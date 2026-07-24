@@ -51,7 +51,7 @@ export function WorkspaceRow({
     space.access_reason === 'owned_subscription_required'
       ? 'This workspace is locked because your plan is inactive. Subscribe to regain access.'
       : space.access_reason === 'shared_owner_inactive'
-        ? 'This shared workspace is locked until the owner renews their plan, or you subscribe.'
+        ? 'This shared workspace is locked until the owner renews their plan.'
         : null;
 
   return (
@@ -129,7 +129,7 @@ export function WorkspaceRow({
             {isLoading ? <Spinner /> : 'Switch'}
           </Button>
         ) : null}
-        {isLocked ? (
+        {isLocked && space.access_reason === 'owned_subscription_required' ? (
           <Button asChild variant="outline" size="sm">
             <Link to="/settings/subscription">Subscribe</Link>
           </Button>
