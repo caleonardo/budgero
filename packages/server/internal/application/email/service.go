@@ -39,6 +39,9 @@ const (
 	TemplateTier3Unlocked    = "tier3_unlocked"
 	TemplateTrialEndingDay33 = "trial_ending_day33"
 	TemplateTrialEndingDay35 = "trial_ending_day35"
+	// Rendered per broadcast; the sent_emails dedup key is quarter-stamped
+	// (see QuarterKey), so the same template can be re-sent each quarter.
+	TemplateQuarterlyFeedback = "quarterly_feedback"
 )
 
 //go:embed templates/*.html
@@ -114,6 +117,7 @@ func AllTemplates() []string {
 		TemplateTier3Unlocked,
 		TemplateTrialEndingDay33,
 		TemplateTrialEndingDay35,
+		TemplateQuarterlyFeedback,
 	}
 }
 
@@ -162,9 +166,9 @@ func (s *Service) Render(templateName, to, firstName string) (Message, error) {
 		Subject:  data.Subject,
 		HTMLBody: body,
 	}
-	// Welcome is personal / replies encouraged; marketing emails don't set
-	// Reply-To (footer directs users to hello@ instead).
-	if templateName == TemplateWelcome {
+	// Welcome and the feedback ask are personal / replies encouraged;
+	// marketing emails don't set Reply-To (footer directs users to hello@).
+	if templateName == TemplateWelcome || templateName == TemplateQuarterlyFeedback {
 		msg.ReplyTo = s.cfg.Email.ReplyTo
 	}
 	return msg, nil
@@ -185,10 +189,17 @@ func (s *Service) SendDirect(ctx context.Context, msg Message) error {
 // successful send OR on "already sent" — both are successful outcomes from
 // the caller's perspective. Errors represent render/transport failures.
 func (s *Service) SendOnce(ctx context.Context, userID, email, firstName, templateName string) error {
+	return s.SendOnceKeyed(ctx, userID, email, firstName, templateName, templateName)
+}
+
+// SendOnceKeyed is SendOnce with the sent_emails dedup key decoupled from the
+// template name, so recurring broadcasts can dedup per occurrence (e.g.
+// quarterly_feedback_2026q3) while rendering a single template.
+func (s *Service) SendOnceKeyed(ctx context.Context, userID, email, firstName, templateName, dedupKey string) error {
 	if s == nil {
 		return nil
 	}
-	alreadySent, err := s.store.HasSent(ctx, userID, templateName)
+	alreadySent, err := s.store.HasSent(ctx, userID, dedupKey)
 	if err != nil {
 		return fmt.Errorf("check sent_emails: %w", err)
 	}
@@ -210,11 +221,11 @@ func (s *Service) SendOnce(ctx context.Context, userID, email, firstName, templa
 		}
 	}
 
-	if err := s.store.MarkSent(ctx, userID, templateName, time.Now().UTC()); err != nil {
+	if err := s.store.MarkSent(ctx, userID, dedupKey, time.Now().UTC()); err != nil {
 		// Send succeeded; log but don't fail — scheduler will see a duplicate
 		// sent_emails miss next tick, but that's preferable to reporting a
 		// send failure to the caller.
-		log.Error().Err(err).Str("user_id", userID).Str("template", templateName).
+		log.Error().Err(err).Str("user_id", userID).Str("template", dedupKey).
 			Msg("email: failed to record sent_emails row after successful send")
 	}
 	return nil
@@ -296,6 +307,8 @@ func (s *Service) buildData(templateName, firstName string) renderData {
 		data.Subject = "2 days left in your Budgero trial"
 	case TemplateTrialEndingDay35:
 		data.Subject = "Your Budgero trial ends today"
+	case TemplateQuarterlyFeedback:
+		data.Subject = "How's Budgero working for you?"
 	default:
 		data.Subject = "Budgero"
 	}
@@ -339,8 +352,9 @@ func parseTemplates() (map[string]*template.Template, error) {
 		TemplateTier1Unlocked:    "templates/tier1_unlocked.html",
 		TemplateTier2Unlocked:    "templates/tier2_unlocked.html",
 		TemplateTier3Unlocked:    "templates/tier3_unlocked.html",
-		TemplateTrialEndingDay33: "templates/trial_ending_day33.html",
-		TemplateTrialEndingDay35: "templates/trial_ending_day35.html",
+		TemplateTrialEndingDay33:  "templates/trial_ending_day33.html",
+		TemplateTrialEndingDay35:  "templates/trial_ending_day35.html",
+		TemplateQuarterlyFeedback: "templates/quarterly_feedback.html",
 	}
 
 	out := make(map[string]*template.Template, len(templates))

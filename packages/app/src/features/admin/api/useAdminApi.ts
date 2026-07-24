@@ -14,6 +14,8 @@ import type { AdminUserDetails } from '@features/admin/model/admin-users';
 import type {
   AdminStats,
   ClerkSyncResult,
+  FeedbackBroadcastResult,
+  FeedbackBroadcastStatus,
   MailerLiteSyncResult,
   RewardsAnalytics,
   RewardsAnalyticsGranularity,
@@ -59,6 +61,17 @@ export function useAdminApi() {
       syncClerkUsers: () => apiClient.post<ClerkSyncResult>('/admin/sync/clerk'),
       syncMailerLite: () => apiClient.post<MailerLiteSyncResult>('/admin/sync/mailerlite'),
       syncLemonSqueezy: () => apiClient.post('/admin/sync/lemonsqueezy'),
+
+      // Quarterly feedback broadcast (SaaS only). Sending walks all eligible
+      // recipients sequentially with pacing, so give it the long timeout.
+      getFeedbackBroadcastStatus: () =>
+        apiClient.get<FeedbackBroadcastStatus>('/admin/broadcast/feedback'),
+      sendFeedbackBroadcast: () =>
+        apiClient.post<FeedbackBroadcastResult>(
+          '/admin/broadcast/feedback',
+          undefined,
+          ADMIN_QUERY_TIMEOUT_MS
+        ),
 
       // Rewards analytics (SaaS only)
       getRewardsAnalytics: (from: string, to: string, granularity: RewardsAnalyticsGranularity) => {

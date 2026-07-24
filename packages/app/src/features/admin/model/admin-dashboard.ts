@@ -32,6 +32,21 @@ export interface MailerLiteSyncResult {
   failed: number;
 }
 
+export interface FeedbackBroadcastStatus {
+  quarter: string;
+  eligible: number;
+  alreadySent: number;
+  dryRun: boolean;
+}
+
+export interface FeedbackBroadcastResult {
+  quarter: string;
+  eligible: number;
+  sent: number;
+  failed: number;
+  dryRun: boolean;
+}
+
 export type RewardsAnalyticsGranularity = 'daily' | 'weekly' | 'monthly';
 
 export interface TimeSeriesPoint {

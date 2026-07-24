@@ -1,0 +1,30 @@
+{{define "edition"}}Quarterly check-in{{end}}
+
+{{define "content"}}
+<p class="eyebrow">A question from the developer</p>
+
+<h1 class="hed">How is Budgero working for you{{if .FirstName}}, {{.FirstName}}{{end}}?</h1>
+
+<p class="dek">
+  I build Budgero. Every few months I ask the people actually using it what's
+  working and what isn't it's the main way the app gets better.
+</p>
+
+<p class="body">Three questions — answer any of them, in as few words as you like:</p>
+
+<ul class="link-list">
+  <li><span class="arrow">→</span> What do you like about Budgero?</li>
+  <li><span class="arrow">→</span> What's annoying, confusing, or missing?</li>
+  <li><span class="arrow">→</span> If you decided not to subscribe — what drove you away?</li>
+</ul>
+
+<p class="body" style="margin-top: 18px;">
+  Just hit reply. I read and answer every response.
+</p>
+{{end}}
+
+{{define "footer"}}
+You're getting this because you've used Budgero in the last 30 days. It goes
+out at most once a quarter. Questions or opt out:
+<a href="mailto:hello@budgero.app">hello@budgero.app</a>.
+{{end}}

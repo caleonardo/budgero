@@ -14,6 +14,8 @@ import {
   UserX,
   RefreshCw,
   Mail,
+  MailQuestion,
+  Send,
 } from 'lucide-react';
 import { useAdminApi } from '@features/admin/api/useAdminApi';
 import { formatDistanceToNow } from 'date-fns';
@@ -27,6 +29,8 @@ import StickinessAnalyticsSection from '@pages/admin/StickinessAnalyticsSection'
 import type {
   AdminStats,
   ClerkSyncResult,
+  FeedbackBroadcastResult,
+  FeedbackBroadcastStatus,
   MailerLiteSyncResult,
 } from '@features/admin/model/admin-dashboard';
 
@@ -40,6 +44,9 @@ export default function AdminDashboard() {
   const [mailerLiteSyncResult, setMailerLiteSyncResult] = useState<MailerLiteSyncResult | null>(
     null
   );
+  const [feedbackStatus, setFeedbackStatus] = useState<FeedbackBroadcastStatus | null>(null);
+  const [sendingFeedback, setSendingFeedback] = useState(false);
+  const [feedbackResult, setFeedbackResult] = useState<FeedbackBroadcastResult | null>(null);
   const adminApi = useAdminApi();
 
   const loadStats = useCallback(async () => {
@@ -97,11 +104,49 @@ export default function AdminDashboard() {
     }
   }, [adminApi]);
 
+  const loadFeedbackStatus = useCallback(async () => {
+    try {
+      const status = await adminApi.getFeedbackBroadcastStatus();
+      setFeedbackStatus(status);
+    } catch (error) {
+      console.error('Failed to load feedback broadcast status:', error);
+    }
+  }, [adminApi]);
+
+  const handleSendFeedbackBroadcast = useCallback(async () => {
+    if (!feedbackStatus) return;
+    const confirmed = window.confirm(
+      `Send the ${feedbackStatus.quarter} feedback email to ${feedbackStatus.eligible} active users?${
+        feedbackStatus.dryRun ? ' (dry run — nothing actually sends)' : ''
+      }`
+    );
+    if (!confirmed) return;
+    try {
+      setSendingFeedback(true);
+      const result = await adminApi.sendFeedbackBroadcast();
+      setFeedbackResult(result);
+      toast.success('Feedback broadcast complete', {
+        description: `Sent ${result.sent ?? 0} of ${result.eligible ?? 0}, failed ${
+          result.failed ?? 0
+        }${result.dryRun ? ' (dry run)' : ''}.`,
+      });
+      void loadFeedbackStatus();
+    } catch (error) {
+      console.error('Failed to send feedback broadcast:', error);
+      toast.error('Feedback broadcast failed', {
+        description: 'Check server logs. Re-sending is safe — delivered users are skipped.',
+      });
+    } finally {
+      setSendingFeedback(false);
+    }
+  }, [adminApi, feedbackStatus, loadFeedbackStatus]);
+
   useEffect(() => {
     if (!IS_SELF_HOSTABLE_BUILD) {
       void loadStats();
+      void loadFeedbackStatus();
     }
-  }, [loadStats]);
+  }, [loadStats, loadFeedbackStatus]);
 
   // Early return for self-hostable build after all hooks
   if (IS_SELF_HOSTABLE_BUILD) {
@@ -240,6 +285,46 @@ export default function AdminDashboard() {
                 >
                   <RefreshCw className={cn('mr-2 h-4 w-4', syncingMailerLite && 'animate-spin')} />
                   {syncingMailerLite ? 'Syncing...' : 'Sync MailerLite'}
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 rounded-lg border p-4">
+              <div className="flex items-start gap-3">
+                <MailQuestion className="h-5 w-5 text-muted-foreground" />
+                <div className="space-y-1">
+                  <p className="font-medium">Quarterly Feedback Email</p>
+                  <p className="text-sm text-muted-foreground">
+                    Ask everyone active in the last 30 days what's working and what isn't. Replies
+                    go to hello@.
+                  </p>
+                </div>
+              </div>
+              {feedbackStatus && (
+                <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+                  {feedbackStatus.quarter} | Eligible {feedbackStatus.eligible} | Already sent{' '}
+                  {feedbackStatus.alreadySent}
+                  {feedbackStatus.dryRun ? ' | DRY RUN' : ''}
+                </div>
+              )}
+              {feedbackResult && (
+                <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+                  Last run: sent {feedbackResult.sent ?? 0} | failed {feedbackResult.failed ?? 0}
+                </div>
+              )}
+              <div>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={handleSendFeedbackBroadcast}
+                  disabled={sendingFeedback || !feedbackStatus || feedbackStatus.eligible === 0}
+                >
+                  <Send className={cn('mr-2 h-4 w-4', sendingFeedback && 'animate-pulse')} />
+                  {sendingFeedback
+                    ? 'Sending...'
+                    : feedbackStatus && feedbackStatus.eligible === 0
+                      ? 'All caught up'
+                      : 'Send Feedback Email'}
                 </Button>
               </div>
             </div>

@@ -50,6 +50,7 @@ type Handlers struct {
 	subscriptionsEnabled bool
 	selfHostMode         bool
 	latestVersion        LatestVersionSource
+	email                *email.Service
 }
 
 // NewHandlers creates a new Handlers instance.
@@ -89,6 +90,7 @@ func NewHandlers(services *application.Services, syncHub *synchub.Hub, opts Opti
 		subscriptionsEnabled: !opts.SelfHost,
 		selfHostMode:         opts.SelfHost,
 		latestVersion:        opts.LatestVersion,
+		email:                opts.Email,
 	}
 }
 

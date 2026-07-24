@@ -232,6 +232,12 @@ func SetupRoutes(e *echo.Echo, h *handler.Handlers, services *application.Servic
 		admin.GET("/stickiness", h.GetAdminStickinessAnalytics)
 	}
 
+	// Quarterly feedback broadcast (cloud only — needs the Resend email service)
+	if !opts.SelfHost {
+		admin.GET("/broadcast/feedback", h.GetFeedbackBroadcastStatus)
+		admin.POST("/broadcast/feedback", h.SendFeedbackBroadcast)
+	}
+
 	// Database explorer
 	admin.GET("/database/tables", h.GetDatabaseTables)
 	admin.GET("/database/tables/:name", h.GetDatabaseTableData)

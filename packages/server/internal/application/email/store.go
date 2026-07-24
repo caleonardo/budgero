@@ -49,6 +49,16 @@ func (s *Store) MarkSent(ctx context.Context, userID, template string, sentAt ti
 	return err
 }
 
+// CountSent returns how many users have a sent_emails row for the given
+// template/dedup key. Used to show "already sent this quarter" in the admin UI.
+func (s *Store) CountSent(ctx context.Context, template string) (int, error) {
+	var n int
+	err := s.db.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM sent_emails WHERE template = ?`, template,
+	).Scan(&n)
+	return n, err
+}
+
 // Candidate is the minimum user info the scheduler needs to fire an email.
 type Candidate struct {
 	UserID    string
@@ -230,6 +240,25 @@ func (s *Store) Day35Candidates(ctx context.Context, now time.Time) ([]Personali
 		    WHERE s.user_id = u.id AND s.template = ?
 		  )
 	`, windowStart, windowEnd, TemplateTrialEndingDay35)
+}
+
+// FeedbackBroadcastCandidates finds users with any activity heartbeat since
+// activeSince (user_daily_activity.day is a YYYY-MM-DD string) who haven't
+// yet received the broadcast identified by dedupKey.
+func (s *Store) FeedbackBroadcastCandidates(ctx context.Context, activeSince time.Time, dedupKey string) ([]Candidate, error) {
+	return s.queryCandidates(ctx, `
+		SELECT u.id, u.email, u.name
+		FROM users u
+		WHERE u.email NOT LIKE '%@clerk.user'
+		  AND EXISTS (
+		    SELECT 1 FROM user_daily_activity a
+		    WHERE a.user_id = u.id AND a.day >= ?
+		  )
+		  AND NOT EXISTS (
+		    SELECT 1 FROM sent_emails s
+		    WHERE s.user_id = u.id AND s.template = ?
+		  )
+	`, activeSince.UTC().Format("2006-01-02"), dedupKey)
 }
 
 func (s *Store) queryPersonalized(ctx context.Context, query string, args ...any) ([]PersonalizedCandidate, error) {
