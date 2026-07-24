@@ -42,6 +42,7 @@ const (
 	// Rendered per broadcast; the sent_emails dedup key is quarter-stamped
 	// (see QuarterKey), so the same template can be re-sent each quarter.
 	TemplateQuarterlyFeedback = "quarterly_feedback"
+	TemplateDay2Feedback      = "day2_feedback"
 )
 
 //go:embed templates/*.html
@@ -118,6 +119,7 @@ func AllTemplates() []string {
 		TemplateTrialEndingDay33,
 		TemplateTrialEndingDay35,
 		TemplateQuarterlyFeedback,
+		TemplateDay2Feedback,
 	}
 }
 
@@ -166,9 +168,10 @@ func (s *Service) Render(templateName, to, firstName string) (Message, error) {
 		Subject:  data.Subject,
 		HTMLBody: body,
 	}
-	// Welcome and the feedback ask are personal / replies encouraged;
+	// Welcome and the feedback asks are personal / replies encouraged;
 	// marketing emails don't set Reply-To (footer directs users to hello@).
-	if templateName == TemplateWelcome || templateName == TemplateQuarterlyFeedback {
+	switch templateName {
+	case TemplateWelcome, TemplateQuarterlyFeedback, TemplateDay2Feedback:
 		msg.ReplyTo = s.cfg.Email.ReplyTo
 	}
 	return msg, nil
@@ -309,6 +312,8 @@ func (s *Service) buildData(templateName, firstName string) renderData {
 		data.Subject = "Your Budgero trial ends today"
 	case TemplateQuarterlyFeedback:
 		data.Subject = "How's Budgero working for you?"
+	case TemplateDay2Feedback:
+		data.Subject = "A quick question from Budgero's developer"
 	default:
 		data.Subject = "Budgero"
 	}
@@ -355,6 +360,7 @@ func parseTemplates() (map[string]*template.Template, error) {
 		TemplateTrialEndingDay33:  "templates/trial_ending_day33.html",
 		TemplateTrialEndingDay35:  "templates/trial_ending_day35.html",
 		TemplateQuarterlyFeedback: "templates/quarterly_feedback.html",
+		TemplateDay2Feedback:      "templates/day2_feedback.html",
 	}
 
 	out := make(map[string]*template.Template, len(templates))

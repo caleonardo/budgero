@@ -67,6 +67,10 @@ func (s *Scheduler) tick(ctx context.Context) {
 		return s.store.WelcomeCatchup(ctx, now, welcomeCatchupLookback)
 	}, TemplateWelcome)
 
+	s.runFlow(ctx, "day2_feedback", func(ctx context.Context) ([]Candidate, error) {
+		return s.store.Day2FeedbackCandidates(ctx, now)
+	}, TemplateDay2Feedback)
+
 	s.runFlow(ctx, "inactivity", func(ctx context.Context) ([]Candidate, error) {
 		return s.store.InactivityCandidates(ctx, now)
 	}, TemplateInactivity)

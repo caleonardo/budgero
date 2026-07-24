@@ -99,6 +99,25 @@ func (s *Store) WelcomeCatchup(ctx context.Context, now time.Time, lookback time
 	`, now.Add(-lookback).UTC(), TemplateWelcome)
 }
 
+// Day2FeedbackCandidates finds users who signed up between 51h and 48h ago
+// (3h slack for delayed scheduler ticks) for the personal "what's almost
+// stopping you?" ask. Deliberately no activity/subscription filter — the
+// question works for both engaged and stalled users.
+func (s *Store) Day2FeedbackCandidates(ctx context.Context, now time.Time) ([]Candidate, error) {
+	windowStart := now.Add(-51 * time.Hour).UTC()
+	windowEnd := now.Add(-48 * time.Hour).UTC()
+	return s.queryCandidates(ctx, `
+		SELECT u.id, u.email, u.name
+		FROM users u
+		WHERE u.created_at BETWEEN ? AND ?
+		  AND u.email NOT LIKE '%@clerk.user'
+		  AND NOT EXISTS (
+		    SELECT 1 FROM sent_emails s
+		    WHERE s.user_id = u.id AND s.template = ?
+		  )
+	`, windowStart, windowEnd, TemplateDay2Feedback)
+}
+
 // InactivityCandidates finds users to nudge toward their first reward (10%
 // off, Tier 1 = log 5 transactions). Targets users who:
 //   - signed up between 75h and 72h ago (a 3h window so a delayed

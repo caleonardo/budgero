@@ -1,0 +1,29 @@
+{{define "edition"}}Day two{{end}}
+
+{{define "content"}}
+<p class="eyebrow">A question from the developer</p>
+
+<h1 class="hed">How's your start going{{if .FirstName}}, {{.FirstName}}{{end}}?</h1>
+
+<p class="dek">
+  You created your Budgero account a couple of days ago, right around now is
+  when a budgeting app either clicks or quietly gets abandoned.
+</p>
+
+<p class="body">
+  So I'll just ask: <strong>what's almost stopping you?</strong> A confusing
+  screen, a missing feature, no time to bring your data over, whatever it is,
+  hit reply and tell me in a sentence.
+</p>
+
+<p class="body">
+  And if it's going well, I'd love to hear that too. I read and answer every
+  reply it's the main way Budgero gets better.
+</p>
+{{end}}
+
+{{define "footer"}}
+You're getting this because you created a Budgero account two days ago. It's a
+one-off, not a sequence. Questions or opt out:
+<a href="mailto:hello@budgero.app">hello@budgero.app</a>.
+{{end}}
