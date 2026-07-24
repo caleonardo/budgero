@@ -295,6 +295,7 @@ export class SpaceActivationService {
         error: errorMessage(error),
       });
     }
+    context.dbLoader.reconcileSpaceScope(dbInstance, params.spaceId);
 
     if (hydratedFromServer) {
       // The DB was just replaced by a server snapshot: stale dedup records

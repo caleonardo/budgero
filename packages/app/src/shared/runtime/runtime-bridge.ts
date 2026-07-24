@@ -18,6 +18,7 @@ import {
 import {
   MigrationRunner as CoreMigrationRunner,
   getMaxSupportedSchemaVersion,
+  reconcileSpaceScope,
 } from '@budgero/core/browser';
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
 import { useUndoStore } from '@shared/mutations/UndoStore';
@@ -71,6 +72,9 @@ export function createRuntimeDeps(): RuntimeCoordinatorDeps {
       },
       runMigrations(db) {
         new CoreMigrationRunner(db as unknown as MigrationDatabase).runMigrations();
+      },
+      reconcileSpaceScope(db, spaceId) {
+        reconcileSpaceScope(db as unknown as MigrationDatabase, spaceId);
       },
     },
 

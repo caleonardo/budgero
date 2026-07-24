@@ -14,6 +14,7 @@ export { DatabaseError } from './database/interface.js';
 export { WebDatabaseAdapter } from './database/web-adapter.js';
 
 export { MigrationRunner, getMaxSupportedSchemaVersion } from './database/migrations.js';
+export { reconcileSpaceScope } from './database/space-scope.js';
 
 // Services (platform-agnostic)
 export { BudgetService } from './services/budgets/index.js';

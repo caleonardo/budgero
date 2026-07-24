@@ -73,20 +73,9 @@ export function readBudgetsForSpace(
   runtime: Pick<AppRuntime, 'services'>,
   spaceId: string
 ): Budget[] {
-  const budgetService = runtime.services().budgets;
-  const scopedBudgets = budgetService.getAllBudgets(spaceId);
-  if (scopedBudgets.length > 0) {
-    return scopedBudgets;
-  }
-
-  const allBudgets = budgetService.getAllBudgets();
-  if (allBudgets.length === 0) {
-    return scopedBudgets;
-  }
-
-  // Each workspace uses its own database file. Fall back to the full active DB
-  // when legacy/shared data carries mismatched SpaceID values inside that DB.
-  return allBudgets;
+  // Legacy SpaceID values are remapped at activation (reconcileSpaceScope),
+  // so the scoped query is authoritative — no silent full-DB fallback.
+  return runtime.services().budgets.getAllBudgets(spaceId);
 }
 
 function isAccessibleWorkspace(space: BudgetSpaceSummary): boolean {

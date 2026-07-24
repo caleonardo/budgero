@@ -221,6 +221,7 @@ export class RuntimeContextFactory {
         }
 
         dbLoader.runMigrations(params.db);
+        dbLoader.reconcileSpaceScope(params.db, spaceId);
 
         // Prefer the mutation version bound to the blob we just restored —
         // with debounced uploads the blob can lag the log, and seeding from

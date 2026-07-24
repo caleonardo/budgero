@@ -583,8 +583,9 @@ export class RuntimeCoordinator {
     }
     if (restored) {
       const db = this.activeContext?.db;
-      if (db) {
-        this.activeContext?.dbLoader.runMigrations(db);
+      if (db && this.activeContext) {
+        this.activeContext.dbLoader.runMigrations(db);
+        this.activeContext.dbLoader.reconcileSpaceScope(db, this.activeContext.spaceId);
       }
       const qc = this.getQueryClient();
       if (qc?.invalidateQueries) {

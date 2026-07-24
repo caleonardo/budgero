@@ -32,21 +32,22 @@ function createSpace(overrides: Partial<BudgetSpaceSummary> = {}): BudgetSpaceSu
 }
 
 describe('resolveBudgetGate', () => {
-  it('falls back to the active database budgets when scoped space rows are empty', () => {
-    const legacyBudget = createBudget({
-      ID: 7,
-      SpaceID: 'legacy-space',
-      Name: 'Imported shared budget',
-    });
+  it('returns only budgets scoped to the requested space (no full-DB fallback)', () => {
+    const scopedBudget = createBudget({ ID: 7, SpaceID: 'space-a' });
+    const strayBudget = createBudget({ ID: 8, SpaceID: 'other-space', Name: 'Stray budget' });
     const runtime = {
       services: () => ({
         budgets: {
-          getAllBudgets: (spaceId?: string) => (spaceId ? [] : [legacyBudget]),
+          getAllBudgets: (spaceId?: string) =>
+            spaceId
+              ? [scopedBudget].filter((b) => b.SpaceID === spaceId)
+              : [scopedBudget, strayBudget],
         },
       }),
     };
 
-    expect(readBudgetsForSpace(runtime as never, 'space-a')).toEqual([legacyBudget]);
+    expect(readBudgetsForSpace(runtime as never, 'space-a')).toEqual([scopedBudget]);
+    expect(readBudgetsForSpace(runtime as never, 'space-b')).toEqual([]);
   });
 
   it('returns required for owners in a workspace with zero budgets', () => {

@@ -29,7 +29,7 @@ function createOnlineContext(db = createDb()) {
       addSyncStatusListener: vi.fn(() => vi.fn()),
     },
     dbSync: { destroy: vi.fn(), setBlobVersion: vi.fn() },
-    dbLoader: { runMigrations: vi.fn() },
+    dbLoader: { runMigrations: vi.fn(), reconcileSpaceScope: vi.fn() },
     executor: {} as never,
     offlineQueue: {} as never,
     encryption: null,

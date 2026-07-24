@@ -15,6 +15,7 @@ import { logRuntime } from '../logging';
 export interface MigrationRunner {
   needsMigration(db: WebDatabaseInstance): boolean;
   runMigrations(db: WebDatabaseInstance): void;
+  reconcileSpaceScope?(db: WebDatabaseInstance, spaceId: string): void;
 }
 
 export class DatabaseLoader {
@@ -44,16 +45,29 @@ export class DatabaseLoader {
         logRuntime('info', 'DatabaseLoader', 'Applying pending migrations');
         this.migrationRunner.runMigrations(db);
         return true;
-      } 
-        // Even if migrations are up to date, ensure foreign keys enabled
-        db.exec('PRAGMA foreign_keys = ON');
-        return false;
-      
+      }
+      // Even if migrations are up to date, ensure foreign keys enabled
+      db.exec('PRAGMA foreign_keys = ON');
+      return false;
     } catch (error) {
       logRuntime('warn', 'DatabaseLoader', 'Failed to run migrations', {
         error: errorMessage(error),
       });
       throw error;
+    }
+  }
+
+  /**
+   * Stamp the authoritative space id onto rows carrying legacy client-minted
+   * space ids. Non-fatal: activation proceeds on failure.
+   */
+  reconcileSpaceScope(db: WebDatabaseInstance, spaceId: string): void {
+    try {
+      this.migrationRunner?.reconcileSpaceScope?.(db, spaceId);
+    } catch (error) {
+      logRuntime('warn', 'DatabaseLoader', 'Failed to reconcile space scope', {
+        error: errorMessage(error),
+      });
     }
   }
 }
