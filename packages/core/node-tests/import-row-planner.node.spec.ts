@@ -32,6 +32,12 @@ const UK: ImportRowParseConfig = {
   dateFormat: 'DD/MM/YYYY',
 };
 
+const EU_DE: ImportRowParseConfig = {
+  thousandSeparator: '.',
+  decimalSeparator: ',',
+  dateFormat: 'DD.MM.YYYY',
+};
+
 /**
  * Regression coverage for the customer report: "I'm told all transactions were
  * uploaded, but only about 10 come into the system." The import loop used to
@@ -162,6 +168,42 @@ describe('import row planner — partially mapped Debit/Credit columns', () => {
 });
 
 /**
+ * A single mapped Amount column decides "money in" vs "money out" purely from
+ * the sign, so a missed minus doesn't just misprint a number — it books a
+ * spend as income. Pinned end-to-end through the planner, since that is what
+ * both the preview and the import loop consume.
+ */
+describe('import row planner — a single Amount column routes by sign', () => {
+  const mapping: ColumnMapping = { date: 'Date', amount: 'Amount', payee: 'Payee' };
+
+  function plan(amount: string, config: ImportRowParseConfig = US) {
+    return planImportRows([{ Date: '06/01/2026', Amount: amount, Payee: 'X' }], mapping, config)[0];
+  }
+
+  it.each([
+    ['-54.20', 0, 54200],
+    ['(54.20)', 0, 54200],
+    ['54.20-', 0, 54200],
+    ['-$54.20', 0, 54200],
+    ['$-54.20', 0, 54200], // minus after the currency symbol
+    ['−54.20', 0, 54200], // U+2212 minus sign
+    ['+2450.00', 2450000, 0],
+    ['2450.00', 2450000, 0],
+    ['$2,450.00', 2450000, 0],
+  ])('%s → inflow %d / outflow %d', (amount, inflow, outflow) => {
+    const row = plan(amount);
+    expect(row.status).toBe('ready');
+    expect({ inflow: row.inflow, outflow: row.outflow }).toEqual({ inflow, outflow });
+  });
+
+  it('routes by sign for European separators too', () => {
+    expect(plan('-1.800,00', EU_DE).outflow).toBe(1800000);
+    expect(plan('1.800,00-', EU_DE).outflow).toBe(1800000);
+    expect(plan('1.800,00', EU_DE).inflow).toBe(1800000);
+  });
+});
+
+/**
  * The other three hypothesised failure modes (invalid dates, missing payees,
  * unknown categories) do NOT drop rows — these tests pin that down so the real
  * culprit (amounts) stays isolated.
@@ -187,6 +229,42 @@ describe('import row planner — invalid dates and missing payees do NOT drop ro
     const badDate = plans.find((p) => rows[p.index].Payee === 'Grocery Store');
     expect(badDate?.status).toBe('ready');
     expect(badDate?.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it('warns when a present date cell could not be read (not just when empty)', () => {
+    // The today fallback used to be silent for garbage values, so a whole
+    // statement could import stamped with the import date and look fine.
+    const rows = loadRows('messy-dates-categories.csv');
+    const plans = planImportRows(rows, mapping, US);
+
+    const badDate = plans.find((p) => rows[p.index].Payee === 'Grocery Store');
+    expect(badDate?.errors).toContain(
+      'Unreadable date "not-a-date" for format MM/DD/YYYY — using today'
+    );
+  });
+
+  it('leaves rows with a readable date free of date errors', () => {
+    const rows = loadRows('messy-dates-categories.csv');
+    const plans = planImportRows(rows, mapping, US);
+
+    const good = plans.find((p) => rows[p.index].Payee === 'Vet Clinic');
+    expect(good?.date).toBe('2026-06-01');
+    expect(good?.errors).toEqual([]);
+  });
+
+  it('reads dates out of cells that carry a timestamp', () => {
+    // Regression for "imports don't use date from file and put actual date for
+    // all transactions": a time in the date column sent every row to today.
+    const rows = loadRows('timestamped-dates.csv');
+    const plans = planImportRows(rows, mapping, UK);
+
+    expect(plans.map((p) => p.date)).toEqual([
+      '2024-01-31',
+      '2024-02-01',
+      '2024-02-02',
+      '2024-02-03',
+    ]);
+    expect(plans.flatMap((p) => p.errors)).toEqual([]);
   });
 
   it('warns (but still imports) when the date cell is empty', () => {

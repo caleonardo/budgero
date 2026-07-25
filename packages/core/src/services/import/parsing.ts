@@ -51,13 +51,28 @@ export function parseAmountDetailed(
 ): ParsedAmount {
   if (!amountStr || !amountStr.trim()) return { value: 0, ok: false, empty: true };
 
-  // Remove currency symbols and whitespace, keep only digits and separators
-  let cleaned = amountStr.replace(/[^\d.,()-]/g, '');
+  // Bank exports — PDF text layers especially — write the minus sign as a
+  // Unicode dash (U+2212 MINUS SIGN, U+2010 HYPHEN, en/em/figure/horizontal-
+  // bar dashes, U+FF0D FULLWIDTH minus in CJK statements). The cleanup below
+  // would strip those as "currency symbols", silently turning a spend into
+  // income, so fold them to ASCII "-" before anything looks for a sign.
+  let original = amountStr.trim().replace(/[‐‒–—―−－]/g, '-');
 
-  // Detect negative formats before stripping
-  const original = amountStr.trim();
+  // Dutch/German whole-amount notation writes "12,–" / "1.234,-" for exactly
+  // 12.00 / 1234.00 — a dash RIGHT AFTER the decimal separator stands for
+  // "00", it is not a minus. Rewrite it before the sign detection below reads
+  // it as a trailing minus and negates the amount. Real trailing-minus values
+  // ("54.20-") have digits before the dash, so they don't match.
+  original = original.replace(/([.,])\s*-$/, (_m, sep: string) => `${sep}00`);
+
+  // Remove currency symbols and whitespace, keep only digits and separators
+  let cleaned = original.replace(/[^\d.,()-]/g, '');
+
+  // Detect negative formats before stripping. The minus only has to come
+  // before the first digit, not at the very start of the cell: "$-54.20" and
+  // "USD -54.20" are as negative as "-54.20".
   const hasParens = original.includes('(') && original.includes(')');
-  const hasLeadingMinus = /^\s*-/.test(original);
+  const hasLeadingMinus = /^\D*-/.test(original);
   const hasTrailingMinus = /-\s*$/.test(original);
   const isNegative = hasParens || hasLeadingMinus || hasTrailingMinus;
 
@@ -135,9 +150,30 @@ export function parseAmount(
   return parseAmountDetailed(amountStr, config, preserveSign).value;
 }
 
+export interface ParsedImportDate {
+  /** ISO `YYYY-MM-DD`. Today's date when the input could not be read. */
+  date: string;
+  /**
+   * True when `date` was actually read out of the input. False means `date`
+   * is the today fallback — either an empty cell or an unrecognized value.
+   */
+  ok: boolean;
+  /** True when the input was empty/whitespace (distinct from present-but-garbage). */
+  empty: boolean;
+}
+
 /**
- * Parse a date string based on the configured date format.
- * Returns ISO date string (YYYY-MM-DD).
+ * Parse a date string based on the configured date format, reporting WHETHER
+ * the input was actually understood.
+ *
+ * The bare {@link parseDate} API returns today's date for empty cells,
+ * unreadable values ("31/01/2024 12:30", "20240131") and a genuine import of
+ * today alike — which is how whole statements used to import with every
+ * transaction silently stamped with the import date. This variant
+ * distinguishes three cases so callers can surface a real error instead:
+ *  - empty cell              → `{ ok: false, empty: true }`
+ *  - present but unreadable  → `{ ok: false, empty: false }`  e.g. "n/a"
+ *  - a real date             → `{ ok: true }`
  *
  * The configured `dateFormat` is honored FIRST. We only fall back to
  * `new Date(...)` if the format-aware parse fails, because JavaScript's
@@ -149,36 +185,68 @@ export function parseAmount(
  * carry no year — common in credit card statements. If omitted and a
  * yearless date is encountered, the current year is used.
  */
-export function parseDate(dateStr: string, dateFormat: string, defaultYear?: number): string {
-  if (!dateStr) return getLocalDateString();
+export function parseDateDetailed(
+  dateStr: string,
+  dateFormat: string,
+  defaultYear?: number
+): ParsedImportDate {
+  if (!dateStr || !dateStr.trim()) {
+    return { date: getLocalDateString(), ok: false, empty: true };
+  }
 
   const trimmed = dateStr.trim();
+  const found = (date: string): ParsedImportDate => ({ date, ok: true, empty: false });
 
   // 1) Try the configured format first (requires a year).
   const formatted = parseWithFormat(trimmed, dateFormat);
-  if (formatted) return formatted;
+  if (formatted) return found(formatted);
 
   // 2) Yearless "Mon DD" / "DD Mon" (common in US/Canadian credit card
   //    statements). Apply the configured default year or today's year.
   const yearless = parseYearlessDate(trimmed, defaultYear ?? new Date().getFullYear());
-  if (yearless) return yearless;
+  if (yearless) return found(yearless);
 
   // 3) ISO-leading dates ("2024-01-31", "2024-01-31T12:34:56Z"): return the
   //    written calendar date verbatim. Parsing via new Date() would anchor
   //    date-only strings to UTC and shift them for users west of UTC.
   const isoDateOnly = trimmed.match(/^(\d{4}-\d{2}-\d{2})(?:$|[T ])/);
-  if (isoDateOnly) return isoDateOnly[1];
+  if (isoDateOnly) return found(isoDateOnly[1]);
 
-  // 4) Fall back to JS Date for textual formats (e.g. "Jan 31, 2024"), which
-  //    parse as LOCAL midnight — so serialize with local getters, never
-  //    toISOString() (UTC), which shifts the day for users east of UTC.
-  const date = new Date(trimmed);
-  if (!isNaN(date.getTime())) {
-    return getLocalDateString(date);
+  // 4) A bare 4-digit year ("2024") → January 1 of that year, written out
+  //    directly. JS Date would parse it too, but anchored to UTC midnight,
+  //    which shifts to Dec 31 for users west of UTC.
+  if (/^\d{4}$/.test(trimmed)) {
+    const year = parseInt(trimmed, 10);
+    if (year >= 1900 && year <= 2999) return found(`${year}-01-01`);
   }
 
-  // 5) Last-ditch: today.
-  return getLocalDateString();
+  // 5) Fall back to JS Date for textual formats (e.g. "Jan 31, 2024"), which
+  //    parse as LOCAL midnight — so serialize with local getters, never
+  //    toISOString() (UTC), which shifts the day for users east of UTC.
+  //    Bare digit runs are excluded: earlier steps already handled the ones
+  //    that are real dates, and JS Date reads whatever is left as a YEAR
+  //    ("12345" → Jan 1 of year 12345), inventing a date out of a mis-mapped
+  //    column.
+  if (!/^\d+$/.test(trimmed)) {
+    const date = new Date(trimmed);
+    if (!isNaN(date.getTime())) {
+      return found(getLocalDateString(date));
+    }
+  }
+
+  // 6) Last-ditch: today, flagged so the caller can warn about it.
+  return { date: getLocalDateString(), ok: false, empty: false };
+}
+
+/**
+ * Parse a date string to an ISO `YYYY-MM-DD` string, falling back to today.
+ *
+ * Thin wrapper over {@link parseDateDetailed} for callers that only need the
+ * date. Prefer `parseDateDetailed` when you must distinguish a date that was
+ * really read from the today fallback (e.g. to surface an import error).
+ */
+export function parseDate(dateStr: string, dateFormat: string, defaultYear?: number): string {
+  return parseDateDetailed(dateStr, dateFormat, defaultYear).date;
 }
 
 const MONTH_NAMES: Record<string, number> = {
@@ -264,6 +332,51 @@ export function dateStringLacksYear(dateStr: string): boolean {
 }
 
 /**
+ * Strips a trailing time-of-day from a date cell: "31/01/2024 12:30",
+ * "31.01.2024. 12:30:45", "01/31/2024 11:59 PM", "2024-01-31T12:30:45Z".
+ *
+ * Bank exports routinely put a timestamp in the date column. Without this the
+ * extra token pushed the field count past three and the whole statement fell
+ * through to the today fallback.
+ */
+const TRAILING_TIME_RE =
+  /[T\s]+\d{1,2}:\d{2}(?::\d{2})?(?:[.,]\d+)?\s*(?:[AP]\.?M\.?)?\s*(?:Z|GMT|UTC|[+-]\d{2}:?\d{2})?$/i;
+
+/**
+ * Turn the separated fields of a date into three numbers, in the same order
+ * they appear in the input.
+ *
+ * Two shapes are accepted: three numeric fields ("31/01/2024", "2024-1-5"),
+ * and a separator-less run of EXACTLY 8 digits ("20240131") whose field
+ * widths follow the configured format's field order. 6-digit runs are
+ * deliberately rejected: with the two-digit-year heuristic almost any
+ * reference/ID number ("150323") reads as a plausible date, so a mis-mapped
+ * numeric column would import as scattered fabricated dates with no warning.
+ * An 8-digit run must contain a real 4-digit year in the right slot, which
+ * filters most non-dates.
+ */
+function parseFieldNumbers(parts: string[], fmt: string): [number, number, number] | null {
+  if (parts.length === 3) {
+    if (!parts.every((part) => /^\d{1,4}$/.test(part))) return null;
+    const [a, b, c] = parts.map((part) => parseInt(part, 10));
+    return [a, b, c];
+  }
+
+  if (parts.length !== 1 || !/^\d{8}$/.test(parts[0])) return null;
+
+  const digits = parts[0];
+  const widths: [number, number, number] = fmt.startsWith('YYYY') ? [4, 2, 2] : [2, 2, 4];
+
+  let offset = 0;
+  const nums = widths.map((width) => {
+    const value = parseInt(digits.slice(offset, offset + width), 10);
+    offset += width;
+    return value;
+  });
+  return nums as [number, number, number];
+}
+
+/**
  * Try to parse `dateStr` strictly against the given `dateFormat`.
  * Returns an ISO `YYYY-MM-DD` string on success, or `null` on failure.
  *
@@ -274,19 +387,22 @@ export function dateStringLacksYear(dateStr: string): boolean {
  * input — we accept any of `-`, `/`, `.` as a separator regardless. This
  * is intentional: bank statements sometimes use mixed separators, and the
  * meaningful information is the field order, not the punctuation.
+ *
+ * A trailing time-of-day is ignored, and separator-less dates ("20240131",
+ * "310124") are read according to the same field order as the format.
  */
 function parseWithFormat(dateStr: string, dateFormat: string): string | null {
-  const parts = dateStr.split(/[-/.\s]+/).filter((p) => p.length > 0);
-  if (parts.length !== 3) return null;
+  const fmt = dateFormat.toUpperCase();
+  const dateOnly = dateStr.replace(TRAILING_TIME_RE, '').trim();
 
-  const nums = parts.map((p) => parseInt(p, 10));
-  if (nums.some((n) => Number.isNaN(n))) return null;
+  const parts = dateOnly.split(/[-/.\s]+/).filter((p) => p.length > 0);
+  const nums = parseFieldNumbers(parts, fmt);
+  if (!nums) return null;
 
   let year: number;
   let month: number;
   let day: number;
 
-  const fmt = dateFormat.toUpperCase();
   if (fmt.startsWith('YYYY')) {
     // YYYY-MM-DD or YYYY/MM/DD
     [year, month, day] = nums;

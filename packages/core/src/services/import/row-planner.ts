@@ -18,7 +18,7 @@
  */
 
 import { fromDecimal, ZERO_MILLI, type MilliUnits } from '../../money/index.js';
-import { parseAmountDetailed, parseDate } from './parsing.js';
+import { parseAmountDetailed, parseDateDetailed } from './parsing.js';
 import type { ColumnMapping } from './types.js';
 
 export type ImportRowStatus =
@@ -131,6 +131,12 @@ function resolveAmounts(
   return { inflow, outflow, status, errors };
 }
 
+/** Keep a garbage cell from blowing up the preview's error column. */
+function truncateForMessage(value: string): string {
+  const clean = value.trim().replace(/\s+/g, ' ');
+  return clean.length > 30 ? `${clean.slice(0, 30)}…` : clean;
+}
+
 /**
  * Plan a single row. Pure — no DB, no category/account resolution (those are
  * async side-effects the caller performs for rows that come back `ready`).
@@ -144,10 +150,17 @@ export function planImportRow(
   const errors: string[] = [];
 
   const dateStr = columnMapping.date ? row[columnMapping.date] : '';
-  if (!dateStr || !dateStr.trim()) {
+  const parsedDate = parseDateDetailed(dateStr ?? '', config.dateFormat, config.defaultYear);
+  if (parsedDate.empty) {
     errors.push('No date found — using today');
+  } else if (!parsedDate.ok) {
+    // A date that can't be read is stamped with today, which silently
+    // collapses a whole statement onto the import date. Say so loudly.
+    errors.push(
+      `Unreadable date "${truncateForMessage(dateStr)}" for format ${config.dateFormat} — using today`
+    );
   }
-  const date = parseDate(dateStr ?? '', config.dateFormat, config.defaultYear);
+  const { date } = parsedDate;
 
   const amount = resolveAmounts(row, columnMapping, config);
   errors.push(...amount.errors);

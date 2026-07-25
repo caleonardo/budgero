@@ -178,6 +178,9 @@ export {
   detectColumnMapping,
   getSeparatorsFromFormat,
   parseAmount,
+  parseDate,
+  parseDateDetailed,
+  type ParsedImportDate,
   dateStringLacksYear,
 } from './services/import/parsing.js';
 export {

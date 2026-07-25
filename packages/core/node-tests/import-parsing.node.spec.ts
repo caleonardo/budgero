@@ -7,6 +7,7 @@ import {
   parseAmountDetailed,
   parseCSVLine,
   parseDate,
+  parseDateDetailed,
   parseDelimitedText,
 } from '../src/services/import/parsing.js';
 
@@ -189,6 +190,94 @@ describe('parseDate', () => {
     const result = parseDate('Feb 30', 'YYYY-MM-DD', 2024);
     expect(result).not.toBe('2024-02-30');
   });
+
+  // Date cells carrying a timestamp ───────────────────────────────────────
+  // Regression: bank exports put "31/01/2024 12:30" in the date column. The
+  // extra field pushed the count past three, every fallback missed, and the
+  // WHOLE statement imported stamped with today's date.
+  it('ignores a trailing time-of-day in the date cell', () => {
+    expect(parseDate('31/01/2024 12:30', 'DD/MM/YYYY')).toBe('2024-01-31');
+    expect(parseDate('31/01/2024 12:30:45', 'DD/MM/YYYY')).toBe('2024-01-31');
+    expect(parseDate('31.01.2024. 12:30', 'DD.MM.YYYY')).toBe('2024-01-31');
+    expect(parseDate('2024-01-31 12:30:45', 'YYYY-MM-DD')).toBe('2024-01-31');
+    expect(parseDate('2024-01-31T12:30:45Z', 'YYYY-MM-DD')).toBe('2024-01-31');
+    expect(parseDate('01/31/2024 11:59 PM', 'MM/DD/YYYY')).toBe('2024-01-31');
+    expect(parseDate('31/01/2024 12:30:45+02:00', 'DD/MM/YYYY')).toBe('2024-01-31');
+  });
+
+  it('keeps the configured field order when a time is present', () => {
+    // The whole point of format-first parsing: 10/03 must stay March 10 for a
+    // DD/MM user even with a timestamp attached.
+    expect(parseDate('10/03/2026 08:15', 'DD/MM/YYYY')).toBe('2026-03-10');
+    expect(parseDate('10/03/2026 08:15', 'MM/DD/YYYY')).toBe('2026-10-03');
+  });
+
+  // Separator-less dates ──────────────────────────────────────────────────
+  it('parses compact 8-digit dates using the configured field order', () => {
+    expect(parseDate('20240131', 'YYYY-MM-DD')).toBe('2024-01-31');
+    expect(parseDate('31012024', 'DD/MM/YYYY')).toBe('2024-01-31');
+    expect(parseDate('01312024', 'MM/DD/YYYY')).toBe('2024-01-31');
+  });
+
+  it('rejects compact 6-digit runs — indistinguishable from reference numbers', () => {
+    // With the two-digit-year heuristic almost any 6-digit ID ("150323")
+    // reads as a plausible date, so a mis-mapped reference column would
+    // import as scattered fabricated dates. Better to warn than to invent.
+    expect(parseDateDetailed('310124', 'DD/MM/YYYY').ok).toBe(false);
+    expect(parseDateDetailed('150323', 'DD/MM/YYYY').ok).toBe(false);
+    expect(parseDateDetailed('240131', 'YYYY-MM-DD').ok).toBe(false);
+  });
+
+  it('rejects digit runs that are not a valid compact date', () => {
+    // 5 or 7 digits isn't a date, and 20241331 has no month 13.
+    expect(parseDateDetailed('12345', 'YYYY-MM-DD').ok).toBe(false);
+    expect(parseDateDetailed('20241331', 'YYYY-MM-DD').ok).toBe(false);
+  });
+
+  it('reads a bare 4-digit year as January 1 of that year', () => {
+    // Pre-existing behavior via new Date('2024'), kept but written out
+    // directly so it can't shift a day for users west of UTC.
+    expect(parseDate('2024', 'YYYY-MM-DD')).toBe('2024-01-01');
+    expect(parseDateDetailed('1999', 'DD/MM/YYYY')).toEqual({
+      date: '1999-01-01',
+      ok: true,
+      empty: false,
+    });
+    // Out-of-range 4-digit runs are NOT years.
+    expect(parseDateDetailed('0042', 'YYYY-MM-DD').ok).toBe(false);
+    expect(parseDateDetailed('9999', 'YYYY-MM-DD').ok).toBe(false);
+  });
+});
+
+describe('parseDateDetailed', () => {
+  it('flags an empty cell as empty, not as a real date', () => {
+    const result = parseDateDetailed('   ', 'DD/MM/YYYY');
+    expect(result).toEqual({ date: getLocalDateString(), ok: false, empty: true });
+  });
+
+  it('flags a present-but-unreadable cell without claiming it is empty', () => {
+    const result = parseDateDetailed('n/a', 'DD/MM/YYYY');
+    expect(result.ok).toBe(false);
+    expect(result.empty).toBe(false);
+    expect(result.date).toBe(getLocalDateString());
+  });
+
+  it('reports ok for dates it actually read', () => {
+    expect(parseDateDetailed('31/01/2024', 'DD/MM/YYYY')).toEqual({
+      date: '2024-01-31',
+      ok: true,
+      empty: false,
+    });
+    expect(parseDateDetailed('Oct 25', 'YYYY-MM-DD', 2025).ok).toBe(true);
+    expect(parseDateDetailed('Jan 31, 2024', 'DD/MM/YYYY').ok).toBe(true);
+  });
+
+  it('reports ok when the input genuinely is today', () => {
+    // The today fallback and a real import of today must be distinguishable.
+    const result = parseDateDetailed(getLocalDateString(), 'YYYY-MM-DD');
+    expect(result.ok).toBe(true);
+    expect(result.date).toBe(getLocalDateString());
+  });
 });
 
 describe('dateStringLacksYear', () => {
@@ -276,6 +365,59 @@ describe('parseAmount', () => {
 
   it('detects negatives via trailing minus', () => {
     expect(parseAmount('1,500.00-', us, true)).toBe(-1500);
+  });
+
+  it('detects a minus that sits after the currency symbol', () => {
+    // "$-54.20" used to import as INCOME: the sign check required the minus at
+    // position 0, so the value was read as negative and then absolute-valued
+    // back to positive. A single mapped Amount column turns that into an
+    // inflow — the spend shows up as money in.
+    expect(parseAmount('$-54.20', us, true)).toBe(-54.2);
+    expect(parseAmount('USD -1,500.00', us, true)).toBe(-1500);
+    expect(parseAmount('RSD -1.500,00', eu, true)).toBe(-1500);
+    // The already-working orderings must stay working.
+    expect(parseAmount('-$54.20', us, true)).toBe(-54.2);
+    expect(parseAmount('-54.20', us, true)).toBe(-54.2);
+  });
+
+  it('treats Unicode dashes as a minus sign', () => {
+    // PDF text layers emit U+2212 and friends. These were stripped as
+    // "currency symbols", losing the sign entirely.
+    expect(parseAmount('−54.20', us, true)).toBe(-54.2); // U+2212 minus
+    expect(parseAmount('− 54.20', us, true)).toBe(-54.2);
+    expect(parseAmount('–1,500.00', us, true)).toBe(-1500); // en dash
+    expect(parseAmount('—1,500.00', us, true)).toBe(-1500); // em dash
+    expect(parseAmount('1.500,00−', eu, true)).toBe(-1500); // trailing U+2212
+    expect(parseAmount('－54.20', us, true)).toBe(-54.2); // U+FF0D fullwidth (CJK)
+    expect(parseAmount('‐54.20', us, true)).toBe(-54.2); // U+2010 hyphen
+  });
+
+  it('reads the Dutch/German ",–" whole-amount suffix as ",00", not a minus', () => {
+    // "12,–" means exactly 12.00 — the dash after the decimal separator
+    // stands for the zero cents. It must never negate the amount.
+    expect(parseAmount('12,–', eu, true)).toBe(12); // en dash
+    expect(parseAmount('12,-', eu, true)).toBe(12); // ASCII hyphen
+    expect(parseAmount('1.234,–', eu, true)).toBe(1234);
+    expect(parseAmount('12.-', us, true)).toBe(12);
+    // A genuinely negative whole amount keeps its leading sign.
+    expect(parseAmount('-12,-', eu, true)).toBe(-12);
+    // Trailing minus with digits before it is still a minus.
+    expect(parseAmount('54.20-', us, true)).toBe(-54.2);
+  });
+
+  it('keeps positive amounts positive', () => {
+    expect(parseAmount('+2,450.00', us, true)).toBe(2450);
+    expect(parseAmount('2,450.00', us, true)).toBe(2450);
+    expect(parseAmount('$2,450.00', us, true)).toBe(2450);
+    expect(parseAmount('1.500,00 EUR', eu, true)).toBe(1500);
+  });
+
+  it('does not read a lone dash as an amount', () => {
+    // Statements use "-" / "—" as an empty-cell placeholder. It must stay a
+    // parse failure, not become zero or a sign.
+    expect(parseAmountDetailed('-', us).ok).toBe(false);
+    expect(parseAmountDetailed('—', us).ok).toBe(false);
+    expect(parseAmountDetailed('−', us).ok).toBe(false);
   });
 
   it('returns absolute value when preserveSign is false', () => {
