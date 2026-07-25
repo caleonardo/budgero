@@ -26,6 +26,9 @@ interface DirectoryManagerPageProps<
   isSaving: boolean;
   onDelete: (item: TItem) => Promise<void>;
   isDeleting: boolean;
+  /** Required when `config.bulkDelete` is set. */
+  onDeleteMany?: (items: TItem[]) => Promise<void>;
+  isDeletingMany?: boolean;
 }
 
 export function DirectoryManagerPage<
@@ -44,11 +47,15 @@ export function DirectoryManagerPage<
   isSaving,
   onDelete,
   isDeleting,
+  onDeleteMany,
+  isDeletingMany = false,
 }: DirectoryManagerPageProps<TItem, TKey, TDraft>) {
   const [addDraft, setAddDraftState] = useState<TDraft>(config.emptyDraft);
   const [editingKey, setEditingKey] = useState<TKey | null>(null);
   const [editDraft, setEditDraftState] = useState<TDraft>(config.emptyDraft);
   const [pendingDelete, setPendingDelete] = useState<TItem | null>(null);
+  const [selectedKeys, setSelectedKeys] = useState<Set<TKey>>(new Set());
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   const setAddDraft = (patch: Partial<TDraft>) =>
     setAddDraftState((prev) => ({ ...prev, ...patch }));
@@ -62,6 +69,27 @@ export function DirectoryManagerPage<
       ),
     [items, config]
   );
+
+  // Derived from the current list, not from the selection set: an item deleted
+  // in another tab (or renamed out from under us) must not stay "selected" and
+  // resurrect itself in the next bulk delete.
+  const selectedItems = useMemo(
+    () => sortedItems.filter((item) => selectedKeys.has(config.getKey(item))),
+    [sortedItems, selectedKeys, config]
+  );
+
+  const toggleSelected = (key: TKey, selected: boolean) => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      if (selected) next.add(key);
+      else next.delete(key);
+      return next;
+    });
+  };
+
+  const setSelection = (keys: TKey[]) => setSelectedKeys(new Set(keys));
+
+  const clearSelection = () => setSelectedKeys(new Set());
 
   const handleAdd = async () => {
     if (!budgetId) return;
@@ -114,10 +142,26 @@ export function DirectoryManagerPage<
       await onDelete(target);
       const success = config.toasts.deleteSuccess(target);
       toast.success(success.title, { description: success.description });
+      toggleSelected(config.getKey(target), false);
     } catch (error) {
       toastError(config.toasts.deleteErrorTitle, error);
     } finally {
       setPendingDelete(null);
+    }
+  };
+
+  const handleDeleteMany = async () => {
+    if (!budgetId || !onDeleteMany || selectedItems.length === 0) return;
+    const targets = selectedItems;
+    try {
+      await onDeleteMany(targets);
+      const success = config.toasts.deleteManySuccess?.(targets);
+      if (success) toast.success(success.title, { description: success.description });
+      clearSelection();
+    } catch (error) {
+      toastError(config.toasts.deleteManyErrorTitle ?? config.toasts.deleteErrorTitle, error);
+    } finally {
+      setBulkDeleteOpen(false);
     }
   };
 
@@ -177,6 +221,13 @@ export function DirectoryManagerPage<
         onCancelEdit={cancelEdit}
         onSave={handleSave}
         onRequestDelete={setPendingDelete}
+        selectedKeys={selectedKeys}
+        selectedCount={selectedItems.length}
+        onToggleSelected={toggleSelected}
+        onSetSelection={setSelection}
+        onClearSelection={clearSelection}
+        onRequestDeleteSelected={() => setBulkDeleteOpen(true)}
+        isDeletingMany={isDeletingMany}
       />
 
       <ConfirmDialog
@@ -189,6 +240,19 @@ export function DirectoryManagerPage<
         isLoading={isDeleting}
         onConfirm={handleDelete}
       />
+
+      {config.bulkDelete && (
+        <ConfirmDialog
+          open={bulkDeleteOpen && selectedItems.length > 0}
+          onOpenChange={(open) => !open && setBulkDeleteOpen(false)}
+          title={config.bulkDelete.deleteDialogTitle(selectedItems)}
+          description={config.bulkDelete.deleteDialogDescription(selectedItems)}
+          confirmText={config.bulkDelete.deleteSelectedLabel(selectedItems.length)}
+          variant="destructive"
+          isLoading={isDeletingMany}
+          onConfirm={handleDeleteMany}
+        />
+      )}
     </div>
   );
 }

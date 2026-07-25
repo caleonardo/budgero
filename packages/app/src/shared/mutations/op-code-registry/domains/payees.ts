@@ -54,4 +54,19 @@ export const payeeOps = {
       ],
     },
   },
+  'payees.deleteMany': {
+    execute: async (args) => {
+      return await S().payees.deletePayees(args.budgetId as number, args.names as string[]);
+    },
+    invalidates: [...TRANSACTION_INVALIDATION_KEYS, ['payeeDirectory'], ['payeeDirectory', '*']],
+    undo: {
+      // delete -> add each back. Like the single-payee undo, this restores the
+      // directory entries, not the payee values cleared from transactions.
+      build: (args) =>
+        ((args.names as string[]) ?? []).map((name) => ({
+          op: 'payees.add',
+          args: { budgetId: args.budgetId, name },
+        })),
+    },
+  },
 } satisfies Record<string, OpCodeEntry>;

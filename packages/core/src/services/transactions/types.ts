@@ -157,6 +157,13 @@ export interface PayeeListItem {
   Source: 'saved' | 'transaction' | 'both';
 }
 
+/** The category a payee was last filed under, with the date it came from. */
+export interface PayeeCategoryMemory {
+  CategoryID: number;
+  CategoryName: string;
+  Date: string;
+}
+
 export interface LabelListItem {
   ID: number;
   Name: string;

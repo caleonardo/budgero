@@ -1,6 +1,6 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { TransactionQueries } from './queries.js';
-import { PayeeListItem } from './types.js';
+import { PayeeListItem, PayeeCategoryMemory } from './types.js';
 
 /**
  * PayeeService - manages the payee directory (saved payees + usage from transactions).
@@ -56,6 +56,18 @@ export class PayeeService {
     );
   }
 
+  /**
+   * The category this payee was last filed under, or null when the payee is
+   * new or has no usable history. Backs the add-transaction form's category
+   * memory; see {@link TransactionQueries.getLastCategoryForPayee} for what
+   * counts as history.
+   */
+  getLastCategoryForPayee(budgetId: number, payee: string): PayeeCategoryMemory | null {
+    const trimmed = (payee || '').trim();
+    if (!trimmed) return null;
+    return this.queries.getLastCategoryForPayee(budgetId, trimmed);
+  }
+
   addPayee(budgetId: number, name: string): number {
     const trimmed = (name || '').trim();
     if (!trimmed) return 0;
@@ -82,15 +94,32 @@ export class PayeeService {
   }
 
   deletePayee(budgetId: number, name: string): { cleared: number } {
-    const trimmed = (name || '').trim();
-    if (!trimmed) return { cleared: 0 };
+    return { cleared: this.deletePayees(budgetId, [name]).cleared };
+  }
+
+  /**
+   * Delete several payees at once, clearing each from the transactions that
+   * reference it.
+   *
+   * One database transaction for the whole batch: deleting N payees one call
+   * at a time would leave the directory half-emptied if the tab closed or a
+   * write failed midway, and would emit N sync mutations for what the user
+   * did as a single action. Blank/duplicate names are ignored.
+   */
+  deletePayees(budgetId: number, names: string[]): { deleted: number; cleared: number } {
+    const unique = Array.from(
+      new Set((names || []).map((name) => (name || '').trim()).filter(Boolean))
+    );
+    if (unique.length === 0) return { deleted: 0, cleared: 0 };
 
     let cleared = 0;
     this.db.transaction(() => {
-      this.queries.deletePayee(budgetId, trimmed);
-      cleared = this.queries.updatePayeeValue(budgetId, trimmed, '');
+      for (const name of unique) {
+        this.queries.deletePayee(budgetId, name);
+        cleared += this.queries.updatePayeeValue(budgetId, name, '');
+      }
     });
 
-    return { cleared };
+    return { deleted: unique.length, cleared };
   }
 }

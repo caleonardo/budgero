@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
+import { Checkbox } from '@shared/ui/checkbox';
 import { Input } from '@shared/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { Spinner } from '@shared/ui/spinner';
@@ -24,6 +25,15 @@ interface DirectoryTableProps<
   onCancelEdit: () => void;
   onSave: (item: TItem) => void;
   onRequestDelete: (item: TItem) => void;
+  /** Selection props are inert unless `config.bulkDelete` is set. */
+  selectedKeys: Set<TKey>;
+  /** Count of selected keys that still exist in `items`. */
+  selectedCount: number;
+  onToggleSelected: (key: TKey, selected: boolean) => void;
+  onSetSelection: (keys: TKey[]) => void;
+  onClearSelection: () => void;
+  onRequestDeleteSelected: () => void;
+  isDeletingMany: boolean;
 }
 
 export function DirectoryTable<
@@ -43,7 +53,18 @@ export function DirectoryTable<
   onCancelEdit,
   onSave,
   onRequestDelete,
+  selectedKeys,
+  selectedCount,
+  onToggleSelected,
+  onSetSelection,
+  onClearSelection,
+  onRequestDeleteSelected,
+  isDeletingMany,
 }: DirectoryTableProps<TItem, TKey, TDraft>) {
+  const bulk = config.bulkDelete;
+  const unusedItems = bulk ? items.filter((item) => config.getUsageCount(item) === 0) : [];
+  const allSelected = items.length > 0 && selectedCount === items.length;
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-2">
@@ -54,6 +75,42 @@ export function DirectoryTable<
         {isFetching && <Spinner className="text-muted-foreground" />}
       </CardHeader>
       <CardContent>
+        {bulk && items.length > 0 && (
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            {selectedCount > 0 ? (
+              <>
+                <span className="text-sm font-medium">{selectedCount} selected</span>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={onRequestDeleteSelected}
+                  disabled={isDeletingMany}
+                >
+                  {isDeletingMany ? <Spinner size="sm" /> : <Trash2 className="h-4 w-4" />}
+                  <span className="ml-1">{bulk.deleteSelectedLabel(selectedCount)}</span>
+                </Button>
+                <Button size="sm" variant="ghost" onClick={onClearSelection}>
+                  Clear selection
+                </Button>
+              </>
+            ) : (
+              <span className="text-sm text-muted-foreground">
+                Select rows to remove several at once.
+              </span>
+            )}
+            {bulk.selectUnusedLabel && unusedItems.length > 0 && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="sm:ml-auto"
+                onClick={() => onSetSelection(unusedItems.map((item) => config.getKey(item)))}
+              >
+                {bulk.selectUnusedLabel(unusedItems.length)}
+              </Button>
+            )}
+          </div>
+        )}
+
         {isLoading ? (
           <InlineLoadingRow label={config.loadingLabel} />
         ) : items.length === 0 ? (
@@ -62,6 +119,19 @@ export function DirectoryTable<
           <Table>
             <TableHeader>
               <TableRow>
+                {bulk && (
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={allSelected}
+                      aria-label={allSelected ? 'Deselect all' : 'Select all'}
+                      onCheckedChange={(checked) =>
+                        checked === true
+                          ? onSetSelection(items.map((item) => config.getKey(item)))
+                          : onClearSelection()
+                      }
+                    />
+                  </TableHead>
+                )}
                 {config.columns.map((column) => (
                   <TableHead key={column.key} className={column.headerClassName}>
                     {column.header}
@@ -83,7 +153,16 @@ export function DirectoryTable<
                     : `${usageCount.toLocaleString()} transactions`;
 
                 return (
-                  <TableRow key={key}>
+                  <TableRow key={key} data-state={selectedKeys.has(key) ? 'selected' : undefined}>
+                    {bulk && (
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedKeys.has(key)}
+                          aria-label={bulk.selectRowLabel(item)}
+                          onCheckedChange={(checked) => onToggleSelected(key, checked === true)}
+                        />
+                      </TableCell>
+                    )}
                     {config.columns.map((column) => (
                       <TableCell key={column.key} className={column.cellClassName}>
                         {isEditing

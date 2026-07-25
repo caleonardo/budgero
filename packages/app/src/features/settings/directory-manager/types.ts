@@ -20,6 +20,27 @@ export interface DirectoryToastCopy<TItem, TDraft> {
   editErrorTitle: string;
   deleteSuccess: (item: TItem) => { title: string; description: string };
   deleteErrorTitle: string;
+  /** Required when the page enables bulk delete (see `bulkDelete`). */
+  deleteManySuccess?: (items: TItem[]) => { title: string; description: string };
+  deleteManyErrorTitle?: string;
+}
+
+/**
+ * Opt-in row selection with a bulk delete action. Pages that set this must
+ * also pass `onDeleteMany` to {@link DirectoryManagerPage}.
+ */
+export interface DirectoryBulkDeleteConfig<TItem> {
+  /** Checkbox aria-label per row, e.g. `Select ${name}`. */
+  selectRowLabel: (item: TItem) => string;
+  /** Label for the bulk delete button, e.g. "Delete 3 payees". */
+  deleteSelectedLabel: (count: number) => string;
+  deleteDialogTitle: (items: TItem[]) => ReactNode;
+  deleteDialogDescription: (items: TItem[]) => ReactNode;
+  /**
+   * Label for the shortcut that selects every unused (zero-usage) item —
+   * the "delete all unused in one go" flow. Omit to hide the shortcut.
+   */
+  selectUnusedLabel?: (count: number) => string;
 }
 
 export interface DirectoryManagerConfig<
@@ -53,5 +74,7 @@ export interface DirectoryManagerConfig<
   prepareDraft: (draft: TDraft) => DirectoryDraftResult<TDraft>;
   deleteDialogTitle: (item: TItem) => ReactNode;
   deleteDialogDescription: (item: TItem) => ReactNode;
+  /** Set to enable checkbox selection and bulk delete for this directory. */
+  bulkDelete?: DirectoryBulkDeleteConfig<TItem>;
   toasts: DirectoryToastCopy<TItem, TDraft>;
 }

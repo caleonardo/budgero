@@ -146,6 +146,7 @@ export function formatOpCode(op: string): string {
     'payees.add': 'Add Payee',
     'payees.rename': 'Rename Payee',
     'payees.delete': 'Delete Payee',
+    'payees.deleteMany': 'Delete Payees',
     'labels.add': 'Add Label',
     'labels.update': 'Update Label',
     'labels.delete': 'Delete Label',

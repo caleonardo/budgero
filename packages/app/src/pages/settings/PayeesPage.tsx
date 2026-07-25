@@ -1,6 +1,7 @@
 import {
   useAddPayee,
   useDeletePayee,
+  useDeletePayees,
   usePayeeDirectory,
   useRenamePayee,
 } from '@entities/payee/api/payee-directory';
@@ -51,6 +52,31 @@ const payeeDirectoryConfig: DirectoryManagerConfig<PayeeListItem, string, PayeeD
       back later if needed.
     </>
   ),
+  bulkDelete: {
+    selectRowLabel: (item) => `Select ${item.Name}`,
+    deleteSelectedLabel: (count) => `Delete ${count} ${count === 1 ? 'payee' : 'payees'}`,
+    selectUnusedLabel: (count) => `Select unused (${count})`,
+    deleteDialogTitle: (items) =>
+      `Remove ${items.length} ${items.length === 1 ? 'payee' : 'payees'}?`,
+    deleteDialogDescription: (items) => {
+      const inUse = items.filter((item) => item.UsageCount > 0);
+      const affected = inUse.reduce((sum, item) => sum + item.UsageCount, 0);
+      return (
+        <>
+          This clears the selected payees from your transactions in this budget.
+          {inUse.length > 0 && (
+            <>
+              {' '}
+              {inUse.length === 1 ? 'One of them is' : `${inUse.length} of them are`} still in use,
+              affecting {affected.toLocaleString()}{' '}
+              {affected === 1 ? 'transaction' : 'transactions'}.
+            </>
+          )}{' '}
+          You can add them back later if needed.
+        </>
+      );
+    },
+  },
   toasts: {
     addSuccess: (draft) => ({
       title: 'Payee added',
@@ -67,6 +93,11 @@ const payeeDirectoryConfig: DirectoryManagerConfig<PayeeListItem, string, PayeeD
       description: `"${item.Name}" has been removed and cleared from existing transactions.`,
     }),
     deleteErrorTitle: 'Could not remove payee',
+    deleteManySuccess: (items) => ({
+      title: `${items.length} ${items.length === 1 ? 'payee' : 'payees'} removed`,
+      description: 'They have been cleared from existing transactions.',
+    }),
+    deleteManyErrorTitle: 'Could not remove payees',
   },
 };
 
@@ -78,6 +109,7 @@ export default function PayeesPage() {
   const addPayee = useAddPayee();
   const renamePayee = useRenamePayee();
   const deletePayee = useDeletePayee();
+  const deletePayees = useDeletePayees();
 
   return (
     <DirectoryManagerPage
@@ -94,6 +126,10 @@ export default function PayeesPage() {
       isSaving={renamePayee.isPending}
       onDelete={(item) => deletePayee.mutateAsync({ budgetId: budgetId!, name: item.Name })}
       isDeleting={deletePayee.isPending}
+      onDeleteMany={(items) =>
+        deletePayees.mutateAsync({ budgetId: budgetId!, names: items.map((item) => item.Name) })
+      }
+      isDeletingMany={deletePayees.isPending}
     />
   );
 }

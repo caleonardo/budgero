@@ -67,3 +67,18 @@ export function useDeletePayee() {
     },
   });
 }
+
+/** Deletes a selection of payees as one mutation (and one undo step). */
+export function useDeletePayees() {
+  const runtime = useRuntime();
+
+  return useMutation<void, Error, { budgetId: number; names: string[] }>({
+    mutationFn: async ({ budgetId, names }) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'payees.deleteMany',
+        payload: { budgetId, names },
+        meta: { label: 'useDeletePayees' },
+      });
+    },
+  });
+}
