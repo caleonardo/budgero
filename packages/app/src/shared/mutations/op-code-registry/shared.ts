@@ -186,6 +186,8 @@ export const TRANSACTION_INVALIDATION_KEYS: string[][] = [
   ['payees', '*'],
   ['payeeDirectory'],
   ['payeeDirectory', '*'],
+  ['payeeCategoryMemory'],
+  ['payeeCategoryMemory', '*'],
   ['labels'],
   ['labels', '*'],
   ['labelDirectory'],

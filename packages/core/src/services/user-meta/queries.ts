@@ -53,6 +53,26 @@ export class UserMetaQueries {
     run(this.db, `UPDATE user_meta SET AllowOverAssignment = ? WHERE ID = 1`, value ? 1 : 0);
   }
 
+  /**
+   * Whether the add-transaction form pre-fills the category from the payee's
+   * last transaction. Defaults to true — including for rows written before the
+   * column existed, where SQLite backfills the column default.
+   */
+  getSuggestCategoryFromPayee(): boolean {
+    this.ensureRow();
+    const row = getRow<{ SuggestCategoryFromPayee: boolean | number | null }>(
+      this.db,
+      `SELECT SuggestCategoryFromPayee FROM user_meta WHERE ID = 1`
+    );
+    if (!row || row.SuggestCategoryFromPayee == null) return true;
+    return row.SuggestCategoryFromPayee === true || row.SuggestCategoryFromPayee === 1;
+  }
+
+  setSuggestCategoryFromPayee(value: boolean): void {
+    this.ensureRow();
+    run(this.db, `UPDATE user_meta SET SuggestCategoryFromPayee = ? WHERE ID = 1`, value ? 1 : 0);
+  }
+
   setLastBackup(timestamp: string): void {
     this.ensureRow();
     run(

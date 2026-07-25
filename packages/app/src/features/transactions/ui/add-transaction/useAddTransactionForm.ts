@@ -293,6 +293,8 @@ export function useAddTransactionForm({
     autofillAppliedSuggestions,
     resetAutofillSession,
     logAutofillApplications,
+    payeeCategoryApplied,
+    payeeCategorySource,
   } = useAutofillIntegration({ form, categories, budgetId, selectedBudget, isSplit });
 
   // Reset form for "Add Another"
@@ -611,6 +613,8 @@ export function useAddTransactionForm({
 
     // Autofill
     autofillAppliedFields,
+    payeeCategoryApplied,
+    payeeCategorySource,
 
     // Actions
     handleSubmit,

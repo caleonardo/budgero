@@ -19,6 +19,7 @@ import { Skeleton } from '@shared/ui/skeleton';
 import { toast } from 'sonner';
 import { RuleEditorDialog, type RuleFormValues } from '@features/rules/ui/rule-editor';
 import { RuleHistoryDrawer } from '@features/rules/ui/RuleHistoryDrawer';
+import { PayeeCategoryMemoryCard } from '@features/rules/ui/PayeeCategoryMemoryCard';
 import { RuleRunOverlay, type RuleRunPhase } from '@features/rules/ui/RuleRunOverlay';
 import type {
   TransactionRule,
@@ -292,6 +293,8 @@ export default function AutomationRulesPage() {
           </Button>
         </div>
       </div>
+
+      <PayeeCategoryMemoryCard />
 
       {!budgetId ? (
         <Card className="border-dashed">

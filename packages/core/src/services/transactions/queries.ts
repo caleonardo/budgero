@@ -859,6 +859,44 @@ export class TransactionQueries {
     run(this.db, `DELETE FROM payees WHERE BudgetID = ? AND Name = ?`, budgetId, name);
   }
 
+  /**
+   * The category the payee was last filed under, for the add-transaction
+   * form's category memory. Returns null when the payee is new or has no
+   * usable history.
+   *
+   * Deliberately narrow about what counts as "history":
+   *  - splits have no single category, so split parents are excluded
+   *  - transfers aren't spending, so they're excluded
+   *  - "Uncategorized" means the user never chose, so it isn't a memory
+   * Payee matching is case-insensitive, matching how the payee directory
+   * treats names.
+   */
+  getLastCategoryForPayee(
+    budgetId: number,
+    payee: string
+  ): { CategoryID: number; CategoryName: string; Date: string } | null {
+    const row = getRow<{ CategoryID: number; CategoryName: string; Date: string }>(
+      this.db,
+      `
+      SELECT t.CategoryID AS CategoryID, c.Name AS CategoryName, t.Date AS Date
+      FROM transactions t
+      JOIN categories c ON c.ID = t.CategoryID
+      WHERE t.BudgetID = ?
+        AND t.Payee = ? COLLATE NOCASE
+        AND t.CategoryID IS NOT NULL
+        AND t.CategoryID > 0
+        AND c.Name <> 'Uncategorized'
+        AND (t.TransferID IS NULL OR t.TransferID = '')
+        ${NO_SPLITS_FILTER}
+      ORDER BY t.Date DESC, t.ID DESC
+      LIMIT 1
+    `,
+      budgetId,
+      payee
+    );
+    return row ?? null;
+  }
+
   getPayeeUsageCounts(budgetId: number): { Name: string; UsageCount: number }[] {
     return allRows<{ Name: string; UsageCount: number }>(
       this.db,

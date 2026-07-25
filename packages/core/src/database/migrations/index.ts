@@ -41,6 +41,7 @@ import { migration040 } from './040-add-toaccountid-to-recurring-transactions.js
 import { migration041 } from './041-add-scenarios-table.js';
 import { migration042 } from './042-drop-client-side-space-registry-tables.js';
 import { migration043 } from './043-rebuild-mutation-history-without-budget-fk.js';
+import { migration044 } from './044-add-suggestcategoryfrompayee-flag-to-user-meta.js';
 
 import type { Migration } from '../migrations.js';
 
@@ -89,4 +90,5 @@ export const migrations: Migration[] = [
   migration041,
   migration042,
   migration043,
+  migration044,
 ];

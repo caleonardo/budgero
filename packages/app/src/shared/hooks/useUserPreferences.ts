@@ -5,6 +5,7 @@ import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 /** Service interface for user preferences */
 interface UserMetaService {
   getAllowOverAssignment(): Promise<boolean> | boolean;
+  getSuggestCategoryFromPayee?(): Promise<boolean> | boolean;
 }
 
 /** Runtime services with userMeta */
@@ -55,6 +56,63 @@ function useUpdateAllowOverAssignment() {
       });
     },
   });
+}
+
+/**
+ * Whether the add-transaction form pre-fills the category from the payee's
+ * last transaction. Defaults to true — including while the query is loading
+ * and on older runtimes whose service predates the setting, so the feature
+ * never appears switched off to someone who never switched it off.
+ */
+export function useSuggestCategoryFromPayee() {
+  const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
+  const spaceKey = spaceId ?? 'global';
+
+  return useQuery<boolean>({
+    queryKey: ['suggestCategoryFromPayee', spaceKey],
+    queryFn: async () => {
+      const services = runtime.services() as ServicesWithUserMeta;
+      if (services?.userMeta?.getSuggestCategoryFromPayee) {
+        const result = await services.userMeta.getSuggestCategoryFromPayee();
+        return result ?? true;
+      }
+      return true;
+    },
+    // No initialData: it would stamp the default as FRESH data and suppress
+    // the fetch for the whole staleTime, hiding a persisted "off" for minutes
+    // after every load. Callers default to true while data is undefined.
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+}
+
+function useUpdateSuggestCategoryFromPayee() {
+  const runtime = useRuntime();
+
+  return useMutation<void, Error, boolean>({
+    mutationFn: async (value: boolean) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'userPreferences.setSuggestCategoryFromPayee',
+        payload: { value },
+        meta: { label: 'Update payee category suggestions setting' },
+      });
+    },
+  });
+}
+
+/** Query + mutation pair for the payee category memory setting. */
+export function useSuggestCategoryFromPayeePreference() {
+  const { data: suggestCategoryFromPayee = true, ...queryRest } = useSuggestCategoryFromPayee();
+  const updateMutation = useUpdateSuggestCategoryFromPayee();
+
+  return {
+    suggestCategoryFromPayee,
+    isLoading: queryRest.isLoading,
+    updateSuggestCategoryFromPayee: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+  };
 }
 
 /**

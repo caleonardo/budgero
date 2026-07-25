@@ -15,8 +15,11 @@ import { SearchableCategorySelect } from '@features/category-management/ui/Searc
 import { PayeeCombobox } from '@features/payees/ui/PayeeCombobox';
 import { LabelCombobox } from '@features/labels/ui/LabelCombobox';
 
+import { formatShortDate, parseDateKey } from '@shared/lib/date-utils';
+
 import type { TransactionType } from '@features/transactions/api/useTransactionForm';
 import type { MilliUnits } from '@shared/lib/currency/milli';
+import type { PayeeCategoryMemory } from '@budgero/core/browser';
 import {
   TransactionTypeSelector,
   AmountInput,
@@ -105,6 +108,9 @@ interface TransactionDetailsSectionProps {
 
   // Autofill indicator
   autofillAppliedFields?: Set<string>;
+  /** Category came from the payee's last transaction, not from a rule. */
+  payeeCategoryApplied?: boolean;
+  payeeCategorySource?: PayeeCategoryMemory | null;
 }
 
 export const TransactionDetailsSection = React.memo(function TransactionDetailsSection({
@@ -151,7 +157,20 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
   memo,
   onMemoChange,
   autofillAppliedFields,
+  payeeCategoryApplied = false,
+  payeeCategorySource = null,
 }: TransactionDetailsSectionProps) {
+  // Names the payee and when it was last filed here, so the softer amber cue
+  // reads differently from a rule's "Auto-filled by rule".
+  const payeeMemoryLabel = React.useMemo(() => {
+    const name = payee.trim();
+    if (!name) return undefined;
+    const lastUsed = payeeCategorySource ? parseDateKey(payeeCategorySource.Date) : null;
+    return lastUsed
+      ? `Last used for "${name}" on ${formatShortDate(lastUsed)}`
+      : `From your last transaction for "${name}"`;
+  }, [payee, payeeCategorySource]);
+
   const selectedCategoryId = React.useMemo(() => {
     const category = categories.find((cat) => cat.Name === selectedCategory);
     return category?.ID || null;
@@ -268,6 +287,12 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
               <Tag className="h-4 w-4 text-muted-foreground" />
               <AutofillIndicator
                 show={autofillAppliedFields?.has('category') ?? false}
+                className="absolute -top-0.5 -right-0.5"
+              />
+              <AutofillIndicator
+                show={payeeCategoryApplied && !autofillAppliedFields?.has('category')}
+                variant="payee-memory"
+                label={payeeMemoryLabel}
                 className="absolute -top-0.5 -right-0.5"
               />
             </div>

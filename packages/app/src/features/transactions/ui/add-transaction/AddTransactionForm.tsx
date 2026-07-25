@@ -68,6 +68,8 @@ export function AddTransactionForm({
     selectedBudget,
     globalLocalizer,
     autofillAppliedFields,
+    payeeCategoryApplied,
+    payeeCategorySource,
     resolvedRate,
     handleSubmit,
   } = useAddTransactionForm({
@@ -255,6 +257,8 @@ export function AddTransactionForm({
         memo={form.memo}
         onMemoChange={form.setMemo}
         autofillAppliedFields={autofillAppliedFields}
+        payeeCategoryApplied={payeeCategoryApplied}
+        payeeCategorySource={payeeCategorySource}
       />
 
       <TransactionSplitSection

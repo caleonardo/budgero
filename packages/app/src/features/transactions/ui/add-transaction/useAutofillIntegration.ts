@@ -12,7 +12,10 @@ import * as React from 'react';
 import { useAutofillRules, type AutofillSuggestion } from '@features/rules/api/useAutofillRules';
 import { useRuntime } from '@shared/runtime/runtime-provider';
 import { asMilli } from '@shared/lib/currency/milli';
-import type { Category, Budget } from '@budgero/core/browser';
+import { usePayeeCategoryMemory } from '@entities/payee/api/usePayeeCategoryMemory';
+import { useSuggestCategoryFromPayee } from '@shared/hooks/useUserPreferences';
+import { decidePayeeCategoryMemory } from '@features/transactions/lib/payee-category-memory';
+import type { Category, Budget, PayeeCategoryMemory } from '@budgero/core/browser';
 import type { useTransactionForm } from '@features/transactions/api/useTransactionForm';
 
 /**
@@ -171,6 +174,126 @@ export function useAutofillIntegration({
     form,
   ]);
 
+  // ── Payee category memory ────────────────────────────────────────────────
+  // Weaker than a rule: fills the category from the payee's last transaction.
+  // Runs ONCE PER PAYEE — switching payees re-runs it for the new payee, and
+  // the applied state is keyed to the payee it applied for, never a bare flag.
+  const { data: suggestCategoryFromPayee = true } = useSuggestCategoryFromPayee();
+
+  const normalizedPayee = form.payee.trim().toLowerCase();
+
+  // Debounce the lookup the same way the rules engine debounces its context,
+  // so typing a payee doesn't issue a DB query per keystroke. Initialized to
+  // the mount value so an already-filled payee resolves without the delay.
+  const [debouncedPayee, setDebouncedPayee] = React.useState(normalizedPayee);
+  React.useEffect(() => {
+    const timer = setTimeout(() => setDebouncedPayee(normalizedPayee), 300);
+    return () => clearTimeout(timer);
+  }, [normalizedPayee]);
+
+  const payeeMemoryEnabled = suggestCategoryFromPayee && !form.isTransfer && !isSplit;
+
+  const { data: payeeCategoryMemory } = usePayeeCategoryMemory(budgetId, debouncedPayee, {
+    enabled: payeeMemoryEnabled,
+  });
+
+  /**
+   * What memory applied, keyed to the payee it applied FOR. The indicator and
+   * the once-per-payee guard both derive from this — a plain boolean can't
+   * say "that fill belonged to the previous payee".
+   */
+  const [appliedFor, setAppliedFor] = React.useState<{
+    payee: string;
+    categoryName: string;
+    memory: PayeeCategoryMemory;
+  } | null>(null);
+
+  /**
+   * The category "remember last" prefills — the last one used for ANY payee.
+   * A payee-specific memory is strictly better information, so it may
+   * overwrite this (exactly as autofill rules do via `ignoreCurrentValues`).
+   */
+  const rememberLastCategory =
+    form.rememberLast && !form.isTransfer && !isSplit
+      ? (form.lastUsed[form.transactionType]?.category ?? null)
+      : null;
+
+  const memoryCategory = React.useMemo(() => {
+    if (!payeeCategoryMemory) return null;
+    return categories.find((c) => c.ID === payeeCategoryMemory.CategoryID) ?? null;
+  }, [payeeCategoryMemory, categories]);
+
+  // Payee switched: the old payee's fill must not survive into the new one.
+  // If the field still holds exactly what memory wrote, walk it back to the
+  // remember-last prefill (or empty) so the new payee starts clean; a value
+  // the user picked themselves is left alone.
+  const lastPayeeRef = React.useRef(normalizedPayee);
+  React.useEffect(() => {
+    if (lastPayeeRef.current === normalizedPayee) return;
+    lastPayeeRef.current = normalizedPayee;
+    if (!appliedFor || appliedFor.payee === normalizedPayee) return;
+    if (form.selectedCategory === appliedFor.categoryName) {
+      const fallback = rememberLastCategory ?? '';
+      previousCategory.current = fallback;
+      setCategory(fallback);
+    }
+    setAppliedFor(null);
+  }, [normalizedPayee, appliedFor, form.selectedCategory, rememberLastCategory, setCategory]);
+
+  React.useEffect(() => {
+    // Ignore lookups still in flight for a payee the user has typed past.
+    if (debouncedPayee !== normalizedPayee) return;
+
+    const decision = decidePayeeCategoryMemory({
+      enabled: payeeMemoryEnabled,
+      payee: debouncedPayee,
+      memoryCategoryId: payeeCategoryMemory?.CategoryID ?? null,
+      memoryCategoryExists: memoryCategory !== null,
+      ruleFilledCategory: autofillAppliedFields.has('category'),
+      appliedForPayee: appliedFor?.payee ?? null,
+      currentCategory: form.selectedCategory,
+      // Values memory may overwrite; anything else was the user's own pick.
+      overwritableValues: ['', rememberLastCategory ?? '', appliedFor?.categoryName ?? ''],
+    });
+    if (!decision.apply || !memoryCategory || !payeeCategoryMemory) return;
+
+    // Update the ref BEFORE setting so the rules' field tracking doesn't read
+    // our own write as the user typing.
+    previousCategory.current = memoryCategory.Name;
+    setCategory(memoryCategory.Name);
+    setAppliedFor({
+      payee: debouncedPayee,
+      categoryName: memoryCategory.Name,
+      memory: payeeCategoryMemory,
+    });
+  }, [
+    debouncedPayee,
+    normalizedPayee,
+    payeeMemoryEnabled,
+    payeeCategoryMemory,
+    memoryCategory,
+    autofillAppliedFields,
+    appliedFor,
+    form.selectedCategory,
+    rememberLastCategory,
+    setCategory,
+  ]);
+
+  // Derived, not stored: the indicator is only truthful while the field still
+  // holds memory's fill for the CURRENT payee. A rule overwriting the value,
+  // the user picking something else, or a payee switch all turn it off with
+  // no bookkeeping to forget.
+  const payeeCategoryApplied =
+    appliedFor !== null &&
+    appliedFor.payee === normalizedPayee &&
+    form.selectedCategory === appliedFor.categoryName &&
+    !autofillAppliedFields.has('category');
+  const payeeCategorySource = payeeCategoryApplied ? appliedFor.memory : null;
+
+  const resetPayeeCategoryMemory = React.useCallback(() => {
+    setAppliedFor(null);
+  }, []);
+
   useAutofillFieldTracking(
     'payee',
     form.payee,
@@ -246,10 +369,19 @@ export function useAutofillIntegration({
     [runtime, selectedBudget]
   );
 
+  const resetSession = React.useCallback(() => {
+    resetAutofillSession();
+    resetPayeeCategoryMemory();
+  }, [resetAutofillSession, resetPayeeCategoryMemory]);
+
   return {
     autofillAppliedFields,
     autofillAppliedSuggestions,
-    resetAutofillSession,
+    resetAutofillSession: resetSession,
     logAutofillApplications,
+    /** True while the category shown came from the payee's last transaction. */
+    payeeCategoryApplied,
+    /** The memory row it applied (snapshotted at apply time), for the tooltip. */
+    payeeCategorySource,
   };
 }

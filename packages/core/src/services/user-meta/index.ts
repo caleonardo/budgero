@@ -27,4 +27,12 @@ export class UserMetaService {
   setAllowOverAssignment(value: boolean): void {
     this.queries.setAllowOverAssignment(value);
   }
+
+  getSuggestCategoryFromPayee(): boolean {
+    return this.queries.getSuggestCategoryFromPayee();
+  }
+
+  setSuggestCategoryFromPayee(value: boolean): void {
+    this.queries.setSuggestCategoryFromPayee(value);
+  }
 }
