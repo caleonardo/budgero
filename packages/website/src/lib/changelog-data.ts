@@ -16,11 +16,55 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.6.1',
+    date: 'July 25, 2026',
+    summary:
+      "Smarter imports that read dates and signs the way your bank writes them, payee bulk management, and categories that fill themselves in from each payee's history.",
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Category memory for payees',
+        description:
+          "When you add a transaction for a payee you've used before, the category pre-fills with whatever you chose last time — marked with an amber ring so you can tell it apart from rule autofills. Explicit autofill rules still win, your own picks always win, and you can turn it off under Settings → Automation Rules.",
+      },
+      {
+        type: 'new',
+        title: 'Bulk payee management',
+        description:
+          'Manage Payees now has checkboxes: select several payees — or every unused one with a single click — and remove them in one confirmed action, with one undo step. The confirmation tells you how many transactions are affected before you commit.',
+      },
+      {
+        type: 'improved',
+        title: 'Update notifications for self-hosted servers',
+        description:
+          'Your server now notices when a newer Budgero release is available and shows a banner in the app. The check is anonymous and can be disabled entirely with UPDATE_CHECK_DISABLED=true.',
+      },
+      {
+        type: 'fixed',
+        title: 'Imports no longer stamp every transaction with today’s date',
+        description:
+          'Date columns carrying a timestamp ("31/01/2024 12:30") or compact dates ("20240131") now parse correctly instead of silently falling back to the import date. When a date genuinely can’t be read, the preview now says so loudly instead of failing quietly.',
+      },
+      {
+        type: 'fixed',
+        title: 'Import amounts keep their sign in more formats',
+        description:
+          'Amounts like "$-54.20", Unicode minus signs from PDF statements, and the European whole-amount style "12,–" now import with the correct sign, so spending no longer occasionally lands as income.',
+      },
+      {
+        type: 'fixed',
+        title: 'Shared workspace reliability',
+        description:
+          'Workspaces created on older versions now open reliably, the audit log survives deleting a budget, and locked shared workspaces show accurate messaging instead of a dead-end subscribe prompt.',
+      },
+    ],
+  },
+  {
     version: 'v1.6.0',
     date: 'July 23, 2026',
     summary:
       'A rebuilt Analytics experience: question-based reports, a scenario planner for stress-testing your finances, and smoother charts everywhere.',
-    isLatest: true,
     items: [
       {
         type: 'new',
