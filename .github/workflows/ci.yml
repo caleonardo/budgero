@@ -1,0 +1,100 @@
+name: ci
+
+# PR + master CI for the public GitHub repo. Runs only on GitHub-hosted
+# runners; jobs are skipped when Forgejo picks this file up.
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: packages/server/go.mod
+          cache-dependency-path: packages/server/go.sum
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type-check
+        run: pnpm run type-check:all
+
+      - name: Lint core
+        run: pnpm run lint:core
+
+      - name: Lint runtime
+        run: pnpm run lint:runtime
+
+      - name: Lint app
+        run: pnpm run lint:app
+
+      - name: Test core
+        run: pnpm run test:core
+
+      - name: Test runtime
+        run: pnpm --dir packages/runtime run test
+
+      - name: Test app
+        run: pnpm run test:app
+
+      - name: Build core
+        run: pnpm run build:core
+
+      - name: Build app + server binary
+        run: pnpm run build:app
+
+      - name: Build website
+        run: pnpm run build:website
+
+  server:
+    if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: packages/server
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: packages/server/go.mod
+          cache-dependency-path: packages/server/go.sum
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./...
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.7.2
+          working-directory: packages/server

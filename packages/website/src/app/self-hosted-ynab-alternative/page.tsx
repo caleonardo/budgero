@@ -134,7 +134,7 @@ const comparisonData = [
 const faqs = [
   {
     q: 'Is Budgero open source?',
-    a: 'Yes — Budgero is open source under the AGPL-3.0, an OSI-approved license. The full source code is public in a read-only GitHub mirror: you can read, audit, modify, self-host, and redistribute it, including commercially; the AGPL\'s condition is that offering a modified version over a network requires sharing your modified source with its users. Self-hosters get a free Docker image with the full feature set, no license keys, and no feature gating, running on your own infrastructure under your control. Because the code is open source, what you run today keeps working regardless of what happens to the company.',
+    a: 'Yes — Budgero is open source under the AGPL-3.0, an OSI-approved license. The full source code is public on GitHub: you can read, audit, modify, self-host, redistribute — and contribute to — it; the AGPL\'s condition is that offering a modified version over a network requires sharing your modified source with its users. Self-hosters get a free Docker image with the full feature set, no license keys, and no feature gating, running on your own infrastructure under your control. Because the code is open source, what you run today keeps working regardless of what happens to the company.',
   },
   {
     q: 'How do I self-host Budgero?',

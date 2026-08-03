@@ -1,0 +1,36 @@
+name: dco
+
+# Every PR commit must carry a Signed-off-by trailer (git commit -s).
+# See CONTRIBUTING.md — Budgero uses the DCO instead of a CLA.
+on:
+  pull_request:
+
+jobs:
+  dco:
+    if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check Signed-off-by on all commits
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          missing=0
+          for sha in $(git rev-list --no-merges "$BASE_SHA..$HEAD_SHA"); do
+            if ! git show -s --format=%B "$sha" | grep -qE '^Signed-off-by: .+ <.+@.+>'; then
+              echo "::error::commit ${sha} is missing a Signed-off-by line"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then
+            echo "Sign off your commits with 'git commit -s'."
+            echo "To fix existing commits: git rebase --signoff origin/master && git push --force-with-lease"
+            exit 1
+          fi
+          echo "All commits are signed off."

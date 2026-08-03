@@ -1,0 +1,51 @@
+name: Bug report
+description: Something is broken or behaving unexpectedly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! For security vulnerabilities, do **not** file an issue — see [SECURITY.md](https://github.com/tombadilo-bombadilo/budgero/blob/master/SECURITY.md).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to …
+        2. Click …
+        3. See error
+    validations:
+      required: true
+  - type: dropdown
+    id: edition
+    attributes:
+      label: Edition
+      options:
+        - Cloud (budgero.app)
+        - Self-Host (Docker or binary)
+        - Local development build
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Shown in the app footer / settings, or the Docker image tag.
+      placeholder: v1.6.1
+  - type: input
+    id: environment
+    attributes:
+      label: Browser / OS
+      placeholder: Firefox 139 on macOS 15
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Console/server output, screenshots — anything that helps. Redact personal data.
