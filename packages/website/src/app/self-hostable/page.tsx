@@ -144,7 +144,7 @@ const faqs = [
   },
   {
     q: 'Is Budgero open source?',
-    a: "Budgero is source-available, not OSI open source. The full source code is published in a public read-only GitHub mirror under the Functional Source License (FSL-1.1-Apache-2.0): you can read, audit, modify, and self-host it — the only restriction is offering it as a competing hosted service, and each release automatically converts to Apache 2.0 two years after publication. We are a small commercial project funded by the Cloud edition; self-hosters get a free Docker image with the full feature set, no license keys, no feature gating, and no telemetry beyond a disable-able daily update check (a version number, nothing else). Between the public source and the automatic Apache 2.0 conversion, your ability to keep running Budgero doesn't depend on our continued operation.",
+    a: "Yes. Budgero is open source under the AGPL-3.0, an OSI-approved license — the same license used by Firefly III. The full source code is published in a public read-only GitHub mirror: you can read, audit, modify, self-host, and redistribute it, including commercially; the AGPL's one condition is that if you offer a modified version over a network, you must share your modified source with its users. We are a small commercial project funded by the Cloud edition; self-hosters get a free Docker image with the full feature set, no license keys, no feature gating, and no telemetry beyond a disable-able daily update check (a version number, nothing else). Because the code is open source, your ability to keep running Budgero doesn't depend on our continued operation.",
   },
 ];
 

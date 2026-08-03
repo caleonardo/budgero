@@ -2,7 +2,7 @@
 
 Go backend for Budgero — a single binary API server built with Echo, SQLite (modernc), and sqlc.
 
-> Part of the Budgero monorepo. **Source-available** under [FSL-1.1-ALv2](../../LICENSE).
+> Part of the Budgero monorepo. **Open source** under [AGPL-3.0](../../LICENSE).
 
 ## Architecture
 

@@ -1,7 +1,7 @@
 {
   "name": "@budgero/runtime",
   "version": "1.0.0",
-  "license": "FSL-1.1-ALv2",
+  "license": "AGPL-3.0-only",
   "private": true,
   "description": "Runtime engine for Budgero — crypto, sync, offline queue, state machine coordinator",
   "type": "module",

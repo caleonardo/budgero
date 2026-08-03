@@ -4,7 +4,7 @@ Shared ESLint (flat config) for the Budgero monorepo: Airbnb (base + TypeScript)
 React additions, Prettier compatibility, file/folder naming rules, and the
 Feature-Sliced Design layer-boundary rules used by `packages/app`.
 
-> Part of the Budgero monorepo. **Source-available** under [FSL-1.1-ALv2](../../LICENSE).
+> Part of the Budgero monorepo. **Open source** under [AGPL-3.0](../../LICENSE).
 
 ## Entry points
 

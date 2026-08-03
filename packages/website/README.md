@@ -2,7 +2,7 @@
 
 Marketing website for Budgero — a Next.js 15 static site with blog, docs, and landing pages.
 
-> Part of the Budgero monorepo. **Source-available** under [FSL-1.1-ALv2](../../LICENSE).
+> Part of the Budgero monorepo. **Open source** under [AGPL-3.0](../../LICENSE).
 
 ## Stack
 

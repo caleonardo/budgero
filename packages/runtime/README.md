@@ -4,7 +4,7 @@ Local-first runtime for Budgero. Owns everything between the UI and the wire: sp
 lifecycle, mutation execution (with undo/redo and history), the WebSocket sync transport,
 offline queueing, snapshot upload/download, and client-side encryption.
 
-> Part of the Budgero monorepo. **Source-available** under [FSL-1.1-ALv2](../../LICENSE).
+> Part of the Budgero monorepo. **Open source** under [AGPL-3.0](../../LICENSE).
 
 ## Architecture
 

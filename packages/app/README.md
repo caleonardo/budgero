@@ -2,7 +2,7 @@
 
 React 19 frontend for Budgero — a progressive web app built with Vite, TailwindCSS, and shadcn/ui.
 
-> Part of the Budgero monorepo. **Source-available** under [FSL-1.1-ALv2](../../LICENSE).
+> Part of the Budgero monorepo. **Open source** under [AGPL-3.0](../../LICENSE).
 
 ## Architecture
 

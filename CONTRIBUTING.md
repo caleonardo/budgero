@@ -11,10 +11,10 @@ You are welcome to:
 - **Report bugs** by opening a GitHub issue with clear reproduction steps.
 - **Report security vulnerabilities** privately — do **not** open a public issue;
   follow [SECURITY.md](./SECURITY.md).
-- **Fork and modify** the code for your own use, within the terms of the
-  [FSL-1.1-Apache-2.0 license](./LICENSE). In short: use, modify, and self-host freely;
-  offering it as a competing commercial product is not permitted until the license
-  converts to Apache 2.0.
+- **Fork and modify** the code under the terms of the
+  [AGPL-3.0 license](./LICENSE): use, modify, self-host, and redistribute freely;
+  if you offer a modified version over a network, you must provide its source to
+  your users under the same license.
 
 ## Conduct
 

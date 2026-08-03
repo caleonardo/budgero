@@ -4,7 +4,7 @@
   "description": "Shared TypeScript domain logic for Budgero — database schema/migrations, SQL services, and business calculations. Runs in Node and the browser (sql.js / SQLite).",
   "type": "module",
   "private": true,
-  "license": "FSL-1.1-ALv2",
+  "license": "AGPL-3.0-only",
   "author": "tombadilo-bombadilo",
   "keywords": [
     "budgero",

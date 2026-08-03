@@ -10,14 +10,18 @@ Contributions are not accepted at this time — see [CONTRIBUTING.md](CONTRIBUTI
 
 ## License
 
-Budgero is **source-available**, not OSI open source. It is licensed under the
-[Functional Source License, v1.1, Apache 2.0 future](LICENSE) (`FSL-1.1-Apache-2.0`):
+Budgero is **open source** under the
+[GNU Affero General Public License, version 3](LICENSE) (`AGPL-3.0-only`), an
+OSI-approved license:
 
-- You may read, modify, run, and self-host the software.
-- You may not offer it as a competing commercial or hosted service.
-- Each release converts to Apache 2.0 two years after publication.
+- You may use, study, modify, self-host, and redistribute the software — including
+  commercially.
+- If you offer a modified version to others over a network, you must make your
+  modified source available to them under the same license.
 
-Version 1.5.0 marks the beginning of the source-available era.
+The Python SDK (`packages/sdk-python`) is separately licensed under MIT so that
+client applications embedding it are not affected by the AGPL. Releases prior to
+the relicense were published under FSL-1.1-ALv2.
 
 ## Repository layout
 

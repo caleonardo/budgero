@@ -68,9 +68,9 @@ const comparisonData = [
   },
   {
     feature: 'Source code',
-    budgero: 'Source-available',
+    budgero: 'Open source',
     ynab: 'Closed-source',
-    budgeroNote: 'Public source on GitHub (FSL license), free Docker image, no license keys',
+    budgeroNote: 'Open source on GitHub (AGPL-3.0), free Docker image, no license keys',
     ynabNote: 'SaaS only, no binaries',
   },
   {
@@ -134,7 +134,7 @@ const comparisonData = [
 const faqs = [
   {
     q: 'Is Budgero open source?',
-    a: 'Budgero is source-available, not OSI open source. The full source code is public in a read-only GitHub mirror under the Functional Source License (FSL-1.1-Apache-2.0): you can read, audit, modify, and self-host it — you just can\'t offer it as a competing hosted service, and each release converts to Apache 2.0 two years after publication. Self-hosters get a free Docker image with the full feature set, no license keys, and no feature gating, running on your own infrastructure under your control. Between the public source and the automatic Apache 2.0 conversion, what you run today keeps working regardless of what happens to the company.',
+    a: 'Yes — Budgero is open source under the AGPL-3.0, an OSI-approved license. The full source code is public in a read-only GitHub mirror: you can read, audit, modify, self-host, and redistribute it, including commercially; the AGPL\'s condition is that offering a modified version over a network requires sharing your modified source with its users. Self-hosters get a free Docker image with the full feature set, no license keys, and no feature gating, running on your own infrastructure under your control. Because the code is open source, what you run today keeps working regardless of what happens to the company.',
   },
   {
     q: 'How do I self-host Budgero?',

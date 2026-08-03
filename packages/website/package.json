@@ -1,7 +1,7 @@
 {
   "name": "website_v2",
   "version": "1.2.0",
-  "license": "FSL-1.1-ALv2",
+  "license": "AGPL-3.0-only",
   "private": true,
   "scripts": {
     "dev": "concurrently -k -n cl,next \"pnpm:dev:cl\" \"pnpm:dev:next\"",

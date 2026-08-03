@@ -4,7 +4,7 @@
   "description": "Shared ESLint flat-config for the Budgero monorepo (Airbnb base + TypeScript, with a React preset). One source of truth for lint rules across packages.",
   "type": "module",
   "private": true,
-  "license": "FSL-1.1-ALv2",
+  "license": "AGPL-3.0-only",
   "exports": {
     "./base": "./base.js",
     "./react": "./react.js",

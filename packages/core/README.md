@@ -5,8 +5,8 @@ service layer, and the business calculations. It is **isomorphic** — the same 
 server (Node) and in the browser (via `sql.js`/WASM) — so budgeting logic behaves identically
 local-first and server-side.
 
-> Part of the Budgero monorepo. **Source-available** under [FSL-1.1-ALv2](../../LICENSE) — not
-> OSI "open source". See the root README for the full picture.
+> Part of the Budgero monorepo. **Open source** under [AGPL-3.0](../../LICENSE).
+> See the root README for the full picture.
 
 ## Architecture
 
