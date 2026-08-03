@@ -165,6 +165,7 @@ export default function LandingPage() {
   }, [activeFeature, totalFeatures]);
 
   const selfHostFeatures = [
+    'Open source (AGPL-3.0)',
     'Run Budgero on your own infrastructure',
     'Encrypted sync and collaboration included',
     'Seamless multi-currency with live rates',
@@ -222,9 +223,14 @@ export default function LandingPage() {
         "Yes, completely! You can add transactions, update budgets, and review your finances without any internet connection. All changes sync automatically when you're back online.",
     },
     {
+      question: 'Is Budgero open source?',
+      answer:
+        'Yes. Budgero is open source under the AGPL-3.0, an OSI-approved license. The full source code is public on GitHub — you can read it, audit the encryption yourself, build from source, and self-host it for free.',
+    },
+    {
       question: 'What happens if Budgero shuts down?',
       answer:
-        "We're committed to open-sourcing the code if we ever shut down. Plus, you can export all your data anytime in standard formats, so you're never locked in.",
+        "Nothing you rely on disappears. The code is open source and self-hostable, so the app keeps working and anyone can keep building it. Plus, you can export all your data anytime in standard formats, so you're never locked in.",
     },
     {
       question: 'Can I export my data?',
@@ -275,6 +281,18 @@ export default function LandingPage() {
                       Not Budgero. Not an aggregator. Not a subpoena. Every transaction
                       is encrypted before it leaves your device — zero-knowledge, by
                       architecture, not by promise.
+                    </p>
+                    <p>
+                      And you don&apos;t have to take our word for it: Budgero is{' '}
+                      <a
+                        href="https://github.com/tombadilo-bombadilo/budgero"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline underline-offset-4 decoration-dotted hover:text-foreground"
+                      >
+                        open source
+                      </a>{' '}
+                      (AGPL-3.0).
                     </p>
                   </div>
                   <div className="flex items-center justify-center">

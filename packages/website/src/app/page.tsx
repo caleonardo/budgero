@@ -52,9 +52,14 @@ const faqs = [
       "Yes, completely! You can add transactions, update budgets, and review your finances without any internet connection. All changes sync automatically when you're back online.",
   },
   {
+    question: 'Is Budgero open source?',
+    answer:
+      'Yes. Budgero is open source under the AGPL-3.0, an OSI-approved license. The full source code is public on GitHub — you can read it, audit the encryption yourself, build from source, and self-host it for free.',
+  },
+  {
     question: 'What happens if Budgero shuts down?',
     answer:
-      "We're committed to open-sourcing the code if we ever shut down. Plus, you can export all your data anytime in standard formats, so you're never locked in.",
+      "Nothing you rely on disappears. The code is open source and self-hostable, so the app keeps working and anyone can keep building it. Plus, you can export all your data anytime in standard formats, so you're never locked in.",
   },
   {
     question: 'Can I export my data?',
