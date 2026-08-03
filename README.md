@@ -92,3 +92,9 @@ pnpm run security         # osv-scanner + govulncheck
 - Security vulnerabilities: see [SECURITY.md](SECURITY.md)
 - Website: [budgero.app](https://budgero.app)
 - Email: hello@budgero.app
+
+## Supporting the project
+
+Self-hosting Budgero is free, with the full feature set, and always will be. If it
+saves you money, you can [donate](https://budgero.app/donate) — pay what you want — or
+simply star this repository. Both genuinely help.

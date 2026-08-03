@@ -82,6 +82,12 @@ CI rejects PRs containing unsigned commits.
 - **Parity promise:** Budgero Cloud and Self-Host are built from this same public
   source with 1:1 feature parity. Your contribution ships in both editions.
 
+## Supporting the project without code
+
+Not every contribution is a pull request. Reporting bugs well, answering other users'
+questions, [donating](https://budgero.app/donate), or starring the repository all
+genuinely help a one-person project.
+
 ## Conduct
 
 Be respectful in issues and discussions. Abusive or harassing behavior can be
