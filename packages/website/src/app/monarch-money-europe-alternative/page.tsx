@@ -188,7 +188,7 @@ const faqs = [
   },
   {
     q: 'Is Budgero cheaper than Monarch?',
-    a: `Yes. Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year, versus Monarch at $14.99/month or $99.99/year. That is roughly half the price, without the USD FX fees that European Monarch customers would incur. And if you prefer to not pay anything, Budgero Self-Host is free forever on your own Docker server.`,
+    a: `Yes. Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year, versus Monarch at $14.99/month or $99.99/year. That is roughly a third of the price, tax included, without the USD FX fees that European Monarch customers would incur. And if you prefer to not pay anything, Budgero Self-Host is free forever on your own Docker server.`,
   },
   {
     q: 'Can I import my Monarch Money data?',
@@ -696,7 +696,7 @@ export default function MonarchMoneyEuropeAlternativePage() {
                 </h2>
                 <p className="text-lg text-foreground/70 mb-8">
                   Start your 35-day Budgero trial. Billed in EUR or GBP. Works with every European
-                  bank via CSV. Zero-knowledge encryption, GDPR by design, and about half the price
+                  bank via CSV. Zero-knowledge encryption, GDPR by design, and about a third of the price
                   of Monarch.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">

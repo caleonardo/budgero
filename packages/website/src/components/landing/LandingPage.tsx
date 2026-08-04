@@ -180,7 +180,6 @@ export default function LandingPage() {
     'Seamless multi-currency with live rates',
     'YNAB & CSV import',
     'Powerful Analytics Engine with Custom Dashboards',
-    'Earn 10–35% off the annual plan for 2 years by building real budgeting habits during your trial',
   ];
 
   const paidPlanPricing = {
@@ -243,9 +242,8 @@ export default function LandingPage() {
         'Yes. Every paid plan comes with a 35-day free trial — no credit card required. Try the full app with encrypted sync and collaboration. When your trial ends, subscribe to keep using the app.',
     },
     {
-      question: 'Can I earn a discount on my annual plan?',
-      answer:
-        "Yes — three tiers tied to real budgeting habits, not gamification badges. Foundation (10% off) rewards logging transactions on 7 of your first 10 days. Discipline (20% off) requires reconciling an account and funding a goal. Persistence (35% off) requires budgeting across two calendar months. All discounts apply to the annual plan for two full years, and codes stay valid for 7 days after your trial ends.",
+      question: 'Do prices include tax?',
+      answer: `Yes. Prices are tax-inclusive — ${pricing.monthly}/month or ${pricing.yearly}/year is exactly what you pay, anywhere in the world. VAT and sales tax are included in the price, never added at checkout.`,
     },
     {
       question: 'What devices does it work on?',
@@ -458,7 +456,7 @@ export default function LandingPage() {
                               variant="secondary"
                               className="bg-[#d7dbe2] text-[#141414] border-[#b9bec8] px-3 py-1"
                             >
-                              {billingCycle === 'monthly' ? 'Flexible' : 'Save $20'}
+                              {billingCycle === 'monthly' ? 'Flexible' : 'Save $13'}
                             </Badge>
                             <div className="flex items-center justify-center gap-1 bg-[#d7dbe2] rounded-full p-1 border border-[#b9bec8]">
                               {(['monthly', 'yearly'] as const).map((cycle) => (
@@ -493,25 +491,11 @@ export default function LandingPage() {
                               </span>
                             )}
                           </div>
+                          <p className="text-xs text-foreground/60">
+                            Tax included — the price you see is the price you pay, worldwide.
+                          </p>
                         </CardHeader>
                         <CardContent className="relative flex-grow flex flex-col space-y-8">
-                          {billingCycle === 'yearly' && (
-                            <div
-                              className="rounded-lg border border-[#bfd7c2] bg-[#e8f0e8] px-3 py-2 text-xs text-[#1f3a2a] flex items-center justify-between gap-2"
-                              aria-label="Trial Rewards"
-                            >
-                              <span>
-                                <span className="font-semibold">💡 Earn 10–35% off · 2 years</span>{' '}
-                                for real budgeting habits during trial.
-                              </span>
-                              <a
-                                href="#faq"
-                                className="font-medium underline underline-offset-2 whitespace-nowrap hover:text-[#0f2519]"
-                              >
-                                How →
-                              </a>
-                            </div>
-                          )}
                           <ul className="space-y-4 flex-grow">
                             {[...paidFeatures, '35-day free trial - no credit card required'].map(
                               (feature, idx) => (
@@ -519,18 +503,9 @@ export default function LandingPage() {
                                   <div className="mt-1 p-0.5 rounded-full bg-[#d7dbe2] text-[#374151] group-hover/item:bg-[#c9ced8] transition-colors">
                                     <CircleCheckBig className="w-3.5 h-3.5" strokeWidth={2.5} />
                                   </div>
-                                  {feature.startsWith('Earn 10') ? (
-                                    <a
-                                      href="#faq"
-                                      className="text-foreground/80 font-medium underline underline-offset-2 hover:text-foreground transition-colors"
-                                    >
-                                      {feature}
-                                    </a>
-                                  ) : (
-                                    <span className="text-foreground/80 font-medium">
-                                      {feature}
-                                    </span>
-                                  )}
+                                  <span className="text-foreground/80 font-medium">
+                                    {feature}
+                                  </span>
                                 </li>
                               )
                             )}

@@ -11,7 +11,7 @@ export const revalidate = false;
 
 export const metadata: Metadata = {
   title: 'Budgero vs YNAB — The Free YNAB Alternative (2026)',
-  description: `Budgero vs YNAB, compared feature by feature. The free YNAB alternative: self-host at no cost, or Cloud from ${pricing.monthly}/mo — half of YNAB's price. Import your YNAB budget in 5 minutes.`,
+  description: `Budgero vs YNAB, compared feature by feature. The free YNAB alternative: self-host at no cost, or Cloud from ${pricing.monthly}/mo — a third of YNAB's price, tax included. Import your YNAB budget in 5 minutes.`,
   keywords: [
     'free ynab alternative',
     'ynab free alternative',
@@ -45,7 +45,6 @@ export const metadata: Metadata = {
 const comparisonData = [
   { feature: 'Monthly price', cloud: `${pricing.monthly}/mo (${pricing.yearly}/yr)`, selfHost: 'Free forever', ynab: '$14.99/mo ($109/yr)' },
   { feature: 'Free trial', cloud: '35 days, no credit card', selfHost: 'N/A — always free', ynab: '34 days' },
-  { feature: 'Trial Rewards (earn discounts on annual plan)', cloud: true, selfHost: 'N/A — already free', ynab: false, cloudNote: '10–35% off · 2 yrs · earned via real budgeting habits', ynabNote: 'Not offered' },
   { feature: 'Zero-based budgeting', cloud: true, selfHost: true, ynab: true },
   { feature: 'End-to-end encryption', cloud: 'AES-256-GCM, zero-knowledge', selfHost: 'Local encryption', ynab: false, ynabNote: 'Data stored in plaintext' },
   { feature: 'Offline mode', cloud: true, selfHost: true, ynab: false },
@@ -76,8 +75,8 @@ const faqs = [
     a: `Yes — Budgero Self-Host is completely free. You run it on your own server with Docker. No trial period, no feature gating. Budgero Cloud is the same app fully managed (we handle hosting, updates, and backups) for ${pricing.monthly}/month or ${pricing.yearly}/year. Both editions include the full feature set.`,
   },
   {
-    q: 'Can I earn a discount on Budgero like YNAB student pricing?',
-    a: 'Better — and not gamification. Budgero ties discounts to the habits that make manual budgeting work: log transactions on 7 of your first 10 days (Foundation, 10% off), reconcile an account and fund a goal (Discipline, 20% off), and budget across two calendar months (Persistence, 35% off). All discounts apply to the annual plan for two full years. The healthier your budget when the trial ends, the better your annual price. YNAB has no equivalent program — and unlike a student discount, this is earned, not granted.',
+    q: 'Does Budgero offer discounts like YNAB student pricing?',
+    a: `No — Budgero keeps pricing simple instead. Cloud costs ${pricing.monthly}/month or ${pricing.yearly}/year, tax included, for everyone, everywhere — roughly a third of YNAB's price without any discount program. And Self-Host is entirely free.`,
   },
   {
     q: 'Can I import my YNAB budget into Budgero?',

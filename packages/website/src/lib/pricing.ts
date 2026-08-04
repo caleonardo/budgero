@@ -9,8 +9,8 @@
  * consistent across all surfaces. The yearly-equivalent-monthly value is
  * computed automatically from the yearly price.
  */
-const monthly = process.env.NEXT_PUBLIC_BUDGERO_PRICE_MONTHLY ?? '$7.99';
-const yearly = process.env.NEXT_PUBLIC_BUDGERO_PRICE_YEARLY ?? '$60';
+const monthly = process.env.NEXT_PUBLIC_BUDGERO_PRICE_MONTHLY ?? '$4';
+const yearly = process.env.NEXT_PUBLIC_BUDGERO_PRICE_YEARLY ?? '$35';
 
 /** "$60" → 60, "$7.99" → 7.99. Returns 0 if the string can't be parsed. */
 function parsePriceAmount(price: string): number {
@@ -27,6 +27,6 @@ function formatPrice(amount: number): string {
 export const pricing = {
   monthly,
   yearly,
-  /** Monthly-equivalent of the yearly price, e.g. "$5" for $60/yr. */
+  /** Monthly-equivalent of the yearly price, e.g. "$2.92" for $35/yr. */
   yearlyEquivMonthly: formatPrice(parsePriceAmount(yearly) / 12),
 } as const;

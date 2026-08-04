@@ -295,7 +295,7 @@ const pickGuide = [
   { priority: 'Bank sync (global)', pick: 'PocketSmith', reason: 'Feeds in many countries, multi-currency' },
   { priority: 'Open source', pick: 'Actual Budget', reason: 'Fully open, local-first' },
   { priority: 'Multi-currency', pick: 'Budgero', reason: '168 currencies, live FX rates' },
-  { priority: 'Lowest paid price', pick: 'Simplifi', reason: '$35.88/yr — a third of YNAB' },
+  { priority: 'Lowest paid price', pick: 'Budgero', reason: '$35/yr tax included — a third of YNAB' },
   { priority: 'Free', pick: 'Actual, EveryDollar, or Budgero Self-Host', reason: 'All genuinely free, different trade-offs' },
   { priority: 'Simplicity', pick: 'Goodbudget', reason: 'No-frills envelope budgeting' },
   { priority: 'Forecasting', pick: 'PocketSmith', reason: 'Calendar-based projections, years ahead' },

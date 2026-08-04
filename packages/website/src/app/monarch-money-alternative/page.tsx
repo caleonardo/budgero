@@ -12,7 +12,7 @@ export const revalidate = false;
 export const metadata: Metadata = {
   title: 'Monarch Money Alternative — Private, No Plaid Required | Budgero',
   description:
-    'Budgero is the private Monarch Money alternative: zero-knowledge encryption, no Plaid, no bank credentials shared — and 40% cheaper. Works in 168 currencies, anywhere. 35-day free trial, no card.',
+    'Budgero is the private Monarch Money alternative: zero-knowledge encryption, no Plaid, no bank credentials shared — and 65% cheaper. Works in 168 currencies, anywhere. 35-day free trial, no card.',
   keywords: [
     'monarch money alternative',
     'monarch alternative',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Monarch Money Alternative — Private, No Plaid Required | Budgero',
     description:
-      'Zero-knowledge encryption, no Plaid, no bank credentials shared — and 40% cheaper than Monarch. Works in 168 currencies, anywhere in the world.',
+      'Zero-knowledge encryption, no Plaid, no bank credentials shared — and 65% cheaper than Monarch. Works in 168 currencies, anywhere in the world.',
     url: 'https://budgero.app/monarch-money-alternative',
     type: 'website',
   },
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Monarch Money Alternative — Private, No Plaid Required | Budgero',
     description:
-      'Zero-knowledge encryption, no Plaid, no bank credentials shared — and 40% cheaper than Monarch. Works in 168 currencies, anywhere.',
+      'Zero-knowledge encryption, no Plaid, no bank credentials shared — and 65% cheaper than Monarch. Works in 168 currencies, anywhere.',
   },
 };
 
@@ -135,7 +135,7 @@ const faqs = [
   },
   {
     q: 'What is the cheapest Monarch Money alternative?',
-    a: `Budgero. Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year — about 40% less than Monarch Money's $99.99/year. You get a 35-day free trial with no credit card, native multi-currency support, zero-knowledge encryption, and offline mode. If you do not want to pay anything at all, Budgero Self-Host is free forever on your own Docker server.`,
+    a: `Budgero. Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year — about 65% less than Monarch Money's $99.99/year. You get a 35-day free trial with no credit card, native multi-currency support, zero-knowledge encryption, and offline mode. If you do not want to pay anything at all, Budgero Self-Host is free forever on your own Docker server.`,
   },
   {
     q: 'Does Budgero connect to my bank like Monarch Money does?',
@@ -150,8 +150,8 @@ const faqs = [
     a: 'Yes. Budgero Cloud supports encrypted shared workspaces — invite your partner or roommates and budget together, with every transaction still end-to-end encrypted in transit and at rest. Self-Host users can run a shared server for the same effect.',
   },
   {
-    q: 'Is Budgero really 40% cheaper than Monarch Money?',
-    a: `Yes, and there is no asterisk. Monarch is $99.99/year. Budgero Cloud is ${pricing.yearly}/year for the full feature set — multi-currency, zero-knowledge encryption, encrypted sync, shared budgets, AI categorization, and 35-day cardless trial. Budgero Self-Host is free forever and includes the same feature set. There is no "premium" upsell tier.`,
+    q: 'Is Budgero really 65% cheaper than Monarch Money?',
+    a: `Yes, and there is no asterisk. Monarch is $99.99/year. Budgero Cloud is ${pricing.yearly}/year, tax included, for the full feature set — multi-currency, zero-knowledge encryption, encrypted sync, shared budgets, AI categorization, and 35-day cardless trial. Budgero Self-Host is free forever and includes the same feature set. There is no "premium" upsell tier.`,
   },
   {
     q: 'What about investment tracking — Monarch syncs with brokerages.',

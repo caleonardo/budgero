@@ -693,7 +693,7 @@ volumes:
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Prefer paying €5/month for a VPS than ${pricing.monthly.replace(/[^0-9.]/g, '')}/month for SaaS</span>
+                      <span>Prefer running your own server to paying for SaaS at all</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />

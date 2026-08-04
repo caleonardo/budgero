@@ -200,12 +200,6 @@ export default function EncryptedBudgetingPage() {
                 <p className="mt-6 text-sm text-foreground/55">
                   This is not marketing speak. This is how the system is architected.
                 </p>
-                <p className="mt-4 text-sm text-foreground/55">
-                  One honest carve-out: during your 35-day trial we record event-kind counters
-                  (e.g., that you reconciled an account today) to power the rewards system. No
-                  amounts, payees, or category names — just the kind of action and the day it
-                  happened. Turn it off any time in Settings → Privacy.
-                </p>
               </div>
             </section>
 

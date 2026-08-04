@@ -182,7 +182,7 @@ const faqs = [
   },
   {
     q: 'How much does Budgero cost in euros?',
-    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year. At current rates that is roughly €6–€7/month or €55/year — about half of what YNAB charges. We accept EUR, GBP, and other European currencies via Stripe, and we issue proper VAT-compliant invoices for freelancers and businesses. If you prefer to not pay anything, Budgero Self-Host is free forever on your own server.`,
+    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year. At current rates that is roughly €3.50/month or €30/year — about a third of what YNAB charges, tax included. We accept EUR, GBP, and other European currencies via Stripe, and we issue proper VAT-compliant invoices for freelancers and businesses. If you prefer to not pay anything, Budgero Self-Host is free forever on your own server.`,
   },
   {
     q: 'Can I get a VAT invoice?',
@@ -342,7 +342,7 @@ export default function YnabAlternativeEuropePage() {
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
                   YNAB bills in USD, still doesn&apos;t do multi-currency, and sends your bank
                   data through Plaid. Budgero is a zero-based budgeting app built with EU-first
-                  currencies, zero-knowledge privacy, and proper VAT invoicing — at roughly half
+                  currencies, zero-knowledge privacy, and proper VAT invoicing — at roughly a third
                   the price.
                 </p>
 
@@ -651,8 +651,8 @@ export default function YnabAlternativeEuropePage() {
                 </h2>
               </div>
               <p className="text-lg text-foreground/75 leading-relaxed mb-6">
-                Budgero Cloud is {pricing.monthly}/month or {pricing.yearly}/year — roughly €6–€7
-                per month, or around €55 per year. That is about half of what YNAB charges. Payments
+                Budgero Cloud is {pricing.monthly}/month or {pricing.yearly}/year — roughly €3.50
+                per month, or around €30 per year. That is about a third of what YNAB charges, tax included. Payments
                 are handled by Stripe, which bills cleanly in EUR, GBP, and dozens of other
                 currencies, and every payment produces a VAT-compliant invoice that you can hand
                 straight to your accountant.

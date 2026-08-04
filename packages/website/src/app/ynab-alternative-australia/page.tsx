@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'YNAB Alternative for Australia — AUD Budgeting | Budgero',
     description:
-      'AUD budgeting that works with every Australian bank. End-to-end encrypted, half the price of YNAB.',
+      'AUD budgeting that works with every Australian bank. End-to-end encrypted, a third the price of YNAB.',
   },
 };
 
@@ -130,7 +130,7 @@ const faqs = [
   },
   {
     q: 'How much does Budgero cost in Australian dollars?',
-    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year — roughly half of YNAB's $109 USD (~A$165). Billing is handled by Stripe in your local currency, so no foreign-transaction surprises. Budgero Self-Host is free forever on your own server.`,
+    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year — roughly a third of YNAB's $109 USD (~A$165), and the price is tax-inclusive — what you see is what you pay, with no foreign-transaction surprises. Budgero Self-Host is free forever on your own server.`,
   },
   {
     q: 'Can I import my YNAB budget?',
@@ -276,7 +276,7 @@ export default function YnabAlternativeAustraliaPage() {
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
                   YNAB&apos;s bank sync doesn&apos;t cover Australian banks, but the USD price tag
                   arrives in full. Budgero is zero-based budgeting built to work properly here —
-                  AUD-first, end-to-end encrypted, at roughly half the price.
+                  AUD-first, end-to-end encrypted, at a third of the price.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">

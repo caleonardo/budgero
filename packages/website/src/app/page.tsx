@@ -72,9 +72,8 @@ const faqs = [
       'Yes. Every paid plan comes with a 35-day free trial — no credit card required. Try the full app with encrypted sync and collaboration. When your trial ends, subscribe to keep using the app.',
   },
   {
-    question: 'Can I earn a discount on my annual plan?',
-    answer:
-      "Yes — three tiers tied to real budgeting habits, not gamification badges. Foundation (10% off) rewards logging transactions on 7 of your first 10 days. Discipline (20% off) requires reconciling an account and funding a goal. Persistence (35% off) requires budgeting across two calendar months. All discounts apply to the annual plan for two full years, and codes stay valid for 7 days after your trial ends.",
+    question: 'Do prices include tax?',
+    answer: `Yes. Prices are tax-inclusive — ${pricing.monthly}/month or ${pricing.yearly}/year is exactly what you pay, anywhere in the world. VAT and sales tax are included in the price, never added at checkout.`,
   },
   {
     question: 'What devices does it work on?',

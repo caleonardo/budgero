@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'YNAB Alternative for the UK — GBP Budgeting | Budgero',
     description:
-      'GBP budgeting that works with every UK bank. End-to-end encrypted, data hosted in the EU, half the price of YNAB.',
+      'GBP budgeting that works with every UK bank. End-to-end encrypted, data hosted in the EU, a third the price of YNAB.',
   },
 };
 
@@ -144,7 +144,7 @@ const faqs = [
   },
   {
     q: 'How much does Budgero cost in pounds?',
-    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year — roughly half of YNAB's $109/year (~£85 once FX fees hit your card). Billing is handled by Stripe and charges cleanly in GBP, so there are no foreign-transaction surprises. Budgero Self-Host is free forever on your own server.`,
+    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year — roughly a third of YNAB's $109/year (~£85 once FX fees hit your card), and the price is tax-inclusive — what you see is what you pay, with no surprises at checkout. Budgero Self-Host is free forever on your own server.`,
   },
   {
     q: 'Can I import my YNAB budget?',
@@ -292,7 +292,7 @@ export default function YnabAlternativeUkPage() {
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
                   YNAB left the UK in 2022 and came back half-way: select banks, USD billing, no
                   multi-currency. Budgero is zero-based budgeting built to work properly here —
-                  GBP-first, end-to-end encrypted, at roughly half the price.
+                  GBP-first, end-to-end encrypted, at a third of the price.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -123,7 +123,7 @@ const faqs = [
   },
   {
     q: 'Is Simplifi cheaper than Budgero?',
-    a: `On Cloud plans, yes: Simplifi is $35.88/year ($2.99/mo billed annually) versus Budgero Cloud at ${pricing.yearly}/year. But Budgero Self-Host is free forever with the full feature set, which makes it the cheaper option overall if you're willing to run a Docker container.`,
+    a: `No — Budgero Cloud at ${pricing.yearly}/year (tax included) now edges out Simplifi's $35.88/year ($2.99/mo billed annually). And Budgero Self-Host is free forever with the full feature set, which makes it the cheaper option by far if you're willing to run a Docker container.`,
   },
   {
     q: 'Does Simplifi work outside the US?',
@@ -494,9 +494,9 @@ export default function QuickenSimplifiAlternativePage() {
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Lower price point:</strong>{' '}
-                      At $35.88/year ($2.99/mo billed annually), Simplifi costs less than
-                      Budgero Cloud at {pricing.yearly}/year. Though you can{' '}
+                      <strong className="text-foreground">Comparable price point:</strong>{' '}
+                      At $35.88/year ($2.99/mo billed annually), Simplifi is priced almost
+                      identically to Budgero Cloud at {pricing.yearly}/year. Though you can{' '}
                       <a href="/self-hostable" className="underline hover:text-foreground">
                         self-host Budgero for free
                       </a>.
@@ -578,7 +578,7 @@ export default function QuickenSimplifiAlternativePage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>Price is your top priority and $35.88/year matters over privacy</span>
+                      <span>Automatic US bank sync matters more to you than privacy</span>
                     </li>
                   </ul>
                 </div>
