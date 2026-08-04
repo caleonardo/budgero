@@ -51,13 +51,6 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     hint: 'The core idea',
   },
   {
-    id: 'rewards',
-    title: 'Earn up to 35% off',
-    subtitle:
-      'Build real budgeting habits during your trial and unlock a discount — automatically.',
-    hint: 'Trial rewards',
-  },
-  {
     id: 'workspace',
     title: 'Name your budget',
     subtitle: 'A household, a side hustle, a trip — whatever you’re planning for.',
@@ -133,7 +126,6 @@ export const PATH_STEPS: Record<ActivePath, string[]> = {
     'rules',
     'currency',
     'zbb',
-    'rewards',
     'workspace',
     'share',
     'accounts',
@@ -149,7 +141,6 @@ export const PATH_STEPS: Record<ActivePath, string[]> = {
     'start_mode',
     'rules',
     'currency',
-    'rewards',
     'workspace',
     'share',
     'ynab_import',
@@ -159,20 +150,6 @@ export const PATH_STEPS: Record<ActivePath, string[]> = {
     'done',
   ],
 };
-
-// Trial-reward tiers surfaced on the onboarding 'rewards' step. Mirrors the
-// tiers in the dashboard rewards card / RewardsPage so new users learn the
-// discount exists. SaaS-only — the step is filtered out of self-host builds.
-export interface RewardTier {
-  percent: number;
-  label: string;
-}
-
-export const REWARD_TIERS: RewardTier[] = [
-  { percent: 10, label: 'Log 5 transactions' },
-  { percent: 20, label: 'Reconcile an account, then create and fund a goal' },
-  { percent: 35, label: 'Keep budgeting across two calendar months' },
-];
 
 export interface CurrencyDef {
   code: string;

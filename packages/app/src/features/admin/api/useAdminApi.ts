@@ -17,8 +17,7 @@ import type {
   FeedbackBroadcastResult,
   FeedbackBroadcastStatus,
   MailerLiteSyncResult,
-  RewardsAnalytics,
-  RewardsAnalyticsGranularity,
+  AnalyticsGranularity,
   StickinessAnalytics,
 } from '@features/admin/model/admin-dashboard';
 
@@ -73,17 +72,11 @@ export function useAdminApi() {
           ADMIN_QUERY_TIMEOUT_MS
         ),
 
-      // Rewards analytics (SaaS only)
-      getRewardsAnalytics: (from: string, to: string, granularity: RewardsAnalyticsGranularity) => {
-        const params = new URLSearchParams({ from, to, granularity });
-        return apiClient.get<RewardsAnalytics>(`/admin/rewards/analytics?${params.toString()}`);
-      },
-
       // Stickiness analytics: DAU/MAU + signup-cohort retention (SaaS only)
       getStickinessAnalytics: (
         from: string,
         to: string,
-        cohort: RewardsAnalyticsGranularity,
+        cohort: AnalyticsGranularity,
         maxDayN: number
       ) => {
         const params = new URLSearchParams({

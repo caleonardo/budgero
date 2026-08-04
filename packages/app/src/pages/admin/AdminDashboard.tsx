@@ -24,7 +24,6 @@ import { toast } from 'sonner';
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
 import { StatCard } from '@pages/admin/components/StatCard';
 import SelfHostAdminDashboard from '@pages/admin/SelfHostAdminDashboard';
-import RewardsAnalyticsSection from '@pages/admin/RewardsAnalyticsSection';
 import StickinessAnalyticsSection from '@pages/admin/StickinessAnalyticsSection';
 import type {
   AdminStats,
@@ -416,9 +415,6 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Rewards analytics — SaaS-only; relies on subscribed_at + trial_progress data. */}
-      <RewardsAnalyticsSection />
 
       {/* Stickiness & retention — DAU/MAU + signup-cohort retention. */}
       <StickinessAnalyticsSection />

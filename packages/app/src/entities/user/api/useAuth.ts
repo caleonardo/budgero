@@ -315,29 +315,3 @@ export function useSetAnalyticsDisabled() {
     },
   });
 }
-
-// Set trial-signals disabled hook (trial-reward tracking, decoupled from analytics)
-export type SetTrialSignalsDisabledInput = {
-  disabled: boolean;
-};
-
-export function useSetTrialSignalsDisabled() {
-  const queryClient = useQueryClient();
-  const apiClient = useApiClient();
-
-  return useMutation<
-    { success: boolean; is_trial_signals_disabled: boolean },
-    Error,
-    SetTrialSignalsDisabledInput
-  >({
-    mutationFn: async ({ disabled }) => {
-      return apiClient.put('/profile/trial-signals', { disabled });
-    },
-    onSuccess: (_data, variables) => {
-      queryClient.setQueryData<User | undefined>(['profile'], (prev) => {
-        if (!prev) return prev;
-        return { ...prev, is_trial_signals_disabled: variables.disabled };
-      });
-    },
-  });
-}

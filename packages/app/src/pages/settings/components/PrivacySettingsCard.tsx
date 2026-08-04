@@ -10,24 +10,16 @@ import {
   disableAnalytics,
 } from '@shared/lib/analytics/analytics';
 import { setPostHogConsent, showKlaro } from '@shared/lib/analytics/klaro';
-import {
-  useProfile,
-  useSetAnalyticsDisabled,
-  useSetTrialSignalsDisabled,
-} from '@entities/user/api/useAuth';
+import { useProfile, useSetAnalyticsDisabled } from '@entities/user/api/useAuth';
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
 
 /** Self-contained privacy/analytics card: owns its own state, sync effect, and mutation. */
 export function PrivacySettingsCard() {
   const { data: profile } = useProfile();
   const setAnalyticsDisabledMutation = useSetAnalyticsDisabled();
-  const setTrialSignalsDisabledMutation = useSetTrialSignalsDisabled();
   const [analyticsEnabled, setAnalyticsEnabled] = useState(() => !isAnalyticsDisabled());
 
   const typedProfile = profile as import('@shared/model/auth').User | undefined;
-  // Trial-reward tracking is server-side only (no local flag or PostHog
-  // involvement) — the profile value is the single source of truth.
-  const trialSignalsEnabled = typedProfile?.is_trial_signals_disabled !== true;
 
   // Sync analytics preference from server profile on load. The server value
   // is authoritative for signed-in users (new accounts are created with
@@ -108,29 +100,6 @@ export function PrivacySettingsCard() {
             disabled={IS_SELF_HOSTABLE_BUILD}
           />
         </div>
-
-        {!IS_SELF_HOSTABLE_BUILD && (
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-1">
-              <Label htmlFor="trial-signals-toggle" className="text-sm font-medium">
-                Trial Reward Tracking
-              </Label>
-              <p className="text-sm text-muted-foreground">
-                Counts your budgeting activity (event names only, no amounts or details) toward
-                trial-reward tier unlocks. Separate from usage analytics. Turning this off pauses
-                new tier unlocks until you turn it back on.
-              </p>
-            </div>
-            <Switch
-              id="trial-signals-toggle"
-              checked={trialSignalsEnabled}
-              onCheckedChange={(enabled) =>
-                setTrialSignalsDisabledMutation.mutate({ disabled: !enabled })
-              }
-              disabled={setTrialSignalsDisabledMutation.isPending}
-            />
-          </div>
-        )}
 
         {!IS_SELF_HOSTABLE_BUILD && (
           <div className="pt-4 border-t border-border/60 space-y-4">

@@ -13,7 +13,7 @@ import { getErrorMessage } from '@shared/lib/errors';
  * sidebar / accounts page with a realistic long account list (e.g. a user with
  * ~50 accounts) without adding them by hand.
  *
- * Gated by `import.meta.env.DEV` at the call site, the same way the trial-reward
+ * Gated by `import.meta.env.DEV` at the call site.
  * dev tools are — in production builds this whole module is dead-code-eliminated.
  * Account creation runs entirely through the client runtime (encryption-aware),
  * so there's no server flag to flip.

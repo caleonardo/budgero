@@ -13,7 +13,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { betaApi } from '@shared/api/api-client';
 import { capitalize } from '@shared/lib/utils';
-import { useTrialProgress } from '@features/subscription/api/useTrialRewards';
 import { useConnectivity } from '@shared/hooks/useConnectivity';
 import {
   STATUS_COLORS,
@@ -43,12 +42,6 @@ export function useSubscriptionViewModel() {
     staleTime: 1000 * 60 * 30, // 30 minutes
   });
 
-  // Trial-rewards data fetched up-front so we have it for both display and
-  // checkout-time auto-apply. The actual filter logic runs after currentTime
-  // is captured below (react-compiler requires Date.now to be captured once
-  // via useState, not called inline during render).
-  const { data: trialRewardsData } = useTrialProgress();
-
   const cancelMutation = useCancelSubscription();
   const resumeMutation = useResumeSubscription();
   const updatePlanMutation = useUpdateSubscriptionPlan();
@@ -63,17 +56,6 @@ export function useSubscriptionViewModel() {
 
   // Capture current time once to avoid impurity
   const [currentTime] = useState(() => Date.now());
-
-  // Trial-rewards: pick the user's highest unredeemed/unexpired tier code
-  // so it gets auto-applied at checkout via handleStartSubscription below.
-  const earnedDiscountCode = useMemo(() => {
-    const codes = trialRewardsData?.codes ?? [];
-    const active = codes.filter(
-      (c) => !c.redeemed_at && new Date(c.valid_until).getTime() > currentTime
-    );
-    if (active.length === 0) return null;
-    return active.reduce((best, c) => (c.tier > best.tier ? c : best), active[0]);
-  }, [trialRewardsData?.codes, currentTime]);
 
   const connectivity = useConnectivity();
   const connectivityReady = connectivity.lastChecked > 0;
@@ -247,17 +229,9 @@ export function useSubscriptionViewModel() {
 
   const handleStartSubscription = useCallback(
     async (variantId: string) => {
-      // The earned tier-rewards code is scoped to the annual variant on the
-      // LS side. Only forward it when the user is starting the yearly plan;
-      // attaching it to a monthly checkout would just be rejected by LS.
-      const targetPlan = plans.find((p) => p.id === variantId);
-      const isYearly = targetPlan?.interval === 'year';
-      await checkoutMutation.mutateAsync({
-        variantId,
-        discountCode: isYearly ? earnedDiscountCode?.code : undefined,
-      });
+      await checkoutMutation.mutateAsync({ variantId });
     },
-    [checkoutMutation, earnedDiscountCode, plans]
+    [checkoutMutation]
   );
 
   return {
@@ -328,9 +302,6 @@ export function useSubscriptionViewModel() {
 
     handleStartSubscription,
     checkoutMutation,
-
-    // Trial-rewards: the active code (if any) auto-applied at checkout.
-    earnedDiscountCode,
   };
 }
 

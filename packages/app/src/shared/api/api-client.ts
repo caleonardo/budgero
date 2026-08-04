@@ -253,10 +253,9 @@ export const subscriptionApi = {
         interval_count: number;
       }[];
     }>('/subscription/plans'),
-  createCheckout: (variantId: string, discountCode?: string) =>
+  createCheckout: (variantId: string) =>
     apiClient.post<{ url: string }>('/subscription/checkout', {
       variant_id: variantId,
-      ...(discountCode ? { discount_code: discountCode } : {}),
     }),
   getCustomerPortal: () => apiClient.get<{ url: string }>('/subscription/portal'),
   cancelSubscription: () => apiClient.post<{ message: string }>('/subscription/cancel'),
@@ -495,71 +494,6 @@ export interface LatestVersionInfo {
 // a network fetch per request.
 export const versionApi = {
   getLatest: () => apiClient.get<LatestVersionInfo>('/version/latest'),
-};
-
-export interface TrialProgress {
-  user_id: string;
-  trial_started_at: string;
-  daily_logging_distinct_days: number;
-  reconciliation_count: number;
-  first_reconciliation_at?: string;
-  second_reconciliation_at?: string;
-  budget_cycle_assigned_at?: string;
-  overspend_covered_at?: string;
-  goal_funded_at?: string;
-  rule_applied_historical_at?: string;
-  monthly_review_at?: string;
-  tier1_unlocked_at?: string;
-  tier2_unlocked_at?: string;
-  tier3_unlocked_at?: string;
-  updated_at: string;
-}
-
-export interface TrialDiscountCode {
-  code: string;
-  user_id: string;
-  tier: 1 | 2 | 3;
-  percent_off: number;
-  generated_at: string;
-  valid_from: string;
-  valid_until: string;
-  redeemed_at?: string;
-}
-
-export interface TrialTier {
-  tier: 1 | 2 | 3;
-  percent_off: number;
-  name: string;
-}
-
-export interface TrialProgressCounts {
-  assignment_distinct_months: number;
-  transaction_distinct_months: number;
-  /** Total transactions logged — drives Tier 1 progress ("X/5"). */
-  transaction_count: number;
-}
-
-export interface TrialProgressResponse {
-  progress: TrialProgress | null;
-  codes: TrialDiscountCode[];
-  tiers: TrialTier[];
-  counts: TrialProgressCounts;
-}
-
-export interface TrialValidateCodeResponse {
-  code: string;
-  tier: 1 | 2 | 3;
-  percent_off: number;
-  valid_until: string;
-}
-
-export const trialApi = {
-  getProgress: () => apiClient.get<TrialProgressResponse>('/trial/progress'),
-  validateCode: (code: string) =>
-    apiClient.post<TrialValidateCodeResponse>('/trial/codes/validate', { code }),
-  // Dev-only — server gates these behind DEV_TOOLS_ENABLED.
-  devForceUnlock: (tier: 1 | 2 | 3) => apiClient.post<void>('/trial/dev/unlock', { tier }),
-  devReset: () => apiClient.post<void>('/trial/dev/reset'),
 };
 
 export const offlineApi = {

@@ -93,13 +93,10 @@ export function useUpdateSubscriptionPlan() {
   });
 }
 
-// Create checkout session mutation. discountCode is optional and, when set,
-// is forwarded to the server which validates ownership and forwards it to
-// LemonSqueezy as the pre-applied discount.
+// Create checkout session mutation.
 export function useCreateCheckout() {
   return useMutation({
-    mutationFn: ({ variantId, discountCode }: { variantId: string; discountCode?: string }) =>
-      subscriptionApi.createCheckout(variantId, discountCode),
+    mutationFn: ({ variantId }: { variantId: string }) => subscriptionApi.createCheckout(variantId),
     onSuccess: (data) => {
       window.open(data.url, '_blank');
     },

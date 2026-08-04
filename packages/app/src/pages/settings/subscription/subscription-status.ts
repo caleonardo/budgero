@@ -71,8 +71,8 @@ export function hasBillingPortalAccess(
 export function shouldOfferCheckoutForStatus(
   status: Pick<User, 'subscription_status'>['subscription_status']
 ): boolean {
-  // Trialing users can subscribe early (locks in their earned tier-rewards
-  // discount, ends the trial, starts the paid period). 'expired' and
+  // Trialing users can subscribe early (ends the trial, starts the paid
+  // period). 'expired' and
   // 'inactive' are the post-trial / never-subscribed states. The status
   // values that should NOT show a buy button are the ones where the user
   // is already paying or recently was: active, lifetime, cancelled (still

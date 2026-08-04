@@ -83,8 +83,6 @@ export interface User {
   where_heard_about?: string;
   // Analytics consent — opt-in, disabled by default (SaaS only)
   is_analytics_disabled?: boolean;
-  // Trial-reward signal opt-out — on by default, decoupled from analytics (SaaS only)
-  is_trial_signals_disabled?: boolean;
   preferences?: UserPreferences;
 }
 

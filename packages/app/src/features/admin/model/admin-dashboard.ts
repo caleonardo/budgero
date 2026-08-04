@@ -47,37 +47,11 @@ export interface FeedbackBroadcastResult {
   dryRun: boolean;
 }
 
-export type RewardsAnalyticsGranularity = 'daily' | 'weekly' | 'monthly';
+export type AnalyticsGranularity = 'daily' | 'weekly' | 'monthly';
 
 export interface TimeSeriesPoint {
   period: string;
   count: number;
-}
-
-export interface RewardsAnalyticsSeries {
-  signups: TimeSeriesPoint[];
-  subscriptions: TimeSeriesPoint[];
-  tier1_unlocks: TimeSeriesPoint[];
-  tier2_unlocks: TimeSeriesPoint[];
-  tier3_unlocks: TimeSeriesPoint[];
-  redemptions: TimeSeriesPoint[];
-}
-
-export interface FunnelCohort {
-  cohort: string;
-  signups: number;
-  tier1: number;
-  tier2: number;
-  tier3: number;
-  subscribed: number;
-}
-
-export interface RewardsAnalytics {
-  granularity: RewardsAnalyticsGranularity;
-  from: string;
-  to: string;
-  series: RewardsAnalyticsSeries;
-  funnel: FunnelCohort[];
 }
 
 export interface StickinessSeriesPoint {
@@ -111,7 +85,7 @@ export interface CohortRetentionMatrix {
 export interface StickinessAnalytics {
   from: string;
   to: string;
-  cohort_granularity: RewardsAnalyticsGranularity;
+  cohort_granularity: AnalyticsGranularity;
   current: StickinessSeriesPoint;
   series: StickinessSeriesPoint[];
   cohorts: CohortRetentionMatrix;

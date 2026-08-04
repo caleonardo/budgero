@@ -12,7 +12,6 @@ export { PasswordStep } from './PasswordStep';
 export { AccountsStep } from './AccountsStep';
 export { CategoriesStep } from './CategoriesStep';
 export { GoalStep } from './GoalStep';
-export { RewardsStep } from './RewardsStep';
 export { WhereHeardStep } from './WhereHeardStep';
 export { ThemeStep } from './ThemeStep';
 export { YnabImportStep } from './YnabImportStep';

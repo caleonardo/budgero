@@ -1,4 +1,3 @@
-import { dispatchTrialSignalForOp } from '@shared/lib/analytics/trial-signal-dispatch';
 import type { OpCodeEntry } from './op-code-registry/shared';
 import { accountOps } from './op-code-registry/domains/accounts';
 import { budgetOps } from './op-code-registry/domains/budgets';
@@ -73,9 +72,7 @@ export async function executeMutationOp(
   const entry = opCodeRegistry[op];
 
   try {
-    const result = await entry.execute(args);
-    dispatchTrialSignalForOp(op, args, result);
-    return result;
+    return await entry.execute(args);
   } catch (error) {
     console.error(`[OpCodeRegistry] Failed to apply mutation: ${op}`, error);
     throw error;

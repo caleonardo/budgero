@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { useProfile } from '@entities/user/api/useAuth';
-import { useTrialProgress } from '@features/subscription/api/useTrialRewards';
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -22,13 +21,12 @@ function readPersistedDismiss(trialEndsAtIso: string): boolean {
 /**
  * Top-of-app banner that appears in the final 2 days of the trial. Dismissable
  * per-trial (re-keyed by trial_ends_at, so the dismissal state doesn't leak
- * across trials). Surfaces the highest earned discount + a checkout CTA.
+ * across trials). Shows the time left + a checkout CTA.
  */
 export function TrialEndingBanner() {
   const [now] = useState(() => Date.now());
   const [explicitlyDismissed, setExplicitlyDismissed] = useState(false);
   const { data: user } = useProfile();
-  const { data } = useTrialProgress();
 
   const trialEndsAtIso = user?.trial_ends_at ?? null;
   const persistedDismissed = useMemo(
@@ -56,12 +54,6 @@ export function TrialEndingBanner() {
   const daysLeft = Math.max(0, Math.floor(msLeft / MS_PER_DAY));
   if (daysLeft > SHOW_WITHIN_DAYS) return null;
 
-  const codes = data?.codes ?? [];
-  const highestCode = codes.reduce<(typeof codes)[number] | null>(
-    (best, c) => (best === null || c.tier > best.tier ? c : best),
-    null
-  );
-
   const handleDismiss = () => {
     setExplicitlyDismissed(true);
     try {
@@ -73,9 +65,7 @@ export function TrialEndingBanner() {
 
   const timeLabel =
     daysLeft === 0 ? 'Less than a day' : daysLeft === 1 ? '1 day' : `${daysLeft} days`;
-  const message = highestCode
-    ? `${timeLabel} left in your trial · You've earned ${highestCode.percent_off}% off for 2 years`
-    : `${timeLabel} left in your trial`;
+  const message = `${timeLabel} left in your trial`;
 
   return (
     <div className="bg-amber-500 text-white w-full">

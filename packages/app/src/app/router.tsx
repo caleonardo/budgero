@@ -40,7 +40,6 @@ import AdminDashboard from '@pages/admin/AdminDashboard';
 import { AdminUsers } from '@pages/admin/admin-users';
 import AdminSqlExplorer from '@pages/admin/sql-explorer';
 import WarrantiesPage from '@pages/warranties/WarrantiesPage';
-import RewardsPage from '@pages/rewards/RewardsPage';
 import { hideStartupPreload } from '@/app/startup/preload';
 import { trackPageView } from '@shared/lib/analytics/analytics';
 
@@ -117,7 +116,6 @@ function AppRouter() {
             {!IS_SELF_HOSTABLE_BUILD && (
               <Route path="/settings/subscription" element={<SubscriptionPage />} />
             )}
-            {!IS_SELF_HOSTABLE_BUILD && <Route path="/rewards" element={<RewardsPage />} />}
             <Route path="/settings/workspaces" element={<WorkspaceSettingsPage />} />
             <Route path="/settings/api" element={<PushApiPage />} />
             <Route path="/settings/security" element={<SecurityPage />} />

@@ -21,7 +21,6 @@ import { toast } from 'sonner';
 import { useRuntime } from '@shared/runtime/runtime-provider';
 import { useLogout, useProfile, useUpdateOnboarding } from '@entities/user/api/useAuth';
 import { useThemePreset } from '@shared/contexts/ThemePresetContext';
-import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
 import { getTodayISO } from '@shared/lib/date-utils';
 import { readPendingSpaceInvite } from '@features/budget-sharing/lib/pending-space-invite';
 import {
@@ -39,7 +38,6 @@ import {
   DoneStep,
   GoalStep,
   PasswordStep,
-  RewardsStep,
   RulesStep,
   ShareStep,
   StartModeStep,
@@ -101,11 +99,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
     : state.startMode === 'ynab'
       ? 'ynab'
       : 'fresh';
-  // Trial rewards are a SaaS-only feature, so drop the informational 'rewards'
-  // step from the flow on self-host builds.
-  const pathIds = PATH_STEPS[activePath].filter(
-    (id) => id !== 'rewards' || !IS_SELF_HOSTABLE_BUILD
-  );
+  const pathIds = PATH_STEPS[activePath];
   const total = pathIds.length;
   const safeStep = Math.min(stepIndex, total - 1);
   const curId = pathIds[safeStep];
@@ -345,7 +339,6 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         {curId === 'rules' && <RulesStep cur={cur} state={state} set={set} />}
         {curId === 'currency' && <CurrencyStep cur={cur} state={state} set={set} />}
         {curId === 'zbb' && <ZbbStep cur={cur} state={state} set={set} />}
-        {curId === 'rewards' && <RewardsStep cur={cur} state={state} set={set} />}
         {curId === 'workspace' && <WorkspaceStep cur={cur} state={state} set={set} />}
         {curId === 'share' && <ShareStep cur={cur} state={state} set={set} />}
         {curId === 'ynab_import' && (

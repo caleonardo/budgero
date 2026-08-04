@@ -12,7 +12,7 @@ import { useAdminApi } from '@features/admin/api/useAdminApi';
 import type {
   StickinessAnalytics,
   CohortRetentionCell,
-  RewardsAnalyticsGranularity,
+  AnalyticsGranularity,
 } from '@features/admin/model/admin-dashboard';
 import { dateInputToISO } from './admin-analytics.utils';
 import { useAnalyticsQuery } from './useAnalyticsQuery';
@@ -69,14 +69,14 @@ function indexCells(cells: CohortRetentionCell[]): RetentionLookup {
 export default function StickinessAnalyticsSection() {
   const adminApi = useAdminApi();
 
-  const [cohort, setCohort] = useState<RewardsAnalyticsGranularity>('weekly');
+  const [cohort, setCohort] = useState<AnalyticsGranularity>('weekly');
   const [maxDayN, setMaxDayN] = useState<number>(30);
 
   // Default range: last 90 days, weekly cohorts. After mount the user re-runs
   // the query via the Refresh button (which reads the live state).
   const { from, setFrom, to, setTo, data, loading, fetchData } = useAnalyticsQuery<
     StickinessAnalytics,
-    [RewardsAnalyticsGranularity, number]
+    [AnalyticsGranularity, number]
   >({
     defaultDaysBack: 90,
     errorMessage: 'Failed to load stickiness analytics',
@@ -174,10 +174,7 @@ export default function StickinessAnalyticsSection() {
           </div>
           <div className="space-y-1.5">
             <Label>Cohort bucket</Label>
-            <Select
-              value={cohort}
-              onValueChange={(v) => setCohort(v as RewardsAnalyticsGranularity)}
-            >
+            <Select value={cohort} onValueChange={(v) => setCohort(v as AnalyticsGranularity)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

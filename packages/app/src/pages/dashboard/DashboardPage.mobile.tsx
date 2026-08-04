@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/tabs';
 import { AtAGlance } from '@widgets/dashboard/AtAGlance';
 import { UpcomingTransactionsCard } from '@widgets/dashboard/UpcomingTransactionsCard';
 import { UncategorizedTransactionsCard } from '@widgets/dashboard/UncategorizedTransactionsCard';
-import { TrialRewardsProgressCard } from '@widgets/dashboard/TrialRewardsProgressCard';
 import { OverspentCategoriesCard } from '@widgets/dashboard/OverspentCategoriesCard';
 import { CashflowTrendCard } from '@widgets/dashboard/CashflowTrendCard';
 import { TrendIndicator } from '@widgets/dashboard/TrendIndicator';
@@ -205,11 +204,6 @@ export function DashboardPageMobile() {
       <div className="mt-4 space-y-4">
         <UpcomingTransactionsCard budgetId={budgetId} globalLocalizer={globalLocalizer} />
         <UncategorizedTransactionsCard budgetId={budgetId} globalLocalizer={globalLocalizer} />
-      </div>
-
-      {/* Trial Rewards (hides itself for paid users + post-trial-window) */}
-      <div className="mt-4">
-        <TrialRewardsProgressCard />
       </div>
     </div>
   );

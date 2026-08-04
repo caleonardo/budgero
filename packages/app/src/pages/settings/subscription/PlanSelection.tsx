@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Separator } from '@shared/ui/separator';
-import { CreditCard, ExternalLink, Sparkles } from 'lucide-react';
+import { CreditCard, ExternalLink } from 'lucide-react';
 import type { SubscriptionViewModel } from '@pages/settings/subscription/useSubscriptionViewModel';
 
 interface PlanSelectionProps {
@@ -18,7 +18,6 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
     portalMutation,
     handleStartSubscription,
     checkoutMutation,
-    earnedDiscountCode,
   } = vm;
 
   const orderedPlans = [...plans].sort((a, b) => {
@@ -27,11 +26,6 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
     return a.price - b.price;
   });
   const monthlyPlan = plans.find((plan) => plan.interval === 'month');
-
-  const formatPrice = (cents: number) => {
-    const dollars = cents / 100;
-    return Number.isInteger(dollars) ? `$${dollars}` : `$${dollars.toFixed(2)}`;
-  };
 
   if (!canStartSubscription && !billingPortalAvailable) {
     return null;
@@ -48,22 +42,6 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {earnedDiscountCode && (
-              <div className="flex items-start gap-3 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 dark:bg-amber-950/20">
-                <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
-                <div className="text-sm">
-                  <p className="font-medium text-amber-900 dark:text-amber-200">
-                    {earnedDiscountCode.percent_off}% off for 2 years, applied at checkout
-                  </p>
-                  <p className="text-xs text-amber-800/80 dark:text-amber-200/80">
-                    Your earned Tier {earnedDiscountCode.tier} reward (code{' '}
-                    <code className="font-mono">{earnedDiscountCode.code}</code>) applies
-                    automatically when you start the annual plan, for 24 months. Renews at the
-                    regular price after that.
-                  </p>
-                </div>
-              </div>
-            )}
             {plans.length === 0 ? (
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Plans are not available right now. Please try again in a moment.
@@ -78,27 +56,14 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
                       : plan.interval === 'month'
                         ? Math.max(plan.interval_count || 1, 1)
                         : null;
-                  // The earned tier-rewards discount only applies to the
-                  // annual plan. effectivePrice is what the user actually
-                  // pays on first purchase; original is shown struck-through.
-                  const discountApplies = isYearly && !!earnedDiscountCode;
-                  const discountPercent = earnedDiscountCode?.percent_off ?? 0;
-                  const effectivePrice = discountApplies
-                    ? Math.round((plan.price * (100 - discountPercent)) / 100)
-                    : plan.price;
                   const monthlyEquivalent =
-                    monthsCovered && monthsCovered > 0
-                      ? effectivePrice / 100 / monthsCovered
-                      : null;
+                    monthsCovered && monthsCovered > 0 ? plan.price / 100 / monthsCovered : null;
                   const yearlyMonthlyEquivalent = isYearly
                     ? (monthlyEquivalent?.toFixed(2) ?? null)
                     : null;
                   const yearlySavingsPercent =
                     isYearly && monthlyPlan
-                      ? Math.max(
-                          0,
-                          Math.round((1 - effectivePrice / (monthlyPlan.price * 12)) * 100)
-                        )
+                      ? Math.max(0, Math.round((1 - plan.price / (monthlyPlan.price * 12)) * 100))
                       : null;
                   return (
                     <div
@@ -113,22 +78,12 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
                         <h3 className="text-2xl font-semibold leading-none text-foreground">
                           {isYearly ? 'Yearly' : 'Monthly'}
                         </h3>
-                        {discountApplies && (
-                          <span className="rounded-full bg-amber-500 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">
-                            {discountPercent}% off
-                          </span>
-                        )}
                       </div>
 
                       <div className="mt-4 flex items-baseline gap-2">
                         <p className="text-4xl font-semibold tracking-tight text-foreground">
-                          {discountApplies ? formatPrice(effectivePrice) : plan.price_formatted}
+                          {plan.price_formatted}
                         </p>
-                        {discountApplies && (
-                          <p className="text-sm text-muted-foreground line-through opacity-70">
-                            {plan.price_formatted}
-                          </p>
-                        )}
                         <p className="text-sm text-muted-foreground">
                           {isYearly ? '/year' : '/month'}
                         </p>
@@ -143,12 +98,6 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
                               · save {yearlySavingsPercent}% vs. monthly
                             </span>
                           ) : null}
-                        </p>
-                      )}
-
-                      {discountApplies && (
-                        <p className="mt-3 text-xs text-amber-900/80">
-                          Reward applied for 24 months, then renews at {plan.price_formatted}/year.
                         </p>
                       )}
 

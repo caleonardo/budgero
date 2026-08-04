@@ -1,7 +1,6 @@
 import {
   User,
   CreditCard,
-  Sparkles,
   Shield,
   Users,
   Inbox,
@@ -42,7 +41,6 @@ export const NAV_REPORTS: NavRouteItem[] = [
 export const NAV_SETTINGS_ACCOUNT: NavRouteItem[] = [
   { to: '/settings/account', icon: User, label: 'Account' },
   { to: '/settings/subscription', icon: CreditCard, label: 'Subscription' },
-  { to: '/rewards', icon: Sparkles, label: 'Trial rewards' },
   { to: '/settings/security', icon: Shield, label: 'Security & Privacy' },
 ];
 

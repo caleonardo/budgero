@@ -121,20 +121,12 @@ export function getMonthKey(date: Date): string {
  * Format a Date as a UTC ISO date string (YYYY-MM-DD).
  *
  * Use only when the value must be anchored to UTC (e.g. server-aligned
- * analytics windows or reward periods). For user-facing calendar dates prefer
+ * analytics windows). For user-facing calendar dates prefer
  * {@link formatDateISO}, which uses the local timezone.
  */
 export function formatDateUtcISO(date: Date): string {
   const { year, month, day } = buildDateParts(date, true);
   return `${year}-${month}-${day}`;
-}
-
-/**
- * Get a UTC month key in YYYY-MM format. UTC counterpart of {@link getMonthKey}.
- */
-export function getUtcMonthKey(date: Date): string {
-  const { year, month } = buildDateParts(date, true);
-  return `${year}-${month}`;
 }
 
 /**

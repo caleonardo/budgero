@@ -12,7 +12,6 @@ import { AtAGlance } from '@widgets/dashboard/AtAGlance';
 import { UpcomingTransactionsCard } from '@widgets/dashboard/UpcomingTransactionsCard';
 import { UncategorizedTransactionsCard } from '@widgets/dashboard/UncategorizedTransactionsCard';
 import { OverspentCategoriesCard } from '@widgets/dashboard/OverspentCategoriesCard';
-import { TrialRewardsProgressCard } from '@widgets/dashboard/TrialRewardsProgressCard';
 import { CashflowTrendCard } from '@widgets/dashboard/CashflowTrendCard';
 import { TrendIndicator } from '@widgets/dashboard/TrendIndicator';
 import { BalanceAreaChart } from '@widgets/dashboard/BalanceAreaChart';
@@ -183,9 +182,6 @@ export function DashboardPageDesktop() {
         <UpcomingTransactionsCard budgetId={budgetId} globalLocalizer={globalLocalizer} />
         <UncategorizedTransactionsCard budgetId={budgetId} globalLocalizer={globalLocalizer} />
       </div>
-
-      {/* Trial Rewards (hides itself for paid users + post-trial-window) */}
-      <TrialRewardsProgressCard />
     </div>
   );
 }
