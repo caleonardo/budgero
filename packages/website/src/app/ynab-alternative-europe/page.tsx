@@ -182,7 +182,7 @@ const faqs = [
   },
   {
     q: 'How much does Budgero cost in euros?',
-    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year. At current rates that is roughly €3.50/month or €30/year — about a third of what YNAB charges, tax included. We accept EUR, GBP, and other European currencies via Stripe, and we issue proper VAT-compliant invoices for freelancers and businesses. If you prefer to not pay anything, Budgero Self-Host is free forever on your own server.`,
+    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year. At current rates that is roughly €3.50/month or €30/year — about a third of what YNAB charges, tax included. Payments run through Lemon Squeezy, our merchant of record, which handles VAT and issues proper VAT-compliant invoices for freelancers and businesses. If you prefer to not pay anything, Budgero Self-Host is free forever on your own server.`,
   },
   {
     q: 'Can I get a VAT invoice?',
@@ -653,9 +653,9 @@ export default function YnabAlternativeEuropePage() {
               <p className="text-lg text-foreground/75 leading-relaxed mb-6">
                 Budgero Cloud is {pricing.monthly}/month or {pricing.yearly}/year — roughly €3.50
                 per month, or around €30 per year. That is about a third of what YNAB charges, tax included. Payments
-                are handled by Stripe, which bills cleanly in EUR, GBP, and dozens of other
-                currencies, and every payment produces a VAT-compliant invoice that you can hand
-                straight to your accountant.
+                are handled by Lemon Squeezy as merchant of record — VAT is included in the
+                price and handled for you, and every payment produces a VAT-compliant invoice
+                that you can hand straight to your accountant.
               </p>
               <p className="text-lg text-foreground/75 leading-relaxed">
                 If you would rather not pay at all, Budgero Self-Host is free forever. Full feature

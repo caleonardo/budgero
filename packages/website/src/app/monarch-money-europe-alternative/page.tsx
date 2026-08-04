@@ -184,7 +184,7 @@ const faqs = [
   },
   {
     q: 'How does Budgero bill customers in Europe?',
-    a: "Via Stripe. We charge in EUR, GBP, or your local currency as appropriate, and every payment produces a VAT-compliant invoice downloadable from your account. For freelancers and small businesses across the EU, that means Budgero is properly deductible as a business expense. Monarch charges in USD with no local currency or VAT support.",
+    a: "Via Lemon Squeezy, our merchant of record — prices are tax-inclusive, VAT is handled for you, and every payment produces a VAT-compliant invoice downloadable from your account. For freelancers and small businesses across the EU, that means Budgero is properly deductible as a business expense. Monarch charges in USD with no local currency or VAT support.",
   },
   {
     q: 'Is Budgero cheaper than Monarch?',
