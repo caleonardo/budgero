@@ -16,11 +16,44 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.7.0',
+    date: 'August 4, 2026',
+    summary:
+      'Budgero goes open source under the AGPL, and pricing gets radically simpler: $4/month or $35/year, tax included, everywhere in the world.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Budgero is open source',
+        description:
+          'The full source code is now licensed under the AGPL-3.0, an OSI-approved open source license — read it, audit the encryption, build from source, self-host it freely. Contributions are open too: pull requests are welcome on GitHub under a DCO, with CI running on every PR.',
+      },
+      {
+        type: 'new',
+        title: 'One simple price, tax included',
+        description:
+          'Budgero Cloud is now $4/month or $35/year — down from $7.99/$60 — and prices are tax-inclusive worldwide: the price you see is exactly what you pay, no VAT or sales tax added at checkout. Existing subscribers have been moved to the new lower price at their next renewal, automatically.',
+      },
+      {
+        type: 'deprecated',
+        title: 'Trial rewards program retired',
+        description:
+          'With one flat low price there is nothing left to discount, so the earn-a-discount trial program is gone — along with the discount emails and the trial activity tracking that powered it. At $35/year, the new full price is lower than the old price with the best earned discount applied.',
+      },
+      {
+        type: 'improved',
+        title: 'A smaller privacy surface',
+        description:
+          'Removing the rewards program also removed its server-side behavior counters and the associated privacy toggle — there is simply nothing to track anymore. Trial reminder emails still exist, but they are plain reminders now: no codes, no pitches.',
+      },
+    ],
+  },
+  {
     version: 'v1.6.1',
     date: 'July 25, 2026',
     summary:
       "Smarter imports that read dates and signs the way your bank writes them, payee bulk management, and categories that fill themselves in from each payee's history.",
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
