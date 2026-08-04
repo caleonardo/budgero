@@ -558,20 +558,6 @@ func (h *Handlers) SelfHostUpdatePassword(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"message": "password updated"})
 }
 
-// GetAppConfig returns app configuration including early access mode
-func (h *Handlers) GetAppConfig(c echo.Context) error {
-	earlyAccessMode := h.cfg.Features.EarlyAccessMode
-	earlyAccessMessage := h.cfg.Features.EarlyAccessMessage
-	if earlyAccessMessage == "" {
-		earlyAccessMessage = "We're currently in invite-only early access. Subscribe to our mailing list to get 15% off when we launch!"
-	}
-
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"early_access_mode":    earlyAccessMode,
-		"early_access_message": earlyAccessMessage,
-	})
-}
-
 func (h *Handlers) checkIsAdmin(ctx context.Context, user *domain.User) bool {
 	if h.selfHostMode {
 		return h.services.Credential.IsAdmin(ctx, user.ID)

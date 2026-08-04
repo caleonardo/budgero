@@ -176,9 +176,9 @@ func TestClerkSyncUsecase_Init_WithoutSecretKey(t *testing.T) {
 
 func TestSplitFullName(t *testing.T) {
 	tests := []struct {
-		input         string
-		wantFirst     string
-		wantLast      string
+		input     string
+		wantFirst string
+		wantLast  string
 	}{
 		{"", "User", ""},
 		{"John", "John", ""},

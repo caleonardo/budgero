@@ -872,12 +872,12 @@ func TestSpaceService_GetBlobMetadata(t *testing.T) {
 	ctx := context.Background()
 
 	tests := []struct {
-		name       string
-		userID     string
-		spaceID    string
-		setup      func(*fake.SpaceRepository)
-		wantPath   string
-		wantErr    error
+		name     string
+		userID   string
+		spaceID  string
+		setup    func(*fake.SpaceRepository)
+		wantPath string
+		wantErr  error
 	}{
 		{
 			name:    "member can get blob metadata",
@@ -1479,9 +1479,9 @@ func TestSpaceService_ListInvites(t *testing.T) {
 			wantCount: 3,
 		},
 		{
-			name:    "empty list for space with no invites",
-			spaceID: "space1",
-			setup:   func(r *fake.SpaceRepository) {},
+			name:      "empty list for space with no invites",
+			spaceID:   "space1",
+			setup:     func(r *fake.SpaceRepository) {},
 			wantCount: 0,
 		},
 		{
@@ -1808,12 +1808,12 @@ func TestSpaceService_GetSyncState_IncludesEncryptionKeyVersion(t *testing.T) {
 	ctx := context.Background()
 
 	tests := []struct {
-		name               string
-		userID             string
-		spaceID            string
-		setup              func(*fake.SpaceRepository)
-		wantKeyVersion     int64
-		wantErr            error
+		name           string
+		userID         string
+		spaceID        string
+		setup          func(*fake.SpaceRepository)
+		wantKeyVersion int64
+		wantErr        error
 	}{
 		{
 			name:    "returns initial encryption key version of 1",

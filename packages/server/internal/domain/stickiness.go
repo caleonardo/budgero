@@ -62,10 +62,10 @@ type CohortMeta struct {
 // `Current` is the headline DAU/MAU at the latest day in the series,
 // duplicated from the last entry of `Series` for ease of display.
 type StickinessAnalytics struct {
-	From              time.Time                  `json:"from"`
-	To                time.Time                  `json:"to"`
-	CohortGranularity AnalyticsGranularity `json:"cohort_granularity"`
-	Current           StickinessSeriesPoint      `json:"current"`
-	Series            []StickinessSeriesPoint    `json:"series"`
-	Cohorts           CohortRetentionMatrix      `json:"cohorts"`
+	From              time.Time               `json:"from"`
+	To                time.Time               `json:"to"`
+	CohortGranularity AnalyticsGranularity    `json:"cohort_granularity"`
+	Current           StickinessSeriesPoint   `json:"current"`
+	Series            []StickinessSeriesPoint `json:"series"`
+	Cohorts           CohortRetentionMatrix   `json:"cohorts"`
 }

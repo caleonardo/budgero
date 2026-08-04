@@ -283,7 +283,7 @@ func (r *DatabaseBrowserRepository) UpdateRow(ctx context.Context, tableName str
 	}
 
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE %s", quoteIdentifier(tableName), strings.Join(setClauses, ", "), strings.Join(whereClauses, " AND ")) //nolint:gosec // G201: identifiers are properly quoted
-	args := append(updateValues, whereValues...) //nolint:gocritic // appendAssign: result is intentionally assigned to new slice
+	args := append(updateValues, whereValues...)                                                                                                       //nolint:gocritic // appendAssign: result is intentionally assigned to new slice
 
 	result, err := r.db.ExecContext(ctx, query, args...)
 	if err != nil {

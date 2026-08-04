@@ -21,9 +21,9 @@ const maxFeedbackBodyLen = 4096
 // ErrFeedbackBodyEmpty / ErrFeedbackCategoryInvalid surface as 400s from the
 // HTTP handler.
 var (
-	ErrFeedbackBodyEmpty      = errors.New("feedback body is empty")
+	ErrFeedbackBodyEmpty       = errors.New("feedback body is empty")
 	ErrFeedbackCategoryInvalid = errors.New("feedback category invalid")
-	ErrFeedbackBodyTooLong    = errors.New("feedback body too long")
+	ErrFeedbackBodyTooLong     = errors.New("feedback body too long")
 )
 
 // FeedbackService implements driving.FeedbackService.

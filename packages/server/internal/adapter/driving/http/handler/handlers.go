@@ -590,11 +590,6 @@ func (s *SubscriptionService) handleOrderCreated(ctx context.Context, event *lem
 		return errors.New("missing user_id in custom data")
 	}
 
-	// Respect early access mode flag
-	if s.cfg != nil && s.cfg.Features.EarlyAccessMode {
-		return nil
-	}
-
 	variantID := event.Data.Attributes.VariantID
 	if variantID == 0 {
 		return nil // No variant ID, likely subscription checkout

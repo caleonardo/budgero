@@ -8,11 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"budgero-server/internal/adapter/driven/mailerlite"
 	"budgero-server/internal/domain"
 
 	clerk "github.com/clerk/clerk-sdk-go/v2"
-	clerkuser "github.com/clerk/clerk-sdk-go/v2/user"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
@@ -235,91 +233,6 @@ func (h *Handlers) SyncClerkUsers(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// SyncMailerLiteWithClerkUsers ensures all Clerk users are subscribed in MailerLite.
-func (h *Handlers) SyncMailerLiteWithClerkUsers(c echo.Context) error {
-	if h.cfg.Auth.ClerkSecretKey == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "CLERK_SECRET_KEY not configured")
-	}
-	clerk.SetKey(h.cfg.Auth.ClerkSecretKey)
-
-	if !h.cfg.HasMailerLite() {
-		return echo.NewHTTPError(http.StatusBadRequest, "MAILERLITE_API_KEY not configured")
-	}
-
-	type Result struct {
-		TotalClerkUsers   int `json:"totalClerkUsers"`
-		Attempted         int `json:"attempted"`
-		Subscribed        int `json:"subscribed"`
-		AlreadySubscribed int `json:"alreadySubscribed"`
-		Skipped           int `json:"skipped"`
-		Failed            int `json:"failed"`
-	}
-
-	res := Result{}
-	seenEmails := make(map[string]struct{})
-
-	ctx := c.Request().Context()
-	page := int64(0)
-	limit := int64(100)
-
-	for {
-		params := &clerkuser.ListParams{}
-		params.Limit = clerk.Int64(limit)
-		params.Offset = clerk.Int64(page * limit)
-
-		list, err := clerkuser.List(ctx, params)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("failed to list clerk users: %v", err))
-		}
-		if len(list.Users) == 0 {
-			break
-		}
-
-		for _, cu := range list.Users {
-			res.TotalClerkUsers++
-
-			email := extractClerkEmail(cu)
-			cleanEmail := strings.TrimSpace(email)
-			lowerEmail := strings.ToLower(cleanEmail)
-			if cleanEmail == "" || lowerEmail == "" || strings.HasSuffix(lowerEmail, "@clerk.user") {
-				res.Skipped++
-				continue
-			}
-			if _, exists := seenEmails[lowerEmail]; exists {
-				res.Skipped++
-				continue
-			}
-			seenEmails[lowerEmail] = struct{}{}
-
-			name := extractClerkFullName(cu)
-
-			res.Attempted++
-			mlClient := mailerlite.NewClient(h.cfg.External.MailerLiteAPIKey, h.cfg.External.MailerLiteGroupID)
-			status, err := mlClient.AddSubscriber(cleanEmail, name)
-			if err != nil {
-				if status == http.StatusConflict {
-					res.AlreadySubscribed++
-					continue
-				}
-
-				res.Failed++
-				log.Warn().Err(err).
-					Str("clerk_user_id", cu.ID).
-					Str("email", cleanEmail).
-					Int("status", status).
-					Msg("Failed to sync Clerk user with MailerLite")
-				continue
-			}
-
-			res.Subscribed++
-		}
-
-		page++
-	}
-
-	return c.JSON(http.StatusOK, res)
-}
-
 // SyncLemonSqueezy refreshes subscription status for users with a subscription ID.
 func (h *Handlers) SyncLemonSqueezy(c echo.Context) error {
 	if err := h.ensureSubscriptionsEnabled(); err != nil {
@@ -445,25 +358,4 @@ func (h *Handlers) GetAdminStickinessAnalytics(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "analytics query failed")
 	}
 	return c.JSON(http.StatusOK, out)
-}
-
-func extractClerkFullName(cu *clerk.User) string {
-	name := ""
-	if cu.FirstName != nil && strings.TrimSpace(*cu.FirstName) != "" {
-		name = strings.TrimSpace(*cu.FirstName)
-	}
-	if cu.LastName != nil && strings.TrimSpace(*cu.LastName) != "" {
-		if name == "" {
-			name = strings.TrimSpace(*cu.LastName)
-		} else {
-			name = strings.TrimSpace(name + " " + *cu.LastName)
-		}
-	}
-	if name == "" && cu.Username != nil {
-		name = strings.TrimSpace(*cu.Username)
-	}
-	if name == "" {
-		name = "User"
-	}
-	return name
 }

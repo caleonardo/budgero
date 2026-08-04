@@ -16,7 +16,6 @@ import type {
   ClerkSyncResult,
   FeedbackBroadcastResult,
   FeedbackBroadcastStatus,
-  MailerLiteSyncResult,
   AnalyticsGranularity,
   StickinessAnalytics,
 } from '@features/admin/model/admin-dashboard';
@@ -58,7 +57,6 @@ export function useAdminApi() {
         apiClient.downloadBinary('/admin/selfhost/database/download', undefined, 0),
 
       syncClerkUsers: () => apiClient.post<ClerkSyncResult>('/admin/sync/clerk'),
-      syncMailerLite: () => apiClient.post<MailerLiteSyncResult>('/admin/sync/mailerlite'),
       syncLemonSqueezy: () => apiClient.post('/admin/sync/lemonsqueezy'),
 
       // Quarterly feedback broadcast (SaaS only). Sending walks all eligible

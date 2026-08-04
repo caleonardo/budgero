@@ -497,7 +497,6 @@ func (h *Handlers) GetDatabaseBlob(c echo.Context) error {
 	return c.File(blob.BlobPath)
 }
 
-
 // resolveUploadMutationVersion returns the mutation-log position an uploaded
 // blob corresponds to. Preferred source is the client's own cursor
 // (X-Mutation-Version — exact for debounced uploads). A malformed header is a

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { SignIn, SignUp } from '@clerk/clerk-react';
-import EarlyAccessBanner from '@features/subscription/ui/GlobalEarlyAccessBanner';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -62,7 +61,6 @@ export default function AuthPage() {
       </Helmet>
       <div className="min-h-screen flex flex-col">
         {/* Early Access Banner at top */}
-        <EarlyAccessBanner variant="top" dismissible={false} />
 
         <div className="flex-1 flex items-center justify-center bg-background px-4">
           <div className="w-full max-w-sm space-y-6">

@@ -193,9 +193,9 @@ func TestEntitlementService_CheckAndRevokeExpiredBeta(t *testing.T) {
 	future := time.Now().Add(24 * time.Hour)
 
 	tests := []struct {
-		name             string
-		user             *domain.User
-		wantBetaRevoked  bool
+		name            string
+		user            *domain.User
+		wantBetaRevoked bool
 	}{
 		{
 			name:            "nil user does nothing",
@@ -278,7 +278,7 @@ func TestEntitlementService_UpdateSubscription(t *testing.T) {
 			name:   "update to cancelled subscription",
 			userID: "user1",
 			update: domain.SubscriptionUpdate{
-				Status:          domain.SubscriptionCancelled,
+				Status:           domain.SubscriptionCancelled,
 				SubscriptionEnds: &future,
 			},
 			setup: func(r *fake.UserRepository) {
@@ -287,10 +287,10 @@ func TestEntitlementService_UpdateSubscription(t *testing.T) {
 			wantStatus: domain.SubscriptionCancelled,
 		},
 		{
-			name:   "update non-existent user fails",
-			userID: "nonexistent",
-			update: domain.SubscriptionUpdate{Status: domain.SubscriptionActive},
-			setup:  func(r *fake.UserRepository) {},
+			name:    "update non-existent user fails",
+			userID:  "nonexistent",
+			update:  domain.SubscriptionUpdate{Status: domain.SubscriptionActive},
+			setup:   func(r *fake.UserRepository) {},
 			wantErr: domain.ErrUserNotFound,
 		},
 		{

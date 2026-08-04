@@ -178,8 +178,8 @@ func TestExchangeRateService_EdgeCaseRates(t *testing.T) {
 	svc := application.NewExchangeRateService(rateRepo)
 
 	tests := []struct {
-		name   string
-		rate   float64
+		name string
+		rate float64
 	}{
 		{"very small rate", 0.0001},
 		{"rate equals 1", 1.0},

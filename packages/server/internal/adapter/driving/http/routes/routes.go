@@ -27,11 +27,8 @@ func SetupRoutes(e *echo.Echo, h *handler.Handlers, services *application.Servic
 	// Public routes (no auth required)
 	api.GET("/health", h.HealthCheck)
 	api.HEAD("/health", h.HealthCheck)
-	api.GET("/config", h.GetAppConfig)
 	api.GET("/version/latest", h.GetLatestVersion)
 
-	// Newsletter signup (public)
-	api.POST("/newsletter/subscribe", h.NewsletterSignup)
 	// Currency proxy/cache is public to support unauthenticated exchange-rate fetches from clients
 	api.GET("/exchange-rates", h.GetExchangeRates)
 
@@ -201,7 +198,6 @@ func SetupRoutes(e *echo.Echo, h *handler.Handlers, services *application.Servic
 
 	// Sync utilities
 	admin.POST("/sync/clerk", h.SyncClerkUsers)
-	admin.POST("/sync/mailerlite", h.SyncMailerLiteWithClerkUsers)
 	if !opts.SelfHost {
 		admin.POST("/sync/lemonsqueezy", h.SyncLemonSqueezy)
 	}

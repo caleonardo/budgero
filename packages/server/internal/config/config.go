@@ -76,8 +76,6 @@ type LemonSqueezyConfig struct {
 type FeatureConfig struct {
 
 	// Early access
-	EarlyAccessMode    bool   `env:"EARLY_ACCESS_MODE" envDefault:"false"`
-	EarlyAccessMessage string `env:"EARLY_ACCESS_MESSAGE"`
 
 	// Trial
 	TrialDurationDays int `env:"TRIAL_DURATION_DAYS" envDefault:"35"`
@@ -106,8 +104,6 @@ type ExternalConfig struct {
 	CurrencyLayerAPIKey string `env:"CURRENCYLAYER_API_KEY"`
 
 	// Newsletter
-	MailerLiteAPIKey  string `env:"MAILERLITE_API_KEY"`
-	MailerLiteGroupID string `env:"MAILERLITE_GROUP_ID"`
 
 	// Offline mode signing
 	OfflineECDSAPrivPEM  string `env:"OFFLINE_ECDSA_PRIV_PEM"`
@@ -227,11 +223,6 @@ func (c *Config) IsAdmin(email string) bool {
 // HasLemonSqueezy returns true if LemonSqueezy is configured.
 func (c *Config) HasLemonSqueezy() bool {
 	return c.LemonSqueezy.APIKey != ""
-}
-
-// HasMailerLite returns true if MailerLite is configured.
-func (c *Config) HasMailerLite() bool {
-	return c.External.MailerLiteAPIKey != ""
 }
 
 // HasEmail returns true if transactional email is enabled and the Resend

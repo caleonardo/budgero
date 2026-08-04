@@ -23,15 +23,6 @@ export interface ClerkSyncResult {
   Updated: number;
 }
 
-export interface MailerLiteSyncResult {
-  totalClerkUsers: number;
-  attempted: number;
-  subscribed: number;
-  alreadySubscribed: number;
-  skipped: number;
-  failed: number;
-}
-
 export interface FeedbackBroadcastStatus {
   quarter: string;
   eligible: number;

@@ -85,8 +85,3 @@ export interface User {
   is_analytics_disabled?: boolean;
   preferences?: UserPreferences;
 }
-
-export interface AppConfig {
-  early_access_mode: boolean;
-  early_access_message: string;
-}

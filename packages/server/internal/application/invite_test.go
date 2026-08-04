@@ -305,12 +305,12 @@ func TestListInvitesUsecase_Execute(t *testing.T) {
 	future := time.Now().Add(24 * time.Hour)
 
 	tests := []struct {
-		name        string
-		setup       func(*fake.SpaceRepository)
-		userID      string
-		spaceID     string
-		wantCount   int
-		wantErr     error
+		name      string
+		setup     func(*fake.SpaceRepository)
+		userID    string
+		spaceID   string
+		wantCount int
+		wantErr   error
 	}{
 		{
 			name: "member can list invites",

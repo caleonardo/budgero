@@ -1,4 +1,3 @@
-import type { AppConfig } from '@shared/model/auth';
 import type {
   BudgetSpaceSummary,
   BudgetSpaceMember,
@@ -472,16 +471,6 @@ export const spaceApi = {
       invite_secret: inviteSecret,
       encrypted_space_key: encryptedSpaceKey,
     }),
-};
-
-// App config + newsletter API. (The beta invite-code redemption methods were
-// removed when the beta program ended; admin-granted free access lives under
-// the admin API.)
-export const betaApi = {
-  getConfig: () => apiClient.get<AppConfig>('/config'),
-
-  subscribeNewsletter: (email: string, name?: string) =>
-    apiClient.post<{ success: boolean; message: string }>('/newsletter/subscribe', { email, name }),
 };
 
 export interface LatestVersionInfo {

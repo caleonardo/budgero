@@ -3,7 +3,6 @@ import { MobileTopBar } from '@widgets/navigation/MobileTopBar';
 import { Outlet } from 'react-router-dom';
 import { useIsMobile } from '@shared/hooks/useIsMobile';
 import { DesktopShell } from '@/app/layout/desktop-shell';
-import EarlyAccessBanner from '@features/subscription/ui/GlobalEarlyAccessBanner';
 import { TrialEndingBanner } from '@features/subscription/ui/TrialEndingBanner';
 import { UpdateAvailableBanner } from '@features/app-update/ui/UpdateAvailableBanner';
 import { cn } from '@shared/lib/utils';
@@ -16,7 +15,6 @@ export default function DashboardLayout() {
   return (
     <div className="flex min-h-screen flex-col relative">
       {/* Show early access banner at the very top */}
-      <EarlyAccessBanner variant="top" dismissible />
 
       {/* Trial-ending banner — shows in the last 2 days of the trial */}
       <TrialEndingBanner />

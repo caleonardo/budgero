@@ -338,15 +338,6 @@ func (h *Handlers) GetAvailablePlans(c echo.Context) error {
 		return err
 	}
 
-	earlyAccessMode := h.cfg.Features.EarlyAccessMode
-	if earlyAccessMode {
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"plans":             []map[string]interface{}{},
-			"early_access_mode": true,
-			"message":           "Access is currently invite-only during early access",
-		})
-	}
-
 	if !h.subscriptionSvc.IsEnabled() {
 		return echo.NewHTTPError(http.StatusServiceUnavailable, "subscription catalog unavailable")
 	}
@@ -389,8 +380,7 @@ func (h *Handlers) GetAvailablePlans(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"plans":             plans,
-		"early_access_mode": false,
+		"plans": plans,
 	})
 }
 

@@ -10,8 +10,7 @@ import {
   useSubscriptionDetails,
   useCreateCheckout,
 } from '@features/subscription/api/useSubscription';
-import { useQuery } from '@tanstack/react-query';
-import { betaApi } from '@shared/api/api-client';
+
 import { capitalize } from '@shared/lib/utils';
 import { useConnectivity } from '@shared/hooks/useConnectivity';
 import {
@@ -36,12 +35,6 @@ export function useSubscriptionViewModel() {
   const subscriptionDetails = subscriptionDetailsResponse?.subscription ?? null;
   const { data: invoicesData, isLoading: invoicesLoading } = useSubscriptionInvoices();
   const { data: plansData } = useSubscriptionPlans();
-  const { data: appConfig } = useQuery({
-    queryKey: ['app-config'],
-    queryFn: betaApi.getConfig,
-    staleTime: 1000 * 60 * 30, // 30 minutes
-  });
-
   const cancelMutation = useCancelSubscription();
   const resumeMutation = useResumeSubscription();
   const updatePlanMutation = useUpdateSubscriptionPlan();
@@ -145,8 +138,7 @@ export function useSubscriptionViewModel() {
   const canStartSubscription =
     shouldOfferCheckoutForStatus(effectiveSubscriptionStatus) &&
     !isFoundingMember &&
-    !hasBetaAccess &&
-    appConfig?.early_access_mode !== true;
+    !hasBetaAccess;
 
   const currentPeriodEndString =
     subscriptionDetails?.current_period_end ?? user?.current_period_end ?? null;
@@ -238,7 +230,6 @@ export function useSubscriptionViewModel() {
     user,
     userLoading,
     subscriptionDetails,
-    appConfig,
 
     invoices,
     invoicesLoading,

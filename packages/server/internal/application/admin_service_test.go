@@ -256,12 +256,12 @@ func TestAdminService_RevokeAllAccess(t *testing.T) {
 	subID := testSubscriptionID
 	custID := testCustomerID
 	_, _ = userRepo.Create(ctx, &domain.User{
-		ID:                    testUserID,
-		SubscriptionStatus:    domain.SubscriptionActive,
-		SubscriptionID:        &subID,
-		CustomerID:            &custID,
-		HasBetaAccess:         true,
-		IsFoundingMember:      true,
+		ID:                     testUserID,
+		SubscriptionStatus:     domain.SubscriptionActive,
+		SubscriptionID:         &subID,
+		CustomerID:             &custID,
+		HasBetaAccess:          true,
+		IsFoundingMember:       true,
 		HasCollaborationAccess: true,
 	})
 
@@ -388,11 +388,11 @@ func TestAdminService_BackfillTrialForInactiveUsers(t *testing.T) {
 	svc := application.NewAdminService(adminRepo)
 
 	// Create users with different states
-	_, _ = userRepo.Create(ctx, &domain.User{ID: "user1", Email: "user1@example.com"})                                       // Inactive - should get trial
-	_, _ = userRepo.Create(ctx, &domain.User{ID: "user2", Email: "user2@example.com"})                                       // Inactive - should get trial
+	_, _ = userRepo.Create(ctx, &domain.User{ID: "user1", Email: "user1@example.com"})                                                // Inactive - should get trial
+	_, _ = userRepo.Create(ctx, &domain.User{ID: "user2", Email: "user2@example.com"})                                                // Inactive - should get trial
 	_, _ = userRepo.Create(ctx, &domain.User{ID: "user3", Email: "user3@example.com", SubscriptionStatus: domain.SubscriptionActive}) // Active - no change
-	_, _ = userRepo.Create(ctx, &domain.User{ID: "user4", Email: "user4@example.com", IsFoundingMember: true})               // Founding - no change
-	_, _ = userRepo.Create(ctx, &domain.User{ID: "user5", Email: "user5@example.com", HasBetaAccess: true})                  // Beta - no change
+	_, _ = userRepo.Create(ctx, &domain.User{ID: "user4", Email: "user4@example.com", IsFoundingMember: true})                        // Founding - no change
+	_, _ = userRepo.Create(ctx, &domain.User{ID: "user5", Email: "user5@example.com", HasBetaAccess: true})                           // Beta - no change
 
 	count, err := svc.BackfillTrialForInactiveUsers(ctx, 14)
 	if err != nil {

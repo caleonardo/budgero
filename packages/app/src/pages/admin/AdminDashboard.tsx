@@ -13,7 +13,6 @@ import {
   UserCheck,
   UserX,
   RefreshCw,
-  Mail,
   MailQuestion,
   Send,
 } from 'lucide-react';
@@ -30,7 +29,6 @@ import type {
   ClerkSyncResult,
   FeedbackBroadcastResult,
   FeedbackBroadcastStatus,
-  MailerLiteSyncResult,
 } from '@features/admin/model/admin-dashboard';
 
 export default function AdminDashboard() {
@@ -38,11 +36,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [syncingClerk, setSyncingClerk] = useState(false);
-  const [syncingMailerLite, setSyncingMailerLite] = useState(false);
   const [clerkSyncResult, setClerkSyncResult] = useState<ClerkSyncResult | null>(null);
-  const [mailerLiteSyncResult, setMailerLiteSyncResult] = useState<MailerLiteSyncResult | null>(
-    null
-  );
   const [feedbackStatus, setFeedbackStatus] = useState<FeedbackBroadcastStatus | null>(null);
   const [sendingFeedback, setSendingFeedback] = useState(false);
   const [feedbackResult, setFeedbackResult] = useState<FeedbackBroadcastResult | null>(null);
@@ -78,28 +72,6 @@ export default function AdminDashboard() {
       });
     } finally {
       setSyncingClerk(false);
-    }
-  }, [adminApi]);
-
-  const handleSyncMailerLite = useCallback(async () => {
-    try {
-      setSyncingMailerLite(true);
-      const result: MailerLiteSyncResult = await adminApi.syncMailerLite();
-      setMailerLiteSyncResult(result);
-      toast.success('MailerLite sync complete', {
-        description: `Attempted ${result.attempted ?? 0}, subscribed ${
-          result.subscribed ?? 0
-        }, already subscribed ${result.alreadySubscribed ?? 0}, skipped ${
-          result.skipped ?? 0
-        }, failed ${result.failed ?? 0}.`,
-      });
-    } catch (error) {
-      console.error('Failed to sync MailerLite subscribers:', error);
-      toast.error('MailerLite sync failed', {
-        description: 'Unable to sync MailerLite subscribers. Check server logs for details.',
-      });
-    } finally {
-      setSyncingMailerLite(false);
     }
   }, [adminApi]);
 
@@ -229,7 +201,7 @@ export default function AdminDashboard() {
       <Card>
         <CardHeader>
           <CardTitle>Sync Utilities</CardTitle>
-          <CardDescription>Keep Clerk users aligned with Budgero and MailerLite.</CardDescription>
+          <CardDescription>Keep Clerk users aligned with Budgero.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
@@ -253,37 +225,6 @@ export default function AdminDashboard() {
                 <Button size="sm" onClick={handleSyncClerkUsers} disabled={syncingClerk}>
                   <RefreshCw className={cn('mr-2 h-4 w-4', syncingClerk && 'animate-spin')} />
                   {syncingClerk ? 'Syncing...' : 'Sync Clerk Users'}
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 rounded-lg border p-4">
-              <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-muted-foreground" />
-                <div className="space-y-1">
-                  <p className="font-medium">Sync MailerLite</p>
-                  <p className="text-sm text-muted-foreground">
-                    Subscribe Clerk user emails into your MailerLite audience.
-                  </p>
-                </div>
-              </div>
-              {mailerLiteSyncResult && (
-                <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                  Attempted {mailerLiteSyncResult.attempted ?? 0} | Subscribed{' '}
-                  {mailerLiteSyncResult.subscribed ?? 0} | Already{' '}
-                  {mailerLiteSyncResult.alreadySubscribed ?? 0} | Skipped{' '}
-                  {mailerLiteSyncResult.skipped ?? 0} | Failed {mailerLiteSyncResult.failed ?? 0}
-                </div>
-              )}
-              <div>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={handleSyncMailerLite}
-                  disabled={syncingMailerLite}
-                >
-                  <RefreshCw className={cn('mr-2 h-4 w-4', syncingMailerLite && 'animate-spin')} />
-                  {syncingMailerLite ? 'Syncing...' : 'Sync MailerLite'}
                 </Button>
               </div>
             </div>

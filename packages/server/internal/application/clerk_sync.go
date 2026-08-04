@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"budgero-server/internal/adapter/driven/mailerlite"
 	emailpkg "budgero-server/internal/application/email"
 	"budgero-server/internal/config"
 	"budgero-server/internal/domain"
@@ -185,20 +184,8 @@ func (uc *ClerkSyncUsecase) findOrCreateUser(ctx context.Context, clerkID string
 	// next pass once a real address is in place (see WelcomeCatchup).
 	if isPlaceholderEmail(email) {
 		log.Info().Str("user_id", created.ID).
-			Msg("Skipping welcome email + MailerLite for placeholder email; will retry once Clerk sync provides the real address")
+			Msg("Skipping welcome email for placeholder email; will retry once Clerk sync provides the real address")
 		return created, nil
-	}
-
-	// Add new user to MailerLite asynchronously
-	if uc.cfg.HasMailerLite() {
-		go func() {
-			client := mailerlite.NewClient(uc.cfg.External.MailerLiteAPIKey, uc.cfg.External.MailerLiteGroupID)
-			if _, err := client.AddSubscriber(email, name); err != nil {
-				log.Warn().Err(err).Str("email", email).Msg("Failed to add new user to MailerLite")
-			} else {
-				log.Info().Str("email", email).Msg("Added new user to MailerLite")
-			}
-		}()
 	}
 
 	// Fire welcome email asynchronously. If this goroutine's send fails

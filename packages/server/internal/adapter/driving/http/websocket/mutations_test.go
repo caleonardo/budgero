@@ -314,7 +314,6 @@ func TestMutationLog_GetLatestVersion(t *testing.T) {
 	}
 }
 
-
 func TestMutationLog_ResetSpace(t *testing.T) {
 	db := newTestDB(t)
 	ml, err := websocket.NewMutationLog(db)

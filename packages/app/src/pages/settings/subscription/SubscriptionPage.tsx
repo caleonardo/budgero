@@ -1,5 +1,4 @@
 import { format } from 'date-fns';
-import { EarlyAccessBanner } from '@features/subscription/ui/EarlyAccessBanner';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Calendar, WifiOff } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -14,7 +13,7 @@ import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
 export default function SubscriptionPage() {
   const vm = useSubscriptionViewModel();
 
-  const { user, userLoading, appConfig, requiresOnline, hasBetaAccess } = vm;
+  const { user, userLoading, requiresOnline } = vm;
 
   if (requiresOnline) {
     return (
@@ -51,11 +50,6 @@ export default function SubscriptionPage() {
         title="Subscription"
         description="Manage your Budgero subscription and billing preferences"
       />
-
-      {/* Early Access Mode Banner */}
-      {appConfig?.early_access_mode && !hasBetaAccess && !user.is_founding_member && (
-        <EarlyAccessBanner message={appConfig.early_access_message} />
-      )}
 
       {/* Current Status Card */}
       <SubscriptionStatusCard vm={vm} />
