@@ -70,6 +70,14 @@ func (s *Scheduler) tick(ctx context.Context) {
 	s.runFlow(ctx, "day2_feedback", func(ctx context.Context) ([]Candidate, error) {
 		return s.store.Day2FeedbackCandidates(ctx, now)
 	}, TemplateDay2Feedback)
+
+	s.runFlow(ctx, "trial_ending_day33", func(ctx context.Context) ([]Candidate, error) {
+		return s.store.Day33Candidates(ctx, now)
+	}, TemplateTrialEndingDay33)
+
+	s.runFlow(ctx, "trial_ending_day35", func(ctx context.Context) ([]Candidate, error) {
+		return s.store.Day35Candidates(ctx, now)
+	}, TemplateTrialEndingDay35)
 }
 
 func (s *Scheduler) runFlow(

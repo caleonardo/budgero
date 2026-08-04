@@ -31,7 +31,9 @@ import (
 // DO NOT rename these strings; doing so will make the scheduler think old
 // recipients haven't been emailed and it will re-send.
 const (
-	TemplateWelcome = "welcome"
+	TemplateWelcome          = "welcome"
+	TemplateTrialEndingDay33 = "trial_ending_day33"
+	TemplateTrialEndingDay35 = "trial_ending_day35"
 	// Rendered per broadcast; the sent_emails dedup key is quarter-stamped
 	// (see QuarterKey), so the same template can be re-sent each quarter.
 	TemplateQuarterlyFeedback = "quarterly_feedback"
@@ -104,6 +106,8 @@ func NewRenderer(cfg *config.Config) (*Service, error) {
 func AllTemplates() []string {
 	return []string{
 		TemplateWelcome,
+		TemplateTrialEndingDay33,
+		TemplateTrialEndingDay35,
 		TemplateQuarterlyFeedback,
 		TemplateDay2Feedback,
 	}
@@ -215,6 +219,10 @@ func (s *Service) buildData(templateName, firstName string) renderData {
 	switch templateName {
 	case TemplateWelcome:
 		data.Subject = "Welcome to Budgero"
+	case TemplateTrialEndingDay33:
+		data.Subject = "2 days left in your Budgero trial"
+	case TemplateTrialEndingDay35:
+		data.Subject = "Your Budgero trial ends today"
 	case TemplateQuarterlyFeedback:
 		data.Subject = "How's Budgero working for you?"
 	case TemplateDay2Feedback:
@@ -245,6 +253,8 @@ func parseTemplates() (map[string]*template.Template, error) {
 
 	templates := map[string]string{
 		TemplateWelcome:           "templates/welcome.html",
+		TemplateTrialEndingDay33:  "templates/trial_ending_day33.html",
+		TemplateTrialEndingDay35:  "templates/trial_ending_day35.html",
 		TemplateQuarterlyFeedback: "templates/quarterly_feedback.html",
 		TemplateDay2Feedback:      "templates/day2_feedback.html",
 	}

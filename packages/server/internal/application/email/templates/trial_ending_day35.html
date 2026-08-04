@@ -1,0 +1,34 @@
+{{define "edition"}}No. 05 · Trial ending today{{end}}
+
+{{define "content"}}
+<p class="eyebrow">Last day</p>
+
+<h1 class="hed">Your trial ends today{{if .FirstName}}, {{.FirstName}}{{end}}.</h1>
+
+<p class="dek">
+  Thirty-five days. We hope it was useful. If it was, the next step is
+  picking a plan; if not, no hard feelings, and your encrypted data
+  remains yours either way.
+</p>
+
+<p class="body">
+  After today, the app falls back to read-only until you subscribe.
+  Your data stays encrypted and intact — you can pick up where you
+  left off any time.
+</p>
+
+<div class="btn-wrap">
+  <a href="{{.AppURL}}/settings/subscription" target="_blank" rel="noopener">Subscribe →</a>
+</div>
+
+<p class="section-label">Have feedback?</p>
+<p class="body">
+  If something's missing, broken, or just not for you, I read every
+  reply: <a href="mailto:hello@budgero.app">hello@budgero.app</a>.
+</p>
+{{end}}
+
+{{define "footer"}}
+You're getting this because your Budgero trial ends today.
+Questions: <a href="mailto:hello@budgero.app">hello@budgero.app</a>.
+{{end}}

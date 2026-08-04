@@ -1,0 +1,27 @@
+{{define "edition"}}No. 04 · 2 days left{{end}}
+
+{{define "content"}}
+<p class="eyebrow">Trial ending soon</p>
+
+<h1 class="hed">Two days left{{if .FirstName}}, {{.FirstName}}{{end}}.</h1>
+
+<p class="dek">
+  Your Budgero trial wraps up in a couple of days. If you've been on
+  the fence, this is the gentle nudge.
+</p>
+
+<p class="body">
+  Subscribing now keeps your encrypted budget, your rules, and your
+  history exactly where they are. One flat price, tax included. Cancel
+  any time; we don't make that hard.
+</p>
+
+<div class="btn-wrap">
+  <a href="{{.AppURL}}/settings/subscription" target="_blank" rel="noopener">Subscribe →</a>
+</div>
+{{end}}
+
+{{define "footer"}}
+You're getting this because your Budgero trial ends in two days.
+Questions: <a href="mailto:hello@budgero.app">hello@budgero.app</a>.
+{{end}}

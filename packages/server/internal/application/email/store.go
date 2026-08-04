@@ -107,6 +107,44 @@ func (s *Store) Day2FeedbackCandidates(ctx context.Context, now time.Time) ([]Ca
 	`, windowStart, windowEnd, TemplateDay2Feedback)
 }
 
+// Day33Candidates finds users whose trial_ends_at is between 45h and 48h in
+// the future (i.e. the last 3h before the official "2 days left" mark), who
+// haven't subscribed and haven't been emailed yet. The 3h window catches
+// scheduler ticks running on a 10-minute cadence.
+func (s *Store) Day33Candidates(ctx context.Context, now time.Time) ([]Candidate, error) {
+	windowStart := now.Add(45 * time.Hour).UTC()
+	windowEnd := now.Add(48 * time.Hour).UTC()
+	return s.queryCandidates(ctx, `
+		SELECT u.id, u.email, u.name
+		FROM users u
+		WHERE u.trial_ends_at BETWEEN ? AND ?
+		  AND u.subscription_status IN ('on_trial', 'trialing')
+		  AND u.email NOT LIKE '%@clerk.user'
+		  AND NOT EXISTS (
+		    SELECT 1 FROM sent_emails s
+		    WHERE s.user_id = u.id AND s.template = ?
+		  )
+	`, windowStart, windowEnd, TemplateTrialEndingDay33)
+}
+
+// Day35Candidates finds users whose trial just ended in the last 3h (so we
+// fire the "ends today" email on the day-of).
+func (s *Store) Day35Candidates(ctx context.Context, now time.Time) ([]Candidate, error) {
+	windowStart := now.Add(-3 * time.Hour).UTC()
+	windowEnd := now.UTC()
+	return s.queryCandidates(ctx, `
+		SELECT u.id, u.email, u.name
+		FROM users u
+		WHERE u.trial_ends_at BETWEEN ? AND ?
+		  AND u.subscription_status IN ('on_trial', 'trialing', 'expired', 'inactive')
+		  AND u.email NOT LIKE '%@clerk.user'
+		  AND NOT EXISTS (
+		    SELECT 1 FROM sent_emails s
+		    WHERE s.user_id = u.id AND s.template = ?
+		  )
+	`, windowStart, windowEnd, TemplateTrialEndingDay35)
+}
+
 // FeedbackBroadcastCandidates finds users with any activity heartbeat since
 // activeSince (user_daily_activity.day is a YYYY-MM-DD string) who haven't
 // yet received the broadcast identified by dedupKey.
