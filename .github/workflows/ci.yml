@@ -40,6 +40,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # core and runtime dist must exist before type-check: app resolves
+      # @budgero/core against ../core/dist
+      - name: Build core
+        run: pnpm run build:core
+
+      - name: Build runtime
+        run: pnpm run build:runtime
+
       - name: Type-check
         run: pnpm run type-check:all
 
@@ -60,9 +68,6 @@ jobs:
 
       - name: Test app
         run: pnpm run test:app
-
-      - name: Build core
-        run: pnpm run build:core
 
       - name: Build app + server binary
         run: pnpm run build:app
