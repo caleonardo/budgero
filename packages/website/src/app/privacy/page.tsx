@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
         <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/50 dark:border-gray-700/50">
           <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-2">Privacy Policy</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-1">
-            <strong>Last updated:</strong> 29 April 2026
+            <strong>Last updated:</strong> 4 August 2026
           </p>
           <p className="text-gray-600 dark:text-gray-400 mb-8">
             <strong>Effective:</strong> 29 April 2026
@@ -150,7 +150,7 @@ export default function PrivacyPolicy() {
             <h3>3.4 Service-email metadata</h3>
             <ul>
               <li>
-                Send/open/bounce events for transactional emails (welcome, trial-ended, inactivity,
+                Send/open/bounce events for transactional emails (welcome, feedback check-ins,
                 password reset, billing receipts)
               </li>
             </ul>
@@ -236,7 +236,7 @@ export default function PrivacyPolicy() {
                 </tr>
                 <tr>
                   <td>
-                    Send service emails (welcome, trial-ended, inactivity, security, billing
+                    Send service emails (welcome, feedback check-ins, security, billing
                     receipts)
                   </td>
                   <td>Email + send/open/bounce metadata</td>
