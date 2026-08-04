@@ -5,11 +5,41 @@ import (
 	"database/sql"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"budgero-server/internal/adapter/driven/sqlite/sqlc"
 	"budgero-server/internal/domain"
 )
+
+// anyToPeriodString safely converts the interface{} period column (sqlc
+// can't infer a concrete type for strftime output) into a clean string.
+func anyToPeriodString(v interface{}) string {
+	switch s := v.(type) {
+	case string:
+		return s
+	case []byte:
+		return strings.TrimSpace(string(s))
+	case nil:
+		return ""
+	default:
+		return fmt.Sprintf("%v", s)
+	}
+}
+
+// strftimeFormatFor returns the SQLite strftime format string for a
+// granularity. Output strings sort lexicographically — e.g. "2026-W17"
+// sorts before "2026-W18".
+func strftimeFormatFor(g domain.AnalyticsGranularity) string {
+	switch g {
+	case domain.AnalyticsGranularityWeekly:
+		return "%Y-W%W"
+	case domain.AnalyticsGranularityMonthly:
+		return "%Y-%m"
+	default:
+		return "%Y-%m-%d"
+	}
+}
 
 // GetStickinessAnalytics computes a DAU/MAU stickiness time series and a
 // signup-cohort retention matrix.

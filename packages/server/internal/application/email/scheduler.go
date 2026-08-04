@@ -70,58 +70,6 @@ func (s *Scheduler) tick(ctx context.Context) {
 	s.runFlow(ctx, "day2_feedback", func(ctx context.Context) ([]Candidate, error) {
 		return s.store.Day2FeedbackCandidates(ctx, now)
 	}, TemplateDay2Feedback)
-
-	s.runFlow(ctx, "inactivity", func(ctx context.Context) ([]Candidate, error) {
-		return s.store.InactivityCandidates(ctx, now)
-	}, TemplateInactivity)
-
-	s.runFlow(ctx, "trial_ended", func(ctx context.Context) ([]Candidate, error) {
-		return s.store.TrialEndedCandidates(ctx, now)
-	}, TemplateTrialEnded)
-
-	s.runPersonalizedFlow(ctx, "trial_ending_day33", func(ctx context.Context) ([]PersonalizedCandidate, error) {
-		return s.store.Day33Candidates(ctx, now)
-	}, TemplateTrialEndingDay33)
-
-	s.runPersonalizedFlow(ctx, "trial_ending_day35", func(ctx context.Context) ([]PersonalizedCandidate, error) {
-		return s.store.Day35Candidates(ctx, now)
-	}, TemplateTrialEndingDay35)
-}
-
-func (s *Scheduler) runPersonalizedFlow(
-	ctx context.Context,
-	flowName string,
-	fetch func(context.Context) ([]PersonalizedCandidate, error),
-	template string,
-) {
-	candidates, err := fetch(ctx)
-	if err != nil {
-		log.Error().Err(err).Str("flow", flowName).Msg("email scheduler: fetch failed")
-		return
-	}
-	if len(candidates) == 0 {
-		return
-	}
-	log.Info().Str("flow", flowName).Int("count", len(candidates)).
-		Msg("email scheduler: sending personalized batch")
-
-	for _, c := range candidates {
-		if ctx.Err() != nil {
-			return
-		}
-		firstName := strutil.FirstWord(c.FirstName)
-		p := PersonalizationData{
-			UnlockCode: c.UnlockCode,
-			Tier:       c.Tier,
-			PercentOff: c.PercentOff,
-			ValidUntil: c.ValidUntil,
-		}
-		if err := s.svc.SendOnceWithPersonalization(ctx, c.UserID, c.Email, firstName, template, p); err != nil {
-			log.Error().Err(err).Str("flow", flowName).
-				Str("user_id", c.UserID).Str("to", c.Email).
-				Msg("email scheduler: send failed")
-		}
-	}
 }
 
 func (s *Scheduler) runFlow(

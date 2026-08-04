@@ -136,12 +136,11 @@ type WebSocketConfig struct {
 // The welcome email gets Reply-To; the marketing emails (inactivity,
 // trial-ended) do not — their footer points users at hello@ instead.
 type EmailConfig struct {
-	ResendAPIKey      string `env:"RESEND_API_KEY"`
-	FromAddress       string `env:"EMAIL_FROM" envDefault:"Budgero <updates@updates.budgero.app>"`
-	ReplyTo           string `env:"EMAIL_REPLY_TO" envDefault:"hello@budgero.app"`
-	Enabled           bool   `env:"EMAIL_ENABLED" envDefault:"true"`
-	DryRun            bool   `env:"EMAIL_DRY_RUN" envDefault:"false"`
-	TrialDiscountCode string `env:"EMAIL_TRIAL_DISCOUNT_CODE" envDefault:"COMEBACK30"`
+	ResendAPIKey string `env:"RESEND_API_KEY"`
+	FromAddress  string `env:"EMAIL_FROM" envDefault:"Budgero <updates@updates.budgero.app>"`
+	ReplyTo      string `env:"EMAIL_REPLY_TO" envDefault:"hello@budgero.app"`
+	Enabled      bool   `env:"EMAIL_ENABLED" envDefault:"true"`
+	DryRun       bool   `env:"EMAIL_DRY_RUN" envDefault:"false"`
 	// AppURL is the base URL used in email CTAs. Intentionally decoupled
 	// from Server.AppURL (which is "http://localhost:5173" in dev) so
 	// emails sent from a dev box still link to the real app.

@@ -36,7 +36,6 @@ type User struct {
 	WhereHeardAbout             string     `json:"where_heard_about,omitempty"`
 	HasCollaborationAccess      bool       `json:"has_collaboration_access"`
 	IsAnalyticsDisabled         bool       `json:"is_analytics_disabled"`
-	IsTrialSignalsDisabled      bool       `json:"is_trial_signals_disabled"`
 }
 
 // UserPreferences stores UI and appearance preferences synced per-user.

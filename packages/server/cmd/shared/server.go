@@ -17,7 +17,6 @@ import (
 	"time"
 
 	serverpkg "budgero-server"
-	"budgero-server/internal/adapter/driven/lemonsqueezy"
 	"budgero-server/internal/adapter/driven/sqlite"
 	"budgero-server/internal/adapter/driven/updatecheck"
 	"budgero-server/internal/adapter/driven/sqlite/sqlc"
@@ -199,12 +198,6 @@ func Run(selfHost bool) {
 		if emailSvc != nil {
 			scheduler := emailpkg.NewScheduler(emailSvc, emailStore)
 			go scheduler.Run(context.Background())
-			// Wire the email service into the trial-rewards service so
-			// tier-unlock emails fire when a user reaches a level. Same
-			// late-injection pattern as ClerkSync.
-			if trs, ok := services.TrialRewards.(*application.TrialRewardsService); ok {
-				trs.SetEmailService(emailSvc)
-			}
 		}
 	}
 
@@ -278,20 +271,9 @@ func WireServices(dbConn *sql.DB, cfg *config.Config, selfHost bool) *applicatio
 		Activity:        sqlite.NewActivityRepository(dbConn, queries),
 		Admin:           sqlite.NewAdminRepository(queries),
 		DatabaseBrowser: sqlite.NewDatabaseBrowserRepository(dbConn),
-		TrialRewards:    sqlite.NewTrialRewardsRepository(queries),
 		Feedback:        sqlite.NewFeedbackRepository(dbConn),
 		UpdatePing:      sqlite.NewUpdatePingRepository(dbConn),
 		Queries:         queries,
-	}
-
-	// Wire the LemonSqueezy-backed discount issuer for SaaS only. Self-host
-	// has no payment provider, so the issuer stays nil and the trial-rewards
-	// service mints local codes only (the rewards endpoints are gated off in
-	// self-host anyway).
-	if !selfHost {
-		lsClient := lemonsqueezy.NewClientWithConfig(cfg)
-		lsCache := lemonsqueezy.NewProductCache(lsClient)
-		repos.DiscountIssuer = lemonsqueezy.NewDiscountIssuer(lsClient, lsCache)
 	}
 
 	return application.NewServices(repos, cfg)

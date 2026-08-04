@@ -112,8 +112,6 @@ SELECT * FROM users ORDER BY created_at DESC;
 -- name: SetAnalyticsDisabled :exec
 UPDATE users SET is_analytics_disabled = ? WHERE id = ?;
 
--- name: SetTrialSignalsDisabled :exec
-UPDATE users SET is_trial_signals_disabled = ? WHERE id = ?;
 
 -- name: ClearDanglingPrimarySpaceIDs :exec
 UPDATE users SET primary_space_id = NULL

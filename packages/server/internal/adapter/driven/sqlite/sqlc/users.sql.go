@@ -64,7 +64,7 @@ INSERT INTO users (
     subscription_status, trial_ends_at, created_at, primary_space_id,
     current_db_hash, sync_version, is_analytics_disabled
 ) VALUES (?, ?, ?, '', 0, ?, ?, ?, NULL, '', 0, 1)
-RETURNING id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about, is_trial_signals_disabled
+RETURNING id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about
 `
 
 type CreateUserParams struct {
@@ -119,7 +119,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.IsAnalyticsDisabled,
 		&i.SubscribedAt,
 		&i.WhereHeardAbout,
-		&i.IsTrialSignalsDisabled,
 	)
 	return i, err
 }
@@ -134,7 +133,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 }
 
 const getUserByCustomerID = `-- name: GetUserByCustomerID :one
-SELECT id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about, is_trial_signals_disabled FROM users WHERE customer_id = ?
+SELECT id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about FROM users WHERE customer_id = ?
 `
 
 func (q *Queries) GetUserByCustomerID(ctx context.Context, customerID sql.NullString) (User, error) {
@@ -170,13 +169,12 @@ func (q *Queries) GetUserByCustomerID(ctx context.Context, customerID sql.NullSt
 		&i.IsAnalyticsDisabled,
 		&i.SubscribedAt,
 		&i.WhereHeardAbout,
-		&i.IsTrialSignalsDisabled,
 	)
 	return i, err
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about, is_trial_signals_disabled FROM users WHERE email = ?
+SELECT id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about FROM users WHERE email = ?
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
@@ -212,13 +210,12 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.IsAnalyticsDisabled,
 		&i.SubscribedAt,
 		&i.WhereHeardAbout,
-		&i.IsTrialSignalsDisabled,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about, is_trial_signals_disabled FROM users WHERE id = ?
+SELECT id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about FROM users WHERE id = ?
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, id string) (User, error) {
@@ -254,7 +251,6 @@ func (q *Queries) GetUserByID(ctx context.Context, id string) (User, error) {
 		&i.IsAnalyticsDisabled,
 		&i.SubscribedAt,
 		&i.WhereHeardAbout,
-		&i.IsTrialSignalsDisabled,
 	)
 	return i, err
 }
@@ -296,7 +292,7 @@ func (q *Queries) IsUserBlocked(ctx context.Context, id string) (bool, error) {
 }
 
 const listAllUsers = `-- name: ListAllUsers :many
-SELECT id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about, is_trial_signals_disabled FROM users ORDER BY created_at DESC
+SELECT id, name, email, db_path, is_master_password_set, current_db_hash, sync_version, created_at, last_user_db_backup, backup_reminder_frequency_days, is_blocked, subscription_status, subscription_id, customer_id, variant_id, subscription_ends_at, trial_ends_at, current_period_end, has_beta_access, beta_expires_at, is_founding_member, has_collaboration_access, onboarding_status, onboarding_completed_at, onboarding_snoozed_until, primary_space_id, is_analytics_disabled, subscribed_at, where_heard_about FROM users ORDER BY created_at DESC
 `
 
 func (q *Queries) ListAllUsers(ctx context.Context) ([]User, error) {
@@ -338,7 +334,6 @@ func (q *Queries) ListAllUsers(ctx context.Context) ([]User, error) {
 			&i.IsAnalyticsDisabled,
 			&i.SubscribedAt,
 			&i.WhereHeardAbout,
-			&i.IsTrialSignalsDisabled,
 		); err != nil {
 			return nil, err
 		}
@@ -474,20 +469,6 @@ type SetReferralSourceParams struct {
 // us?" step). Only written when the user provides a non-empty answer.
 func (q *Queries) SetReferralSource(ctx context.Context, arg SetReferralSourceParams) error {
 	_, err := q.db.ExecContext(ctx, setReferralSource, arg.WhereHeardAbout, arg.ID)
-	return err
-}
-
-const setTrialSignalsDisabled = `-- name: SetTrialSignalsDisabled :exec
-UPDATE users SET is_trial_signals_disabled = ? WHERE id = ?
-`
-
-type SetTrialSignalsDisabledParams struct {
-	IsTrialSignalsDisabled bool   `json:"is_trial_signals_disabled"`
-	ID                     string `json:"id"`
-}
-
-func (q *Queries) SetTrialSignalsDisabled(ctx context.Context, arg SetTrialSignalsDisabledParams) error {
-	_, err := q.db.ExecContext(ctx, setTrialSignalsDisabled, arg.IsTrialSignalsDisabled, arg.ID)
 	return err
 }
 

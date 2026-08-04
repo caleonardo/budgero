@@ -219,11 +219,6 @@ func (s *UserService) SetAnalyticsDisabled(ctx context.Context, id string, disab
 	return s.userRepo.SetAnalyticsDisabled(ctx, id, disabled)
 }
 
-// SetTrialSignalsDisabled sets the trial-signals opt-out flag for a user.
-func (s *UserService) SetTrialSignalsDisabled(ctx context.Context, id string, disabled bool) error {
-	return s.userRepo.SetTrialSignalsDisabled(ctx, id, disabled)
-}
-
 // SetPrimarySpace sets the primary space for a user.
 func (s *UserService) SetPrimarySpace(ctx context.Context, id, spaceID string) error {
 	return s.userRepo.SetPrimarySpace(ctx, id, spaceID)

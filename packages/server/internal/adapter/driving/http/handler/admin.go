@@ -399,7 +399,7 @@ func (h *Handlers) GetAdminStickinessAnalytics(c echo.Context) error {
 	now := time.Now().UTC()
 	from := now.Add(-90 * 24 * time.Hour)
 	to := now
-	cohortGranularity := domain.RewardsGranularityWeekly
+	cohortGranularity := domain.AnalyticsGranularityWeekly
 	maxDayN := 30
 
 	if s := c.QueryParam("from"); s != "" {
@@ -417,7 +417,7 @@ func (h *Handlers) GetAdminStickinessAnalytics(c echo.Context) error {
 		to = t
 	}
 	if s := c.QueryParam("cohort"); s != "" {
-		g := domain.RewardsAnalyticsGranularity(strings.ToLower(s))
+		g := domain.AnalyticsGranularity(strings.ToLower(s))
 		if !g.IsValid() {
 			return echo.NewHTTPError(http.StatusBadRequest, "cohort must be daily, weekly, or monthly")
 		}
@@ -442,61 +442,6 @@ func (h *Handlers) GetAdminStickinessAnalytics(c echo.Context) error {
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("stickiness analytics query failed")
-		return echo.NewHTTPError(http.StatusInternalServerError, "analytics query failed")
-	}
-	return c.JSON(http.StatusOK, out)
-}
-
-// GetAdminRewardsAnalytics returns time-series and signup-cohort funnel
-// data for the trial-rewards admin dashboard. Query params:
-//
-//	from         RFC3339 timestamp (inclusive). Defaults to 30 days ago.
-//	to           RFC3339 timestamp (exclusive). Defaults to now.
-//	granularity  one of "daily" | "weekly" | "monthly". Defaults to "daily".
-//
-// SaaS-only: returns 404 in self-host mode.
-func (h *Handlers) GetAdminRewardsAnalytics(c echo.Context) error {
-	if h.selfHostMode {
-		return echo.NewHTTPError(http.StatusNotFound, "saas admin dashboard unavailable in self-host mode")
-	}
-
-	now := time.Now().UTC()
-	from := now.Add(-30 * 24 * time.Hour)
-	to := now
-	granularity := domain.RewardsGranularityDaily
-
-	if s := c.QueryParam("from"); s != "" {
-		t, err := time.Parse(time.RFC3339, s)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "invalid from: must be RFC3339")
-		}
-		from = t
-	}
-	if s := c.QueryParam("to"); s != "" {
-		t, err := time.Parse(time.RFC3339, s)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "invalid to: must be RFC3339")
-		}
-		to = t
-	}
-	if s := c.QueryParam("granularity"); s != "" {
-		g := domain.RewardsAnalyticsGranularity(strings.ToLower(s))
-		if !g.IsValid() {
-			return echo.NewHTTPError(http.StatusBadRequest, "granularity must be daily, weekly, or monthly")
-		}
-		granularity = g
-	}
-	if !from.Before(to) {
-		return echo.NewHTTPError(http.StatusBadRequest, "from must be before to")
-	}
-
-	out, err := h.services.Admin.GetRewardsAnalytics(c.Request().Context(), domain.RewardsAnalyticsParams{
-		From:        from,
-		To:          to,
-		Granularity: granularity,
-	})
-	if err != nil {
-		log.Error().Err(err).Msg("rewards analytics query failed")
 		return echo.NewHTTPError(http.StatusInternalServerError, "analytics query failed")
 	}
 	return c.JSON(http.StatusOK, out)

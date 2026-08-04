@@ -180,14 +180,6 @@ func (r *UserRepository) SetAnalyticsDisabled(ctx context.Context, id string, di
 	})
 }
 
-// SetTrialSignalsDisabled sets the trial-signals opt-out flag for a user.
-func (r *UserRepository) SetTrialSignalsDisabled(ctx context.Context, id string, disabled bool) error {
-	return r.queries.SetTrialSignalsDisabled(ctx, sqlc.SetTrialSignalsDisabledParams{
-		IsTrialSignalsDisabled: disabled,
-		ID:                     id,
-	})
-}
-
 // SetPrimarySpace sets the primary space for a user.
 func (r *UserRepository) SetPrimarySpace(ctx context.Context, id, spaceID string) error {
 	return r.queries.UpdateUserPrimarySpace(ctx, sqlc.UpdateUserPrimarySpaceParams{

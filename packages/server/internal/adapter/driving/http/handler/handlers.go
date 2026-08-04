@@ -55,7 +55,7 @@ type Handlers struct {
 
 // NewHandlers creates a new Handlers instance.
 func NewHandlers(services *application.Services, syncHub *synchub.Hub, opts Options) *Handlers {
-	subscriptionSvc := NewSubscriptionService(services.Entitlement, services.TrialRewards, opts.Config, !opts.SelfHost)
+	subscriptionSvc := NewSubscriptionService(services.Entitlement, opts.Config, !opts.SelfHost)
 	usecases := application.NewUsecases(
 		services.User,
 		services.Space,
@@ -171,7 +171,6 @@ func mapServiceError(err error) error {
 // SubscriptionService handles subscription-related operations.
 type SubscriptionService struct {
 	entitlements         driving.EntitlementService
-	trialRewards         driving.TrialRewardsService
 	cfg                  *config.Config
 	client               *lemonsqueezy.Client
 	cache                *lemonsqueezy.ProductCache
@@ -185,11 +184,10 @@ type RevenueStats struct {
 }
 
 // NewSubscriptionService creates a new SubscriptionService.
-func NewSubscriptionService(entitlements driving.EntitlementService, trialRewards driving.TrialRewardsService, cfg *config.Config, subscriptionsEnabled bool) *SubscriptionService {
+func NewSubscriptionService(entitlements driving.EntitlementService, cfg *config.Config, subscriptionsEnabled bool) *SubscriptionService {
 	if !subscriptionsEnabled {
 		return &SubscriptionService{
 			entitlements:         entitlements,
-			trialRewards:         trialRewards,
 			cfg:                  cfg,
 			subscriptionsEnabled: false,
 		}
@@ -200,7 +198,6 @@ func NewSubscriptionService(entitlements driving.EntitlementService, trialReward
 
 	svc := &SubscriptionService{
 		entitlements:         entitlements,
-		trialRewards:         trialRewards,
 		cfg:                  cfg,
 		client:               client,
 		cache:                cache,
@@ -274,19 +271,6 @@ func (s *SubscriptionService) CreateCheckout(userID, userEmail, variantID string
 		return "", errors.New("subscriptions are not enabled")
 	}
 	return s.client.CreateCheckout(userID, userEmail, variantID)
-}
-
-// CreateCheckoutWithDiscount creates a checkout with a trial-reward code
-// pre-applied. The caller is expected to have validated the code's
-// ownership and validity.
-func (s *SubscriptionService) CreateCheckoutWithDiscount(userID, userEmail, variantID, discountCode string) (string, error) {
-	if !s.subscriptionsEnabled {
-		return "", errors.New("subscriptions are not enabled")
-	}
-	if discountCode == "" {
-		return s.client.CreateCheckout(userID, userEmail, variantID)
-	}
-	return s.client.CreateCheckoutWithDiscount(userID, userEmail, variantID, discountCode)
 }
 
 // GetSubscription fetches subscription details from LemonSqueezy.
@@ -523,20 +507,6 @@ func (s *SubscriptionService) handleSubscriptionCreated(ctx context.Context, eve
 	if err := s.entitlements.MarkSubscribedIfFirstTime(ctx, userID, time.Now().UTC()); err != nil {
 		log.Warn().Err(err).Str("user_id", userID).
 			Msg("failed to stamp first-subscribed timestamp")
-	}
-
-	// If a trial-reward code was applied at checkout, mark it redeemed. The
-	// code travels through checkout custom_data so we don't need to query LS
-	// for discount redemptions. Failures are non-fatal — subscription is
-	// already created; lacking the redemption mark is recoverable later.
-	if trialCode := event.Meta.CustomData.TrialCode; trialCode != "" && s.trialRewards != nil {
-		if err := s.trialRewards.MarkRedeemed(ctx, trialCode, subID, time.Now()); err != nil {
-			log.Warn().Err(err).
-				Str("user_id", userID).
-				Str("trial_code", trialCode).
-				Str("subscription_id", subID).
-				Msg("failed to mark trial code redeemed")
-		}
 	}
 
 	return nil

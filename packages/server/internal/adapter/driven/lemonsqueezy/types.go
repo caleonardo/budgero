@@ -91,10 +91,10 @@ type Variant struct {
 type Customer struct {
 	ID         string `json:"id"`
 	Attributes struct {
-		StoreID                      int    `json:"store_id"`
-		Name                         string `json:"name"`
-		Email                        string `json:"email"`
-		MonthlyRecurringRevenueCents int    `json:"monthly_recurring_revenue_cents"`
+		StoreID                      int         `json:"store_id"`
+		Name                         string      `json:"name"`
+		Email                        string      `json:"email"`
+		MonthlyRecurringRevenueCents int         `json:"monthly_recurring_revenue_cents"`
 		TotalRevenueCents            int         `json:"total_revenue_cents"`
 		TotalRevenueCurrency         interface{} `json:"total_revenue_currency"`
 	} `json:"attributes"`
@@ -135,10 +135,6 @@ type WebhookEvent struct {
 		WebhookID  string `json:"webhook_id"`
 		CustomData struct {
 			UserID string `json:"user_id"`
-			// TrialCode is the rewards-system code passed through checkout
-			// custom_data, so subscription_created webhooks can mark the
-			// code redeemed without an extra LS API roundtrip.
-			TrialCode string `json:"trial_code,omitempty"`
 		} `json:"custom_data"`
 	} `json:"meta"`
 	Data struct {

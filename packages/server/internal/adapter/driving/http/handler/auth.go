@@ -80,11 +80,6 @@ type SetAnalyticsDisabledRequest struct {
 	Disabled bool `json:"disabled"`
 }
 
-// SetTrialSignalsDisabledRequest contains fields for toggling trial-signal opt-out.
-type SetTrialSignalsDisabledRequest struct {
-	Disabled bool `json:"disabled"`
-}
-
 // UpdateUserPreferencesRequest contains fields for updating persisted user preferences.
 type UpdateUserPreferencesRequest struct {
 	ThemeMode                 *string `json:"theme_mode,omitempty"`
@@ -416,34 +411,6 @@ func (h *Handlers) SetAnalyticsDisabled(c echo.Context) error {
 	})
 }
 
-// SetTrialSignalsDisabled handles toggling the trial-signals opt-out flag.
-// Trial signals are decoupled from analytics: they stay on by default and
-// only this explicit opt-out stops RecordSignal from accruing progress.
-func (h *Handlers) SetTrialSignalsDisabled(c echo.Context) error {
-	userID := middleware.GetUserIDFromContext(c)
-	if userID == "" {
-		return echo.NewHTTPError(http.StatusUnauthorized, "user not authenticated")
-	}
-
-	ctx := c.Request().Context()
-	var req SetTrialSignalsDisabledRequest
-	if err := c.Bind(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
-	}
-
-	if err := h.services.User.SetTrialSignalsDisabled(ctx, userID, req.Disabled); err != nil {
-		if errors.Is(err, domain.ErrUserNotFound) {
-			return echo.NewHTTPError(http.StatusNotFound, "user not found")
-		}
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to update trial-signals preference")
-	}
-
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"success":                   true,
-		"is_trial_signals_disabled": req.Disabled,
-	})
-}
-
 // GetUserPreferences returns persisted per-user appearance/navigation preferences.
 func (h *Handlers) GetUserPreferences(c echo.Context) error {
 	userID := middleware.GetUserIDFromContext(c)
@@ -696,7 +663,6 @@ func (h *Handlers) buildServiceUserResponse(ctx context.Context, user *domain.Us
 		"last_user_db_backup":            user.LastUserDBBackup,
 		"backup_reminder_frequency_days": user.BackupReminderFrequencyDays,
 		"is_analytics_disabled":          user.IsAnalyticsDisabled,
-		"is_trial_signals_disabled":      user.IsTrialSignalsDisabled,
 	}
 	if user.SubscriptionID != nil {
 		payload["subscription_id"] = *user.SubscriptionID

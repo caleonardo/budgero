@@ -229,4 +229,3 @@ func convertInvoice(inv *Invoice) *external.Invoice {
 		TestMode:               inv.TestMode,
 	}
 }
-

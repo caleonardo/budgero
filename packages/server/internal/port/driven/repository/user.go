@@ -54,9 +54,6 @@ type UserRepository interface {
 	// SetAnalyticsDisabled sets the analytics opt-out flag for a user.
 	SetAnalyticsDisabled(ctx context.Context, id string, disabled bool) error
 
-	// SetTrialSignalsDisabled sets the trial-signals opt-out flag for a user.
-	SetTrialSignalsDisabled(ctx context.Context, id string, disabled bool) error
-
 	// SetPrimarySpace sets the primary space for a user.
 	SetPrimarySpace(ctx context.Context, id, spaceID string) error
 

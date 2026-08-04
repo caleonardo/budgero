@@ -60,7 +60,6 @@ func SetupRoutes(e *echo.Echo, h *handler.Handlers, services *application.Servic
 	authOnly.GET("/profile", h.GetProfile)
 	authOnly.PUT("/profile", h.UpdateProfile)
 	authOnly.PUT("/profile/analytics", h.SetAnalyticsDisabled)
-	authOnly.PUT("/profile/trial-signals", h.SetTrialSignalsDisabled)
 	authOnly.GET("/profile/preferences", h.GetUserPreferences)
 	authOnly.PUT("/profile/preferences", h.UpdateUserPreferences)
 	authOnly.POST("/profile/onboarding", h.UpdateOnboardingState)
@@ -75,19 +74,6 @@ func SetupRoutes(e *echo.Echo, h *handler.Handlers, services *application.Servic
 	} else {
 		log.Info().Msg("Self-host mode: skipping feedback route")
 	}
-	if !opts.SelfHost {
-		authOnly.POST("/trial/signal", h.RecordTrialSignal)
-		authOnly.GET("/trial/progress", h.GetTrialProgress)
-		authOnly.POST("/trial/codes/validate", h.ValidateTrialCode)
-		// Dev-only tier manipulation. Gated behind DEV_TOOLS_ENABLED so the
-		// routes don't even register in production.
-		if opts.Config != nil && opts.Config.Features.DevToolsEnabled {
-			log.Warn().Msg("DEV_TOOLS_ENABLED is on — dev trial endpoints registered. DO NOT USE IN PROD.")
-			authOnly.POST("/trial/dev/unlock", h.DevForceUnlockTrialTier)
-			authOnly.POST("/trial/dev/reset", h.DevResetTrialState)
-		}
-	}
-
 	if !opts.SelfHost {
 		authOnly.GET("/subscription/status", h.GetSubscriptionStatus)
 		authOnly.GET("/subscription/details", h.GetSubscriptionDetails)
@@ -225,10 +211,9 @@ func SetupRoutes(e *echo.Echo, h *handler.Handlers, services *application.Servic
 		admin.POST("/migrate/trials", h.MigrateInactiveToTrial)
 	}
 
-	// Trial-rewards analytics (cloud only — relies on subscription/trial data
+	// Stickiness analytics (cloud only — relies on subscription/trial data
 	// that doesn't exist in self-host).
 	if !opts.SelfHost {
-		admin.GET("/rewards/analytics", h.GetAdminRewardsAnalytics)
 		admin.GET("/stickiness", h.GetAdminStickinessAnalytics)
 	}
 

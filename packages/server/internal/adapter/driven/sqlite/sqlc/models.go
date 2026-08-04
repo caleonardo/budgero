@@ -137,44 +137,13 @@ type SentEmail struct {
 	SentAt   time.Time `json:"sent_at"`
 }
 
-type TrialDiscountCode struct {
-	Code          string         `json:"code"`
-	UserID        string         `json:"user_id"`
-	Tier          int64          `json:"tier"`
-	PercentOff    int64          `json:"percent_off"`
-	LsDiscountID  string         `json:"ls_discount_id"`
-	GeneratedAt   time.Time      `json:"generated_at"`
-	ValidFrom     time.Time      `json:"valid_from"`
-	ValidUntil    time.Time      `json:"valid_until"`
-	RedeemedAt    sql.NullTime   `json:"redeemed_at"`
-	RedeemedSubID sql.NullString `json:"redeemed_sub_id"`
-}
-
-type TrialProgress struct {
-	UserID                   string       `json:"user_id"`
-	TrialStartedAt           time.Time    `json:"trial_started_at"`
-	DailyLoggingDistinctDays int64        `json:"daily_logging_distinct_days"`
-	ReconciliationCount      int64        `json:"reconciliation_count"`
-	FirstReconciliationAt    sql.NullTime `json:"first_reconciliation_at"`
-	SecondReconciliationAt   sql.NullTime `json:"second_reconciliation_at"`
-	BudgetCycleAssignedAt    sql.NullTime `json:"budget_cycle_assigned_at"`
-	OverspendCoveredAt       sql.NullTime `json:"overspend_covered_at"`
-	GoalFundedAt             sql.NullTime `json:"goal_funded_at"`
-	RuleAppliedHistoricalAt  sql.NullTime `json:"rule_applied_historical_at"`
-	MonthlyReviewAt          sql.NullTime `json:"monthly_review_at"`
-	Tier1UnlockedAt          sql.NullTime `json:"tier1_unlocked_at"`
-	Tier2UnlockedAt          sql.NullTime `json:"tier2_unlocked_at"`
-	Tier3UnlockedAt          sql.NullTime `json:"tier3_unlocked_at"`
-	UpdatedAt                time.Time    `json:"updated_at"`
-}
-
-type TrialSignal struct {
-	UserID  string    `json:"user_id"`
-	Kind    string    `json:"kind"`
-	Day     string    `json:"day"`
-	Count   int64     `json:"count"`
-	FirstAt time.Time `json:"first_at"`
-	LastAt  time.Time `json:"last_at"`
+type UpdatePing struct {
+	Day        string    `json:"day"`
+	Version    string    `json:"version"`
+	Build      string    `json:"build"`
+	ClientType string    `json:"client_type"`
+	Count      int64     `json:"count"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 type User struct {
@@ -207,7 +176,6 @@ type User struct {
 	IsAnalyticsDisabled         bool           `json:"is_analytics_disabled"`
 	SubscribedAt                sql.NullTime   `json:"subscribed_at"`
 	WhereHeardAbout             string         `json:"where_heard_about"`
-	IsTrialSignalsDisabled      bool           `json:"is_trial_signals_disabled"`
 }
 
 type UserDailyActivity struct {

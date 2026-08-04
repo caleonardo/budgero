@@ -134,9 +134,6 @@ func (h *Handlers) GetSubscriptionDetails(c echo.Context) error {
 // CreateCheckoutRequest represents the checkout creation request
 type CreateCheckoutRequest struct {
 	VariantID string `json:"variant_id" validate:"required"`
-	// DiscountCode is an optional trial-reward code earned by the user.
-	// Validated server-side before being forwarded to the payment provider.
-	DiscountCode string `json:"discount_code,omitempty"`
 }
 
 // CreateCheckoutSession creates a new LemonSqueezy checkout session
@@ -169,14 +166,7 @@ func (h *Handlers) CreateCheckoutSession(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
 
-	if req.DiscountCode != "" {
-		if _, validateErr := h.services.TrialRewards.ValidateCodeForUser(ctx, userID, req.DiscountCode); validateErr != nil {
-			log.Warn().Err(validateErr).Str("user_id", userID).Msg("rejected checkout: invalid discount code")
-			return echo.NewHTTPError(http.StatusBadRequest, "invalid discount code: "+validateErr.Error())
-		}
-	}
-
-	checkoutURL, err := h.subscriptionSvc.CreateCheckoutWithDiscount(userID, user.Email, req.VariantID, req.DiscountCode)
+	checkoutURL, err := h.subscriptionSvc.CreateCheckout(userID, user.Email, req.VariantID)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create checkout session")
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to create checkout session")

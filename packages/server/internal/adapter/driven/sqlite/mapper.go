@@ -24,7 +24,6 @@ func ToUser(u *sqlc.User) *domain.User {
 		IsFoundingMember:            u.IsFoundingMember,
 		HasCollaborationAccess:      u.HasCollaborationAccess,
 		IsAnalyticsDisabled:         u.IsAnalyticsDisabled,
-		IsTrialSignalsDisabled:      u.IsTrialSignalsDisabled,
 		OnboardingStatus:            u.OnboardingStatus,
 		WhereHeardAbout:             u.WhereHeardAbout,
 	}

@@ -58,9 +58,6 @@ type UserService interface {
 	// SetAnalyticsDisabled sets the analytics opt-out flag for a user.
 	SetAnalyticsDisabled(ctx context.Context, id string, disabled bool) error
 
-	// SetTrialSignalsDisabled sets the trial-signals opt-out flag for a user.
-	SetTrialSignalsDisabled(ctx context.Context, id string, disabled bool) error
-
 	// SetPrimarySpace sets the primary space for a user.
 	SetPrimarySpace(ctx context.Context, id, spaceID string) error
 
@@ -315,54 +312,6 @@ type UpdatePingService interface {
 	Record(ctx context.Context, version, build, clientType string) error
 }
 
-// TrialRewardsService defines trial behavior tracking and tiered-reward
-// operations (SaaS-only — gated off in self-host builds).
-type TrialRewardsService interface {
-	// RecordSignal records a behavior signal for a user. Validates kind,
-	// drops the signal silently if the user has opted out of analytics or
-	// has no active trial, and triggers tier re-evaluation.
-	//
-	// `month` (YYYY-MM) is required for the *_in_month signal kinds, ignored
-	// for all others. For the month kinds, the trial_signals row's `day`
-	// column stores YYYY-MM-01 of the tracked month (so distinct rows = the
-	// distinct months the user has had activity in).
-	RecordSignal(ctx context.Context, userID string, kind domain.SignalKind, occurredAt time.Time, month string) error
-
-	// GetProgress returns the user's tier progress and any earned discount
-	// codes. Returns (nil, nil, nil) if the user has no progress yet.
-	GetProgress(ctx context.Context, userID string) (*domain.TrialProgress, []domain.DiscountCode, error)
-
-	// GetProgressCounts returns derived month counts for cross-month signals
-	// (assignment_in_month, transaction_in_month). These aren't stored on the
-	// trial_progress row — they're computed from trial_signals on demand —
-	// but the rewards UI needs them to show per-criterion progress for T3.
-	GetProgressCounts(ctx context.Context, userID string) (assignmentMonths, transactionMonths, transactionCount int, err error)
-
-	// ValidateCodeForUser checks that a code belongs to the user, is in its
-	// validity window, and has not been redeemed. Returns the code or an
-	// error suitable for user-facing checkout validation.
-	ValidateCodeForUser(ctx context.Context, userID, code string) (*domain.DiscountCode, error)
-
-	// MarkRedeemed marks a code redeemed. Called from the LemonSqueezy
-	// webhook handler after subscription_created with a discount applied.
-	MarkRedeemed(ctx context.Context, code, subscriptionID string, redeemedAt time.Time) error
-
-	// ReissueCodesOnReturn extends the validity of expired codes for a user
-	// who returns within the re-engagement window (30 days post-trial-end).
-	// Issues new 7-day validity from now. No-op for users outside the window.
-	ReissueCodesOnReturn(ctx context.Context, userID string) error
-
-	// DevForceUnlock force-unlocks the given tier for a user without checking
-	// criteria. Sets prerequisite "first occurrence" timestamps that lower
-	// tiers expect, so the resulting state reads like an organic progression.
-	// Bypasses email side-effects to keep test inboxes quiet. Dev-only.
-	DevForceUnlock(ctx context.Context, userID string, tier domain.RewardTier) error
-
-	// DevReset wipes the user's trial-rewards state (signals, progress,
-	// discount codes). Dev-only.
-	DevReset(ctx context.Context, userID string) error
-}
-
 // AdminService defines the interface for admin operations.
 type AdminService interface {
 	// GetStats returns admin dashboard statistics.
@@ -397,10 +346,6 @@ type AdminService interface {
 
 	// BackfillTrialForInactiveUsers migrates inactive users to trial status.
 	BackfillTrialForInactiveUsers(ctx context.Context, trialDays int) (int64, error)
-
-	// GetRewardsAnalytics returns time-series + cohort-funnel data for the
-	// admin analytics dashboard. SaaS-only at the route layer.
-	GetRewardsAnalytics(ctx context.Context, params domain.RewardsAnalyticsParams) (*domain.RewardsAnalytics, error)
 
 	// GetStickinessAnalytics returns DAU/MAU stickiness time-series and a
 	// signup-cohort retention matrix. SaaS-only at the route layer.

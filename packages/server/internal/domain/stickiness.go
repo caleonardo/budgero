@@ -10,7 +10,7 @@ import "time"
 type StickinessAnalyticsParams struct {
 	From              time.Time
 	To                time.Time
-	CohortGranularity RewardsAnalyticsGranularity
+	CohortGranularity AnalyticsGranularity
 	MaxDayN           int
 }
 
@@ -64,7 +64,7 @@ type CohortMeta struct {
 type StickinessAnalytics struct {
 	From              time.Time                  `json:"from"`
 	To                time.Time                  `json:"to"`
-	CohortGranularity RewardsAnalyticsGranularity `json:"cohort_granularity"`
+	CohortGranularity AnalyticsGranularity `json:"cohort_granularity"`
 	Current           StickinessSeriesPoint      `json:"current"`
 	Series            []StickinessSeriesPoint    `json:"series"`
 	Cohorts           CohortRetentionMatrix      `json:"cohorts"`
