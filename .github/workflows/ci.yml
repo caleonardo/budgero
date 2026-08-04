@@ -102,4 +102,7 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.7.2
+          # goinstall compiles with the job's Go toolchain; release binaries
+          # are built with older Go and refuse newer go.mod targets
+          install-mode: goinstall
           working-directory: packages/server
