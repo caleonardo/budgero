@@ -24,6 +24,7 @@ import { getAccountTypesByBudgetType, isLiabilityType } from '@entities/account/
 import { usePlainNumberFormatter } from '@shared/hooks/useNumberFormatter';
 import { roundToFractionDigits } from '@shared/lib/currency/round-amount';
 import { fromDecimal, toDecimal, ZERO_MILLI, type MilliUnits } from '@shared/lib/currency/milli';
+import { isCryptoCurrency } from '@budgero/core/browser';
 import { toastError } from '@shared/lib/errors';
 import { OnBudgetToggle } from './OnBudgetToggle';
 import { LiabilityNumberCell } from './LiabilityNumberCell';
@@ -292,6 +293,13 @@ export function AddAccountDialog({
                     setIsLiability(isLiabilityType(val));
                     if (val === 'Mortgage' && termYears === 0) {
                       setTermYears(30);
+                    }
+                    // Crypto accounts hold coins, not the budget's fiat:
+                    // default the currency accordingly (and back again).
+                    if (val === 'Crypto' && !isCryptoCurrency(currency)) {
+                      setCurrency('BTC');
+                    } else if (val !== 'Crypto' && isCryptoCurrency(currency)) {
+                      setCurrency(selectedBudget?.DisplayCurrency || 'USD');
                     }
 
                     // Note: We don't override the budget setting here since the dropdown is already filtered

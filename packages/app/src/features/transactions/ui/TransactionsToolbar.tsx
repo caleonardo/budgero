@@ -6,6 +6,8 @@ import { Input } from '@shared/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { PlusCircle, Search, Filter, Columns, Tag } from 'lucide-react';
 import { CountryFlag } from '@shared/ui/country-flag';
+import { CryptoIcon } from '@entities/currency/ui/CryptoIcon';
+import { isCryptoCurrency } from '@budgero/core/browser';
 import { SearchActiveFilters } from '@features/transactions/ui/SearchActiveFilters';
 import { currencies } from '@features/currencies/model/currency-data';
 import type { ParsedSearchQuery, MatchedToken } from '@shared/lib/search-query-parser';
@@ -20,6 +22,9 @@ function CurrencyFlagLabel({ currency }: { currency: string | undefined }) {
   const countryCode = currency ? currencyCountryMap[currency] : null;
   if (countryCode) {
     return <CountryFlag countryCode={countryCode} svg style={{ width: '1em', height: '1em' }} />;
+  }
+  if (currency && isCryptoCurrency(currency)) {
+    return <CryptoIcon code={currency} className="h-[1.1em] w-[1.1em]" />;
   }
   // Fallback to currency code if no flag mapping
   return <span className="font-mono text-xs">{currency || '?'}</span>;
