@@ -3,6 +3,9 @@ import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
 import { AnimatedNumber } from '@shared/ui/animated-number';
 import { trendTextClass } from '@shared/lib/amount-color';
+import { AssetLiabilityHistoryChart } from '@pages/accounts/components/AssetLiabilityHistoryChart';
+import { useMonthlyAssetHistory } from '@entities/account/api/useMonthlyAssetHistory';
+import { useUiStore } from '@shared/store/useUiStore';
 import {
   buildMonthlyFlow,
   buildNetWorthSeries,
@@ -34,7 +37,7 @@ import {
   StatTile,
 } from '../components/panels';
 
-type WealthMode = 'assets-debt' | 'change' | 'forecast';
+type WealthMode = 'assets-debt' | 'change' | 'forecast' | 'by-type';
 
 const FORECAST_HORIZON = 6;
 const MAX_RUNWAY_PROJECTION = 36;
@@ -58,6 +61,11 @@ interface WealthReportProps {
  */
 export function WealthReport({ data, months, accountIds }: WealthReportProps) {
   const [mode, setMode] = useState<WealthMode>('assets-debt');
+  const selectedBudget = useUiStore((s) => s.selectedBudget);
+  const { data: assetHistory = [] } = useMonthlyAssetHistory(
+    selectedBudget?.ID || 0,
+    Math.max(months.length, 6)
+  );
   const palette = usePalette();
   const money = useMoneyFormatters();
 
@@ -349,6 +357,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           ariaLabel="Wealth chart mode"
           options={[
             { value: 'assets-debt', label: 'Assets vs Debt' },
+            { value: 'by-type', label: 'By Type' },
             { value: 'change', label: 'Change' },
             { value: 'forecast', label: 'Forecast' },
           ]}
@@ -374,28 +383,43 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         ) : null
       }
       chart={
-        <>
-          <EChart option={option} ariaLabel="Wealth over time" />
-          <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-dashed border-border/60 pt-3 text-sm">
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Runway
-            </span>
-            <span className="font-semibold">{formatRunway(runway.runwayMonths)}</span>
-            {runsOut ? (
+        mode === 'by-type' ? (
+          <>
+            <AssetLiabilityHistoryChart
+              monthlyAssetHistory={assetHistory}
+              netWorth={assetHistory[assetHistory.length - 1]?.netWorth ?? 0}
+              formatCurrency={(milli) => money.amount(milli)}
+            />
+            {accountIds.length > 0 && (
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                The by-type view always covers all accounts — the account filter doesn't apply here.
+              </p>
+            )}
+          </>
+        ) : (
+          <>
+            <EChart option={option} ariaLabel="Wealth over time" />
+            <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-dashed border-border/60 pt-3 text-sm">
+              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Runway
+              </span>
+              <span className="font-semibold">{formatRunway(runway.runwayMonths)}</span>
+              {runsOut ? (
+                <span className="text-muted-foreground">
+                  funds last until <span className="font-medium text-foreground">{runsOut}</span> if
+                  income stopped
+                </span>
+              ) : null}
               <span className="text-muted-foreground">
-                funds last until <span className="font-medium text-foreground">{runsOut}</span> if
-                income stopped
+                burn{' '}
+                <span className="font-medium text-foreground">
+                  {money.amount(runway.avgMonthlySpend)}
+                </span>
+                /month
               </span>
-            ) : null}
-            <span className="text-muted-foreground">
-              burn{' '}
-              <span className="font-medium text-foreground">
-                {money.amount(runway.avgMonthlySpend)}
-              </span>
-              /month
-            </span>
-          </div>
-        </>
+            </div>
+          </>
+        )
       }
       isLoading={data.isLoading}
       isEmpty={isEmpty}
