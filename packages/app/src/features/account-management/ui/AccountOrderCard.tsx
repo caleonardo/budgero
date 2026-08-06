@@ -1,10 +1,11 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
-import { ArrowUpDown, ChevronUp, ChevronDown, Wallet } from 'lucide-react';
+import { ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
 import type { Account } from '@budgero/core/browser';
 import { useReorderAccounts } from '@entities/account/api/useAccounts';
 import { useActiveAccounts } from '@entities/account/api/useActiveAccounts';
+import { AccountGlyph } from '@entities/account/ui/AccountGlyph';
 import { getAccountTypeDefinition } from '@entities/account/model/accountTypes';
 import { useUiStore } from '@shared/store/useUiStore';
 
@@ -37,14 +38,17 @@ function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</p>
       <ul className="space-y-1.5">
         {accounts.map((account, index) => {
-          const def = getAccountTypeDefinition(account.Type);
-          const Icon = def?.icon || Wallet;
+          // (icon resolution moved into AccountGlyph)
           return (
             <li
               key={account.ID}
               className="flex items-center gap-3 rounded-lg border border-border/70 bg-background px-3 py-2"
             >
-              <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <AccountGlyph
+                type={account.Type}
+                currency={account.Currency}
+                className="h-4 w-4 shrink-0 text-muted-foreground"
+              />
               <span className="min-w-0 flex-1 truncate text-sm">{account.Name}</span>
               <div className="flex items-center gap-1">
                 <Button

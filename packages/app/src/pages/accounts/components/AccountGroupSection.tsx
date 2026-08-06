@@ -10,6 +10,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@shared/ui/
 import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import { trendTextClass } from '@shared/lib/amount-color';
+import { isCryptoCurrency } from '@budgero/core/browser';
+import { CryptoIcon } from '@entities/currency/ui/CryptoIcon';
 import { getAccountTypeDefinition } from '@entities/account/model/accountTypes';
 import { AccountSparkline } from './AccountSparkline';
 
@@ -17,6 +19,7 @@ interface Account {
   ID: number;
   Name?: string;
   Type?: string;
+  Currency?: string;
   BalanceNative?: number;
   BalanceConverted?: number;
   Metadata?: string | Record<string, unknown>;
@@ -42,6 +45,7 @@ interface AccountGroupSectionProps {
 
 function getAccountTypeStyle(acc: {
   Type?: string;
+  Currency?: string;
   Name?: string;
   Metadata?: string | Record<string, unknown>;
 }) {
@@ -136,7 +140,14 @@ export function AccountGroupSection({
                           color: bgColor,
                         }}
                       >
-                        <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        {account.Currency && isCryptoCurrency(account.Currency) ? (
+                          <CryptoIcon
+                            code={account.Currency}
+                            className="h-4 w-4 sm:h-[18px] sm:w-[18px]"
+                          />
+                        ) : (
+                          <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        )}
                       </div>
                       <div className="min-w-0">
                         <div className="font-medium text-xs sm:text-base truncate">

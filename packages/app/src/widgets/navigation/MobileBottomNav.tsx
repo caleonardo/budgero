@@ -35,6 +35,7 @@ import { Badge } from '@shared/ui/badge';
 import { useUncategorizedTransactions } from '@entities/transaction/api/useUncategorizedTransactions';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@shared/ui/collapsible';
 import { useLogout } from '@entities/user/api/useAuth';
+import { AccountGlyph } from '@entities/account/ui/AccountGlyph';
 import { getAccountTypeDefinition } from '@entities/account/model/accountTypes';
 import {
   NAV_REPORTS,
@@ -303,8 +304,7 @@ export function MobileBottomNav() {
   );
 
   const renderAccountItem = (account: (typeof displayedOnBudget)[number]) => {
-    const accountTypeDef = getAccountTypeDefinition(account.Type);
-    const AccountIcon = accountTypeDef?.icon || Wallet;
+    // (icon resolution moved into AccountGlyph)
     const uncategorizedCount = uncategorizedData?.byAccount[account.ID]?.count || 0;
     return (
       <DropdownMenuItem key={account.ID} asChild onSelect={() => setOpenDropdown(null)}>
@@ -314,7 +314,11 @@ export function MobileBottomNav() {
         >
           <span className="flex items-center gap-2">
             <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-muted">
-              <AccountIcon className="h-3.5 w-3.5" />
+              <AccountGlyph
+                type={account.Type}
+                currency={account.Currency}
+                className="h-3.5 w-3.5"
+              />
             </span>
             <span className="truncate">{account.Name}</span>
           </span>

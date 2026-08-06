@@ -29,6 +29,7 @@ import { CenteredLoader } from '@shared/ui/CenteredLoader';
 import { toast } from 'sonner';
 
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
+import { AccountGlyph } from '@entities/account/ui/AccountGlyph';
 import { useAccountDateRange } from './hooks/useAccountDateRange';
 import { useAccountMetrics, normalizeToDate } from './hooks/useAccountMetrics';
 import { useJumpToTransaction } from './hooks/useJumpToTransaction';
@@ -334,7 +335,11 @@ export default function AccountPage() {
         <div className="sm:hidden px-3 pt-3 pb-1 space-y-2">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <AccountIcon className="w-3.5 h-3.5" />
+              <AccountGlyph
+                type={selectedAccount?.Type}
+                currency={selectedAccount?.Currency}
+                className="w-4 h-4"
+              />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
