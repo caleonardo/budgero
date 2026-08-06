@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Wallet, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import { Badge } from '@shared/ui/badge';
 import { Input } from '@shared/ui/input';
 import { SidebarMenuButton } from '@shared/ui/sidebar';
 import { getAccountTypeDefinition } from '@entities/account/model/accountTypes';
-import { isCryptoCurrency } from '@budgero/core/browser';
-import { CryptoIcon } from '@entities/currency/ui/CryptoIcon';
+import { AccountGlyph } from '@entities/account/ui/AccountGlyph';
 import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { MAX_ACCOUNTS_PER_SECTION, ACCOUNT_SEARCH_THRESHOLD } from './constants';
@@ -59,9 +58,6 @@ const AccountItem = React.memo(function AccountItem({
   balanceValue: number;
   isActive: boolean;
 }) {
-  const accountTypeDef = getAccountTypeDefinition(account.Type);
-  const AccountIcon = accountTypeDef?.icon || Wallet;
-
   return (
     <div className="mx-2">
       <SidebarMenuButton asChild isActive={isActive}>
@@ -73,10 +69,13 @@ const AccountItem = React.memo(function AccountItem({
             <Badge variant="destructive" className="h-4 px-1 text-xs flex-shrink-0">
               {uncategorizedCount}
             </Badge>
-          ) : isCryptoCurrency(account.Currency ?? '') ? (
-            <CryptoIcon code={account.Currency ?? ''} className="h-3.5 w-3.5 flex-shrink-0" />
           ) : (
-            <AccountIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+            <AccountGlyph
+              type={account.Type}
+              currency={account.Currency}
+              variant="chip"
+              className="h-3.5 w-3.5 flex-shrink-0"
+            />
           )}
           <span className="truncate flex-1 min-w-0">{account.Name}</span>
           <span

@@ -317,6 +317,7 @@ export function MobileBottomNav() {
               <AccountGlyph
                 type={account.Type}
                 currency={account.Currency}
+                variant="chip"
                 className="h-3.5 w-3.5"
               />
             </span>

@@ -47,7 +47,8 @@ function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
               <AccountGlyph
                 type={account.Type}
                 currency={account.Currency}
-                className="h-4 w-4 shrink-0 text-muted-foreground"
+                variant="chip"
+                className="h-5 w-5 shrink-0"
               />
               <span className="min-w-0 flex-1 truncate text-sm">{account.Name}</span>
               <div className="flex items-center gap-1">

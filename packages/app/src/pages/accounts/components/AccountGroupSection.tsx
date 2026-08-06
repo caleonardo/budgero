@@ -136,7 +136,7 @@ export function AccountGroupSection({
                       <div
                         className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0"
                         style={{
-                          backgroundColor: `${bgColor}20`,
+                          backgroundColor: `color-mix(in srgb, ${bgColor} 18%, transparent)`,
                           color: bgColor,
                         }}
                       >
