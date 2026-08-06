@@ -76,8 +76,6 @@ export class SplitService {
       parent.BudgetID
     );
 
-    const month = parent.Date.substring(0, 7);
-
     type PreparedMirror = {
       targetAccountId: number;
       memo: string;
@@ -105,9 +103,8 @@ export class SplitService {
           asMilli(-sourceNetOriginal),
           sourceAcc.Currency,
           targetAccount.Currency,
-          month,
-          parent.BudgetID,
-          parent.Date
+          parent.Date,
+          parent.BudgetID
         );
         const mirrorInflowOriginal =
           mirrorNetOriginalInTarget > 0 ? mirrorNetOriginalInTarget : ZERO_MILLI;
@@ -118,17 +115,15 @@ export class SplitService {
           mirrorInflowOriginal,
           targetAccount.Currency,
           budget.DisplayCurrency,
-          month,
-          parent.BudgetID,
-          parent.Date
+          parent.Date,
+          parent.BudgetID
         );
         const mirrorOutflowConverted = await this.currencyService.convertAmount(
           mirrorOutflowOriginal,
           targetAccount.Currency,
           budget.DisplayCurrency,
-          month,
-          parent.BudgetID,
-          parent.Date
+          parent.Date,
+          parent.BudgetID
         );
 
         preparedMirrors.push({

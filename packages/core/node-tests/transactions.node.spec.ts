@@ -177,7 +177,7 @@ describe('Transactions (Node/sql.js)', () => {
     const rate = await services.currency.getOrFetchRate(
       'EUR',
       'USD',
-      getLocalDateString().slice(0, 7),
+      getLocalDateString(),
       budgetId
     );
     if (!rate) {
@@ -929,7 +929,6 @@ describe('Transactions (Node/sql.js)', () => {
 
   it('moves a transaction between accounts with currency conversion of originals', async () => {
     const today = getLocalDateString();
-    const month = today.slice(0, 7);
 
     // Budget in USD
     const bId = await services.budgets.createBudget({
@@ -946,7 +945,7 @@ describe('Transactions (Node/sql.js)', () => {
 
     // Seed USD→RSD rate ≈100
     const USDRSD = 100;
-    await services.currency.saveRate('USD', 'RSD', USDRSD, month, bId);
+    await services.currency.saveRate('USD', 'RSD', USDRSD, today, bId);
 
     const rsdCats = services.categories.getAllCategories(bId);
     const rsdNonIncomeCat = rsdCats.find((c: Category) => c.Name !== 'Income');
@@ -1041,11 +1040,10 @@ describe('Transactions (Node/sql.js)', () => {
   describe('Multi-Currency Transactions', () => {
     it('should handle transactions in foreign currency accounts', async () => {
       const today = getLocalDateString();
-      const month = today.slice(0, 7);
 
       // Set up exchange rate
       const GBPUSD = 1.3;
-      await services.currency.saveRate('GBP', 'USD', GBPUSD, month, budgetId);
+      await services.currency.saveRate('GBP', 'USD', GBPUSD, today, budgetId);
 
       // Create GBP account
       const gbpAccount = await services.accounts.createAccount(
@@ -1085,11 +1083,10 @@ describe('Transactions (Node/sql.js)', () => {
 
     it('should update transactions when account currency changes', async () => {
       const today = getLocalDateString();
-      const month = today.slice(0, 7);
 
       // Set up exchange rates
-      await services.currency.saveRate('EUR', 'USD', 1.1, month, budgetId);
-      await services.currency.saveRate('GBP', 'USD', 1.3, month, budgetId);
+      await services.currency.saveRate('EUR', 'USD', 1.1, today, budgetId);
+      await services.currency.saveRate('GBP', 'USD', 1.3, today, budgetId);
 
       // Create EUR account
       const eurAccount = await services.accounts.createAccount(

@@ -349,7 +349,7 @@ describe('Transactions (additional coverage)', () => {
       create_default_categories: true,
     });
     const month = '2024-04';
-    await services.currency.saveRate('EUR', 'USD', 1.2, month, budgetId);
+    await services.currency.saveRate('EUR', 'USD', 1.2, `${month}-10`, budgetId);
 
     const eur = await services.accounts.createAccount('EUR', budgetId, 'checking', 'EUR', 0);
     const allCatsUtco = services.categories.getAllCategories(budgetId);
@@ -394,7 +394,7 @@ describe('Transactions (additional coverage)', () => {
       create_default_categories: true,
     });
     const month = '2024-05';
-    await services.currency.saveRate('EUR', 'USD', 1.25, month, budgetId);
+    await services.currency.saveRate('EUR', 'USD', 1.25, `${month}-11`, budgetId);
     const eur = await services.accounts.createAccount('EUR', budgetId, 'checking', 'EUR', 0);
     const allCatsUtcb = services.categories.getAllCategories(budgetId);
     const foundCatUtcb = allCatsUtcb.find((c: Category) => c.Name !== 'Income');
@@ -439,7 +439,7 @@ describe('Transactions (additional coverage)', () => {
     });
     const month = '2024-07';
     // Market rate: 1 EUR = 100 RSD (kept round so the override math is easy to read).
-    await services.currency.saveRate('EUR', 'RSD', 100, month, budgetId);
+    await services.currency.saveRate('EUR', 'RSD', 100, `${month}-10`, budgetId);
 
     const bank = await services.accounts.createAccount('Bank', budgetId, 'checking', 'RSD', 0);
     const ibkr = await services.accounts.createAccount('IBKR', budgetId, 'checking', 'EUR', 0);
@@ -505,7 +505,7 @@ describe('Transactions (additional coverage)', () => {
     });
     const month = '2024-08';
     // Market rate: 1 EUR = 100 RSD.
-    await services.currency.saveRate('EUR', 'RSD', 100, month, budgetId);
+    await services.currency.saveRate('EUR', 'RSD', 100, `${month}-10`, budgetId);
 
     const bank = await services.accounts.createAccount('Bank', budgetId, 'checking', 'RSD', 0);
     const ibkr = await services.accounts.createAccount('IBKR', budgetId, 'checking', 'EUR', 0);

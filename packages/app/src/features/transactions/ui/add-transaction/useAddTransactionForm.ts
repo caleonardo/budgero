@@ -15,7 +15,6 @@ import { useUiStore } from '@shared/store/useUiStore';
 import { useCategories } from '@entities/category/api/useCategories';
 import { useUpsertSplits } from '@entities/transaction/api/useTransactions';
 import { useActiveAccounts } from '@entities/account/api/useActiveAccounts';
-import { getMonthKey } from '@shared/lib/date-utils';
 import { roundMilli } from '@shared/lib/currency/round-amount';
 import { useAutofillIntegration } from './useAutofillIntegration';
 
@@ -27,7 +26,6 @@ import {
   generateTransferId,
   formatTransferMemo,
   getCurrentDate,
-  getCurrentMonth,
   calculateSplitRemaining,
 } from './add-transaction.utils';
 
@@ -232,14 +230,12 @@ export function useAddTransactionForm({
       setLoadingRate(true);
 
       if (!canUseCurrencyApi) {
-        const month = getCurrentMonth(form.transactionDate);
         const date = getCurrentDate(form.transactionDate);
         const localOrManual = await getLocalOrManualRate(
           selectedAccount.Currency,
           toAccount.Currency,
-          month,
-          selectedBudget.ID,
-          date
+          date,
+          selectedBudget.ID
         );
         if (!localOrManual) {
           setPendingRatePair({ from: selectedAccount.Currency, to: toAccount.Currency });
@@ -249,16 +245,14 @@ export function useAddTransactionForm({
         }
       }
 
-      const currentMonth = getCurrentMonth(form.transactionDate);
       const currentDate = getCurrentDate(form.transactionDate);
 
       try {
         const rate = await getExchangeRate(
           selectedAccount.Currency,
           toAccount.Currency,
-          currentMonth,
-          selectedBudget.ID,
-          currentDate
+          currentDate,
+          selectedBudget.ID
         );
         // money × rate leaves float milli-space; round back to exact milliunits
         setConvertedAmount(rate ? roundMilli(form.amount * rate) : null);
@@ -347,14 +341,12 @@ export function useAddTransactionForm({
             const inboundPayee = form.payee || fromAccount.Name || '';
 
             if (fromAccount.Currency !== toAcc.Currency) {
-              const currentMonth = getCurrentMonth(form.transactionDate);
               const currentDate = getCurrentDate(form.transactionDate);
               const rate = await getExchangeRate(
                 fromAccount.Currency,
                 toAcc.Currency,
-                currentMonth,
-                selectedBudget.ID,
-                currentDate
+                currentDate,
+                selectedBudget.ID
               );
               if (rate) {
                 // money × rate → round back to exact integer milliunits
@@ -429,14 +421,12 @@ export function useAddTransactionForm({
         if (!canUseCurrencyApi && selectedAccount && selectedBudget) {
           const budgetCurrency = selectedBudget.DisplayCurrency;
           if (budgetCurrency && selectedAccount.Currency !== budgetCurrency) {
-            const m = getMonthKey(form.transactionDate || new Date());
             const d = getCurrentDate(form.transactionDate);
             const localOrManual = await getLocalOrManualRate(
               selectedAccount.Currency,
               budgetCurrency,
-              m,
-              selectedBudget.ID,
-              d
+              d,
+              selectedBudget.ID
             );
             if (!localOrManual) {
               form.setPendingRatePair({ from: selectedAccount.Currency, to: budgetCurrency });

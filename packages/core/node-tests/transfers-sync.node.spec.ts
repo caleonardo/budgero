@@ -30,7 +30,7 @@ describe('Multi-currency updateTransactionColumn preserves amounts', () => {
     const dateA = `${month}-10`;
     const dateB = `${month}-15`;
     const EURRSD = 117.5; // 1 EUR = ~117.5 RSD (realistic rate)
-    await services.currency.saveRate('EUR', 'RSD', EURRSD, month, budgetId);
+    await services.currency.saveRate('EUR', 'RSD', EURRSD, dateA, budgetId);
 
     const allCategories = services.categories.getAllCategories(budgetId);
     const nonIncomeCategory = allCategories.find((c: Category) => c.Name !== 'Income');
@@ -120,7 +120,8 @@ describe('Multi-currency updateTransactionColumn preserves amounts', () => {
     const dateA = `${month}-05`;
     const dateB = `${month}-20`;
     const JPYUSD = 0.0067; // 1 JPY = ~0.0067 USD (realistic rate)
-    await services.currency.saveRate('JPY', 'USD', JPYUSD, month, budgetId);
+    await services.currency.saveRate('JPY', 'USD', JPYUSD, dateA, budgetId);
+    await services.currency.saveRate('JPY', 'USD', JPYUSD, dateB, budgetId);
 
     const allCategories = services.categories.getAllCategories(budgetId);
     const incomeCategory = allCategories.find((c: Category) => c.Name === 'Income');
@@ -200,7 +201,7 @@ describe('Transfer partner sync (date/memo/amount)', () => {
     const dateA = `${month}-10`;
     const dateB = `${month}-11`;
     const EURUSD = 1.2; // 1 EUR = 1.2 USD
-    await services.currency.saveRate('EUR', 'USD', EURUSD, month, budgetId);
+    await services.currency.saveRate('EUR', 'USD', EURUSD, dateA, budgetId);
 
     // Create a paired transfer: USD outflow $100, EUR inflow €(100 / 1.2)
     const transferId = 'tr_sync_1';

@@ -27,6 +27,7 @@ import { ChatPanel } from '@features/chat/ui/chat-panel';
 import { TooltipProvider } from '@shared/ui/tooltip';
 import { UserPreferencesSync } from '@app/system/UserPreferencesSync';
 import { ActivityHeartbeat } from '@app/system/ActivityHeartbeat';
+import { RateResync } from '@app/system/RateResync';
 import { STARTUP_INTENT_KEY } from '@shared/lib/pwa-constants';
 
 const PWA_SHORTCUT_CHANNEL = 'budgero-pwa-shortcut-intent-v1';
@@ -295,7 +296,16 @@ function AppContentAuthed() {
     void queryClient.invalidateQueries({ queryKey: ['profile'] });
   }, [user, queryClient]);
 
-  return <AppContentBase topSlot={<ActivityHeartbeat />} />;
+  return (
+    <AppContentBase
+      topSlot={
+        <>
+          <ActivityHeartbeat />
+          <RateResync />
+        </>
+      }
+    />
+  );
 }
 
 function AppContentSelfHost() {

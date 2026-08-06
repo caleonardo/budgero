@@ -11,7 +11,8 @@ export interface CurrencyRate {
   FromCurrency: string;
   ToCurrency: string;
   Rate: number;
-  Month: string;
+  /** Day the rate applies to (YYYY-MM-DD). */
+  RateDate: string;
   LastUpdated: string;
   BudgetID: number;
 }

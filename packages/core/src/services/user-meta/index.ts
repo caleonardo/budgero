@@ -35,4 +35,20 @@ export class UserMetaService {
   setSuggestCategoryFromPayee(value: boolean): void {
     this.queries.setSuggestCategoryFromPayee(value);
   }
+
+  getRateCacheRetentionDays(): number {
+    return this.queries.getRateCacheRetentionDays();
+  }
+
+  setRateCacheRetentionDays(days: number): void {
+    this.queries.setRateCacheRetentionDays(days);
+  }
+
+  getResyncRatesOnReconnect(): boolean {
+    return this.queries.getResyncRatesOnReconnect();
+  }
+
+  setResyncRatesOnReconnect(value: boolean): void {
+    this.queries.setResyncRatesOnReconnect(value);
+  }
 }

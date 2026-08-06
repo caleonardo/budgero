@@ -16,6 +16,7 @@ import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { DialogHeader, DialogTitle, DialogDescription } from '@shared/ui/dialog';
 import { AddAccountDialog } from '@features/account-management/ui/AddAccountDialog';
+import { getCurrentDate } from './add-transaction.utils';
 
 import { TransactionFormHeader } from './TransactionFormHeader';
 import { TransactionDetailsSection } from './TransactionDetailsSection';
@@ -203,6 +204,8 @@ export function AddTransactionForm({
         <ManualRatePrompt
           from={form.pendingRatePair.from}
           to={form.pendingRatePair.to}
+          budgetId={selectedBudget?.ID}
+          rateDate={form.transactionDate ? getCurrentDate(form.transactionDate) : undefined}
           onCancel={() => form.setShowRatePrompt(false)}
           onConfirm={handleRatePromptConfirm}
         />

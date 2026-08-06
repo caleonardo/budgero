@@ -3,6 +3,7 @@ import { convertAtRate, type MilliUnits } from '../../money/index.js';
 import { CustomCurrencyRate } from './types.js';
 import { TransactionQueries } from '../transactions/queries.js';
 import { CurrencyQueries } from './queries.js';
+import { UserMetaQueries } from '../user-meta/queries.js';
 
 import { createLogger } from '../../logger.js';
 import { getRow, allRows, run } from '../../database/sql.js';
@@ -12,6 +13,10 @@ const debugLog = createLogger('services:currency');
 
 export class CurrencyService {
   private static readonly EXCHANGE_RATES_MIN_INTERVAL_MS = 25; // ~40 RPS max, under server 50 RPS limit
+
+  /** How many days back a cached rate may lag the requested date and still
+   * count as official. Mirrors the server's provider walk-back window. */
+  static readonly RATE_FALLBACK_WINDOW_DAYS = 7;
 
   private static exchangeRatesThrottle: Promise<void> = Promise.resolve();
 
@@ -70,27 +75,13 @@ export class CurrencyService {
     return fetch(url);
   }
 
-  private isDesktopRuntime(): boolean {
-    try {
-      if (typeof globalThis !== 'undefined') {
-        const maybeDesktop = (globalThis as { budgero?: { desktop?: boolean } })?.budgero?.desktop;
-        if (maybeDesktop) return true;
-      }
-    } catch {
-      // Ignore - globalThis may not be available in all environments
-    }
-    try {
-      if (typeof process !== 'undefined' && process?.env?.BUDGERO_DESKTOP === '1') {
-        return true;
-      }
-    } catch {
-      // Ignore - process may not be available in browser environments
-    }
-    return false;
+  private static addDays(date: string, days: number): string {
+    const [y, m, d] = date.split('-').map(Number);
+    return getLocalDateString(new Date(y, m - 1, d + days));
   }
 
   /**
-   * Resolve an exchange rate for a specific currency pair and month from the
+   * Resolve an exchange rate for a specific currency pair and date from the
    * local cache. NOT a pure lookup: when only the reciprocal pair is stored it
    * persists the inverted rate before returning it (unlike its read-only twin
    * getLocalRate).
@@ -99,28 +90,66 @@ export class CurrencyService {
   private resolveAndCacheRate(
     fromCurrency: string,
     toCurrency: string,
-    month: string,
+    rateDate: string,
     budgetId: number
   ): number | null {
     if (fromCurrency === toCurrency) {
       return 1;
     }
 
-    const rate = this.queries.getCurrencyRate(fromCurrency, toCurrency, month, budgetId);
+    const rate = this.queries.getCurrencyRate(fromCurrency, toCurrency, rateDate, budgetId);
     // If we do not find the rate search for the reciprocal rate
     if (!rate) {
       const reciprocalRate = this.queries.getCurrencyRate(
         toCurrency,
         fromCurrency,
-        month,
+        rateDate,
         budgetId
       );
       if (reciprocalRate) {
-        this.saveRate(fromCurrency, toCurrency, 1 / reciprocalRate.Rate, month, budgetId);
+        this.saveRate(fromCurrency, toCurrency, 1 / reciprocalRate.Rate, rateDate, budgetId);
         return 1 / reciprocalRate.Rate;
       }
     }
     return rate ? rate.Rate : null;
+  }
+
+  /**
+   * Cached rate for the date, accepting the nearest earlier entry within the
+   * fallback window (both directions). No network.
+   */
+  private findNearbyRate(
+    fromCurrency: string,
+    toCurrency: string,
+    rateDate: string,
+    budgetId: number
+  ): number | null {
+    if (fromCurrency === toCurrency) return 1;
+
+    const exact = this.resolveAndCacheRate(fromCurrency, toCurrency, rateDate, budgetId);
+    if (exact) return exact;
+
+    const windowStart = CurrencyService.addDays(
+      rateDate,
+      -CurrencyService.RATE_FALLBACK_WINDOW_DAYS
+    );
+    const direct = this.queries.getLatestCurrencyRateOnOrBefore(
+      fromCurrency,
+      toCurrency,
+      rateDate,
+      budgetId
+    );
+    if (direct && direct.RateDate >= windowStart) return direct.Rate;
+
+    const reciprocal = this.queries.getLatestCurrencyRateOnOrBefore(
+      toCurrency,
+      fromCurrency,
+      rateDate,
+      budgetId
+    );
+    if (reciprocal && reciprocal.RateDate >= windowStart) return 1 / reciprocal.Rate;
+
+    return null;
   }
 
   /**
@@ -130,26 +159,52 @@ export class CurrencyService {
     fromCurrency: string,
     toCurrency: string,
     rate: number,
-    month: string,
+    rateDate: string,
     budgetId: number
   ): void {
     const now = new Date().toISOString();
-    this.queries.upsertCurrencyRate(fromCurrency, toCurrency, rate, month, now, budgetId);
+    this.queries.upsertCurrencyRate(fromCurrency, toCurrency, rate, rateDate, now, budgetId);
   }
 
-  /** Get a locally cached official monthly rate (no network). */
-  getLocalRate(
+  /**
+   * Closest cached rate at or before the date with NO freshness window —
+   * offline-prompt prefill only, never used for automatic conversion.
+   */
+  getClosestCachedRate(
     fromCurrency: string,
     toCurrency: string,
-    month: string,
+    rateDate: string,
     budgetId: number
   ): number | null {
     if (fromCurrency === toCurrency) return 1;
-    const direct = this.queries.getCurrencyRate(fromCurrency, toCurrency, month, budgetId);
+    const direct = this.queries.getLatestCurrencyRateOnOrBefore(
+      fromCurrency,
+      toCurrency,
+      rateDate,
+      budgetId
+    );
     if (direct) return direct.Rate;
-    const reciprocal = this.queries.getCurrencyRate(toCurrency, fromCurrency, month, budgetId);
+    const reciprocal = this.queries.getLatestCurrencyRateOnOrBefore(
+      toCurrency,
+      fromCurrency,
+      rateDate,
+      budgetId
+    );
     if (reciprocal) return 1 / reciprocal.Rate;
     return null;
+  }
+
+  /**
+   * Get a locally cached official rate for the date (no network), accepting
+   * the nearest earlier entry within the fallback window.
+   */
+  getLocalRate(
+    fromCurrency: string,
+    toCurrency: string,
+    rateDate: string,
+    budgetId: number
+  ): number | null {
+    return this.findNearbyRate(fromCurrency, toCurrency, rateDate, budgetId);
   }
 
   /** Save/get manual (user-supplied) rates for offline usage. */
@@ -193,36 +248,29 @@ export class CurrencyService {
   /**
    * Resolve the best available rate using the full priority chain:
    * 1. Custom date-range rate
-   * 2. Auto-fetched monthly rate
+   * 2. Official daily rate (cached within the fallback window, else fetched)
    * 3. Manual offline rate
-   * 4. Adjacent month fallback
-   * 5. null (caller decides what to do)
+   * 4. null (caller decides what to do — never a silent 1:1)
    */
   async resolveRate(
     fromCurrency: string,
     toCurrency: string,
     date: string,
-    month: string,
     budgetId: number
   ): Promise<number | null> {
-    if (this.isDesktopRuntime()) return 1;
     if (fromCurrency === toCurrency) return 1;
 
     // 1. Custom date-range rate
     const custom = this.getCustomRate(fromCurrency, toCurrency, date, budgetId);
     if (custom) return custom;
 
-    // 2. Auto-fetched monthly rate
-    const fetched = await this.getOrFetchRate(fromCurrency, toCurrency, month, budgetId);
+    // 2. Official daily rate (cache within window, then network)
+    const fetched = await this.getOrFetchRate(fromCurrency, toCurrency, date, budgetId);
     if (fetched) return fetched;
 
     // 3. Manual offline rate
     const manual = this.getManualRate(fromCurrency, toCurrency, budgetId);
     if (manual) return manual;
-
-    // 4. Adjacent month fallback
-    const fallback = this.getFallbackRate(fromCurrency, toCurrency, month, budgetId);
-    if (fallback) return fallback;
 
     return null;
   }
@@ -236,44 +284,20 @@ export class CurrencyService {
     amount: MilliUnits,
     fromCurrency: string,
     toCurrency: string,
-    month: string,
-    budgetId: number,
-    date?: string
+    rateDate: string,
+    budgetId: number
   ): Promise<MilliUnits> {
-    if (this.isDesktopRuntime()) {
-      return amount;
-    }
     if (fromCurrency === toCurrency) {
       return amount;
     }
 
-    // Use full resolution chain if date is provided
-    if (date) {
-      const resolved = await this.resolveRate(fromCurrency, toCurrency, date, month, budgetId);
-      if (resolved) return convertAtRate(amount, resolved);
-      debugLog(`No exchange rate found for ${fromCurrency} to ${toCurrency} on ${date}`, {
-        level: 'warn',
-      });
-      return amount;
-    }
+    const resolved = await this.resolveRate(fromCurrency, toCurrency, rateDate, budgetId);
+    if (resolved) return convertAtRate(amount, resolved);
 
-    const rate = await this.getOrFetchRate(fromCurrency, toCurrency, month, budgetId);
-
-    if (!rate) {
-      // Try manual user-supplied rate first (offline path)
-      const manual = this.getManualRate(fromCurrency, toCurrency, budgetId);
-      if (manual) return convertAtRate(amount, manual);
-      // Try local fallback (adjacent months) before giving up
-      const fallback = this.getFallbackRate(fromCurrency, toCurrency, month, budgetId);
-      if (fallback) return convertAtRate(amount, fallback);
-      debugLog(`No exchange rate found for ${fromCurrency} to ${toCurrency} in ${month}`, {
-        level: 'warn',
-      });
-      // Return original amount if no rate found
-      return amount;
-    }
-
-    return convertAtRate(amount, rate);
+    debugLog(`No exchange rate found for ${fromCurrency} to ${toCurrency} on ${rateDate}`, {
+      level: 'warn',
+    });
+    return amount;
   }
 
   /**
@@ -283,92 +307,54 @@ export class CurrencyService {
   async getOrFetchRate(
     fromCurrency: string,
     toCurrency: string,
-    month: string,
+    rateDate: string,
     budgetId: number
   ): Promise<number | null> {
-    if (this.isDesktopRuntime()) {
-      return 1;
-    }
     if (fromCurrency === toCurrency) {
       return 1;
     }
 
-    // STEP 1: Check if we have the direct rate already
-    let rate = this.resolveAndCacheRate(fromCurrency, toCurrency, month, budgetId);
-    if (rate) {
-      debugLog(`Found existing rate: ${fromCurrency} → ${toCurrency} = ${rate}`);
-      return rate;
+    // STEP 1: Cached rate for the date (or within the fallback window)
+    const cached = this.findNearbyRate(fromCurrency, toCurrency, rateDate, budgetId);
+    if (cached) {
+      return cached;
     }
 
-    debugLog(`No rate found for ${fromCurrency} → ${toCurrency}, fetching from API...`);
+    debugLog(`No cached rate for ${fromCurrency} → ${toCurrency}, fetching from API...`);
 
-    // STEP 2: Fetch the rate directly from the API
+    // STEP 2: Fetch from the API (the dataset serves any base directly)
     try {
-      // Fetch the direct rate from fromCurrency to toCurrency
-      await this.fetchAndStoreRates([toCurrency], fromCurrency, month, budgetId);
-
-      rate = this.resolveAndCacheRate(fromCurrency, toCurrency, month, budgetId);
-      if (rate) {
-        debugLog(`Successfully fetched rate: ${fromCurrency} → ${toCurrency} = ${rate}`);
-        return rate;
-      }
-
-      // If direct fetch didn't work, try fetching USD rates as a common base
-      // (CurrencyLayer free tier only supports USD as base in some cases)
-      if (fromCurrency !== 'USD' && toCurrency !== 'USD') {
-        debugLog(`Direct fetch failed, trying via USD...`);
-
-        await this.fetchAndStoreRates([fromCurrency, toCurrency], 'USD', month, budgetId);
-
-        const fromToUSD = this.resolveAndCacheRate(fromCurrency, 'USD', month, budgetId);
-        const toToUSD = this.resolveAndCacheRate(toCurrency, 'USD', month, budgetId);
-
-        if (fromToUSD && toToUSD) {
-          // Calculate cross rate: fromCurrency → USD → toCurrency
-          rate = fromToUSD / toToUSD;
-          this.saveRate(fromCurrency, toCurrency, rate, month, budgetId);
-          debugLog(`Calculated via USD: ${fromCurrency} → ${toCurrency} = ${rate}`);
-          return rate;
-        }
+      await this.fetchAndStoreRates([toCurrency], fromCurrency, rateDate, budgetId);
+      const fetched = this.findNearbyRate(fromCurrency, toCurrency, rateDate, budgetId);
+      if (fetched) {
+        debugLog(`Successfully fetched rate: ${fromCurrency} → ${toCurrency} = ${fetched}`);
+        return fetched;
       }
     } catch (error) {
-      if (error instanceof Error && error.message.includes('rate limit')) {
-        debugLog(
-          `API rate limit hit when fetching ${fromCurrency} → ${toCurrency}. Please try again later.`,
-          { level: 'warn' }
-        );
-      } else {
-        debugLog(`Failed to fetch rates for ${fromCurrency} → ${toCurrency}`, {
-          level: 'error',
-          error,
-        });
-      }
+      debugLog(`Failed to fetch rates for ${fromCurrency} → ${toCurrency}`, {
+        level: 'error',
+        error,
+      });
     }
 
     return null;
   }
 
   /**
-   * Fetch and store exchange rates from external API for a specific month
-   * Using CurrencyLayer API which supports 168 currencies including RSD
-   *
-   * STRATEGY: We fetch rates ONCE per month and reuse them for all transactions
-   * in that month. This is standard practice for personal finance apps and keeps
-   * API usage minimal while maintaining reasonable accuracy.
+   * Fetch and store daily exchange rates from the server proxy. The server
+   * caches per (pair, date) and may serve a slightly earlier dataset date;
+   * rows are stored under the requested date so lookups stay stable.
    * @private - Use getOrFetchRate instead to ensure proper error handling
    */
   private async fetchAndStoreRates(
     currencies: string[],
     baseCurrency: string,
-    month: string,
+    rateDate: string,
     budgetId: number
   ): Promise<void> {
-    if (this.isDesktopRuntime()) {
-      return;
-    }
     try {
       const currencyList = currencies.filter((c) => c !== baseCurrency).join(',');
-      const url = `/api/v1/exchange-rates?base=${encodeURIComponent(baseCurrency)}&symbols=${encodeURIComponent(currencyList)}&month=${encodeURIComponent(month)}`;
+      const url = `/api/v1/exchange-rates?base=${encodeURIComponent(baseCurrency)}&symbols=${encodeURIComponent(currencyList)}&date=${encodeURIComponent(rateDate)}`;
 
       const response = await this.fetchExchangeRatesWithPacing(url);
       if (!response.ok) {
@@ -386,17 +372,18 @@ export class CurrencyService {
         const quoteKey = `${baseCurrency}${currency}`;
         const rate = quotes ? quotes[quoteKey] : undefined;
         if (typeof rate === 'number' && isFinite(rate) && rate > 0) {
-          this.saveRate(baseCurrency, currency, rate, month, budgetId);
-          this.saveRate(currency, baseCurrency, 1 / rate, month, budgetId);
+          this.saveRate(baseCurrency, currency, rate, rateDate, budgetId);
+          this.saveRate(currency, baseCurrency, 1 / rate, rateDate, budgetId);
         }
       }
 
-      debugLog(`Fetched and stored monthly exchange rates for ${month}`, {
+      debugLog(`Fetched and stored daily exchange rates for ${rateDate}`, {
         baseCurrency,
         currencies: currencies.length,
-        month,
-        ratesStored: currencies.length - 1,
+        rateDate,
       });
+
+      this.pruneRateCache(budgetId);
     } catch (error) {
       debugLog('Failed to fetch exchange rates', { error, level: 'error' });
       throw error;
@@ -404,40 +391,88 @@ export class CurrencyService {
   }
 
   /**
-   * Get fallback rate from recent months (within last 3 months)
-   * This is used when the API is unavailable or rate-limited
+   * Drop cached daily rates older than the user's retention setting. Safe:
+   * every transaction stores its own ExchangeRate, and pruned historical
+   * rates refetch on demand when online.
    */
-  private getFallbackRate(
-    fromCurrency: string,
-    toCurrency: string,
-    targetMonth: string,
-    budgetId: number
-  ): number | null {
-    if (this.isDesktopRuntime()) {
-      return 1;
+  pruneRateCache(budgetId: number): number {
+    const retentionDays = new UserMetaQueries(this.db).getRateCacheRetentionDays();
+    const cutoff = CurrencyService.addDays(getLocalDateString(), -retentionDays);
+    const pruned = this.queries.pruneRatesOlderThan(cutoff, budgetId);
+    if (pruned > 0) {
+      debugLog(`Pruned ${pruned} cached rates older than ${cutoff}`, { budgetId });
     }
-    const [year, month] = targetMonth.split('-').map(Number);
-    const targetDate = new Date(year, month - 1, 1);
+    return pruned;
+  }
 
-    // Check the last 3 months first, then up to 3 months ahead (in case we're
-    // looking at historical data). The offset order preserves the search order.
-    for (const offset of [-1, -2, -3, 1, 2, 3]) {
-      const checkDate = new Date(targetDate);
-      checkDate.setMonth(checkDate.getMonth() + offset);
-      // Local getters: checkDate is a local month anchor, so toISOString()
-      // would shift it into the previous month for UTC-positive timezones.
-      const checkMonth = getLocalDateString(checkDate).slice(0, 7);
+  /**
+   * Re-resolve official rates for transactions whose conversion was marked
+   * pending (offline/manual placeholder) and not pinned by the user. Called
+   * when the app regains connectivity. Returns the number of updated rows.
+   */
+  async resyncPendingConversions(budgetId: number): Promise<number> {
+    const pending = allRows<{
+      ID: number;
+      Date: string;
+      AccountID: number;
+      InflowNative: number | null;
+      OutflowNative: number | null;
+      Currency: string;
+    }>(
+      this.db,
+      `
+      SELECT t.ID, t.Date, t.AccountID, t.InflowNative, t.OutflowNative, a.Currency
+      FROM transactions t
+      JOIN accounts a ON t.AccountID = a.ID
+      WHERE t.BudgetID = ?
+        AND t.ConversionPending = 1
+        AND t.ExchangeRateOverride = 0
+      ORDER BY t.Date ASC, t.ID ASC
+    `,
+      budgetId
+    );
+    if (pending.length === 0) return 0;
 
-      const rate = this.resolveAndCacheRate(fromCurrency, toCurrency, checkMonth, budgetId);
-      if (rate) {
-        debugLog(
-          `Found fallback rate from ${checkMonth} for ${fromCurrency} → ${toCurrency}: ${rate}`
-        );
-        return rate;
-      }
+    const displayCurrency = this.getBudgetDisplayCurrency(budgetId);
+    if (!displayCurrency) return 0;
+
+    let updated = 0;
+    const affectedAccounts = new Set<number>();
+
+    for (const tx of pending) {
+      if (tx.Currency === displayCurrency) continue;
+      // Official/custom only — a manual rate is what we're replacing.
+      const custom = this.getCustomRate(tx.Currency, displayCurrency, tx.Date, budgetId);
+      const official =
+        custom ?? (await this.getOrFetchRate(tx.Currency, displayCurrency, tx.Date, budgetId));
+      if (!official) continue;
+
+      const inflowConverted = Math.round((tx.InflowNative || 0) * official);
+      const outflowConverted = Math.round((tx.OutflowNative || 0) * official);
+      run(
+        this.db,
+        `
+        UPDATE transactions
+        SET InflowConverted = ?, OutflowConverted = ?, ExchangeRate = ?, ConversionPending = 0
+        WHERE ID = ?
+      `,
+        inflowConverted,
+        outflowConverted,
+        official,
+        tx.ID
+      );
+      affectedAccounts.add(tx.AccountID);
+      updated++;
     }
 
-    return null;
+    for (const accountId of affectedAccounts) {
+      this.transactionQueries.recalculateBalances(accountId);
+    }
+
+    if (updated > 0) {
+      debugLog(`Resynced ${updated} pending conversions to official rates`, { budgetId });
+    }
+    return updated;
   }
 
   getCustomRatesForBudget(budgetId: number): CustomCurrencyRate[] {
@@ -574,14 +609,7 @@ export class CurrencyService {
     const affectedAccounts = new Set<number>();
 
     for (const tx of txs) {
-      const month = tx.Date.substring(0, 7);
-      const rate = await this.resolveRate(
-        accountCurrency,
-        displayCurrency,
-        tx.Date,
-        month,
-        budgetId
-      );
+      const rate = await this.resolveRate(accountCurrency, displayCurrency, tx.Date, budgetId);
       if (!rate) continue;
 
       // money x rate -> round back to integer milliunits before storing
@@ -621,16 +649,6 @@ export class CurrencyService {
     newCurrency: string,
     oldCurrency: string
   ): Promise<void> {
-    if (this.isDesktopRuntime()) {
-      debugLog(
-        `Desktop runtime: skipping currency recalculation for budget change ${oldCurrency} → ${newCurrency}`,
-        { budgetId, level: 'info' }
-      );
-      // Still clear cached rates to avoid displaying outdated conversions
-      this.queries.deleteAllRatesForBudget(budgetId);
-      this.queries.clearAllConvertedAmounts(budgetId);
-      return;
-    }
     debugLog(`Handling budget currency change from ${oldCurrency} to ${newCurrency}`, {
       budgetId,
       level: 'info',
@@ -647,10 +665,10 @@ export class CurrencyService {
     const uniqueCurrencies = [...new Set(accountCurrencies)].filter((c) => c !== newCurrency);
 
     if (uniqueCurrencies.length > 0) {
-      // 4. Fetch new rates for current month (other months will be fetched during recalculation)
-      const currentMonth = getLocalDateString().slice(0, 7);
+      // 4. Fetch new rates for today (other dates will be fetched during recalculation)
+      const today = getLocalDateString();
       try {
-        await this.fetchAndStoreRates(uniqueCurrencies, newCurrency, currentMonth, budgetId);
+        await this.fetchAndStoreRates(uniqueCurrencies, newCurrency, today, budgetId);
         debugLog(`Fetched new rates for budget currency change`, {
           currencies: uniqueCurrencies,
           baseCurrency: newCurrency,
@@ -682,7 +700,13 @@ export class CurrencyService {
       );
 
       for (const row of assignments) {
-        const rate = await this.getOrFetchRate(oldCurrency, newCurrency, row.month, budgetId);
+        // Assignments are monthly buckets; anchor conversion mid-month.
+        const rate = await this.getOrFetchRate(
+          oldCurrency,
+          newCurrency,
+          `${row.month}-15`,
+          budgetId
+        );
         if (!rate) continue;
         const newAmount = Math.round(row.amount * rate);
         run(
@@ -706,12 +730,11 @@ export class CurrencyService {
         budgetId
       );
 
-      // Use current month for conversion of targets (most consistent baseline)
-      const currentMonth = getLocalDateString().slice(0, 7);
+      // Use today's rate for conversion of targets (most consistent baseline)
       const rateForGoals = await this.getOrFetchRate(
         oldCurrency,
         newCurrency,
-        currentMonth,
+        getLocalDateString(),
         budgetId
       );
       const goalsRate = rateForGoals || 1;
@@ -738,13 +761,6 @@ export class CurrencyService {
     newCurrency: string,
     oldCurrency: string
   ): Promise<void> {
-    if (this.isDesktopRuntime()) {
-      debugLog(
-        `Desktop runtime: leaving transaction amounts untouched for account currency change ${oldCurrency} → ${newCurrency}`,
-        { accountId, budgetId, level: 'info' }
-      );
-      return;
-    }
     debugLog(`Handling account currency change from ${oldCurrency} to ${newCurrency}`, {
       accountId,
       level: 'info',
@@ -774,9 +790,8 @@ export class CurrencyService {
 
       let runningBalanceOriginal = 0;
       for (const tx of transactions) {
-        const month = tx.date.substring(0, 7);
-        // Get or fetch rate old -> new for the tx month
-        const rate = await this.getOrFetchRate(oldCurrency, newCurrency, month, budgetId);
+        // Get or fetch rate old -> new for the tx date
+        const rate = await this.getOrFetchRate(oldCurrency, newCurrency, tx.date, budgetId);
         const effectiveRate = rate || 1; // fallback to 1 to avoid NaN
 
         // Some legacy rows may have NULL original amounts; fall back to converted values
@@ -910,9 +925,7 @@ export class CurrencyService {
     let runningBalanceConverted = 0;
 
     for (const tx of transactions) {
-      const month = tx.date.substring(0, 7);
-
-      const rate = await this.getOrFetchRate(accountCurrency, budgetCurrency, month, budgetId);
+      const rate = await this.getOrFetchRate(accountCurrency, budgetCurrency, tx.date, budgetId);
 
       if (rate) {
         const inflowConverted = Math.round(tx.inflow_original * rate);

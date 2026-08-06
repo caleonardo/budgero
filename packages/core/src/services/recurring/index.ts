@@ -110,7 +110,7 @@ export const PROJECTION_RATE_SQL = `
     WHERE cr.BudgetID = o.BudgetID
       AND cr.FromCurrency = a.Currency
       AND cr.ToCurrency = b.DisplayCurrency
-    ORDER BY cr.Month DESC LIMIT 1
+    ORDER BY cr.RateDate DESC LIMIT 1
   ), 1) END
 `;
 
@@ -125,7 +125,7 @@ const TRANSFER_LEG_RATE_SQL = `
     WHERE cr.BudgetID = o.BudgetID
       AND cr.FromCurrency = a.Currency
       AND cr.ToCurrency = a2.Currency
-    ORDER BY cr.Month DESC LIMIT 1
+    ORDER BY cr.RateDate DESC LIMIT 1
   ), 1) END
 `;
 
@@ -807,7 +807,6 @@ export class RecurringTransactionService {
         source.Currency,
         destination.Currency,
         transactionDate,
-        transactionDate.substring(0, 7),
         template.budgetId
       );
       destinationAmount = convertAtRate(template.amount, rate || 1);

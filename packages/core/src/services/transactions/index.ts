@@ -114,14 +114,11 @@ export class TransactionService {
     let resolvedExchangeRate: number | null = null;
 
     if (account && budget && account.Currency !== budget.DisplayCurrency) {
-      const month = date.substring(0, 7); // Extract YYYY-MM from date
-
       // Use full resolution chain: custom date-range → official → manual → fallback → 1:1
       let rate = await this.currencyService.resolveRate(
         account.Currency,
         budget.DisplayCurrency,
         date,
-        month,
         budgetId
       );
 
@@ -138,11 +135,10 @@ export class TransactionService {
     // Capture whether we need to mark this row pending (manual/adjacent/1:1)
     let markPending = false;
     if (account && budget && account.Currency !== budget.DisplayCurrency) {
-      const month = date.substring(0, 7);
       const official = await this.currencyService.getLocalRate(
         account.Currency,
         budget.DisplayCurrency,
-        month,
+        date,
         budgetId
       );
       const custom = await this.currencyService.getCustomRate(
@@ -560,18 +556,16 @@ export class TransactionService {
     const outflowOriginal = outflow;
 
     if (account && budget && account.Currency !== budget.DisplayCurrency) {
-      const month = date.substring(0, 7);
-
       const rate = await this.currencyService.getOrFetchRate(
         account.Currency,
         budget.DisplayCurrency,
-        month,
+        date,
         budgetId
       );
 
       if (!rate) {
         console.warn(
-          `No exchange rate available for ${account.Currency} → ${budget.DisplayCurrency} in ${month}`
+          `No exchange rate available for ${account.Currency} → ${budget.DisplayCurrency} on ${date}`
         );
       }
 
@@ -579,18 +573,16 @@ export class TransactionService {
         inflow,
         account.Currency,
         budget.DisplayCurrency,
-        month,
-        budgetId,
-        date
+        date,
+        budgetId
       );
 
       outflow = await this.currencyService.convertAmount(
         outflow,
         account.Currency,
         budget.DisplayCurrency,
-        month,
-        budgetId,
-        date
+        date,
+        budgetId
       );
     }
 
@@ -766,8 +758,6 @@ export class TransactionService {
       needsRecalculation = newAccount.Currency !== oldAccount.Currency;
 
       if (needsRecalculation) {
-        const month = tx.Date.substring(0, 7);
-
         // Determine old originals reliably (fall back by back-calculating from converted if needed)
         let oldInflowOriginal = tx.InflowNative;
         let oldOutflowOriginal = tx.OutflowNative;
@@ -777,9 +767,8 @@ export class TransactionService {
             tx.InflowConverted,
             budget.DisplayCurrency,
             oldAccount.Currency,
-            month,
-            tx.BudgetID,
-            tx.Date
+            tx.Date,
+            tx.BudgetID
           );
         }
         if (oldOutflowOriginal == null && (tx.OutflowConverted ?? 0) !== 0) {
@@ -787,9 +776,8 @@ export class TransactionService {
             tx.OutflowConverted,
             budget.DisplayCurrency,
             oldAccount.Currency,
-            month,
-            tx.BudgetID,
-            tx.Date
+            tx.Date,
+            tx.BudgetID
           );
         }
 
@@ -798,17 +786,15 @@ export class TransactionService {
           oldInflowOriginal ?? ZERO_MILLI,
           oldAccount.Currency,
           newAccount.Currency,
-          month,
-          tx.BudgetID,
-          tx.Date
+          tx.Date,
+          tx.BudgetID
         );
         newOutflowOriginal = await this.currencyService.convertAmount(
           oldOutflowOriginal ?? ZERO_MILLI,
           oldAccount.Currency,
           newAccount.Currency,
-          month,
-          tx.BudgetID,
-          tx.Date
+          tx.Date,
+          tx.BudgetID
         );
 
         // Now compute converted (budget currency) using target account currency
@@ -817,17 +803,15 @@ export class TransactionService {
             newInflowOriginal,
             newAccount.Currency,
             budget.DisplayCurrency,
-            month,
-            tx.BudgetID,
-            tx.Date
+            tx.Date,
+            tx.BudgetID
           );
           newOutflowConverted = await this.currencyService.convertAmount(
             newOutflowOriginal,
             newAccount.Currency,
             budget.DisplayCurrency,
-            month,
-            tx.BudgetID,
-            tx.Date
+            tx.Date,
+            tx.BudgetID
           );
         } else {
           // Target account in budget currency: converted equals originals
@@ -846,11 +830,10 @@ export class TransactionService {
     // Compute pending flag for this move based on availability of official/manual rates
     let markPendingMove = false;
     if (needsRecalculation && newAccount && oldAccount && budget) {
-      const month = tx.Date.substring(0, 7);
       const officialOldToNew = await this.currencyService.getLocalRate(
         oldAccount.Currency,
         newAccount.Currency,
-        month,
+        tx.Date,
         tx.BudgetID
       );
       const manualOldToNew = await this.currencyService.getManualRate(
@@ -861,7 +844,7 @@ export class TransactionService {
       const officialNewToBudget = await this.currencyService.getLocalRate(
         newAccount.Currency,
         budget.DisplayCurrency,
-        month,
+        tx.Date,
         tx.BudgetID
       );
       const manualNewToBudget = await this.currencyService.getManualRate(
@@ -994,8 +977,6 @@ export class TransactionService {
     if (!partnerAcc) return;
     if (!budget) return;
 
-    const month = (main.Date || '').substring(0, 7);
-
     // Mirror converted (budget) amounts: partner inflow = main outflow; partner outflow = main inflow
     const pInflowConverted = main.OutflowConverted ?? ZERO_MILLI;
     const pOutflowConverted = main.InflowConverted ?? ZERO_MILLI;
@@ -1016,17 +997,15 @@ export class TransactionService {
           pInflowConverted,
           budget.DisplayCurrency,
           partnerAcc.Currency,
-          month,
-          main.BudgetID,
-          main.Date
+          main.Date,
+          main.BudgetID
         );
         pOutflowOriginal = await this.currencyService.convertAmount(
           pOutflowConverted,
           budget.DisplayCurrency,
           partnerAcc.Currency,
-          month,
-          main.BudgetID,
-          main.Date
+          main.Date,
+          main.BudgetID
         );
       }
     }
@@ -1141,19 +1120,17 @@ export class TransactionService {
     let outflowConverted = outflow;
 
     if (account.Currency !== budget.DisplayCurrency) {
-      const month = date.substring(0, 7);
-
       if (editedIn === 'budget-currency') {
         const rate = await this.currencyService.getOrFetchRate(
           account.Currency,
           budget.DisplayCurrency,
-          month,
+          date,
           account.BudgetID
         );
 
         if (!rate) {
           console.warn(
-            `No exchange rate available for ${account.Currency} → ${budget.DisplayCurrency} in ${month}`
+            `No exchange rate available for ${account.Currency} → ${budget.DisplayCurrency} on ${date}`
           );
         }
 
@@ -1169,25 +1146,22 @@ export class TransactionService {
           inflow,
           account.Currency,
           budget.DisplayCurrency,
-          month,
-          account.BudgetID,
-          date
+          date,
+          account.BudgetID
         );
 
         outflowConverted = await this.currencyService.convertAmount(
           outflow,
           account.Currency,
           budget.DisplayCurrency,
-          month,
-          account.BudgetID,
-          date
+          date,
+          account.BudgetID
         );
 
         const rate = await this.currencyService.resolveRate(
           account.Currency,
           budget.DisplayCurrency,
           date,
-          month,
           account.BudgetID
         );
         if (rate) {

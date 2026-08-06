@@ -28,7 +28,7 @@ import { SearchableCategorySelect } from '@features/category-management/ui/Searc
 import { useConnectivity } from '@shared/hooks/useConnectivity';
 import { ManualRatePrompt } from '@features/currencies/ui/ManualRatePrompt';
 import { getLocalOrManualRate, saveManualRate } from '@entities/currency/lib/currency-utils';
-import { getMonthKey } from '@shared/lib/date-utils';
+import { getTodayISO } from '@shared/lib/date-utils';
 import { toastError } from '@shared/lib/errors';
 
 interface TransactionsBatchToolbarProps {
@@ -118,11 +118,10 @@ export function TransactionsBatchToolbar({
       if (newAccountIdInt != -1 && selectedAccount && selectedBudget) {
         const target = accountsData.find((a) => a.ID === newAccountIdInt);
         if (target && target.Currency !== selectedAccount.Currency && !isFullyOnline) {
-          const month = getMonthKey(new Date());
           const r = await getLocalOrManualRate(
             selectedAccount.Currency,
             target.Currency,
-            month,
+            getTodayISO(),
             selectedBudget.ID
           );
           if (!r) {
@@ -196,6 +195,7 @@ export function TransactionsBatchToolbar({
         <ManualRatePrompt
           from={pendingRatePair.from}
           to={pendingRatePair.to}
+          budgetId={selectedBudget.ID}
           onCancel={() => setShowRatePrompt(false)}
           onConfirm={async (rate, base, quote) => {
             await saveManualRate(base, quote, rate, selectedBudget.ID);

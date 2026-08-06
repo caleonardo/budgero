@@ -19,7 +19,6 @@ import { useAddTransaction } from '@entities/transaction/api/useTransactions';
 import {
   formatTransferMemo,
   generateTransferId,
-  getCurrentMonth,
   getCurrentDate,
 } from '@features/transactions/ui/add-transaction/add-transaction.utils';
 import { getExchangeRate, getLocalOrManualRate } from '@entities/currency/lib/currency-utils';
@@ -88,7 +87,6 @@ export function CCPaymentCoverPopover({
 
     try {
       const today = getTodayISO();
-      const currentMonth = getCurrentMonth(new Date());
       const currentDate = getCurrentDate(new Date());
       const budgetCurrency = selectedBudget?.DisplayCurrency || '';
       const needsSourceConversion = sourceAccount.Currency !== budgetCurrency;
@@ -101,9 +99,8 @@ export function CCPaymentCoverPopover({
           const localOrManual = await getLocalOrManualRate(
             sourceAccount.Currency,
             ccAccount.Currency,
-            currentMonth,
-            selectedBudget.ID,
-            currentDate
+            currentDate,
+            selectedBudget.ID
           );
           if (!localOrManual) {
             toast.error('No exchange rate available', {
@@ -120,9 +117,8 @@ export function CCPaymentCoverPopover({
           const rateBudgetToSource = await getExchangeRate(
             budgetCurrency,
             sourceAccount.Currency,
-            currentMonth,
-            selectedBudget.ID,
-            currentDate
+            currentDate,
+            selectedBudget.ID
           );
           if (rateBudgetToSource) {
             sourceOutflow = roundMilli(amount * rateBudgetToSource);
@@ -133,9 +129,8 @@ export function CCPaymentCoverPopover({
           const rateBudgetToCC = await getExchangeRate(
             budgetCurrency,
             ccAccount.Currency,
-            currentMonth,
-            selectedBudget.ID,
-            currentDate
+            currentDate,
+            selectedBudget.ID
           );
           if (rateBudgetToCC) {
             ccInflow = roundMilli(amount * rateBudgetToCC);

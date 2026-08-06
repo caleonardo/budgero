@@ -17,6 +17,9 @@ import {
   DialogTitle,
 } from '@shared/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
+import { Switch } from '@shared/ui/switch';
+import { getRuntime } from '@shared/runtime/global';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog';
 import { CalculatorCellDecimal } from '@shared/ui/calculator-cell';
 import { CurrencySelector } from '@features/currencies/ui/CurrencySelector';
@@ -33,6 +36,96 @@ import {
   EXCHANGE_RATE_PRECISION,
   formatExchangeRate,
 } from '@entities/currency/lib/exchange-rate-format';
+
+const RETENTION_OPTIONS = [30, 60, 90, 180, 365] as const;
+
+/** Daily-rate cache retention + reconnect-resync settings (user_meta backed). */
+function RateCacheSettingsCard() {
+  const [retentionDays, setRetentionDays] = useState<number>(() => {
+    try {
+      return getRuntime()?.services()?.userMeta.getRateCacheRetentionDays() ?? 30;
+    } catch {
+      return 30;
+    }
+  });
+  const [resyncOnReconnect, setResyncOnReconnect] = useState<boolean>(() => {
+    try {
+      return getRuntime()?.services()?.userMeta.getResyncRatesOnReconnect() ?? true;
+    } catch {
+      return true;
+    }
+  });
+  const selectedBudget = useUiStore((state) => state.selectedBudget);
+
+  const commitRetention = (days: number) => {
+    setRetentionDays(days);
+    const services = getRuntime()?.services();
+    if (!services) return;
+    services.userMeta.setRateCacheRetentionDays(days);
+    if (selectedBudget) {
+      const pruned = services.currency.pruneRateCache(selectedBudget.ID);
+      if (pruned > 0) {
+        toast.success('Rate cache pruned', {
+          description: `${pruned} cached rate${pruned !== 1 ? 's' : ''} older than ${days} days removed.`,
+        });
+      }
+    }
+  };
+
+  const commitResync = (value: boolean) => {
+    setResyncOnReconnect(value);
+    getRuntime()?.services()?.userMeta.setResyncRatesOnReconnect(value);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm font-medium">Rate cache & offline sync</CardTitle>
+        <CardDescription>
+          Exchange rates are fetched daily and cached inside your budget file.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-0.5">
+            <p className="text-sm font-medium">Keep cached rates for</p>
+            <p className="text-xs text-muted-foreground">
+              Older rates are pruned and refetched on demand. Longer retention means fewer refetches
+              for historical edits, but a larger budget file — which can slow app load and sync.
+            </p>
+          </div>
+          <Select value={String(retentionDays)} onValueChange={(v) => commitRetention(Number(v))}>
+            <SelectTrigger className="w-32" aria-label="Keep cached rates for">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {RETENTION_OPTIONS.map((days) => (
+                <SelectItem key={days} value={String(days)}>
+                  {days} days
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-0.5">
+            <p className="text-sm font-medium">Update offline rates when back online</p>
+            <p className="text-xs text-muted-foreground">
+              Transactions converted with a manually entered rate while offline are re-converted
+              with the official rate once you reconnect. Rates you pinned on a transaction are never
+              touched.
+            </p>
+          </div>
+          <Switch
+            checked={resyncOnReconnect}
+            onCheckedChange={commitResync}
+            aria-label="Update offline rates when back online"
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 interface RateFormData {
   fromCurrency: string;
@@ -507,6 +600,8 @@ export default function CurrencySettingsPage() {
           )}
         </CardContent>
       </Card>
+
+      <RateCacheSettingsCard />
 
       <Card>
         <CardHeader>

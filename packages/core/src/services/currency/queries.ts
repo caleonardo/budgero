@@ -11,7 +11,7 @@ export class CurrencyQueries {
   getCurrencyRate(
     fromCurrency: string,
     toCurrency: string,
-    month: string,
+    rateDate: string,
     budgetId: number
   ): CurrencyRate | null {
     return getRow(
@@ -20,13 +20,38 @@ export class CurrencyQueries {
       SELECT * FROM currency_rates
       WHERE FromCurrency = ?
         AND ToCurrency = ?
-        AND Month = ?
+        AND RateDate = ?
         AND BudgetID = ?
       LIMIT 1
     `,
       fromCurrency,
       toCurrency,
-      month,
+      rateDate,
+      budgetId
+    ) as CurrencyRate | null;
+  }
+
+  /** Most recent cached rate at or before rateDate for the pair. */
+  getLatestCurrencyRateOnOrBefore(
+    fromCurrency: string,
+    toCurrency: string,
+    rateDate: string,
+    budgetId: number
+  ): CurrencyRate | null {
+    return getRow(
+      this.db,
+      `
+      SELECT * FROM currency_rates
+      WHERE FromCurrency = ?
+        AND ToCurrency = ?
+        AND RateDate <= ?
+        AND BudgetID = ?
+      ORDER BY RateDate DESC
+      LIMIT 1
+    `,
+      fromCurrency,
+      toCurrency,
+      rateDate,
       budgetId
     ) as CurrencyRate | null;
   }
@@ -35,16 +60,16 @@ export class CurrencyQueries {
     fromCurrency: string,
     toCurrency: string,
     rate: number,
-    month: string,
+    rateDate: string,
     lastUpdated: string,
     budgetId: number
   ): void {
     run(
       this.db,
       `
-      INSERT INTO currency_rates (FromCurrency, ToCurrency, Rate, Month, LastUpdated, BudgetID)
+      INSERT INTO currency_rates (FromCurrency, ToCurrency, Rate, RateDate, LastUpdated, BudgetID)
       VALUES (?, ?, ?, ?, ?, ?)
-      ON CONFLICT(FromCurrency, ToCurrency, Month, BudgetID)
+      ON CONFLICT(FromCurrency, ToCurrency, RateDate, BudgetID)
       DO UPDATE SET
         Rate = excluded.Rate,
         LastUpdated = excluded.LastUpdated
@@ -52,10 +77,24 @@ export class CurrencyQueries {
       fromCurrency,
       toCurrency,
       rate,
-      month,
+      rateDate,
       lastUpdated,
       budgetId
     );
+  }
+
+  /** Drop cached daily rates older than the cutoff (retention pruning). */
+  pruneRatesOlderThan(cutoffDate: string, budgetId: number): number {
+    const result = run(
+      this.db,
+      `
+      DELETE FROM currency_rates
+      WHERE BudgetID = ? AND RateDate < ?
+    `,
+      budgetId,
+      cutoffDate
+    );
+    return Number(result.changes ?? 0);
   }
 
   getAllCurrenciesUsed(budgetId: number): string[] {

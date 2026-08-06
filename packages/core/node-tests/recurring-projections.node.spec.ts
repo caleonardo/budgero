@@ -425,11 +425,11 @@ describe('Recurring transfers', () => {
 
     // Two months of rates — the newest one must win.
     const insertRate = adapter.prepare(
-      `INSERT INTO currency_rates (FromCurrency, ToCurrency, Rate, Month, LastUpdated, BudgetID)
+      `INSERT INTO currency_rates (FromCurrency, ToCurrency, Rate, RateDate, LastUpdated, BudgetID)
        VALUES (?, ?, ?, ?, datetime('now'), ?)`
     );
-    insertRate.run('USD', 'EUR', 0.8, '2020-01', budgetId);
-    insertRate.run('USD', 'EUR', 0.5, '2020-02', budgetId);
+    insertRate.run('USD', 'EUR', 0.8, '2020-01-01', budgetId);
+    insertRate.run('USD', 'EUR', 0.5, '2020-02-01', budgetId);
     insertRate.finalize();
 
     await services.recurring.createRecurringTransaction({

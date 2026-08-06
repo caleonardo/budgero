@@ -43,6 +43,7 @@ import { migration042 } from './042-drop-client-side-space-registry-tables.js';
 import { migration043 } from './043-rebuild-mutation-history-without-budget-fk.js';
 import { migration044 } from './044-add-suggestcategoryfrompayee-flag-to-user-meta.js';
 import { migration045 } from './045-rename-money-columns-to-native-converted-scheme.js';
+import { migration046 } from './046-daily-currency-rates-and-rate-cache-settings.js';
 
 import type { Migration } from '../migrations.js';
 
@@ -93,4 +94,5 @@ export const migrations: Migration[] = [
   migration043,
   migration044,
   migration045,
+  migration046,
 ];

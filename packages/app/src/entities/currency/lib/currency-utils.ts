@@ -14,15 +14,14 @@ export interface CustomCurrencyRate {
 }
 
 /**
- * Get exchange rate between two currencies for a specific month
- * Will automatically fetch from API if not available
+ * Get exchange rate between two currencies for a specific date.
+ * Will automatically fetch from API if not available.
  */
 export async function getExchangeRate(
   fromCurrency: string,
   toCurrency: string,
-  month: string,
-  budgetId: number,
-  date?: string
+  rateDate: string,
+  budgetId: number
 ): Promise<number | null> {
   if (fromCurrency === toCurrency) {
     return 1;
@@ -31,23 +30,7 @@ export async function getExchangeRate(
   try {
     const services = getRuntime()?.services();
     if (!services) return null;
-    const currencyService = services.currency;
-
-    // Use full resolution when a transaction date is available (custom date-range overrides first).
-    if (date) {
-      const resolved = await currencyService.resolveRate(
-        fromCurrency,
-        toCurrency,
-        date,
-        month,
-        budgetId
-      );
-      if (resolved) return resolved;
-    }
-
-    // Fallback to monthly fetch path.
-    const rate = await currencyService.getOrFetchRate(fromCurrency, toCurrency, month, budgetId);
-    return rate;
+    return await services.currency.resolveRate(fromCurrency, toCurrency, rateDate, budgetId);
   } catch (error) {
     console.error('Failed to get exchange rate:', error);
     return null;
@@ -57,9 +40,8 @@ export async function getExchangeRate(
 export async function getLocalOrManualRate(
   fromCurrency: string,
   toCurrency: string,
-  month: string,
-  budgetId: number,
-  date?: string
+  rateDate: string,
+  budgetId: number
 ): Promise<number | null> {
   if (fromCurrency === toCurrency) return 1;
   try {
@@ -67,12 +49,15 @@ export async function getLocalOrManualRate(
     if (!services) return null;
     const currencyService = services.currency;
 
-    if (date) {
-      const custom = await currencyService.getCustomRate(fromCurrency, toCurrency, date, budgetId);
-      if (custom) return custom;
-    }
+    const custom = await currencyService.getCustomRate(
+      fromCurrency,
+      toCurrency,
+      rateDate,
+      budgetId
+    );
+    if (custom) return custom;
 
-    const local = await currencyService.getLocalRate(fromCurrency, toCurrency, month, budgetId);
+    const local = await currencyService.getLocalRate(fromCurrency, toCurrency, rateDate, budgetId);
     if (local) return local;
     const manual = await currencyService.getManualRate(fromCurrency, toCurrency, budgetId);
     return manual;

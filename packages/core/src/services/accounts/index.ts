@@ -101,7 +101,6 @@ export class AccountService {
     const budget = this.queries.getBudget(budgetId);
     if (budget && currency !== budget.DisplayCurrency && balance !== 0) {
       try {
-        const currentMonth = currentDate.substring(0, 7); // YYYY-MM
         debugLog(
           `🔄 Pre-fetching currency rate for ${currency} → ${budget.DisplayCurrency} for account creation`
         );
@@ -109,7 +108,7 @@ export class AccountService {
         const rate = await this.currencyService.getOrFetchRate(
           currency,
           budget.DisplayCurrency,
-          currentMonth,
+          currentDate,
           budgetId
         );
 

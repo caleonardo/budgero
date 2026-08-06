@@ -1078,7 +1078,8 @@ describe('MonthlyBudgetService', () => {
 
       // EUR→USD rate: 1 EUR = 1.10 USD
       const month = '2024-01';
-      await currency.saveRate('EUR', 'USD', 1.1, month, budgetId);
+      await currency.saveRate('EUR', 'USD', 1.1, '2024-01-05', budgetId);
+      await currency.saveRate('EUR', 'USD', 1.1, '2024-01-20', budgetId);
 
       // Accounts: EUR checking, USD CC, EUR CC
       const eurChecking = await accounts.createAccount(

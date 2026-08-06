@@ -87,4 +87,37 @@ export class UserMetaQueries {
     const normalized = Math.max(0, Math.floor(days));
     run(this.db, `UPDATE user_meta SET BackupReminderDays = ? WHERE ID = 1`, normalized);
   }
+
+  /** Days of daily currency rates kept in the local cache (synced blob size). */
+  getRateCacheRetentionDays(): number {
+    this.ensureRow();
+    const row = getRow<{ RateCacheRetentionDays: number | null }>(
+      this.db,
+      `SELECT RateCacheRetentionDays FROM user_meta WHERE ID = 1`
+    );
+    const days = row?.RateCacheRetentionDays;
+    return typeof days === 'number' && days > 0 ? days : 30;
+  }
+
+  setRateCacheRetentionDays(days: number): void {
+    this.ensureRow();
+    const normalized = Math.max(1, Math.floor(days));
+    run(this.db, `UPDATE user_meta SET RateCacheRetentionDays = ? WHERE ID = 1`, normalized);
+  }
+
+  /** Whether offline-entered rates re-resolve to official ones on reconnect. */
+  getResyncRatesOnReconnect(): boolean {
+    this.ensureRow();
+    const row = getRow<{ ResyncRatesOnReconnect: boolean | number | null }>(
+      this.db,
+      `SELECT ResyncRatesOnReconnect FROM user_meta WHERE ID = 1`
+    );
+    if (!row || row.ResyncRatesOnReconnect == null) return true;
+    return row.ResyncRatesOnReconnect === true || row.ResyncRatesOnReconnect === 1;
+  }
+
+  setResyncRatesOnReconnect(value: boolean): void {
+    this.ensureRow();
+    run(this.db, `UPDATE user_meta SET ResyncRatesOnReconnect = ? WHERE ID = 1`, value ? 1 : 0);
+  }
 }
