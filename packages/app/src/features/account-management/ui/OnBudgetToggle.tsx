@@ -39,7 +39,7 @@ export function OnBudgetToggle({
               </p>
               <p>
                 <strong>Off-Budget:</strong> Tracked for net worth only (mortgages, loans,
-                investments)
+                investments, crypto)
               </p>
             </div>
           </HelpTooltip>

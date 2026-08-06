@@ -295,9 +295,12 @@ export function AddAccountDialog({
                       setTermYears(30);
                     }
                     // Crypto accounts hold coins, not the budget's fiat:
-                    // default the currency accordingly (and back again).
+                    // default the currency accordingly (and back again), and
+                    // default to tracking-only — market swings shouldn't move
+                    // Ready to Assign unless the user opts in via the toggle.
                     if (val === 'Crypto' && !isCryptoCurrency(currency)) {
                       setCurrency('BTC');
+                      setOnBudget(false);
                     } else if (val !== 'Crypto' && isCryptoCurrency(currency)) {
                       setCurrency(selectedBudget?.DisplayCurrency || 'USD');
                     }
