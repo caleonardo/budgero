@@ -11,6 +11,7 @@ import { AlertCircle, Archive as ArchiveIcon, Search } from 'lucide-react';
 import { Input } from '@shared/ui/input';
 import { AddAccountDialog } from '@features/account-management/ui/AddAccountDialog';
 import { DevSeedAccountsButton } from '@features/account-management/ui/DevSeedAccountsButton';
+import { DevSimulateRateMoveButton } from '@features/account-management/ui/DevSimulateRateMoveButton';
 import { Button } from '@shared/ui/button';
 import { useCallback, useMemo, useState } from 'react';
 import { cn } from '@shared/lib/utils';
@@ -288,6 +289,7 @@ export default function AccountsPage() {
             </Button>
           )}
           {import.meta.env.DEV && <DevSeedAccountsButton />}
+          {import.meta.env.DEV && <DevSimulateRateMoveButton />}
           <AddAccountDialog />
         </div>
       </div>

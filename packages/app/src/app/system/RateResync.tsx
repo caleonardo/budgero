@@ -39,6 +39,7 @@ export function RateResync() {
           await queryClient.invalidateQueries({ queryKey: ['accounts'] });
           await queryClient.invalidateQueries({ queryKey: ['monthlyBudget'] });
           await queryClient.invalidateQueries({ queryKey: ['readyToAssign'] });
+          await queryClient.invalidateQueries({ queryKey: ['revaluationSummary'] });
           await queryClient.invalidateQueries({ queryKey: ['balanceByDates'] });
           await queryClient.invalidateQueries({ queryKey: ['onBudgetBalance'] });
           await queryClient.invalidateQueries({ queryKey: ['onBudgetBalanceByDates'] });

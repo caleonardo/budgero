@@ -261,6 +261,9 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      // Dev-server bind address override (e.g. 127.0.0.1 when a local HTTPS
+      // proxy like tailscale serve dials IPv4 and the default binds ::1 only).
+      host: env.VITE_DEV_HOST || undefined,
       proxy: serverProxy,
       headers: serverHeaders,
       allowedHosts,
