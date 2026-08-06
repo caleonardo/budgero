@@ -64,9 +64,9 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
       const filename = `budgero-backup-${timestamp}.db`;
       const recordedAt = new Date().toISOString();
 
-      downloadFile(dbData, filename, 'application/x-sqlite3');
-      toast.success('Database backup downloaded');
-
+      // Record on the server BEFORE triggering the download: iOS Safari
+      // cancels in-flight fetches when the download sheet appears, which
+      // killed this call with "Load failed" and made the reminder eternal.
       let recordedOnServer = false;
       try {
         await recordBackup.mutateAsync();
@@ -79,6 +79,9 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
           description: getErrorMessage(recordError, 'The reminder may reappear until this works.'),
         });
       }
+
+      downloadFile(dbData, filename, 'application/x-sqlite3');
+      toast.success('Database backup downloaded');
       if (!recordedOnServer) {
         queryClient.setQueryData<User | undefined>(['profile'], (prev) => {
           if (!prev) return prev;
