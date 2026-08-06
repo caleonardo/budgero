@@ -1,6 +1,8 @@
 import React from 'react';
 import { Badge } from '@shared/ui/badge';
 import { CalendarClock, type LucideIcon } from 'lucide-react';
+import { isCryptoCurrency } from '@budgero/core/browser';
+import { CryptoIcon } from '@entities/currency/ui/CryptoIcon';
 
 export interface AccountHeaderProps {
   accountName: string;
@@ -20,7 +22,11 @@ export const AccountHeader = React.memo(function AccountHeader({
   return (
     <div className="flex items-center gap-2.5">
       <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-        <AccountIcon className="w-4 h-4" />
+        {isCryptoCurrency(accountCurrency) ? (
+          <CryptoIcon code={accountCurrency} className="w-5 h-5" />
+        ) : (
+          <AccountIcon className="w-4 h-4" />
+        )}
       </div>
       <div className="min-w-0">
         <div className="flex items-center gap-2">

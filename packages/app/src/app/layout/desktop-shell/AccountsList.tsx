@@ -6,6 +6,8 @@ import { Badge } from '@shared/ui/badge';
 import { Input } from '@shared/ui/input';
 import { SidebarMenuButton } from '@shared/ui/sidebar';
 import { getAccountTypeDefinition } from '@entities/account/model/accountTypes';
+import { isCryptoCurrency } from '@budgero/core/browser';
+import { CryptoIcon } from '@entities/currency/ui/CryptoIcon';
 import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { MAX_ACCOUNTS_PER_SECTION, ACCOUNT_SEARCH_THRESHOLD } from './constants';
@@ -14,6 +16,7 @@ interface Account {
   ID: number;
   Name: string;
   Type: string;
+  Currency?: string;
   /** Integer milliunits, like every stored amount. */
   BalanceNative?: number;
   BalanceConverted?: number;
@@ -70,6 +73,8 @@ const AccountItem = React.memo(function AccountItem({
             <Badge variant="destructive" className="h-4 px-1 text-xs flex-shrink-0">
               {uncategorizedCount}
             </Badge>
+          ) : isCryptoCurrency(account.Currency ?? '') ? (
+            <CryptoIcon code={account.Currency ?? ''} className="h-3.5 w-3.5 flex-shrink-0" />
           ) : (
             <AccountIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
           )}

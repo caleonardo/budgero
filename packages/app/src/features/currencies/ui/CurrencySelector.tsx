@@ -11,7 +11,8 @@ import {
 import { Label } from '@shared/ui/label';
 import { Button } from '@shared/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@shared/ui/tooltip';
-import { Bitcoin, Check, ChevronsUpDown, Info } from 'lucide-react';
+import { Check, ChevronsUpDown, Info } from 'lucide-react';
+import { CryptoIcon } from '@entities/currency/ui/CryptoIcon';
 import { CountryFlag } from '@shared/ui/country-flag';
 import { cn } from '@shared/lib/utils';
 import { useConnectivity } from '@shared/hooks/useConnectivity';
@@ -21,14 +22,14 @@ import {
   type CurrencyOption,
 } from '@features/currencies/model/currency-data';
 
-/** Flag for fiat entries; a coin glyph for crypto (no country to show). */
-function CurrencyGlyph({ countryCode, className }: { countryCode: string; className?: string }) {
-  if (!countryCode) {
-    return <Bitcoin className={cn('h-[1.2em] w-[1.2em] text-muted-foreground', className)} />;
+/** Flag for fiat entries; the coin's own icon for crypto (no country to show). */
+function CurrencyGlyph({ currency, className }: { currency: CurrencyOption; className?: string }) {
+  if (!currency.countryCode) {
+    return <CryptoIcon code={currency.value} className={cn('h-[1.35em] w-[1.35em]', className)} />;
   }
   return (
     <CountryFlag
-      countryCode={countryCode}
+      countryCode={currency.countryCode}
       svg
       style={{ width: '1.5em', height: '1.5em' }}
       className={className}
@@ -121,7 +122,7 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
           >
             {selectedCurrency ? (
               <div className="flex items-center">
-                <CurrencyGlyph countryCode={selectedCurrency.countryCode} />
+                <CurrencyGlyph currency={selectedCurrency} />
                 <span className="ml-2">
                   {compact ? selectedCurrency.value : selectedCurrency.label}
                 </span>
@@ -160,7 +161,7 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                           value === currency.value ? 'opacity-100' : 'opacity-0'
                         )}
                       />
-                      <CurrencyGlyph countryCode={currency.countryCode} className="mr-2" />
+                      <CurrencyGlyph currency={currency} className="mr-2" />
                       <span className="truncate">{compact ? currency.value : currency.label}</span>
                     </CommandItem>
                   ))}
