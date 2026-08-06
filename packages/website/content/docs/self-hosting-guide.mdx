@@ -186,9 +186,9 @@ Each entry must match the browser's origin exactly: scheme, host, and port (when
       <td><code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code></td>
     </tr>
     <tr>
-      <td><code>CURRENCYLAYER_API_KEY</code></td>
-      <td>-</td>
-      <td>Optional: enables multi-currency conversion</td>
+      <td><code>CURRENCY_API_BASE_URL</code></td>
+      <td>public jsDelivr CDN</td>
+      <td>Optional: base URL of a self-hosted exchange-rate mirror — see <a href="#currency-conversion">Currency conversion</a></td>
     </tr>
     <tr>
       <td><code>UPDATE_CHECK_DISABLED</code></td>
@@ -212,15 +212,17 @@ On first startup (when no users exist), Budgero automatically creates an admin a
 - **Foreground**: Prints directly to your terminal
 - **Daemon mode**: Check `data/logs/<name>.log`
 
-## Currency conversion (optional)
+## Currency conversion
 
-For multi-currency accounts, get a free API key from [currencylayer.com](https://currencylayer.com) (100 requests/month, 168 currencies). Add it to your environment:
+Multi-currency conversion works out of the box — no API key, no signup. Rates come from the open [exchange-api](https://github.com/fawazahmed0/exchange-api) dataset (~350 currencies including crypto, updated daily) via the public jsDelivr CDN, and your server caches them locally so repeated requests never leave your machine.
+
+If you want zero third-party calls, mirror the dataset's static JSON files (a daily cron copying `currencies/*.min.json` is enough) and point Budgero at your mirror:
 
 ```bash
-CURRENCYLAYER_API_KEY=your_api_key_here
+CURRENCY_API_BASE_URL=https://rates.example.com/{date}/v1
 ```
 
-Single-currency users can skip this—Budgero works fine without it.
+The `{date}` placeholder is substituted with the dataset date (YYYY-MM-DD). Single-currency users can ignore all of this — Budgero works fine without it.
 
 ## User management
 

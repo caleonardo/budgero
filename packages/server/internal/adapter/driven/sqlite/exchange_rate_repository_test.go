@@ -14,13 +14,13 @@ func TestExchangeRateRepository_UpsertRate(t *testing.T) {
 	repo := sqlite.NewExchangeRateRepository(queries)
 	ctx := context.Background()
 
-	err := repo.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.85)
+	err := repo.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.85)
 	if err != nil {
 		t.Fatalf("UpsertRate() error = %v", err)
 	}
 
 	// Verify
-	rate, err := repo.GetRate(ctx, "USD", "EUR", "2024-01")
+	rate, err := repo.GetRate(ctx, "USD", "EUR", "2024-01-15")
 	if err != nil {
 		t.Fatalf("GetRate() error = %v", err)
 	}
@@ -35,15 +35,15 @@ func TestExchangeRateRepository_UpsertRate_Update(t *testing.T) {
 	ctx := context.Background()
 
 	// Create
-	_ = repo.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.85)
+	_ = repo.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.85)
 
 	// Update
-	err := repo.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.90)
+	err := repo.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.90)
 	if err != nil {
 		t.Fatalf("UpsertRate() update error = %v", err)
 	}
 
-	rate, _ := repo.GetRate(ctx, "USD", "EUR", "2024-01")
+	rate, _ := repo.GetRate(ctx, "USD", "EUR", "2024-01-15")
 	if rate != 0.90 {
 		t.Errorf("GetRate() after update = %v, want 0.90", rate)
 	}
@@ -54,9 +54,9 @@ func TestExchangeRateRepository_GetRate(t *testing.T) {
 	repo := sqlite.NewExchangeRateRepository(queries)
 	ctx := context.Background()
 
-	testkit.SeedExchangeRate(t, queries, "EUR", "USD", "2024-02", 1.08)
+	testkit.SeedExchangeRate(t, queries, "EUR", "USD", "2024-02-15", 1.08)
 
-	rate, err := repo.GetRate(ctx, "EUR", "USD", "2024-02")
+	rate, err := repo.GetRate(ctx, "EUR", "USD", "2024-02-15")
 	if err != nil {
 		t.Fatalf("GetRate() error = %v", err)
 	}
@@ -70,7 +70,7 @@ func TestExchangeRateRepository_GetRate_NotFound(t *testing.T) {
 	repo := sqlite.NewExchangeRateRepository(queries)
 	ctx := context.Background()
 
-	_, err := repo.GetRate(ctx, "USD", "JPY", "2024-01")
+	_, err := repo.GetRate(ctx, "USD", "JPY", "2024-01-15")
 	if err == nil {
 		t.Error("GetRate() error = nil, want error for not found")
 	}
@@ -84,14 +84,14 @@ func TestExchangeRateRepository_ListRates(t *testing.T) {
 	repo := sqlite.NewExchangeRateRepository(queries)
 	ctx := context.Background()
 
-	// Seed multiple rates for same base currency and month
-	testkit.SeedExchangeRate(t, queries, "USD", "EUR", "2024-01", 0.85)
-	testkit.SeedExchangeRate(t, queries, "USD", "GBP", "2024-01", 0.79)
-	testkit.SeedExchangeRate(t, queries, "USD", "JPY", "2024-01", 148.5)
-	// Different month - should not be included
-	testkit.SeedExchangeRate(t, queries, "USD", "EUR", "2024-02", 0.86)
+	// Seed multiple rates for same base currency and date
+	testkit.SeedExchangeRate(t, queries, "USD", "EUR", "2024-01-15", 0.85)
+	testkit.SeedExchangeRate(t, queries, "USD", "GBP", "2024-01-15", 0.79)
+	testkit.SeedExchangeRate(t, queries, "USD", "JPY", "2024-01-15", 148.5)
+	// Different date - should not be included
+	testkit.SeedExchangeRate(t, queries, "USD", "EUR", "2024-02-15", 0.86)
 
-	rates, err := repo.ListRates(ctx, "USD", "2024-01")
+	rates, err := repo.ListRates(ctx, "USD", "2024-01-15")
 	if err != nil {
 		t.Fatalf("ListRates() error = %v", err)
 	}
@@ -115,11 +115,40 @@ func TestExchangeRateRepository_ListRates_Empty(t *testing.T) {
 	repo := sqlite.NewExchangeRateRepository(queries)
 	ctx := context.Background()
 
-	rates, err := repo.ListRates(ctx, "XYZ", "2024-01")
+	rates, err := repo.ListRates(ctx, "XYZ", "2024-01-15")
 	if err != nil {
 		t.Fatalf("ListRates() error = %v", err)
 	}
 	if len(rates) != 0 {
 		t.Errorf("ListRates() returned %d rates, want 0", len(rates))
+	}
+}
+
+func TestExchangeRateRepository_GetLatestRateOnOrBefore(t *testing.T) {
+	_, queries := testkit.NewTestDB(t, false)
+	repo := sqlite.NewExchangeRateRepository(queries)
+	ctx := context.Background()
+
+	testkit.SeedExchangeRate(t, queries, "USD", "EUR", "2026-08-01", 0.85)
+	testkit.SeedExchangeRate(t, queries, "USD", "EUR", "2026-08-05", 0.86)
+
+	rate, date, err := repo.GetLatestRateOnOrBefore(ctx, "USD", "EUR", "2026-08-06")
+	if err != nil {
+		t.Fatalf("GetLatestRateOnOrBefore() error = %v", err)
+	}
+	if rate != 0.86 || date != "2026-08-05" {
+		t.Errorf("got %v @ %s, want 0.86 @ 2026-08-05", rate, date)
+	}
+
+	rate, date, err = repo.GetLatestRateOnOrBefore(ctx, "USD", "EUR", "2026-08-03")
+	if err != nil {
+		t.Fatalf("GetLatestRateOnOrBefore() error = %v", err)
+	}
+	if rate != 0.85 || date != "2026-08-01" {
+		t.Errorf("got %v @ %s, want 0.85 @ 2026-08-01", rate, date)
+	}
+
+	if _, _, err := repo.GetLatestRateOnOrBefore(ctx, "USD", "JPY", "2026-08-06"); err == nil {
+		t.Error("GetLatestRateOnOrBefore() for missing pair = nil error, want not-found")
 	}
 }

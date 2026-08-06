@@ -69,6 +69,6 @@ See [Self-Host CLI Guide](../../docs/selfhost-cli.md) for full details.
 | `SELF_HOSTABLE` | For self-host | Enables local JWT auth |
 | `CLERK_SECRET_KEY` | For SaaS | Clerk API key |
 | `LEMONSQUEEZY_*` | For SaaS | Payment processing |
-| `CURRENCYLAYER_API_KEY` | No | Multi-currency conversion |
+| `CURRENCY_API_BASE_URL` | No | Self-hosted exchange-rate mirror URL (rates need no key by default) |
 
 See [Build Flags Reference](../../docs/build-flags.md) for all runtime flags.

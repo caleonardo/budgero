@@ -115,6 +115,8 @@ func NewTestServices(t *testing.T, selfHost bool) (*sql.DB, *sqlc.Queries, *appl
 		Feedback:        sqlite.NewFeedbackRepository(sqlDB),
 		UpdatePing:      sqlite.NewUpdatePingRepository(sqlDB),
 		Queries:         queries,
+		// No CurrencyProvider: service-level tests exercise the cache path;
+		// provider behavior is covered by fakes in dedicated tests.
 	}
 
 	return sqlDB, queries, application.NewServices(repos, cfg), cfg
@@ -337,14 +339,14 @@ func SeedPushToken(t *testing.T, queries *sqlc.Queries, userID, spaceID string) 
 }
 
 // SeedExchangeRate creates a test exchange rate.
-func SeedExchangeRate(t *testing.T, queries *sqlc.Queries, baseCurrency, targetCurrency, month string, rate float64) {
+func SeedExchangeRate(t *testing.T, queries *sqlc.Queries, baseCurrency, targetCurrency, rateDate string, rate float64) {
 	t.Helper()
 
 	ctx := context.Background()
 	err := queries.UpsertExchangeRate(ctx, sqlc.UpsertExchangeRateParams{
 		BaseCurrency:   baseCurrency,
 		TargetCurrency: targetCurrency,
-		Month:          month,
+		RateDate:       rateDate,
 		Rate:           rate,
 	})
 	if err != nil {

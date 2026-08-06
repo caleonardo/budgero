@@ -68,7 +68,7 @@ type BudgetSpaceMember struct {
 type ExchangeRate struct {
 	BaseCurrency   string    `json:"base_currency"`
 	TargetCurrency string    `json:"target_currency"`
-	Month          string    `json:"month"`
+	RateDate       string    `json:"rate_date"`
 	Rate           float64   `json:"rate"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }

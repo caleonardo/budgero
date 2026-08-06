@@ -4,10 +4,9 @@ import "context"
 
 // CurrencyProvider defines methods for fetching exchange rates from external APIs.
 type CurrencyProvider interface {
-	// GetRates fetches exchange rates for a base currency on a specific date.
-	// Returns a map of target currency codes to their rates.
-	GetRates(ctx context.Context, baseCurrency string, date string) (map[string]float64, error)
-
-	// GetRate fetches a specific exchange rate.
-	GetRate(ctx context.Context, baseCurrency, targetCurrency, date string) (float64, error)
+	// GetRates fetches all exchange rates for a base currency on a specific
+	// date (YYYY-MM-DD). Returns uppercase target currency codes mapped to
+	// their rates, plus the dataset date actually served — which may be
+	// earlier than requested (upstream gaps, historical floor clamps).
+	GetRates(ctx context.Context, baseCurrency, date string) (map[string]float64, string, error)
 }

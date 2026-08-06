@@ -50,7 +50,7 @@ func newDaemonCmd() *cobra.Command {
 			if envOpts.port < 0 {
 				return fmt.Errorf("port must be positive when provided")
 			}
-			return daemonStart(envOpts, name, envFile, logDir)
+			return daemonStart(&envOpts, name, envFile, logDir)
 		},
 	}
 	bindRuntimeEnvFlags(startCmd, &envOpts, true, "Port to run the server on (overrides PORT env; defaults to 3001)")
@@ -81,7 +81,7 @@ func newDaemonCmd() *cobra.Command {
 	return daemonCmd
 }
 
-func daemonStart(envOpts runtimeEnvOptions, name, envFile, logDir string) error {
+func daemonStart(envOpts *runtimeEnvOptions, name, envFile, logDir string) error {
 	executable, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("failed to resolve current executable: %w", err)

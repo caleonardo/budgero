@@ -265,15 +265,20 @@ type PushService interface {
 }
 
 // ExchangeRateService defines the interface for exchange rate operations.
+// Rates are keyed by day (YYYY-MM-DD).
 type ExchangeRateService interface {
-	// GetRate gets the exchange rate for a currency pair and month.
-	GetRate(ctx context.Context, baseCurrency, targetCurrency, month string) (float64, error)
+	// GetOrFetchRates returns base→symbol rates for a date, serving from the
+	// cache and fetching missing pairs from the external provider.
+	GetOrFetchRates(ctx context.Context, baseCurrency string, symbols []string, rateDate string) (map[string]float64, error)
+
+	// GetRate gets the exchange rate for a currency pair on an exact date.
+	GetRate(ctx context.Context, baseCurrency, targetCurrency, rateDate string) (float64, error)
 
 	// UpsertRate inserts or updates an exchange rate.
-	UpsertRate(ctx context.Context, baseCurrency, targetCurrency, month string, rate float64) error
+	UpsertRate(ctx context.Context, baseCurrency, targetCurrency, rateDate string, rate float64) error
 
-	// ListRates lists all exchange rates for a base currency and month.
-	ListRates(ctx context.Context, baseCurrency, month string) (map[string]float64, error)
+	// ListRates lists all exchange rates for a base currency on a date.
+	ListRates(ctx context.Context, baseCurrency, rateDate string) (map[string]float64, error)
 }
 
 // ActivityService defines app activity heartbeat tracking operations.

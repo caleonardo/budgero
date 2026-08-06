@@ -17,6 +17,7 @@ import (
 	"time"
 
 	serverpkg "budgero-server"
+	"budgero-server/internal/adapter/driven/currencyapi"
 	"budgero-server/internal/adapter/driven/sqlite"
 	"budgero-server/internal/adapter/driven/updatecheck"
 	"budgero-server/internal/adapter/driven/sqlite/sqlc"
@@ -273,7 +274,8 @@ func WireServices(dbConn *sql.DB, cfg *config.Config, selfHost bool) *applicatio
 		DatabaseBrowser: sqlite.NewDatabaseBrowserRepository(dbConn),
 		Feedback:        sqlite.NewFeedbackRepository(dbConn),
 		UpdatePing:      sqlite.NewUpdatePingRepository(dbConn),
-		Queries:         queries,
+		CurrencyProvider: currencyapi.New(cfg.External.CurrencyAPIBaseURL),
+		Queries:          queries,
 	}
 
 	return application.NewServices(repos, cfg)

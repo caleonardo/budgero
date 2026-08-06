@@ -3,6 +3,7 @@ package application
 import (
 	"budgero-server/internal/adapter/driven/sqlite/sqlc"
 	"budgero-server/internal/config"
+	"budgero-server/internal/port/driven/external"
 	"budgero-server/internal/port/driven/repository"
 	"budgero-server/internal/port/driving"
 )
@@ -42,7 +43,10 @@ type Repositories struct {
 	// UpdatePing aggregates anonymous update-check counts. Same deal as
 	// Feedback: wired in both modes, only ever written on SaaS.
 	UpdatePing repository.UpdatePingRepository
-	Queries    *sqlc.Queries
+	// CurrencyProvider fetches daily exchange rates from the external
+	// dataset (or a self-hosted mirror).
+	CurrencyProvider external.CurrencyProvider
+	Queries          *sqlc.Queries
 }
 
 // NewServices creates all application services with their dependencies.
@@ -54,7 +58,7 @@ func NewServices(repos *Repositories, cfg *config.Config) *Services {
 		Entitlement:     NewEntitlementService(repos.Entitlement, repos.User, cfg),
 		Sync:            NewSyncService(repos.Sync),
 		Push:            NewPushService(repos.Push),
-		ExchangeRate:    NewExchangeRateService(repos.ExchangeRate),
+		ExchangeRate:    NewExchangeRateService(repos.ExchangeRate, repos.CurrencyProvider),
 		Activity:        NewActivityService(repos.Activity),
 		Admin:           NewAdminService(repos.Admin, repos.Activity, repos.Space, repos.Queries, cfg),
 		DatabaseBrowser: NewDatabaseBrowserService(repos.DatabaseBrowser, repos.Queries),

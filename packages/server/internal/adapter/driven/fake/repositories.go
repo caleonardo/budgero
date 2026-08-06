@@ -4,6 +4,8 @@ package fake
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -1449,7 +1451,7 @@ func (r *AdminRepository) RevokeAllAccess(ctx context.Context, userID string) er
 // ExchangeRateRepository is a fake in-memory implementation of the exchange rate repository for testing.
 type ExchangeRateRepository struct {
 	mu    sync.RWMutex
-	rates map[string]float64 // key: "base:target:month" -> rate
+	rates map[string]float64 // key: "base:target:rateDate" -> rate
 }
 
 // NewExchangeRateRepository creates a new fake exchange rate repository.
@@ -1459,26 +1461,49 @@ func NewExchangeRateRepository() *ExchangeRateRepository {
 	}
 }
 
-func (r *ExchangeRateRepository) rateKey(base, target, month string) string {
-	return base + ":" + target + ":" + month
+func (r *ExchangeRateRepository) rateKey(base, target, rateDate string) string {
+	return base + ":" + target + ":" + rateDate
 }
 
-// GetRate retrieves an exchange rate for a currency pair and month.
-func (r *ExchangeRateRepository) GetRate(ctx context.Context, baseCurrency, targetCurrency, month string) (float64, error) {
+// GetRate retrieves an exchange rate for a currency pair on an exact date.
+func (r *ExchangeRateRepository) GetRate(ctx context.Context, baseCurrency, targetCurrency, rateDate string) (float64, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	key := r.rateKey(baseCurrency, targetCurrency, month)
+	key := r.rateKey(baseCurrency, targetCurrency, rateDate)
 	if rate, ok := r.rates[key]; ok {
 		return rate, nil
 	}
 	return 0, nil // Return 0 for not found (not an error in this context)
 }
 
-// UpsertRate creates or updates an exchange rate for a currency pair and month.
-func (r *ExchangeRateRepository) UpsertRate(ctx context.Context, baseCurrency, targetCurrency, month string, rate float64) error {
+// GetLatestRateOnOrBefore returns the most recent rate at or before rateDate.
+func (r *ExchangeRateRepository) GetLatestRateOnOrBefore(ctx context.Context, baseCurrency, targetCurrency, rateDate string) (rate float64, actualDate string, err error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	prefix := baseCurrency + ":" + targetCurrency + ":"
+	bestDate := ""
+	bestRate := 0.0
+	for key, rate := range r.rates {
+		if !strings.HasPrefix(key, prefix) {
+			continue
+		}
+		date := key[len(prefix):]
+		if date <= rateDate && date > bestDate {
+			bestDate = date
+			bestRate = rate
+		}
+	}
+	if bestDate == "" {
+		return 0, "", fmt.Errorf("no rate for %s/%s on or before %s", baseCurrency, targetCurrency, rateDate)
+	}
+	return bestRate, bestDate, nil
+}
+
+// UpsertRate creates or updates an exchange rate for a currency pair and date.
+func (r *ExchangeRateRepository) UpsertRate(ctx context.Context, baseCurrency, targetCurrency, rateDate string, rate float64) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	key := r.rateKey(baseCurrency, targetCurrency, month)
+	key := r.rateKey(baseCurrency, targetCurrency, rateDate)
 	r.rates[key] = rate
 	return nil
 }

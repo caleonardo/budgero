@@ -132,7 +132,7 @@ const faqs = [
   },
   {
     q: 'Can I run Budgero air-gapped (fully offline)?',
-    a: "Yes. There is no telemetry, no license check, no analytics. The only routine outbound call is a daily update check against budgero.app that carries the version number of your install and nothing else — set UPDATE_CHECK_DISABLED=true and it never fires, with no loss of functionality. Optional currency exchange rates (currencylayer.com, your own API key) are the only other outbound call. You can run Budgero on a fully isolated network indefinitely.",
+    a: "Yes. There is no telemetry, no license check, no analytics. The only routine outbound call is a daily update check against budgero.app that carries the version number of your install and nothing else — set UPDATE_CHECK_DISABLED=true and it never fires, with no loss of functionality. Optional currency exchange rates (a free public dataset on the jsDelivr CDN, no API key) are the only other outbound call — and CURRENCY_API_BASE_URL can point them at your own mirror. You can run Budgero on a fully isolated network indefinitely.",
   },
   {
     q: 'How do I import my YNAB data into self-hosted Budgero?',

@@ -2,34 +2,114 @@ package application
 
 import (
 	"context"
+	"fmt"
+	"time"
 
+	"github.com/rs/zerolog/log"
+
+	"budgero-server/internal/port/driven/external"
 	"budgero-server/internal/port/driven/repository"
 	"budgero-server/internal/port/driving"
 )
 
+// maxRateStaleDays is how far behind a cached rate may lag the requested date
+// before a provider refresh is attempted. Mirrors the provider's own walk-back
+// window so weekends/gaps resolve without refetch loops.
+const maxRateStaleDays = 7
+
+const rateDateLayout = "2006-01-02"
+
 // ExchangeRateService implements driving.ExchangeRateService.
 type ExchangeRateService struct {
 	rateRepo repository.ExchangeRateRepository
+	provider external.CurrencyProvider
 }
 
 // NewExchangeRateService creates a new ExchangeRateService.
-func NewExchangeRateService(rateRepo repository.ExchangeRateRepository) *ExchangeRateService {
-	return &ExchangeRateService{rateRepo: rateRepo}
+func NewExchangeRateService(rateRepo repository.ExchangeRateRepository, provider external.CurrencyProvider) *ExchangeRateService {
+	return &ExchangeRateService{rateRepo: rateRepo, provider: provider}
 }
 
 var _ driving.ExchangeRateService = (*ExchangeRateService)(nil)
 
-// GetRate returns the exchange rate between two currencies for a given month.
-func (s *ExchangeRateService) GetRate(ctx context.Context, baseCurrency, targetCurrency, month string) (float64, error) {
-	return s.rateRepo.GetRate(ctx, baseCurrency, targetCurrency, month)
+// GetRate returns the exchange rate between two currencies on an exact date.
+func (s *ExchangeRateService) GetRate(ctx context.Context, baseCurrency, targetCurrency, rateDate string) (float64, error) {
+	return s.rateRepo.GetRate(ctx, baseCurrency, targetCurrency, rateDate)
 }
 
-// UpsertRate creates or updates an exchange rate for a currency pair and month.
-func (s *ExchangeRateService) UpsertRate(ctx context.Context, baseCurrency, targetCurrency, month string, rate float64) error {
-	return s.rateRepo.UpsertRate(ctx, baseCurrency, targetCurrency, month, rate)
+// UpsertRate creates or updates an exchange rate for a currency pair and date.
+func (s *ExchangeRateService) UpsertRate(ctx context.Context, baseCurrency, targetCurrency, rateDate string, rate float64) error {
+	return s.rateRepo.UpsertRate(ctx, baseCurrency, targetCurrency, rateDate, rate)
 }
 
-// ListRates returns all exchange rates for a base currency and month.
-func (s *ExchangeRateService) ListRates(ctx context.Context, baseCurrency, month string) (map[string]float64, error) {
-	return s.rateRepo.ListRates(ctx, baseCurrency, month)
+// ListRates returns all exchange rates for a base currency and date.
+func (s *ExchangeRateService) ListRates(ctx context.Context, baseCurrency, rateDate string) (map[string]float64, error) {
+	return s.rateRepo.ListRates(ctx, baseCurrency, rateDate)
+}
+
+// GetOrFetchRates returns base→symbol rates for a date, serving fresh cache
+// hits first, fetching missing pairs from the provider, and falling back to
+// stale cache entries when the provider is unreachable.
+func (s *ExchangeRateService) GetOrFetchRates(ctx context.Context, baseCurrency string, symbols []string, rateDate string) (map[string]float64, error) {
+	quotes := make(map[string]float64, len(symbols))
+	missing := make([]string, 0)
+
+	for _, sym := range symbols {
+		rate, actualDate, err := s.rateRepo.GetLatestRateOnOrBefore(ctx, baseCurrency, sym, rateDate)
+		if err == nil && rate != 0 && withinStaleWindow(actualDate, rateDate) {
+			quotes[sym] = rate
+			continue
+		}
+		missing = append(missing, sym)
+	}
+
+	if len(missing) == 0 {
+		return quotes, nil
+	}
+
+	if s.provider == nil {
+		return quotes, fmt.Errorf("no currency provider configured")
+	}
+
+	rates, servedDate, err := s.provider.GetRates(ctx, baseCurrency, rateDate)
+	if err != nil {
+		// Provider down: serve stale cache entries rather than nothing.
+		for _, sym := range missing {
+			rate, _, cacheErr := s.rateRepo.GetLatestRateOnOrBefore(ctx, baseCurrency, sym, rateDate)
+			if cacheErr == nil && rate != 0 {
+				quotes[sym] = rate
+			}
+		}
+		if len(quotes) == 0 {
+			return nil, fmt.Errorf("fetching rates for %s on %s: %w", baseCurrency, rateDate, err)
+		}
+		log.Warn().Err(err).Str("base", baseCurrency).Str("date", rateDate).
+			Msg("currency provider unavailable; serving stale cached rates")
+		return quotes, nil
+	}
+
+	for _, sym := range missing {
+		rate, ok := rates[sym]
+		if !ok || rate == 0 {
+			continue
+		}
+		if err := s.rateRepo.UpsertRate(ctx, baseCurrency, sym, servedDate, rate); err != nil {
+			log.Error().Err(err).Msg("failed upserting exchange rate")
+		}
+		if err := s.rateRepo.UpsertRate(ctx, sym, baseCurrency, servedDate, 1.0/rate); err != nil {
+			log.Warn().Err(err).Msg("failed upserting inverse exchange rate")
+		}
+		quotes[sym] = rate
+	}
+
+	return quotes, nil
+}
+
+func withinStaleWindow(actualDate, requestedDate string) bool {
+	actual, err1 := time.Parse(rateDateLayout, actualDate)
+	requested, err2 := time.Parse(rateDateLayout, requestedDate)
+	if err1 != nil || err2 != nil {
+		return false
+	}
+	return requested.Sub(actual) <= maxRateStaleDays*24*time.Hour
 }

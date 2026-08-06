@@ -100,8 +100,10 @@ type RateLimitConfig struct {
 
 // ExternalConfig contains external service settings.
 type ExternalConfig struct {
-	// Currency exchange
-	CurrencyLayerAPIKey string `env:"CURRENCYLAYER_API_KEY"`
+	// Currency exchange: base URL template for the fawazahmed0/exchange-api
+	// dataset ("{date}" is substituted). Empty selects the public jsDelivr
+	// CDN; self-hosters can point it at a private mirror.
+	CurrencyAPIBaseURL string `env:"CURRENCY_API_BASE_URL"`
 
 	// Newsletter
 
@@ -229,11 +231,6 @@ func (c *Config) HasLemonSqueezy() bool {
 // API key is set. Scheduler and per-event sends short-circuit when false.
 func (c *Config) HasEmail() bool {
 	return c.Email.Enabled && c.Email.ResendAPIKey != ""
-}
-
-// HasCurrencyLayer returns true if CurrencyLayer is configured.
-func (c *Config) HasCurrencyLayer() bool {
-	return c.External.CurrencyLayerAPIKey != ""
 }
 
 // generateSecureSecret generates a secure random secret for JWT signing.

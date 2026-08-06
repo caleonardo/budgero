@@ -11,16 +11,16 @@ import (
 func TestExchangeRateService_UpsertAndGetRate(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
 	// Upsert a rate
-	err := svc.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.85)
+	err := svc.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.85)
 	if err != nil {
 		t.Fatalf("UpsertRate() error = %v", err)
 	}
 
 	// Get the rate
-	rate, err := svc.GetRate(ctx, "USD", "EUR", "2024-01")
+	rate, err := svc.GetRate(ctx, "USD", "EUR", "2024-01-15")
 	if err != nil {
 		t.Fatalf("GetRate() error = %v", err)
 	}
@@ -33,10 +33,10 @@ func TestExchangeRateService_UpsertAndGetRate(t *testing.T) {
 func TestExchangeRateService_GetRate_NotFound(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
 	// Get non-existent rate
-	rate, err := svc.GetRate(ctx, "USD", "EUR", "2024-01")
+	rate, err := svc.GetRate(ctx, "USD", "EUR", "2024-01-15")
 	if err != nil {
 		t.Fatalf("GetRate() error = %v", err)
 	}
@@ -50,16 +50,16 @@ func TestExchangeRateService_GetRate_NotFound(t *testing.T) {
 func TestExchangeRateService_UpsertRate_Updates(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
 	// Insert initial rate
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.85)
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.85)
 
 	// Update the rate
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.90)
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.90)
 
 	// Get updated rate
-	rate, _ := svc.GetRate(ctx, "USD", "EUR", "2024-01")
+	rate, _ := svc.GetRate(ctx, "USD", "EUR", "2024-01-15")
 	if rate != 0.90 {
 		t.Errorf("GetRate() after update = %v, want 0.90", rate)
 	}
@@ -68,18 +68,18 @@ func TestExchangeRateService_UpsertRate_Updates(t *testing.T) {
 func TestExchangeRateService_ListRates(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
-	// Add multiple rates for same base and month
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.85)
-	_ = svc.UpsertRate(ctx, "USD", "GBP", "2024-01", 0.75)
-	_ = svc.UpsertRate(ctx, "USD", "JPY", "2024-01", 148.50)
-	// Different month should not be included
-	_ = svc.UpsertRate(ctx, "USD", "CAD", "2024-02", 1.35)
+	// Add multiple rates for same base and date
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.85)
+	_ = svc.UpsertRate(ctx, "USD", "GBP", "2024-01-15", 0.75)
+	_ = svc.UpsertRate(ctx, "USD", "JPY", "2024-01-15", 148.50)
+	// Different date should not be included
+	_ = svc.UpsertRate(ctx, "USD", "CAD", "2024-02-15", 1.35)
 	// Different base should not be included
-	_ = svc.UpsertRate(ctx, "EUR", "GBP", "2024-01", 0.88)
+	_ = svc.UpsertRate(ctx, "EUR", "GBP", "2024-01-15", 0.88)
 
-	rates, err := svc.ListRates(ctx, "USD", "2024-01")
+	rates, err := svc.ListRates(ctx, "USD", "2024-01-15")
 	if err != nil {
 		t.Fatalf("ListRates() error = %v", err)
 	}
@@ -102,9 +102,9 @@ func TestExchangeRateService_ListRates(t *testing.T) {
 func TestExchangeRateService_ListRates_Empty(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
-	rates, err := svc.ListRates(ctx, "USD", "2024-01")
+	rates, err := svc.ListRates(ctx, "USD", "2024-01-15")
 	if err != nil {
 		t.Fatalf("ListRates() error = %v", err)
 	}
@@ -114,20 +114,20 @@ func TestExchangeRateService_ListRates_Empty(t *testing.T) {
 	}
 }
 
-func TestExchangeRateService_DifferentMonths(t *testing.T) {
+func TestExchangeRateService_DifferentDates(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
-	// Same currency pair, different months
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.85)
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-02", 0.86)
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-03", 0.84)
+	// Same currency pair, different dates
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.85)
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-02-15", 0.86)
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-03-15", 0.84)
 
-	// Each month should have its own rate
-	rate1, _ := svc.GetRate(ctx, "USD", "EUR", "2024-01")
-	rate2, _ := svc.GetRate(ctx, "USD", "EUR", "2024-02")
-	rate3, _ := svc.GetRate(ctx, "USD", "EUR", "2024-03")
+	// Each date should have its own rate
+	rate1, _ := svc.GetRate(ctx, "USD", "EUR", "2024-01-15")
+	rate2, _ := svc.GetRate(ctx, "USD", "EUR", "2024-02-15")
+	rate3, _ := svc.GetRate(ctx, "USD", "EUR", "2024-03-15")
 
 	if rate1 != 0.85 {
 		t.Errorf("Jan rate = %v, want 0.85", rate1)
@@ -143,17 +143,17 @@ func TestExchangeRateService_DifferentMonths(t *testing.T) {
 func TestExchangeRateService_DifferentBaseCurrencies(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
 	// Different base currencies
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.85)
-	_ = svc.UpsertRate(ctx, "GBP", "EUR", "2024-01", 1.15)
-	_ = svc.UpsertRate(ctx, "CHF", "EUR", "2024-01", 1.05)
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.85)
+	_ = svc.UpsertRate(ctx, "GBP", "EUR", "2024-01-15", 1.15)
+	_ = svc.UpsertRate(ctx, "CHF", "EUR", "2024-01-15", 1.05)
 
 	// Each should be independent
-	usdRate, _ := svc.GetRate(ctx, "USD", "EUR", "2024-01")
-	gbpRate, _ := svc.GetRate(ctx, "GBP", "EUR", "2024-01")
-	chfRate, _ := svc.GetRate(ctx, "CHF", "EUR", "2024-01")
+	usdRate, _ := svc.GetRate(ctx, "USD", "EUR", "2024-01-15")
+	gbpRate, _ := svc.GetRate(ctx, "GBP", "EUR", "2024-01-15")
+	chfRate, _ := svc.GetRate(ctx, "CHF", "EUR", "2024-01-15")
 
 	if usdRate != 0.85 {
 		t.Errorf("USD->EUR rate = %v, want 0.85", usdRate)
@@ -166,7 +166,7 @@ func TestExchangeRateService_DifferentBaseCurrencies(t *testing.T) {
 	}
 
 	// List rates for USD only
-	usdRates, _ := svc.ListRates(ctx, "USD", "2024-01")
+	usdRates, _ := svc.ListRates(ctx, "USD", "2024-01-15")
 	if len(usdRates) != 1 {
 		t.Errorf("USD rates count = %d, want 1", len(usdRates))
 	}
@@ -175,7 +175,7 @@ func TestExchangeRateService_DifferentBaseCurrencies(t *testing.T) {
 func TestExchangeRateService_EdgeCaseRates(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
 	tests := []struct {
 		name string
@@ -189,8 +189,8 @@ func TestExchangeRateService_EdgeCaseRates(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_ = svc.UpsertRate(ctx, "USD", "TEST", "2024-01", tt.rate)
-			got, _ := svc.GetRate(ctx, "USD", "TEST", "2024-01")
+			_ = svc.UpsertRate(ctx, "USD", "TEST", "2024-01-15", tt.rate)
+			got, _ := svc.GetRate(ctx, "USD", "TEST", "2024-01-15")
 			if got != tt.rate {
 				t.Errorf("Rate = %v, want %v", got, tt.rate)
 			}
@@ -201,14 +201,14 @@ func TestExchangeRateService_EdgeCaseRates(t *testing.T) {
 func TestExchangeRateService_SpecialCharactersInCurrencyCode(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
 	// Currency codes that might cause issues with key formatting
-	_ = svc.UpsertRate(ctx, "BTC", "USD", "2024-01", 45000.0)
-	_ = svc.UpsertRate(ctx, "ETH", "USD", "2024-01", 2500.0)
+	_ = svc.UpsertRate(ctx, "BTC", "USD", "2024-01-15", 45000.0)
+	_ = svc.UpsertRate(ctx, "ETH", "USD", "2024-01-15", 2500.0)
 
-	btcRate, _ := svc.GetRate(ctx, "BTC", "USD", "2024-01")
-	ethRate, _ := svc.GetRate(ctx, "ETH", "USD", "2024-01")
+	btcRate, _ := svc.GetRate(ctx, "BTC", "USD", "2024-01-15")
+	ethRate, _ := svc.GetRate(ctx, "ETH", "USD", "2024-01-15")
 
 	if btcRate != 45000.0 {
 		t.Errorf("BTC->USD rate = %v, want 45000.0", btcRate)
@@ -221,18 +221,18 @@ func TestExchangeRateService_SpecialCharactersInCurrencyCode(t *testing.T) {
 func TestExchangeRateService_YearBoundaries(t *testing.T) {
 	ctx := context.Background()
 	rateRepo := fake.NewExchangeRateRepository()
-	svc := application.NewExchangeRateService(rateRepo)
+	svc := application.NewExchangeRateService(rateRepo, nil)
 
 	// Test across year boundaries
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2023-12", 0.91)
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01", 0.90)
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-12", 0.88)
-	_ = svc.UpsertRate(ctx, "USD", "EUR", "2025-01", 0.87)
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2023-12-15", 0.91)
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-01-15", 0.90)
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2024-12-15", 0.88)
+	_ = svc.UpsertRate(ctx, "USD", "EUR", "2025-01-15", 0.87)
 
-	rate2023_12, _ := svc.GetRate(ctx, "USD", "EUR", "2023-12")
-	rate2024_01, _ := svc.GetRate(ctx, "USD", "EUR", "2024-01")
-	rate2024_12, _ := svc.GetRate(ctx, "USD", "EUR", "2024-12")
-	rate2025_01, _ := svc.GetRate(ctx, "USD", "EUR", "2025-01")
+	rate2023_12, _ := svc.GetRate(ctx, "USD", "EUR", "2023-12-15")
+	rate2024_01, _ := svc.GetRate(ctx, "USD", "EUR", "2024-01-15")
+	rate2024_12, _ := svc.GetRate(ctx, "USD", "EUR", "2024-12-15")
+	rate2025_01, _ := svc.GetRate(ctx, "USD", "EUR", "2025-01-15")
 
 	if rate2023_12 != 0.91 {
 		t.Errorf("2023-12 rate = %v, want 0.91", rate2023_12)
@@ -245,5 +245,105 @@ func TestExchangeRateService_YearBoundaries(t *testing.T) {
 	}
 	if rate2025_01 != 0.87 {
 		t.Errorf("2025-01 rate = %v, want 0.87", rate2025_01)
+	}
+}
+
+// stubProvider is a test double for external.CurrencyProvider.
+type stubProvider struct {
+	rates      map[string]float64
+	servedDate string
+	err        error
+	calls      int
+}
+
+func (p *stubProvider) GetRates(_ context.Context, _, date string) (rates map[string]float64, servedDate string, err error) {
+	p.calls++
+	if p.err != nil {
+		return nil, "", p.err
+	}
+	served := p.servedDate
+	if served == "" {
+		served = date
+	}
+	return p.rates, served, nil
+}
+
+func TestExchangeRateService_GetOrFetchRates_FreshCacheSkipsProvider(t *testing.T) {
+	ctx := context.Background()
+	rateRepo := fake.NewExchangeRateRepository()
+	provider := &stubProvider{rates: map[string]float64{"EUR": 0.99}}
+	svc := application.NewExchangeRateService(rateRepo, provider)
+
+	_ = rateRepo.UpsertRate(ctx, "USD", "EUR", "2026-08-05", 0.90)
+
+	quotes, err := svc.GetOrFetchRates(ctx, "USD", []string{"EUR"}, "2026-08-06")
+	if err != nil {
+		t.Fatalf("GetOrFetchRates() error = %v", err)
+	}
+	if quotes["EUR"] != 0.90 {
+		t.Errorf("quotes[EUR] = %v, want cached 0.90", quotes["EUR"])
+	}
+	if provider.calls != 0 {
+		t.Errorf("provider.calls = %d, want 0 (fresh cache hit)", provider.calls)
+	}
+}
+
+func TestExchangeRateService_GetOrFetchRates_FetchesMissingAndStoresInverse(t *testing.T) {
+	ctx := context.Background()
+	rateRepo := fake.NewExchangeRateRepository()
+	provider := &stubProvider{
+		rates:      map[string]float64{"EUR": 0.92, "RSD": 100.5},
+		servedDate: "2026-08-05", // upstream gap: served a day earlier
+	}
+	svc := application.NewExchangeRateService(rateRepo, provider)
+
+	quotes, err := svc.GetOrFetchRates(ctx, "USD", []string{"EUR", "RSD"}, "2026-08-06")
+	if err != nil {
+		t.Fatalf("GetOrFetchRates() error = %v", err)
+	}
+	if quotes["EUR"] != 0.92 || quotes["RSD"] != 100.5 {
+		t.Errorf("quotes = %v, want EUR 0.92 and RSD 100.5", quotes)
+	}
+	if provider.calls != 1 {
+		t.Errorf("provider.calls = %d, want 1 (one call covers all symbols)", provider.calls)
+	}
+
+	// Stored under the served date, with inverses.
+	rate, date, err := rateRepo.GetLatestRateOnOrBefore(ctx, "USD", "EUR", "2026-08-06")
+	if err != nil || rate != 0.92 || date != "2026-08-05" {
+		t.Errorf("cached rate = %v @ %s (err %v), want 0.92 @ 2026-08-05", rate, date, err)
+	}
+	inverse, _, err := rateRepo.GetLatestRateOnOrBefore(ctx, "EUR", "USD", "2026-08-06")
+	if err != nil || inverse != 1.0/0.92 {
+		t.Errorf("inverse rate = %v (err %v), want %v", inverse, err, 1.0/0.92)
+	}
+}
+
+func TestExchangeRateService_GetOrFetchRates_StaleFallbackWhenProviderDown(t *testing.T) {
+	ctx := context.Background()
+	rateRepo := fake.NewExchangeRateRepository()
+	provider := &stubProvider{err: context.DeadlineExceeded}
+	svc := application.NewExchangeRateService(rateRepo, provider)
+
+	// Cached rate is far older than the freshness window.
+	_ = rateRepo.UpsertRate(ctx, "USD", "EUR", "2026-01-01", 0.80)
+
+	quotes, err := svc.GetOrFetchRates(ctx, "USD", []string{"EUR"}, "2026-08-06")
+	if err != nil {
+		t.Fatalf("GetOrFetchRates() error = %v, want stale fallback", err)
+	}
+	if quotes["EUR"] != 0.80 {
+		t.Errorf("quotes[EUR] = %v, want stale 0.80", quotes["EUR"])
+	}
+}
+
+func TestExchangeRateService_GetOrFetchRates_ErrorWhenNothingAvailable(t *testing.T) {
+	ctx := context.Background()
+	rateRepo := fake.NewExchangeRateRepository()
+	provider := &stubProvider{err: context.DeadlineExceeded}
+	svc := application.NewExchangeRateService(rateRepo, provider)
+
+	if _, err := svc.GetOrFetchRates(ctx, "USD", []string{"EUR"}, "2026-08-06"); err == nil {
+		t.Fatal("GetOrFetchRates() = nil error, want failure with empty cache and dead provider")
 	}
 }

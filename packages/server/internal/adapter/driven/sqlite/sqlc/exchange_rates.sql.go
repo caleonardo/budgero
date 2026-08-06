@@ -11,34 +11,59 @@ import (
 
 const getExchangeRate = `-- name: GetExchangeRate :one
 SELECT rate FROM exchange_rates
-WHERE base_currency = ? AND target_currency = ? AND month = ?
+WHERE base_currency = ? AND target_currency = ? AND rate_date = ?
 `
 
 type GetExchangeRateParams struct {
 	BaseCurrency   string `json:"base_currency"`
 	TargetCurrency string `json:"target_currency"`
-	Month          string `json:"month"`
+	RateDate       string `json:"rate_date"`
 }
 
 func (q *Queries) GetExchangeRate(ctx context.Context, arg GetExchangeRateParams) (float64, error) {
-	row := q.db.QueryRowContext(ctx, getExchangeRate, arg.BaseCurrency, arg.TargetCurrency, arg.Month)
+	row := q.db.QueryRowContext(ctx, getExchangeRate, arg.BaseCurrency, arg.TargetCurrency, arg.RateDate)
 	var rate float64
 	err := row.Scan(&rate)
 	return rate, err
 }
 
+const getLatestExchangeRateOnOrBefore = `-- name: GetLatestExchangeRateOnOrBefore :one
+SELECT rate, rate_date FROM exchange_rates
+WHERE base_currency = ? AND target_currency = ? AND rate_date <= ?
+ORDER BY rate_date DESC
+LIMIT 1
+`
+
+type GetLatestExchangeRateOnOrBeforeParams struct {
+	BaseCurrency   string `json:"base_currency"`
+	TargetCurrency string `json:"target_currency"`
+	RateDate       string `json:"rate_date"`
+}
+
+type GetLatestExchangeRateOnOrBeforeRow struct {
+	Rate     float64 `json:"rate"`
+	RateDate string  `json:"rate_date"`
+}
+
+func (q *Queries) GetLatestExchangeRateOnOrBefore(ctx context.Context, arg GetLatestExchangeRateOnOrBeforeParams) (GetLatestExchangeRateOnOrBeforeRow, error) {
+	row := q.db.QueryRowContext(ctx, getLatestExchangeRateOnOrBefore, arg.BaseCurrency, arg.TargetCurrency, arg.RateDate)
+	var i GetLatestExchangeRateOnOrBeforeRow
+	err := row.Scan(&i.Rate, &i.RateDate)
+	return i, err
+}
+
 const listExchangeRates = `-- name: ListExchangeRates :many
-SELECT base_currency, target_currency, month, rate, updated_at FROM exchange_rates
-WHERE base_currency = ? AND month = ?
+SELECT base_currency, target_currency, rate_date, rate, updated_at FROM exchange_rates
+WHERE base_currency = ? AND rate_date = ?
 `
 
 type ListExchangeRatesParams struct {
 	BaseCurrency string `json:"base_currency"`
-	Month        string `json:"month"`
+	RateDate     string `json:"rate_date"`
 }
 
 func (q *Queries) ListExchangeRates(ctx context.Context, arg ListExchangeRatesParams) ([]ExchangeRate, error) {
-	rows, err := q.db.QueryContext(ctx, listExchangeRates, arg.BaseCurrency, arg.Month)
+	rows, err := q.db.QueryContext(ctx, listExchangeRates, arg.BaseCurrency, arg.RateDate)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +74,7 @@ func (q *Queries) ListExchangeRates(ctx context.Context, arg ListExchangeRatesPa
 		if err := rows.Scan(
 			&i.BaseCurrency,
 			&i.TargetCurrency,
-			&i.Month,
+			&i.RateDate,
 			&i.Rate,
 			&i.UpdatedAt,
 		); err != nil {
@@ -67,9 +92,9 @@ func (q *Queries) ListExchangeRates(ctx context.Context, arg ListExchangeRatesPa
 }
 
 const upsertExchangeRate = `-- name: UpsertExchangeRate :exec
-INSERT INTO exchange_rates (base_currency, target_currency, month, rate, updated_at)
+INSERT INTO exchange_rates (base_currency, target_currency, rate_date, rate, updated_at)
 VALUES (?, ?, ?, ?, datetime('now'))
-ON CONFLICT(base_currency, target_currency, month) DO UPDATE SET
+ON CONFLICT(base_currency, target_currency, rate_date) DO UPDATE SET
     rate = excluded.rate,
     updated_at = datetime('now')
 `
@@ -77,7 +102,7 @@ ON CONFLICT(base_currency, target_currency, month) DO UPDATE SET
 type UpsertExchangeRateParams struct {
 	BaseCurrency   string  `json:"base_currency"`
 	TargetCurrency string  `json:"target_currency"`
-	Month          string  `json:"month"`
+	RateDate       string  `json:"rate_date"`
 	Rate           float64 `json:"rate"`
 }
 
@@ -85,7 +110,7 @@ func (q *Queries) UpsertExchangeRate(ctx context.Context, arg UpsertExchangeRate
 	_, err := q.db.ExecContext(ctx, upsertExchangeRate,
 		arg.BaseCurrency,
 		arg.TargetCurrency,
-		arg.Month,
+		arg.RateDate,
 		arg.Rate,
 	)
 	return err

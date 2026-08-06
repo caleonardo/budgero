@@ -14,6 +14,7 @@ type runtimeEnvOptions struct {
 	jwtSecret        string
 	jwtTTLHours      int
 	currencyAPIKey   string
+	currencyAPIURL   string
 	extraAssignments []string
 }
 
@@ -23,11 +24,13 @@ func bindRuntimeEnvFlags(cmd *cobra.Command, opts *runtimeEnvOptions, includePor
 	}
 	cmd.Flags().StringVar(&opts.jwtSecret, "jwt-secret", "", "Self-host JWT secret (overrides SELF_HOST_JWT_SECRET)")
 	cmd.Flags().IntVar(&opts.jwtTTLHours, "jwt-ttl-hours", 0, "JWT expiry in hours (overrides SELF_HOST_JWT_TTL_HOURS; defaults to 24)")
-	cmd.Flags().StringVar(&opts.currencyAPIKey, "currency-api-key", "", "CurrencyLayer API key (overrides CURRENCYLAYER_API_KEY)")
+	cmd.Flags().StringVar(&opts.currencyAPIKey, "currency-api-key", "", "Deprecated: rates no longer need an API key")
+	_ = cmd.Flags().MarkDeprecated("currency-api-key", "exchange rates no longer require an API key; use --currency-api-url to point at a self-hosted mirror")
+	cmd.Flags().StringVar(&opts.currencyAPIURL, "currency-api-url", "", "Currency dataset base URL (overrides CURRENCY_API_BASE_URL; for self-hosted mirrors)")
 	cmd.Flags().StringArrayVar(&opts.extraAssignments, "env", nil, "Additional KEY=VALUE environment overrides (repeatable)")
 }
 
-func (opts runtimeEnvOptions) processEnvOverrides() (map[string]string, error) {
+func (opts *runtimeEnvOptions) processEnvOverrides() (map[string]string, error) {
 	overrides := make(map[string]string)
 	if opts.port > 0 {
 		overrides["PORT"] = strconv.Itoa(opts.port)
@@ -38,8 +41,8 @@ func (opts runtimeEnvOptions) processEnvOverrides() (map[string]string, error) {
 	if opts.jwtTTLHours > 0 {
 		overrides["SELF_HOST_JWT_TTL_HOURS"] = strconv.Itoa(opts.jwtTTLHours)
 	}
-	if strings.TrimSpace(opts.currencyAPIKey) != "" {
-		overrides["CURRENCYLAYER_API_KEY"] = opts.currencyAPIKey
+	if strings.TrimSpace(opts.currencyAPIURL) != "" {
+		overrides["CURRENCY_API_BASE_URL"] = opts.currencyAPIURL
 	}
 	for _, raw := range opts.extraAssignments {
 		key, value, err := parseEnvAssignment(raw)
@@ -51,7 +54,7 @@ func (opts runtimeEnvOptions) processEnvOverrides() (map[string]string, error) {
 	return overrides, nil
 }
 
-func (opts runtimeEnvOptions) applyProcessEnv() error {
+func (opts *runtimeEnvOptions) applyProcessEnv() error {
 	overrides, err := opts.processEnvOverrides()
 	if err != nil {
 		return err
@@ -64,7 +67,7 @@ func (opts runtimeEnvOptions) applyProcessEnv() error {
 	return nil
 }
 
-func (opts runtimeEnvOptions) applyToEnvMap(env map[string]string) error {
+func (opts *runtimeEnvOptions) applyToEnvMap(env map[string]string) error {
 	overrides, err := opts.processEnvOverrides()
 	if err != nil {
 		return err

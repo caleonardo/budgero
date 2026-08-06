@@ -24,7 +24,6 @@ For custom configuration, all flags are optional:
 ```bash
 ./budgero serve \
   --port 4000 \
-  --currency-api-key "$CURRENCYLAYER_API_KEY" \
   --env RATE_LIMIT_RPS=5
 ```
 
@@ -40,7 +39,7 @@ The process still loads `.env` from the working directory (using `godotenv`) bef
 | `DB_PATH`                  | `data/budgero.db`  | SQLite database file path                      |
 | `WEBSOCKET_ALLOWED_ORIGINS` | localhost origins only | Comma-separated browser origins allowed to connect to sync (e.g. `https://budget.example.com,http://192.168.1.50:3001`). **Required for any non-localhost access** — without it the sync WebSocket is rejected and the app can't load the budget. Exact match on scheme/host/port, no wildcards. |
 | `LOG_LEVEL`                | `info`             | `debug`, `info`, `warn`, `error`               |
-| `CURRENCYLAYER_API_KEY`    | -                  | Optional: multi-currency conversion            |
+| `CURRENCY_API_BASE_URL`    | public jsDelivr CDN | Optional: base URL of a self-hosted [exchange-api](https://github.com/fawazahmed0/exchange-api) mirror for multi-currency rates (`{date}` is substituted). Rates work out of the box with no key. |
 | `UPDATE_CHECK_DISABLED`    | `false`            | Set `true` to disable the update check entirely (see below) |
 | `UPDATE_CHECK_URL`         | Budgero cloud endpoint | Override the update-check source URL       |
 
@@ -97,7 +96,6 @@ Just run `budgero serve`. On first startup, admin credentials print directly to 
 ```bash
 PORT=3001
 LOG_LEVEL=info
-CURRENCYLAYER_API_KEY=...  # optional, for multi-currency
 ```
 
 For daemon mode, check `data/logs/<name>.log` for the initial credentials.
