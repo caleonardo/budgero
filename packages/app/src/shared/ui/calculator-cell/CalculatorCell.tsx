@@ -206,6 +206,7 @@ export function CalculatorCell({
   commitPrecision,
   formatter,
   localizer,
+  displayFormatter,
   ...rest
 }: CalculatorCellProps) {
   const scale = currencyCode ? getCurrencyScale(currencyCode) : MILLIS_PER_UNIT;
@@ -256,6 +257,7 @@ export function CalculatorCell({
       commitPrecision={commitPrecision ?? (isMilli ? undefined : 8)}
       formatter={cryptoDisplay?.formatter ?? formatter}
       localizer={cryptoDisplay?.localizer ?? localizer}
+      displayFormatter={cryptoDisplay?.formatter ?? displayFormatter}
       {...rest}
     />
   );
