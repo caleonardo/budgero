@@ -914,7 +914,7 @@ export class AnalyticsQueries {
   }
 
   /**
-   * Get total balance for cash accounts only (Checking, Savings, Cash)
+   * Get total balance for liquid on-budget accounts (Checking, Savings, Cash, Crypto)
    */
   getOnBudgetBalance(budgetId: number, asOfDate: string) {
     return getRow(
@@ -925,7 +925,7 @@ export class AnalyticsQueries {
         FROM accounts
         WHERE BudgetID = ?1
           AND OnBudget = 1
-          AND LOWER(Type) IN ('checking', 'savings', 'cash')
+          AND LOWER(Type) IN ('checking', 'savings', 'cash', 'crypto')
       ),
       future_transactions AS (
         SELECT COALESCE(SUM(t.InflowConverted - t.OutflowConverted), 0) AS NetChange
@@ -933,7 +933,7 @@ export class AnalyticsQueries {
         INNER JOIN accounts a ON t.AccountID = a.ID
         WHERE t.BudgetID = ?1
           AND a.OnBudget = 1
-          AND LOWER(a.Type) IN ('checking', 'savings', 'cash')
+          AND LOWER(a.Type) IN ('checking', 'savings', 'cash', 'crypto')
           AND DATE(t.Date) > DATE(?2)
       )
       SELECT cb.CurrentBalance - ft.NetChange AS TotalBalance
@@ -960,7 +960,7 @@ export class AnalyticsQueries {
         INNER JOIN accounts a ON t.AccountID = a.ID
         WHERE t.BudgetID = ?
           AND a.OnBudget = 1
-          AND LOWER(a.Type) IN ('checking', 'savings', 'cash')
+          AND LOWER(a.Type) IN ('checking', 'savings', 'cash', 'crypto')
       ),
       bounds AS (
         SELECT
@@ -975,12 +975,12 @@ export class AnalyticsQueries {
         WHERE day < EndDay
       ),
       starting_balance AS (
-        -- Get the current balance from cash accounts only (Checking, Savings, Cash)
+        -- Get the current balance from liquid on-budget accounts (Checking, Savings, Cash, Crypto)
         SELECT COALESCE(SUM(COALESCE(BalanceConverted, BalanceNative)), 0) AS CurrentBalance
         FROM accounts
         WHERE BudgetID = ?
           AND OnBudget = 1
-          AND LOWER(Type) IN ('checking', 'savings', 'cash')
+          AND LOWER(Type) IN ('checking', 'savings', 'cash', 'crypto')
       ),
       transactions_after_end AS (
         -- Get net transactions after the end date to work backwards
@@ -989,7 +989,7 @@ export class AnalyticsQueries {
         INNER JOIN accounts a ON t.AccountID = a.ID
         WHERE t.BudgetID = ?
           AND a.OnBudget = 1
-          AND LOWER(a.Type) IN ('checking', 'savings', 'cash')
+          AND LOWER(a.Type) IN ('checking', 'savings', 'cash', 'crypto')
           AND DATE(t.Date) > DATE(?)
       ),
       daily_transactions AS (
@@ -1001,7 +1001,7 @@ export class AnalyticsQueries {
         INNER JOIN accounts a ON t.AccountID = a.ID
         WHERE t.BudgetID = ?
           AND a.OnBudget = 1
-          AND LOWER(a.Type) IN ('checking', 'savings', 'cash')
+          AND LOWER(a.Type) IN ('checking', 'savings', 'cash', 'crypto')
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
         GROUP BY DATE(t.Date)

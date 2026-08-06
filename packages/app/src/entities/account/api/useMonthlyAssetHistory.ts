@@ -34,6 +34,7 @@ const ACCOUNT_TYPE_CATEGORY: Record<string, string> = {
   'Real Estate': 'realEstate',
   'Other Asset': 'otherAssets',
   Investment: 'investments',
+  Crypto: 'investments',
   Retirement: 'retirement',
 };
 

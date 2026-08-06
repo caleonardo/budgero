@@ -146,7 +146,7 @@ export default function AccountsPage() {
         loans: accounts.filter((a) => ['Loan', 'Mortgage'].includes(a.Type || '')),
         realEstate: accounts.filter((a) => a.Type === 'Real Estate'),
         otherAssets: accounts.filter((a) => a.Type === 'Other Asset'),
-        investments: accounts.filter((a) => a.Type === 'Investment'),
+        investments: accounts.filter((a) => a.Type === 'Investment' || a.Type === 'Crypto'),
         retirement: accounts.filter((a) => a.Type === 'Retirement'),
       };
 
