@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dices } from 'lucide-react';
+import { Dices, Undo2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@shared/ui/button';
@@ -19,10 +19,48 @@ import { getErrorMessage } from '@shared/lib/errors';
  * production builds. Writes only to the local rate cache — the next real
  * daily fetch overwrites the fake rate.
  */
+const INVALIDATED_KEYS = [
+  ['transactions'],
+  ['allTransactions'],
+  ['allTransactionsDetailed'],
+  ['accounts'],
+  ['monthlyBudget'],
+  ['readyToAssign'],
+  ['revaluationSummary'],
+  ['balanceByDates'],
+  ['onBudgetBalance'],
+  ['onBudgetBalanceByDates'],
+];
+
 export function DevSimulateRateMoveButton() {
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const queryClient = useQueryClient();
   const [running, setRunning] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+
+  const invalidateAll = () =>
+    Promise.all(INVALIDATED_KEYS.map((queryKey) => queryClient.invalidateQueries({ queryKey })));
+
+  const handleRestore = async () => {
+    const services = getRuntime()?.services();
+    const budgetId = selectedBudget?.ID;
+    if (!services || !budgetId) {
+      toast.error('No budget selected');
+      return;
+    }
+    setRestoring(true);
+    try {
+      const revalued = await services.currency.restoreOfficialRates(budgetId);
+      await invalidateAll();
+      toast.success('Official rates restored', {
+        description: `Today's cache refetched; ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
+      });
+    } catch (err) {
+      toast.error(`Restore failed: ${getErrorMessage(err, 'unknown error')}`);
+    } finally {
+      setRestoring(false);
+    }
+  };
 
   const handleSimulate = async () => {
     const services = getRuntime()?.services();
@@ -66,21 +104,7 @@ export function DevSimulateRateMoveButton() {
       }
 
       const revalued = await services.currency.revalueAccounts(budgetId);
-
-      await Promise.all(
-        [
-          ['transactions'],
-          ['allTransactions'],
-          ['allTransactionsDetailed'],
-          ['accounts'],
-          ['monthlyBudget'],
-          ['readyToAssign'],
-          ['revaluationSummary'],
-          ['balanceByDates'],
-          ['onBudgetBalance'],
-          ['onBudgetBalanceByDates'],
-        ].map((queryKey) => queryClient.invalidateQueries({ queryKey }))
-      );
+      await invalidateAll();
 
       toast.success(`Simulated a market move`, {
         description: `${moved} rate${moved !== 1 ? 's' : ''} shifted, ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
@@ -98,11 +122,21 @@ export function DevSimulateRateMoveButton() {
         size="sm"
         variant="outline"
         onClick={handleSimulate}
-        disabled={running}
+        disabled={running || restoring}
         className="gap-1.5"
       >
         <Dices className="h-4 w-4" />
         {running ? 'Moving rates…' : 'Simulate rate move'}
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={handleRestore}
+        disabled={running || restoring}
+        className="gap-1.5"
+      >
+        <Undo2 className="h-4 w-4" />
+        {restoring ? 'Restoring…' : 'Restore real rates'}
       </Button>
     </div>
   );

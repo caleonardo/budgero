@@ -83,6 +83,20 @@ export class CurrencyQueries {
     );
   }
 
+  /** Drop all cached rates for one date (rate refresh / dev tooling). */
+  deleteRatesOnDate(rateDate: string, budgetId: number): number {
+    const result = run(
+      this.db,
+      `
+      DELETE FROM currency_rates
+      WHERE BudgetID = ? AND RateDate = ?
+    `,
+      budgetId,
+      rateDate
+    );
+    return Number(result.changes ?? 0);
+  }
+
   /** Drop cached daily rates older than the cutoff (retention pruning). */
   pruneRatesOlderThan(cutoffDate: string, budgetId: number): number {
     const result = run(

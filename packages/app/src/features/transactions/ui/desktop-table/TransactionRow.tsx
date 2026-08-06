@@ -77,6 +77,11 @@ export const TransactionRow = React.memo(function TransactionRow({
   onSplitCreate,
 }: TransactionRowProps) {
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
+  const selectedAccount = useUiStore((state) => state.selectedAccount);
+  // In account display mode the cell edits the NATIVE amount, whose storage
+  // scale follows the account currency (crypto = sats, not milliunits).
+  const editCurrencyCode =
+    transactionCurrencyDisplay === 'account' ? (selectedAccount?.Currency ?? undefined) : undefined;
   // Row amounts and running balances are stored milliunits.
   const formatAmount = (formatter: Intl.NumberFormat, value: number) =>
     formatMaskedMilli(formatter, value, privacyMaskNumbers);
@@ -150,6 +155,7 @@ export const TransactionRow = React.memo(function TransactionRow({
         ) : (
           <CalculatorCell
             value={asMilli(getPrimary(transaction) || 0)}
+            currencyCode={editCurrencyCode}
             onCommit={(val) =>
               onCellCommit(transaction.ID, isInflow ? 'InflowConverted' : 'OutflowConverted', val)
             }

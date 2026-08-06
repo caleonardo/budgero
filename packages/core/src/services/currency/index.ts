@@ -521,6 +521,28 @@ export class CurrencyService {
     return row?.Total ?? 0;
   }
 
+  /**
+   * Discard today's cached rates and refetch official ones from the server,
+   * then revalue accounts. Recovers from locally tampered/simulated rates
+   * without waiting for tomorrow's dataset. Returns accounts revalued.
+   */
+  async restoreOfficialRates(budgetId: number): Promise<number> {
+    const displayCurrency = this.getBudgetDisplayCurrency(budgetId);
+    if (!displayCurrency) return 0;
+
+    const today = getLocalDateString();
+    this.queries.deleteRatesOnDate(today, budgetId);
+
+    const currencies = this.queries
+      .getAllCurrenciesUsed(budgetId)
+      .filter((currency) => currency && currency !== displayCurrency);
+    for (const currency of currencies) {
+      await this.getOrFetchRate(currency, displayCurrency, today, budgetId);
+    }
+
+    return this.revalueAccounts(budgetId);
+  }
+
   /** Aggregate revaluation impact for an account (all-time and last 30 days). */
   getRevaluationSummary(accountId: number): {
     total: number;

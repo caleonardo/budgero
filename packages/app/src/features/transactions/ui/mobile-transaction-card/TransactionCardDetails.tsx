@@ -131,6 +131,11 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
   onSaveSplits,
 }: TransactionCardDetailsProps) {
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
+  const selectedAccount = useUiStore((state) => state.selectedAccount);
+  // In account display mode the cells edit the NATIVE amount, whose storage
+  // scale follows the account currency (crypto = sats, not milliunits).
+  const editCurrencyCode =
+    transactionCurrencyDisplay === 'account' ? (selectedAccount?.Currency ?? undefined) : undefined;
   // Split/transaction amounts are stored milliunits.
   const formatAmount = (formatter: Intl.NumberFormat, value: number) =>
     formatMaskedMilli(formatter, value, privacyMaskNumbers);
@@ -156,6 +161,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                 <div className="[&>div]:w-full">
                   <CalculatorCell
                     value={asMilli(getPrimaryInflow(transaction) || 0)}
+                    currencyCode={editCurrencyCode}
                     onCommit={(newVal) => onCellCommit(transaction.ID, 'InflowConverted', newVal)}
                     formatter={(val) => currentFormatter.format(val)}
                     displayFormatter={(val) => currentFormatter.format(val)}
@@ -192,6 +198,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                 <div className="[&>div]:w-full">
                   <CalculatorCell
                     value={asMilli(getPrimaryOutflow(transaction) || 0)}
+                    currencyCode={editCurrencyCode}
                     onCommit={(newVal) => onCellCommit(transaction.ID, 'OutflowConverted', newVal)}
                     formatter={(val) => currentFormatter.format(val)}
                     displayFormatter={(val) => currentFormatter.format(val)}
