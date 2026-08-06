@@ -25,15 +25,23 @@ export function RateResync() {
       if (!services) return;
       running.current = true;
       try {
-        if (!services.userMeta.getResyncRatesOnReconnect()) return;
-        const updated = await services.currency.resyncPendingConversions(budgetId);
-        if (updated > 0) {
+        let changed = 0;
+        if (services.userMeta.getResyncRatesOnReconnect()) {
+          changed += await services.currency.resyncPendingConversions(budgetId);
+        }
+        // Daily true-up: converted balances follow native × latest rate,
+        // journaled per account in account_revaluations.
+        changed += await services.currency.revalueAccounts(budgetId);
+        if (changed > 0) {
           await queryClient.invalidateQueries({ queryKey: ['transactions'] });
           await queryClient.invalidateQueries({ queryKey: ['allTransactions'] });
           await queryClient.invalidateQueries({ queryKey: ['allTransactionsDetailed'] });
           await queryClient.invalidateQueries({ queryKey: ['accounts'] });
           await queryClient.invalidateQueries({ queryKey: ['monthlyBudget'] });
           await queryClient.invalidateQueries({ queryKey: ['readyToAssign'] });
+          await queryClient.invalidateQueries({ queryKey: ['balanceByDates'] });
+          await queryClient.invalidateQueries({ queryKey: ['onBudgetBalance'] });
+          await queryClient.invalidateQueries({ queryKey: ['onBudgetBalanceByDates'] });
         }
       } catch {
         // Best-effort: a failed resync retries on the next online event.

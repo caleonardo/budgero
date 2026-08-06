@@ -20,7 +20,7 @@ import {
 
 import { createLogger } from '../../logger.js';
 import { asMilli, ZERO_MILLI, type MilliUnits } from '../../money/index.js';
-import { convertScaled } from '../../currencies/index.js';
+import { convertScaled, isCryptoCurrency } from '../../currencies/index.js';
 import { getLocalDateString } from '../../utils/date.js';
 
 export type {
@@ -124,7 +124,15 @@ export class TransactionService {
       );
 
       if (!rate) {
-        // No rate found; use 1:1 temporary (pending is computed separately below)
+        // Crypto never falls back to 1:1 — a BTC transaction converted at
+        // parity would corrupt the budget by orders of magnitude.
+        if (isCryptoCurrency(account.Currency) || isCryptoCurrency(budget.DisplayCurrency)) {
+          throw new ValidationError(
+            `No exchange rate available for ${account.Currency} → ${budget.DisplayCurrency}. ` +
+              `Add a manual rate or reconnect before recording this transaction.`
+          );
+        }
+        // Fiat: 1:1 placeholder, marked ConversionPending and resynced later.
         rate = 1;
       }
 

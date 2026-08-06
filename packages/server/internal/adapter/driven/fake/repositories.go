@@ -1476,6 +1476,26 @@ func (r *ExchangeRateRepository) GetRate(ctx context.Context, baseCurrency, targ
 	return 0, nil // Return 0 for not found (not an error in this context)
 }
 
+// ListRecentPairs lists distinct currency pairs cached on or after a date.
+func (r *ExchangeRateRepository) ListRecentPairs(ctx context.Context, sinceDate string) ([]repository.RatePair, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	seen := make(map[string]bool)
+	pairs := make([]repository.RatePair, 0)
+	for key := range r.rates {
+		parts := strings.SplitN(key, ":", 3)
+		if len(parts) != 3 || parts[2] < sinceDate {
+			continue
+		}
+		pairKey := parts[0] + ":" + parts[1]
+		if !seen[pairKey] {
+			seen[pairKey] = true
+			pairs = append(pairs, repository.RatePair{Base: parts[0], Target: parts[1]})
+		}
+	}
+	return pairs, nil
+}
+
 // GetLatestRateOnOrBefore returns the most recent rate at or before rateDate.
 func (r *ExchangeRateRepository) GetLatestRateOnOrBefore(ctx context.Context, baseCurrency, targetCurrency, rateDate string) (rate float64, actualDate string, err error) {
 	r.mu.RLock()

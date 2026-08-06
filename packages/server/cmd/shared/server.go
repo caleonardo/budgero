@@ -202,6 +202,9 @@ func Run(selfHost bool) {
 		}
 	}
 
+	// Keep today's exchange rates warm for recently used currency pairs.
+	go application.NewRateRefresher(services.ExchangeRate).Run(context.Background())
+
 	h := handler.NewHandlers(services, hub, handler.Options{
 		SelfHost:      selfHost,
 		Config:        cfg,

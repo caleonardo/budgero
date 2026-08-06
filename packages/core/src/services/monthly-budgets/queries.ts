@@ -291,8 +291,28 @@ export class MonthlyBudgetQueries {
     );
     const totalOffBudgetTransfers = offBudgetTransfersResult?.total_offbudget_transfers ?? 0;
 
+    // Journaled rate true-ups on on-budget foreign-currency accounts: the
+    // budget's purchasing power moved with the market, so RTA moves with it.
+    const revaluationsResult = getRow<{ total_revaluations: number }>(
+      this.db,
+      `
+      SELECT IFNULL(SUM(r.DeltaConverted), 0) as total_revaluations
+      FROM account_revaluations r
+      INNER JOIN accounts a ON r.AccountID = a.ID
+      WHERE r.BudgetID = ?1
+        AND a.OnBudget = TRUE
+        AND DATE(r.Date) <= DATE(?2)
+    `,
+      budgetId,
+      asOfDate
+    );
+    const totalRevaluations = revaluationsResult?.total_revaluations ?? 0;
+
     const readyToAssign =
-      incomeResult.total_income - assignmentsResult.total_assignments - totalOffBudgetTransfers;
+      incomeResult.total_income -
+      assignmentsResult.total_assignments -
+      totalOffBudgetTransfers +
+      totalRevaluations;
 
     debugLog(`Ready to Assign (static, all-time):`);
     debugLog(`  Total Income: ${incomeResult.total_income.toLocaleString()}`);

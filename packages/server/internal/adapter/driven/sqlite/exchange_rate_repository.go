@@ -64,6 +64,19 @@ func (r *ExchangeRateRepository) UpsertRate(ctx context.Context, baseCurrency, t
 	})
 }
 
+// ListRecentPairs lists distinct currency pairs cached on or after a date.
+func (r *ExchangeRateRepository) ListRecentPairs(ctx context.Context, sinceDate string) ([]repository.RatePair, error) {
+	rows, err := r.queries.ListRecentRatePairs(ctx, sinceDate)
+	if err != nil {
+		return nil, err
+	}
+	pairs := make([]repository.RatePair, 0, len(rows))
+	for _, row := range rows {
+		pairs = append(pairs, repository.RatePair{Base: row.BaseCurrency, Target: row.TargetCurrency})
+	}
+	return pairs, nil
+}
+
 // ListRates returns all exchange rates for a base currency on a specific date.
 func (r *ExchangeRateRepository) ListRates(ctx context.Context, baseCurrency, rateDate string) (map[string]float64, error) {
 	rows, err := r.queries.ListExchangeRates(ctx, sqlc.ListExchangeRatesParams{

@@ -2,9 +2,18 @@ package repository
 
 import "context"
 
+// RatePair is a cached (base, target) currency pair.
+type RatePair struct {
+	Base   string
+	Target string
+}
+
 // ExchangeRateRepository defines methods for exchange rate persistence.
 // Rates are keyed by day (YYYY-MM-DD).
 type ExchangeRateRepository interface {
+	// ListRecentPairs lists distinct currency pairs cached on or after a date.
+	ListRecentPairs(ctx context.Context, sinceDate string) ([]RatePair, error)
+
 	// GetRate gets the exchange rate for a currency pair on an exact date.
 	GetRate(ctx context.Context, baseCurrency, targetCurrency, rateDate string) (float64, error)
 

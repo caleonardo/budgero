@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { EditAccountDialog } from '@features/account-management/ui/EditAccountDialog';
 import { ReconcileAccountDialog } from '@features/account-management/ui/ReconcileAccountDialog';
 import { useCategories } from '@entities/category/api/useCategories';
+import { useRevaluationSummary } from '@entities/currency/api/useRevaluationSummary';
 import { useAccounts } from '@entities/account/api/useAccounts';
 import { useTransactions } from '@entities/transaction/api/useTransactions';
 import {
@@ -100,6 +101,13 @@ export default function AccountPage() {
 
   // Fetch categories (needed for transaction display/editing)
   const { data: categories = [] } = useCategories(selectedBudget?.ID || 0);
+  const isForeignCurrency =
+    !!selectedAccount &&
+    !!selectedBudget &&
+    selectedAccount.Currency !== selectedBudget.DisplayCurrency;
+  const { data: revaluationSummary } = useRevaluationSummary(
+    isForeignCurrency ? (selectedAccount?.ID ?? 0) : 0
+  );
 
   const {
     data: recurringOccurrences = [],
@@ -386,6 +394,19 @@ export default function AccountPage() {
               color="destructive"
               size="sm"
             />
+            {revaluationSummary && revaluationSummary.total !== 0 && (
+              <>
+                <div className="w-px h-6 bg-border" />
+                <FlowStat
+                  icon={revaluationSummary.last30Days >= 0 ? ArrowUpRight : ArrowDownRight}
+                  label="Rate impact (30d)"
+                  value={formatMilliAmount(revaluationSummary.last30Days)}
+                  color={revaluationSummary.last30Days >= 0 ? 'success' : 'destructive'}
+                  size="sm"
+                  tooltip="Change in this account's converted balance caused by exchange-rate moves, not transactions. The all-time impact is included in the balance above."
+                />
+              </>
+            )}
           </div>
 
           {displayLiabilityInfo && (

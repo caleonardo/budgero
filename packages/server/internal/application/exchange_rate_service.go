@@ -105,6 +105,55 @@ func (s *ExchangeRateService) GetOrFetchRates(ctx context.Context, baseCurrency 
 	return quotes, nil
 }
 
+// rateRefreshLookbackDays bounds which cached pairs count as "in use".
+const rateRefreshLookbackDays = 35
+
+// RefreshTodayRates re-fetches today's rates for every currency pair seen
+// recently, keeping the cache warm for client balance true-ups.
+func (s *ExchangeRateService) RefreshTodayRates(ctx context.Context) (int, error) {
+	if s.provider == nil {
+		return 0, nil
+	}
+	now := time.Now().UTC()
+	today := now.Format(rateDateLayout)
+	since := now.AddDate(0, 0, -rateRefreshLookbackDays).Format(rateDateLayout)
+
+	pairs, err := s.rateRepo.ListRecentPairs(ctx, since)
+	if err != nil {
+		return 0, err
+	}
+
+	// One provider call per base covers every target.
+	missingByBase := make(map[string][]string)
+	for _, pair := range pairs {
+		if _, err := s.rateRepo.GetRate(ctx, pair.Base, pair.Target, today); err == nil {
+			continue
+		}
+		missingByBase[pair.Base] = append(missingByBase[pair.Base], pair.Target)
+	}
+
+	refreshed := 0
+	for base, symbols := range missingByBase {
+		rates, servedDate, err := s.provider.GetRates(ctx, base, today)
+		if err != nil {
+			log.Warn().Err(err).Str("base", base).Msg("rate refresh: provider fetch failed")
+			continue
+		}
+		for _, sym := range symbols {
+			rate, ok := rates[sym]
+			if !ok || rate == 0 {
+				continue
+			}
+			if err := s.rateRepo.UpsertRate(ctx, base, sym, servedDate, rate); err != nil {
+				log.Error().Err(err).Msg("rate refresh: failed upserting rate")
+				continue
+			}
+			refreshed++
+		}
+	}
+	return refreshed, nil
+}
+
 func withinStaleWindow(actualDate, requestedDate string) bool {
 	actual, err1 := time.Parse(rateDateLayout, actualDate)
 	requested, err2 := time.Parse(rateDateLayout, requestedDate)

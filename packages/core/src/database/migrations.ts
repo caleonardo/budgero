@@ -156,6 +156,13 @@ const ORPHAN_CLEANUP_STEPS: {
     guardTable: 'currency_rates',
   },
   {
+    table: 'account_revaluations',
+    fkColumn: 'BudgetID',
+    parent: 'budgets',
+    label: 'orphaned account revaluations',
+    guardTable: 'account_revaluations',
+  },
+  {
     table: 'manual_currency_rates',
     fkColumn: 'BudgetID',
     parent: 'budgets',

@@ -1,6 +1,6 @@
 import { DatabaseAdapter } from '../../database/index.js';
 import { asMilli, type MilliUnits } from '../../money/index.js';
-import { convertScaled } from '../../currencies/index.js';
+import { convertScaled, getCurrencyScale } from '../../currencies/index.js';
 import { CustomCurrencyRate } from './types.js';
 import { TransactionQueries } from '../transactions/queries.js';
 import { CurrencyQueries } from './queries.js';
@@ -406,6 +406,111 @@ export class CurrencyService {
     return pruned;
   }
 
+  /** One-cent threshold (milliunits) below which no revaluation is journaled. */
+  private static readonly REVALUATION_EPSILON_MILLI = 10;
+
+  /**
+   * True up converted balances of foreign-currency accounts to
+   * native × latest official rate, journaling each delta in
+   * account_revaluations (one merged row per account per day). Transactions
+   * keep their historical rates — this reconciles the stock, not the flows.
+   * Returns the number of accounts revalued.
+   */
+  async revalueAccounts(budgetId: number): Promise<number> {
+    const displayCurrency = this.getBudgetDisplayCurrency(budgetId);
+    if (!displayCurrency) return 0;
+
+    const today = getLocalDateString();
+    const accounts = allRows<{
+      ID: number;
+      Currency: string;
+      BalanceNative: number;
+      BalanceConverted: number | null;
+    }>(
+      this.db,
+      `SELECT ID, Currency, BalanceNative, BalanceConverted
+       FROM accounts WHERE BudgetID = ? AND Currency != ?`,
+      budgetId,
+      displayCurrency
+    );
+
+    let revalued = 0;
+    for (const account of accounts) {
+      // NULL converted balance means the conversion pipeline hasn't run yet.
+      if (account.BalanceConverted == null) continue;
+
+      // Official rates only — manual/custom rates don't define market value.
+      const rate = await this.getOrFetchRate(account.Currency, displayCurrency, today, budgetId);
+      if (!rate) continue;
+
+      const target = convertScaled(account.BalanceNative, rate, account.Currency, displayCurrency);
+      const delta = target - account.BalanceConverted;
+      if (Math.abs(delta) < CurrencyService.REVALUATION_EPSILON_MILLI) continue;
+
+      const impliedOldRate =
+        account.BalanceNative !== 0
+          ? (account.BalanceConverted / account.BalanceNative) *
+            (getCurrencyScale(account.Currency) / getCurrencyScale(displayCurrency))
+          : null;
+
+      // Merge same-day true-ups into one row; OldRate keeps the day's first value.
+      run(
+        this.db,
+        `
+        INSERT INTO account_revaluations
+          (BudgetID, AccountID, Date, OldRate, NewRate, BalanceNative, DeltaConverted)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(AccountID, Date) DO UPDATE SET
+          NewRate = excluded.NewRate,
+          BalanceNative = excluded.BalanceNative,
+          DeltaConverted = DeltaConverted + excluded.DeltaConverted,
+          CreatedAt = datetime('now')
+      `,
+        budgetId,
+        account.ID,
+        today,
+        impliedOldRate,
+        rate,
+        account.BalanceNative,
+        delta
+      );
+      run(this.db, `UPDATE accounts SET BalanceConverted = ? WHERE ID = ?`, target, account.ID);
+      revalued++;
+    }
+
+    if (revalued > 0) {
+      debugLog(`Revalued ${revalued} accounts to today's rates`, { budgetId });
+    }
+    return revalued;
+  }
+
+  /** Aggregate revaluation impact for an account (all-time and last 30 days). */
+  getRevaluationSummary(accountId: number): {
+    total: number;
+    last30Days: number;
+    lastDate: string | null;
+  } {
+    const cutoff = CurrencyService.addDays(getLocalDateString(), -30);
+    const row = getRow<{ Total: number; Last30: number; LastDate: string | null }>(
+      this.db,
+      `
+      SELECT
+        COALESCE(SUM(DeltaConverted), 0) AS Total,
+        COALESCE(SUM(CASE WHEN Date >= ? THEN DeltaConverted ELSE 0 END), 0) AS Last30,
+        MAX(Date) AS LastDate
+      FROM account_revaluations
+      WHERE AccountID = ?
+    `,
+      cutoff,
+      accountId
+    );
+    return {
+      total: row?.Total ?? 0,
+      last30Days: row?.Last30 ?? 0,
+      lastDate: row?.LastDate ?? null,
+    };
+  }
+
   /**
    * Re-resolve official rates for transactions whose conversion was marked
    * pending (offline/manual placeholder) and not pinned by the user. Called
@@ -678,8 +783,10 @@ export class CurrencyService {
     // 1. Clear all existing exchange rates for this budget
     this.queries.deleteAllRatesForBudget(budgetId);
 
-    // 2. Clear all converted amounts (will be recalculated below)
+    // 2. Clear all converted amounts (will be recalculated below). Old
+    // revaluation deltas are denominated in the old currency — drop them.
     this.queries.clearAllConvertedAmounts(budgetId);
+    run(this.db, `DELETE FROM account_revaluations WHERE BudgetID = ?`, budgetId);
 
     // 3. Get all currencies used in accounts
     const accountCurrencies = this.queries.getAllCurrenciesUsed(budgetId);
@@ -878,8 +985,11 @@ export class CurrencyService {
       });
     }
 
-    // 2. Clear converted amounts for this account's transactions (will be recalculated with new currency)
+    // 2. Clear converted amounts for this account's transactions (will be
+    // recalculated with new currency). Revaluation history references the old
+    // native unit — drop it.
     this.queries.clearAccountConvertedAmounts(accountId);
+    run(this.db, `DELETE FROM account_revaluations WHERE AccountID = ?`, accountId);
 
     // 2. Get budget currency
     const displayCurrency = this.getBudgetDisplayCurrency(budgetId);

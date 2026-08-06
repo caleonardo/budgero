@@ -31,8 +31,9 @@ export function ReadyToAssignHelpPopover({
       </PopoverTrigger>
       <PopoverContent className="w-64 text-xs" side={side} align={align}>
         <p>
-          Money available to assign to budget categories. This equals your total income minus all
-          budget assignments. Positive means funds to allocate; negative means you have
+          Money available to assign to budget categories: total income minus all budget assignments
+          and transfers to off-budget accounts, plus market-rate changes on on-budget accounts held
+          in other currencies. Positive means funds to allocate; negative means you have
           over-budgeted.
         </p>
       </PopoverContent>

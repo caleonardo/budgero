@@ -14,6 +14,7 @@ export const MONEY_COLUMNS_BY_TABLE: Readonly<Record<string, readonly string[]>>
     'RunningBalanceNative',
   ],
   transaction_splits: ['InflowConverted', 'OutflowConverted', 'InflowNative', 'OutflowNative'],
+  account_revaluations: ['BalanceNative', 'DeltaConverted'],
   assignments: ['Amount'],
   goals: ['Target'],
   recurring_transactions: ['Amount'],

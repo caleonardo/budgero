@@ -534,15 +534,23 @@ export class TransactionQueries {
 
     updateStmt.finalize();
 
+    // BalanceConverted = Σ converted transactions + Σ journaled revaluation
+    // deltas — a full recompute must not wipe rate true-ups.
     run(
       this.db,
       `
-      UPDATE accounts 
-      SET BalanceNative = ?, BalanceConverted = ?
+      UPDATE accounts
+      SET BalanceNative = ?,
+          BalanceConverted = ? + (
+            SELECT COALESCE(SUM(DeltaConverted), 0)
+            FROM account_revaluations
+            WHERE AccountID = ?
+          )
       WHERE ID = ?
     `,
       runningBalanceOriginal,
       runningBalance,
+      accountId,
       accountId
     );
   }

@@ -91,6 +91,39 @@ func (q *Queries) ListExchangeRates(ctx context.Context, arg ListExchangeRatesPa
 	return items, nil
 }
 
+const listRecentRatePairs = `-- name: ListRecentRatePairs :many
+SELECT DISTINCT base_currency, target_currency FROM exchange_rates
+WHERE rate_date >= ?
+`
+
+type ListRecentRatePairsRow struct {
+	BaseCurrency   string `json:"base_currency"`
+	TargetCurrency string `json:"target_currency"`
+}
+
+func (q *Queries) ListRecentRatePairs(ctx context.Context, rateDate string) ([]ListRecentRatePairsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listRecentRatePairs, rateDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListRecentRatePairsRow{}
+	for rows.Next() {
+		var i ListRecentRatePairsRow
+		if err := rows.Scan(&i.BaseCurrency, &i.TargetCurrency); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const upsertExchangeRate = `-- name: UpsertExchangeRate :exec
 INSERT INTO exchange_rates (base_currency, target_currency, rate_date, rate, updated_at)
 VALUES (?, ?, ?, ?, datetime('now'))

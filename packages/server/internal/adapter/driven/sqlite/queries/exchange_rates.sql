@@ -18,3 +18,7 @@ ON CONFLICT(base_currency, target_currency, rate_date) DO UPDATE SET
 -- name: ListExchangeRates :many
 SELECT * FROM exchange_rates
 WHERE base_currency = ? AND rate_date = ?;
+
+-- name: ListRecentRatePairs :many
+SELECT DISTINCT base_currency, target_currency FROM exchange_rates
+WHERE rate_date >= ?;
