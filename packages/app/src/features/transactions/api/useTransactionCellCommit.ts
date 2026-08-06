@@ -65,16 +65,17 @@ function computeCellCommit(
     };
   }
 
-  if (columnId === 'Inflow' || columnId === 'Outflow') {
+  if (columnId === 'InflowConverted' || columnId === 'OutflowConverted') {
     const value = Number(newVal ?? 0);
     const patch: Record<string, string | number | Date | null> = {};
-    const dbColumn: DbTransactionColumn =
-      display === 'budget' ? columnId : (`${columnId}Original` as DbTransactionColumn);
+    const nativeColumn: DbTransactionColumn =
+      columnId === 'InflowConverted' ? 'InflowNative' : 'OutflowNative';
+    const dbColumn: DbTransactionColumn = display === 'budget' ? columnId : nativeColumn;
 
     if (display === 'budget') {
       patch[columnId] = newVal;
     } else {
-      patch[`${columnId}Original` as DbTransactionColumn] = newVal;
+      patch[nativeColumn] = newVal;
     }
 
     return {

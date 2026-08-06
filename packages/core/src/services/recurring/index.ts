@@ -636,11 +636,11 @@ export class RecurringTransactionService {
          COALESCE(NULLIF(r.Memo, ''), r.Name) AS Memo,
          r.Name AS Payee,
          CASE WHEN r.Direction = 'inflow'
-           THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS Inflow,
+           THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS InflowConverted,
          CASE WHEN r.Direction = 'outflow'
-           THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS Outflow,
-         CASE WHEN r.Direction = 'inflow' THEN r.Amount ELSE 0 END AS InflowOriginal,
-         CASE WHEN r.Direction = 'outflow' THEN r.Amount ELSE 0 END AS OutflowOriginal
+           THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS OutflowConverted,
+         CASE WHEN r.Direction = 'inflow' THEN r.Amount ELSE 0 END AS InflowNative,
+         CASE WHEN r.Direction = 'outflow' THEN r.Amount ELSE 0 END AS OutflowNative
        FROM recurring_transaction_occurrences o
        JOIN recurring_transactions r ON r.ID = o.RecurringTransactionID
        JOIN accounts a ON a.ID = r.AccountID
@@ -660,10 +660,10 @@ export class RecurringTransactionService {
          o.DueDate AS Date,
          COALESCE(NULLIF(r.Memo, ''), r.Name) AS Memo,
          r.Name AS Payee,
-         CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) AS Inflow,
-         0 AS Outflow,
-         CAST(ROUND(r.Amount * ${TRANSFER_LEG_RATE_SQL}) AS INTEGER) AS InflowOriginal,
-         0 AS OutflowOriginal
+         CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) AS InflowConverted,
+         0 AS OutflowConverted,
+         CAST(ROUND(r.Amount * ${TRANSFER_LEG_RATE_SQL}) AS INTEGER) AS InflowNative,
+         0 AS OutflowNative
        FROM recurring_transaction_occurrences o
        JOIN recurring_transactions r ON r.ID = o.RecurringTransactionID
        JOIN accounts a ON a.ID = r.AccountID

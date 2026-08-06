@@ -119,8 +119,8 @@ export const TransactionRow = React.memo(function TransactionRow({
     const getPrimary = isInflow ? getPrimaryInflow : getPrimaryOutflow;
     const getSecondary = isInflow ? getSecondaryInflow : getSecondaryOutflow;
     const colorClass = isInflow ? 'text-success' : 'text-destructive';
-    const amount = isInflow ? transaction.Inflow : transaction.Outflow;
-    const originalAmount = isInflow ? transaction.InflowOriginal : transaction.OutflowOriginal;
+    const amount = isInflow ? transaction.InflowConverted : transaction.OutflowConverted;
+    const originalAmount = isInflow ? transaction.InflowNative : transaction.OutflowNative;
 
     return (
       <TableCell className="text-right font-mono text-xs">
@@ -150,7 +150,9 @@ export const TransactionRow = React.memo(function TransactionRow({
         ) : (
           <CalculatorCell
             value={asMilli(getPrimary(transaction) || 0)}
-            onCommit={(val) => onCellCommit(transaction.ID, isInflow ? 'Inflow' : 'Outflow', val)}
+            onCommit={(val) =>
+              onCellCommit(transaction.ID, isInflow ? 'InflowConverted' : 'OutflowConverted', val)
+            }
             formatter={(val) => currentFormatter.format(val)}
             displayFormatter={(val) => currentFormatter.format(val)}
             localizer={currentFormatter}

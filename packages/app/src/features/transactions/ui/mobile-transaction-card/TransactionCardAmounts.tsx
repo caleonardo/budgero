@@ -49,7 +49,7 @@ export const TransactionCardAmounts = React.memo(function TransactionCardAmounts
   // This handles cases where viewing from spending overview returns only filtered split amount
   const hasSplits = splits.length > 0;
   const isInflowTransaction =
-    getPrimaryInflow(transaction) > 0 || (hasSplits && splits.some((s) => s.Inflow > 0));
+    getPrimaryInflow(transaction) > 0 || (hasSplits && splits.some((s) => s.InflowConverted > 0));
 
   const primaryInflow =
     hasSplits && splitTotal !== undefined && isInflowTransaction
@@ -85,8 +85,8 @@ export const TransactionCardAmounts = React.memo(function TransactionCardAmounts
       {!hideSecondaryAmounts && (
         <>
           <SecondaryAmount
-            amount={transaction.Inflow}
-            originalAmount={transaction.InflowOriginal}
+            amount={transaction.InflowConverted}
+            originalAmount={transaction.InflowNative}
             value={getSecondaryInflow(transaction)}
             transactionCurrencyDisplay={transactionCurrencyDisplay}
             accountLocalizer={accountLocalizer}
@@ -95,8 +95,8 @@ export const TransactionCardAmounts = React.memo(function TransactionCardAmounts
             className="text-xs text-muted-foreground font-mono"
           />
           <SecondaryAmount
-            amount={transaction.Outflow}
-            originalAmount={transaction.OutflowOriginal}
+            amount={transaction.OutflowConverted}
+            originalAmount={transaction.OutflowNative}
             value={getSecondaryOutflow(transaction)}
             transactionCurrencyDisplay={transactionCurrencyDisplay}
             accountLocalizer={accountLocalizer}

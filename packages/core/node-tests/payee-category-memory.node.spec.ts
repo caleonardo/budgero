@@ -134,8 +134,8 @@ describe('PayeeService.getLastCategoryForPayee', () => {
       date: '2026-03-02',
     });
     await services.splits.upsertSplits(splitId, [
-      { CategoryID: groceriesId, Memo: '', Inflow: 0, Outflow: 5, OrderIndex: 0 },
-      { CategoryID: diningId, Memo: '', Inflow: 0, Outflow: 5, OrderIndex: 1 },
+      { CategoryID: groceriesId, Memo: '', InflowConverted: 0, OutflowConverted: 5, OrderIndex: 0 },
+      { CategoryID: diningId, Memo: '', InflowConverted: 0, OutflowConverted: 5, OrderIndex: 1 },
     ]);
 
     // The newer split row is skipped, so the older plain transaction wins.

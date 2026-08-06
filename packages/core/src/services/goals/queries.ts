@@ -201,7 +201,7 @@ export class GoalQueries {
       `
       SELECT 
         strftime('%Y-%m', Date) as month,
-        SUM(Inflow - Outflow) as amount
+        SUM(InflowConverted - OutflowConverted) as amount
       FROM transactions
       WHERE CategoryID = ?
         AND strftime('%Y-%m', Date) < ?

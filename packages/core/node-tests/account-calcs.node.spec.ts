@@ -156,8 +156,8 @@ describe('calculateTransactionStats', () => {
   it('sums budget-currency amounts', () => {
     const stats = calculateTransactionStats(
       [
-        { Inflow: 100, Outflow: 0, InflowOriginal: 90, OutflowOriginal: 0 },
-        { Inflow: 0, Outflow: 40, InflowOriginal: 0, OutflowOriginal: 35 },
+        { InflowConverted: 100, OutflowConverted: 0, InflowNative: 90, OutflowNative: 0 },
+        { InflowConverted: 0, OutflowConverted: 40, InflowNative: 0, OutflowNative: 35 },
       ],
       null,
       'budget'
@@ -168,8 +168,8 @@ describe('calculateTransactionStats', () => {
   it('sums account-currency (original) amounts, falling back to converted', () => {
     const stats = calculateTransactionStats(
       [
-        { Inflow: 100, Outflow: 0, InflowOriginal: 90, OutflowOriginal: 0 },
-        { Inflow: 0, Outflow: 40 }, // no originals -> fall back to converted
+        { InflowConverted: 100, OutflowConverted: 0, InflowNative: 90, OutflowNative: 0 },
+        { InflowConverted: 0, OutflowConverted: 40 }, // no originals -> fall back to converted
       ],
       null,
       'account'

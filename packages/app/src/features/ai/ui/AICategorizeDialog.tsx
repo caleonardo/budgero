@@ -140,8 +140,8 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
             payee: t.Payee || '',
             // Stored milliunits → decimal at the LLM boundary (the prompt's
             // amount guidelines reason about decimal currency amounts).
-            inflow: toDecimal(asMilli(t.Inflow || 0)),
-            outflow: toDecimal(asMilli(t.Outflow || 0)),
+            inflow: toDecimal(asMilli(t.InflowConverted || 0)),
+            outflow: toDecimal(asMilli(t.OutflowConverted || 0)),
             date: t.Date || '',
             accountName: account?.Name,
             accountType: account?.Type,

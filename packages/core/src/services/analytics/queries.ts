@@ -29,9 +29,9 @@ const PROJECTED_TRANSACTIONS_SQL = `
     COALESCE(NULLIF(r.Memo, ''), r.Name) AS Memo,
     0 AS Reconciled,
     CASE WHEN r.Direction = 'inflow'
-      THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS Inflow,
+      THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS InflowConverted,
     CASE WHEN r.Direction = 'outflow'
-      THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS Outflow,
+      THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS OutflowConverted,
     o.BudgetID AS BudgetID,
     r.Name AS Payee,
     NULL AS LabelID
@@ -87,7 +87,7 @@ function periodParams(grouping: 'day' | 'week' | 'month' | 'quarter'): string[] 
 function transactionsSource(includeProjections?: boolean): string {
   if (!includeProjections) return 'transactions';
   return `(
-    SELECT ID, CategoryID, AccountID, TransferID, Date, Memo, Reconciled, Inflow, Outflow, BudgetID, Payee, LabelID
+    SELECT ID, CategoryID, AccountID, TransferID, Date, Memo, Reconciled, InflowConverted, OutflowConverted, BudgetID, Payee, LabelID
     FROM transactions
     UNION ALL
     ${PROJECTED_TRANSACTIONS_SQL}
@@ -113,21 +113,21 @@ export class AnalyticsQueries {
   ) {
     const query = `
       WITH base AS (
-        SELECT DATE(t.Date) AS Date, c.CategoryGroupID AS GroupID, s.Outflow AS Outflow
+        SELECT DATE(t.Date) AS Date, c.CategoryGroupID AS GroupID, s.OutflowConverted AS OutflowConverted
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
         JOIN categories c ON c.ID = s.CategoryID
-        WHERE t.BudgetID = ? AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND a.OnBudget = 1 AND s.Outflow > 0
+        WHERE t.BudgetID = ? AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND a.OnBudget = 1 AND s.OutflowConverted > 0
         UNION ALL
-        SELECT DATE(t.Date) AS Date, c.CategoryGroupID AS GroupID, t.Outflow AS Outflow
+        SELECT DATE(t.Date) AS Date, c.CategoryGroupID AS GroupID, t.OutflowConverted AS OutflowConverted
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         JOIN categories c ON c.ID = t.CategoryID
-        WHERE t.BudgetID = ? AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND a.OnBudget = 1 AND t.Outflow > 0
+        WHERE t.BudgetID = ? AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND a.OnBudget = 1 AND t.OutflowConverted > 0
           ${NO_SPLITS_FILTER}
       )
-      SELECT b.Date AS Date, SUM(b.Outflow) AS Spending, cg.ID AS CategoryGroupID, cg.Name AS CategoryGroupName
+      SELECT b.Date AS Date, SUM(b.OutflowConverted) AS Spending, cg.ID AS CategoryGroupID, cg.Name AS CategoryGroupName
       FROM base b
       LEFT JOIN category_groups cg ON cg.ID = b.GroupID
       WHERE (cg.Name != 'Transfers' OR cg.Name IS NULL)
@@ -156,23 +156,23 @@ export class AnalyticsQueries {
         WHERE day < DATE(?)
       ),
       base as (
-        SELECT DATE(t.Date) as Date, s.Outflow as Outflow, cg.Name as GroupName
+        SELECT DATE(t.Date) as Date, s.OutflowConverted as OutflowConverted, cg.Name as GroupName
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
         LEFT JOIN categories c ON c.ID = s.CategoryID
         LEFT JOIN category_groups cg ON cg.ID = c.CategoryGroupID
-        WHERE t.BudgetID = ? AND a.OnBudget = 1 AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND s.Outflow > 0
+        WHERE t.BudgetID = ? AND a.OnBudget = 1 AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND s.OutflowConverted > 0
         UNION ALL
-        SELECT DATE(t.Date) as Date, t.Outflow as Outflow, cg.Name as GroupName
+        SELECT DATE(t.Date) as Date, t.OutflowConverted as OutflowConverted, cg.Name as GroupName
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         LEFT JOIN categories c ON c.ID = t.CategoryID
         LEFT JOIN category_groups cg ON cg.ID = c.CategoryGroupID
-        WHERE t.BudgetID = ? AND a.OnBudget = 1 AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND t.Outflow > 0
+        WHERE t.BudgetID = ? AND a.OnBudget = 1 AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND t.OutflowConverted > 0
           ${NO_SPLITS_FILTER}
       )
-      SELECT dr.day AS Date, COALESCE(SUM(CASE WHEN base.GroupName != 'Transfers' OR base.GroupName IS NULL THEN base.Outflow ELSE 0 END), 0) AS Spending
+      SELECT dr.day AS Date, COALESCE(SUM(CASE WHEN base.GroupName != 'Transfers' OR base.GroupName IS NULL THEN base.OutflowConverted ELSE 0 END), 0) AS Spending
       FROM date_range dr
       LEFT JOIN base ON base.Date = dr.day
       GROUP BY dr.day
@@ -208,7 +208,7 @@ export class AnalyticsQueries {
         -- Prefer split rows when present
         SELECT
           s.CategoryID AS CategoryID,
-          s.Outflow AS Outflow
+          s.OutflowConverted AS OutflowConverted
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
@@ -217,7 +217,7 @@ export class AnalyticsQueries {
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
           AND a.OnBudget = 1
-          AND s.Outflow > 0
+          AND s.OutflowConverted > 0
           AND c.CategoryGroupID = ?
           AND c.BudgetID = ?
 
@@ -226,7 +226,7 @@ export class AnalyticsQueries {
         -- Fallback to parent transactions that do not have splits
         SELECT
           t.CategoryID AS CategoryID,
-          t.Outflow AS Outflow
+          t.OutflowConverted AS OutflowConverted
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         JOIN categories c ON c.ID = t.CategoryID
@@ -234,7 +234,7 @@ export class AnalyticsQueries {
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
           AND a.OnBudget = 1
-          AND t.Outflow > 0
+          AND t.OutflowConverted > 0
           AND c.CategoryGroupID = ?
           AND c.BudgetID = ?
           ${NO_SPLITS_FILTER}
@@ -242,7 +242,7 @@ export class AnalyticsQueries {
       SELECT
         c.ID AS CategoryID,
         c.Name AS CategoryName,
-        COALESCE(SUM(base.Outflow), 0) AS Spending
+        COALESCE(SUM(base.OutflowConverted), 0) AS Spending
       FROM base
       JOIN categories c ON c.ID = base.CategoryID
       GROUP BY c.ID, c.Name
@@ -276,7 +276,7 @@ export class AnalyticsQueries {
       WITH base AS (
         SELECT
           t.LabelID AS LabelID,
-          s.Outflow AS Outflow,
+          s.OutflowConverted AS OutflowConverted,
           cg.Name AS GroupName
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
@@ -287,13 +287,13 @@ export class AnalyticsQueries {
           AND a.OnBudget = 1
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
-          AND s.Outflow > 0
+          AND s.OutflowConverted > 0
 
         UNION ALL
 
         SELECT
           t.LabelID AS LabelID,
-          t.Outflow AS Outflow,
+          t.OutflowConverted AS OutflowConverted,
           cg.Name AS GroupName
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
@@ -303,11 +303,11 @@ export class AnalyticsQueries {
           AND a.OnBudget = 1
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
-          AND t.Outflow > 0
+          AND t.OutflowConverted > 0
           ${NO_SPLITS_FILTER}
       ),
       filtered AS (
-        SELECT LabelID, Outflow
+        SELECT LabelID, OutflowConverted
         FROM base
         WHERE GroupName IS NULL OR GroupName NOT IN ('Transfers', 'Income')
       ),
@@ -316,7 +316,7 @@ export class AnalyticsQueries {
           f.LabelID AS LabelID,
           COALESCE(l.Name, 'Unlabeled') AS Label,
           COALESCE(l.Color, '#9CA3AF') AS LabelColor,
-          SUM(f.Outflow) AS Spending
+          SUM(f.OutflowConverted) AS Spending
         FROM filtered f
         LEFT JOIN labels l ON l.ID = f.LabelID
         GROUP BY f.LabelID, l.Name, l.Color
@@ -350,7 +350,7 @@ export class AnalyticsQueries {
       WITH base AS (
         SELECT
           COALESCE(NULLIF(TRIM(t.Payee), ''), '(No payee)') AS Payee,
-          s.Outflow AS Outflow,
+          s.OutflowConverted AS OutflowConverted,
           cg.Name AS GroupName
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
@@ -361,13 +361,13 @@ export class AnalyticsQueries {
           AND a.OnBudget = 1
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
-          AND s.Outflow > 0
+          AND s.OutflowConverted > 0
 
         UNION ALL
 
         SELECT
           COALESCE(NULLIF(TRIM(t.Payee), ''), '(No payee)') AS Payee,
-          t.Outflow AS Outflow,
+          t.OutflowConverted AS OutflowConverted,
           cg.Name AS GroupName
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
@@ -377,17 +377,17 @@ export class AnalyticsQueries {
           AND a.OnBudget = 1
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
-          AND t.Outflow > 0
+          AND t.OutflowConverted > 0
           ${NO_SPLITS_FILTER}
       ),
       filtered AS (
-        SELECT Payee, Outflow
+        SELECT Payee, OutflowConverted
         FROM base
         WHERE GroupName IS NULL OR GroupName NOT IN ('Transfers', 'Income')
       )
       SELECT
         Payee,
-        SUM(Outflow) AS Spending
+        SUM(OutflowConverted) AS Spending
       FROM filtered
       GROUP BY Payee
       ORDER BY Spending DESC, Payee COLLATE NOCASE;
@@ -406,7 +406,7 @@ export class AnalyticsQueries {
   ) {
     const query = `
       WITH base AS (
-        SELECT DATE(t.Date) AS Date, s.Outflow AS Outflow, s.Inflow AS Inflow, cg.Name AS GroupName
+        SELECT DATE(t.Date) AS Date, s.OutflowConverted AS OutflowConverted, s.InflowConverted AS InflowConverted, cg.Name AS GroupName
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
@@ -417,7 +417,7 @@ export class AnalyticsQueries {
           AND DATE(t.Date) <= DATE(?)
           AND a.OnBudget = 1
         UNION ALL
-        SELECT DATE(t.Date) AS Date, t.Outflow AS Outflow, t.Inflow AS Inflow, cg.Name AS GroupName
+        SELECT DATE(t.Date) AS Date, t.OutflowConverted AS OutflowConverted, t.InflowConverted AS InflowConverted, cg.Name AS GroupName
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         LEFT JOIN categories c ON c.ID = t.CategoryID
@@ -432,10 +432,10 @@ export class AnalyticsQueries {
         SELECT
           Date,
           CASE
-            WHEN GroupName NOT IN ('Transfers', 'Income') OR GroupName IS NULL THEN Outflow
+            WHEN GroupName NOT IN ('Transfers', 'Income') OR GroupName IS NULL THEN OutflowConverted
             ELSE 0
           END AS FilteredOutflow,
-          CASE WHEN GroupName = 'Income' THEN Inflow ELSE 0 END AS Income
+          CASE WHEN GroupName = 'Income' THEN InflowConverted ELSE 0 END AS Income
         FROM base
       ),
       stats AS (
@@ -498,7 +498,7 @@ export class AnalyticsQueries {
           COALESCE(c.ID, 0) AS CategoryID,
           COALESCE(c.Name, 'Uncategorized') AS CategoryName,
           cg.Name AS CategoryGroupName,
-          s.Outflow AS Outflow
+          s.OutflowConverted AS OutflowConverted
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
@@ -508,13 +508,13 @@ export class AnalyticsQueries {
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
           AND a.OnBudget = 1
-          AND s.Outflow > 0
+          AND s.OutflowConverted > 0
         UNION ALL
         SELECT
           COALESCE(c.ID, 0) AS CategoryID,
           COALESCE(c.Name, 'Uncategorized') AS CategoryName,
           cg.Name AS CategoryGroupName,
-          t.Outflow AS Outflow
+          t.OutflowConverted AS OutflowConverted
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         LEFT JOIN categories c ON c.ID = t.CategoryID
@@ -523,18 +523,18 @@ export class AnalyticsQueries {
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
           AND a.OnBudget = 1
-          AND t.Outflow > 0
+          AND t.OutflowConverted > 0
           AND NOT EXISTS (SELECT 1 FROM transaction_splits s WHERE s.TransactionID = t.ID)
       )
       SELECT
         CategoryID,
         CategoryName,
         CategoryGroupName,
-        SUM(Outflow) AS Spending
+        SUM(OutflowConverted) AS Spending
       FROM base
       WHERE CategoryGroupName IS NULL OR (CategoryGroupName NOT IN ('Transfers', 'Income'))
       GROUP BY CategoryID, CategoryName, CategoryGroupName
-      HAVING SUM(Outflow) > 0
+      HAVING SUM(OutflowConverted) > 0
       ORDER BY Spending DESC
       LIMIT ?;
     `;
@@ -570,8 +570,8 @@ export class AnalyticsQueries {
           DATE(t.Date) AS Date,
           c.CategoryGroupID AS GroupID,
           cg.Name AS GroupName,
-          s.Inflow AS Inflow,
-          s.Outflow AS Outflow
+          s.InflowConverted AS InflowConverted,
+          s.OutflowConverted AS OutflowConverted
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
@@ -587,8 +587,8 @@ export class AnalyticsQueries {
           DATE(t.Date) AS Date,
           c.CategoryGroupID AS GroupID,
           cg.Name AS GroupName,
-          t.Inflow AS Inflow,
-          t.Outflow AS Outflow
+          t.InflowConverted AS InflowConverted,
+          t.OutflowConverted AS OutflowConverted
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         LEFT JOIN categories c ON c.ID = t.CategoryID
@@ -605,14 +605,14 @@ export class AnalyticsQueries {
           Date,
           GroupID,
           COALESCE(NULLIF(GroupName, ''), 'Uncategorized') AS CategoryGroupName,
-          CASE WHEN GroupName = 'Income' THEN COALESCE(Inflow, 0) ELSE 0 END AS IncomeAmount,
+          CASE WHEN GroupName = 'Income' THEN COALESCE(InflowConverted, 0) ELSE 0 END AS IncomeAmount,
           CASE
             WHEN GroupName = 'Income' THEN 0
             WHEN GroupName = 'Transfers' THEN 0
-            ELSE COALESCE(Outflow, 0)
+            ELSE COALESCE(OutflowConverted, 0)
           END AS ExpenseAmount
         FROM base
-        WHERE COALESCE(Inflow, 0) > 0 OR COALESCE(Outflow, 0) > 0
+        WHERE COALESCE(InflowConverted, 0) > 0 OR COALESCE(OutflowConverted, 0) > 0
       ),
       periodized AS (
         SELECT
@@ -687,7 +687,7 @@ export class AnalyticsQueries {
       WITH base AS (
         SELECT
           DATE(t.Date) AS Date,
-          s.Outflow AS Outflow
+          s.OutflowConverted AS OutflowConverted
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
@@ -697,14 +697,14 @@ export class AnalyticsQueries {
           AND a.OnBudget = 1
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
-          AND s.Outflow > 0
+          AND s.OutflowConverted > 0
           AND (cg.Name != 'Transfers' OR cg.Name IS NULL)
           ${categoryFilterSplits}
           ${accountFilterClause}
         UNION ALL
         SELECT
           DATE(t.Date) AS Date,
-          t.Outflow AS Outflow
+          t.OutflowConverted AS OutflowConverted
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         LEFT JOIN categories c ON c.ID = t.CategoryID
@@ -713,7 +713,7 @@ export class AnalyticsQueries {
           AND a.OnBudget = 1
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
-          AND t.Outflow > 0
+          AND t.OutflowConverted > 0
           ${NO_SPLITS_FILTER}
           AND (cg.Name != 'Transfers' OR cg.Name IS NULL)
           ${categoryFilterTransactions}
@@ -721,13 +721,13 @@ export class AnalyticsQueries {
       ),
       periodized AS (
         SELECT
-          Outflow,
+          OutflowConverted,
           ${PERIOD_START_CASE}
         FROM base
       ),
       with_bounds AS (
         SELECT
-          Outflow,
+          OutflowConverted,
           PeriodStart,
           ${PERIOD_END_CASE}
         FROM periodized
@@ -737,7 +737,7 @@ export class AnalyticsQueries {
           ${PERIOD_LABEL_CASE},
           PeriodStart,
           PeriodEnd,
-          SUM(Outflow) AS TotalSpending
+          SUM(OutflowConverted) AS TotalSpending
         FROM with_bounds
         GROUP BY Period, PeriodStart, PeriodEnd
       )
@@ -798,8 +798,8 @@ export class AnalyticsQueries {
           COALESCE(c.Name, 'Uncategorized') AS CategoryName,
           c.CategoryGroupID AS CategoryGroupID,
           COALESCE(NULLIF(cg.Name, ''), 'Uncategorized') AS CategoryGroupName,
-          COALESCE(s.Inflow, 0) AS Inflow,
-          COALESCE(s.Outflow, 0) AS Outflow
+          COALESCE(s.InflowConverted, 0) AS InflowConverted,
+          COALESCE(s.OutflowConverted, 0) AS OutflowConverted
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
@@ -818,8 +818,8 @@ export class AnalyticsQueries {
           COALESCE(c.Name, 'Uncategorized') AS CategoryName,
           c.CategoryGroupID AS CategoryGroupID,
           COALESCE(NULLIF(cg.Name, ''), 'Uncategorized') AS CategoryGroupName,
-          COALESCE(t.Inflow, 0) AS Inflow,
-          COALESCE(t.Outflow, 0) AS Outflow
+          COALESCE(t.InflowConverted, 0) AS InflowConverted,
+          COALESCE(t.OutflowConverted, 0) AS OutflowConverted
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         LEFT JOIN categories c ON c.ID = t.CategoryID
@@ -839,11 +839,11 @@ export class AnalyticsQueries {
           CategoryName,
           CategoryGroupID,
           CategoryGroupName,
-          Inflow,
+          InflowConverted,
           CASE
             WHEN CategoryGroupName = 'Transfers' THEN 0
-            ELSE Outflow
-          END AS Outflow
+            ELSE OutflowConverted
+          END AS OutflowConverted
         FROM base
       ),
       periodized AS (
@@ -852,8 +852,8 @@ export class AnalyticsQueries {
           CategoryName,
           CategoryGroupID,
           CategoryGroupName,
-          Inflow,
-          Outflow,
+          InflowConverted,
+          OutflowConverted,
           ${PERIOD_START_CASE}
         FROM filtered
       ),
@@ -863,8 +863,8 @@ export class AnalyticsQueries {
           CategoryName,
           CategoryGroupID,
           CategoryGroupName,
-          Inflow,
-          Outflow,
+          InflowConverted,
+          OutflowConverted,
           PeriodStart,
           ${PERIOD_END_CASE}
         FROM periodized
@@ -877,8 +877,8 @@ export class AnalyticsQueries {
         ${PERIOD_LABEL_CASE},
         PeriodStart,
         PeriodEnd,
-        SUM(Inflow) AS TotalIncome,
-        SUM(Outflow) AS TotalOutflow
+        SUM(InflowConverted) AS TotalIncome,
+        SUM(OutflowConverted) AS TotalOutflow
       FROM with_bounds
       GROUP BY
         CategoryID,
@@ -921,14 +921,14 @@ export class AnalyticsQueries {
       this.db,
       `
       WITH current_balance AS (
-        SELECT COALESCE(SUM(COALESCE(BalanceConverted, Balance)), 0) AS CurrentBalance
+        SELECT COALESCE(SUM(COALESCE(BalanceConverted, BalanceNative)), 0) AS CurrentBalance
         FROM accounts
         WHERE BudgetID = ?1
           AND OnBudget = 1
           AND LOWER(Type) IN ('checking', 'savings', 'cash')
       ),
       future_transactions AS (
-        SELECT COALESCE(SUM(t.Inflow - t.Outflow), 0) AS NetChange
+        SELECT COALESCE(SUM(t.InflowConverted - t.OutflowConverted), 0) AS NetChange
         FROM transactions t
         INNER JOIN accounts a ON t.AccountID = a.ID
         WHERE t.BudgetID = ?1
@@ -976,7 +976,7 @@ export class AnalyticsQueries {
       ),
       starting_balance AS (
         -- Get the current balance from cash accounts only (Checking, Savings, Cash)
-        SELECT COALESCE(SUM(COALESCE(BalanceConverted, Balance)), 0) AS CurrentBalance
+        SELECT COALESCE(SUM(COALESCE(BalanceConverted, BalanceNative)), 0) AS CurrentBalance
         FROM accounts
         WHERE BudgetID = ?
           AND OnBudget = 1
@@ -984,7 +984,7 @@ export class AnalyticsQueries {
       ),
       transactions_after_end AS (
         -- Get net transactions after the end date to work backwards
-        SELECT COALESCE(SUM(t.Inflow - t.Outflow), 0) AS NetChange
+        SELECT COALESCE(SUM(t.InflowConverted - t.OutflowConverted), 0) AS NetChange
         FROM transactions t
         INNER JOIN accounts a ON t.AccountID = a.ID
         WHERE t.BudgetID = ?
@@ -996,7 +996,7 @@ export class AnalyticsQueries {
         -- Calculate daily net changes for cash accounts only
         SELECT
           DATE(t.Date) AS Date,
-          SUM(t.Inflow - t.Outflow) AS DailyChange
+          SUM(t.InflowConverted - t.OutflowConverted) AS DailyChange
         FROM transactions t
         INNER JOIN accounts a ON t.AccountID = a.ID
         WHERE t.BudgetID = ?

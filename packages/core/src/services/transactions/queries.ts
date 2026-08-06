@@ -30,12 +30,12 @@ const TX_ROW_COLUMNS = `
         t.Memo,
         t.Payee,
         t.Reconciled,
-        t.Inflow,
-        t.Outflow,
-        t.InflowOriginal,
-        t.OutflowOriginal,
-        t.RunningBalance,
-        t.RunningBalanceOriginal,
+        t.InflowConverted,
+        t.OutflowConverted,
+        t.InflowNative,
+        t.OutflowNative,
+        t.RunningBalanceConverted,
+        t.RunningBalanceNative,
         t.ExchangeRate,
         t.ExchangeRateOverride,
         t.TransferID`;
@@ -86,8 +86,8 @@ export class TransactionQueries {
       this.db,
       `
       UPDATE accounts 
-      SET Balance = Balance + ? - ?,
-          BalanceConverted = COALESCE(BalanceConverted, Balance) + ? - ?
+      SET BalanceNative = BalanceNative + ? - ?,
+          BalanceConverted = COALESCE(BalanceConverted, BalanceNative) + ? - ?
       WHERE ID = ?
     `,
       inflowOriginal,
@@ -124,8 +124,8 @@ export class TransactionQueries {
       this.db,
       `
       INSERT INTO transactions (
-        Inflow, Outflow, InflowOriginal, OutflowOriginal, CategoryID, AccountID,
-        Date, Memo, Payee, BudgetID, RunningBalance, RunningBalanceOriginal, TransferID, ExchangeRate, LabelID
+        InflowConverted, OutflowConverted, InflowNative, OutflowNative, CategoryID, AccountID,
+        Date, Memo, Payee, BudgetID, RunningBalanceConverted, RunningBalanceNative, TransferID, ExchangeRate, LabelID
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       inflow,
@@ -169,9 +169,9 @@ export class TransactionQueries {
         l.Color as LabelColor,
         t.Memo,
         t.Payee,
-        t.Inflow,
-        t.Outflow,
-        t.RunningBalance,
+        t.InflowConverted,
+        t.OutflowConverted,
+        t.RunningBalanceConverted,
         t.TransferID
       FROM transactions t
         LEFT JOIN categories c ON t.CategoryID = c.ID
@@ -252,7 +252,7 @@ export class TransactionQueries {
   }
 
   private getRunningBalanceColumn(
-    col: 'RunningBalance' | 'RunningBalanceOriginal',
+    col: 'RunningBalanceConverted' | 'RunningBalanceNative',
     accountId: number,
     date: string,
     id?: number
@@ -275,18 +275,18 @@ export class TransactionQueries {
    * SQL: SELECT running_balance FROM transactions WHERE account_id = ? AND (date < ? OR (date = ? AND id < COALESCE(?, 9223372036854775807))) ORDER BY date DESC, id DESC LIMIT 1
    */
   getRunningBalanceBefore(accountId: number, date: string, id?: number): number | null {
-    return this.getRunningBalanceColumn('RunningBalance', accountId, date, id);
+    return this.getRunningBalanceColumn('RunningBalanceConverted', accountId, date, id);
   }
 
   /**
    * GetRunningBalanceOriginalBefore - Gets the original currency running balance before a date/transaction
    */
   getRunningBalanceOriginalBefore(accountId: number, date: string, id?: number): number | null {
-    return this.getRunningBalanceColumn('RunningBalanceOriginal', accountId, date, id);
+    return this.getRunningBalanceColumn('RunningBalanceNative', accountId, date, id);
   }
 
   private bumpFutureBalancesColumn(
-    col: 'RunningBalance' | 'RunningBalanceOriginal',
+    col: 'RunningBalanceConverted' | 'RunningBalanceNative',
     accountId: number,
     date: string,
     id: number,
@@ -312,18 +312,18 @@ export class TransactionQueries {
    * SQL: UPDATE transactions SET running_balance = running_balance + ? WHERE ...
    */
   bumpFutureBalances(accountId: number, date: string, id: number, delta: number): void {
-    this.bumpFutureBalancesColumn('RunningBalance', accountId, date, id, delta);
+    this.bumpFutureBalancesColumn('RunningBalanceConverted', accountId, date, id, delta);
   }
 
   /**
    * BumpFutureBalancesOriginal - Updates original running balances for all transactions after a specific date
    */
   bumpFutureBalancesOriginal(accountId: number, date: string, id: number, delta: number): void {
-    this.bumpFutureBalancesColumn('RunningBalanceOriginal', accountId, date, id, delta);
+    this.bumpFutureBalancesColumn('RunningBalanceNative', accountId, date, id, delta);
   }
 
   private updateRunningBalanceColumn(
-    col: 'RunningBalance' | 'RunningBalanceOriginal',
+    col: 'RunningBalanceConverted' | 'RunningBalanceNative',
     id: number,
     runningBalance: number
   ): void {
@@ -344,15 +344,15 @@ export class TransactionQueries {
    * SQL: UPDATE transactions SET running_balance = ? WHERE id = ?
    */
   updateRunningBalance(id: number, runningBalance: number): void {
-    this.updateRunningBalanceColumn('RunningBalance', id, runningBalance);
+    this.updateRunningBalanceColumn('RunningBalanceConverted', id, runningBalance);
   }
 
   /**
    * UpdateRunningBalanceOriginal - Updates original running balance for a specific transaction
-   * SQL: UPDATE transactions SET RunningBalanceOriginal = ? WHERE ID = ?
+   * SQL: UPDATE transactions SET RunningBalanceNative = ? WHERE ID = ?
    */
   updateRunningBalanceOriginal(id: number, runningBalance: number): void {
-    this.updateRunningBalanceColumn('RunningBalanceOriginal', id, runningBalance);
+    this.updateRunningBalanceColumn('RunningBalanceNative', id, runningBalance);
   }
 
   /**
@@ -406,7 +406,7 @@ export class TransactionQueries {
       this.db,
       `
       UPDATE transactions 
-      SET Inflow = ?, Outflow = ?, InflowOriginal = ?, OutflowOriginal = ?, 
+      SET InflowConverted = ?, OutflowConverted = ?, InflowNative = ?, OutflowNative = ?, 
           CategoryID = ?, AccountID = ?, Date = ?, Memo = ?, Payee = ?
       WHERE ID = ?
     `,
@@ -443,8 +443,8 @@ export class TransactionQueries {
       this.db,
       `
       UPDATE transactions 
-      SET InflowOriginal = ?, OutflowOriginal = ?, 
-          Inflow = ?, Outflow = ?,
+      SET InflowNative = ?, OutflowNative = ?, 
+          InflowConverted = ?, OutflowConverted = ?,
           CategoryID = ?, AccountID = ?, Date = ?, Memo = ?, Payee = ?
       WHERE ID = ?
     `,
@@ -502,14 +502,14 @@ export class TransactionQueries {
     // Get all transactions for the account ordered by date and ID
     const transactions = allRows<{
       ID: number;
-      Inflow: number;
-      Outflow: number;
-      InflowOriginal: number;
-      OutflowOriginal: number;
+      InflowConverted: number;
+      OutflowConverted: number;
+      InflowNative: number;
+      OutflowNative: number;
     }>(
       this.db,
       `
-      SELECT ID, Inflow, Outflow, InflowOriginal, OutflowOriginal
+      SELECT ID, InflowConverted, OutflowConverted, InflowNative, OutflowNative
       FROM transactions 
       WHERE AccountID = ?
       ORDER BY Date ASC, ID ASC
@@ -522,13 +522,13 @@ export class TransactionQueries {
 
     const updateStmt = this.db.prepare(`
       UPDATE transactions 
-      SET RunningBalance = ?, RunningBalanceOriginal = ?
+      SET RunningBalanceConverted = ?, RunningBalanceNative = ?
       WHERE ID = ?
     `);
 
     for (const tx of transactions) {
-      runningBalance += (tx.Inflow ?? 0) - (tx.Outflow ?? 0);
-      runningBalanceOriginal += (tx.InflowOriginal ?? 0) - (tx.OutflowOriginal ?? 0);
+      runningBalance += (tx.InflowConverted ?? 0) - (tx.OutflowConverted ?? 0);
+      runningBalanceOriginal += (tx.InflowNative ?? 0) - (tx.OutflowNative ?? 0);
       updateStmt.run(runningBalance, runningBalanceOriginal, tx.ID);
     }
 
@@ -538,7 +538,7 @@ export class TransactionQueries {
       this.db,
       `
       UPDATE accounts 
-      SET Balance = ?, BalanceConverted = ?
+      SET BalanceNative = ?, BalanceConverted = ?
       WHERE ID = ?
     `,
       runningBalanceOriginal,
@@ -663,9 +663,9 @@ export class TransactionQueries {
           t.LabelID as LabelID,
           l.Name as Label,
           l.Color as LabelColor,
-          COALESCE(s.Inflow, 0) as Inflow,
-          COALESCE(s.Outflow, 0) as Outflow,
-          NULL as RunningBalance,
+          COALESCE(s.InflowConverted, 0) as InflowConverted,
+          COALESCE(s.OutflowConverted, 0) as OutflowConverted,
+          NULL as RunningBalanceConverted,
           t.AccountID,
           a.Name as Account,
           c.Name as Category,
@@ -691,9 +691,9 @@ export class TransactionQueries {
           t.LabelID as LabelID,
           l.Name as Label,
           l.Color as LabelColor,
-          t.Inflow,
-          t.Outflow,
-          t.RunningBalance,
+          t.InflowConverted,
+          t.OutflowConverted,
+          t.RunningBalanceConverted,
           t.AccountID,
           a.Name as Account,
           c.Name as Category,
@@ -752,9 +752,9 @@ export class TransactionQueries {
           t.LabelID AS LabelID,
           l.Name AS Label,
           l.Color AS LabelColor,
-          COALESCE(s.Inflow, 0) AS Inflow,
-          COALESCE(s.Outflow, 0) AS Outflow,
-          NULL AS RunningBalance,
+          COALESCE(s.InflowConverted, 0) AS InflowConverted,
+          COALESCE(s.OutflowConverted, 0) AS OutflowConverted,
+          NULL AS RunningBalanceConverted,
           t.AccountID,
           a.Name AS Account,
           COALESCE(c.Name, 'Uncategorized') AS Category,
@@ -781,9 +781,9 @@ export class TransactionQueries {
           t.LabelID AS LabelID,
           l.Name AS Label,
           l.Color AS LabelColor,
-          t.Inflow,
-          t.Outflow,
-          t.RunningBalance,
+          t.InflowConverted,
+          t.OutflowConverted,
+          t.RunningBalanceConverted,
           t.AccountID,
           a.Name AS Account,
           COALESCE(c.Name, 'Uncategorized') AS Category,
@@ -1084,17 +1084,17 @@ export class TransactionQueries {
       `
       INSERT INTO transaction_splits (
         TransactionID, CategoryID, TransferAccountID, Memo,
-        Inflow, Outflow, InflowOriginal, OutflowOriginal, PairID, OrderIndex
+        InflowConverted, OutflowConverted, InflowNative, OutflowNative, PairID, OrderIndex
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       split.TransactionID,
       split.CategoryID ?? null,
       split.TransferAccountID ?? null,
       split.Memo,
-      split.Inflow,
-      split.Outflow,
-      split.InflowOriginal ?? null,
-      split.OutflowOriginal ?? null,
+      split.InflowConverted,
+      split.OutflowConverted,
+      split.InflowNative ?? null,
+      split.OutflowNative ?? null,
       split.PairID ?? null,
       split.OrderIndex ?? 0
     );

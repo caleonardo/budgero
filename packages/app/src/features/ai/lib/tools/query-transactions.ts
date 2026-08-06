@@ -60,13 +60,13 @@ interface Transaction {
   Account?: string;
   AccountID?: number;
   AccountId?: number;
-  Inflow?: number;
-  Outflow?: number;
+  InflowConverted?: number;
+  OutflowConverted?: number;
 }
 
 /** Absolute transaction amount in milliunits (stored representation). */
 function getAbsAmount(tx: Transaction): number {
-  return Math.max(tx.Outflow || 0, tx.Inflow || 0);
+  return Math.max(tx.OutflowConverted || 0, tx.InflowConverted || 0);
 }
 
 export async function executeQueryTransactions(
@@ -147,9 +147,9 @@ export async function executeQueryTransactions(
       }
 
       if (f.type === 'expense') {
-        transactions = transactions.filter((tx) => (tx.Outflow || 0) > 0);
+        transactions = transactions.filter((tx) => (tx.OutflowConverted || 0) > 0);
       } else if (f.type === 'income') {
-        transactions = transactions.filter((tx) => (tx.Inflow || 0) > 0);
+        transactions = transactions.filter((tx) => (tx.InflowConverted || 0) > 0);
       }
 
       if (f.excludeCategory) {
@@ -199,9 +199,9 @@ export async function executeQueryTransactions(
 
         const list = results
           .map((tx) => {
-            const amount = tx.Outflow
-              ? `-${formatMilliCurrency(tx.Outflow)}`
-              : `+${formatMilliCurrency(tx.Inflow || 0)}`;
+            const amount = tx.OutflowConverted
+              ? `-${formatMilliCurrency(tx.OutflowConverted)}`
+              : `+${formatMilliCurrency(tx.InflowConverted || 0)}`;
             const desc = tx.Payee || tx.Memo || 'No description';
             // Include id so the model can target this row with edit_transaction.
             return `#${tx.ID} | ${tx.Date} | ${desc} | ${tx.Category || 'Uncategorized'} | ${tx.Account} | ${amount}`;
@@ -227,8 +227,8 @@ export async function executeQueryTransactions(
         }
 
         // Exact integer milliunit sums
-        const totalOutflow = transactions.reduce((sum, tx) => sum + (tx.Outflow || 0), 0);
-        const totalInflow = transactions.reduce((sum, tx) => sum + (tx.Inflow || 0), 0);
+        const totalOutflow = transactions.reduce((sum, tx) => sum + (tx.OutflowConverted || 0), 0);
+        const totalInflow = transactions.reduce((sum, tx) => sum + (tx.InflowConverted || 0), 0);
         const net = totalInflow - totalOutflow;
 
         return {
@@ -272,9 +272,9 @@ export async function executeQueryTransactions(
 
         const sorted = [...transactions].sort((a, b) => getAbsAmount(b) - getAbsAmount(a));
         const max = sorted[0];
-        const amount = max.Outflow
-          ? `-${formatMilliCurrency(max.Outflow)}`
-          : `+${formatMilliCurrency(max.Inflow || 0)}`;
+        const amount = max.OutflowConverted
+          ? `-${formatMilliCurrency(max.OutflowConverted)}`
+          : `+${formatMilliCurrency(max.InflowConverted || 0)}`;
 
         return {
           success: true,
@@ -303,9 +303,9 @@ export async function executeQueryTransactions(
 
         const sorted = nonZero.sort((a, b) => getAbsAmount(a) - getAbsAmount(b));
         const min = sorted[0];
-        const amount = min.Outflow
-          ? `-${formatMilliCurrency(min.Outflow)}`
-          : `+${formatMilliCurrency(min.Inflow || 0)}`;
+        const amount = min.OutflowConverted
+          ? `-${formatMilliCurrency(min.OutflowConverted)}`
+          : `+${formatMilliCurrency(min.InflowConverted || 0)}`;
 
         return {
           success: true,
@@ -333,8 +333,8 @@ export async function executeQueryTransactions(
           };
         }
 
-        const totalOutflow = transactions.reduce((sum, tx) => sum + (tx.Outflow || 0), 0);
-        const totalInflow = transactions.reduce((sum, tx) => sum + (tx.Inflow || 0), 0);
+        const totalOutflow = transactions.reduce((sum, tx) => sum + (tx.OutflowConverted || 0), 0);
+        const totalInflow = transactions.reduce((sum, tx) => sum + (tx.InflowConverted || 0), 0);
         // Averages of milli integers are float milli; rounded back at display
         const avgOutflow = totalOutflow / transactions.length;
         const avgInflow = totalInflow / transactions.length;
@@ -402,8 +402,8 @@ function executeGroupedAggregation(
   const results: { group: string; value: number; count: number }[] = [];
 
   for (const [group, txs] of groups) {
-    const totalOutflow = txs.reduce((sum, tx) => sum + (tx.Outflow || 0), 0);
-    const totalInflow = txs.reduce((sum, tx) => sum + (tx.Inflow || 0), 0);
+    const totalOutflow = txs.reduce((sum, tx) => sum + (tx.OutflowConverted || 0), 0);
+    const totalInflow = txs.reduce((sum, tx) => sum + (tx.InflowConverted || 0), 0);
     const count = txs.length;
 
     let value: number;

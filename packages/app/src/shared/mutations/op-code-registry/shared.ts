@@ -16,10 +16,10 @@ export interface NormalizedSplit {
   CategoryID: number | null;
   TransferAccountID: number | null;
   Memo: string;
-  Inflow: MilliUnits;
-  Outflow: MilliUnits;
-  InflowOriginal: MilliUnits | null;
-  OutflowOriginal: MilliUnits | null;
+  InflowConverted: MilliUnits;
+  OutflowConverted: MilliUnits;
+  InflowNative: MilliUnits | null;
+  OutflowNative: MilliUnits | null;
   PairID: string | null;
   OrderIndex: number;
 }
@@ -43,12 +43,20 @@ export interface TransactionSnapshot {
   memo?: string;
   Payee?: string;
   payee?: string;
+  InflowConverted?: number;
+  /** Legacy pre-045 payload name for InflowConverted. */
   Inflow?: number;
   inflow?: number;
+  OutflowConverted?: number;
+  /** Legacy pre-045 payload name for OutflowConverted. */
   Outflow?: number;
   outflow?: number;
+  InflowNative?: number;
+  /** Legacy pre-045 payload name for InflowNative. */
   InflowOriginal?: number;
   inflowOriginal?: number;
+  OutflowNative?: number;
+  /** Legacy pre-045 payload name for OutflowNative. */
   OutflowOriginal?: number;
   outflowOriginal?: number;
   CategoryID?: number;
@@ -76,12 +84,12 @@ export interface TransactionRowWithColumns {
   ID: number;
   Date: string;
   Memo: string;
-  Inflow: number;
-  Outflow: number;
+  InflowConverted: number;
+  OutflowConverted: number;
   CategoryID: number;
   AccountID: number;
-  InflowOriginal?: number;
-  OutflowOriginal?: number;
+  InflowNative?: number;
+  OutflowNative?: number;
   TransferID?: string;
   ReconciledAt?: string | null;
   LabelID?: number | null;
@@ -101,14 +109,18 @@ export function transactionSnapshotToAddOp(snapshot: TransactionSnapshot): OpCal
     op: 'transactions.add',
     args: {
       inflow:
+        snapshot.InflowNative ??
         snapshot.InflowOriginal ??
         snapshot.inflowOriginal ??
+        snapshot.InflowConverted ??
         snapshot.Inflow ??
         snapshot.inflow ??
         0,
       outflow:
+        snapshot.OutflowNative ??
         snapshot.OutflowOriginal ??
         snapshot.outflowOriginal ??
+        snapshot.OutflowConverted ??
         snapshot.Outflow ??
         snapshot.outflow ??
         0,

@@ -102,9 +102,9 @@ export function UncategorizedTransactionsCard({
       Category: transaction.Category,
       Memo: transaction.Memo,
       Reconciled: false,
-      Inflow: transaction.Inflow,
-      Outflow: transaction.Outflow,
-      RunningBalance: transaction.RunningBalance ?? null,
+      InflowConverted: transaction.InflowConverted,
+      OutflowConverted: transaction.OutflowConverted,
+      RunningBalanceConverted: transaction.RunningBalanceConverted ?? null,
       TransferID: transaction.TransferID,
       Account: accountName,
       AccountId: accountId,
@@ -161,10 +161,10 @@ export function UncategorizedTransactionsCard({
     }
   };
 
-  const getPrimaryInflow = (tx: { Inflow: number }) => tx.Inflow || 0;
-  const getPrimaryOutflow = (tx: { Outflow: number }) => tx.Outflow || 0;
-  const getSecondaryInflow = (tx: { Inflow: number }) => tx.Inflow ?? 0;
-  const getSecondaryOutflow = (tx: { Outflow: number }) => tx.Outflow ?? 0;
+  const getPrimaryInflow = (tx: { InflowConverted: number }) => tx.InflowConverted || 0;
+  const getPrimaryOutflow = (tx: { OutflowConverted: number }) => tx.OutflowConverted || 0;
+  const getSecondaryInflow = (tx: { InflowConverted: number }) => tx.InflowConverted ?? 0;
+  const getSecondaryOutflow = (tx: { OutflowConverted: number }) => tx.OutflowConverted ?? 0;
 
   return (
     <>
@@ -206,8 +206,8 @@ export function UncategorizedTransactionsCard({
                   transaction.AccountName ||
                   String((transaction as { Account?: string }).Account ?? '') ||
                   'Unknown account';
-                const inflow = Number(transaction.Inflow || 0);
-                const outflow = Number(transaction.Outflow || 0);
+                const inflow = Number(transaction.InflowConverted || 0);
+                const outflow = Number(transaction.OutflowConverted || 0);
                 const amount = inflow > 0 ? inflow : outflow;
                 const isIncome = inflow > 0;
                 const formattedAmount = formatMaskedMilli(

@@ -139,12 +139,12 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
     for (const { transaction } of upcomingScheduledTransactions) {
       const inflowValue =
         transactionCurrencyDisplay === 'budget'
-          ? transaction.Inflow
-          : (transaction.InflowOriginal ?? transaction.Inflow);
+          ? transaction.InflowConverted
+          : (transaction.InflowNative ?? transaction.InflowConverted);
       const outflowValue =
         transactionCurrencyDisplay === 'budget'
-          ? transaction.Outflow
-          : (transaction.OutflowOriginal ?? transaction.Outflow);
+          ? transaction.OutflowConverted
+          : (transaction.OutflowNative ?? transaction.OutflowConverted);
       inflow += inflowValue ?? 0;
       outflow += outflowValue ?? 0;
     }
@@ -346,12 +346,12 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                     : 'Unassigned category');
                 const inflowValue =
                   transactionCurrencyDisplay === 'budget'
-                    ? transaction.Inflow
-                    : (transaction.InflowOriginal ?? transaction.Inflow);
+                    ? transaction.InflowConverted
+                    : (transaction.InflowNative ?? transaction.InflowConverted);
                 const outflowValue =
                   transactionCurrencyDisplay === 'budget'
-                    ? transaction.Outflow
-                    : (transaction.OutflowOriginal ?? transaction.Outflow);
+                    ? transaction.OutflowConverted
+                    : (transaction.OutflowNative ?? transaction.OutflowConverted);
                 const isOutflow =
                   (outflowValue ?? 0) > 0 && (outflowValue ?? 0) >= Math.abs(inflowValue ?? 0);
                 const amountValue = isOutflow ? outflowValue : inflowValue;

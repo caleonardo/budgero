@@ -26,7 +26,7 @@ export class AccountQueries {
     const result = run(
       this.db,
       `
-      INSERT INTO accounts (Name, Type, Currency, ReconciledAt, Balance, BudgetID, Metadata, OnBudget, Position)
+      INSERT INTO accounts (Name, Type, Currency, ReconciledAt, BalanceNative, BudgetID, Metadata, OnBudget, Position)
       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8,
         (SELECT COALESCE(MAX(Position), -1) + 1 FROM accounts WHERE BudgetID = ?6))
       RETURNING ID
@@ -68,12 +68,12 @@ export class AccountQueries {
       `
       SELECT a.*,
         COALESCE((
-          SELECT SUM(COALESCE(t.InflowOriginal, t.Inflow) - COALESCE(t.OutflowOriginal, t.Outflow))
+          SELECT SUM(COALESCE(t.InflowNative, t.InflowConverted) - COALESCE(t.OutflowNative, t.OutflowConverted))
           FROM transactions t
           WHERE t.AccountID = a.ID AND DATE(t.Date) > DATE('now', 'localtime')
-        ), 0) AS FutureImpactOriginal,
+        ), 0) AS FutureImpactNative,
         COALESCE((
-          SELECT SUM(t.Inflow - t.Outflow)
+          SELECT SUM(t.InflowConverted - t.OutflowConverted)
           FROM transactions t
           WHERE t.AccountID = a.ID AND DATE(t.Date) > DATE('now', 'localtime')
         ), 0) AS FutureImpactConverted

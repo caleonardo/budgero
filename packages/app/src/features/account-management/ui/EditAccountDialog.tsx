@@ -143,13 +143,13 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
   }
 
   // Derive suggested minimum monthly payment based on remaining balance, APR
-  // and target date. Account.Balance is milliunits, so `mp` is a float in
+  // and target date. Account.BalanceNative is milliunits, so `mp` is a float in
   // milli-space that rounds back to an exact MilliUnits amount.
   const computedMinPayment = useMemo(() => {
     if (!isLiability) {
       return null;
     }
-    const outstanding = Math.abs(selectedAccount?.Balance ?? 0);
+    const outstanding = Math.abs(selectedAccount?.BalanceNative ?? 0);
     const mRate = interestRate > 0 ? interestRate / 100 / 12 : 0;
     const months = targetDate
       ? Math.max(1, differenceInMonths(parseISO(targetDate), new Date()))
@@ -164,7 +164,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
       return roundMilli(mp);
     }
     return null;
-  }, [isLiability, selectedAccount?.Balance, interestRate, targetDate]);
+  }, [isLiability, selectedAccount?.BalanceNative, interestRate, targetDate]);
 
   const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,7 +269,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
       return;
     }
 
-    if (selectedAccount?.Balance !== 0) {
+    if (selectedAccount?.BalanceNative !== 0) {
       toast.error("You can't delete an account with a non-zero balance!", {
         description: 'Please move or delete all transactions from this account first.',
       });

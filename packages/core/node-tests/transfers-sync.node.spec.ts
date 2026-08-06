@@ -54,10 +54,10 @@ describe('Multi-currency updateTransactionColumn preserves amounts', () => {
 
     // Verify initial state
     let tx = services.transactions.getTransactionByID(txId);
-    expect(tx.OutflowOriginal).toBe(100); // 100 EUR
-    expect(tx.Outflow).toBeCloseTo(100 * EURRSD, 4); // ~11,750 RSD
-    expect(tx.InflowOriginal).toBe(0);
-    expect(tx.Inflow).toBe(0);
+    expect(tx.OutflowNative).toBe(100); // 100 EUR
+    expect(tx.OutflowConverted).toBeCloseTo(100 * EURRSD, 4); // ~11,750 RSD
+    expect(tx.InflowNative).toBe(0);
+    expect(tx.InflowConverted).toBe(0);
 
     // TEST 1: Update DATE - amounts should NOT change
     await services.transactions.updateTransactionColumn(txId, 'Date', dateB);
@@ -65,30 +65,30 @@ describe('Multi-currency updateTransactionColumn preserves amounts', () => {
 
     expect(tx.Date).toBe(dateB);
     // Critical: amounts must remain the same (bug would cause 100 EUR -> 11,750 EUR -> 1,380,625 RSD)
-    expect(tx.OutflowOriginal).toBe(100);
-    expect(tx.Outflow).toBeCloseTo(100 * EURRSD, 4);
-    expect(tx.InflowOriginal).toBe(0);
-    expect(tx.Inflow).toBe(0);
+    expect(tx.OutflowNative).toBe(100);
+    expect(tx.OutflowConverted).toBeCloseTo(100 * EURRSD, 4);
+    expect(tx.InflowNative).toBe(0);
+    expect(tx.InflowConverted).toBe(0);
 
     // TEST 2: Update MEMO - amounts should NOT change
     await services.transactions.updateTransactionColumn(txId, 'Memo', 'Updated memo');
     tx = services.transactions.getTransactionByID(txId);
 
     expect(tx.Memo).toBe('Updated memo');
-    expect(tx.OutflowOriginal).toBe(100);
-    expect(tx.Outflow).toBeCloseTo(100 * EURRSD, 4);
+    expect(tx.OutflowNative).toBe(100);
+    expect(tx.OutflowConverted).toBeCloseTo(100 * EURRSD, 4);
 
     // TEST 3: Update PAYEE - amounts should NOT change
     await services.transactions.updateTransactionColumn(txId, 'Payee', 'Updated Payee');
     tx = services.transactions.getTransactionByID(txId);
 
     expect(tx.Payee).toBe('Updated Payee');
-    expect(tx.OutflowOriginal).toBe(100);
-    expect(tx.Outflow).toBeCloseTo(100 * EURRSD, 4);
+    expect(tx.OutflowNative).toBe(100);
+    expect(tx.OutflowConverted).toBeCloseTo(100 * EURRSD, 4);
 
     // Verify account balance is still correct
     const account = services.accounts.getAccount(eurAccount.ID);
-    expect(account.Balance).toBe(-100); // -100 EUR
+    expect(account.BalanceNative).toBe(-100); // -100 EUR
     expect(account.BalanceConverted).toBeCloseTo(-100 * EURRSD, 4); // ~-11,750 RSD
   });
 
@@ -141,26 +141,26 @@ describe('Multi-currency updateTransactionColumn preserves amounts', () => {
 
     // Verify initial state
     let tx = services.transactions.getTransactionByID(txId);
-    expect(tx.InflowOriginal).toBe(10000); // 10000 JPY
-    expect(tx.Inflow).toBeCloseTo(10000 * JPYUSD, 4); // ~67 USD
-    expect(tx.OutflowOriginal).toBe(0);
-    expect(tx.Outflow).toBe(0);
+    expect(tx.InflowNative).toBe(10000); // 10000 JPY
+    expect(tx.InflowConverted).toBeCloseTo(10000 * JPYUSD, 4); // ~67 USD
+    expect(tx.OutflowNative).toBe(0);
+    expect(tx.OutflowConverted).toBe(0);
 
     // Update date
     await services.transactions.updateTransactionColumn(txId, 'Date', dateB);
     tx = services.transactions.getTransactionByID(txId);
 
     expect(tx.Date).toBe(dateB);
-    expect(tx.InflowOriginal).toBe(10000);
-    expect(tx.Inflow).toBeCloseTo(10000 * JPYUSD, 4);
+    expect(tx.InflowNative).toBe(10000);
+    expect(tx.InflowConverted).toBeCloseTo(10000 * JPYUSD, 4);
 
     // Update memo
     await services.transactions.updateTransactionColumn(txId, 'Memo', 'Updated salary');
     tx = services.transactions.getTransactionByID(txId);
 
     expect(tx.Memo).toBe('Updated salary');
-    expect(tx.InflowOriginal).toBe(10000);
-    expect(tx.Inflow).toBeCloseTo(10000 * JPYUSD, 4);
+    expect(tx.InflowNative).toBe(10000);
+    expect(tx.InflowConverted).toBeCloseTo(10000 * JPYUSD, 4);
   });
 });
 
@@ -239,9 +239,9 @@ describe('Transfer partner sync (date/memo/amount)', () => {
     // Sanity: amounts are mirrored at creation
     let a = services.transactions.getTransactionByID(usdTx);
     let b = services.transactions.getTransactionByID(eurTx);
-    expect(a.Outflow).toBeCloseTo(usdOutflow, 6);
-    expect(b.Inflow).toBeCloseTo(usdOutflow, 6);
-    expect(b.InflowOriginal).toBeCloseTo(eurInflowOriginal, 6);
+    expect(a.OutflowConverted).toBeCloseTo(usdOutflow, 6);
+    expect(b.InflowConverted).toBeCloseTo(usdOutflow, 6);
+    expect(b.InflowNative).toBeCloseTo(eurInflowOriginal, 6);
 
     // 1) Update USD memo; partner memo should mirror
     await services.transactions.updateTransactionColumn(usdTx, 'Memo', 'updated memo');
@@ -257,22 +257,22 @@ describe('Transfer partner sync (date/memo/amount)', () => {
     expect(a.Date).toBe(dateB);
     expect(b.Date).toBe(dateB);
 
-    // 3) Update USD converted amount (budget currency): Outflow 150 USD
-    await services.transactions.updateTransactionColumn(usdTx, 'Outflow', 150);
+    // 3) Update USD converted amount (budget currency): OutflowConverted 150 USD
+    await services.transactions.updateTransactionColumn(usdTx, 'OutflowConverted', 150);
     a = services.transactions.getTransactionByID(usdTx);
     b = services.transactions.getTransactionByID(eurTx);
     // USD side reflects 150 outflow
-    expect(a.Outflow).toBeCloseTo(150, 6);
+    expect(a.OutflowConverted).toBeCloseTo(150, 6);
     // EUR partner mirrors converted inflow 150 and recalculates originals (≈ 125 EUR)
-    expect(b.Inflow).toBeCloseTo(150, 6);
-    expect(b.InflowOriginal).toBeCloseTo(150 / EURUSD, 6);
+    expect(b.InflowConverted).toBeCloseTo(150, 6);
+    expect(b.InflowNative).toBeCloseTo(150 / EURUSD, 6);
 
     // 4) Update EUR original amount: set inflow_original to 200 EUR -> partner should mirror 240 USD outflow
-    await services.transactions.updateTransactionColumn(eurTx, 'InflowOriginal', 200);
+    await services.transactions.updateTransactionColumn(eurTx, 'InflowNative', 200);
     a = services.transactions.getTransactionByID(usdTx);
     b = services.transactions.getTransactionByID(eurTx);
     // EUR side converted inflow becomes 240 USD, partner USD outflow becomes 240
-    expect(b.Inflow).toBeCloseTo(200 * EURUSD, 6);
-    expect(a.Outflow).toBeCloseTo(200 * EURUSD, 6);
+    expect(b.InflowConverted).toBeCloseTo(200 * EURUSD, 6);
+    expect(a.OutflowConverted).toBeCloseTo(200 * EURUSD, 6);
   });
 });

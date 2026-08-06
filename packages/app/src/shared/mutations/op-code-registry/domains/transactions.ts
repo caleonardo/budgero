@@ -285,18 +285,19 @@ export const transactionOps = {
       // throws here instead of reaching an integer column.
       const normalized: NormalizedSplit[] = ((args.splits as Record<string, unknown>[]) || []).map(
         (s, idx) => {
-          const inflowOriginal = s.InflowOriginal ?? s.inflow_original ?? null;
-          const outflowOriginal = s.OutflowOriginal ?? s.outflow_original ?? null;
+          const inflowOriginal = s.InflowNative ?? s.InflowOriginal ?? s.inflow_original ?? null;
+          const outflowOriginal =
+            s.OutflowNative ?? s.OutflowOriginal ?? s.outflow_original ?? null;
           return {
             CategoryID: (s.CategoryID ?? s.category_id ?? null) as number | null,
             TransferAccountID: (s.TransferAccountID ?? s.transfer_account_id ?? null) as
               | number
               | null,
             Memo: String(s.Memo ?? s.memo ?? ''),
-            Inflow: asMilli(Number(s.Inflow ?? s.inflow ?? 0)),
-            Outflow: asMilli(Number(s.Outflow ?? s.outflow ?? 0)),
-            InflowOriginal: inflowOriginal == null ? null : asMilli(Number(inflowOriginal)),
-            OutflowOriginal: outflowOriginal == null ? null : asMilli(Number(outflowOriginal)),
+            InflowConverted: asMilli(Number(s.InflowConverted ?? s.Inflow ?? s.inflow ?? 0)),
+            OutflowConverted: asMilli(Number(s.OutflowConverted ?? s.Outflow ?? s.outflow ?? 0)),
+            InflowNative: inflowOriginal == null ? null : asMilli(Number(inflowOriginal)),
+            OutflowNative: outflowOriginal == null ? null : asMilli(Number(outflowOriginal)),
             PairID: (s.PairID ?? s.pair_id ?? null) as string | null,
             OrderIndex: Number(s.OrderIndex ?? s.order_index ?? idx),
           };

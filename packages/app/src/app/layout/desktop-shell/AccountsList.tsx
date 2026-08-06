@@ -15,9 +15,9 @@ interface Account {
   Name: string;
   Type: string;
   /** Integer milliunits, like every stored amount. */
-  Balance?: number;
+  BalanceNative?: number;
   BalanceConverted?: number;
-  FutureImpactOriginal?: number;
+  FutureImpactNative?: number;
   FutureImpactConverted?: number;
   OnBudget?: boolean;
 }
@@ -40,7 +40,7 @@ interface AccountsListProps {
 function realizedBalance(account: Account): number {
   return typeof account.BalanceConverted === 'number'
     ? account.BalanceConverted - (account.FutureImpactConverted ?? 0)
-    : (account.Balance ?? 0) - (account.FutureImpactOriginal ?? 0);
+    : (account.BalanceNative ?? 0) - (account.FutureImpactNative ?? 0);
 }
 
 const AccountItem = React.memo(function AccountItem({

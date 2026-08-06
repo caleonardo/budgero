@@ -737,8 +737,8 @@ export class RulesService {
     for (const [transactionId, rollback] of rollbackMap.entries()) {
       try {
         const tx = this.transactions.getTransactionByID(transactionId);
-        const nextInflow = asMilli(Number(rollback.inflow ?? tx.Inflow ?? 0));
-        const nextOutflow = asMilli(Number(rollback.outflow ?? tx.Outflow ?? 0));
+        const nextInflow = asMilli(Number(rollback.inflow ?? tx.InflowConverted ?? 0));
+        const nextOutflow = asMilli(Number(rollback.outflow ?? tx.OutflowConverted ?? 0));
         const nextAccount = Number(rollback.accountId ?? tx.AccountID ?? 0);
         const nextCategory = Number(rollback.categoryId ?? tx.CategoryID ?? 0);
         const nextMemo = rollback.memo ?? tx.Memo ?? '';
@@ -879,7 +879,7 @@ export class RulesService {
         return this.matchesTextCondition((transaction.Memo ?? '').toString(), condition);
       case 'amount': {
         const amount = this.roundCurrency(
-          Number(transaction.Inflow || 0) - Number(transaction.Outflow || 0)
+          Number(transaction.InflowConverted || 0) - Number(transaction.OutflowConverted || 0)
         );
         const compareTo = Number(condition.value);
         if (!Number.isFinite(compareTo)) return false;
@@ -931,8 +931,8 @@ export class RulesService {
       memo: (transaction.Memo ?? '').toString(),
       categoryId: Number(transaction.CategoryID ?? 0),
       accountId: Number(transaction.AccountID ?? 0),
-      inflow: asMilli(Number(transaction.Inflow ?? 0)),
-      outflow: asMilli(Number(transaction.Outflow ?? 0)),
+      inflow: asMilli(Number(transaction.InflowConverted ?? 0)),
+      outflow: asMilli(Number(transaction.OutflowConverted ?? 0)),
       payee: transaction.Payee?.toString?.() ?? '',
     };
     const working: TransactionWorkingState = { ...original };

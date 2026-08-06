@@ -232,7 +232,7 @@ export function BudgetContextPanel({
     categoryTransactions.forEach((tx) => {
       const dayKey = extractDateKey(tx.Date);
       if (dayKey >= startKey && dayKey <= endKey) {
-        dailySpendMap[dayKey] = (dailySpendMap[dayKey] || 0) + (tx.Outflow || 0);
+        dailySpendMap[dayKey] = (dailySpendMap[dayKey] || 0) + (tx.OutflowConverted || 0);
       }
     });
 

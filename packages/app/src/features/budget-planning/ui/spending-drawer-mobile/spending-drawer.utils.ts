@@ -23,17 +23,17 @@ export function mapToTransactionRow(
     ID: tx.ID,
     Date: tx.Date,
     Memo: tx.Memo || '',
-    Inflow: tx.Inflow,
-    Outflow: tx.Outflow,
-    InflowOriginal: tx.Inflow_original,
-    OutflowOriginal: tx.Outflow_original,
+    InflowConverted: tx.InflowConverted,
+    OutflowConverted: tx.OutflowConverted,
+    InflowNative: tx.Inflow_original,
+    OutflowNative: tx.Outflow_original,
     CategoryID: tx.CategoryID ?? 0,
     Category: tx.Category || '',
     LabelID: tx.LabelID ?? null,
     Label: tx.Label ?? null,
     LabelColor: tx.LabelColor ?? null,
     Reconciled: false,
-    RunningBalance: null,
+    RunningBalanceConverted: null,
     Account: tx.Account || tx.account_name || '',
     AccountID: tx.AccountID ?? tx.account_id, // Include AccountID for split operations
     Payee: tx.Payee || '',
@@ -43,10 +43,10 @@ export function mapToTransactionRow(
 }
 
 export function getTransactionSignedAmount(
-  tx: Pick<Transaction, 'Inflow' | 'Outflow'>
+  tx: Pick<Transaction, 'InflowConverted' | 'OutflowConverted'>
 ): MilliUnits {
-  if ((tx.Inflow || 0) > 0) return tx.Inflow || ZERO_MILLI;
-  if ((tx.Outflow || 0) > 0) return asMilli(0 - (tx.Outflow || 0));
+  if ((tx.InflowConverted || 0) > 0) return tx.InflowConverted || ZERO_MILLI;
+  if ((tx.OutflowConverted || 0) > 0) return asMilli(0 - (tx.OutflowConverted || 0));
   return ZERO_MILLI;
 }
 
@@ -107,7 +107,7 @@ export function calculateCumulativeData(
   const dailySpendMap: Record<string, number> = {};
   filteredTransactions.forEach((tx) => {
     const dayKey = extractDateKey(tx.Date);
-    dailySpendMap[dayKey] = (dailySpendMap[dayKey] || 0) + tx.Outflow;
+    dailySpendMap[dayKey] = (dailySpendMap[dayKey] || 0) + tx.OutflowConverted;
   });
 
   const allDates = eachDayOfInterval({

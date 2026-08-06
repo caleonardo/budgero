@@ -60,8 +60,8 @@ interface SelectedTransactionData extends GetTransactionsByAccountRow {
   AccountID?: number;
   AccountId?: number;
   AccountName?: string;
-  InflowOriginal?: MilliUnits;
-  OutflowOriginal?: MilliUnits;
+  InflowNative?: MilliUnits;
+  OutflowNative?: MilliUnits;
 }
 
 export function CommandPalette() {
@@ -240,9 +240,9 @@ export function CommandPalette() {
         Category: transaction.Category,
         Memo: transaction.Memo,
         Reconciled: false,
-        Inflow: transaction.Inflow,
-        Outflow: transaction.Outflow,
-        RunningBalance: transaction.RunningBalance ?? null,
+        InflowConverted: transaction.InflowConverted,
+        OutflowConverted: transaction.OutflowConverted,
+        RunningBalanceConverted: transaction.RunningBalanceConverted ?? null,
         TransferID: transaction.TransferID,
         Payee: transaction.Payee,
         Account: accountName,
@@ -273,34 +273,34 @@ export function CommandPalette() {
 
   const currentFormatter = globalLocalizer;
   const getPrimaryInflow = React.useCallback(
-    (transaction: { Inflow: number; InflowOriginal?: number }) => {
+    (transaction: { InflowConverted: number; InflowNative?: number }) => {
       return transactionCurrencyDisplay === 'budget'
-        ? transaction.Inflow
-        : transaction.InflowOriginal || transaction.Inflow;
+        ? transaction.InflowConverted
+        : transaction.InflowNative || transaction.InflowConverted;
     },
     [transactionCurrencyDisplay]
   );
   const getPrimaryOutflow = React.useCallback(
-    (transaction: { Outflow: number; OutflowOriginal?: number }) => {
+    (transaction: { OutflowConverted: number; OutflowNative?: number }) => {
       return transactionCurrencyDisplay === 'budget'
-        ? transaction.Outflow
-        : transaction.OutflowOriginal || transaction.Outflow;
+        ? transaction.OutflowConverted
+        : transaction.OutflowNative || transaction.OutflowConverted;
     },
     [transactionCurrencyDisplay]
   );
   const getSecondaryInflow = React.useCallback(
-    (transaction: { Inflow: number; InflowOriginal?: number }) => {
+    (transaction: { InflowConverted: number; InflowNative?: number }) => {
       return transactionCurrencyDisplay === 'budget'
-        ? transaction.InflowOriginal || transaction.Inflow
-        : transaction.Inflow;
+        ? transaction.InflowNative || transaction.InflowConverted
+        : transaction.InflowConverted;
     },
     [transactionCurrencyDisplay]
   );
   const getSecondaryOutflow = React.useCallback(
-    (transaction: { Outflow: number; OutflowOriginal?: number }) => {
+    (transaction: { OutflowConverted: number; OutflowNative?: number }) => {
       return transactionCurrencyDisplay === 'budget'
-        ? transaction.OutflowOriginal || transaction.Outflow
-        : transaction.Outflow;
+        ? transaction.OutflowNative || transaction.OutflowConverted
+        : transaction.OutflowConverted;
     },
     [transactionCurrencyDisplay]
   );
@@ -367,7 +367,10 @@ export function CommandPalette() {
       const memo = (transaction.Memo || '').toLowerCase();
       const category = (transaction.Category || '').toLowerCase();
       const payee = (transaction.Payee || '').toLowerCase();
-      const amount = transaction.Inflow > 0 ? transaction.Inflow : transaction.Outflow;
+      const amount =
+        transaction.InflowConverted > 0
+          ? transaction.InflowConverted
+          : transaction.OutflowConverted;
       // Stored amounts are milliunits; match against the decimal the user types.
       const amountStr = toDecimal(amount).toFixed(2);
 
@@ -561,8 +564,10 @@ export function CommandPalette() {
               <CommandGroup heading="Recent Transactions">
                 {displayedTransactions.map((transaction) => {
                   const rawAmount =
-                    transaction.Inflow > 0 ? transaction.Inflow : transaction.Outflow;
-                  const isPositive = transaction.Inflow > 0;
+                    transaction.InflowConverted > 0
+                      ? transaction.InflowConverted
+                      : transaction.OutflowConverted;
+                  const isPositive = transaction.InflowConverted > 0;
                   // Format the absolute value and add sign manually to ensure it's on the same line
                   const formattedAmount = formatMilli(globalLocalizer, rawAmount);
                   const amount = isPositive ? `+${formattedAmount}` : `-${formattedAmount}`;

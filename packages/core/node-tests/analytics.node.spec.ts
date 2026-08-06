@@ -179,15 +179,15 @@ describe('AnalyticsService', () => {
       {
         CategoryID: flightsId,
         Memo: 'Flight ticket',
-        Inflow: 0,
-        Outflow: 70,
+        InflowConverted: 0,
+        OutflowConverted: 70,
         OrderIndex: 0,
       },
       {
         CategoryID: hotelsId,
         Memo: 'Hotel stay',
-        Inflow: 0,
-        Outflow: 50,
+        InflowConverted: 0,
+        OutflowConverted: 50,
         OrderIndex: 1,
       },
     ]);
@@ -302,15 +302,15 @@ describe('AnalyticsService', () => {
       {
         CategoryID: groceriesId,
         Memo: 'Flight',
-        Inflow: 0,
-        Outflow: 30,
+        InflowConverted: 0,
+        OutflowConverted: 30,
         OrderIndex: 0,
       },
       {
         CategoryID: groceriesId,
         Memo: 'Meals',
-        Inflow: 0,
-        Outflow: 20,
+        InflowConverted: 0,
+        OutflowConverted: 20,
         OrderIndex: 1,
       },
     ]);

@@ -1,8 +1,25 @@
 import type { Migration, MigrationDatabase } from '../migrations.js';
 import { createLogger } from '../../logger.js';
-import { MONEY_COLUMNS } from '../money-columns.js';
 
-export { MONEY_COLUMNS } from '../money-columns.js';
+/** Frozen at 039-time: column names as they existed before the 045 Native/Converted rename. */
+const MONEY_COLUMNS: readonly (readonly [string, string])[] = [
+  ['accounts', 'Balance'],
+  ['accounts', 'BalanceConverted'],
+  ['transactions', 'Inflow'],
+  ['transactions', 'Outflow'],
+  ['transactions', 'InflowOriginal'],
+  ['transactions', 'OutflowOriginal'],
+  ['transactions', 'RunningBalance'],
+  ['transactions', 'RunningBalanceOriginal'],
+  ['transaction_splits', 'Inflow'],
+  ['transaction_splits', 'Outflow'],
+  ['transaction_splits', 'InflowOriginal'],
+  ['transaction_splits', 'OutflowOriginal'],
+  ['assignments', 'Amount'],
+  ['goals', 'Target'],
+  ['recurring_transactions', 'Amount'],
+  ['warranties', 'Amount'],
+];
 
 const debugLog = createLogger('database:migrations');
 

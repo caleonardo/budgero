@@ -95,7 +95,8 @@ export function CategoryTransactionCell({
           ) : (
             <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
               {data.map((transaction) => {
-                const net = (transaction.Inflow ?? 0) - (transaction.Outflow ?? 0);
+                const net =
+                  (transaction.InflowConverted ?? 0) - (transaction.OutflowConverted ?? 0);
                 const netLabel = formatMaskedMilli(globalLocalizer, net, privacyMaskNumbers);
                 const netClass = net < 0 ? 'text-rose-600' : 'text-emerald-600';
                 return (

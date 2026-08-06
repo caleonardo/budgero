@@ -3,8 +3,8 @@ import { eachDayOfInterval, format, parseISO, isAfter, isBefore } from 'date-fns
 /** Minimal transaction shape needed for balance-history math (amounts in integer milliunits). */
 export interface HistoryTransaction {
   Date: string;
-  Inflow?: number | null;
-  Outflow?: number | null;
+  InflowConverted?: number | null;
+  OutflowConverted?: number | null;
 }
 
 export interface DailyBalancePoint {
@@ -32,7 +32,7 @@ export function computeDailyBalances(
   // Opening balance: everything before the window.
   let currentBalance = sorted
     .filter((tx) => isBefore(parseISO(tx.Date), start))
-    .reduce((acc, tx) => acc + (tx.Inflow || 0) - (tx.Outflow || 0), 0);
+    .reduce((acc, tx) => acc + (tx.InflowConverted || 0) - (tx.OutflowConverted || 0), 0);
 
   const history: DailyBalancePoint[] = [];
   let transactionIndex = 0;
@@ -45,7 +45,7 @@ export function computeDailyBalances(
     ) {
       const tx = sorted[transactionIndex];
       if (!isBefore(parseISO(tx.Date), start)) {
-        currentBalance += (tx.Inflow || 0) - (tx.Outflow || 0);
+        currentBalance += (tx.InflowConverted || 0) - (tx.OutflowConverted || 0);
       }
       transactionIndex++;
     }

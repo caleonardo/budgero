@@ -1,19 +1,19 @@
 /**
  * Canonical list of integer-milliunit money columns in the schema.
- * Single source of truth for migration 039 (conversion + verification) and
- * boundaries that must re-present milliunits as decimals (CSV export).
+ * Single source of truth for boundaries that must re-present milliunits as
+ * decimals (CSV export). Migration 039 keeps its own frozen pre-rename copy.
  */
 export const MONEY_COLUMNS_BY_TABLE: Readonly<Record<string, readonly string[]>> = {
-  accounts: ['Balance', 'BalanceConverted'],
+  accounts: ['BalanceNative', 'BalanceConverted'],
   transactions: [
-    'Inflow',
-    'Outflow',
-    'InflowOriginal',
-    'OutflowOriginal',
-    'RunningBalance',
-    'RunningBalanceOriginal',
+    'InflowConverted',
+    'OutflowConverted',
+    'InflowNative',
+    'OutflowNative',
+    'RunningBalanceConverted',
+    'RunningBalanceNative',
   ],
-  transaction_splits: ['Inflow', 'Outflow', 'InflowOriginal', 'OutflowOriginal'],
+  transaction_splits: ['InflowConverted', 'OutflowConverted', 'InflowNative', 'OutflowNative'],
   assignments: ['Amount'],
   goals: ['Target'],
   recurring_transactions: ['Amount'],

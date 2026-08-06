@@ -15,12 +15,12 @@ function toRegisterRow(p: ProjectedTransactionRow): GetTransactionsByAccountRow 
     Memo: p.Memo,
     Payee: p.Payee,
     Reconciled: false,
-    Inflow: p.Inflow,
-    Outflow: p.Outflow,
-    InflowOriginal: p.InflowOriginal,
-    OutflowOriginal: p.OutflowOriginal,
-    RunningBalance: null,
-    RunningBalanceOriginal: null,
+    InflowConverted: p.InflowConverted,
+    OutflowConverted: p.OutflowConverted,
+    InflowNative: p.InflowNative,
+    OutflowNative: p.OutflowNative,
+    RunningBalanceConverted: null,
+    RunningBalanceNative: null,
     Account: p.Account,
     IsProjected: true,
   };
@@ -60,25 +60,26 @@ export function mergeProjectedTransactions(
   let runningOriginal: number;
   if (firstProjectedIdx > 0) {
     const anchor = merged[firstProjectedIdx - 1];
-    runningBudget = anchor.RunningBalance ?? 0;
-    runningOriginal = anchor.RunningBalanceOriginal ?? anchor.RunningBalance ?? 0;
+    runningBudget = anchor.RunningBalanceConverted ?? 0;
+    runningOriginal = anchor.RunningBalanceNative ?? anchor.RunningBalanceConverted ?? 0;
   } else {
     const firstDate = merged[0].Date;
     // allRealRows is Date DESC, so the first match is the latest prior row
     const anchor = allRealRows.find((row) => row.Date <= firstDate);
-    runningBudget = anchor?.RunningBalance ?? 0;
-    runningOriginal = anchor?.RunningBalanceOriginal ?? anchor?.RunningBalance ?? 0;
+    runningBudget = anchor?.RunningBalanceConverted ?? 0;
+    runningOriginal = anchor?.RunningBalanceNative ?? anchor?.RunningBalanceConverted ?? 0;
   }
 
   for (let i = firstProjectedIdx; i < merged.length; i++) {
     const row = merged[i];
-    runningBudget += (row.Inflow ?? 0) - (row.Outflow ?? 0);
+    runningBudget += (row.InflowConverted ?? 0) - (row.OutflowConverted ?? 0);
     runningOriginal +=
-      (row.InflowOriginal ?? row.Inflow ?? 0) - (row.OutflowOriginal ?? row.Outflow ?? 0);
+      (row.InflowNative ?? row.InflowConverted ?? 0) -
+      (row.OutflowNative ?? row.OutflowConverted ?? 0);
     merged[i] = {
       ...row,
-      RunningBalance: asMilli(runningBudget),
-      RunningBalanceOriginal: asMilli(runningOriginal),
+      RunningBalanceConverted: asMilli(runningBudget),
+      RunningBalanceNative: asMilli(runningOriginal),
       RunningBalanceProjected: true,
     };
   }

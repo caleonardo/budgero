@@ -230,7 +230,7 @@ export class MonthlyBudgetQueries {
     const incomeResult = getRow(
       this.db,
       `
-      SELECT IFNULL(SUM(t.Inflow - t.Outflow), 0) as total_income
+      SELECT IFNULL(SUM(t.InflowConverted - t.OutflowConverted), 0) as total_income
       FROM transactions t
       INNER JOIN accounts acc ON t.AccountID = acc.ID
       INNER JOIN categories c ON t.CategoryID = c.ID
@@ -264,14 +264,14 @@ export class MonthlyBudgetQueries {
     const offBudgetTransfersResult = getRow<{ total_offbudget_transfers: number }>(
       this.db,
       `
-      SELECT IFNULL(SUM(t.Outflow), 0) as total_offbudget_transfers
+      SELECT IFNULL(SUM(t.OutflowConverted), 0) as total_offbudget_transfers
       FROM transactions t
       INNER JOIN accounts src ON t.AccountID = src.ID
       INNER JOIN categories c ON t.CategoryID = c.ID
       INNER JOIN category_groups cg ON c.CategoryGroupID = cg.ID
       WHERE t.BudgetID = ?1
         AND src.OnBudget = TRUE
-        AND t.Outflow > 0
+        AND t.OutflowConverted > 0
         AND t.TransferID IS NOT NULL
         AND t.TransferID <> ''
         AND DATE(t.Date) <= DATE(?2)
@@ -313,14 +313,14 @@ export class MonthlyBudgetQueries {
       `
       WITH activity_month AS (
         -- Prefer split lines for category activity; fall back to parent transactions without splits
-        SELECT s.CategoryID AS category_id, SUM(s.Inflow - s.Outflow) AS net
+        SELECT s.CategoryID AS category_id, SUM(s.InflowConverted - s.OutflowConverted) AS net
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
         WHERE strftime('%Y-%m', t.Date) = ?1 AND a.OnBudget = TRUE
         GROUP BY s.CategoryID
         UNION ALL
-        SELECT t.CategoryID AS category_id, SUM(t.Inflow - t.Outflow) AS net
+        SELECT t.CategoryID AS category_id, SUM(t.InflowConverted - t.OutflowConverted) AS net
         FROM transactions t
         JOIN accounts a ON a.ID = t.AccountID
         WHERE strftime('%Y-%m', t.Date) = ?1 AND a.OnBudget = TRUE
@@ -328,14 +328,14 @@ export class MonthlyBudgetQueries {
         GROUP BY t.CategoryID
       ),
       activity_prior AS (
-        SELECT s.CategoryID AS category_id, SUM(s.Inflow - s.Outflow) AS net
+        SELECT s.CategoryID AS category_id, SUM(s.InflowConverted - s.OutflowConverted) AS net
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
         WHERE strftime('%Y-%m', t.Date) < ?1 AND a.OnBudget = TRUE
         GROUP BY s.CategoryID
         UNION ALL
-        SELECT t.CategoryID AS category_id, SUM(t.Inflow - t.Outflow) AS net
+        SELECT t.CategoryID AS category_id, SUM(t.InflowConverted - t.OutflowConverted) AS net
         FROM transactions t
         JOIN accounts a ON a.ID = t.AccountID
         WHERE strftime('%Y-%m', t.Date) < ?1 AND a.OnBudget = TRUE
@@ -552,14 +552,14 @@ export class MonthlyBudgetQueries {
 
     // Transfers TO a CC, either in the given month (=) or before it (<).
     const paymentsQuery = (dateOp: '=' | '<') => `
-      SELECT COALESCE(SUM(t.Inflow), 0) as payments
+      SELECT COALESCE(SUM(t.InflowConverted), 0) as payments
       FROM transactions t
       WHERE t.AccountID = ?
         AND t.BudgetID = ?
         AND strftime('%Y-%m', t.Date) ${dateOp} ?
         AND t.TransferID IS NOT NULL
         AND t.TransferID != ''
-        AND t.Inflow > 0
+        AND t.InflowConverted > 0
     `;
 
     for (const cc of ccAccounts) {
@@ -620,7 +620,7 @@ export class MonthlyBudgetQueries {
           ), 0)
           +
           COALESCE((
-            SELECT SUM(s.Inflow - s.Outflow)
+            SELECT SUM(s.InflowConverted - s.OutflowConverted)
             FROM transaction_splits s
             JOIN transactions t ON t.ID = s.TransactionID
             JOIN accounts acc ON acc.ID = t.AccountID
@@ -630,7 +630,7 @@ export class MonthlyBudgetQueries {
           ), 0)
           +
           COALESCE((
-            SELECT SUM(t.Inflow - t.Outflow)
+            SELECT SUM(t.InflowConverted - t.OutflowConverted)
             FROM transactions t
             JOIN accounts acc ON acc.ID = t.AccountID
             WHERE t.CategoryID = ?1
@@ -687,14 +687,14 @@ export class MonthlyBudgetQueries {
     // activity CTEs in getMonthlyBudget). Without this, CC spending recorded as
     // a split transaction would never fund the CC Payment category.
     const spendingQuery = (dateOp: '=' | '<') => `
-      SELECT x.CategoryID, x.AccountID, COALESCE(SUM(x.Outflow), 0) as spending
+      SELECT x.CategoryID, x.AccountID, COALESCE(SUM(x.OutflowConverted), 0) as spending
       FROM (
-        SELECT s.CategoryID AS CategoryID, t.AccountID AS AccountID, s.Outflow AS Outflow,
+        SELECT s.CategoryID AS CategoryID, t.AccountID AS AccountID, s.OutflowConverted AS OutflowConverted,
                t.Date AS Date, t.BudgetID AS BudgetID
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         UNION ALL
-        SELECT t.CategoryID, t.AccountID, t.Outflow, t.Date, t.BudgetID
+        SELECT t.CategoryID, t.AccountID, t.OutflowConverted, t.Date, t.BudgetID
         FROM transactions t
         WHERE NOT EXISTS (SELECT 1 FROM transaction_splits s2 WHERE s2.TransactionID = t.ID)
       ) x
@@ -703,7 +703,7 @@ export class MonthlyBudgetQueries {
       WHERE x.AccountID IN (${placeholders})
         AND x.BudgetID = ?
         AND strftime('%Y-%m', x.Date) ${dateOp} ?
-        AND x.Outflow > 0
+        AND x.OutflowConverted > 0
         AND cg.Name NOT IN ('Income', 'Transfers', 'Uncategorized', 'Credit Card Payments')
       GROUP BY x.CategoryID, x.AccountID
     `;
@@ -779,7 +779,7 @@ export class MonthlyBudgetQueries {
 
   /**
    * GetCCAccountBalances - Signed balance of each credit-card account as of
-   * the end of `month` (negative = debt), from the same raw Inflow/Outflow the
+   * the end of `month` (negative = debt), from the same raw InflowConverted/OutflowConverted the
    * CC funding and payment math use. Display-only: attached to CC Payment rows
    * so the UI can contrast "set aside" with "owed".
    */
@@ -788,7 +788,7 @@ export class MonthlyBudgetQueries {
       this.db,
       `
       SELECT t.AccountID AS AccountID,
-             COALESCE(SUM(t.Inflow - t.Outflow), 0) AS balance
+             COALESCE(SUM(t.InflowConverted - t.OutflowConverted), 0) AS balance
       FROM transactions t
       JOIN accounts a ON a.ID = t.AccountID
       WHERE a.BudgetID = ?

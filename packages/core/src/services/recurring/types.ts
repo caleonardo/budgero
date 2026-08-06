@@ -135,10 +135,10 @@ export interface ProjectedTransactionRow {
   Memo: string;
   Payee: string;
   /** Budget-currency amounts (converted with the latest known rate) */
-  Inflow: MilliUnits;
-  Outflow: MilliUnits;
+  InflowConverted: MilliUnits;
+  OutflowConverted: MilliUnits;
   /** Account-currency amounts (the template amount) */
-  InflowOriginal: MilliUnits;
-  OutflowOriginal: MilliUnits;
+  InflowNative: MilliUnits;
+  OutflowNative: MilliUnits;
   IsProjected: true;
 }

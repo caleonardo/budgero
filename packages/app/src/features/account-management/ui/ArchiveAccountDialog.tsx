@@ -41,7 +41,7 @@ export function ArchiveAccountDialog({
   onOpenChange,
   onArchived,
 }: ArchiveAccountDialogProps) {
-  const balance = account.Balance ?? 0;
+  const balance = account.BalanceNative ?? 0;
   const needsAdjustment = balance !== 0;
 
   const setArchivedMutation = useSetAccountArchived();
@@ -68,7 +68,7 @@ export function ArchiveAccountDialog({
   }, [defaultCategoryId, categoryId]);
 
   // When balance is positive we need an outflow to zero it; when negative we need an inflow.
-  // All milliunits (Account.Balance is a stored amount).
+  // All milliunits (Account.BalanceNative is a stored amount).
   const inflow = balance < 0 ? Math.abs(balance) : 0;
   const outflow = balance > 0 ? balance : 0;
 

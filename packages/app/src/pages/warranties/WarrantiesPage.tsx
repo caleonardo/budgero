@@ -36,8 +36,8 @@ function formatTxLabel(tx: {
   Payee?: string | null;
   Category?: string | null;
   Memo?: string | null;
-  Outflow: number;
-  Inflow: number;
+  OutflowConverted: number;
+  InflowConverted: number;
 }): string {
   const parts = [tx.Date];
   if (tx.Payee) parts.push(tx.Payee);
@@ -45,10 +45,10 @@ function formatTxLabel(tx: {
   if (tx.Memo) parts.push(tx.Memo);
   // Stored amounts are milliunits; the label shows decimal currency units.
   const amount =
-    tx.Outflow > 0
-      ? `-${toDecimal(asMilli(tx.Outflow))}`
-      : tx.Inflow > 0
-        ? `+${toDecimal(asMilli(tx.Inflow))}`
+    tx.OutflowConverted > 0
+      ? `-${toDecimal(asMilli(tx.OutflowConverted))}`
+      : tx.InflowConverted > 0
+        ? `+${toDecimal(asMilli(tx.InflowConverted))}`
         : '';
   return amount ? `${parts.join(' · ')} (${amount})` : parts.join(' · ');
 }

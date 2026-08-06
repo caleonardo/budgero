@@ -60,7 +60,7 @@ export function useMobileTransactionCardState({
     // If we have splits loaded, calculate total from them (more accurate)
     if (splits.length > 0) {
       return splits.reduce((sum, s) => {
-        const val = s.Inflow > 0 ? s.Inflow : s.Outflow;
+        const val = s.InflowConverted > 0 ? s.InflowConverted : s.OutflowConverted;
         return sum + (Number(val) || 0);
       }, 0);
     }
@@ -116,7 +116,7 @@ export function useMobileTransactionCardState({
         category_id: s.CategoryID ?? null,
         transfer_account_id: s.TransferAccountID ?? null,
         memo: s.Memo ?? '',
-        amount: s.Inflow > 0 ? s.Inflow : s.Outflow,
+        amount: s.InflowConverted > 0 ? s.InflowConverted : s.OutflowConverted,
       }))
     );
   };
@@ -160,7 +160,9 @@ export function useMobileTransactionCardState({
 
     // Determine transaction type from existing splits (more reliable than filtered transaction data)
     const isInflowType =
-      splits.length > 0 ? splits.some((s) => s.Inflow > 0) : getPrimaryInflow(transaction) > 0;
+      splits.length > 0
+        ? splits.some((s) => s.InflowConverted > 0)
+        : getPrimaryInflow(transaction) > 0;
     const type = isInflowType ? 'inflow' : 'outflow';
 
     const newTotal = editSplits.reduce((sum, l) => sum + (Number(l.amount) || 0), 0);
@@ -168,11 +170,13 @@ export function useMobileTransactionCardState({
     // Check if parent transaction amount needs updating (e.g., when viewing from filtered spending overview)
     // The parent transaction's inflow/outflow must match the split total for backend validation.
     // Both sides are exact integer milliunits.
-    const currentParentAmount = isInflowType ? transaction.Inflow || 0 : transaction.Outflow || 0;
+    const currentParentAmount = isInflowType
+      ? transaction.InflowConverted || 0
+      : transaction.OutflowConverted || 0;
 
     if (currentParentAmount !== newTotal) {
       // Update parent transaction amount before saving splits
-      const column = isInflowType ? 'Inflow' : 'Outflow';
+      const column = isInflowType ? 'InflowConverted' : 'OutflowConverted';
       await updateTransactionColumn.mutateAsync({
         transactionId: transaction.ID,
         column,
@@ -197,7 +201,7 @@ export function useMobileTransactionCardState({
       return splitTarget - total;
     }
     const total = splits.reduce((s, l) => {
-      const val = l.Inflow > 0 ? l.Inflow : l.Outflow;
+      const val = l.InflowConverted > 0 ? l.InflowConverted : l.OutflowConverted;
       return s + (Number(val) || 0);
     }, 0);
     return parentSplitTarget - total;

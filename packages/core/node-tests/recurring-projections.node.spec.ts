@@ -67,9 +67,9 @@ describe('RecurringTransactionService.listProjectedTransactions', () => {
     for (const row of projected) {
       expect(row.IsProjected).toBe(true);
       expect(row.ID).toBeLessThan(0);
-      expect(row.Outflow).toBe(100);
-      expect(row.Inflow).toBe(0);
-      expect(row.OutflowOriginal).toBe(100);
+      expect(row.OutflowConverted).toBe(100);
+      expect(row.InflowConverted).toBe(0);
+      expect(row.OutflowNative).toBe(100);
       expect(row.AccountID).toBe(account.ID);
       expect(row.Account).toBe('Checking');
       expect(row.Category).toBe('Utilities');
@@ -272,8 +272,8 @@ describe('Recurring transfers', () => {
     const sourceRows = services.transactions.getTransactionsByAccount(account.ID);
     const sourceLeg = sourceRows.find((tx) => tx.ID === result.transactionId);
     expect(sourceLeg).toBeDefined();
-    expect(sourceLeg?.Outflow).toBe(200);
-    expect(sourceLeg?.Inflow).toBe(0);
+    expect(sourceLeg?.OutflowConverted).toBe(200);
+    expect(sourceLeg?.InflowConverted).toBe(0);
     expect(sourceLeg?.TransferID).toBeTruthy();
     expect(sourceLeg?.Payee).toBe('Savings');
     expect(sourceLeg?.Category).toBe('Transfers');
@@ -281,8 +281,8 @@ describe('Recurring transfers', () => {
     const destRows = services.transactions.getTransactionsByAccount(savings.ID);
     const destLeg = destRows.find((tx) => tx.TransferID === sourceLeg?.TransferID);
     expect(destLeg).toBeDefined();
-    expect(destLeg?.Inflow).toBe(200);
-    expect(destLeg?.Outflow).toBe(0);
+    expect(destLeg?.InflowConverted).toBe(200);
+    expect(destLeg?.OutflowConverted).toBe(0);
     expect(destLeg?.Payee).toBe('Checking');
 
     const occurrence = services.recurring.getOccurrenceWithTemplate(occurrences[0].id);
@@ -309,8 +309,8 @@ describe('Recurring transfers', () => {
     });
     expect(sourceProjected.length).toBeGreaterThan(0);
     for (const row of sourceProjected) {
-      expect(row.Outflow).toBe(200);
-      expect(row.Inflow).toBe(0);
+      expect(row.OutflowConverted).toBe(200);
+      expect(row.InflowConverted).toBe(0);
       expect(row.AccountID).toBe(account.ID);
     }
 
@@ -319,8 +319,8 @@ describe('Recurring transfers', () => {
     });
     expect(destProjected.length).toBe(sourceProjected.length);
     for (const row of destProjected) {
-      expect(row.Inflow).toBe(200);
-      expect(row.Outflow).toBe(0);
+      expect(row.InflowConverted).toBe(200);
+      expect(row.OutflowConverted).toBe(0);
       expect(row.AccountID).toBe(savings.ID);
       expect(row.Account).toBe('Savings');
     }
@@ -457,7 +457,7 @@ describe('Recurring transfers', () => {
     });
     expect(destProjected.length).toBeGreaterThan(0);
     for (const row of destProjected) {
-      expect(row.InflowOriginal).toBe(100);
+      expect(row.InflowNative).toBe(100);
     }
 
     // Same-currency transfers report the untouched amount

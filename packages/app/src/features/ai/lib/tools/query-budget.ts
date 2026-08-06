@@ -52,9 +52,9 @@ export async function executeQueryBudget(
         const accounts = context.services.accounts.listAccounts(context.budgetId);
         const balances = accounts.map((a) => ({
           name: a.Name,
-          balance: milliToDecimal(a.Balance || 0),
+          balance: milliToDecimal(a.BalanceNative || 0),
           currency: a.Currency || disp,
-          balanceConverted: milliToDecimal(a.BalanceConverted ?? a.Balance ?? 0),
+          balanceConverted: milliToDecimal(a.BalanceConverted ?? a.BalanceNative ?? 0),
           type: a.Type,
           onBudget: Boolean(a.OnBudget),
         }));
@@ -95,7 +95,7 @@ export async function executeQueryBudget(
             monthEnd
           );
           // Exact milliunit sum → decimal for the LLM
-          const total = milliToDecimal(txs.reduce((sum, t) => sum + (t.Outflow || 0), 0));
+          const total = milliToDecimal(txs.reduce((sum, t) => sum + (t.OutflowConverted || 0), 0));
           const category = context.categories.find((c) => c.ID === categoryId);
 
           return {
@@ -133,7 +133,7 @@ export async function executeQueryBudget(
         const list = recent
           .map(
             (t) =>
-              `${t.Date}: ${t.Payee || t.Memo || 'No description'} - ${disp} ${milliToDecimal(t.Outflow || t.Inflow || 0).toFixed(2)}`
+              `${t.Date}: ${t.Payee || t.Memo || 'No description'} - ${disp} ${milliToDecimal(t.OutflowConverted || t.InflowConverted || 0).toFixed(2)}`
           )
           .join('\n');
 

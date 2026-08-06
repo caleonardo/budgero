@@ -209,11 +209,13 @@ export function SplitDetailsDialog({
     // If the user edited the original amount, sync the parent transaction
     // first — the splits service requires splits to sum to the parent total.
     // Both sides are exact integer milliunits.
-    const currentParentAmount = isIncome ? transaction.Inflow || 0 : transaction.Outflow || 0;
+    const currentParentAmount = isIncome
+      ? transaction.InflowConverted || 0
+      : transaction.OutflowConverted || 0;
     if (targetTotal !== currentParentAmount) {
       await updateTransactionColumn.mutateAsync({
         transactionId: transaction.ID,
-        column: isIncome ? 'Inflow' : 'Outflow',
+        column: isIncome ? 'InflowConverted' : 'OutflowConverted',
         value: targetTotal,
         accountId:
           (transaction as GetTransactionsByAccountRow & { AccountID?: number }).AccountID ?? 0,

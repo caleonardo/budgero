@@ -40,7 +40,7 @@ describe('AccountService.createAccount — opening balance', () => {
 
     const balances = services.accounts.listAccounts(budgetId);
     const chase = balances.find((a) => a.ID === acc.ID)!;
-    expect(chase.Balance).toBe(fromDecimal(-500));
+    expect(chase.BalanceNative).toBe(fromDecimal(-500));
   });
 
   it('opens a credit card with a positive credit balance from a positive plain balance', async () => {
@@ -56,7 +56,7 @@ describe('AccountService.createAccount — opening balance', () => {
     );
 
     const chase = services.accounts.listAccounts(budgetId).find((a) => a.ID === acc.ID)!;
-    expect(chase.Balance).toBe(fromDecimal(120));
+    expect(chase.BalanceNative).toBe(fromDecimal(120));
   });
 
   it('still opens a standard checking account from a positive balance', async () => {
@@ -72,7 +72,7 @@ describe('AccountService.createAccount — opening balance', () => {
     );
 
     const everyday = services.accounts.listAccounts(budgetId).find((a) => a.ID === acc.ID)!;
-    expect(everyday.Balance).toBe(fromDecimal(1000));
+    expect(everyday.BalanceNative).toBe(fromDecimal(1000));
   });
 
   it('does not double-count when debt_total metadata is supplied (dialog path)', async () => {
@@ -91,7 +91,7 @@ describe('AccountService.createAccount — opening balance', () => {
 
     // remaining debt = -(10000 - 2000) = -8000, driven by metadata only.
     const loan = services.accounts.listAccounts(budgetId).find((a) => a.ID === acc.ID)!;
-    expect(loan.Balance).toBe(fromDecimal(-8000));
+    expect(loan.BalanceNative).toBe(fromDecimal(-8000));
   });
 
   it('leaves a liability at zero when no balance and no debt metadata are given', async () => {
@@ -106,6 +106,6 @@ describe('AccountService.createAccount — opening balance', () => {
       true
     );
     const cc = services.accounts.listAccounts(budgetId).find((a) => a.ID === acc.ID)!;
-    expect(cc.Balance).toBe(0);
+    expect(cc.BalanceNative).toBe(0);
   });
 });

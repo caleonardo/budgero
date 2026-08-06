@@ -14,15 +14,15 @@ import { useLoading } from '@shared/contexts/LoadingContext';
  * Matches the normalization in op-code-registry.ts
  */
 export type TransactionColumnName =
-  | 'Inflow'
-  | 'Outflow'
+  | 'InflowConverted'
+  | 'OutflowConverted'
   | 'Memo'
   | 'Date'
   | 'CategoryID'
   | 'LabelID'
   | 'AccountID'
-  | 'InflowOriginal'
-  | 'OutflowOriginal'
+  | 'InflowNative'
+  | 'OutflowNative'
   | 'Payee'
   | 'ExchangeRate';
 

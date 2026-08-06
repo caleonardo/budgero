@@ -24,8 +24,8 @@ export interface Transaction {
   CategoryID?: number | null;
   account_id?: number;
   account_name?: string;
-  Inflow: MilliUnits;
-  Outflow: MilliUnits;
+  InflowConverted: MilliUnits;
+  OutflowConverted: MilliUnits;
   Inflow_original?: MilliUnits;
   Outflow_original?: MilliUnits;
   Category?: string;

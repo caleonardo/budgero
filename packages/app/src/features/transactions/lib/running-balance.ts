@@ -13,8 +13,8 @@ export function getRunningBalance(
 ): number | null {
   const candidate =
     display === 'budget'
-      ? transaction.RunningBalance
-      : (transaction.RunningBalanceOriginal ?? transaction.RunningBalance);
+      ? transaction.RunningBalanceConverted
+      : (transaction.RunningBalanceNative ?? transaction.RunningBalanceConverted);
   if (candidate === null || candidate === undefined) return null;
   const value = typeof candidate === 'string' ? parseFloat(candidate) : candidate;
   return Number.isNaN(value) ? null : value;

@@ -14,13 +14,13 @@ export interface Account {
   Currency: string;
   Type: string;
   ReconciledAt?: string;
-  Balance: MilliUnits;
+  BalanceNative: MilliUnits;
   BalanceConverted?: MilliUnits;
   /**
-   * Net impact of future-dated (scheduled) transactions on Balance /
+   * Net impact of future-dated (scheduled) transactions on BalanceNative /
    * BalanceConverted. Subtract to get the realized as-of-today balance.
    */
-  FutureImpactOriginal?: MilliUnits;
+  FutureImpactNative?: MilliUnits;
   FutureImpactConverted?: MilliUnits;
   BudgetID: number;
   /** Sort order within the budget; rendered order in the sidebar and mobile nav */

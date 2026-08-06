@@ -284,8 +284,8 @@ async function registerPrebuiltAnalyticsViews(
         COUNT(*) AS split_count,
         -- Stored amounts are integer milliunits; analytics keeps exact
         -- DECIMAL currency units so saved reports and AI SQL stay decimal
-        CAST(COALESCE(SUM("Inflow"), 0) / 1000.0 AS DECIMAL(18, 3)) AS split_inflow,
-        CAST(COALESCE(SUM("Outflow"), 0) / 1000.0 AS DECIMAL(18, 3)) AS split_outflow
+        CAST(COALESCE(SUM("InflowConverted"), 0) / 1000.0 AS DECIMAL(18, 3)) AS split_inflow,
+        CAST(COALESCE(SUM("OutflowConverted"), 0) / 1000.0 AS DECIMAL(18, 3)) AS split_outflow
       FROM transaction_splits
       GROUP BY "TransactionID"
     ),
@@ -315,12 +315,12 @@ async function registerPrebuiltAnalyticsViews(
       strftime(DATE_TRUNC('year', t.parsed_date), '%Y-%m-%d') AS year,
       t."Memo" AS memo,
       t."Reconciled" AS reconciled,
-      CAST(t."Inflow" / 1000.0 AS DECIMAL(18, 3)) AS inflow,
-      CAST(t."Outflow" / 1000.0 AS DECIMAL(18, 3)) AS outflow,
-      CAST(t."InflowOriginal" / 1000.0 AS DECIMAL(18, 3)) AS inflow_original,
-      CAST(t."OutflowOriginal" / 1000.0 AS DECIMAL(18, 3)) AS outflow_original,
-      CAST(t."RunningBalance" / 1000.0 AS DECIMAL(18, 3)) AS running_balance,
-      CAST(t."RunningBalanceOriginal" / 1000.0 AS DECIMAL(18, 3)) AS running_balance_original,
+      CAST(t."InflowConverted" / 1000.0 AS DECIMAL(18, 3)) AS inflow,
+      CAST(t."OutflowConverted" / 1000.0 AS DECIMAL(18, 3)) AS outflow,
+      CAST(t."InflowNative" / 1000.0 AS DECIMAL(18, 3)) AS inflow_original,
+      CAST(t."OutflowNative" / 1000.0 AS DECIMAL(18, 3)) AS outflow_original,
+      CAST(t."RunningBalanceConverted" / 1000.0 AS DECIMAL(18, 3)) AS running_balance,
+      CAST(t."RunningBalanceNative" / 1000.0 AS DECIMAL(18, 3)) AS running_balance_original,
       t."ExchangeRate" AS exchange_rate,
       t."ExchangeRateOverride" AS exchange_rate_override,
       t."ConversionPending" AS conversion_pending,
@@ -422,7 +422,7 @@ async function rebuildDuckDbSnapshot(sqliteDb: ReportingSqlDatabase): Promise<vo
       // Auto-detection (read_json_auto, used by insertJSONFromPath) infers an
       // UNSIGNED integer from a sample of non-negative rows and then fails
       // ("Expected unsigned int or null, got number") on the first negative
-      // (credit/overdrawn RunningBalance) or fractional (pre-milliunit) value.
+      // (credit/overdrawn RunningBalanceConverted) or fractional (pre-milliunit) value.
       const columnStruct = columns
         .map((c) => `${quoteJsonKey(c.name)}: ${quoteJsonKey(mapSQLiteTypeToDuckDb(c.type))}`)
         .join(', ');

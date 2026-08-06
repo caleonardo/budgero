@@ -99,7 +99,7 @@ export default function AccountsPage() {
 
     return accountsData.map((account) => {
       const adjustment = futureAdjustments[account.ID] || { original: 0, converted: 0 };
-      const adjustedBalance = (account.Balance ?? 0) - adjustment.original;
+      const adjustedBalance = (account.BalanceNative ?? 0) - adjustment.original;
       const hasConverted =
         account.BalanceConverted !== undefined && account.BalanceConverted !== null;
       const baseConverted = hasConverted
@@ -124,11 +124,11 @@ export default function AccountsPage() {
       const liabilities = accounts.filter((a) => isLiabilityType(a.Type));
 
       const assetsTotal = assets.reduce(
-        (sum, a) => sum + (a.BalanceConverted ?? a.Balance ?? 0),
+        (sum, a) => sum + (a.BalanceConverted ?? a.BalanceNative ?? 0),
         0
       );
       const liabilitiesTotal = Math.abs(
-        liabilities.reduce((sum, a) => sum + (a.BalanceConverted ?? a.Balance ?? 0), 0)
+        liabilities.reduce((sum, a) => sum + (a.BalanceConverted ?? a.BalanceNative ?? 0), 0)
       );
       const netWorth = assetsTotal - liabilitiesTotal;
 

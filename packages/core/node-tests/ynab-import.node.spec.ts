@@ -297,8 +297,8 @@ for (const testCase of sharedImportCases) {
     it('should have correct September 2025 inflow and outflow totals', () => {
       const stmt = adapter.prepare(`
         SELECT 
-          COALESCE(SUM(Inflow), 0) as totalInflow,
-          COALESCE(SUM(Outflow), 0) as totalOutflow
+          COALESCE(SUM(InflowConverted), 0) as totalInflow,
+          COALESCE(SUM(OutflowConverted), 0) as totalOutflow
         FROM transactions
         WHERE BudgetId = ?
           AND strftime('%Y-%m', Date) = '2025-09'
@@ -340,7 +340,7 @@ for (const testCase of sharedImportCases) {
         JOIN categories c ON t.CategoryID = c.ID
         WHERE t.BudgetId = ?
           AND t.Payee = 'Transfer : Beta Checking'
-          AND t.Outflow > 0
+          AND t.OutflowConverted > 0
         GROUP BY c.Name
       `);
       const rows = stmt.all(importedBudgetId) as { categoryName: string; count: number }[];

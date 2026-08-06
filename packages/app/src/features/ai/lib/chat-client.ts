@@ -72,7 +72,7 @@ ${todayStr}
 **Assigned (Allocated)**: Money intentionally allocated to a category for a specific month. User-controlled.
 
 **Activity**: Actual spending/income in a category for a month. Negative = spending, Positive = income/refunds.
-- Formula: Inflow - Outflow for transactions in that category
+- Formula: InflowConverted - OutflowConverted for transactions in that category
 
 **Available**: Running balance available to spend in a category. Rolls over between months.
 - Formula: Leftover from previous months + Current month's Assigned + Current month's Activity

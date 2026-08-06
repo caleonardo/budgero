@@ -46,8 +46,8 @@ export function AtAGlance() {
   const { data: onBudgetBalance = 0 } = useOnBudgetBalance(budgetId);
 
   const biggestOutflows = monthTx
-    .filter((t) => (t.Outflow || 0) > 0 && !t.TransferID)
-    .sort((a, b) => (b.Outflow || 0) - (a.Outflow || 0))
+    .filter((t) => (t.OutflowConverted || 0) > 0 && !t.TransferID)
+    .sort((a, b) => (b.OutflowConverted || 0) - (a.OutflowConverted || 0))
     .slice(0, 5);
 
   const start = startOfMonth(today);
@@ -62,7 +62,7 @@ export function AtAGlance() {
     )
   );
 
-  const monthSpent = monthTx.reduce((sum: number, t) => sum + (t.Outflow || 0), 0);
+  const monthSpent = monthTx.reduce((sum: number, t) => sum + (t.OutflowConverted || 0), 0);
   const spentPct = assignedForMonth ? Math.min(100, (monthSpent / assignedForMonth) * 100) : 0;
 
   const paceDelta = spentPct - elapsedPct;
@@ -97,11 +97,11 @@ export function AtAGlance() {
 
   // MTD on-budget income/outflow excluding transfers
   const totalIncome = monthTx.reduce(
-    (sum: number, t) => sum + (t.TransferID ? 0 : t.Inflow || 0),
+    (sum: number, t) => sum + (t.TransferID ? 0 : t.InflowConverted || 0),
     0
   );
   const totalOutflow = monthTx.reduce(
-    (sum: number, t) => sum + (t.TransferID ? 0 : t.Outflow || 0),
+    (sum: number, t) => sum + (t.TransferID ? 0 : t.OutflowConverted || 0),
     0
   );
   const savingsRate = totalIncome > 0 ? ((totalIncome - totalOutflow) / totalIncome) * 100 : 0;
@@ -156,7 +156,11 @@ export function AtAGlance() {
                         {format(parseISO(t.Date), 'MMM d')} • {t.Category || 'Uncategorized'}
                       </span>
                       <span className="ml-3 font-semibold text-red-600 whitespace-nowrap">
-                        {formatMaskedMilli(globalLocalizer, t.Outflow || 0, privacyMaskNumbers)}
+                        {formatMaskedMilli(
+                          globalLocalizer,
+                          t.OutflowConverted || 0,
+                          privacyMaskNumbers
+                        )}
                       </span>
                     </div>
                     <div

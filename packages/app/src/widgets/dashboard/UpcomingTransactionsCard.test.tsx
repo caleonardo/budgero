@@ -84,9 +84,9 @@ function makeTransaction(id: number, date: string, overrides: Record<string, unk
     Memo: '',
     Payee: `Payee ${id}`,
     Reconciled: false,
-    Inflow: 0,
-    Outflow: 50_000, // $50 in milliunits
-    RunningBalance: null,
+    InflowConverted: 0,
+    OutflowConverted: 50_000, // $50 in milliunits
+    RunningBalanceConverted: null,
     Account: 'Checking',
     ...overrides,
   };

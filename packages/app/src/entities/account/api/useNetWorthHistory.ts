@@ -52,11 +52,11 @@ export function useNetWorthHistory(budgetId: number, periodMonths = 1) {
       // If the account has no transactions in our time period, skip it or use current balance only for today
       if (isAfter(accountStartDate, endDate) || sortedTransactions.length === 0) {
         // Account has no transactions in our period - only show current balance for today if it exists
-        if (account.Balance !== null && account.Balance !== undefined) {
+        if (account.BalanceNative !== null && account.BalanceNative !== undefined) {
           accountHistories.set(account.ID, [
             {
               date: format(endDate, 'yyyy-MM-dd'),
-              balance: account.BalanceConverted ?? account.Balance ?? 0,
+              balance: account.BalanceConverted ?? account.BalanceNative ?? 0,
             },
           ]);
         }
@@ -81,7 +81,7 @@ export function useNetWorthHistory(budgetId: number, periodMonths = 1) {
         const balancePoint = accountHistory?.find((point) => point.date === dateStr);
 
         if (balancePoint) {
-          const currentAccountBalance = account.BalanceConverted ?? account.Balance ?? 0;
+          const currentAccountBalance = account.BalanceConverted ?? account.BalanceNative ?? 0;
           const calculatedBalance = balancePoint.balance;
 
           // If this is today's date, use the account's converted balance

@@ -42,6 +42,7 @@ import { migration041 } from './041-add-scenarios-table.js';
 import { migration042 } from './042-drop-client-side-space-registry-tables.js';
 import { migration043 } from './043-rebuild-mutation-history-without-budget-fk.js';
 import { migration044 } from './044-add-suggestcategoryfrompayee-flag-to-user-meta.js';
+import { migration045 } from './045-rename-money-columns-to-native-converted-scheme.js';
 
 import type { Migration } from '../migrations.js';
 
@@ -91,4 +92,5 @@ export const migrations: Migration[] = [
   migration042,
   migration043,
   migration044,
+  migration045,
 ];

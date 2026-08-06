@@ -31,14 +31,15 @@ export function useRecurringEditorFromTransaction({
     useState<RecurringTransactionEditorProps['initialValues']>();
 
   const openFromTransaction = (transaction: GetTransactionsByAccountRow) => {
-    const direction = transaction.Outflow > 0 ? 'outflow' : 'inflow';
-    const rawAmount = direction === 'outflow' ? transaction.Outflow : transaction.Inflow;
+    const direction = transaction.OutflowConverted > 0 ? 'outflow' : 'inflow';
+    const rawAmount =
+      direction === 'outflow' ? transaction.OutflowConverted : transaction.InflowConverted;
     const startDate = transaction.Date || getTodayISO();
 
     setInitialValues({
       name: transaction.Memo || 'Recurring transaction',
       memo: transaction.Memo || '',
-      // Outflow/Inflow are stored milliunits; Math.abs drops the brand only.
+      // OutflowConverted/InflowConverted are stored milliunits; Math.abs drops the brand only.
       amount: asMilli(Math.abs(rawAmount)),
       direction,
       accountId: accountId ?? transaction.AccountID ?? null,

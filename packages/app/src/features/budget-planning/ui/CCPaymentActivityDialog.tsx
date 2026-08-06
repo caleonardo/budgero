@@ -46,7 +46,7 @@ export function CCPaymentActivityDialog({
   const payments = useMemo(
     () =>
       txs
-        .filter((t) => Boolean(t.TransferID) && (t.Inflow ?? 0) > 0)
+        .filter((t) => Boolean(t.TransferID) && (t.InflowConverted ?? 0) > 0)
         .sort((a, b) => (a.Date < b.Date ? -1 : a.Date > b.Date ? 1 : 0)),
     [txs]
   );
@@ -55,7 +55,7 @@ export function CCPaymentActivityDialog({
 
   const deleteTransaction = useDeleteTransaction();
 
-  const totalPaid = payments.reduce((sum, p) => sum + (p.Inflow ?? 0), 0);
+  const totalPaid = payments.reduce((sum, p) => sum + (p.InflowConverted ?? 0), 0);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -90,7 +90,7 @@ export function CCPaymentActivityDialog({
                     </div>
                   </div>
                   <div className="shrink-0 text-sm font-semibold tabular-nums text-foreground">
-                    {formatAmount(p.Inflow ?? 0)}
+                    {formatAmount(p.InflowConverted ?? 0)}
                   </div>
                   <Button
                     size="icon"

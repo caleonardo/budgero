@@ -203,12 +203,12 @@ export class TransactionService {
           TxOutflow: number;
           Type: string;
           OnBudget: boolean | number;
-          Balance: number;
+          BalanceNative: number;
           Metadata: string;
         }>(
           this.db,
-          `SELECT t.AccountID, t.Inflow as TxInflow, t.Outflow as TxOutflow,
-                  a.Type, a.OnBudget, a.Balance, a.Metadata
+          `SELECT t.AccountID, t.InflowConverted as TxInflow, t.OutflowConverted as TxOutflow,
+                  a.Type, a.OnBudget, a.BalanceNative, a.Metadata
            FROM transactions t
            JOIN accounts a ON t.AccountID = a.ID
            WHERE t.TransferID = ? AND t.AccountID != ?
@@ -222,7 +222,7 @@ export class TransactionService {
 
         // Calculate pre-transfer balance (before partner's transaction was applied)
         const partnerPreTransferBalance = partner
-          ? partner.Balance - (partner.TxInflow || 0) + (partner.TxOutflow || 0)
+          ? partner.BalanceNative - (partner.TxInflow || 0) + (partner.TxOutflow || 0)
           : 0;
 
         debugLog('🔍 Partner account info:', {
@@ -230,7 +230,7 @@ export class TransactionService {
           partnerType: partner?.Type,
           isPartnerDebt,
           isPartnerOnBudget,
-          partnerBalance: partner?.Balance,
+          partnerBalance: partner?.BalanceNative,
           partnerPreTransferBalance,
         });
 
@@ -459,10 +459,10 @@ export class TransactionService {
             TransactionID: id,
             CategoryID: linkedCategoryIdForSplit,
             Memo: 'Debt payment',
-            Inflow: ZERO_MILLI,
-            Outflow: spendingAmount,
-            InflowOriginal: ZERO_MILLI,
-            OutflowOriginal: spendingAmount,
+            InflowConverted: ZERO_MILLI,
+            OutflowConverted: spendingAmount,
+            InflowNative: ZERO_MILLI,
+            OutflowNative: spendingAmount,
             OrderIndex: 0,
           });
         }
@@ -472,10 +472,10 @@ export class TransactionService {
           TransactionID: id,
           CategoryID: transfersCategoryIdForSplit,
           Memo: 'Overpayment',
-          Inflow: ZERO_MILLI,
-          Outflow: overpaymentAmount,
-          InflowOriginal: ZERO_MILLI,
-          OutflowOriginal: overpaymentAmount,
+          InflowConverted: ZERO_MILLI,
+          OutflowConverted: overpaymentAmount,
+          InflowNative: ZERO_MILLI,
+          OutflowNative: overpaymentAmount,
           OrderIndex: 1,
         });
 
@@ -603,7 +603,7 @@ export class TransactionService {
       const oldTxn = this.getTransactionByID(id);
 
       // 2. Calculate deltas (using converted amounts)
-      const oldDelta = oldTxn.Inflow - oldTxn.Outflow;
+      const oldDelta = oldTxn.InflowConverted - oldTxn.OutflowConverted;
       const newDelta = inflow - outflow;
       const delta = newDelta - oldDelta;
 
@@ -634,10 +634,10 @@ export class TransactionService {
       // 7. Update account-level balance (both original and converted)
       this.queries.updateAccountBalance(
         accountId,
-        inflowOriginal - (oldTxn.InflowOriginal ?? oldTxn.Inflow ?? 0),
-        outflowOriginal - (oldTxn.OutflowOriginal ?? oldTxn.Outflow ?? 0),
-        inflow - (oldTxn.Inflow ?? 0),
-        outflow - (oldTxn.Outflow ?? 0)
+        inflowOriginal - (oldTxn.InflowNative ?? oldTxn.InflowConverted ?? 0),
+        outflowOriginal - (oldTxn.OutflowNative ?? oldTxn.OutflowConverted ?? 0),
+        inflow - (oldTxn.InflowConverted ?? 0),
+        outflow - (oldTxn.OutflowConverted ?? 0)
       );
     });
 
@@ -670,9 +670,10 @@ export class TransactionService {
       this.queries.deleteTransaction(id);
 
       // 4. Bump future balances negatively for main transaction (both converted and original)
-      const deltaConverted = -(txn.Inflow - txn.Outflow);
+      const deltaConverted = -(txn.InflowConverted - txn.OutflowConverted);
       const deltaOriginal = -(
-        (txn.InflowOriginal ?? txn.Inflow ?? 0) - (txn.OutflowOriginal ?? txn.Outflow ?? 0)
+        (txn.InflowNative ?? txn.InflowConverted ?? 0) -
+        (txn.OutflowNative ?? txn.OutflowConverted ?? 0)
       );
 
       this.queries.bumpFutureBalances(txn.AccountID, txn.Date, txn.ID, deltaConverted);
@@ -683,10 +684,10 @@ export class TransactionService {
       // We pass outflow as inflow (to add it back) and inflow as outflow (to subtract it)
       this.queries.updateAccountBalance(
         txn.AccountID,
-        txn.OutflowOriginal ?? txn.Outflow ?? 0, // Add back the outflow (pass as inflow param)
-        txn.InflowOriginal ?? txn.Inflow ?? 0, // Subtract the inflow (pass as outflow param)
-        txn.Outflow ?? 0, // Add back the outflow converted
-        txn.Inflow ?? 0 // Subtract the inflow converted
+        txn.OutflowNative ?? txn.OutflowConverted ?? 0, // Add back the outflow (pass as inflow param)
+        txn.InflowNative ?? txn.InflowConverted ?? 0, // Subtract the inflow (pass as outflow param)
+        txn.OutflowConverted ?? 0, // Add back the outflow converted
+        txn.InflowConverted ?? 0 // Subtract the inflow converted
       );
 
       // 6. Delete partner transactions if this was a transfer
@@ -695,10 +696,10 @@ export class TransactionService {
 
         this.queries.deleteTransaction(partner.ID);
 
-        const partnerDeltaConverted = -(partner.Inflow - partner.Outflow);
+        const partnerDeltaConverted = -(partner.InflowConverted - partner.OutflowConverted);
         const partnerDeltaOriginal = -(
-          (partner.InflowOriginal ?? partner.Inflow ?? 0) -
-          (partner.OutflowOriginal ?? partner.Outflow ?? 0)
+          (partner.InflowNative ?? partner.InflowConverted ?? 0) -
+          (partner.OutflowNative ?? partner.OutflowConverted ?? 0)
         );
 
         this.queries.bumpFutureBalances(
@@ -716,10 +717,10 @@ export class TransactionService {
 
         this.queries.updateAccountBalance(
           partner.AccountID,
-          partner.OutflowOriginal ?? partner.Outflow ?? 0,
-          partner.InflowOriginal ?? partner.Inflow ?? 0,
-          partner.Outflow ?? 0,
-          partner.Inflow ?? 0
+          partner.OutflowNative ?? partner.OutflowConverted ?? 0,
+          partner.InflowNative ?? partner.InflowConverted ?? 0,
+          partner.OutflowConverted ?? 0,
+          partner.InflowConverted ?? 0
         );
       }
 
@@ -755,11 +756,11 @@ export class TransactionService {
     const { account: oldAccount } = this.queries.getAccountAndBudget(tx.AccountID, tx.BudgetID);
 
     let needsRecalculation = false;
-    let newInflowConverted = tx.Inflow ?? 0;
-    let newOutflowConverted = tx.Outflow ?? 0;
+    let newInflowConverted = tx.InflowConverted ?? 0;
+    let newOutflowConverted = tx.OutflowConverted ?? 0;
     // New originals in target account currency
-    let newInflowOriginal = tx.InflowOriginal ?? tx.Inflow ?? 0;
-    let newOutflowOriginal = tx.OutflowOriginal ?? tx.Outflow ?? 0;
+    let newInflowOriginal = tx.InflowNative ?? tx.InflowConverted ?? 0;
+    let newOutflowOriginal = tx.OutflowNative ?? tx.OutflowConverted ?? 0;
 
     if (newAccount && oldAccount && budget) {
       needsRecalculation = newAccount.Currency !== oldAccount.Currency;
@@ -768,12 +769,12 @@ export class TransactionService {
         const month = tx.Date.substring(0, 7);
 
         // Determine old originals reliably (fall back by back-calculating from converted if needed)
-        let oldInflowOriginal = tx.InflowOriginal;
-        let oldOutflowOriginal = tx.OutflowOriginal;
-        if (oldInflowOriginal == null && (tx.Inflow ?? 0) !== 0) {
+        let oldInflowOriginal = tx.InflowNative;
+        let oldOutflowOriginal = tx.OutflowNative;
+        if (oldInflowOriginal == null && (tx.InflowConverted ?? 0) !== 0) {
           // convert from budget to old account currency
           oldInflowOriginal = await this.currencyService.convertAmount(
-            tx.Inflow,
+            tx.InflowConverted,
             budget.DisplayCurrency,
             oldAccount.Currency,
             month,
@@ -781,9 +782,9 @@ export class TransactionService {
             tx.Date
           );
         }
-        if (oldOutflowOriginal == null && (tx.Outflow ?? 0) !== 0) {
+        if (oldOutflowOriginal == null && (tx.OutflowConverted ?? 0) !== 0) {
           oldOutflowOriginal = await this.currencyService.convertAmount(
-            tx.Outflow,
+            tx.OutflowConverted,
             budget.DisplayCurrency,
             oldAccount.Currency,
             month,
@@ -835,10 +836,10 @@ export class TransactionService {
         }
       } else if (newAccount.Currency === budget.DisplayCurrency) {
         // No recalculation needed, and target is budget currency → converted equals originals
-        newInflowConverted = tx.InflowOriginal ?? tx.Inflow ?? 0;
-        newOutflowConverted = tx.OutflowOriginal ?? tx.Outflow ?? 0;
-        newInflowOriginal = tx.InflowOriginal ?? tx.Inflow ?? 0;
-        newOutflowOriginal = tx.OutflowOriginal ?? tx.Outflow ?? 0;
+        newInflowConverted = tx.InflowNative ?? tx.InflowConverted ?? 0;
+        newOutflowConverted = tx.OutflowNative ?? tx.OutflowConverted ?? 0;
+        newInflowOriginal = tx.InflowNative ?? tx.InflowConverted ?? 0;
+        newOutflowOriginal = tx.OutflowNative ?? tx.OutflowConverted ?? 0;
       }
     }
 
@@ -874,9 +875,10 @@ export class TransactionService {
 
     this.db.transaction(() => {
       const oldAccountId = tx.AccountID;
-      const deltaConverted = tx.Inflow - tx.Outflow;
+      const deltaConverted = tx.InflowConverted - tx.OutflowConverted;
       const oldDeltaOriginal =
-        (tx.InflowOriginal ?? tx.Inflow ?? 0) - (tx.OutflowOriginal ?? tx.Outflow ?? 0);
+        (tx.InflowNative ?? tx.InflowConverted ?? 0) -
+        (tx.OutflowNative ?? tx.OutflowConverted ?? 0);
 
       // 2. Remove delta from old account's future balances (both converted and original)
       this.queries.bumpFutureBalances(oldAccountId, tx.Date, tx.ID, -deltaConverted);
@@ -922,10 +924,10 @@ export class TransactionService {
       // 7. Update account balances (both original and converted)
       this.queries.updateAccountBalance(
         oldAccountId,
-        -Number(tx.InflowOriginal ?? tx.Inflow ?? 0),
-        -Number(tx.OutflowOriginal ?? tx.Outflow ?? 0),
-        -Number(tx.Inflow ?? 0),
-        -Number(tx.Outflow ?? 0)
+        -Number(tx.InflowNative ?? tx.InflowConverted ?? 0),
+        -Number(tx.OutflowNative ?? tx.OutflowConverted ?? 0),
+        -Number(tx.InflowConverted ?? 0),
+        -Number(tx.OutflowConverted ?? 0)
       );
       this.queries.updateAccountBalance(
         newAccountId,
@@ -995,8 +997,8 @@ export class TransactionService {
     const month = (main.Date || '').substring(0, 7);
 
     // Mirror converted (budget) amounts: partner inflow = main outflow; partner outflow = main inflow
-    const pInflowConverted = main.Outflow ?? ZERO_MILLI;
-    const pOutflowConverted = main.Inflow ?? ZERO_MILLI;
+    const pInflowConverted = main.OutflowConverted ?? ZERO_MILLI;
+    const pOutflowConverted = main.InflowConverted ?? ZERO_MILLI;
 
     // Compute originals for partner in partner account currency
     let pInflowOriginal = pInflowConverted;
@@ -1225,25 +1227,27 @@ export class TransactionService {
     const col = columnName.toLowerCase().replace(/_/g, '');
 
     switch (col) {
-      case 'inflow':
+      case 'inflowconverted':
+      case 'inflow': // legacy pre-045 name
         // When updating the converted amount (budget currency), we need to back-calculate the original.
         // asMilli doubles as the op-boundary guard: a decimal amount arriving in
         // an op payload throws here instead of being written to an integer column.
         await this.updateTransactionFromBudgetCurrency(
           transactionId,
           asMilli(Number(newValue ?? 0)),
-          transaction.Outflow ?? ZERO_MILLI,
+          transaction.OutflowConverted ?? ZERO_MILLI,
           transaction.AccountID,
           transaction.CategoryID,
           transaction.Date,
           transaction.Memo ?? ''
         );
         break;
-      case 'outflow':
+      case 'outflowconverted':
+      case 'outflow': // legacy pre-045 name
         // When updating the converted amount (budget currency), we need to back-calculate the original
         await this.updateTransactionFromBudgetCurrency(
           transactionId,
-          transaction.Inflow ?? ZERO_MILLI,
+          transaction.InflowConverted ?? ZERO_MILLI,
           asMilli(Number(newValue ?? 0)),
           transaction.AccountID,
           transaction.CategoryID,
@@ -1251,23 +1255,25 @@ export class TransactionService {
           transaction.Memo ?? ''
         );
         break;
-      case 'infloworiginal':
+      case 'inflownative':
+      case 'infloworiginal': // legacy pre-045 name
         // When updating original amount, we need to recalculate the converted amount
         await this.updateTransactionOriginal(
           transactionId,
           asMilli(Number(newValue ?? 0)),
-          transaction.OutflowOriginal ?? transaction.Outflow ?? ZERO_MILLI,
+          transaction.OutflowNative ?? transaction.OutflowConverted ?? ZERO_MILLI,
           transaction.AccountID,
           transaction.CategoryID,
           transaction.Date,
           transaction.Memo ?? ''
         );
         break;
-      case 'outfloworiginal':
+      case 'outflownative':
+      case 'outfloworiginal': // legacy pre-045 name
         // When updating original amount, we need to recalculate the converted amount
         await this.updateTransactionOriginal(
           transactionId,
-          transaction.InflowOriginal ?? transaction.Inflow ?? ZERO_MILLI,
+          transaction.InflowNative ?? transaction.InflowConverted ?? ZERO_MILLI,
           asMilli(Number(newValue ?? 0)),
           transaction.AccountID,
           transaction.CategoryID,
@@ -1297,8 +1303,8 @@ export class TransactionService {
       case 'date':
         await this.updateTransaction(
           transactionId,
-          transaction.InflowOriginal ?? transaction.Inflow ?? 0,
-          transaction.OutflowOriginal ?? transaction.Outflow ?? 0,
+          transaction.InflowNative ?? transaction.InflowConverted ?? 0,
+          transaction.OutflowNative ?? transaction.OutflowConverted ?? 0,
           transaction.AccountID,
           transaction.CategoryID,
           newValue as string,
@@ -1308,8 +1314,8 @@ export class TransactionService {
       case 'memo':
         await this.updateTransaction(
           transactionId,
-          transaction.InflowOriginal ?? transaction.Inflow ?? 0,
-          transaction.OutflowOriginal ?? transaction.Outflow ?? 0,
+          transaction.InflowNative ?? transaction.InflowConverted ?? 0,
+          transaction.OutflowNative ?? transaction.OutflowConverted ?? 0,
           transaction.AccountID,
           transaction.CategoryID,
           transaction.Date,
@@ -1322,8 +1328,8 @@ export class TransactionService {
         }
         await this.updateTransaction(
           transactionId,
-          transaction.InflowOriginal ?? transaction.Inflow ?? 0,
-          transaction.OutflowOriginal ?? transaction.Outflow ?? 0,
+          transaction.InflowNative ?? transaction.InflowConverted ?? 0,
+          transaction.OutflowNative ?? transaction.OutflowConverted ?? 0,
           transaction.AccountID,
           transaction.CategoryID,
           transaction.Date,
@@ -1345,11 +1351,11 @@ export class TransactionService {
           // Transfer leg: the budget-currency (converted) amount is the anchor — it is the
           // value moved between the two legs and must stay put. Overriding the rate only
           // changes how much account-currency that value corresponds to, so we hold
-          // Inflow/Outflow fixed and re-derive the originals. (Without this, raising the rate
+          // InflowConverted/OutflowConverted fixed and re-derive the originals. (Without this, raising the rate
           // would inflate the incoming leg's converted amount instead of correcting the
           // original amount the user actually received.)
-          const inflowConverted = tx.Inflow ?? 0;
-          const outflowConverted = tx.Outflow ?? 0;
+          const inflowConverted = tx.InflowConverted ?? 0;
+          const outflowConverted = tx.OutflowConverted ?? 0;
           // money / rate -> round back to integer milliunits before storing
           const newInflowOriginal = newRate
             ? Math.round(inflowConverted / newRate)
@@ -1361,7 +1367,7 @@ export class TransactionService {
           run(
             this.db,
             `
-            UPDATE transactions SET InflowOriginal = ?, OutflowOriginal = ? WHERE ID = ?
+            UPDATE transactions SET InflowNative = ?, OutflowNative = ? WHERE ID = ?
           `,
             newInflowOriginal,
             newOutflowOriginal,
@@ -1370,15 +1376,15 @@ export class TransactionService {
         } else {
           // Regular transaction: the original (account-currency) amount is ground truth, so
           // overriding the rate re-derives the budget-currency converted amount.
-          const inflowOrig = tx.InflowOriginal ?? tx.Inflow ?? 0;
-          const outflowOrig = tx.OutflowOriginal ?? tx.Outflow ?? 0;
+          const inflowOrig = tx.InflowNative ?? tx.InflowConverted ?? 0;
+          const outflowOrig = tx.OutflowNative ?? tx.OutflowConverted ?? 0;
           const newInflow = Math.round(inflowOrig * newRate);
           const newOutflow = Math.round(outflowOrig * newRate);
 
           run(
             this.db,
             `
-            UPDATE transactions SET Inflow = ?, Outflow = ? WHERE ID = ?
+            UPDATE transactions SET InflowConverted = ?, OutflowConverted = ? WHERE ID = ?
           `,
             newInflow,
             newOutflow,

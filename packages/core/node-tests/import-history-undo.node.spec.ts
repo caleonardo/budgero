@@ -33,7 +33,7 @@ describe('ImportHistoryService.undoImportRun — balance recalculation', () => {
       '2026-01-01',
       'rent'
     );
-    expect(services.accounts.getAccount(acc.ID).Balance).toBe(-200);
+    expect(services.accounts.getAccount(acc.ID).BalanceNative).toBe(-200);
 
     // Two imported transactions land in the same pre-existing account.
     const imp1 = await services.transactions.addTransaction(
@@ -54,7 +54,7 @@ describe('ImportHistoryService.undoImportRun — balance recalculation', () => {
       '2026-01-03',
       'groceries'
     );
-    expect(services.accounts.getAccount(acc.ID).Balance).toBe(250);
+    expect(services.accounts.getAccount(acc.ID).BalanceNative).toBe(250);
 
     const runId = services.importHistory.recordImportRun({
       budgetId,
@@ -72,7 +72,7 @@ describe('ImportHistoryService.undoImportRun — balance recalculation', () => {
 
     // Balance is recomputed from the surviving manual transaction — not stale
     // at 250, and not blindly zeroed.
-    expect(services.accounts.getAccount(acc.ID).Balance).toBe(-200);
+    expect(services.accounts.getAccount(acc.ID).BalanceNative).toBe(-200);
   });
 
   it('keeps the surviving transaction running balance accurate after undo', async () => {
@@ -111,7 +111,7 @@ describe('ImportHistoryService.undoImportRun — balance recalculation', () => {
     services.importHistory.undoImportRun(runId);
 
     const survivor = services.transactions.getTransactionByID(manual);
-    expect(survivor.RunningBalance).toBe(-200);
+    expect(survivor.RunningBalanceConverted).toBe(-200);
   });
 
   it('removes an empty created account on undo without leaving a stale balance', async () => {

@@ -255,7 +255,8 @@ export function WarrantyFormDialog({
                             key={tx.ID}
                             value={label}
                             onSelect={() => {
-                              const txAmount = tx.Outflow > 0 ? tx.Outflow : tx.Inflow;
+                              const txAmount =
+                                tx.OutflowConverted > 0 ? tx.OutflowConverted : tx.InflowConverted;
                               setForm((p) => ({
                                 ...p,
                                 transactionId: String(tx.ID),

@@ -585,14 +585,14 @@ export class CurrencyService {
       if (!rate) continue;
 
       // money x rate -> round back to integer milliunits before storing
-      const inflowConverted = Math.round((tx.InflowOriginal || 0) * rate);
-      const outflowConverted = Math.round((tx.OutflowOriginal || 0) * rate);
+      const inflowConverted = Math.round((tx.InflowNative || 0) * rate);
+      const outflowConverted = Math.round((tx.OutflowNative || 0) * rate);
 
       run(
         this.db,
         `
         UPDATE transactions
-        SET Inflow = ?, Outflow = ?, ExchangeRate = ?
+        SET InflowConverted = ?, OutflowConverted = ?, ExchangeRate = ?
         WHERE ID = ?
       `,
         inflowConverted,
@@ -764,7 +764,7 @@ export class CurrencyService {
       }>(
         this.db,
         `
-        SELECT ID as id, Date as date, InflowOriginal as inflow_original, OutflowOriginal as outflow_original, RunningBalanceOriginal as running_balance_original
+        SELECT ID as id, Date as date, InflowNative as inflow_original, OutflowNative as outflow_original, RunningBalanceNative as running_balance_original
         FROM transactions 
         WHERE AccountID = ?
         ORDER BY Date ASC, ID ASC
@@ -785,23 +785,23 @@ export class CurrencyService {
           (tx.inflow_original ?? null) !== null
             ? tx.inflow_original
             : (() => {
-                const row = getRow<{ Inflow: number }>(
+                const row = getRow<{ InflowConverted: number }>(
                   this.db,
-                  'SELECT Inflow FROM transactions WHERE ID = ?',
+                  'SELECT InflowConverted FROM transactions WHERE ID = ?',
                   tx.id
                 );
-                return row?.Inflow || 0;
+                return row?.InflowConverted || 0;
               })();
         const baseOutflow =
           (tx.outflow_original ?? null) !== null
             ? tx.outflow_original
             : (() => {
-                const row = getRow<{ Outflow: number }>(
+                const row = getRow<{ OutflowConverted: number }>(
                   this.db,
-                  'SELECT Outflow FROM transactions WHERE ID = ?',
+                  'SELECT OutflowConverted FROM transactions WHERE ID = ?',
                   tx.id
                 );
-                return row?.Outflow || 0;
+                return row?.OutflowConverted || 0;
               })();
 
         const inflowNew = Math.round(baseInflow * effectiveRate);
@@ -812,9 +812,9 @@ export class CurrencyService {
           this.db,
           `
           UPDATE transactions 
-          SET InflowOriginal = ?, 
-              OutflowOriginal = ?,
-              RunningBalanceOriginal = ?
+          SET InflowNative = ?, 
+              OutflowNative = ?,
+              RunningBalanceNative = ?
           WHERE ID = ?
         `,
           inflowNew,
@@ -828,8 +828,8 @@ export class CurrencyService {
       run(
         this.db,
         `
-        UPDATE accounts 
-        SET Balance = ?
+        UPDATE accounts
+        SET BalanceNative = ?
         WHERE ID = ?
       `,
         runningBalanceOriginal,
@@ -899,7 +899,7 @@ export class CurrencyService {
     }>(
       this.db,
       `
-      SELECT ID as id, Date as date, InflowOriginal as inflow_original, OutflowOriginal as outflow_original, RunningBalanceOriginal as running_balance_original
+      SELECT ID as id, Date as date, InflowNative as inflow_original, OutflowNative as outflow_original, RunningBalanceNative as running_balance_original
       FROM transactions 
       WHERE AccountID = ?
       ORDER BY Date ASC, ID ASC
@@ -924,9 +924,9 @@ export class CurrencyService {
           this.db,
           `
           UPDATE transactions
-          SET Inflow = ?,
-              Outflow = ?,
-              RunningBalance = ?,
+          SET InflowConverted = ?,
+              OutflowConverted = ?,
+              RunningBalanceConverted = ?,
               ExchangeRate = CASE WHEN ExchangeRateOverride = 0 THEN ? ELSE ExchangeRate END
           WHERE ID = ?
         `,

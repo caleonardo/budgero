@@ -120,10 +120,10 @@ describe('Transactions (Node/sql.js)', () => {
     const updatedAccount = services.accounts.getAccount(account.ID);
     const txn = services.transactions.getTransactionByID(txnId);
 
-    expect(txn.Inflow).toBe(0);
-    expect(txn.Outflow).toBe(50);
-    expect(updatedAccount.Balance).toBe(950);
-    expect(typeof txn.RunningBalance).toBe('number');
+    expect(txn.InflowConverted).toBe(0);
+    expect(txn.OutflowConverted).toBe(50);
+    expect(updatedAccount.BalanceNative).toBe(950);
+    expect(typeof txn.RunningBalanceConverted).toBe('number');
 
     // Add account in a different curency and add a transaction in that currency
 
@@ -158,20 +158,20 @@ describe('Transactions (Node/sql.js)', () => {
     const txn2 = services.transactions.getTransactionByID(txnId2);
 
     // check inflow, outflow and balance in Account Currency (EUR)
-    expect(txn2.InflowOriginal).toBe(0);
-    expect(txn2.OutflowOriginal).toBe(50);
-    expect(updatedAccount2.Balance).toBe(950);
+    expect(txn2.InflowNative).toBe(0);
+    expect(txn2.OutflowNative).toBe(50);
+    expect(updatedAccount2.BalanceNative).toBe(950);
     // Since this is the last and only transaction in the account, the running balance is the same as the balance
-    expect(typeof txn2.RunningBalanceOriginal).toBe('number');
+    expect(typeof txn2.RunningBalanceNative).toBe('number');
 
     // check inflow, outflow and balance in Budget Currency (USD)
-    expect(txn2.RunningBalanceOriginal).toBe(updatedAccount2.Balance);
-    expect(txn2.Inflow).toBe(0 * EURUSD);
-    expect(txn2.Outflow).toBe(50 * EURUSD);
+    expect(txn2.RunningBalanceNative).toBe(updatedAccount2.BalanceNative);
+    expect(txn2.InflowConverted).toBe(0 * EURUSD);
+    expect(txn2.OutflowConverted).toBe(50 * EURUSD);
     expect(updatedAccount2.BalanceConverted).toBe(950 * EURUSD);
-    expect(typeof txn2.RunningBalance).toBe('number');
+    expect(typeof txn2.RunningBalanceConverted).toBe('number');
     // Since this is the last and only transaction in the account, the running balance is the same as the balance
-    expect(txn2.RunningBalance).toBe(updatedAccount2.BalanceConverted);
+    expect(txn2.RunningBalanceConverted).toBe(updatedAccount2.BalanceConverted);
 
     // get rate for EUR to USD today as month YYYY-MM-DD
     const rate = await services.currency.getOrFetchRate(
@@ -194,15 +194,15 @@ describe('Transactions (Node/sql.js)', () => {
     // Finally update Account 2 currency to USD and check that the balance is still the same
     await services.accounts.updateAccount(account2.ID, account2.Name, account2.Type, 'USD');
     const updatedAccount2USD = services.accounts.getAccount(account2.ID);
-    expect(updatedAccount2USD.Balance).toBe(950 * EURUSD);
-    expect(updatedAccount2USD.BalanceConverted).toBe(updatedAccount2USD.Balance);
+    expect(updatedAccount2USD.BalanceNative).toBe(950 * EURUSD);
+    expect(updatedAccount2USD.BalanceConverted).toBe(updatedAccount2USD.BalanceNative);
     // Test transaction running balance inflow and outflow
     const txn2USD = services.transactions.getTransactionByID(txnId2);
-    expect(txn2USD.Inflow).toBe(0);
-    expect(txn2USD.OutflowOriginal).toBe(50 * EURUSD);
-    expect(txn2USD.Outflow).toBe(50 * EURUSD);
-    expect(txn2USD.RunningBalance).toBe(updatedAccount2USD.Balance);
-    expect(txn2USD.RunningBalanceOriginal).toBe(updatedAccount2USD.Balance);
+    expect(txn2USD.InflowConverted).toBe(0);
+    expect(txn2USD.OutflowNative).toBe(50 * EURUSD);
+    expect(txn2USD.OutflowConverted).toBe(50 * EURUSD);
+    expect(txn2USD.RunningBalanceConverted).toBe(updatedAccount2USD.BalanceNative);
+    expect(txn2USD.RunningBalanceNative).toBe(updatedAccount2USD.BalanceNative);
 
     const readyToAssignAferAccount2CurrencyChange =
       await services.monthlyBudgets.getReadyToAssign(budgetId);
@@ -212,16 +212,16 @@ describe('Transactions (Node/sql.js)', () => {
     // Exchange Rate service should use Reciprocal Rate for USD to EUR
     await services.accounts.updateAccount(account2.ID, account2.Name, account2.Type, 'EUR');
     const updatedAccount2EUR = services.accounts.getAccount(account2.ID);
-    expect(updatedAccount2EUR.Balance).toBe(950);
+    expect(updatedAccount2EUR.BalanceNative).toBe(950);
     expect(updatedAccount2EUR.BalanceConverted).toBe(950 * EURUSD);
 
     // Test transaction running balance inflow and outflow
     const txn2EUR = services.transactions.getTransactionByID(txnId2);
-    expect(txn2EUR.Inflow).toBe(0);
-    expect(txn2EUR.OutflowOriginal).toBe(50);
-    expect(txn2EUR.Outflow).toBe(50 * EURUSD);
-    expect(txn2EUR.RunningBalance).toBe(updatedAccount2EUR.BalanceConverted);
-    expect(txn2EUR.RunningBalanceOriginal).toBe(updatedAccount2EUR.Balance);
+    expect(txn2EUR.InflowConverted).toBe(0);
+    expect(txn2EUR.OutflowNative).toBe(50);
+    expect(txn2EUR.OutflowConverted).toBe(50 * EURUSD);
+    expect(txn2EUR.RunningBalanceConverted).toBe(updatedAccount2EUR.BalanceConverted);
+    expect(txn2EUR.RunningBalanceNative).toBe(updatedAccount2EUR.BalanceNative);
 
     const readyToAssignAferAccount2CurrencyChangeEUR =
       await services.monthlyBudgets.getReadyToAssign(budgetId);
@@ -296,8 +296,8 @@ describe('Transactions (Node/sql.js)', () => {
       const updatedPayee = 'Downtown Coffee';
       await services.transactions.updateTransaction(
         txnId,
-        stored.Inflow,
-        stored.Outflow,
+        stored.InflowConverted,
+        stored.OutflowConverted,
         accountId,
         categoryId,
         today,
@@ -310,8 +310,8 @@ describe('Transactions (Node/sql.js)', () => {
 
       await services.transactions.updateTransaction(
         txnId,
-        updated.Inflow,
-        updated.Outflow,
+        updated.InflowConverted,
+        updated.OutflowConverted,
         accountId,
         categoryId,
         today,
@@ -557,12 +557,12 @@ describe('Transactions (Node/sql.js)', () => {
 
       const updated = services.transactions.getTransactionByID(txnId);
       expect(updated.Memo).toBe('Updated');
-      expect(updated.Inflow).toBe(50);
-      expect(updated.Outflow).toBe(75);
+      expect(updated.InflowConverted).toBe(50);
+      expect(updated.OutflowConverted).toBe(75);
 
       // Check account balance updated correctly
       const account = services.accounts.getAccount(accountId);
-      expect(account.Balance).toBe(5000 + 50 - 75); // Initial + inflow - outflow
+      expect(account.BalanceNative).toBe(5000 + 50 - 75); // Initial + inflow - outflow
     });
 
     it('should delete a transaction and update balances', async () => {
@@ -579,14 +579,14 @@ describe('Transactions (Node/sql.js)', () => {
 
       // Check balance after adding
       let account = services.accounts.getAccount(accountId);
-      expect(account.Balance).toBe(4900);
+      expect(account.BalanceNative).toBe(4900);
 
       // Delete the transaction
       services.transactions.deleteTransaction(txnId);
 
       // Check balance restored
       account = services.accounts.getAccount(accountId);
-      expect(account.Balance).toBe(5000);
+      expect(account.BalanceNative).toBe(5000);
 
       // Verify transaction is deleted
       expect(() => services.transactions.getTransactionByID(txnId)).toThrow();
@@ -677,7 +677,7 @@ describe('Transactions (Node/sql.js)', () => {
       await services.transactions.updateTransactionColumn(txnId, 'Memo', 'New memo');
       let updated = services.transactions.getTransactionByID(txnId);
       expect(updated.Memo).toBe('New memo');
-      expect(updated.Outflow).toBe(100); // Unchanged
+      expect(updated.OutflowConverted).toBe(100); // Unchanged
 
       // Update category (supported column)
       const newCatGroup = services.categories.addCategoryGroup('New Group', budgetId);
@@ -731,8 +731,8 @@ describe('Transactions (Node/sql.js)', () => {
       // Verify balances
       const checking = services.accounts.getAccount(accountId);
       const savings = services.accounts.getAccount(savingsAccount.ID);
-      expect(checking.Balance).toBe(4500); // 5000 - 500
-      expect(savings.Balance).toBe(2500); // 2000 + 500
+      expect(checking.BalanceNative).toBe(4500); // 5000 - 500
+      expect(savings.BalanceNative).toBe(2500); // 2000 + 500
     });
 
     it('should handle paired transfer transactions', async () => {
@@ -782,8 +782,8 @@ describe('Transactions (Node/sql.js)', () => {
       // Balances should be restored
       const checking = services.accounts.getAccount(accountId);
       const savings = services.accounts.getAccount(savingsAccount.ID);
-      expect(checking.Balance).toBe(5000);
-      expect(savings.Balance).toBe(2000);
+      expect(checking.BalanceNative).toBe(5000);
+      expect(savings.BalanceNative).toBe(2000);
     });
 
     it('should handle mortgage category for liability accounts', async () => {
@@ -876,10 +876,10 @@ describe('Transactions (Node/sql.js)', () => {
     const acc = services.accounts.getAccount(eur.ID);
 
     // Converted uses manual rate
-    expect(tx.OutflowOriginal).toBe(10);
-    expect(tx.Outflow).toBeCloseTo(15, 6);
+    expect(tx.OutflowNative).toBe(10);
+    expect(tx.OutflowConverted).toBeCloseTo(15, 6);
     // Account balances reflect conversion and original
-    expect(acc.Balance).toBeCloseTo(-10, 6);
+    expect(acc.BalanceNative).toBeCloseTo(-10, 6);
     expect(acc.BalanceConverted).toBeCloseTo(-15, 6);
   });
 
@@ -921,9 +921,9 @@ describe('Transactions (Node/sql.js)', () => {
     const acc = services.accounts.getAccount(jpy.ID);
 
     // Since no rate is available, converted equals original (1:1), and values are recorded
-    expect(tx.OutflowOriginal).toBe(1000);
-    expect(tx.Outflow).toBeCloseTo(1000, 6);
-    expect(acc.Balance).toBeCloseTo(-1000, 6);
+    expect(tx.OutflowNative).toBe(1000);
+    expect(tx.OutflowConverted).toBeCloseTo(1000, 6);
+    expect(acc.BalanceNative).toBeCloseTo(-1000, 6);
     expect(acc.BalanceConverted).toBeCloseTo(-1000, 6);
   });
 
@@ -976,15 +976,15 @@ describe('Transactions (Node/sql.js)', () => {
     // Transaction now belongs to RSD account
     expect(moved.AccountID).toBe(rsd.ID);
     // Originals should be in RSD and reflect conversion (≈ 5 * 100)
-    expect(moved.InflowOriginal || 0).toBe(0);
-    expect(moved.OutflowOriginal).toBeCloseTo(5 * USDRSD, 6);
+    expect(moved.InflowNative || 0).toBe(0);
+    expect(moved.OutflowNative).toBeCloseTo(5 * USDRSD, 6);
     // Converted stays in budget currency (USD)
-    expect(moved.Outflow).toBeCloseTo(5, 6);
+    expect(moved.OutflowConverted).toBeCloseTo(5, 6);
 
     // Account balances: USD back to 0; RSD shows -500 original and -5 converted
-    expect(usdAfter.Balance).toBeCloseTo(0, 6);
+    expect(usdAfter.BalanceNative).toBeCloseTo(0, 6);
     expect(usdAfter.BalanceConverted).toBeCloseTo(0, 6);
-    expect(rsdAfter.Balance).toBeCloseTo(-5 * USDRSD, 6);
+    expect(rsdAfter.BalanceNative).toBeCloseTo(-5 * USDRSD, 6);
     expect(rsdAfter.BalanceConverted).toBeCloseTo(-5, 6);
   });
 
@@ -1027,8 +1027,8 @@ describe('Transactions (Node/sql.js)', () => {
 
       await expect(
         services.splits.upsertSplits(transferTxnId, [
-          { CategoryID: categoryId, Inflow: 0, Outflow: 120, Memo: '' },
-          { CategoryID: categoryId, Inflow: 0, Outflow: 80, Memo: '' },
+          { CategoryID: categoryId, InflowConverted: 0, OutflowConverted: 120, Memo: '' },
+          { CategoryID: categoryId, InflowConverted: 0, OutflowConverted: 80, Memo: '' },
         ] as never)
       ).rejects.toThrow('Transfer transactions cannot be split.');
 
@@ -1070,16 +1070,16 @@ describe('Transactions (Node/sql.js)', () => {
       const txn = services.transactions.getTransactionByID(txnId);
 
       // Check original currency values
-      expect(txn.OutflowOriginal).toBe(100); // GBP
-      expect(txn.InflowOriginal).toBe(0);
+      expect(txn.OutflowNative).toBe(100); // GBP
+      expect(txn.InflowNative).toBe(0);
 
       // Check converted values
-      expect(txn.Outflow).toBe(100 * GBPUSD); // USD
-      expect(txn.Inflow).toBe(0);
+      expect(txn.OutflowConverted).toBe(100 * GBPUSD); // USD
+      expect(txn.InflowConverted).toBe(0);
 
       // Check account balance
       const account = services.accounts.getAccount(gbpAccount.ID);
-      expect(account.Balance).toBe(900); // GBP
+      expect(account.BalanceNative).toBe(900); // GBP
       expect(account.BalanceConverted).toBe(900 * GBPUSD); // USD
     });
 
@@ -1120,8 +1120,8 @@ describe('Transactions (Node/sql.js)', () => {
 
       // Currency conversion may not happen automatically when changing account currency
       // The transaction may retain its original amount
-      expect(txn.OutflowOriginal).toBeDefined();
-      expect(account.Balance).toBeDefined();
+      expect(txn.OutflowNative).toBeDefined();
+      expect(account.BalanceNative).toBeDefined();
     });
 
     it('should handle missing exchange rates gracefully', async () => {
@@ -1148,11 +1148,11 @@ describe('Transactions (Node/sql.js)', () => {
       );
 
       const txn = services.transactions.getTransactionByID(txnId);
-      expect(txn.OutflowOriginal).toBe(1000); // JPY
+      expect(txn.OutflowNative).toBe(1000); // JPY
       expect(txn.ID).toBe(txnId);
 
       const account = services.accounts.getAccount(jpyAccount.ID);
-      expect(account.Balance).toBe(9000); // JPY
+      expect(account.BalanceNative).toBe(9000); // JPY
     });
   });
 
@@ -1266,10 +1266,10 @@ describe('Transactions (Node/sql.js)', () => {
       );
 
       const txn = services.transactions.getTransactionByID(txnId);
-      expect(txn.Outflow).toBe(-50);
+      expect(txn.OutflowConverted).toBe(-50);
 
       const account = services.accounts.getAccount(accountId);
-      expect(account.Balance).toBe(5050); // 5000 - (-50) = 5050
+      expect(account.BalanceNative).toBe(5050); // 5000 - (-50) = 5050
     });
 
     it('should throw error for non-existent transaction', () => {
@@ -1290,11 +1290,11 @@ describe('Transactions (Node/sql.js)', () => {
       );
 
       const txn = services.transactions.getTransactionByID(txnId);
-      expect(txn.Inflow).toBe(0);
-      expect(txn.Outflow).toBe(0);
+      expect(txn.InflowConverted).toBe(0);
+      expect(txn.OutflowConverted).toBe(0);
 
       const account = services.accounts.getAccount(accountId);
-      expect(account.Balance).toBe(5000); // Unchanged
+      expect(account.BalanceNative).toBe(5000); // Unchanged
     });
 
     it('should handle transactions without memos', async () => {
@@ -1338,8 +1338,8 @@ describe('Transactions (Node/sql.js)', () => {
       // Check initial balances
       let acc1 = services.accounts.getAccount(accountId);
       let acc2 = services.accounts.getAccount(account2.ID);
-      expect(acc1.Balance).toBe(4900);
-      expect(acc2.Balance).toBe(3000);
+      expect(acc1.BalanceNative).toBe(4900);
+      expect(acc2.BalanceNative).toBe(3000);
 
       // Update to different account using AccountID column
       await services.transactions.updateTransactionColumn(txnId, 'AccountID', account2.ID);
@@ -1347,8 +1347,8 @@ describe('Transactions (Node/sql.js)', () => {
       // Check updated balances
       acc1 = services.accounts.getAccount(accountId);
       acc2 = services.accounts.getAccount(account2.ID);
-      expect(acc1.Balance).toBe(5000); // Restored
-      expect(acc2.Balance).toBe(2900); // Deducted
+      expect(acc1.BalanceNative).toBe(5000); // Restored
+      expect(acc2.BalanceNative).toBe(2900); // Deducted
     });
 
     it('should have exactly zero balance after deleting all transactions (no floating point drift)', async () => {
@@ -1389,7 +1389,7 @@ describe('Transactions (Node/sql.js)', () => {
 
       // Balance must be exactly 0, not -0 or a tiny floating point residual
       const updatedAccount = services.accounts.getAccount(account.ID);
-      expect(updatedAccount.Balance).toBe(0);
+      expect(updatedAccount.BalanceNative).toBe(0);
       expect(updatedAccount.BalanceConverted).toBe(0);
     });
   });

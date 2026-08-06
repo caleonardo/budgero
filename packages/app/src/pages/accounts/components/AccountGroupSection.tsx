@@ -17,7 +17,7 @@ interface Account {
   ID: number;
   Name?: string;
   Type?: string;
-  Balance?: number;
+  BalanceNative?: number;
   BalanceConverted?: number;
   Metadata?: string | Record<string, unknown>;
 }
@@ -82,7 +82,10 @@ export function AccountGroupSection({
 }: AccountGroupSectionProps) {
   if (accounts.length === 0) return null;
 
-  const total = accounts.reduce((sum, acc) => sum + (acc.BalanceConverted ?? acc.Balance ?? 0), 0);
+  const total = accounts.reduce(
+    (sum, acc) => sum + (acc.BalanceConverted ?? acc.BalanceNative ?? 0),
+    0
+  );
 
   return (
     <Collapsible open={isOpen} onOpenChange={onToggle}>
@@ -120,7 +123,7 @@ export function AccountGroupSection({
           <CardContent className="pt-0 space-y-1 sm:space-y-3">
             {accounts.map((account) => {
               const { bgColor, Icon } = getAccountTypeStyle(account);
-              const balance = account.BalanceConverted ?? account.Balance ?? 0;
+              const balance = account.BalanceConverted ?? account.BalanceNative ?? 0;
 
               return (
                 <Link key={account.ID} to={`/accounts/${account.ID}`}>

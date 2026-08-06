@@ -29,7 +29,7 @@ export const normalizeToDate = (value: unknown): Date | null => {
 
 export interface AccountMetricsInput {
   selectedAccount: {
-    Balance?: number | null;
+    BalanceNative?: number | null;
     BalanceConverted?: number | null;
   } | null;
   allTransactionsData: GetTransactionsByAccountRow[];
@@ -71,10 +71,10 @@ export function useAccountMetrics({
         if (!tx?.Date || tx.Date <= cutoff) {
           return acc;
         }
-        const inflow = tx.Inflow ?? 0;
-        const outflow = tx.Outflow ?? 0;
-        const inflowOriginal = tx.InflowOriginal ?? inflow;
-        const outflowOriginal = tx.OutflowOriginal ?? outflow;
+        const inflow = tx.InflowConverted ?? 0;
+        const outflow = tx.OutflowConverted ?? 0;
+        const inflowOriginal = tx.InflowNative ?? inflow;
+        const outflowOriginal = tx.OutflowNative ?? outflow;
         acc.original += inflowOriginal - outflowOriginal;
         acc.converted += inflow - outflow;
         return acc;
@@ -87,7 +87,7 @@ export function useAccountMetrics({
     if (!selectedAccount) {
       return 0;
     }
-    const base = selectedAccount.Balance ?? 0;
+    const base = selectedAccount.BalanceNative ?? 0;
     return base - futureTransactionImpact.original;
   }, [selectedAccount, futureTransactionImpact.original]);
 

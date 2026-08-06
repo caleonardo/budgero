@@ -47,15 +47,17 @@ describe('restoreAndMigrate', () => {
     const version = adapter.exec('SELECT MAX(version) AS v FROM schema_migrations');
     expect(version[0].values[0][0]).toBe(Math.max(...migrations.map((m) => m.version)));
 
-    // Float dollars are now integer milliunits.
-    const tx = adapter.exec('SELECT Inflow, RunningBalance, typeof(Inflow) AS t FROM transactions');
+    // Float dollars are now integer milliunits, columns renamed by 045.
+    const tx = adapter.exec(
+      'SELECT InflowConverted, RunningBalanceConverted, typeof(InflowConverted) AS t FROM transactions'
+    );
     expect(tx[0].values[0][0]).toBe(100100);
     expect(tx[0].values[0][1]).toBe(100100);
     expect(tx[0].values[0][2]).toBe('integer');
 
     // Balance is recomputed from transaction history (one +$100.10 row),
     // not copied from the stored account value.
-    const acct = adapter.exec('SELECT Balance FROM accounts WHERE ID = 1');
+    const acct = adapter.exec('SELECT BalanceNative FROM accounts WHERE ID = 1');
     expect(acct[0].values[0][0]).toBe(100100);
   });
 

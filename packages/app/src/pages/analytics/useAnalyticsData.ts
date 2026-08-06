@@ -69,7 +69,7 @@ export function useAnalyticsData(filters: AnalyticsFilters): AnalyticsData {
           type: account.Type,
           onBudget: account.OnBudget,
           isLiability: isLiabilityType(account.Type),
-          currentBalance: account.BalanceConverted ?? account.Balance ?? 0,
+          currentBalance: account.BalanceConverted ?? account.BalanceNative ?? 0,
         })),
     [rawAccounts]
   );
@@ -98,8 +98,8 @@ export function useAnalyticsData(filters: AnalyticsFilters): AnalyticsData {
         labelId: row.LabelID ?? null,
         label: row.Label ?? '',
         labelColor: row.LabelColor ?? null,
-        inflow: row.Inflow,
-        outflow: row.Outflow,
+        inflow: row.InflowConverted,
+        outflow: row.OutflowConverted,
         isTransfer: Boolean(row.TransferID) || groupName === TRANSFERS_GROUP_NAME,
         isIncome: groupName === INCOME_GROUP_NAME,
       });

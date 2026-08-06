@@ -3,7 +3,7 @@ import path from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { MigrationRunner, migrations } from '../src/database/migrations.js';
 import { createMigrationDatabase } from '../src/database/migration-database-factory.js';
-import { MONEY_COLUMNS } from '../src/database/migrations/039-convert-money-columns-to-integer-milliunits.js';
+import { MONEY_COLUMNS } from '../src/database/money-columns.js';
 import { DatabaseNewerThanAppError } from '../src/types/index.js';
 
 type MigDb = ReturnType<typeof createMigrationDatabase>;
@@ -84,10 +84,10 @@ describe('migration 039: REAL money -> INTEGER milliunits', () => {
 
   it('stores every money value as round(old * 1000), typed INTEGER', () => {
     const expected: [string, number][] = [
-      [`SELECT Inflow FROM transactions WHERE ID = 1`, 100100],
-      [`SELECT InflowOriginal FROM transactions WHERE ID = 1`, 91000],
-      [`SELECT Outflow FROM transactions WHERE ID = 2`, 300], // 0.1 + 0.2 artifact
-      [`SELECT Outflow FROM transactions WHERE ID = 3`, 50000],
+      [`SELECT InflowConverted FROM transactions WHERE ID = 1`, 100100],
+      [`SELECT InflowNative FROM transactions WHERE ID = 1`, 91000],
+      [`SELECT OutflowConverted FROM transactions WHERE ID = 2`, 300], // 0.1 + 0.2 artifact
+      [`SELECT OutflowConverted FROM transactions WHERE ID = 3`, 50000],
       [`SELECT Amount FROM assignments WHERE ID = 1`, 250505],
       [`SELECT Target FROM goals WHERE ID = 1`, 1000004],
       [`SELECT Amount FROM recurring_transactions WHERE ID = 1`, 9990],
@@ -113,18 +113,23 @@ describe('migration 039: REAL money -> INTEGER milliunits', () => {
 
   it('reconciles split sets exactly to their parent totals', () => {
     expect(
-      one(db, `SELECT SUM(Inflow - Outflow) FROM transaction_splits WHERE TransactionID = 3`)
+      one(
+        db,
+        `SELECT SUM(InflowConverted - OutflowConverted) FROM transaction_splits WHERE TransactionID = 3`
+      )
     ).toBe(-50000);
     // Largest line absorbed the -250 remainder
-    expect(one(db, `SELECT Outflow FROM transaction_splits WHERE ID = 1`)).toBe(25350);
-    expect(one(db, `SELECT Outflow FROM transaction_splits WHERE ID = 2`)).toBe(24650);
+    expect(one(db, `SELECT OutflowConverted FROM transaction_splits WHERE ID = 1`)).toBe(25350);
+    expect(one(db, `SELECT OutflowConverted FROM transaction_splits WHERE ID = 2`)).toBe(24650);
   });
 
   it('recomputes running balances and account balances in service order', () => {
-    const rbs = db.exec(`SELECT RunningBalance FROM transactions ORDER BY Date ASC, ID ASC`);
+    const rbs = db.exec(
+      `SELECT RunningBalanceConverted FROM transactions ORDER BY Date ASC, ID ASC`
+    );
     expect(rbs[0].values.map((v) => v[0])).toEqual([100100, 99800, 49800]);
-    // Balance = final original-currency sum; BalanceConverted = final converted sum
-    expect(one(db, `SELECT Balance FROM accounts WHERE ID = 1`)).toBe(91000);
+    // BalanceNative = final native-currency sum; BalanceConverted = final converted sum
+    expect(one(db, `SELECT BalanceNative FROM accounts WHERE ID = 1`)).toBe(91000);
     expect(one(db, `SELECT BalanceConverted FROM accounts WHERE ID = 1`)).toBe(49800);
   });
 
@@ -142,7 +147,7 @@ describe('migration 039: REAL money -> INTEGER milliunits', () => {
     // The fixture intentionally has no budget/category parent rows; this test
     // is about sqlite_sequence surviving the rebuild, not FK integrity.
     db.exec('PRAGMA foreign_keys = OFF');
-    db.exec(`INSERT INTO transactions (CategoryID, AccountID, Date, Inflow, Outflow, BudgetID)
+    db.exec(`INSERT INTO transactions (CategoryID, AccountID, Date, InflowConverted, OutflowConverted, BudgetID)
              VALUES (1, 1, '2026-01-04', 1000, 0, 1)`);
     expect(one(db, `SELECT MAX(ID) FROM transactions`)).toBe(4);
   });

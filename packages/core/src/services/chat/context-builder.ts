@@ -101,9 +101,9 @@ export function buildBudgetContext(
     accounts = accountsRaw.map((a) => ({
       id: a.ID,
       name: a.Name,
-      balance: a.Balance || 0,
+      balance: a.BalanceNative || 0,
       currency: a.Currency || currencySymbol,
-      balanceConverted: a.BalanceConverted ?? a.Balance ?? 0,
+      balanceConverted: a.BalanceConverted ?? a.BalanceNative ?? 0,
       type: a.Type || AccountTypeEnum.CHECKING,
       onBudget: Boolean(a.OnBudget),
     }));
@@ -142,8 +142,8 @@ export function buildBudgetContext(
         payee: t.Payee || '',
         category: t.Category || 'Uncategorized',
         memo: t.Memo || '',
-        inflow: t.Inflow || 0,
-        outflow: t.Outflow || 0,
+        inflow: t.InflowConverted || 0,
+        outflow: t.OutflowConverted || 0,
       }));
   } catch {
     // Fallback

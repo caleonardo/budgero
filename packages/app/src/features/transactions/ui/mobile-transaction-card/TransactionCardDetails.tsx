@@ -47,9 +47,9 @@ interface SplitDisplayItem {
   Memo?: string;
   amount?: number;
   inflow?: number;
-  Inflow?: number;
+  InflowConverted?: number;
   outflow?: number;
-  Outflow?: number;
+  OutflowConverted?: number;
 }
 
 interface TransactionCardDetailsProps {
@@ -156,7 +156,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                 <div className="[&>div]:w-full">
                   <CalculatorCell
                     value={asMilli(getPrimaryInflow(transaction) || 0)}
-                    onCommit={(newVal) => onCellCommit(transaction.ID, 'Inflow', newVal)}
+                    onCommit={(newVal) => onCellCommit(transaction.ID, 'InflowConverted', newVal)}
                     formatter={(val) => currentFormatter.format(val)}
                     displayFormatter={(val) => currentFormatter.format(val)}
                     localizer={currentFormatter}
@@ -172,8 +172,8 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
             </div>
             {!hideSecondaryAmounts && (
               <SecondaryAmount
-                amount={transaction.Inflow}
-                originalAmount={transaction.InflowOriginal}
+                amount={transaction.InflowConverted}
+                originalAmount={transaction.InflowNative}
                 value={getSecondaryInflow(transaction)}
                 transactionCurrencyDisplay={transactionCurrencyDisplay}
                 accountLocalizer={accountLocalizer}
@@ -192,7 +192,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                 <div className="[&>div]:w-full">
                   <CalculatorCell
                     value={asMilli(getPrimaryOutflow(transaction) || 0)}
-                    onCommit={(newVal) => onCellCommit(transaction.ID, 'Outflow', newVal)}
+                    onCommit={(newVal) => onCellCommit(transaction.ID, 'OutflowConverted', newVal)}
                     formatter={(val) => currentFormatter.format(val)}
                     displayFormatter={(val) => currentFormatter.format(val)}
                     localizer={currentFormatter}
@@ -208,8 +208,8 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
             </div>
             {!hideSecondaryAmounts && (
               <SecondaryAmount
-                amount={transaction.Outflow}
-                originalAmount={transaction.OutflowOriginal}
+                amount={transaction.OutflowConverted}
+                originalAmount={transaction.OutflowNative}
                 value={getSecondaryOutflow(transaction)}
                 transactionCurrencyDisplay={transactionCurrencyDisplay}
                 accountLocalizer={accountLocalizer}
@@ -431,7 +431,12 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                         {editSplits ? (
                           <CalculatorCell
                             value={asMilli(
-                              s.amount ?? s.inflow ?? s.Inflow ?? s.outflow ?? s.Outflow ?? 0
+                              s.amount ??
+                                s.inflow ??
+                                s.InflowConverted ??
+                                s.outflow ??
+                                s.OutflowConverted ??
+                                0
                             )}
                             onCommit={(val) => onUpdateSplitLine(idx, { amount: val })}
                             formatter={(val) => editFormatter.format(val)}
@@ -445,8 +450,8 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                           />
                         ) : (
                           (() => {
-                            const outflowAmount = s.outflow ?? s.Outflow ?? 0;
-                            const inflowAmount = s.inflow ?? s.Inflow ?? 0;
+                            const outflowAmount = s.outflow ?? s.OutflowConverted ?? 0;
+                            const inflowAmount = s.inflow ?? s.InflowConverted ?? 0;
                             const isOutflow = outflowAmount > 0 && outflowAmount >= inflowAmount;
                             const absoluteAmount = isOutflow ? outflowAmount : inflowAmount;
                             const symbol = isOutflow ? '-' : '+';

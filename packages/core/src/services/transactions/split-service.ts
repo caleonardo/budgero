@@ -47,7 +47,7 @@ export class SplitService {
     }
 
     // Compute parent net in account currency
-    const parentNet = (parent.Inflow || 0) - (parent.Outflow || 0);
+    const parentNet = (parent.InflowConverted || 0) - (parent.OutflowConverted || 0);
 
     let splitsNet = 0;
     for (const s of splits) {
@@ -59,7 +59,7 @@ export class SplitService {
           'Each split must have either CategoryID or TransferAccountID (exclusively)'
         );
       }
-      splitsNet += (s.Inflow || 0) - (s.Outflow || 0);
+      splitsNet += (s.InflowConverted || 0) - (s.OutflowConverted || 0);
     }
 
     // Integer milliunits compare exactly — splits must reconcile to the milliunit
@@ -100,7 +100,7 @@ export class SplitService {
         if (!targetAccount) continue;
 
         const sourceNetOriginal =
-          (s.InflowOriginal ?? s.Inflow ?? 0) - (s.OutflowOriginal ?? s.Outflow ?? 0);
+          (s.InflowNative ?? s.InflowConverted ?? 0) - (s.OutflowNative ?? s.OutflowConverted ?? 0);
         const mirrorNetOriginalInTarget = await this.currencyService.convertAmount(
           asMilli(-sourceNetOriginal),
           sourceAcc.Currency,
@@ -152,10 +152,10 @@ export class SplitService {
           CategoryID: s.CategoryID ?? null,
           TransferAccountID: s.TransferAccountID ?? null,
           Memo: s.Memo ?? parent.Memo ?? '',
-          Inflow: s.Inflow ?? 0,
-          Outflow: s.Outflow ?? 0,
-          InflowOriginal: s.InflowOriginal ?? null,
-          OutflowOriginal: s.OutflowOriginal ?? null,
+          InflowConverted: s.InflowConverted ?? 0,
+          OutflowConverted: s.OutflowConverted ?? 0,
+          InflowNative: s.InflowNative ?? null,
+          OutflowNative: s.OutflowNative ?? null,
           PairID: s.PairID ?? null,
           OrderIndex: s.OrderIndex ?? orderIndex,
         };

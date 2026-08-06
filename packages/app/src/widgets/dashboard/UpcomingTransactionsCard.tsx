@@ -53,11 +53,12 @@ type UpcomingItem = {
   row: GetTransactionsByAccountRow | null;
 };
 
-const getPrimaryInflow = (tx: GetTransactionsByAccountRow) => tx.Inflow || 0;
-const getPrimaryOutflow = (tx: GetTransactionsByAccountRow) => tx.Outflow || 0;
-const getSecondaryInflow = (tx: GetTransactionsByAccountRow) => tx.InflowOriginal ?? tx.Inflow ?? 0;
+const getPrimaryInflow = (tx: GetTransactionsByAccountRow) => tx.InflowConverted || 0;
+const getPrimaryOutflow = (tx: GetTransactionsByAccountRow) => tx.OutflowConverted || 0;
+const getSecondaryInflow = (tx: GetTransactionsByAccountRow) =>
+  tx.InflowNative ?? tx.InflowConverted ?? 0;
 const getSecondaryOutflow = (tx: GetTransactionsByAccountRow) =>
-  tx.OutflowOriginal ?? tx.Outflow ?? 0;
+  tx.OutflowNative ?? tx.OutflowConverted ?? 0;
 
 export function UpcomingTransactionsCard({
   budgetId,
@@ -181,14 +182,14 @@ export function UpcomingTransactionsCard({
         return differenceInCalendarDays(txDate, today) > 0 && txDate <= oneOffHorizon;
       })
       // Transfers create two future rows; show only the outflow leg.
-      .filter((tx) => !tx.TransferID || (tx.Outflow ?? 0) > 0)
+      .filter((tx) => !tx.TransferID || (tx.OutflowConverted ?? 0) > 0)
       .map((tx) => {
-        const isOutflow = (tx.Outflow ?? 0) > 0;
+        const isOutflow = (tx.OutflowConverted ?? 0) > 0;
         return {
           key: `transaction-${tx.ID}`,
           name: tx.Payee || tx.Memo || tx.Category || 'Scheduled transaction',
           date: parseISO(tx.Date),
-          amount: Math.abs(isOutflow ? (tx.Outflow ?? 0) : (tx.Inflow ?? 0)),
+          amount: Math.abs(isOutflow ? (tx.OutflowConverted ?? 0) : (tx.InflowConverted ?? 0)),
           isOutflow,
           accountId: accountIdByName.get(tx.Account ?? '') ?? null,
           accountName: tx.Account ?? 'Unknown account',

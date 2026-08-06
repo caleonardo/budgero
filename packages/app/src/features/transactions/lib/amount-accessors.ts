@@ -16,10 +16,10 @@ function makeFlowAccessor(
   return (tx) => (preferOriginal ? original(tx) || primary(tx) : primary(tx));
 }
 
-const inflowBudget = (tx: GetTransactionsByAccountRow) => tx.Inflow;
-const inflowOriginal = (tx: GetTransactionsByAccountRow) => tx.InflowOriginal ?? 0;
-const outflowBudget = (tx: GetTransactionsByAccountRow) => tx.Outflow;
-const outflowOriginal = (tx: GetTransactionsByAccountRow) => tx.OutflowOriginal ?? 0;
+const inflowBudget = (tx: GetTransactionsByAccountRow) => tx.InflowConverted;
+const inflowOriginal = (tx: GetTransactionsByAccountRow) => tx.InflowNative ?? 0;
+const outflowBudget = (tx: GetTransactionsByAccountRow) => tx.OutflowConverted;
+const outflowOriginal = (tx: GetTransactionsByAccountRow) => tx.OutflowNative ?? 0;
 
 export interface AmountAccessors {
   getPrimaryInflow: (tx: GetTransactionsByAccountRow) => number;

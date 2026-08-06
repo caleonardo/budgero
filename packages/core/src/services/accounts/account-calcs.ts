@@ -263,10 +263,10 @@ export interface MobilePageStats {
  */
 export function calculateTransactionStats(
   transactionsData: {
-    Inflow?: number;
-    Outflow?: number;
-    InflowOriginal?: number;
-    OutflowOriginal?: number;
+    InflowConverted?: number;
+    OutflowConverted?: number;
+    InflowNative?: number;
+    OutflowNative?: number;
   }[],
   mobilePageStats: MobilePageStats | null,
   transactionCurrencyDisplay: 'budget' | 'account'
@@ -286,13 +286,17 @@ export function calculateTransactionStats(
   // Use the correct amounts based on currency display preference
   const totalInflow = transactionsData.reduce((sum, tx) => {
     const amount =
-      transactionCurrencyDisplay === 'budget' ? tx.Inflow : (tx.InflowOriginal ?? tx.Inflow);
+      transactionCurrencyDisplay === 'budget'
+        ? tx.InflowConverted
+        : (tx.InflowNative ?? tx.InflowConverted);
     return sum + (amount || 0);
   }, 0);
 
   const totalOutflow = transactionsData.reduce((sum, tx) => {
     const amount =
-      transactionCurrencyDisplay === 'budget' ? tx.Outflow : (tx.OutflowOriginal ?? tx.Outflow);
+      transactionCurrencyDisplay === 'budget'
+        ? tx.OutflowConverted
+        : (tx.OutflowNative ?? tx.OutflowConverted);
     return sum + (amount || 0);
   }, 0);
 

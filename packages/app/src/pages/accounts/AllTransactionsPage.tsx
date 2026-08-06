@@ -83,9 +83,9 @@ export default function AllTransactionsPage() {
     let totalOutflow = 0;
 
     transactionsData.forEach((t) => {
-      // Always use budget currency (Inflow/Outflow) for All Transactions view
-      totalInflow += t.Inflow || 0;
-      totalOutflow += t.Outflow || 0;
+      // Always use budget currency (InflowConverted/OutflowConverted) for All Transactions view
+      totalInflow += t.InflowConverted || 0;
+      totalOutflow += t.OutflowConverted || 0;
     });
 
     return {

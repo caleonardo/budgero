@@ -224,7 +224,7 @@ export function MappingTab({
                 {field === 'date'
                   ? '(Required)'
                   : field === 'amount'
-                    ? '(Required - or use Inflow/Outflow)'
+                    ? '(Required - or use InflowConverted/OutflowConverted)'
                     : '(Optional)'}
               </Label>
               <Select

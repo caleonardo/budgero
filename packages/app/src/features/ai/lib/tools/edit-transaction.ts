@@ -143,7 +143,9 @@ export function generateEditTransactionPreview(
       // Stored amounts are milliunits; the preview text shows decimals.
       const fmt = (milli: number) => toDecimal(roundMilli(milli)).toFixed(2);
       const amount =
-        (tx.Outflow ?? 0) > 0 ? `-${sym} ${fmt(tx.Outflow)}` : `+${sym} ${fmt(tx.Inflow ?? 0)}`;
+        (tx.OutflowConverted ?? 0) > 0
+          ? `-${sym} ${fmt(tx.OutflowConverted)}`
+          : `+${sym} ${fmt(tx.InflowConverted ?? 0)}`;
       const currentCategory =
         context.categories.find((c) => c.ID === tx.CategoryID)?.Name ?? 'Uncategorized';
       txInfo = `${tx.Payee || tx.Memo || 'transaction'} (${amount}, ${currentCategory})`;

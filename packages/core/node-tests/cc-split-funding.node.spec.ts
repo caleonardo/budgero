@@ -51,8 +51,8 @@ describe('CC Payment funding with split transactions', () => {
       'Split purchase'
     );
     await splits.upsertSplits(parentId, [
-      { CategoryID: cat1, Memo: '', Inflow: 0, Outflow: 5, OrderIndex: 0 },
-      { CategoryID: cat2, Memo: '', Inflow: 0, Outflow: 5, OrderIndex: 1 },
+      { CategoryID: cat1, Memo: '', InflowConverted: 0, OutflowConverted: 5, OrderIndex: 0 },
+      { CategoryID: cat2, Memo: '', InflowConverted: 0, OutflowConverted: 5, OrderIndex: 1 },
     ]);
 
     const rows = monthlyBudgets.getMonthlyBudget(month, budgetId);
@@ -94,8 +94,8 @@ describe('CC Payment funding with split transactions', () => {
       'Mixed split'
     );
     await splits.upsertSplits(parentId, [
-      { CategoryID: funded, Memo: '', Inflow: 0, Outflow: 20, OrderIndex: 0 },
-      { CategoryID: unfunded, Memo: '', Inflow: 0, Outflow: 10, OrderIndex: 1 },
+      { CategoryID: funded, Memo: '', InflowConverted: 0, OutflowConverted: 20, OrderIndex: 0 },
+      { CategoryID: unfunded, Memo: '', InflowConverted: 0, OutflowConverted: 10, OrderIndex: 1 },
     ]);
 
     const rows = monthlyBudgets.getMonthlyBudget(month, budgetId);

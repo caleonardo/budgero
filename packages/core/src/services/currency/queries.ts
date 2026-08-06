@@ -136,9 +136,9 @@ export class CurrencyQueries {
       this.db,
       `
       UPDATE transactions
-      SET Inflow = InflowOriginal,
-          Outflow = OutflowOriginal,
-          RunningBalance = RunningBalanceOriginal
+      SET InflowConverted = InflowNative,
+          OutflowConverted = OutflowNative,
+          RunningBalanceConverted = RunningBalanceNative
       WHERE BudgetID = ?
     `,
       budgetId
@@ -161,9 +161,9 @@ export class CurrencyQueries {
       this.db,
       `
       UPDATE transactions
-      SET Inflow = InflowOriginal,
-          Outflow = OutflowOriginal,
-          RunningBalance = RunningBalanceOriginal
+      SET InflowConverted = InflowNative,
+          OutflowConverted = OutflowNative,
+          RunningBalanceConverted = RunningBalanceNative
       WHERE AccountID = ?
     `,
       accountId
@@ -304,10 +304,10 @@ export class CurrencyQueries {
     ID: number;
     Date: string;
     AccountID: number;
-    InflowOriginal: number;
-    OutflowOriginal: number;
-    Inflow: number;
-    Outflow: number;
+    InflowNative: number;
+    OutflowNative: number;
+    InflowConverted: number;
+    OutflowConverted: number;
   }[] {
     const endDateClause = endDate ? `AND t.Date <= ?` : '';
     const params: (string | number)[] = [accountCurrency, budgetId, startDate];
@@ -316,14 +316,14 @@ export class CurrencyQueries {
       ID: number;
       Date: string;
       AccountID: number;
-      InflowOriginal: number;
-      OutflowOriginal: number;
-      Inflow: number;
-      Outflow: number;
+      InflowNative: number;
+      OutflowNative: number;
+      InflowConverted: number;
+      OutflowConverted: number;
     }>(
       this.db,
       `
-      SELECT t.ID, t.Date, t.AccountID, t.InflowOriginal, t.OutflowOriginal, t.Inflow, t.Outflow
+      SELECT t.ID, t.Date, t.AccountID, t.InflowNative, t.OutflowNative, t.InflowConverted, t.OutflowConverted
       FROM transactions t
       JOIN accounts a ON t.AccountID = a.ID
       WHERE a.Currency = ?

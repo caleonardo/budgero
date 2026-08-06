@@ -150,7 +150,7 @@ export function IncomeExpenseByGroupChart() {
       const balance =
         typeof account.BalanceConverted === 'number'
           ? account.BalanceConverted
-          : (account.Balance ?? 0);
+          : (account.BalanceNative ?? 0);
       return sum + (Number.isFinite(balance) ? balance : 0);
     }, 0);
   }, [onBudgetAccounts, selectedAccountIds]);

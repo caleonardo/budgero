@@ -66,7 +66,7 @@ export function useMonthlyAssetHistory(budgetId: number, months = 24) {
       // integer milliunits, so the sum is exact — no rounding needed.
       return accountTransactions
         .filter((tx) => !isBefore(monthEnd, parseISO(tx.Date)))
-        .reduce((acc, tx) => acc + (tx.Inflow || 0) - (tx.Outflow || 0), 0);
+        .reduce((acc, tx) => acc + (tx.InflowConverted || 0) - (tx.OutflowConverted || 0), 0);
     };
 
     const monthlyData: MonthlyAssetPoint[] = monthDates.map((monthDate) => {

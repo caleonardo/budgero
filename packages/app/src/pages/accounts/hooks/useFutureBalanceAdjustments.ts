@@ -48,10 +48,10 @@ export function useFutureBalanceAdjustments(accountsData: Account[]) {
 
               for (const tx of transactions) {
                 if (!tx?.Date || tx.Date <= cutoff) continue;
-                const inflow = tx.Inflow ?? 0;
-                const outflow = tx.Outflow ?? 0;
-                const inflowOriginal = tx.InflowOriginal ?? inflow;
-                const outflowOriginal = tx.OutflowOriginal ?? outflow;
+                const inflow = tx.InflowConverted ?? 0;
+                const outflow = tx.OutflowConverted ?? 0;
+                const inflowOriginal = tx.InflowNative ?? inflow;
+                const outflowOriginal = tx.OutflowNative ?? outflow;
                 original += inflowOriginal - outflowOriginal;
                 converted += inflow - outflow;
               }

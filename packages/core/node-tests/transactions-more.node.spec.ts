@@ -255,8 +255,8 @@ describe('Transactions (additional coverage)', () => {
           CategoryID: cat,
           TransferAccountID: acc2.ID,
           Memo: 'bad',
-          Inflow: 0,
-          Outflow: 100,
+          InflowConverted: 0,
+          OutflowConverted: 100,
           OrderIndex: 0,
         },
       ])
@@ -265,15 +265,33 @@ describe('Transactions (additional coverage)', () => {
     // Invalid: sum mismatch
     await expect(
       services.splits.upsertSplits(parentId, [
-        { CategoryID: cat, Memo: 'x', Inflow: 0, Outflow: 30, OrderIndex: 0 },
-        { TransferAccountID: acc2.ID, Memo: 'y', Inflow: 0, Outflow: 50, OrderIndex: 1 },
+        { CategoryID: cat, Memo: 'x', InflowConverted: 0, OutflowConverted: 30, OrderIndex: 0 },
+        {
+          TransferAccountID: acc2.ID,
+          Memo: 'y',
+          InflowConverted: 0,
+          OutflowConverted: 50,
+          OrderIndex: 1,
+        },
       ])
     ).rejects.toThrow(/must sum to parent total/);
 
-    // Valid: Outflow 40 to category, 60 transfer to acc2
+    // Valid: OutflowConverted 40 to category, 60 transfer to acc2
     await services.splits.upsertSplits(parentId, [
-      { CategoryID: cat, Memo: 'part-cat', Inflow: 0, Outflow: 40, OrderIndex: 0 },
-      { TransferAccountID: acc2.ID, Memo: 'part-tr', Inflow: 0, Outflow: 60, OrderIndex: 1 },
+      {
+        CategoryID: cat,
+        Memo: 'part-cat',
+        InflowConverted: 0,
+        OutflowConverted: 40,
+        OrderIndex: 0,
+      },
+      {
+        TransferAccountID: acc2.ID,
+        Memo: 'part-tr',
+        InflowConverted: 0,
+        OutflowConverted: 60,
+        OrderIndex: 1,
+      },
     ]);
 
     const splits = services.splits.getSplits(parentId);
@@ -352,14 +370,14 @@ describe('Transactions (additional coverage)', () => {
       'euro'
     );
     let tx = services.transactions.getTransactionByID(txId);
-    expect(tx.OutflowOriginal).toBe(100);
-    expect(tx.Outflow).toBeCloseTo(120, 6);
+    expect(tx.OutflowNative).toBe(100);
+    expect(tx.OutflowConverted).toBeCloseTo(120, 6);
 
     // Update original outflow to 200 EUR; converted should be 240 USD
-    await services.transactions.updateTransactionColumn(txId, 'OutflowOriginal', 200);
+    await services.transactions.updateTransactionColumn(txId, 'OutflowNative', 200);
     tx = services.transactions.getTransactionByID(txId);
-    expect(tx.OutflowOriginal).toBeCloseTo(200, 6);
-    expect(tx.Outflow).toBeCloseTo(240, 6);
+    expect(tx.OutflowNative).toBeCloseTo(200, 6);
+    expect(tx.OutflowConverted).toBeCloseTo(240, 6);
   });
 
   it('updates converted amounts in budget currency and back-calculates originals', async () => {
@@ -396,13 +414,13 @@ describe('Transactions (additional coverage)', () => {
       'euro2'
     );
     let tx = services.transactions.getTransactionByID(txId);
-    expect(tx.Outflow).toBeCloseTo(125, 6);
+    expect(tx.OutflowConverted).toBeCloseTo(125, 6);
 
     // Now edit the converted amount to 250 USD; originals should back-calc to 200 EUR
-    await services.transactions.updateTransactionColumn(txId, 'Outflow', 250);
+    await services.transactions.updateTransactionColumn(txId, 'OutflowConverted', 250);
     tx = services.transactions.getTransactionByID(txId);
-    expect(tx.Outflow).toBeCloseTo(250, 6);
-    expect(tx.OutflowOriginal).toBeCloseTo(200, 6);
+    expect(tx.OutflowConverted).toBeCloseTo(250, 6);
+    expect(tx.OutflowNative).toBeCloseTo(200, 6);
   });
 
   it('overriding the exchange rate on a transfer leg keeps the converted amount and re-derives the original', async () => {
@@ -452,8 +470,8 @@ describe('Transactions (additional coverage)', () => {
     );
 
     let incoming = services.transactions.getTransactionByID(inLeg);
-    expect(incoming.InflowOriginal).toBeCloseTo(2400, 6); // EUR (native)
-    expect(incoming.Inflow).toBeCloseTo(240000, 6); // RSD (budget/converted)
+    expect(incoming.InflowNative).toBeCloseTo(2400, 6); // EUR (native)
+    expect(incoming.InflowConverted).toBeCloseTo(240000, 6); // RSD (budget/converted)
 
     // The bank's effective rate was worse: 240,000 RSD only bought 2,000 EUR (1 EUR = 120 RSD).
     // Overriding the rate must keep the incoming leg's converted (RSD) value put and correct
@@ -461,15 +479,15 @@ describe('Transactions (additional coverage)', () => {
     await services.transactions.updateTransactionColumn(inLeg, 'ExchangeRate', 120);
 
     incoming = services.transactions.getTransactionByID(inLeg);
-    expect(incoming.Inflow).toBeCloseTo(240000, 6); // unchanged — the transfer value is preserved
-    expect(incoming.InflowOriginal).toBeCloseTo(2000, 6); // 240,000 / 120 — the EUR actually received
+    expect(incoming.InflowConverted).toBeCloseTo(240000, 6); // unchanged — the transfer value is preserved
+    expect(incoming.InflowNative).toBeCloseTo(2000, 6); // 240,000 / 120 — the EUR actually received
     expect(incoming.ExchangeRate).toBeCloseTo(120, 6);
     expect(!!incoming.ExchangeRateOverride).toBe(true);
 
     // The outgoing RSD leg is untouched, so both legs still balance at 240,000 RSD.
     const outgoing = services.transactions.getTransactionByID(outLeg);
-    expect(outgoing.Outflow).toBeCloseTo(240000, 6);
-    expect(outgoing.OutflowOriginal).toBeCloseTo(240000, 6);
+    expect(outgoing.OutflowConverted).toBeCloseTo(240000, 6);
+    expect(outgoing.OutflowNative).toBeCloseTo(240000, 6);
   });
 
   it('syncing a transfer leg preserves a manual rate override on the partner leg', async () => {
@@ -518,18 +536,18 @@ describe('Transactions (additional coverage)', () => {
     // Override the incoming leg with the bank's real rate (1 EUR = 120 RSD).
     await services.transactions.updateTransactionColumn(inLeg, 'ExchangeRate', 120);
     let incoming = services.transactions.getTransactionByID(inLeg);
-    expect(incoming.InflowOriginal).toBe(240000000 / 120); // EUR 2,000 in milliunits
+    expect(incoming.InflowNative).toBe(240000000 / 120); // EUR 2,000 in milliunits
 
     // Editing the OUTGOING leg syncs the partner. The override must survive: the EUR original is
     // re-derived from the user's 120 rate (236,000,000 / 120 ≈ 1,966,666.67, rounded to integer
     // milliunits), not the market rate of 100.
-    await services.transactions.updateTransactionColumn(outLeg, 'Outflow', 236000000);
+    await services.transactions.updateTransactionColumn(outLeg, 'OutflowConverted', 236000000);
 
     incoming = services.transactions.getTransactionByID(inLeg);
-    expect(incoming.Inflow).toBe(236000000); // mirrors the new outgoing value
+    expect(incoming.InflowConverted).toBe(236000000); // mirrors the new outgoing value
     expect(incoming.ExchangeRate).toBeCloseTo(120, 6); // override rate preserved
     expect(!!incoming.ExchangeRateOverride).toBe(true);
-    expect(incoming.InflowOriginal).toBe(1966667); // ≈EUR 1,966.67, not market-rate 2,360,000
+    expect(incoming.InflowNative).toBe(1966667); // ≈EUR 1,966.67, not market-rate 2,360,000
   });
 
   it('bulk reassigns categories and supports transfer ID queries and unsupported column path', async () => {
@@ -611,7 +629,7 @@ describe('Transactions (additional coverage)', () => {
 
     // Verify account balance is -600
     const ccAccount = services.accounts.getAccount(cc.ID);
-    expect(ccAccount.Balance).toBe(-600);
+    expect(ccAccount.BalanceNative).toBe(-600);
 
     // Verify the initial debt transaction uses Transfers category (excluded from budget)
     const ccTransactions = services.transactions.getTransactionsByAccount(cc.ID);
@@ -710,7 +728,7 @@ describe('Transactions (additional coverage)', () => {
 
     // Verify CC balance is now -100 (600 debt - 500 payment)
     const ccUpdated = services.accounts.getAccount(cc.ID);
-    expect(ccUpdated.Balance).toBe(-100);
+    expect(ccUpdated.BalanceNative).toBe(-100);
   });
 
   it('overpayment to loan creates split transaction', async () => {
@@ -772,21 +790,21 @@ describe('Transactions (additional coverage)', () => {
 
     // Verify loan balance is now +100 (overpaid)
     const loanUpdated = services.accounts.getAccount(loan.ID);
-    expect(loanUpdated.Balance).toBe(100);
+    expect(loanUpdated.BalanceNative).toBe(100);
 
     // Verify: Source transaction has splits
     const splits = services.splits.getSplits(t2);
     expect(splits.length).toBe(2);
 
     // Split 1: $600 to linked category (Car Loan)
-    const debtSplit = splits.find((s) => s.Outflow === 600);
+    const debtSplit = splits.find((s) => s.OutflowConverted === 600);
     expect(debtSplit).toBeTruthy();
     expect(debtSplit?.CategoryID).toBeTruthy();
     const debtCat = services.categories.getCategory(debtSplit?.CategoryID as number);
     expect(debtCat.Name).toBe('Car Loan');
 
     // Split 2: $100 to Transfers
-    const overpaymentSplit = splits.find((s) => s.Outflow === 100);
+    const overpaymentSplit = splits.find((s) => s.OutflowConverted === 100);
     expect(overpaymentSplit).toBeTruthy();
     expect(overpaymentSplit?.CategoryID).toBeTruthy();
     const transferCat = services.categories.getCategory(overpaymentSplit?.CategoryID as number);
@@ -838,7 +856,7 @@ describe('Transactions (additional coverage)', () => {
     );
 
     const ccBefore = services.accounts.getAccount(cc.ID);
-    expect(ccBefore.Balance).toBe(100); // Positive balance (overpaid/credit)
+    expect(ccBefore.BalanceNative).toBe(100); // Positive balance (overpaid/credit)
 
     const today = '2024-02-20';
     const transferId = 'tr_cc_pos_1';
@@ -1094,8 +1112,8 @@ describe('Transactions (additional coverage)', () => {
     // Verify balances are correct after deletion
     const checkingAfter = services.accounts.getAccount(checking.ID);
     const savingsAfter = services.accounts.getAccount(savings.ID);
-    expect(checkingAfter.Balance).toBe(5000); // Back to original
-    expect(savingsAfter.Balance).toBe(1000); // Back to original
+    expect(checkingAfter.BalanceNative).toBe(5000); // Back to original
+    expect(savingsAfter.BalanceNative).toBe(1000); // Back to original
   });
 
   it('deleting the second leg of a transfer also deletes the first leg', async () => {
@@ -1162,8 +1180,8 @@ describe('Transactions (additional coverage)', () => {
     // Verify balances are restored
     const checkingAfter = services.accounts.getAccount(checking.ID);
     const savingsAfter = services.accounts.getAccount(savings.ID);
-    expect(checkingAfter.Balance).toBe(3000);
-    expect(savingsAfter.Balance).toBe(500);
+    expect(checkingAfter.BalanceNative).toBe(3000);
+    expect(savingsAfter.BalanceNative).toBe(500);
   });
 
   it('deleting a debt account also deletes its linked category', async () => {
@@ -1295,7 +1313,7 @@ describe('Transactions (additional coverage)', () => {
     // We'll use the database directly to create account without linked_category_id
     const db = sm.getDatabase();
     const stmt = db.prepare(`
-      INSERT INTO accounts (Name, Type, Currency, Balance, BudgetID, Metadata, OnBudget)
+      INSERT INTO accounts (Name, Type, Currency, BalanceNative, BudgetID, Metadata, OnBudget)
       VALUES (?, ?, ?, ?, ?, ?, ?)
       RETURNING ID
     `);

@@ -48,9 +48,9 @@ export function filterTransactions(
     filtered = filtered.filter((tx) => {
       switch (parsedQuery.transactionType) {
         case 'inflows':
-          return tx.Inflow > 0 && !tx.TransferID;
+          return tx.InflowConverted > 0 && !tx.TransferID;
         case 'outflows':
-          return tx.Outflow > 0 && !tx.TransferID;
+          return tx.OutflowConverted > 0 && !tx.TransferID;
         case 'transfers':
           return !!tx.TransferID;
         default:

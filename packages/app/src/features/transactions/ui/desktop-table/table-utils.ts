@@ -21,8 +21,8 @@ export type SplitLike =
  */
 export const extractSplitAmount = (split: SplitLike): number => {
   const s = split as Record<string, unknown>;
-  const outflow = Number(s.outflow ?? s.Outflow ?? 0);
-  const inflow = Number(s.inflow ?? s.Inflow ?? 0);
+  const outflow = Number(s.outflow ?? s.OutflowConverted ?? 0);
+  const inflow = Number(s.inflow ?? s.InflowConverted ?? 0);
   if (outflow !== 0) return Math.abs(outflow);
   if (inflow !== 0) return Math.abs(inflow);
   return Math.abs(Number(s.amount ?? s.Amount ?? 0));
@@ -88,8 +88,8 @@ export const getSplitCategoryLabel = (split: SplitLike & Record<string, unknown>
  */
 export const isSplitIncomeAmount = (split: SplitLike, fallbackIsIncome: boolean): boolean => {
   const s = split as Record<string, unknown>;
-  const inflow = Number(s.inflow ?? s.Inflow ?? 0);
-  const outflow = Number(s.outflow ?? s.Outflow ?? 0);
+  const inflow = Number(s.inflow ?? s.InflowConverted ?? 0);
+  const outflow = Number(s.outflow ?? s.OutflowConverted ?? 0);
   if (inflow !== 0 || outflow !== 0) {
     return inflow > 0;
   }

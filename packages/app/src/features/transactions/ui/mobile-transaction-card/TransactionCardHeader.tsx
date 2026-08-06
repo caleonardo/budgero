@@ -46,7 +46,7 @@ export const TransactionCardHeader = React.memo(function TransactionCardHeader({
           <Checkbox
             checked={isSelected}
             onCheckedChange={onSelectionChange}
-            aria-label={`Select transaction: ${transaction.Memo || 'No memo'} - ${formatMilli(accountLocalizer, asMilli(transaction.Inflow > 0 ? transaction.Inflow : transaction.Outflow))}`}
+            aria-label={`Select transaction: ${transaction.Memo || 'No memo'} - ${formatMilli(accountLocalizer, asMilli(transaction.InflowConverted > 0 ? transaction.InflowConverted : transaction.OutflowConverted))}`}
             className="rounded-full"
           />
         </div>
