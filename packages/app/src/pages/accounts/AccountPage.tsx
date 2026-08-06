@@ -152,6 +152,10 @@ export default function AccountPage() {
   const formatAmount = useFormatMaskedAmount(currentFormatter);
   // Stored amounts are integer milliunits; convert at this display boundary.
   const formatMilliAmount = (m: number) => formatAmount(toDecimal(asMilli(m)));
+  // Revaluation deltas are budget-currency values by definition — formatting
+  // them in the account currency would read as lost/gained holdings.
+  const formatBudgetAmount = useFormatMaskedAmount(globalLocalizer);
+  const formatBudgetMilliAmount = (m: number) => formatBudgetAmount(toDecimal(asMilli(m)));
   const maskedFormatter = useMemo(
     () =>
       ({
@@ -399,11 +403,11 @@ export default function AccountPage() {
                 <div className="w-px h-6 bg-border" />
                 <FlowStat
                   icon={revaluationSummary.last30Days >= 0 ? ArrowUpRight : ArrowDownRight}
-                  label="Rate impact (30d)"
-                  value={formatMilliAmount(revaluationSummary.last30Days)}
+                  label="Value change (30d)"
+                  value={formatBudgetMilliAmount(revaluationSummary.last30Days)}
                   color={revaluationSummary.last30Days >= 0 ? 'success' : 'destructive'}
                   size="sm"
-                  tooltip="Change in this account's converted balance caused by exchange-rate moves, not transactions. The all-time impact is included in the balance above."
+                  tooltip="How much this account's value in your budget currency moved with exchange rates over the last 30 days. The account's own balance is unchanged — only what it's worth."
                 />
               </>
             )}
