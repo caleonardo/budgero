@@ -43,9 +43,10 @@ interface CurrencySelectorProps {
   label?: React.ReactNode;
   disabled?: boolean;
   compact?: boolean;
-  /** Offer the crypto group. Account pickers enable this; the budget display
-   * currency stays fiat-only. */
-  includeCrypto?: boolean;
+  /** Which currency kinds to offer. Crypto accounts pick from coins only,
+   * fiat accounts and the budget display currency from fiat only; rate
+   * settings mix both. */
+  kind?: 'fiat' | 'crypto' | 'all';
   'data-testid'?: string;
 }
 
@@ -55,7 +56,7 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
   label,
   disabled = false,
   compact = false,
-  includeCrypto = false,
+  kind = 'fiat',
   'data-testid': testId,
 }) => {
   const [open, setOpen] = useState(false);
@@ -67,7 +68,12 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
   const groupedCurrencies = useMemo(() => {
     const groups = new Map<string, CurrencyOption[]>();
 
-    const options = includeCrypto ? [...cryptoCurrencies, ...currencies] : currencies;
+    const options =
+      kind === 'crypto'
+        ? cryptoCurrencies
+        : kind === 'all'
+          ? [...cryptoCurrencies, ...currencies]
+          : currencies;
     options.forEach((currency) => {
       if (!groups.has(currency.region)) {
         groups.set(currency.region, []);
@@ -79,7 +85,7 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     });
 
     return Array.from(groups.entries());
-  }, [includeCrypto]);
+  }, [kind]);
 
   // Search both lists so an existing crypto account renders its code even in
   // pickers that don't offer crypto.

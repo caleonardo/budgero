@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 import { Edit3 } from 'lucide-react';
 import type { Account } from '@budgero/core/browser';
+import { isCryptoCurrency } from '@budgero/core/browser';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -346,6 +347,17 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                   onValueChange={(val) => {
                     setAccType(val);
                     setIsLiability(isLiabilityType(val));
+                    // Crypto accounts hold coins, not the budget's fiat:
+                    // default the currency accordingly (and back again).
+                    if (val === 'Crypto' && !isCryptoCurrency(currency)) {
+                      setCurrency('BTC');
+                    } else if (val !== 'Crypto' && isCryptoCurrency(currency)) {
+                      setCurrency(
+                        selectedAccount?.Currency && !isCryptoCurrency(selectedAccount.Currency)
+                          ? selectedAccount.Currency
+                          : selectedBudget?.DisplayCurrency || 'USD'
+                      );
+                    }
 
                     // Note: We don't override the budget setting here since the dropdown is already filtered
                   }}
@@ -412,7 +424,11 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
               )}
 
               {/* Currency display */}
-              <CurrencySelector value={currency} onValueChange={setCurrency} includeCrypto />
+              <CurrencySelector
+                value={currency}
+                onValueChange={setCurrency}
+                kind={accType === 'Crypto' ? 'crypto' : 'fiat'}
+              />
               {isLiability && (
                 <div className="rounded-md bg-muted/20 border border-border/50 p-2 text-[11px] text-muted-foreground">
                   Paid So Far should be edited via transactions (inflows). Here you can adjust

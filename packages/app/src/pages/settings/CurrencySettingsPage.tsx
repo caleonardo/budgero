@@ -259,6 +259,7 @@ function RateFormDialog({
                   value={formData.fromCurrency}
                   onValueChange={(v) => setFormData((f) => ({ ...f, fromCurrency: v }))}
                   disabled={editing}
+                  kind="all"
                   compact
                 />
               </div>
@@ -268,6 +269,7 @@ function RateFormDialog({
                   value={formData.toCurrency}
                   onValueChange={(v) => setFormData((f) => ({ ...f, toCurrency: v }))}
                   disabled={editing}
+                  kind="all"
                   compact
                 />
               </div>

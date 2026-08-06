@@ -422,7 +422,7 @@ export function AddAccountDialog({
                 <CurrencySelector
                   value={currency}
                   onValueChange={setCurrency}
-                  includeCrypto
+                  kind={accType === 'Crypto' ? 'crypto' : 'fiat'}
                   data-testid="account-currency-select"
                 />
               </div>
