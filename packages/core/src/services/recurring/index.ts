@@ -1,6 +1,7 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { getRow, allRows, run } from '../../database/sql.js';
-import { asMilli, convertAtRate, ZERO_MILLI } from '../../money/index.js';
+import { asMilli, ZERO_MILLI } from '../../money/index.js';
+import { convertScaled } from '../../currencies/index.js';
 import { ValidationError, NotFoundError } from '../../types/index.js';
 import { safeParseJSON } from '../../utils/json.js';
 import { getLocalDateString, getUTCDateString } from '../../utils/date.js';
@@ -809,7 +810,9 @@ export class RecurringTransactionService {
         transactionDate,
         template.budgetId
       );
-      destinationAmount = convertAtRate(template.amount, rate || 1);
+      destinationAmount = asMilli(
+        convertScaled(template.amount, rate || 1, source.Currency, destination.Currency)
+      );
     }
 
     const transferId = generateTransferId();

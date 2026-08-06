@@ -1,19 +1,34 @@
 import type { ServiceManager } from '../service-manager.js';
 import { allRows } from '../../database/sql.js';
 import { MONEY_COLUMNS_BY_TABLE } from '../../database/money-columns.js';
+import { FIAT_SCALE, getCurrencyScale } from '../../currencies/index.js';
 
-/** CSV speaks decimal currency: convert integer-milliunit columns back. */
-function milliColumnsToDecimal(
+/** Native-side columns are stored at the account currency's scale; everything
+ * else is budget-currency milliunits. */
+const NATIVE_COLUMNS = new Set([
+  'BalanceNative',
+  'InflowNative',
+  'OutflowNative',
+  'RunningBalanceNative',
+]);
+
+/** CSV speaks decimal currency: convert integer scaled columns back.
+ * `scaleForRow` supplies the storage scale of a row's native columns. */
+function moneyColumnsToDecimal(
   rows: Record<string, unknown>[],
-  table: string
+  table: string,
+  scaleForRow?: (row: Record<string, unknown>) => number
 ): Record<string, unknown>[] {
   const moneyCols = MONEY_COLUMNS_BY_TABLE[table];
   if (!moneyCols || rows.length === 0) return rows;
   return rows.map((row) => {
     const out = { ...row };
+    const nativeScale = scaleForRow ? scaleForRow(row) : FIAT_SCALE;
     for (const col of moneyCols) {
       const v = out[col];
-      if (typeof v === 'number') out[col] = v / 1000;
+      if (typeof v === 'number') {
+        out[col] = v / (NATIVE_COLUMNS.has(col) ? nativeScale : FIAT_SCALE);
+      }
     }
     return out;
   });
@@ -83,7 +98,14 @@ export class DatabaseExportService implements ExportService {
       csvFiles['budgets.csv'] = arrayToCSV(budgets as unknown as Record<string, unknown>[]);
 
       const accounts = allRows<Record<string, unknown>>(db, 'SELECT * FROM accounts ORDER BY id');
-      csvFiles['accounts.csv'] = arrayToCSV(milliColumnsToDecimal(accounts, 'accounts'));
+      csvFiles['accounts.csv'] = arrayToCSV(
+        moneyColumnsToDecimal(accounts, 'accounts', (row) =>
+          getCurrencyScale(String(row.Currency ?? ''))
+        )
+      );
+      const accountScaleById = new Map<unknown, number>(
+        accounts.map((row) => [row.ID, getCurrencyScale(String(row.Currency ?? ''))])
+      );
 
       const categories = allRows<Record<string, unknown>>(
         db,
@@ -102,19 +124,23 @@ export class DatabaseExportService implements ExportService {
         'SELECT * FROM transactions ORDER BY id'
       );
       csvFiles['transactions.csv'] = arrayToCSV(
-        milliColumnsToDecimal(transactions, 'transactions')
+        moneyColumnsToDecimal(
+          transactions,
+          'transactions',
+          (row) => accountScaleById.get(row.AccountID) ?? FIAT_SCALE
+        )
       );
 
       const assignments = allRows<Record<string, unknown>>(
         db,
         'SELECT * FROM assignments ORDER BY id'
       );
-      csvFiles['assignments.csv'] = arrayToCSV(milliColumnsToDecimal(assignments, 'assignments'));
+      csvFiles['assignments.csv'] = arrayToCSV(moneyColumnsToDecimal(assignments, 'assignments'));
 
       const goals = services.goals.getAllGoals();
 
       csvFiles['goals.csv'] = arrayToCSV(
-        milliColumnsToDecimal(goals as unknown as Record<string, unknown>[], 'goals')
+        moneyColumnsToDecimal(goals as unknown as Record<string, unknown>[], 'goals')
       );
 
       return csvFiles;

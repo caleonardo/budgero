@@ -19,7 +19,8 @@ import {
 } from './category-helpers.js';
 
 import { createLogger } from '../../logger.js';
-import { asMilli, convertAtRate, ZERO_MILLI, type MilliUnits } from '../../money/index.js';
+import { asMilli, ZERO_MILLI, type MilliUnits } from '../../money/index.js';
+import { convertScaled } from '../../currencies/index.js';
 import { getLocalDateString } from '../../utils/date.js';
 
 export type {
@@ -128,8 +129,12 @@ export class TransactionService {
       }
 
       resolvedExchangeRate = rate;
-      inflowConverted = convertAtRate(inflowOriginal, rate || 1);
-      outflowConverted = convertAtRate(outflowOriginal, rate || 1);
+      inflowConverted = asMilli(
+        convertScaled(inflowOriginal, rate || 1, account.Currency, budget.DisplayCurrency)
+      );
+      outflowConverted = asMilli(
+        convertScaled(outflowOriginal, rate || 1, account.Currency, budget.DisplayCurrency)
+      );
     }
 
     // Capture whether we need to mark this row pending (manual/adjacent/1:1)
@@ -990,8 +995,22 @@ export class TransactionService {
         // so syncing the other leg doesn't silently overwrite the user's rate. ExchangeRate is
         // account→budget, so original = converted / rate. (ExchangeRate/ExchangeRateOverride are
         // left untouched by updateTransactionWithOriginal, keeping the leg self-consistent.)
-        pInflowOriginal = convertAtRate(pInflowConverted, 1 / partner.ExchangeRate);
-        pOutflowOriginal = convertAtRate(pOutflowConverted, 1 / partner.ExchangeRate);
+        pInflowOriginal = asMilli(
+          convertScaled(
+            pInflowConverted,
+            1 / partner.ExchangeRate,
+            budget.DisplayCurrency,
+            partnerAcc.Currency
+          )
+        );
+        pOutflowOriginal = asMilli(
+          convertScaled(
+            pOutflowConverted,
+            1 / partner.ExchangeRate,
+            budget.DisplayCurrency,
+            partnerAcc.Currency
+          )
+        );
       } else {
         pInflowOriginal = await this.currencyService.convertAmount(
           pInflowConverted,
@@ -1137,8 +1156,12 @@ export class TransactionService {
         // Back-calculate original amounts (inverse conversion) and store the
         // exchange rate on the transaction
         if (rate) {
-          inflowOriginal = convertAtRate(inflow, 1 / rate);
-          outflowOriginal = convertAtRate(outflow, 1 / rate);
+          inflowOriginal = asMilli(
+            convertScaled(inflow, 1 / rate, budget.DisplayCurrency, account.Currency)
+          );
+          outflowOriginal = asMilli(
+            convertScaled(outflow, 1 / rate, budget.DisplayCurrency, account.Currency)
+          );
           this.queries.setExchangeRate(transactionId, rate, false);
         }
       } else {
@@ -1320,6 +1343,11 @@ export class TransactionService {
         this.queries.setExchangeRate(transactionId, newRate, true);
 
         const tx = this.getTransactionByID(transactionId);
+        const { account: rateAccount, budget: rateBudget } = this.queries.getAccountAndBudget(
+          tx.AccountID
+        );
+        const accountCurrency = rateAccount?.Currency ?? rateBudget?.DisplayCurrency ?? '';
+        const budgetCurrency = rateBudget?.DisplayCurrency ?? accountCurrency;
 
         if (tx.TransferID) {
           // Transfer leg: the budget-currency (converted) amount is the anchor — it is the
@@ -1330,12 +1358,12 @@ export class TransactionService {
           // original amount the user actually received.)
           const inflowConverted = tx.InflowConverted ?? 0;
           const outflowConverted = tx.OutflowConverted ?? 0;
-          // money / rate -> round back to integer milliunits before storing
+          // money / rate -> round back to integer storage units before storing
           const newInflowOriginal = newRate
-            ? Math.round(inflowConverted / newRate)
+            ? convertScaled(inflowConverted, 1 / newRate, budgetCurrency, accountCurrency)
             : inflowConverted;
           const newOutflowOriginal = newRate
-            ? Math.round(outflowConverted / newRate)
+            ? convertScaled(outflowConverted, 1 / newRate, budgetCurrency, accountCurrency)
             : outflowConverted;
 
           run(
@@ -1352,8 +1380,8 @@ export class TransactionService {
           // overriding the rate re-derives the budget-currency converted amount.
           const inflowOrig = tx.InflowNative ?? tx.InflowConverted ?? 0;
           const outflowOrig = tx.OutflowNative ?? tx.OutflowConverted ?? 0;
-          const newInflow = Math.round(inflowOrig * newRate);
-          const newOutflow = Math.round(outflowOrig * newRate);
+          const newInflow = convertScaled(inflowOrig, newRate, accountCurrency, budgetCurrency);
+          const newOutflow = convertScaled(outflowOrig, newRate, accountCurrency, budgetCurrency);
 
           run(
             this.db,

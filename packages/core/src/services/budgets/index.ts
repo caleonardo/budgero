@@ -2,6 +2,7 @@ import { DatabaseAdapter } from '../../database/interface.js';
 import { run } from '../../database/sql.js';
 import { Budget, CreateBudgetRequest } from './types.js';
 import { ValidationError, NotFoundError } from '../../types/index.js';
+import { isCryptoCurrency } from '../../currencies/index.js';
 import { BudgetQueries } from './queries.js';
 import { CurrencyService } from '../currency/index.js';
 
@@ -84,6 +85,12 @@ export class BudgetService {
    * Handles currency change by clearing all converted amounts
    */
   async updateBudgetCurrency(id: number, currency: string): Promise<void> {
+    if (isCryptoCurrency(currency)) {
+      throw new ValidationError(
+        'The budget display currency must be a fiat currency; crypto is supported on accounts',
+        'display_currency'
+      );
+    }
     // Get the current budget to check old currency
     const budget = this.queries.getBudget(id);
     if (!budget) {
@@ -222,6 +229,12 @@ export class BudgetService {
 
     if (!display_currency || display_currency.trim() === '') {
       throw new ValidationError('Display currency cannot be empty', 'display_currency');
+    }
+    if (isCryptoCurrency(display_currency)) {
+      throw new ValidationError(
+        'The budget display currency must be a fiat currency; crypto is supported on accounts',
+        'display_currency'
+      );
     }
 
     if (!badge_icon || badge_icon.trim() === '') {

@@ -1,5 +1,6 @@
 import { DatabaseAdapter } from '../../database/index.js';
-import { convertAtRate, type MilliUnits } from '../../money/index.js';
+import { asMilli, type MilliUnits } from '../../money/index.js';
+import { convertScaled } from '../../currencies/index.js';
 import { CustomCurrencyRate } from './types.js';
 import { TransactionQueries } from '../transactions/queries.js';
 import { CurrencyQueries } from './queries.js';
@@ -292,7 +293,7 @@ export class CurrencyService {
     }
 
     const resolved = await this.resolveRate(fromCurrency, toCurrency, rateDate, budgetId);
-    if (resolved) return convertAtRate(amount, resolved);
+    if (resolved) return asMilli(convertScaled(amount, resolved, fromCurrency, toCurrency));
 
     debugLog(`No exchange rate found for ${fromCurrency} to ${toCurrency} on ${rateDate}`, {
       level: 'warn',
@@ -447,8 +448,18 @@ export class CurrencyService {
         custom ?? (await this.getOrFetchRate(tx.Currency, displayCurrency, tx.Date, budgetId));
       if (!official) continue;
 
-      const inflowConverted = Math.round((tx.InflowNative || 0) * official);
-      const outflowConverted = Math.round((tx.OutflowNative || 0) * official);
+      const inflowConverted = convertScaled(
+        tx.InflowNative || 0,
+        official,
+        tx.Currency,
+        displayCurrency
+      );
+      const outflowConverted = convertScaled(
+        tx.OutflowNative || 0,
+        official,
+        tx.Currency,
+        displayCurrency
+      );
       run(
         this.db,
         `
@@ -613,8 +624,18 @@ export class CurrencyService {
       if (!rate) continue;
 
       // money x rate -> round back to integer milliunits before storing
-      const inflowConverted = Math.round((tx.InflowNative || 0) * rate);
-      const outflowConverted = Math.round((tx.OutflowNative || 0) * rate);
+      const inflowConverted = convertScaled(
+        tx.InflowNative || 0,
+        rate,
+        accountCurrency,
+        displayCurrency
+      );
+      const outflowConverted = convertScaled(
+        tx.OutflowNative || 0,
+        rate,
+        accountCurrency,
+        displayCurrency
+      );
 
       run(
         this.db,
@@ -708,7 +729,7 @@ export class CurrencyService {
           budgetId
         );
         if (!rate) continue;
-        const newAmount = Math.round(row.amount * rate);
+        const newAmount = convertScaled(row.amount, rate, oldCurrency, newCurrency);
         run(
           this.db,
           `UPDATE assignments SET Amount = ? WHERE CategoryID = ? AND Month = ?`,
@@ -740,7 +761,7 @@ export class CurrencyService {
       const goalsRate = rateForGoals || 1;
 
       for (const row of goals) {
-        const newTarget = Math.round(row.target * goalsRate);
+        const newTarget = convertScaled(row.target, goalsRate, oldCurrency, newCurrency);
         run(this.db, `UPDATE goals SET Target = ? WHERE ID = ?`, newTarget, row.id);
       }
     } catch (error) {
@@ -819,8 +840,8 @@ export class CurrencyService {
                 return row?.OutflowConverted || 0;
               })();
 
-        const inflowNew = Math.round(baseInflow * effectiveRate);
-        const outflowNew = Math.round(baseOutflow * effectiveRate);
+        const inflowNew = convertScaled(baseInflow, effectiveRate, oldCurrency, newCurrency);
+        const outflowNew = convertScaled(baseOutflow, effectiveRate, oldCurrency, newCurrency);
         runningBalanceOriginal += inflowNew - outflowNew;
 
         run(
@@ -928,8 +949,18 @@ export class CurrencyService {
       const rate = await this.getOrFetchRate(accountCurrency, budgetCurrency, tx.date, budgetId);
 
       if (rate) {
-        const inflowConverted = Math.round(tx.inflow_original * rate);
-        const outflowConverted = Math.round(tx.outflow_original * rate);
+        const inflowConverted = convertScaled(
+          tx.inflow_original,
+          rate,
+          accountCurrency,
+          budgetCurrency
+        );
+        const outflowConverted = convertScaled(
+          tx.outflow_original,
+          rate,
+          accountCurrency,
+          budgetCurrency
+        );
         runningBalanceConverted += inflowConverted - outflowConverted;
 
         // Only update ExchangeRate for non-overridden transactions

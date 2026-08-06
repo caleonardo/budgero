@@ -3,6 +3,7 @@
 
 // Money (integer milliunits — platform-agnostic)
 export * from './money/index.js';
+export * from './currencies/index.js';
 
 // Database abstractions (web-only)
 export type {

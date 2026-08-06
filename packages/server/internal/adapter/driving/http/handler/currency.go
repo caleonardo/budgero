@@ -2,12 +2,17 @@ package handler
 
 import (
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
+
+// currencyCodePattern bounds what gets forwarded upstream: short uppercase
+// alphanumeric tickers (fiat ISO codes and crypto symbols alike).
+var currencyCodePattern = regexp.MustCompile(`^[A-Z0-9]{2,10}$`)
 
 // GetExchangeRates proxies and caches daily exchange rates.
 // Query params:
@@ -42,10 +47,16 @@ func (h *Handlers) GetExchangeRates(c echo.Context) error {
 		date = today.Format("2006-01-02")
 	}
 
+	if !currencyCodePattern.MatchString(base) {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "invalid base currency code",
+		})
+	}
+
 	symbols := make([]string, 0)
 	for _, s := range strings.Split(symbolsParam, ",") {
 		s = strings.TrimSpace(strings.ToUpper(s))
-		if s != "" && s != base {
+		if s != "" && s != base && currencyCodePattern.MatchString(s) {
 			symbols = append(symbols, s)
 		}
 	}
