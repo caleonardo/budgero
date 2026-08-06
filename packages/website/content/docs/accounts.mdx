@@ -83,9 +83,9 @@ Any account can be denominated in any of 168 currencies, independent of your [bu
 Rates resolve in a defined order:
 
 1. **Custom rates** you've pinned to a date range — useful when you moved money at a known rate.
-2. **Fetched rates** — Budgero retrieves month-averaged rates automatically.
+2. **Fetched rates** — Budgero retrieves daily rates automatically.
 3. **Manual rates** you've entered — these also make multi-currency work fully offline and on self-hosted setups without a rate API.
-4. **Adjacent month fallback** when nothing else covers the date.
+4. **Nearest recent rate** — the closest earlier day's rate (up to a week back) when the exact day isn't cached.
 
 You can also override the rate on any individual transaction — the right tool when your card's actual settlement rate differs from the market average and you want the converted amount to match your statement to the cent.
 

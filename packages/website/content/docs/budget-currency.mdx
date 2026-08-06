@@ -5,8 +5,8 @@ section: getting-started
 topicId: budget-currency
 takeaways:
   - Know what the budget currency controls across Ready to Assign, dashboards, and reports.
-  - Understand how Budgero converts multi-currency accounts using monthly exchange rates and manual fallbacks.
-  - Change the budget currency confidently and learn how the recalculation behaves in cloud and desktop builds.
+  - Understand how Budgero converts multi-currency accounts using daily exchange rates and manual fallbacks.
+  - Change the budget currency confidently and learn how the recalculation behaves.
 ---
 
 Your budget currency is the single unit Budgero uses for totals, insights, and Ready to Assign. Even if your money lives in accounts across currencies, Budgero converts everything back to this anchor so every decision happens in one language.
@@ -27,8 +27,8 @@ Your budget currency is the single unit Budgero uses for totals, insights, and R
 
 Budgero lets each account keep its native currency. When transactions post, Budgero stores both the original amount and a converted amount in the budget currency:
 
-- Budgero pulls official exchange rates per month and caches them for the budget. If you already fetched the rate for a currency pair, it reuses the stored figure.
-- When a fresh rate is needed, Budgero fetches it from the exchange-rate service and stores it. If you're offline and no cached rate exists, you can supply a manual rate so the conversion can proceed; that manual rate is replaced automatically the next time Budgero fetches the official rate.
+- Budgero pulls official exchange rates daily and caches them in the budget file. How long the cache is kept is configurable in Settings → Currencies (30 days by default) — older rates are pruned to keep the budget file small and refetched on demand.
+- When a fresh rate is needed, Budgero fetches it from the exchange-rate service and stores it. If you're offline and no cached rate exists, you can supply a manual rate so the conversion can proceed; that manual rate is replaced automatically once you reconnect, unless you turn the "update offline rates" option off — and rates you pin on a transaction are never touched.
 - Converted balances update automatically when you edit a transaction, reconcile an account, or import history so Ready to Assign and reports stay accurate.
 
 ## Changing the budget currency later
@@ -42,10 +42,10 @@ Expect large histories to take a moment while conversions refresh. You can keep 
 ## Offline and manual exchange rates
 
 - Heading offline? Enter manual exchange rates so Budgero can keep conversions accurate without a network call. Budgero stores both the rate and its reciprocal for easy re-use.
-- When you reconnect, Budgero replaces manual conversions with official rates automatically unless you choose to keep your manual entries.
-- If a rate is missing, Budgero searches up to three months on either side for a known value before falling back to the original amount. This keeps reports moving even when a provider is delayed.
+- When you reconnect, Budgero replaces offline conversions with official rates automatically — an opt-in that is on by default and can be changed in Settings → Currencies or right in the offline rate prompt.
+- If the exact day is not cached, Budgero uses the nearest earlier rate up to a week back. Beyond that it asks you for a rate, prefilled with the closest cached one.
 
 ## Troubleshooting
 
-- **Converted totals look off:** Check that the month-specific exchange rate exists. Reopen the account or refresh the dashboard to prompt Budgero to fetch or recalculate the rate.
+- **Converted totals look off:** Check that a rate exists for the transaction date. Reopen the account or refresh the dashboard to prompt Budgero to fetch or recalculate the rate.
 - **Assignments changed after switching currencies:** Budgero multiplies assignments and goal targets by the new currency rate so their purchasing power stays intact. Adjust categories manually if you want to lock in a different number.
