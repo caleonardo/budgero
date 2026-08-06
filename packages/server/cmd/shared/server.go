@@ -86,6 +86,26 @@ func Run(selfHost bool) {
 	e.HidePort = true
 
 	e.Use(middleware.Recover())
+	// Log failed API requests: 4xx/5xx are invisible otherwise, which has
+	// hidden silent client-side failures (e.g. backup recording) for weeks.
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogStatus: true,
+		LogMethod: true,
+		LogURI:    true,
+		LogError:  true,
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			if v.Status < 400 {
+				return nil
+			}
+			log.Warn().
+				Int("status", v.Status).
+				Str("method", v.Method).
+				Str("uri", v.URI).
+				Err(v.Error).
+				Msg("request failed")
+			return nil
+		},
+	}))
 	e.Use(
 		middleware.GzipWithConfig(middleware.GzipConfig{
 			Skipper: func(c echo.Context) bool {

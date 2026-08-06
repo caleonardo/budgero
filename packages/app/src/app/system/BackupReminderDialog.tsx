@@ -73,6 +73,11 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
         recordedOnServer = true;
       } catch (recordError) {
         console.warn('Failed to record backup timestamp', recordError);
+        // Surface it: a silently failing record means this reminder returns
+        // on every launch even though the user diligently backs up.
+        toast.warning('Backup saved, but recording it on the server failed', {
+          description: getErrorMessage(recordError, 'The reminder may reappear until this works.'),
+        });
       }
       if (!recordedOnServer) {
         queryClient.setQueryData<User | undefined>(['profile'], (prev) => {
