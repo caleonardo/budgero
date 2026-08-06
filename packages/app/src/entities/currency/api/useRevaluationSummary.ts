@@ -6,6 +6,13 @@ export interface RevaluationSummary {
   lastDate: string | null;
 }
 
+export interface RevaluationHistoryRow {
+  Date: string;
+  OldRate: number | null;
+  NewRate: number;
+  DeltaConverted: number;
+}
+
 /**
  * Journaled rate true-up impact for a foreign-currency account: how much of
  * its converted balance comes from market moves rather than transactions.
@@ -15,5 +22,23 @@ export function useRevaluationSummary(accountId: number) {
     key: ['revaluationSummary', accountId],
     enabled: Boolean(accountId),
     queryFn: (services) => services.currency.getRevaluationSummary(accountId),
+  });
+}
+
+/** Daily revaluation rows for an account (last 90 days, oldest first). */
+export function useRevaluationHistory(accountId: number) {
+  return useSpaceQuery<RevaluationHistoryRow[]>({
+    key: ['revaluationSummary', accountId, 'history'],
+    enabled: Boolean(accountId),
+    queryFn: (services) => services.currency.getRevaluationHistory(accountId),
+  });
+}
+
+/** Total market-change delta included in Ready to Assign (on-budget accounts). */
+export function useBudgetRevaluationTotal(budgetId: number | undefined) {
+  return useSpaceQuery<number>({
+    key: ['revaluationSummary', 'budgetTotal', budgetId ?? 0],
+    enabled: Boolean(budgetId),
+    queryFn: (services) => services.currency.getBudgetRevaluationTotal(budgetId!),
   });
 }

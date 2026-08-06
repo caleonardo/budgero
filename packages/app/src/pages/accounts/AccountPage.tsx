@@ -28,6 +28,7 @@ import { getErrorMessage } from '@shared/lib/errors';
 import { CenteredLoader } from '@shared/ui/CenteredLoader';
 import { toast } from 'sonner';
 
+import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { useAccountDateRange } from './hooks/useAccountDateRange';
 import { useAccountMetrics, normalizeToDate } from './hooks/useAccountMetrics';
 import { useJumpToTransaction } from './hooks/useJumpToTransaction';
@@ -42,6 +43,7 @@ import {
 } from './account-page.utils';
 import { AccountHeader } from './components/AccountHeader';
 import { FlowStat } from './components/FlowStat';
+import { ValueChangeStat } from './components/ValueChangeStat';
 import { AccountSummaryCards } from './components/AccountSummaryCards';
 import { AccountDateRangeControls } from './components/AccountDateRangeControls';
 import { AccountTransactionsSection } from './components/AccountTransactionsSection';
@@ -398,19 +400,24 @@ export default function AccountPage() {
               color="destructive"
               size="sm"
             />
-            {revaluationSummary && revaluationSummary.total !== 0 && (
-              <>
-                <div className="w-px h-6 bg-border" />
-                <FlowStat
-                  icon={revaluationSummary.last30Days >= 0 ? ArrowUpRight : ArrowDownRight}
-                  label="Value change (30d)"
-                  value={formatBudgetMilliAmount(revaluationSummary.last30Days)}
-                  color={revaluationSummary.last30Days >= 0 ? 'success' : 'destructive'}
-                  size="sm"
-                  tooltip="How much this account's value in your budget currency moved with exchange rates over the last 30 days. The account's own balance is unchanged — only what it's worth."
-                />
-              </>
-            )}
+            {revaluationSummary &&
+              revaluationSummary.total !== 0 &&
+              selectedAccount &&
+              selectedBudget && (
+                <>
+                  <div className="w-px h-6 bg-border" />
+                  <ValueChangeStat
+                    accountId={selectedAccount.ID}
+                    summary={revaluationSummary}
+                    onBudget={Boolean(selectedAccount.OnBudget)}
+                    formatBudgetMilliAmount={formatBudgetMilliAmount}
+                    formatRate={formatExchangeRate}
+                    accountCurrency={selectedAccount.Currency}
+                    budgetCurrency={selectedBudget.DisplayCurrency}
+                    size="sm"
+                  />
+                </>
+              )}
           </div>
 
           {displayLiabilityInfo && (

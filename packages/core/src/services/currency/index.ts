@@ -484,6 +484,43 @@ export class CurrencyService {
     return revalued;
   }
 
+  /** Daily revaluation rows for an account, oldest first (default last 90 days). */
+  getRevaluationHistory(
+    accountId: number,
+    days = 90
+  ): { Date: string; OldRate: number | null; NewRate: number; DeltaConverted: number }[] {
+    const cutoff = CurrencyService.addDays(getLocalDateString(), -days);
+    return allRows(
+      this.db,
+      `
+      SELECT Date, OldRate, NewRate, DeltaConverted
+      FROM account_revaluations
+      WHERE AccountID = ? AND Date >= ?
+      ORDER BY Date ASC
+    `,
+      accountId,
+      cutoff
+    );
+  }
+
+  /**
+   * Total journaled revaluation delta feeding Ready to Assign (on-budget
+   * accounts only) — the same term the RTA query adds.
+   */
+  getBudgetRevaluationTotal(budgetId: number): number {
+    const row = getRow<{ Total: number }>(
+      this.db,
+      `
+      SELECT IFNULL(SUM(r.DeltaConverted), 0) AS Total
+      FROM account_revaluations r
+      INNER JOIN accounts a ON r.AccountID = a.ID
+      WHERE r.BudgetID = ? AND a.OnBudget = TRUE
+    `,
+      budgetId
+    );
+    return row?.Total ?? 0;
+  }
+
   /** Aggregate revaluation impact for an account (all-time and last 30 days). */
   getRevaluationSummary(accountId: number): {
     total: number;

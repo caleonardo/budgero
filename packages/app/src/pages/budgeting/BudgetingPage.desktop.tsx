@@ -334,6 +334,7 @@ export function BudgetingPageDesktop() {
                   <div className="flex items-center gap-1">
                     <p className="text-xs text-muted-foreground">Ready to Assign</p>
                     <ReadyToAssignHelpPopover
+                      budgetId={budgetId}
                       triggerClassName="h-5 w-5 text-muted-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                       side="top"
                       align="center"

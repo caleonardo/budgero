@@ -200,7 +200,10 @@ export function BudgetToolbar({
                   <span className="text-[10px] font-medium uppercase tracking-[0.08em] leading-none text-muted-foreground">
                     Ready to assign
                   </span>
-                  <ReadyToAssignHelpPopover triggerClassName="h-3.5 w-3.5 text-muted-foreground/60" />
+                  <ReadyToAssignHelpPopover
+                    budgetId={budgetId}
+                    triggerClassName="h-3.5 w-3.5 text-muted-foreground/60"
+                  />
                 </div>
                 <AnimatedNumber
                   value={readyToAssign}
