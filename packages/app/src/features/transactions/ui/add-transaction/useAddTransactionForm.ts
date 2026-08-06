@@ -15,7 +15,7 @@ import { useUiStore } from '@shared/store/useUiStore';
 import { useCategories } from '@entities/category/api/useCategories';
 import { useUpsertSplits } from '@entities/transaction/api/useTransactions';
 import { useActiveAccounts } from '@entities/account/api/useActiveAccounts';
-import { roundMilli } from '@shared/lib/currency/round-amount';
+import { asMilli, convertScaled } from '@budgero/core/browser';
 import { useAutofillIntegration } from './useAutofillIntegration';
 
 import type { SplitLine } from '../form';
@@ -254,8 +254,14 @@ export function useAddTransactionForm({
           currentDate,
           selectedBudget.ID
         );
-        // money × rate leaves float milli-space; round back to exact milliunits
-        setConvertedAmount(rate ? roundMilli(form.amount * rate) : null);
+        // money × rate crosses storage scales (crypto is sat-scale); convertScaled rounds back
+        setConvertedAmount(
+          rate
+            ? asMilli(
+                convertScaled(form.amount, rate, selectedAccount.Currency, toAccount.Currency)
+              )
+            : null
+        );
         setResolvedRate(rate);
       } catch (error) {
         console.error('Failed to get exchange rate:', error);
@@ -349,8 +355,10 @@ export function useAddTransactionForm({
                 selectedBudget.ID
               );
               if (rate) {
-                // money × rate → round back to exact integer milliunits
-                inflowAmount = roundMilli(amt * rate);
+                // money × rate crosses storage scales (crypto is sat-scale)
+                inflowAmount = asMilli(
+                  convertScaled(amt, rate, fromAccount.Currency, toAcc.Currency)
+                );
               }
             }
 

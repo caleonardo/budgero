@@ -335,3 +335,32 @@ export const currencies: CurrencyOption[] = [
   { value: 'WST', label: 'Samoan Tala (WST)', countryCode: 'WS', region: 'Oceania' },
   { value: 'XPF', label: 'CFP Franc (XPF)', countryCode: 'PF', region: 'Oceania' }, // French Polynesia
 ];
+
+/** Curated crypto set — mirrors the core currency registry (scale 1e8). */
+export const cryptoCurrencies: CurrencyOption[] = [
+  { value: 'BTC', label: 'Bitcoin (BTC)', countryCode: '', region: 'Crypto' },
+  { value: 'ETH', label: 'Ethereum (ETH)', countryCode: '', region: 'Crypto' },
+  { value: 'USDT', label: 'Tether (USDT)', countryCode: '', region: 'Crypto' },
+  { value: 'USDC', label: 'USD Coin (USDC)', countryCode: '', region: 'Crypto' },
+  { value: 'BNB', label: 'BNB (BNB)', countryCode: '', region: 'Crypto' },
+  { value: 'XRP', label: 'XRP (XRP)', countryCode: '', region: 'Crypto' },
+  { value: 'SOL', label: 'Solana (SOL)', countryCode: '', region: 'Crypto' },
+  { value: 'ADA', label: 'Cardano (ADA)', countryCode: '', region: 'Crypto' },
+  { value: 'DOGE', label: 'Dogecoin (DOGE)', countryCode: '', region: 'Crypto' },
+  { value: 'TRX', label: 'TRON (TRX)', countryCode: '', region: 'Crypto' },
+  { value: 'DOT', label: 'Polkadot (DOT)', countryCode: '', region: 'Crypto' },
+  { value: 'LTC', label: 'Litecoin (LTC)', countryCode: '', region: 'Crypto' },
+  { value: 'AVAX', label: 'Avalanche (AVAX)', countryCode: '', region: 'Crypto' },
+  { value: 'LINK', label: 'Chainlink (LINK)', countryCode: '', region: 'Crypto' },
+  { value: 'XLM', label: 'Stellar (XLM)', countryCode: '', region: 'Crypto' },
+  { value: 'XMR', label: 'Monero (XMR)', countryCode: '', region: 'Crypto' },
+  { value: 'ATOM', label: 'Cosmos (ATOM)', countryCode: '', region: 'Crypto' },
+  { value: 'UNI', label: 'Uniswap (UNI)', countryCode: '', region: 'Crypto' },
+  { value: 'BCH', label: 'Bitcoin Cash (BCH)', countryCode: '', region: 'Crypto' },
+  { value: 'ETC', label: 'Ethereum Classic (ETC)', countryCode: '', region: 'Crypto' },
+  { value: 'FIL', label: 'Filecoin (FIL)', countryCode: '', region: 'Crypto' },
+  { value: 'NEAR', label: 'NEAR Protocol (NEAR)', countryCode: '', region: 'Crypto' },
+  { value: 'ARB', label: 'Arbitrum (ARB)', countryCode: '', region: 'Crypto' },
+  { value: 'OP', label: 'Optimism (OP)', countryCode: '', region: 'Crypto' },
+  { value: 'DAI', label: 'Dai (DAI)', countryCode: '', region: 'Crypto' },
+];

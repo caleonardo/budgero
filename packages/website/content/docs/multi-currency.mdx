@@ -1,6 +1,6 @@
 ---
 title: Multi-Currency
-summary: Hold accounts in 168 currencies inside one budget. Learn how conversion works, where rates come from, and how to override them when reality disagrees.
+summary: Hold accounts in over 120 fiat currencies — or crypto — inside one budget. Learn how conversion works, where rates come from, and how to override them when reality disagrees.
 section: accounts-and-imports
 topicId: multi-currency
 takeaways:
@@ -96,3 +96,12 @@ Manual rates are standing rates you enter yourself, used when fetched rates aren
 ## What conversion never touches
 
 A principle worth knowing: rates affect how foreign amounts are *expressed*, never what *happened*. Original amounts are immutable facts; converted amounts are interpretations that improve as your rate data does. Deleting a custom rate doesn't corrupt history — it just sends those transactions back down the hierarchy to the next applicable rate.
+
+## Crypto accounts
+
+Accounts can also be denominated in cryptocurrency — Bitcoin, Ethereum, and about two dozen other major coins. A few things work differently from fiat:
+
+- **Sat-level precision.** Crypto amounts are stored to eight decimal places, so 0.00000001 BTC is representable. Fiat precision is unchanged.
+- **Tracking-only by default.** New crypto accounts start off-budget: their value counts toward net worth, but daily market swings don't move Ready to Assign. Flip the account on-budget if you *want* your budget to breathe with the market.
+- **Daily revaluation.** Each day the account's converted balance is trued up to its native balance times the latest rate, and the change is journaled. Your transactions keep the rate from the day they happened — spending reports never rewrite history — while balances always reflect today's market.
+- **No 1:1 fallback.** A fiat transaction with no known rate falls back to a temporary 1:1 conversion and fixes itself later; for crypto that would be catastrophic, so Budgero refuses to record the transaction until a rate is available (add a manual rate or reconnect).

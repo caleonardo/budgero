@@ -50,6 +50,7 @@ export enum AccountTypeEnum {
   REAL_ESTATE = 'Real Estate',
   OTHER_ASSET = 'Other Asset',
   INVESTMENT = 'Investment',
+  CRYPTO = 'Crypto',
   RETIREMENT = 'Retirement',
 }
 
@@ -80,6 +81,7 @@ export const DEFAULT_OFF_BUDGET_ACCOUNT_TYPES: readonly AccountTypeEnum[] = [
   AccountTypeEnum.OTHER_ASSET,
   AccountTypeEnum.INVESTMENT,
   AccountTypeEnum.RETIREMENT,
+  AccountTypeEnum.CRYPTO,
 ];
 
 const LIABILITY_TYPE_SET = new Set(LIABILITY_ACCOUNT_TYPES.map(normalizeAccountType));

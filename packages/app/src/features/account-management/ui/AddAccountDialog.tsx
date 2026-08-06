@@ -71,12 +71,24 @@ export function AddAccountDialog({
   // Create a formatter that uses the selected account currency but respects global locale settings
   const accountCurrencyFormatter = React.useMemo(() => {
     const resolvedOptions = globalLocalizer.resolvedOptions();
-    return new Intl.NumberFormat(resolvedOptions.locale, {
-      style: 'currency',
-      currency,
-      minimumFractionDigits: resolvedOptions.minimumFractionDigits,
-      maximumFractionDigits: resolvedOptions.maximumFractionDigits,
-    });
+    try {
+      return new Intl.NumberFormat(resolvedOptions.locale, {
+        style: 'currency',
+        currency,
+        minimumFractionDigits: resolvedOptions.minimumFractionDigits,
+        maximumFractionDigits: resolvedOptions.maximumFractionDigits,
+      });
+    } catch {
+      // Non-ISO codes (crypto tickers) — plain decimals with a code suffix.
+      const base = new Intl.NumberFormat(resolvedOptions.locale, {
+        maximumFractionDigits: 8,
+      });
+      return {
+        format: (value: number) => `${base.format(value)} ${currency.toUpperCase()}`,
+        resolvedOptions: () => base.resolvedOptions(),
+        formatToParts: (value?: number) => base.formatToParts(value ?? 0),
+      } as Intl.NumberFormat;
+    }
   }, [globalLocalizer, currency]);
 
   // Plain number formatter for non-currency fields (respects locale decimal/grouping)
@@ -402,6 +414,7 @@ export function AddAccountDialog({
                 <CurrencySelector
                   value={currency}
                   onValueChange={setCurrency}
+                  includeCrypto
                   data-testid="account-currency-select"
                 />
               </div>
@@ -422,6 +435,7 @@ export function AddAccountDialog({
                   <CalculatorCell
                     value={balance}
                     onCommit={setBalance}
+                    currencyCode={currency}
                     formatter={accountCurrencyFormatter.format}
                     localizer={accountCurrencyFormatter}
                     inputAlign="left"

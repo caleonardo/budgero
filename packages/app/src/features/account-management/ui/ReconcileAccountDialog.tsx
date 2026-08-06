@@ -208,6 +208,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
             <CalculatorCell
               value={actualBalance ?? ZERO_MILLI}
               onCommit={setActualBalance}
+              currencyCode={account.Currency}
               onValueChange={setLiveBalance}
               onEditingChange={setIsEditingBalance}
               formatter={accountLocalizer.format}

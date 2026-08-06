@@ -65,6 +65,7 @@ export function AmountInput({
             key={nonce}
             autoFocus
             value={value ?? ZERO_MILLI}
+            currencyCode={currencyCode}
             zeroAsEmpty
             focusSignal={focusSignal}
             onCommit={handleCommit}

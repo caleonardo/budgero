@@ -5,7 +5,13 @@
 //   that need more precision (exchange rates, percentages).
 
 import { useEffect, useMemo } from 'react';
-import { fromDecimal, toDecimal, type MilliUnits } from '@budgero/core/browser';
+import {
+  fromDecimal,
+  getCurrencyScale,
+  MILLIS_PER_UNIT,
+  toDecimal,
+  type MilliUnits,
+} from '@budgero/core/browser';
 import { cn } from '@shared/lib/utils';
 import { useCalculatorState } from './useCalculatorState';
 import { CalculatorDisplay } from './CalculatorDisplay';
@@ -185,26 +191,71 @@ export interface CalculatorCellProps
   value: MilliUnits;
   onCommit: (value: MilliUnits) => void;
   onValueChange?: (value: MilliUnits | null) => void;
+  /** Currency of the stored amount. Crypto codes store at sat scale (1e8)
+   * instead of milliunits, so decimal↔stored conversion follows the
+   * registry scale. Omit for budget-currency (milliunit) amounts. */
+  currencyCode?: string;
 }
 
-/** The MilliUnits-contract cell every stored amount uses. */
-export function CalculatorCell({ value, onCommit, onValueChange, ...rest }: CalculatorCellProps) {
-  const commitMilli = useMemo(
-    () => (decimal: number) => onCommit(fromDecimal(decimal)),
-    [onCommit]
+/** The scaled-integer-contract cell every stored amount uses. */
+export function CalculatorCell({
+  value,
+  onCommit,
+  onValueChange,
+  currencyCode,
+  commitPrecision,
+  formatter,
+  localizer,
+  ...rest
+}: CalculatorCellProps) {
+  const scale = currencyCode ? getCurrencyScale(currencyCode) : MILLIS_PER_UNIT;
+  const isMilli = scale === MILLIS_PER_UNIT;
+
+  // Crypto cells format their own true-decimal display: store-level localizers
+  // follow the milliunit convention and would double-scale here.
+  const cryptoDisplay = useMemo(() => {
+    if (isMilli || !currencyCode) return null;
+    const base = new Intl.NumberFormat(undefined, { maximumFractionDigits: 8 });
+    const code = currencyCode.toUpperCase();
+    const format = (v: number) => `${base.format(v)} ${code}`;
+    return {
+      formatter: format,
+      localizer: {
+        format,
+        resolvedOptions: () => base.resolvedOptions(),
+        formatToParts: (v?: number) => base.formatToParts(v ?? 0),
+      } as Intl.NumberFormat,
+    };
+  }, [isMilli, currencyCode]);
+  const commitScaled = useMemo(
+    () =>
+      isMilli
+        ? (decimal: number) => onCommit(fromDecimal(decimal))
+        : (decimal: number) => onCommit(Math.round(decimal * scale) as MilliUnits),
+    [onCommit, isMilli, scale]
   );
-  const liveMilli = useMemo(
+  const liveScaled = useMemo(
     () =>
       onValueChange
-        ? (decimal: number | null) => onValueChange(decimal == null ? null : fromDecimal(decimal))
+        ? (decimal: number | null) =>
+            onValueChange(
+              decimal == null
+                ? null
+                : isMilli
+                  ? fromDecimal(decimal)
+                  : (Math.round(decimal * scale) as MilliUnits)
+            )
         : undefined,
-    [onValueChange]
+    [onValueChange, isMilli, scale]
   );
   return (
     <CalculatorCellDecimal
-      value={toDecimal(value)}
-      onCommit={commitMilli}
-      onValueChange={liveMilli}
+      value={isMilli ? toDecimal(value) : value / scale}
+      onCommit={commitScaled}
+      onValueChange={liveScaled}
+      commitPrecision={commitPrecision ?? (isMilli ? undefined : 8)}
+      formatter={cryptoDisplay?.formatter ?? formatter}
+      localizer={cryptoDisplay?.localizer ?? localizer}
       {...rest}
     />
   );

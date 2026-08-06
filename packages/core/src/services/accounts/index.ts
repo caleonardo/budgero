@@ -8,6 +8,7 @@ import {
   isLiabilityAccountType,
 } from './types.js';
 import { AccountQueries } from './queries.js';
+import { isCryptoCurrency } from '../../currencies/index.js';
 import { TransactionService } from '../transactions/index.js';
 import { ensureCategoryGroup, ensureCategoryWithGroup } from '../transactions/category-helpers.js';
 import { CurrencyService } from '../currency/index.js';
@@ -60,7 +61,9 @@ export class AccountService {
     // Determine default on_budget value based on account type if not explicitly set
     let isOnBudget = onBudget;
     if (isOnBudget === undefined) {
-      isOnBudget = defaultOnBudgetForType(accType);
+      // Crypto holdings default to tracking-only regardless of account type:
+      // market volatility should not jitter Ready to Assign unless opted in.
+      isOnBudget = isCryptoCurrency(currency) ? false : defaultOnBudgetForType(accType);
     }
 
     // Create the account with 0 balance first (the initial balance will be added via transaction)

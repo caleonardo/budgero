@@ -42,7 +42,6 @@ const CRYPTO_CURRENCIES: Readonly<Record<string, string>> = {
   DOGE: 'Dogecoin',
   TRX: 'TRON',
   DOT: 'Polkadot',
-  POL: 'Polygon',
   LTC: 'Litecoin',
   AVAX: 'Avalanche',
   LINK: 'Chainlink',
@@ -108,6 +107,16 @@ export function getCurrencyScale(code: string): number {
 
 export function listCryptoCurrencies(): CurrencyInfo[] {
   return Object.keys(CRYPTO_CURRENCIES).map((code) => getCurrencyInfo(code));
+}
+
+/** Integer storage units → decimal major units for a currency. */
+export function scaledToDecimal(amount: number, code: string): number {
+  return amount / getCurrencyScale(code);
+}
+
+/** Decimal major units → integer storage units for a currency. */
+export function decimalToScaled(value: number, code: string): number {
+  return Math.round(value * getCurrencyScale(code));
 }
 
 /** Convert an integer amount between two currencies' storage scales:

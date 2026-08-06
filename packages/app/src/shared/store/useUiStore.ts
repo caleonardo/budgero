@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { getFormatOptionFromLabel } from '@shared/lib/number-format';
 import type { Account, Budget, Category } from '@budgero/core/browser';
+import { getCurrencyInfo, isCryptoCurrency, MILLIS_PER_UNIT } from '@budgero/core/browser';
 import { DateRange } from 'react-day-picker';
 import { subDays } from 'date-fns';
 import { persistUserPreferencesPatch } from '@shared/lib/user-preferences-sync';
@@ -11,13 +12,55 @@ function buildCurrencyLocalizer(currency: string, number_format: string): Intl.N
   if (!settings) {
     return null;
   }
-  return Intl.NumberFormat(settings.locale, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: settings.fractionDigits,
-    maximumFractionDigits: settings.fractionDigits,
-    useGrouping: settings.useGrouping,
+  if (isCryptoCurrency(currency)) {
+    return buildCryptoLocalizer(currency, settings.locale, settings.useGrouping);
+  }
+  try {
+    return Intl.NumberFormat(settings.locale, {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: settings.fractionDigits,
+      maximumFractionDigits: settings.fractionDigits,
+      useGrouping: settings.useGrouping,
+    });
+  } catch {
+    // Non-ISO code Intl refuses: plain decimal formatting with a code suffix.
+    const base = Intl.NumberFormat(settings.locale, {
+      minimumFractionDigits: settings.fractionDigits,
+      maximumFractionDigits: settings.fractionDigits,
+      useGrouping: settings.useGrouping,
+    });
+    return {
+      format: (value: number) => `${base.format(value)} ${currency.toUpperCase()}`,
+      resolvedOptions: () => base.resolvedOptions(),
+      formatToParts: (value?: number) => base.formatToParts(value ?? 0),
+    } as Intl.NumberFormat;
+  }
+}
+
+/**
+ * Crypto amounts are stored at sat scale (1e8/unit) but every display path
+ * divides stored integers by 1000 (the milliunit convention) before calling
+ * the localizer. This localizer absorbs the residual scale factor so all existing
+ * native-amount call sites render crypto correctly without changes.
+ */
+function buildCryptoLocalizer(
+  currency: string,
+  locale: string,
+  useGrouping: boolean
+): Intl.NumberFormat {
+  const info = getCurrencyInfo(currency);
+  const residualScale = info.scale / MILLIS_PER_UNIT;
+  const base = Intl.NumberFormat(locale, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: info.displayDecimals,
+    useGrouping,
   });
+  return {
+    format: (value: number) => `${base.format(value / residualScale)} ${info.code}`,
+    resolvedOptions: () => base.resolvedOptions(),
+    formatToParts: (value?: number) => base.formatToParts((value ?? 0) / residualScale),
+  } as Intl.NumberFormat;
 }
 
 export type RangeOption = 'last-30' | 'last-month' | 'last-60' | 'last-90' | 'ytd' | 'custom';

@@ -11,11 +11,30 @@ import {
 import { Label } from '@shared/ui/label';
 import { Button } from '@shared/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@shared/ui/tooltip';
-import { Check, ChevronsUpDown, Info } from 'lucide-react';
+import { Bitcoin, Check, ChevronsUpDown, Info } from 'lucide-react';
 import { CountryFlag } from '@shared/ui/country-flag';
 import { cn } from '@shared/lib/utils';
 import { useConnectivity } from '@shared/hooks/useConnectivity';
-import { currencies, type CurrencyOption } from '@features/currencies/model/currency-data';
+import {
+  currencies,
+  cryptoCurrencies,
+  type CurrencyOption,
+} from '@features/currencies/model/currency-data';
+
+/** Flag for fiat entries; a coin glyph for crypto (no country to show). */
+function CurrencyGlyph({ countryCode, className }: { countryCode: string; className?: string }) {
+  if (!countryCode) {
+    return <Bitcoin className={cn('h-[1.2em] w-[1.2em] text-muted-foreground', className)} />;
+  }
+  return (
+    <CountryFlag
+      countryCode={countryCode}
+      svg
+      style={{ width: '1.5em', height: '1.5em' }}
+      className={className}
+    />
+  );
+}
 
 interface CurrencySelectorProps {
   value: string;
@@ -23,6 +42,9 @@ interface CurrencySelectorProps {
   label?: React.ReactNode;
   disabled?: boolean;
   compact?: boolean;
+  /** Offer the crypto group. Account pickers enable this; the budget display
+   * currency stays fiat-only. */
+  includeCrypto?: boolean;
   'data-testid'?: string;
 }
 
@@ -32,6 +54,7 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
   label,
   disabled = false,
   compact = false,
+  includeCrypto = false,
   'data-testid': testId,
 }) => {
   const [open, setOpen] = useState(false);
@@ -43,7 +66,8 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
   const groupedCurrencies = useMemo(() => {
     const groups = new Map<string, CurrencyOption[]>();
 
-    currencies.forEach((currency) => {
+    const options = includeCrypto ? [...cryptoCurrencies, ...currencies] : currencies;
+    options.forEach((currency) => {
       if (!groups.has(currency.region)) {
         groups.set(currency.region, []);
       }
@@ -54,9 +78,13 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     });
 
     return Array.from(groups.entries());
-  }, []);
+  }, [includeCrypto]);
 
-  const selectedCurrency = currencies.find((cur) => cur.value === value);
+  // Search both lists so an existing crypto account renders its code even in
+  // pickers that don't offer crypto.
+  const selectedCurrency =
+    currencies.find((cur) => cur.value === value) ??
+    cryptoCurrencies.find((cur) => cur.value === value);
 
   return (
     <div className="flex flex-col space-y-1">
@@ -93,11 +121,7 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
           >
             {selectedCurrency ? (
               <div className="flex items-center">
-                <CountryFlag
-                  countryCode={selectedCurrency.countryCode}
-                  svg
-                  style={{ width: '1.5em', height: '1.5em' }}
-                />
+                <CurrencyGlyph countryCode={selectedCurrency.countryCode} />
                 <span className="ml-2">
                   {compact ? selectedCurrency.value : selectedCurrency.label}
                 </span>
@@ -136,12 +160,7 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                           value === currency.value ? 'opacity-100' : 'opacity-0'
                         )}
                       />
-                      <CountryFlag
-                        countryCode={currency.countryCode}
-                        svg
-                        style={{ width: '1.5em', height: '1.5em' }}
-                        className="mr-2"
-                      />
+                      <CurrencyGlyph countryCode={currency.countryCode} className="mr-2" />
                       <span className="truncate">{compact ? currency.value : currency.label}</span>
                     </CommandItem>
                   ))}

@@ -9,6 +9,7 @@ import {
   Package,
   TrendingUp,
   Briefcase,
+  Bitcoin,
   type LucideIcon,
 } from 'lucide-react';
 import { AccountTypeEnum } from '@budgero/core/browser';
@@ -106,6 +107,14 @@ export const ACCOUNT_TYPES: Record<AccountTypeEnum, AccountTypeDefinition> = {
     color: 'var(--color-account-retirement)',
     icon: Briefcase,
     description: '401(k), IRA, pension, and other retirement accounts',
+  },
+  [AccountTypeEnum.CRYPTO]: {
+    name: 'Crypto',
+    category: 'asset',
+    budgetType: 'flexible',
+    color: 'var(--color-account-investment)',
+    icon: Bitcoin,
+    description: 'Wallets and exchange balances held in cryptocurrency',
   },
 };
 

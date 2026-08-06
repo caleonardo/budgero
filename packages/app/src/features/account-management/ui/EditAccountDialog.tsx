@@ -412,7 +412,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
               )}
 
               {/* Currency display */}
-              <CurrencySelector value={currency} onValueChange={setCurrency} />
+              <CurrencySelector value={currency} onValueChange={setCurrency} includeCrypto />
               {isLiability && (
                 <div className="rounded-md bg-muted/20 border border-border/50 p-2 text-[11px] text-muted-foreground">
                   Paid So Far should be edited via transactions (inflows). Here you can adjust
