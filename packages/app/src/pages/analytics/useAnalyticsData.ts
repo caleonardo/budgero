@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useUiStore } from '@shared/store/useUiStore';
-import { useAllTransactionsDetailed } from '@entities/transaction/api/queries';
+import { useAllTransactionsAnalytics } from '@entities/transaction/api/queries';
 import { useAccounts } from '@entities/account/api/useAccounts';
 import { useCategories, useCategoryGroups } from '@entities/category/api/useCategories';
 import { useLabels } from '@entities/label/api/useLabels';
@@ -31,7 +31,7 @@ export interface AnalyticsData {
 
 export function useAnalyticsData(filters: AnalyticsFilters): AnalyticsData {
   const budgetId = useUiStore((state) => state.selectedBudget?.ID || 0);
-  const { data: rawTxns, isLoading: txnsLoading } = useAllTransactionsDetailed(budgetId);
+  const { data: rawTxns, isLoading: txnsLoading } = useAllTransactionsAnalytics(budgetId);
   const { data: rawAccounts, isLoading: accountsLoading } = useAccounts(budgetId);
   const { data: rawCategories } = useCategories(budgetId);
   const { data: rawGroups } = useCategoryGroups(budgetId);

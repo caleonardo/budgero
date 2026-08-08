@@ -145,3 +145,15 @@ export function useAllTransactionsDetailed(budgetId: number) {
     queryFn: (services) => services.transactions.getAllTransactionsDetailed(budgetId),
   });
 }
+
+/**
+ * Budget-wide transactions with split parents expanded into their split lines.
+ * For aggregation (analytics); registers want useAllTransactionsDetailed.
+ */
+export function useAllTransactionsAnalytics(budgetId: number) {
+  return useSpaceQuery<GetTransactionsByAccountRow[]>({
+    key: ['allTransactionsAnalytics', budgetId],
+    enabled: Boolean(budgetId),
+    queryFn: (services) => services.transactions.getAllTransactionsAnalytics(budgetId),
+  });
+}

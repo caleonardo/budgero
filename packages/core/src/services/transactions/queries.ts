@@ -207,6 +207,83 @@ export class TransactionQueries {
   }
 
   /**
+   * GetAllTransactionsAnalytics - Budget-wide rows with split parents expanded
+   * into their split lines (category and amounts from the split; date, account,
+   * payee, and label from the parent). Transfer split lines carry the same
+   * synthetic TransferID as their mirror rows so both sides read as a transfer.
+   * For aggregation views — registers keep getAllTransactionsDetailed.
+   */
+  getAllTransactionsAnalytics(budgetId: number): GetTransactionsByAccountRow[] {
+    return allRows<GetTransactionsByAccountRow>(
+      this.db,
+      `
+      SELECT
+        t.ID as ID,
+        t.Date as Date,
+        s.CategoryID,
+        c.Name as Category,
+        t.LabelID,
+        l.Name as Label,
+        l.Color as LabelColor,
+        COALESCE(s.Memo, t.Memo) as Memo,
+        t.Payee,
+        t.Reconciled,
+        s.InflowConverted,
+        s.OutflowConverted,
+        s.InflowNative,
+        s.OutflowNative,
+        NULL as RunningBalanceConverted,
+        NULL as RunningBalanceNative,
+        t.ExchangeRate,
+        t.ExchangeRateOverride,
+        CASE WHEN s.TransferAccountID IS NOT NULL
+             THEN 'split_transfer_' || t.ID || '_' || t.Date
+             ELSE t.TransferID END as TransferID,
+        t.AccountID,
+        a.Name as Account
+      FROM transaction_splits s
+      JOIN transactions t ON t.ID = s.TransactionID
+      LEFT JOIN categories c ON s.CategoryID = c.ID
+      LEFT JOIN labels l ON t.LabelID = l.ID
+      LEFT JOIN accounts a ON t.AccountID = a.ID
+      WHERE t.BudgetID = ?
+      UNION ALL
+      SELECT
+        t.ID as ID,
+        t.Date as Date,
+        t.CategoryID,
+        c.Name as Category,
+        t.LabelID,
+        l.Name as Label,
+        l.Color as LabelColor,
+        t.Memo,
+        t.Payee,
+        t.Reconciled,
+        t.InflowConverted,
+        t.OutflowConverted,
+        t.InflowNative,
+        t.OutflowNative,
+        t.RunningBalanceConverted,
+        t.RunningBalanceNative,
+        t.ExchangeRate,
+        t.ExchangeRateOverride,
+        t.TransferID,
+        t.AccountID,
+        a.Name as Account
+      FROM transactions t
+      LEFT JOIN categories c ON t.CategoryID = c.ID
+      LEFT JOIN labels l ON t.LabelID = l.ID
+      LEFT JOIN accounts a ON t.AccountID = a.ID
+      WHERE t.BudgetID = ?
+      ${NO_SPLITS_FILTER}
+      ORDER BY Date DESC, ID DESC
+    `,
+      budgetId,
+      budgetId
+    );
+  }
+
+  /**
    * GetTransactionsByAccount - Gets transactions for a specific account with category names
    * SQL: Complex JOIN with categories and category_groups
    */

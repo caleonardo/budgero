@@ -512,6 +512,14 @@ export class TransactionService {
   }
 
   /**
+   * GetAllTransactionsAnalytics - Budget-wide rows with split parents expanded
+   * into their split lines; for aggregation views, not registers
+   */
+  getAllTransactionsAnalytics(budgetId: number): GetTransactionsByAccountRow[] {
+    return this.queries.getAllTransactionsAnalytics(budgetId);
+  }
+
+  /**
    * GetTransactionsByAccount - Gets transactions for a specific account
    */
   getTransactionsByAccount(accountId: number): GetTransactionsByAccountRow[] {

@@ -177,6 +177,7 @@ export const TRANSACTION_INVALIDATION_KEYS: string[][] = [
   ['transactionsByCategoryAndMonth', '*'],
   ['allTransactions', '*'],
   ['allTransactionsDetailed', '*'],
+  ['allTransactionsAnalytics', '*'],
   ['uncategorizedTransactions', '*'],
   ['allAccountsMonthlyTransactions', '*'],
   ['monthlyTransactions', '*'],

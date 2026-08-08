@@ -36,6 +36,7 @@ export function RateResync() {
           await queryClient.invalidateQueries({ queryKey: ['transactions'] });
           await queryClient.invalidateQueries({ queryKey: ['allTransactions'] });
           await queryClient.invalidateQueries({ queryKey: ['allTransactionsDetailed'] });
+          await queryClient.invalidateQueries({ queryKey: ['allTransactionsAnalytics'] });
           await queryClient.invalidateQueries({ queryKey: ['accounts'] });
           await queryClient.invalidateQueries({ queryKey: ['monthlyBudget'] });
           await queryClient.invalidateQueries({ queryKey: ['readyToAssign'] });

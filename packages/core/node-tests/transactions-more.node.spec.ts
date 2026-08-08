@@ -310,6 +310,89 @@ describe('Transactions (additional coverage)', () => {
     expect(mirrors.c).toBe(1);
   });
 
+  it('getAllTransactionsAnalytics expands split parents into split lines', async () => {
+    const adapter: DatabaseAdapter = await NodeSqlJsAdapter.create();
+    const sm = new ServiceManager();
+    await sm.initialize(adapter);
+    const services: Services = sm.getServices();
+
+    const budgetId = await services.budgets.createBudget({
+      name: 'SA',
+      display_currency: 'USD',
+      badge_icon: 'dollar',
+      number_format: '123,456.78',
+      create_default_categories: true,
+    });
+
+    const acc1 = await services.accounts.createAccount('One', budgetId, 'checking', 'USD', 0);
+    const acc2 = await services.accounts.createAccount('Two', budgetId, 'checking', 'USD', 0);
+    const allCats = services.categories.getAllCategories(budgetId);
+    const cat = allCats.find((c: Category) => c.Name !== 'Income')!.ID;
+
+    const today = '2024-02-05';
+    const parentId = await services.transactions.addTransaction(
+      0,
+      100,
+      acc1.ID,
+      cat,
+      budgetId,
+      today,
+      'Parent'
+    );
+    const plainId = await services.transactions.addTransaction(
+      0,
+      25,
+      acc1.ID,
+      cat,
+      budgetId,
+      today,
+      'Plain'
+    );
+
+    await services.splits.upsertSplits(parentId, [
+      {
+        CategoryID: cat,
+        Memo: 'part-cat',
+        InflowConverted: 0,
+        OutflowConverted: 40,
+        OrderIndex: 0,
+      },
+      {
+        TransferAccountID: acc2.ID,
+        Memo: 'part-tr',
+        InflowConverted: 0,
+        OutflowConverted: 60,
+        OrderIndex: 1,
+      },
+    ]);
+
+    const rows = services.transactions.getAllTransactionsAnalytics(budgetId);
+
+    // Parent replaced by its two split lines — never a 'Split' pseudo-row
+    expect(rows.some((r) => r.Category === 'Split')).toBe(false);
+    const parentRows = rows.filter((r) => r.ID === parentId);
+    expect(parentRows).toHaveLength(2);
+
+    const catLeg = parentRows.find((r) => r.CategoryID === cat)!;
+    expect(catLeg.OutflowConverted).toBe(40);
+    expect(catLeg.Account).toBe('One');
+
+    const transferLeg = parentRows.find((r) => r.CategoryID == null)!;
+    expect(transferLeg.OutflowConverted).toBe(60);
+    expect(transferLeg.TransferID).toBe(`split_transfer_${parentId}_${today}`);
+
+    // Plain transactions come through unchanged
+    const plainRows = rows.filter((r) => r.ID === plainId);
+    expect(plainRows).toHaveLength(1);
+    expect(plainRows[0].OutflowConverted).toBe(25);
+
+    // Expansion preserves the budget-wide net (splits sum to parents)
+    const detailed = services.transactions.getAllTransactionsDetailed(budgetId);
+    const net = (list: { InflowConverted: number; OutflowConverted: number }[]) =>
+      list.reduce((sum, r) => sum + r.InflowConverted - r.OutflowConverted, 0);
+    expect(net(rows)).toBe(net(detailed));
+  });
+
   it('gets transactions by category and month', async () => {
     const adapter: DatabaseAdapter = await NodeSqlJsAdapter.create();
     const sm = new ServiceManager();

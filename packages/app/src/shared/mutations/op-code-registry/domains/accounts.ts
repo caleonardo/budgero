@@ -137,6 +137,7 @@ export const accountOps = {
       ['transactions'],
       ['allTransactions', '*'], // For useAllTransactions hook
       ['allTransactionsDetailed', '*'], // For useAllTransactionsDetailed hook
+      ['allTransactionsAnalytics', '*'], // For useAllTransactionsAnalytics hook
       ['uncategorizedTransactions', '*'], // For uncategorized badges
       ['allAccountsMonthlyTransactions', '*'], // For all accounts monthly transactions
       ['accounts'],

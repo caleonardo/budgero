@@ -23,6 +23,7 @@ const INVALIDATED_KEYS = [
   ['transactions'],
   ['allTransactions'],
   ['allTransactionsDetailed'],
+  ['allTransactionsAnalytics'],
   ['accounts'],
   ['monthlyBudget'],
   ['readyToAssign'],
