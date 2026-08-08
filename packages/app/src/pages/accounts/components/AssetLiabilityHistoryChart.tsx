@@ -23,6 +23,7 @@ interface AssetLiabilityHistoryChartProps {
 const SERIES_LABELS = {
   cash: 'Cash',
   investments: 'Investments',
+  crypto: 'Crypto',
   retirement: 'Retirement',
   realEstate: 'Real Estate',
   otherAssets: 'Other Assets',
@@ -36,6 +37,7 @@ type SeriesKey = keyof typeof SERIES_LABELS;
 const SERIES_ORDER: SeriesKey[] = [
   'cash',
   'investments',
+  'crypto',
   'retirement',
   'realEstate',
   'otherAssets',
@@ -60,6 +62,7 @@ export function AssetLiabilityHistoryChart({
       retirement: palette.series[2],
       realEstate: palette.series[3],
       otherAssets: palette.series[4],
+      crypto: palette.series[6],
       loans: palette.series[5],
       credit: palette.flow.negative,
     }),
@@ -74,6 +77,7 @@ export function AssetLiabilityHistoryChart({
       label: point.label,
       cash: toDecimal(asMilli(point.cash)),
       investments: toDecimal(asMilli(point.investments)),
+      crypto: toDecimal(asMilli(point.crypto)),
       retirement: toDecimal(asMilli(point.retirement)),
       realEstate: toDecimal(asMilli(point.realEstate)),
       otherAssets: toDecimal(asMilli(point.otherAssets)),

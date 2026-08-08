@@ -12,6 +12,7 @@ export interface MonthlyAssetPoint {
   // Assets
   cash: number;
   investments: number;
+  crypto: number;
   retirement: number;
   realEstate: number;
   otherAssets: number;
@@ -34,7 +35,7 @@ const ACCOUNT_TYPE_CATEGORY: Record<string, string> = {
   'Real Estate': 'realEstate',
   'Other Asset': 'otherAssets',
   Investment: 'investments',
-  Crypto: 'investments',
+  Crypto: 'crypto',
   Retirement: 'retirement',
 };
 
@@ -81,6 +82,7 @@ export function useMonthlyAssetHistory(budgetId: number, months = 24) {
       const categoryTotals: Record<string, number> = {
         cash: 0,
         investments: 0,
+        crypto: 0,
         retirement: 0,
         realEstate: 0,
         otherAssets: 0,
@@ -103,6 +105,7 @@ export function useMonthlyAssetHistory(budgetId: number, months = 24) {
       const totalAssets =
         categoryTotals.cash +
         categoryTotals.investments +
+        categoryTotals.crypto +
         categoryTotals.retirement +
         categoryTotals.realEstate +
         categoryTotals.otherAssets;
@@ -114,6 +117,7 @@ export function useMonthlyAssetHistory(budgetId: number, months = 24) {
         label: monthLabel,
         cash: categoryTotals.cash,
         investments: categoryTotals.investments,
+        crypto: categoryTotals.crypto,
         retirement: categoryTotals.retirement,
         realEstate: categoryTotals.realEstate,
         otherAssets: categoryTotals.otherAssets,

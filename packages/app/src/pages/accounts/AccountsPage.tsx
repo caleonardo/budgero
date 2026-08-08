@@ -34,6 +34,7 @@ const CHART_COLORS = {
   cash: 'var(--color-chart-1)',
   credit: 'var(--color-chart-2)',
   investments: 'var(--color-account-investment)',
+  crypto: 'var(--color-chart-3)',
   retirement: 'var(--color-account-retirement)',
   loans: 'var(--color-chart-4)',
   realEstate: 'var(--color-account-real-estate)',
@@ -52,6 +53,7 @@ export default function AccountsPage() {
     cash: true,
     credit: true,
     investments: true,
+    crypto: true,
     retirement: true,
     loans: true,
     realEstate: true,
@@ -146,7 +148,8 @@ export default function AccountsPage() {
         loans: accounts.filter((a) => ['Loan', 'Mortgage'].includes(a.Type || '')),
         realEstate: accounts.filter((a) => a.Type === 'Real Estate'),
         otherAssets: accounts.filter((a) => a.Type === 'Other Asset'),
-        investments: accounts.filter((a) => a.Type === 'Investment' || a.Type === 'Crypto'),
+        investments: accounts.filter((a) => a.Type === 'Investment'),
+        crypto: accounts.filter((a) => a.Type === 'Crypto'),
         retirement: accounts.filter((a) => a.Type === 'Retirement'),
       };
 
@@ -191,6 +194,7 @@ export default function AccountsPage() {
         realEstate: calculateGroupTrend(groups.realEstate, false),
         otherAssets: calculateGroupTrend(groups.otherAssets, false),
         investments: calculateGroupTrend(groups.investments, false),
+        crypto: calculateGroupTrend(groups.crypto, false),
         retirement: calculateGroupTrend(groups.retirement, false),
       };
 
@@ -221,6 +225,7 @@ export default function AccountsPage() {
       realEstate: accountGroups.realEstate.filter(matchesQuery),
       otherAssets: accountGroups.otherAssets.filter(matchesQuery),
       investments: accountGroups.investments.filter(matchesQuery),
+      crypto: accountGroups.crypto.filter(matchesQuery),
       retirement: accountGroups.retirement.filter(matchesQuery),
     };
   }, [accountGroups, isSearching, matchesQuery]);
@@ -353,6 +358,18 @@ export default function AccountsPage() {
               periodLabel={periodLabel}
               periodMonths={periodMonths}
               chartColor={CHART_COLORS.investments}
+              formatCurrency={formatCurrency}
+            />
+
+            <AccountGroupSection
+              title="Crypto"
+              accounts={filteredGroups.crypto}
+              isOpen={isSearching || openSections.crypto}
+              onToggle={() => toggleSection('crypto')}
+              trend={groupTrends.crypto}
+              periodLabel={periodLabel}
+              periodMonths={periodMonths}
+              chartColor={CHART_COLORS.crypto}
               formatCurrency={formatCurrency}
             />
 
@@ -506,6 +523,7 @@ function SidebarContent({
 
   const cashTotal = getGroupTotal(accountGroups.cash);
   const investmentsTotal = getGroupTotal(accountGroups.investments);
+  const cryptoTotal = getGroupTotal(accountGroups.crypto);
   const retirementTotal = getGroupTotal(accountGroups.retirement);
   const realEstateTotal = getGroupTotal(accountGroups.realEstate);
   const otherAssetsTotal = getGroupTotal(accountGroups.otherAssets);
@@ -528,6 +546,12 @@ function SidebarContent({
       color: '#22d3ee',
       value: investmentsTotal,
       show: accountGroups.investments.length > 0,
+    },
+    {
+      label: 'Crypto',
+      color: '#f7931a',
+      value: cryptoTotal,
+      show: accountGroups.crypto.length > 0,
     },
     {
       label: 'Retirement',
