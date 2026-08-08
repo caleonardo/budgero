@@ -129,13 +129,7 @@ describe('Transactions (Node/sql.js)', () => {
 
     // Since this is testing we will add a Fixed Rate for EUR to USD
     const EURUSD = 1.2;
-    await services.currency.saveRate(
-      'EUR',
-      'USD',
-      EURUSD,
-      getLocalDateString().slice(0, 7),
-      budgetId
-    );
+    await services.currency.saveRate('EUR', 'USD', EURUSD, today, budgetId);
 
     const account2 = await services.accounts.createAccount(
       'Checking EUR',
