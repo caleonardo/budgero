@@ -12,6 +12,8 @@ export interface AccountSummaryCardsProps {
   displayLiabilityInfo: LiabilityInfo | null;
   balanceAccountToday: number;
   formatter: Intl.NumberFormat;
+  /** Rate-driven value-change stat (foreign-currency accounts only). */
+  valueChangeSlot?: React.ReactNode;
 }
 
 export const AccountSummaryCards = React.memo(function AccountSummaryCards({
@@ -20,6 +22,7 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
   displayLiabilityInfo,
   balanceAccountToday,
   formatter,
+  valueChangeSlot,
 }: AccountSummaryCardsProps) {
   return (
     <div className="space-y-3 mb-4">
@@ -48,6 +51,13 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
           color="destructive"
           tooltip={`Total outflow from recent ${transactionStats.recentCount} transactions`}
         />
+
+        {valueChangeSlot && (
+          <>
+            <div className="w-px h-8 bg-border" />
+            {valueChangeSlot}
+          </>
+        )}
       </div>
 
       {displayLiabilityInfo && (

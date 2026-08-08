@@ -485,6 +485,23 @@ export default function AccountPage() {
             displayLiabilityInfo={displayLiabilityInfo}
             balanceAccountToday={balanceAccountToday}
             formatter={maskedFormatter}
+            valueChangeSlot={
+              revaluationSummary &&
+              revaluationSummary.total !== 0 &&
+              selectedAccount &&
+              selectedBudget ? (
+                <ValueChangeStat
+                  accountId={selectedAccount.ID}
+                  summary={revaluationSummary}
+                  onBudget={Boolean(selectedAccount.OnBudget)}
+                  formatBudgetMilliAmount={formatBudgetMilliAmount}
+                  formatRate={formatExchangeRate}
+                  accountCurrency={selectedAccount.Currency}
+                  budgetCurrency={selectedBudget.DisplayCurrency}
+                  size="md"
+                />
+              ) : null
+            }
           />
         </div>
 
