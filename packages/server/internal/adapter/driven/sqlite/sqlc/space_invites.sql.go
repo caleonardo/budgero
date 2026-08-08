@@ -110,10 +110,12 @@ SELECT
     i.inviter_user_id,
     i.encrypted_bundle,
     i.status,
-    i.expires_at
+    i.expires_at,
+    i.redeemed_at,
+    i.redeemed_by
 FROM budget_space_invites i
 INNER JOIN budget_spaces s ON s.space_id = i.space_id
-WHERE i.invite_secret = ?
+WHERE i.invite_secret = ? AND i.invite_secret != '' AND i.status = 'pending'
 `
 
 type GetSpaceInviteBySecretRow struct {
@@ -124,6 +126,8 @@ type GetSpaceInviteBySecretRow struct {
 	EncryptedBundle sql.NullString `json:"encrypted_bundle"`
 	Status          string         `json:"status"`
 	ExpiresAt       sql.NullTime   `json:"expires_at"`
+	RedeemedAt      sql.NullTime   `json:"redeemed_at"`
+	RedeemedBy      sql.NullString `json:"redeemed_by"`
 }
 
 func (q *Queries) GetSpaceInviteBySecret(ctx context.Context, inviteSecret string) (GetSpaceInviteBySecretRow, error) {
@@ -137,6 +141,8 @@ func (q *Queries) GetSpaceInviteBySecret(ctx context.Context, inviteSecret strin
 		&i.EncryptedBundle,
 		&i.Status,
 		&i.ExpiresAt,
+		&i.RedeemedAt,
+		&i.RedeemedBy,
 	)
 	return i, err
 }

@@ -9,10 +9,12 @@ SELECT
     i.inviter_user_id,
     i.encrypted_bundle,
     i.status,
-    i.expires_at
+    i.expires_at,
+    i.redeemed_at,
+    i.redeemed_by
 FROM budget_space_invites i
 INNER JOIN budget_spaces s ON s.space_id = i.space_id
-WHERE i.invite_secret = ?;
+WHERE i.invite_secret = ? AND i.invite_secret != '' AND i.status = 'pending';
 
 -- name: CreateSpaceInvite :one
 INSERT INTO budget_space_invites (

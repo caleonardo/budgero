@@ -438,6 +438,12 @@ func (r *SpaceRepository) GetInviteBySecret(ctx context.Context, secret string) 
 	if row.ExpiresAt.Valid {
 		invite.ExpiresAt = &row.ExpiresAt.Time
 	}
+	if row.RedeemedAt.Valid {
+		invite.RedeemedAt = &row.RedeemedAt.Time
+	}
+	if row.RedeemedBy.Valid {
+		invite.RedeemedBy = &row.RedeemedBy.String
+	}
 
 	return invite, nil
 }
