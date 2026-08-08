@@ -16,11 +16,56 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.8.0',
+    date: 'August 8, 2026',
+    summary:
+      'Crypto accounts arrive, balances follow daily market rates, and exchange rates now come from an open dataset — no API key, self-hostable.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Crypto accounts',
+        description:
+          'Track 25 cryptocurrencies — Bitcoin, Ethereum, Solana and more — each with its own icon and full 8-decimal precision. Crypto accounts are tracking-only (off-budget) by default so market swings never distort your envelopes, and they get their own Crypto section on the accounts page and in net-worth views.',
+      },
+      {
+        type: 'new',
+        title: 'Balances that follow the market',
+        description:
+          'Accounts held in another currency — fiat or crypto — now revalue daily to market rates, so their balance in your budget currency reflects what they are actually worth. A value-change stat on each account shows the 30-day market impact with a mini chart, and Ready to Assign follows market moves for on-budget accounts.',
+      },
+      {
+        type: 'new',
+        title: 'Daily exchange rates, no API key',
+        description:
+          'Exchange rates now come from an open daily dataset covering ~350 currencies including crypto — no signup, no rate limits, and self-hosters can point at their own mirror. Rates are cached per day with a configurable retention window, and when you are offline you can enter a rate by hand (prefilled with the closest cached one) — it trues up automatically when you reconnect.',
+      },
+      {
+        type: 'new',
+        title: 'Net worth by asset type',
+        description:
+          'The Wealth report gained a By Type view that stacks your net worth into cash, investments, crypto, retirement, real estate, other assets, and debt — so you can see composition at a glance, not just the total.',
+      },
+      {
+        type: 'improved',
+        title: 'Accounts you can tell apart',
+        description:
+          'Every account now carries a type-colored icon — and crypto accounts show their coin — across the sidebar, account lists, and pickers.',
+      },
+      {
+        type: 'fixed',
+        title: 'Backup reminder kept nagging on iPhone',
+        description:
+          'iOS Safari cancels in-flight requests the moment the download sheet appears, so backups were never recorded as done. Backups are now registered before the download starts, and the reminder respects them.',
+      },
+    ],
+  },
+  {
     version: 'v1.7.0',
     date: 'August 4, 2026',
     summary:
       'Budgero goes open source under the AGPL, and pricing gets radically simpler: $4/month or $35/year, tax included, everywhere in the world.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
