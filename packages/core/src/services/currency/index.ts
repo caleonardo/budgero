@@ -521,6 +521,22 @@ export class CurrencyService {
     return row?.Total ?? 0;
   }
 
+  /** All revaluation rows for a budget, oldest first — for history reconstruction. */
+  getBudgetRevaluations(
+    budgetId: number
+  ): { AccountID: number; Date: string; DeltaConverted: number }[] {
+    return allRows(
+      this.db,
+      `
+      SELECT AccountID, Date, DeltaConverted
+      FROM account_revaluations
+      WHERE BudgetID = ?
+      ORDER BY Date ASC
+    `,
+      budgetId
+    );
+  }
+
   /**
    * Discard today's cached rates and refetch official ones from the server,
    * then revalue accounts. Recovers from locally tampered/simulated rates

@@ -34,6 +34,21 @@ export function useRevaluationHistory(accountId: number) {
   });
 }
 
+export interface BudgetRevaluationRow {
+  AccountID: number;
+  Date: string;
+  DeltaConverted: number;
+}
+
+/** All revaluation rows for a budget (oldest first) — for history reconstruction. */
+export function useBudgetRevaluations(budgetId: number) {
+  return useSpaceQuery<BudgetRevaluationRow[]>({
+    key: ['revaluationSummary', 'budgetRows', budgetId],
+    enabled: Boolean(budgetId),
+    queryFn: (services) => services.currency.getBudgetRevaluations(budgetId),
+  });
+}
+
 /** Total market-change delta included in Ready to Assign (on-budget accounts). */
 export function useBudgetRevaluationTotal(budgetId: number | undefined) {
   return useSpaceQuery<number>({
