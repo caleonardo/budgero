@@ -16,11 +16,25 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.8.1',
+    date: 'August 8, 2026',
+    summary: 'Hotfix: custom exchange rates now pin account balances, as they always should have.',
+    isLatest: true,
+    items: [
+      {
+        type: 'fixed',
+        title: 'Custom rates take precedence over market revaluation',
+        description:
+          'If a custom date-range rate covers today, account balances are now pinned to it instead of drifting with daily market rates. Adding, editing, or deleting a custom rate also trues balances up immediately instead of waiting for the next app launch.',
+      },
+    ],
+  },
+  {
     version: 'v1.8.0',
     date: 'August 8, 2026',
     summary:
       'Crypto accounts arrive, balances follow daily market rates, and exchange rates now come from an open dataset — no API key, self-hostable.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
