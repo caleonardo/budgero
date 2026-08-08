@@ -498,6 +498,7 @@ interface SidebarContentProps {
     realEstate: { BalanceConverted?: number; Balance?: number }[];
     otherAssets: { BalanceConverted?: number; Balance?: number }[];
     investments: { BalanceConverted?: number; Balance?: number }[];
+    crypto: { BalanceConverted?: number; Balance?: number }[];
     retirement: { BalanceConverted?: number; Balance?: number }[];
   };
   formatCurrency: (value: number) => string;
