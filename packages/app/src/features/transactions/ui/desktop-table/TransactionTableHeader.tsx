@@ -69,11 +69,11 @@ export const TransactionTableHeader = React.memo(function TransactionTableHeader
           <ResizeHandle column="category" onResize={onResize} />
         </TableHead>
         <TableHead style={{ width: columnWidths.inflow }} className="text-right relative group">
-          InflowConverted
+          Inflow
           <ResizeHandle column="inflow" onResize={onResize} />
         </TableHead>
         <TableHead style={{ width: columnWidths.outflow }} className="text-right relative group">
-          OutflowConverted
+          Outflow
           <ResizeHandle column="outflow" onResize={onResize} />
         </TableHead>
         {showExchangeRateColumn && (
