@@ -84,6 +84,10 @@ func Run(selfHost bool) {
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
+	// Without this, RealIP() returns a raw client-supplied X-Forwarded-For, so
+	// rotating that header hands out a fresh rate-limit bucket per request.
+	// Walks XFF right-to-left and stops at the first non-private hop.
+	e.IPExtractor = echo.ExtractIPFromXFFHeader()
 
 	e.Use(middleware.Recover())
 	// Log failed API requests: 4xx/5xx are invisible otherwise, which has
@@ -140,10 +144,9 @@ func Run(selfHost bool) {
 		IdentifierExtractor: func(ctx echo.Context) (string, error) {
 			return ctx.RealIP(), nil
 		},
-		DenyHandler: func(ctx echo.Context, identifier string, err error) error {
+		DenyHandler: func(ctx echo.Context, _ string, _ error) error {
 			return ctx.JSON(http.StatusTooManyRequests, map[string]any{
-				"message":    "rate limit exceeded",
-				"identifier": identifier,
+				"message": "rate limit exceeded",
 			})
 		},
 	}))
