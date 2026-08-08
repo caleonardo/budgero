@@ -439,8 +439,12 @@ export class CurrencyService {
       // NULL converted balance means the conversion pipeline hasn't run yet.
       if (account.BalanceConverted == null) continue;
 
-      // Official rates only — manual/custom rates don't define market value.
-      const rate = await this.getOrFetchRate(account.Currency, displayCurrency, today, budgetId);
+      // A custom date-range rate pins the conversion — true up to it instead
+      // of the market. Otherwise official rates only; manual offline rates
+      // never drive revaluation.
+      const rate =
+        this.getCustomRate(account.Currency, displayCurrency, today, budgetId) ??
+        (await this.getOrFetchRate(account.Currency, displayCurrency, today, budgetId));
       if (!rate) continue;
 
       const target = convertScaled(account.BalanceNative, rate, account.Currency, displayCurrency);
@@ -717,6 +721,7 @@ export class CurrencyService {
           budgetId
         )
       : 0;
+    await this.revalueAccounts(budgetId);
     return { id, reverseId, recalculated: recalculated + reverseRecalculated };
   }
 
@@ -749,6 +754,7 @@ export class CurrencyService {
       effectiveEnd,
       budgetId
     );
+    await this.revalueAccounts(budgetId);
     return { recalculated };
   }
 
@@ -766,6 +772,7 @@ export class CurrencyService {
       old.EndDate,
       budgetId
     );
+    await this.revalueAccounts(budgetId);
     return { recalculated };
   }
 

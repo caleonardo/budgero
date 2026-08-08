@@ -114,4 +114,35 @@ describe('account revaluations (stock vs flow)', () => {
     // Off-budget: the +$2,000 delta must NOT hit RTA.
     expect(await monthlyBudgets.getReadyToAssign(bId)).toBe(rtaBefore);
   });
+
+  it('custom date-range rate pins revaluation over the market rate', async () => {
+    const { services, bId } = await setup();
+    const { accounts, categories, currency, transactions } = services;
+    const today = getLocalDateString();
+    const pastDate = '2026-01-02'; // before any custom range; flows keep this rate
+
+    await currency.saveRate('EUR', 'USD', 1.0, pastDate, bId);
+    const eur = await accounts.createAccount('EUR', bId, 'checking', 'EUR', 0);
+    const income = categories.getAllCategories(bId).find((c) => c.Name === 'Income');
+    if (!income) throw new Error('income category missing');
+    await transactions.addTransaction(100_000, 0, eur.ID, income.ID, bId, pastDate, 'salary');
+
+    // Market says 1.2 today.
+    await currency.saveRate('EUR', 'USD', 1.2, today, bId);
+    await currency.revalueAccounts(bId);
+    expect(accounts.getAccount(eur.ID)?.BalanceConverted).toBe(120_000);
+
+    // Custom rate 1.5 from today, open-ended — trues the stock up immediately.
+    const { id } = await currency.addCustomRate('EUR', 'USD', 1.5, today, null, bId);
+    expect(accounts.getAccount(eur.ID)?.BalanceConverted).toBe(150_000);
+
+    // Market moves again; the pin must hold.
+    await currency.saveRate('EUR', 'USD', 1.3, today, bId);
+    expect(await currency.revalueAccounts(bId)).toBe(0);
+    expect(accounts.getAccount(eur.ID)?.BalanceConverted).toBe(150_000);
+
+    // Deleting the custom rate reverts the stock to the market rate.
+    await currency.deleteCustomRate(id, bId);
+    expect(accounts.getAccount(eur.ID)?.BalanceConverted).toBe(130_000);
+  });
 });

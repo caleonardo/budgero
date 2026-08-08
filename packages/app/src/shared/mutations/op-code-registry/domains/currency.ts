@@ -3,6 +3,9 @@ import { S, TRANSACTION_INVALIDATION_KEYS, type OpCodeEntry } from '../shared';
 const CURRENCY_INVALIDATION_KEYS: string[][] = [
   ['customCurrencyRates'],
   ['customCurrencyRates', '*'],
+  // Custom-rate changes revalue account balances (pinned-rate true-up).
+  ['revaluationSummary'],
+  ['revaluationSummary', '*'],
   ...TRANSACTION_INVALIDATION_KEYS,
 ];
 

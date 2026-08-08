@@ -515,7 +515,7 @@ export default function CurrencySettingsPage() {
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
         title="Currencies"
-        description="Manage custom exchange rates for your budget. Custom rates take priority over automatically fetched rates for transactions within the specified date range."
+        description="Manage custom exchange rates for your budget. Custom rates take priority over automatically fetched rates for transactions and account balances within the specified date range."
       />
 
       <Card>
@@ -613,7 +613,8 @@ export default function CurrencySettingsPage() {
           <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
             <li>
               <strong className="text-foreground">Custom rates take priority</strong> over
-              automatically fetched rates when a matching date range exists.
+              automatically fetched rates when a matching date range exists. Account balances are
+              pinned to the custom rate too — no daily market revaluation while it's active.
             </li>
             <li>
               <strong className="text-foreground">Retroactive recalculation</strong> — adding or
