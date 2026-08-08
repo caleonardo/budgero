@@ -1,3 +1,4 @@
+import { isCryptoCurrency, scaledToDecimal } from '@budgero/core/browser';
 import { getRuntime } from '@shared/runtime/global';
 
 /** Custom currency rate shape */
@@ -77,6 +78,18 @@ export async function saveManualRate(
     throw new Error('Runtime services not available');
   }
   await services.currency.saveManualRate(fromCurrency, toCurrency, rate, budgetId);
+}
+
+/**
+ * Format a native-scaled amount (fiat milli, crypto sat-scale) as a plain
+ * decimal string, without the currency code.
+ */
+export function formatNativeAmount(amount: number, code: string): string {
+  const decimal = scaledToDecimal(amount, code);
+  if (isCryptoCurrency(code)) {
+    return new Intl.NumberFormat(undefined, { maximumFractionDigits: 8 }).format(decimal);
+  }
+  return decimal.toFixed(2);
 }
 
 /**

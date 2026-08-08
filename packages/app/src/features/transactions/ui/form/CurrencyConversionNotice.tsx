@@ -5,14 +5,13 @@
  */
 
 import { Info, Loader2 } from 'lucide-react';
+import { formatNativeAmount } from '@entities/currency/lib/currency-utils';
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
-import { toDecimal } from '@shared/lib/currency/milli';
-import { roundMilli } from '@shared/lib/currency/round-amount';
 
 interface CurrencyConversionNoticeProps {
-  /** Milliunits. */
+  /** Native scale of `fromCurrency` (fiat milli, crypto sat-scale). */
   amount: number;
-  /** Milliunits. */
+  /** Native scale of `toCurrency` (fiat milli, crypto sat-scale). */
   convertedAmount: number | null;
   isLoadingRate: boolean;
   fromCurrency: string;
@@ -44,8 +43,8 @@ export function CurrencyConversionNotice({
           ) : convertedAmount !== null ? (
             <div className="mt-2 rounded bg-sky-100 dark:bg-sky-900/40 p-2">
               <p className="font-medium text-sky-900 dark:text-sky-100">
-                {toDecimal(roundMilli(amount)).toFixed(2)} {fromCurrency} →{' '}
-                {toDecimal(roundMilli(convertedAmount)).toFixed(2)} {toCurrency}
+                {formatNativeAmount(amount, fromCurrency)} {fromCurrency} →{' '}
+                {formatNativeAmount(convertedAmount, toCurrency)} {toCurrency}
               </p>
               {exchangeRate != null && (
                 <p className="text-xs text-sky-700 dark:text-sky-300 mt-1">

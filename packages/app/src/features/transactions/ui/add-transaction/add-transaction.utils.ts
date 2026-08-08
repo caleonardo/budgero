@@ -6,9 +6,8 @@
 
 import { format } from 'date-fns';
 
+import { formatNativeAmount } from '@entities/currency/lib/currency-utils';
 import type { TransactionType } from '@features/transactions/api/useTransactionForm';
-import { toDecimal } from '@shared/lib/currency/milli';
-import { roundMilli } from '@shared/lib/currency/round-amount';
 
 /**
  * Converts amount to inflow/outflow based on transaction type.
@@ -100,7 +99,8 @@ export function generateTransferId(): string {
 
 /**
  * Formats a transfer memo with currency conversion info if needed.
- * `amount`/`convertedAmount` are milliunits; the memo text shows decimals.
+ * `amount`/`convertedAmount` are in each currency's native scale (fiat milli,
+ * crypto sat-scale); the memo text shows decimals.
  */
 export function formatTransferMemo(params: {
   fromAccountName: string;
@@ -126,7 +126,7 @@ export function formatTransferMemo(params: {
   let transferMemo = `Transfer from ${fromAccountName} to ${toAccountName}${memo ? `: ${memo}` : ''}`;
 
   if (needsConversion) {
-    transferMemo += ` (${toDecimal(roundMilli(amount)).toFixed(2)} ${fromCurrency} → ${toDecimal(roundMilli(convertedAmount)).toFixed(2)} ${toCurrency})`;
+    transferMemo += ` (${formatNativeAmount(amount, fromCurrency)} ${fromCurrency} → ${formatNativeAmount(convertedAmount, toCurrency)} ${toCurrency})`;
   }
 
   return transferMemo;
