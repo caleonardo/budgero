@@ -16,10 +16,42 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.9.0',
+    date: 'August 12, 2026',
+    summary:
+      'Ready to Assign can now work month-by-month like YNAB, and credit-card debt no longer hides in your budget.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Monthly (YNAB-style) Ready to Assign',
+        description:
+          'Choose per budget how Ready to Assign is calculated. Monthly mode counts income through the month you are viewing and pulls last month’s overspending out of this month’s Ready to Assign — overspent categories reset instead of carrying a red balance forever. Cumulative (the original all-time total) stays the default; switch anytime in Settings → Budget Settings, and the Ready to Assign popover shows the full math for whichever mode is active.',
+      },
+      {
+        type: 'new',
+        title: 'Credit-card debt made visible',
+        description:
+          'Overspending on a credit card is now flagged in amber, distinct from cash overspend in red, because it becomes card debt rather than lost cash. Credit Card Payment categories show when they are underfunded against the card balance, and you can click through to see exactly which categories and months created the debt.',
+      },
+      {
+        type: 'fixed',
+        title: 'Split transactions in analytics',
+        description:
+          'Reports and analytics now expand split transactions into their individual lines, so category spending totals include money from splits.',
+      },
+      {
+        type: 'fixed',
+        title: 'Security hardening',
+        description: 'Hardened API rate limiting and workspace-invite handling.',
+      },
+    ],
+  },
+  {
     version: 'v1.8.1',
     date: 'August 8, 2026',
     summary: 'Hotfix: custom exchange rates now pin account balances, as they always should have.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'fixed',
