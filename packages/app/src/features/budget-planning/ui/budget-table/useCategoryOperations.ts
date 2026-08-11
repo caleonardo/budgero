@@ -5,7 +5,6 @@
  */
 
 import { useCallback, useMemo, useState, useRef } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   useCategories,
   useDeleteCategoryGroup,
@@ -27,6 +26,7 @@ import {
 } from '@entities/budget/api/useMonthlyBudget';
 import { useReassignTransactions } from '@entities/transaction/api/useTransactions';
 import { toast } from 'sonner';
+import { useRuntime } from '@shared/runtime/runtime-provider';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useMaskedLocalizer } from '@shared/lib/privacy/useMaskedLocalizer';
 import { asMilli, formatMilli } from '@shared/lib/currency/milli';
@@ -40,7 +40,6 @@ interface UseCategoryOperationsProps {
   budgetId: number;
   selectedBudgetId: number;
   effectiveMonth: string;
-  spaceKey: string;
   globalLocalizer: Intl.NumberFormat;
   transformedRows: BudgetRow[];
   rowsByCategoryId: Map<number, BudgetRow>;
@@ -50,12 +49,11 @@ export function useCategoryOperations({
   budgetId,
   selectedBudgetId,
   effectiveMonth,
-  spaceKey,
   globalLocalizer,
   transformedRows,
   rowsByCategoryId,
 }: UseCategoryOperationsProps) {
-  const queryClient = useQueryClient();
+  const runtime = useRuntime();
   const setHighlightAssignmentCategoryId = useUiStore(
     (state) => state.setHighlightAssignmentCategoryId
   );
@@ -338,12 +336,12 @@ export function useCategoryOperations({
   const handleUpsertAssignment = useCallback(
     async (categoryId: number, value: number) => {
       try {
-        const readyToAssignData = queryClient.getQueryData<number>([
-          'readyToAssign',
-          spaceKey,
-          selectedBudgetId || 0,
-        ]);
-        const readyToAssign = readyToAssignData || 0;
+        // Read the authoritative Ready to Assign for the month being edited.
+        // In monthly mode RTA is month-specific, so a cached-by-key lookup was
+        // both stale and month-blind; the service is the source of truth.
+        const readyToAssign = runtime
+          .services()
+          .monthlyBudgets.getReadyToAssign(selectedBudgetId || 0, effectiveMonth);
 
         const currentAssignment =
           transformedRows.find((row) => row.categoryId === categoryId)?.assigned || 0;
@@ -397,9 +395,8 @@ export function useCategoryOperations({
       effectiveMonth,
       executeUpsertAssignment,
       maskedLocalizer,
-      queryClient,
+      runtime,
       selectedBudgetId,
-      spaceKey,
       transformedRows,
     ]
   );

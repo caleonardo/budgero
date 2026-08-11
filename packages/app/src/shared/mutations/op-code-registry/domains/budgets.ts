@@ -53,6 +53,14 @@ export const budgetOps = {
     invalidates: [['budgets']],
   },
 
+  // useUpdateBudgetRtaMode — switches Ready to Assign between cumulative/monthly
+  'budgets.updateRtaMode': {
+    execute: async (args) => {
+      return S().budgets!.updateRtaMode(args.id as number, args.mode as 'cumulative' | 'monthly');
+    },
+    invalidates: [['budgets'], ['readyToAssign', '*'], ['monthlyBudget', '*']],
+  },
+
   // useDeleteBudget
   'budgets.delete': {
     execute: async (args) => {

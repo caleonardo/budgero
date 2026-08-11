@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
-import type { GetMonthlyBudgetRow, AssignmentsByMonthRow } from '@budgero/core/browser';
+import type {
+  GetMonthlyBudgetRow,
+  AssignmentsByMonthRow,
+  ReadyToAssignBreakdown,
+} from '@budgero/core/browser';
 // Use runtime services directly instead of db-ops wrappers
 import { useRuntime, useActiveSpaceId } from '@shared/runtime/runtime-provider';
 import { executeSpaceMutation } from '@shared/runtime/mutation-router';
@@ -33,13 +37,32 @@ export function useMonthlyBudget(month: string, budgetId: number) {
 
 /**
  * Fetch the "ready to assign" amount for a budget.
- * This is static and doesn't depend on the month.
+ *
+ * In cumulative mode this is a static, month-independent figure; in monthly
+ * (YNAB-style) mode it is computed through `month`. Callers on the budget page
+ * pass the selected month; omit it elsewhere to get the current month.
  */
-export function useReadyToAssign(budgetId: number) {
+export function useReadyToAssign(budgetId: number, month?: string) {
   return useSpaceQuery<number>({
-    key: ['readyToAssign', budgetId],
+    key: ['readyToAssign', budgetId, month ?? 'current'],
     enabled: Boolean(budgetId),
-    queryFn: (services) => services.monthlyBudgets.getReadyToAssign(budgetId),
+    queryFn: (services) => services.monthlyBudgets.getReadyToAssign(budgetId, month),
+    placeholderData: keepPreviousData,
+  });
+}
+
+/**
+ * The component figures behind Ready to Assign (income, assignments, transfers,
+ * revaluations, prior cash overspend) plus the active mode — used by the help
+ * popover to always show the full math.
+ */
+export function useReadyToAssignBreakdown(budgetId: number, month?: string) {
+  return useSpaceQuery<ReadyToAssignBreakdown>({
+    // Keyed under the 'readyToAssign' prefix so every existing
+    // ['readyToAssign', '*'] invalidation refreshes the breakdown too.
+    key: ['readyToAssign', budgetId, month ?? 'current', 'breakdown'],
+    enabled: Boolean(budgetId),
+    queryFn: (services) => services.monthlyBudgets.getReadyToAssignBreakdown(budgetId, month),
     placeholderData: keepPreviousData,
   });
 }

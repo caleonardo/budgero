@@ -40,7 +40,7 @@ export function BudgetingPageDesktop() {
   const budgetId = selectedBudget?.ID ?? 0;
   const { data: budgetData = [] } = useMonthlyBudget(currentMonth, budgetId);
   const { data: goalsData = [] } = useGoals(budgetId);
-  const { data: readyToAssign = 0 } = useReadyToAssign(budgetId);
+  const { data: readyToAssign = 0 } = useReadyToAssign(budgetId, currentMonth);
   const { hideCategory, hasHiddenCategories } = useHideCategory(budgetId);
 
   const [multiMonthOpen, setMultiMonthOpen] = useState(false);
@@ -335,6 +335,7 @@ export function BudgetingPageDesktop() {
                     <p className="text-xs text-muted-foreground">Ready to Assign</p>
                     <ReadyToAssignHelpPopover
                       budgetId={budgetId}
+                      month={currentMonth}
                       triggerClassName="h-5 w-5 text-muted-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                       side="top"
                       align="center"

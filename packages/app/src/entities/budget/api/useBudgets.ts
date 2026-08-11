@@ -153,6 +153,21 @@ export function useUpdateBudgetNumberFormat() {
   });
 }
 
+export type UpdateBudgetRtaModeInput = { id: number; mode: 'cumulative' | 'monthly' };
+export function useUpdateBudgetRtaMode() {
+  const runtime = useRuntime();
+  return useMutation<void, Error, UpdateBudgetRtaModeInput>({
+    mutationFn: async ({ id, mode }: UpdateBudgetRtaModeInput) => {
+      const mutationManager = runtime.mutationsRouter();
+      await mutationManager.execute<void>({
+        op: 'budgets.updateRtaMode',
+        payload: { id, mode },
+        meta: { label: 'useUpdateBudgetRtaMode' },
+      });
+    },
+  });
+}
+
 export function useDeleteBudget() {
   const qc = useQueryClient();
   const runtime = useRuntime();

@@ -36,7 +36,7 @@ export function BudgetingPageMobile() {
   const budgetId = selectedBudget?.ID ?? 0;
   const { data: budgetData = [] } = useMonthlyBudget(currentMonth, budgetId);
   const { data: goalsData = [] } = useGoals(budgetId);
-  const { data: readyToAssign = 0 } = useReadyToAssign(budgetId);
+  const { data: readyToAssign = 0 } = useReadyToAssign(budgetId, currentMonth);
   const { hideCategory, hasHiddenCategories } = useHideCategory(budgetId);
 
   const transformedRows = useMemo(

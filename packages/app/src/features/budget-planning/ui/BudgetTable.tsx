@@ -3,8 +3,6 @@ import { cn } from '@shared/lib/utils';
 import { Plus } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { useUiStore } from '@shared/store/useUiStore';
-import { useActiveSpaceId } from '@shared/runtime/runtime-provider';
-import { resolveSpaceKey } from '@shared/lib/query-utils';
 import { useBudgetTableState } from '@features/budget-planning/api/useBudgetTableState';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { SearchAndFilterControls, type FilterType } from './SearchAndFilterControls';
@@ -71,8 +69,6 @@ export function BudgetTable({
   const mobileBudgetLayout = useUiStore((state) => state.mobileBudgetLayout);
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
 
-  const spaceId = useActiveSpaceId();
-  const spaceKey = resolveSpaceKey(spaceId);
   const effectiveMonth = monthOverride || currentMonth;
 
   const [drawerState, setDrawerState] = useState<SpendingDrawerState>({
@@ -182,7 +178,6 @@ export function BudgetTable({
     budgetId,
     selectedBudgetId: selectedBudget?.ID || 0,
     effectiveMonth,
-    spaceKey,
     globalLocalizer,
     transformedRows,
     rowsByCategoryId,

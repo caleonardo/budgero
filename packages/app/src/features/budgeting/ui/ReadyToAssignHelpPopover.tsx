@@ -1,30 +1,62 @@
 import { HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
 import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
-import { useBudgetRevaluationTotal } from '@entities/currency/api/useRevaluationSummary';
+import { useReadyToAssignBreakdown } from '@entities/budget/api/useMonthlyBudget';
 
 interface ReadyToAssignHelpPopoverProps {
   /** Trigger-button sizing/tone classes (varies per layout). */
   triggerClassName?: string;
   side?: 'top' | 'bottom';
   align?: 'start' | 'center';
-  /** When set, the popover shows how much of RTA comes from market-rate
-   * changes on on-budget foreign-currency accounts. */
+  /** Budget whose Ready to Assign math is explained. */
   budgetId?: number;
+  /** Selected month ('YYYY-MM'); drives the breakdown in monthly mode. */
+  month?: string;
 }
 
-/** The "What does Ready to Assign mean?" help popover. */
+/** One label/amount line in the math breakdown. */
+function MathRow({
+  label,
+  value,
+  localizer,
+  mask,
+  sign,
+  strong,
+}: {
+  label: string;
+  value: number;
+  localizer: Intl.NumberFormat;
+  mask: boolean;
+  sign?: '+' | '−';
+  strong?: boolean;
+}) {
+  return (
+    <div className={cn('flex items-baseline justify-between gap-3', strong && 'font-semibold')}>
+      <span className={cn(!strong && 'text-muted-foreground')}>
+        {sign ? `${sign} ` : ''}
+        {label}
+      </span>
+      <span className="tabular-nums">{formatMaskedMilli(localizer, value, mask)}</span>
+    </div>
+  );
+}
+
+/** The "What does Ready to Assign mean?" help popover with full math breakdown. */
 export function ReadyToAssignHelpPopover({
   triggerClassName,
   side = 'bottom',
   align = 'start',
   budgetId,
+  month,
 }: ReadyToAssignHelpPopoverProps) {
-  const { data: revaluationTotal = 0 } = useBudgetRevaluationTotal(budgetId);
+  const { data: breakdown } = useReadyToAssignBreakdown(budgetId ?? 0, month);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
-  const privacyMaskNumbers = useUiStore((s) => s.privacyMaskNumbers);
+  const mask = useUiStore((s) => s.privacyMaskNumbers);
+
+  const isMonthly = breakdown?.mode === 'monthly';
 
   return (
     <Popover>
@@ -40,26 +72,91 @@ export function ReadyToAssignHelpPopover({
           <HelpCircle className="h-3 w-3" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 text-xs" side={side} align={align}>
-        <p>
-          Money available to assign to budget categories: total income minus all budget assignments
-          and transfers to off-budget accounts, plus market-rate changes on on-budget accounts held
-          in other currencies. Positive means funds to allocate; negative means you have
-          over-budgeted.
+      <PopoverContent className="w-72 text-xs" side={side} align={align}>
+        <p className="font-medium text-sm">Ready to Assign</p>
+        <p className="mt-1 text-muted-foreground">
+          Money you can still assign to categories. Positive means funds to allocate; negative means
+          you&apos;ve over-budgeted.
         </p>
-        {revaluationTotal !== 0 && (
-          <p className="mt-2 border-t border-border pt-2">
-            Currently includes{' '}
-            <span
-              className={cn(
-                'font-medium tabular-nums',
-                revaluationTotal >= 0 ? 'text-success' : 'text-destructive'
+
+        {breakdown && (
+          <div className="mt-3 border-t border-border pt-2">
+            <p className="mb-1 flex items-center justify-between">
+              <span className="font-medium">
+                {isMonthly ? 'Monthly calculation' : 'Cumulative calculation'}
+              </span>
+              <span className="text-muted-foreground">
+                {isMonthly ? 'through this month' : 'all time'}
+              </span>
+            </p>
+            <div className="space-y-1">
+              <MathRow
+                label="Income"
+                value={breakdown.income}
+                localizer={globalLocalizer}
+                mask={mask}
+              />
+              <MathRow
+                label="Assigned to categories"
+                value={breakdown.assignments}
+                localizer={globalLocalizer}
+                mask={mask}
+                sign="−"
+              />
+              {breakdown.offBudgetTransfers !== 0 && (
+                <MathRow
+                  label="Transfers off budget"
+                  value={breakdown.offBudgetTransfers}
+                  localizer={globalLocalizer}
+                  mask={mask}
+                  sign="−"
+                />
               )}
-            >
-              {formatMaskedMilli(globalLocalizer, revaluationTotal, privacyMaskNumbers)}
-            </span>{' '}
-            from market-rate changes on on-budget accounts.
-          </p>
+              {breakdown.revaluations !== 0 && (
+                <MathRow
+                  label="Currency rate changes"
+                  value={breakdown.revaluations}
+                  localizer={globalLocalizer}
+                  mask={mask}
+                  sign="+"
+                />
+              )}
+              {isMonthly && breakdown.priorCashOverspend !== 0 && (
+                <MathRow
+                  label="Last month's overspending"
+                  value={breakdown.priorCashOverspend}
+                  localizer={globalLocalizer}
+                  mask={mask}
+                  sign="−"
+                />
+              )}
+              <div className="mt-1 border-t border-border pt-1">
+                <MathRow
+                  label="Ready to Assign"
+                  value={breakdown.readyToAssign}
+                  localizer={globalLocalizer}
+                  mask={mask}
+                  strong
+                />
+              </div>
+            </div>
+
+            <p className="mt-2 text-muted-foreground">
+              {isMonthly
+                ? 'Income counts as it arrives and last month’s overspending is pulled from this month (YNAB-style).'
+                : 'Income and assignments accumulate across all time, so this figure is the same in every month.'}
+            </p>
+            <p className="mt-2 text-muted-foreground">
+              Switch between Monthly and Cumulative in{' '}
+              <Link
+                to="/settings/budget"
+                className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+              >
+                Settings → Budget Settings
+              </Link>
+              .
+            </p>
+          </div>
         )}
       </PopoverContent>
     </Popover>

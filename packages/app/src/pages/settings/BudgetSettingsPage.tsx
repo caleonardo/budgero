@@ -1,10 +1,121 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Switch } from '@shared/ui/switch';
 import { Label } from '@shared/ui/label';
-import { AlertTriangle, SlidersHorizontal } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group';
+import { AlertTriangle, SlidersHorizontal, Wallet } from 'lucide-react';
+import { toast } from 'sonner';
 import { useAllowOverAssignmentPreference } from '@shared/hooks/useUserPreferences';
+import { useBudgets, useUpdateBudgetRtaMode } from '@entities/budget/api/useBudgets';
+import { useUiStore } from '@shared/store/useUiStore';
 import { cn } from '@shared/lib/utils';
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
+
+type RtaMode = 'cumulative' | 'monthly';
+
+const RTA_OPTIONS: { value: RtaMode; title: string; blurb: string }[] = [
+  {
+    value: 'cumulative',
+    title: 'Cumulative',
+    blurb:
+      'All income and assignments add up across all time, so Ready to Assign is one running total that ignores the month you are viewing. Overspending stays inside the category and carries forward.',
+  },
+  {
+    value: 'monthly',
+    title: 'Monthly',
+    blurb:
+      'Ready to Assign reflects money received through the month you are viewing, and a category’s overspending is pulled out of the next month’s Ready to Assign instead of carrying inside the category. This matches what people moving from YNAB expect.',
+  },
+];
+
+function RtaModeCard() {
+  const selectedBudget = useUiStore((s) => s.selectedBudget);
+  const { data: budgets = [] } = useBudgets();
+  const updateRtaMode = useUpdateBudgetRtaMode();
+
+  const budgetId = selectedBudget?.ID ?? 0;
+  // Read from the live budgets query so the choice reflects the last saved value.
+  const activeBudget = budgets.find((b) => b.ID === budgetId) ?? selectedBudget ?? null;
+  const mode: RtaMode = activeBudget?.RtaMode === 'monthly' ? 'monthly' : 'cumulative';
+
+  const handleChange = (next: string) => {
+    if (!budgetId || next === mode) return;
+    updateRtaMode.mutate(
+      { id: budgetId, mode: next as RtaMode },
+      {
+        onSuccess: () =>
+          toast.success(
+            next === 'monthly'
+              ? 'Ready to Assign is now calculated monthly'
+              : 'Ready to Assign is now calculated cumulatively'
+          ),
+        onError: () => toast.error('Could not change the Ready to Assign calculation'),
+      }
+    );
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Wallet className="h-5 w-5" />
+          Ready to Assign calculation
+        </CardTitle>
+        <CardDescription>
+          Choose how this budget computes Ready to Assign. Switching is instant and non-destructive
+          — it only changes the math, never your transactions or assignments.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <RadioGroup
+          value={mode}
+          onValueChange={handleChange}
+          className="gap-3"
+          disabled={!budgetId || updateRtaMode.isPending}
+        >
+          {RTA_OPTIONS.map((opt) => (
+            <label
+              key={opt.value}
+              htmlFor={`rta-${opt.value}`}
+              className={cn(
+                'flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition',
+                mode === opt.value ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
+              )}
+            >
+              <RadioGroupItem id={`rta-${opt.value}`} value={opt.value} className="mt-1" />
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{opt.title}</span>
+                  {opt.value === 'cumulative' && (
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                      Default
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground">{opt.blurb}</p>
+              </div>
+            </label>
+          ))}
+        </RadioGroup>
+
+        <div className="rounded-lg border bg-muted/50 p-4">
+          <h4 className="mb-2 text-sm font-medium">Which should I pick?</h4>
+          <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
+            <li>
+              <strong className="text-foreground">Cumulative</strong> is best if you think of the
+              budget as one continuous pool and don’t mind Ready to Assign staying the same across
+              months.
+            </li>
+            <li>
+              <strong className="text-foreground">Monthly</strong> is best if you’re coming from
+              YNAB or want each month to stand on its own — income counts as it arrives, and last
+              month’s overspending reduces this month’s Ready to Assign.
+            </li>
+          </ul>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function BudgetSettingsPage() {
   const { allowOverAssignment, isLoading, updateAllowOverAssignment, isUpdating } =
@@ -20,6 +131,8 @@ export default function BudgetSettingsPage() {
         title="Budget Settings"
         description="Configure how Budgero handles your budget assignments and constraints."
       />
+
+      <RtaModeCard />
 
       <Card>
         <CardHeader>

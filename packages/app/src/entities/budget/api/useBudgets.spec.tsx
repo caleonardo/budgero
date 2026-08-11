@@ -39,6 +39,7 @@ function createBudget(overrides: Partial<Budget> = {}): Budget {
     DisplayCurrency: 'USD',
     BadgeIcon: 'Wallet',
     NumberFormat: '$1,096.56',
+    RtaMode: 'cumulative',
     ...overrides,
   };
 }

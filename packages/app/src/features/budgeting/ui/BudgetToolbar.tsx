@@ -202,6 +202,7 @@ export function BudgetToolbar({
                   </span>
                   <ReadyToAssignHelpPopover
                     budgetId={budgetId}
+                    month={currentMonth}
                     triggerClassName="h-3.5 w-3.5 text-muted-foreground/60"
                   />
                 </div>
