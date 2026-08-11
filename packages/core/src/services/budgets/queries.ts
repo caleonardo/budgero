@@ -1,6 +1,6 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { getRow, allRows, run } from '../../database/sql.js';
-import { Budget } from './types.js';
+import { Budget, RtaMode } from './types.js';
 
 /**
  * BudgetQueries - All SQL queries for budgets
@@ -121,6 +121,26 @@ export class BudgetQueries {
       newNumberFormat,
       budgetId
     );
+  }
+
+  /**
+   * GetRtaMode - Reads a budget's Ready to Assign mode, defaulting to 'cumulative'
+   * for rows written before the column existed.
+   */
+  getRtaMode(budgetId: number): RtaMode {
+    const row = getRow<{ RtaMode: string | null }>(
+      this.db,
+      'SELECT RtaMode FROM budgets WHERE ID = ?',
+      budgetId
+    );
+    return row?.RtaMode === 'monthly' ? 'monthly' : 'cumulative';
+  }
+
+  /**
+   * UpdateBudgetRtaMode - Sets a budget's Ready to Assign mode.
+   */
+  updateRtaMode(budgetId: number, mode: RtaMode): void {
+    run(this.db, `UPDATE budgets SET RtaMode = ? WHERE ID = ?`, mode, budgetId);
   }
 
   /**

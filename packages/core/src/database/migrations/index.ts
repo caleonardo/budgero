@@ -45,6 +45,7 @@ import { migration044 } from './044-add-suggestcategoryfrompayee-flag-to-user-me
 import { migration045 } from './045-rename-money-columns-to-native-converted-scheme.js';
 import { migration046 } from './046-daily-currency-rates-and-rate-cache-settings.js';
 import { migration047 } from './047-add-account-revaluations-table.js';
+import { migration048 } from './048-add-rtamode-to-budgets.js';
 
 import type { Migration } from '../migrations.js';
 
@@ -97,4 +98,5 @@ export const migrations: Migration[] = [
   migration045,
   migration046,
   migration047,
+  migration048,
 ];

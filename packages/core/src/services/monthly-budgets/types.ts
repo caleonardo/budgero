@@ -4,6 +4,23 @@
  */
 
 import type { MilliUnits } from '../../money/index.js';
+import type { RtaMode } from '../budgets/types.js';
+
+/**
+ * ReadyToAssignBreakdown - the component figures behind the Ready to Assign
+ * number, so the UI can always show the full math. `priorCashOverspend` and
+ * `month` are only meaningful in 'monthly' mode.
+ */
+export interface ReadyToAssignBreakdown {
+  mode: RtaMode;
+  month: string;
+  income: MilliUnits;
+  assignments: MilliUnits;
+  offBudgetTransfers: MilliUnits;
+  revaluations: MilliUnits;
+  priorCashOverspend: MilliUnits;
+  readyToAssign: MilliUnits;
+}
 
 /**
  * Assignment type - represents a monthly budget assignment
@@ -26,6 +43,18 @@ export interface FundingSource {
 }
 
 /**
+ * DebtSource - one credit-overspend event that contributed unfunded debt to a
+ * CC Payment category: a spending category overspent on credit in a given month
+ * by `amount` that wasn't covered. Sums to the card's total credit debt created.
+ */
+export interface DebtSource {
+  categoryId: number;
+  categoryName: string;
+  month: string;
+  amount: MilliUnits;
+}
+
+/**
  * Monthly budget row - represents a row in the monthly budget view
  */
 export interface GetMonthlyBudgetRow {
@@ -37,8 +66,16 @@ export interface GetMonthlyBudgetRow {
   Assigned: MilliUnits;
   Activity: MilliUnits;
   Available: MilliUnits;
+  /** Current-month activity split by account kind (net; negative = spending). */
+  CashActivity?: MilliUnits;
+  CreditActivity?: MilliUnits;
   /** For CC Payment categories: breakdown of where funding came from */
   fundingBreakdown?: FundingSource[];
+  /**
+   * For CC Payment categories: the credit-overspend events (category + month)
+   * that created this card's debt. Sums to total credit debt created.
+   */
+  debtBreakdown?: DebtSource[];
   /** For CC Payment categories: total funded from spending categories */
   totalFunded?: MilliUnits;
   /**

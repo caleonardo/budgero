@@ -1,6 +1,6 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { run } from '../../database/sql.js';
-import { Budget, CreateBudgetRequest } from './types.js';
+import { Budget, CreateBudgetRequest, RtaMode } from './types.js';
 import { ValidationError, NotFoundError } from '../../types/index.js';
 import { isCryptoCurrency } from '../../currencies/index.js';
 import { BudgetQueries } from './queries.js';
@@ -111,6 +111,20 @@ export class BudgetService {
    */
   updateBudgetIcon(id: number, icon: string): void {
     this.queries.updateBudgetIcon(id, icon);
+  }
+
+  /**
+   * GetRtaMode - Reads a budget's Ready to Assign calculation mode.
+   */
+  getRtaMode(id: number): RtaMode {
+    return this.queries.getRtaMode(id);
+  }
+
+  /**
+   * UpdateBudgetRtaMode - Sets a budget's Ready to Assign calculation mode.
+   */
+  updateRtaMode(id: number, mode: RtaMode): void {
+    this.queries.updateRtaMode(id, mode);
   }
 
   /**
@@ -300,4 +314,4 @@ export class BudgetService {
 }
 
 // Re-export types for external use
-export type { Budget, CreateBudgetRequest } from './types.js';
+export type { Budget, CreateBudgetRequest, RtaMode } from './types.js';

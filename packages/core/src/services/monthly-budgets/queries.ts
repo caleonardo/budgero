@@ -1,7 +1,14 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { getRow, allRows, run } from '../../database/sql.js';
+import { asMilli } from '../../money/index.js';
 import { NO_SPLITS_FILTER } from '../transactions/queries.js';
-import { Assignment, GetMonthlyBudgetRow, AssignmentsByMonthRow } from './types.js';
+import {
+  Assignment,
+  GetMonthlyBudgetRow,
+  AssignmentsByMonthRow,
+  ReadyToAssignBreakdown,
+} from './types.js';
+import type { RtaMode } from '../budgets/types.js';
 
 import { createLogger } from '../../logger.js';
 
@@ -225,7 +232,7 @@ export class MonthlyBudgetQueries {
    * ReadyToAssign - Calculates ready to assign amount
    * Simple static calculation: Total Income (NET) - Total Assignments (for entire budget, all time)
    */
-  readyToAssign(budgetId: number, asOfDate: string): number {
+  readyToAssign(budgetId: number, asOfDate: string): ReadyToAssignBreakdown {
     // Get total income (NET of inflow - outflow for Income category) for all time
     const incomeResult = getRow(
       this.db,
@@ -320,7 +327,489 @@ export class MonthlyBudgetQueries {
     debugLog(`  Off-budget transfers: ${totalOffBudgetTransfers.toLocaleString()}`);
     debugLog(`  Ready to Assign: ${readyToAssign.toLocaleString()}`);
 
-    return readyToAssign;
+    return {
+      mode: 'cumulative',
+      month: asOfDate,
+      income: asMilli(incomeResult.total_income),
+      assignments: asMilli(assignmentsResult.total_assignments),
+      offBudgetTransfers: asMilli(totalOffBudgetTransfers),
+      revaluations: asMilli(totalRevaluations),
+      priorCashOverspend: asMilli(0),
+      readyToAssign: asMilli(readyToAssign),
+    };
+  }
+
+  /** Reads a budget's Ready to Assign mode, defaulting to 'cumulative'. */
+  getRtaMode(budgetId: number): RtaMode {
+    const row = getRow<{ RtaMode: string | null }>(
+      this.db,
+      `SELECT RtaMode FROM budgets WHERE ID = ?`,
+      budgetId
+    );
+    return row?.RtaMode === 'monthly' ? 'monthly' : 'cumulative';
+  }
+
+  /**
+   * ReadyToAssignMonthly - YNAB-style Ready to Assign for a single month.
+   *
+   * Counts income and assignments only up to and including `month`, then
+   * subtracts prior-month cash overspending (each overspent category's negative
+   * cash balance is pulled from Ready to Assign the month after it happens,
+   * rather than carried inside the category). Credit-card overspending is left
+   * to the CC Payment system and never deducted here.
+   */
+  readyToAssignMonthly(budgetId: number, month: string): ReadyToAssignBreakdown {
+    const income =
+      getRow<{ total: number }>(
+        this.db,
+        `
+      SELECT IFNULL(SUM(t.InflowConverted - t.OutflowConverted), 0) as total
+      FROM transactions t
+      INNER JOIN accounts acc ON t.AccountID = acc.ID
+      INNER JOIN categories c ON t.CategoryID = c.ID
+      INNER JOIN category_groups cg ON c.CategoryGroupID = cg.ID
+      WHERE t.BudgetID = ?1
+        AND acc.OnBudget = TRUE
+        AND cg.Name = 'Income'
+        AND (t.TransferID IS NULL OR t.TransferID = '')
+        AND strftime('%Y-%m', t.Date) <= ?2
+    `,
+        budgetId,
+        month
+      )?.total ?? 0;
+
+    const assignments =
+      getRow<{ total: number }>(
+        this.db,
+        `SELECT IFNULL(SUM(Amount), 0) as total FROM assignments WHERE BudgetID = ?1 AND Month <= ?2`,
+        budgetId,
+        month
+      )?.total ?? 0;
+
+    const offBudgetTransfers =
+      getRow<{ total: number }>(
+        this.db,
+        `
+      SELECT IFNULL(SUM(t.OutflowConverted), 0) as total
+      FROM transactions t
+      INNER JOIN accounts src ON t.AccountID = src.ID
+      INNER JOIN categories c ON t.CategoryID = c.ID
+      INNER JOIN category_groups cg ON c.CategoryGroupID = cg.ID
+      WHERE t.BudgetID = ?1
+        AND src.OnBudget = TRUE
+        AND t.OutflowConverted > 0
+        AND t.TransferID IS NOT NULL
+        AND t.TransferID <> ''
+        AND strftime('%Y-%m', t.Date) <= ?2
+        AND cg.Name = 'Transfers'
+        AND EXISTS (
+          SELECT 1 FROM transactions mirror
+          INNER JOIN accounts dest ON mirror.AccountID = dest.ID
+          WHERE mirror.TransferID = t.TransferID
+            AND mirror.ID != t.ID
+            AND dest.OnBudget = FALSE
+            AND LOWER(dest.Type) NOT IN ('credit', 'loan', 'mortgage')
+        )
+    `,
+        budgetId,
+        month
+      )?.total ?? 0;
+
+    const revaluations =
+      getRow<{ total: number }>(
+        this.db,
+        `
+      SELECT IFNULL(SUM(r.DeltaConverted), 0) as total
+      FROM account_revaluations r
+      INNER JOIN accounts a ON r.AccountID = a.ID
+      WHERE r.BudgetID = ?1 AND a.OnBudget = TRUE AND strftime('%Y-%m', r.Date) <= ?2
+    `,
+        budgetId,
+        month
+      )?.total ?? 0;
+
+    const { priorCashOverspend } = this.computeMonthlyRollforward(budgetId, month);
+
+    const readyToAssign =
+      income - assignments - offBudgetTransfers + revaluations - priorCashOverspend;
+
+    debugLog(`Ready to Assign (monthly, through ${month}):`);
+    debugLog(`  Income: ${income.toLocaleString()}`);
+    debugLog(`  Assignments: ${assignments.toLocaleString()}`);
+    debugLog(`  Off-budget transfers: ${offBudgetTransfers.toLocaleString()}`);
+    debugLog(`  Prior cash overspend: ${priorCashOverspend.toLocaleString()}`);
+    debugLog(`  Ready to Assign: ${readyToAssign.toLocaleString()}`);
+
+    return {
+      mode: 'monthly',
+      month,
+      income: asMilli(income),
+      assignments: asMilli(assignments),
+      offBudgetTransfers: asMilli(offBudgetTransfers),
+      revaluations: asMilli(revaluations),
+      priorCashOverspend: asMilli(priorCashOverspend),
+      readyToAssign: asMilli(readyToAssign),
+    };
+  }
+
+  /**
+   * Per-category monthly series (assigned + activity split into cash vs credit)
+   * for every month up to and including `throughMonth`, restricted to the
+   * spendable groups. Feeds the month-by-month rollforward in monthly mode.
+   */
+  private getCategoryMonthlySeries(
+    budgetId: number,
+    throughMonth: string
+  ): { CategoryID: number; Month: string; Assigned: number; Cash: number; Credit: number }[] {
+    return allRows<{
+      CategoryID: number;
+      Month: string;
+      Assigned: number;
+      Cash: number;
+      Credit: number;
+    }>(
+      this.db,
+      `
+      WITH contributions AS (
+        /* assignments */
+        SELECT a.CategoryID AS CategoryID, a.Month AS Month,
+               a.Amount AS Assigned, 0 AS Cash, 0 AS Credit
+        FROM assignments a
+        WHERE a.BudgetID = ?1 AND a.Month <= ?2
+        UNION ALL
+        /* activity from split lines, partitioned by account kind */
+        SELECT s.CategoryID, strftime('%Y-%m', t.Date),
+               0,
+               CASE WHEN LOWER(acc.Type) = 'credit' THEN 0 ELSE s.InflowConverted - s.OutflowConverted END,
+               CASE WHEN LOWER(acc.Type) = 'credit' THEN s.InflowConverted - s.OutflowConverted ELSE 0 END
+        FROM transaction_splits s
+        JOIN transactions t ON t.ID = s.TransactionID
+        JOIN accounts acc ON acc.ID = t.AccountID
+        WHERE t.BudgetID = ?1 AND acc.OnBudget = TRUE AND strftime('%Y-%m', t.Date) <= ?2
+        UNION ALL
+        /* activity from non-split transactions, partitioned by account kind */
+        SELECT t.CategoryID, strftime('%Y-%m', t.Date),
+               0,
+               CASE WHEN LOWER(acc.Type) = 'credit' THEN 0 ELSE t.InflowConverted - t.OutflowConverted END,
+               CASE WHEN LOWER(acc.Type) = 'credit' THEN t.InflowConverted - t.OutflowConverted ELSE 0 END
+        FROM transactions t
+        JOIN accounts acc ON acc.ID = t.AccountID
+        WHERE t.BudgetID = ?1 AND acc.OnBudget = TRUE AND strftime('%Y-%m', t.Date) <= ?2
+          ${NO_SPLITS_FILTER}
+      )
+      SELECT con.CategoryID AS CategoryID, con.Month AS Month,
+             SUM(con.Assigned) AS Assigned, SUM(con.Cash) AS Cash, SUM(con.Credit) AS Credit
+      FROM contributions con
+      JOIN categories c ON c.ID = con.CategoryID
+      JOIN category_groups cg ON cg.ID = c.CategoryGroupID
+      WHERE cg.Name NOT IN ('Income', 'Transfers', 'Uncategorized', 'Credit Card Payments')
+      GROUP BY con.CategoryID, con.Month
+      ORDER BY con.CategoryID, con.Month
+    `,
+      budgetId,
+      throughMonth
+    );
+  }
+
+  /**
+   * Net credit-card spend per (spending category, card, month) up to and
+   * including `throughMonth`. Positive = net outflow (refunds subtracted).
+   * Feeds per-card attribution of the covered ("funded") portion of spending.
+   */
+  private getCreditSpendByCategoryCardMonth(
+    budgetId: number,
+    throughMonth: string
+  ): { CategoryID: number; AccountID: number; Month: string; Spend: number }[] {
+    return allRows<{ CategoryID: number; AccountID: number; Month: string; Spend: number }>(
+      this.db,
+      `
+      WITH contributions AS (
+        SELECT s.CategoryID AS CategoryID, t.AccountID AS AccountID,
+               strftime('%Y-%m', t.Date) AS Month,
+               s.OutflowConverted - s.InflowConverted AS Spend
+        FROM transaction_splits s
+        JOIN transactions t ON t.ID = s.TransactionID
+        JOIN accounts acc ON acc.ID = t.AccountID
+        WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit' AND strftime('%Y-%m', t.Date) <= ?2
+        UNION ALL
+        SELECT t.CategoryID, t.AccountID, strftime('%Y-%m', t.Date),
+               t.OutflowConverted - t.InflowConverted
+        FROM transactions t
+        JOIN accounts acc ON acc.ID = t.AccountID
+        WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit' AND strftime('%Y-%m', t.Date) <= ?2
+          ${NO_SPLITS_FILTER}
+      )
+      SELECT con.CategoryID AS CategoryID, con.AccountID AS AccountID, con.Month AS Month,
+             SUM(con.Spend) AS Spend
+      FROM contributions con
+      JOIN categories c ON c.ID = con.CategoryID
+      JOIN category_groups cg ON cg.ID = c.CategoryGroupID
+      WHERE cg.Name NOT IN ('Income', 'Transfers', 'Uncategorized', 'Credit Card Payments')
+      GROUP BY con.CategoryID, con.AccountID, con.Month
+    `,
+      budgetId,
+      throughMonth
+    );
+  }
+
+  /** Card payments (transfers into a credit account) per card per month. */
+  private getCardPaymentsByMonth(
+    budgetId: number,
+    throughMonth: string
+  ): { AccountID: number; Month: string; Payments: number }[] {
+    return allRows<{ AccountID: number; Month: string; Payments: number }>(
+      this.db,
+      `
+      SELECT t.AccountID AS AccountID, strftime('%Y-%m', t.Date) AS Month,
+             COALESCE(SUM(t.InflowConverted), 0) AS Payments
+      FROM transactions t
+      JOIN accounts acc ON acc.ID = t.AccountID
+      WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit'
+        AND strftime('%Y-%m', t.Date) <= ?2
+        AND t.TransferID IS NOT NULL AND t.TransferID != '' AND t.InflowConverted > 0
+      GROUP BY t.AccountID, strftime('%Y-%m', t.Date)
+    `,
+      budgetId,
+      throughMonth
+    );
+  }
+
+  /** Assignments made directly to CC Payment categories, per category per month. */
+  private getPaymentCategoryAssignmentsByMonth(
+    budgetId: number,
+    throughMonth: string
+  ): { CategoryID: number; Month: string; Assigned: number }[] {
+    return allRows<{ CategoryID: number; Month: string; Assigned: number }>(
+      this.db,
+      `
+      SELECT a.CategoryID AS CategoryID, a.Month AS Month, SUM(a.Amount) AS Assigned
+      FROM assignments a
+      JOIN categories c ON c.ID = a.CategoryID
+      JOIN category_groups cg ON cg.ID = c.CategoryGroupID
+      WHERE a.BudgetID = ?1 AND a.Month <= ?2 AND cg.Name = 'Credit Card Payments'
+      GROUP BY a.CategoryID, a.Month
+    `,
+      budgetId,
+      throughMonth
+    );
+  }
+
+  /**
+   * Per-category activity for a single month, split by account kind (net;
+   * negative = spending). Lets the UI distinguish cash overspend (red) from
+   * credit overspend (yellow) and show the cash/credit spending breakdown.
+   */
+  getActivityByAccountKind(
+    month: string,
+    budgetId: number
+  ): Map<number, { cash: number; credit: number }> {
+    const rows = allRows<{ CategoryID: number; Cash: number; Credit: number }>(
+      this.db,
+      `
+      WITH contributions AS (
+        SELECT s.CategoryID AS CategoryID,
+               CASE WHEN LOWER(acc.Type) = 'credit' THEN 0 ELSE s.InflowConverted - s.OutflowConverted END AS Cash,
+               CASE WHEN LOWER(acc.Type) = 'credit' THEN s.InflowConverted - s.OutflowConverted ELSE 0 END AS Credit
+        FROM transaction_splits s
+        JOIN transactions t ON t.ID = s.TransactionID
+        JOIN accounts acc ON acc.ID = t.AccountID
+        WHERE t.BudgetID = ?2 AND acc.OnBudget = TRUE AND strftime('%Y-%m', t.Date) = ?1
+        UNION ALL
+        SELECT t.CategoryID,
+               CASE WHEN LOWER(acc.Type) = 'credit' THEN 0 ELSE t.InflowConverted - t.OutflowConverted END,
+               CASE WHEN LOWER(acc.Type) = 'credit' THEN t.InflowConverted - t.OutflowConverted ELSE 0 END
+        FROM transactions t
+        JOIN accounts acc ON acc.ID = t.AccountID
+        WHERE t.BudgetID = ?2 AND acc.OnBudget = TRUE AND strftime('%Y-%m', t.Date) = ?1
+          ${NO_SPLITS_FILTER}
+      )
+      SELECT CategoryID, SUM(Cash) AS Cash, SUM(Credit) AS Credit
+      FROM contributions
+      GROUP BY CategoryID
+    `,
+      month,
+      budgetId
+    );
+    const result = new Map<number, { cash: number; credit: number }>();
+    for (const r of rows) result.set(r.CategoryID, { cash: r.Cash, credit: r.Credit });
+    return result;
+  }
+
+  /**
+   * Month-by-month rollforward for monthly RTA mode.
+   *
+   * Spending categories: a "total" envelope (assigned + all activity) whose
+   * floored carry drives the displayed available, and a "cash" envelope
+   * (assigned + cash activity) whose floored negatives are cash overspend
+   * charged to RTA. Credit overspend is left to the CC Payment system.
+   *
+   * CC Payment categories: rolled as a running balance
+   * `carry + assigned + funded − payments` (positive-carry). `funded` is the
+   * covered portion of each month's credit spend — recomputed per month on the
+   * floored balances (not all-time), which is what makes a later assignment NOT
+   * retroactively fund an earlier credit overspend. If a payment category is
+   * overpaid (goes negative) that is cash overspend and also hits RTA.
+   *
+   * Returns, per spendable category, its displayed available at `month`; per CC
+   * Payment category, its rolled available at `month`; and the total prior cash
+   * overspend to pull from Ready to Assign.
+   */
+  computeMonthlyRollforward(
+    budgetId: number,
+    month: string
+  ): {
+    availableByCategory: Map<number, number>;
+    paymentAvailableByCategory: Map<number, number>;
+    debtBreakdownByPaymentCat: Map<number, { categoryId: number; month: string; amount: number }[]>;
+    priorCashOverspend: number;
+  } {
+    const series = this.getCategoryMonthlySeries(budgetId, month);
+    const creditSpend = this.getCreditSpendByCategoryCardMonth(budgetId, month);
+    const cardPayments = this.getCardPaymentsByMonth(budgetId, month);
+    const paymentAssignments = this.getPaymentCategoryAssignmentsByMonth(budgetId, month);
+    const cardToPaymentCat = this.getCCAccountPaymentCategoryMap(budgetId);
+
+    // Global ascending month axis so every rollforward advances in lockstep;
+    // gaps contribute a zero delta and leave the carry untouched.
+    const monthSet = new Set<string>([month]);
+    for (const r of series) monthSet.add(r.Month);
+    for (const r of creditSpend) monthSet.add(r.Month);
+    for (const r of cardPayments) monthSet.add(r.Month);
+    for (const r of paymentAssignments) monthSet.add(r.Month);
+    const allMonths = [...monthSet].filter((m) => m <= month).sort();
+
+    // series[cat][month] -> {Assigned, Cash, Credit}
+    const seriesByCat = new Map<
+      number,
+      Map<string, { Assigned: number; Cash: number; Credit: number }>
+    >();
+    for (const r of series) {
+      let byMonth = seriesByCat.get(r.CategoryID);
+      if (!byMonth) seriesByCat.set(r.CategoryID, (byMonth = new Map()));
+      byMonth.set(r.Month, { Assigned: r.Assigned, Cash: r.Cash, Credit: r.Credit });
+    }
+    // creditSpend[cat][month] -> [{card, spend}]
+    const creditByCat = new Map<number, Map<string, { card: number; spend: number }[]>>();
+    for (const r of creditSpend) {
+      let byMonth = creditByCat.get(r.CategoryID);
+      if (!byMonth) creditByCat.set(r.CategoryID, (byMonth = new Map()));
+      const list = byMonth.get(r.Month) ?? [];
+      list.push({ card: r.AccountID, spend: r.Spend });
+      byMonth.set(r.Month, list);
+    }
+
+    const availableByCategory = new Map<number, number>();
+    // fundedByPaymentCat[paymentCatId][month] -> funded amount
+    const fundedByPaymentCat = new Map<number, Map<string, number>>();
+    const addFunded = (paymentCatId: number, m: string, amount: number) => {
+      let byMonth = fundedByPaymentCat.get(paymentCatId);
+      if (!byMonth) fundedByPaymentCat.set(paymentCatId, (byMonth = new Map()));
+      byMonth.set(m, (byMonth.get(m) ?? 0) + amount);
+    };
+    // debtByPaymentCat[paymentCatId]['catId|month'] -> unfunded credit overspend
+    const debtByPaymentCat = new Map<
+      number,
+      Map<string, { categoryId: number; month: string; amount: number }>
+    >();
+    const addDebt = (paymentCatId: number, categoryId: number, m: string, amount: number) => {
+      let byKey = debtByPaymentCat.get(paymentCatId);
+      if (!byKey) debtByPaymentCat.set(paymentCatId, (byKey = new Map()));
+      const key = `${categoryId}|${m}`;
+      const existing = byKey.get(key);
+      if (existing) existing.amount += amount;
+      else byKey.set(key, { categoryId, month: m, amount });
+    };
+    let priorCashOverspend = 0;
+
+    // Spending-category pass: displayed available + per-card funding attribution.
+    for (const [categoryId, byMonth] of seriesByCat) {
+      let carryTotal = 0;
+      let carryCash = 0;
+      for (const m of allMonths) {
+        const s = byMonth.get(m) ?? { Assigned: 0, Cash: 0, Credit: 0 };
+        const availableToCover = carryTotal + s.Assigned + s.Cash; // before credit spend
+        const netCreditSpend = Math.max(0, -s.Credit); // refunds already netted in
+        const funded = Math.min(netCreditSpend, Math.max(0, availableToCover));
+        const unfunded = netCreditSpend - funded; // credit overspend that became debt
+
+        // Attribute funded and unfunded to each card's payment category,
+        // proportional to that card's positive net spend this month.
+        if (funded > 0 || unfunded > 0) {
+          const cards = creditByCat.get(categoryId)?.get(m) ?? [];
+          const positive = cards.filter((c) => c.spend > 0);
+          const denom = positive.reduce((sum, c) => sum + c.spend, 0);
+          for (const c of positive) {
+            const paymentCatId = cardToPaymentCat.get(c.card);
+            if (!paymentCatId || denom <= 0) continue;
+            const share = c.spend / denom;
+            if (funded > 0) addFunded(paymentCatId, m, Math.round(funded * share));
+            if (unfunded > 0) addDebt(paymentCatId, categoryId, m, Math.round(unfunded * share));
+          }
+        }
+
+        const displayed = carryTotal + s.Assigned + s.Cash + s.Credit;
+        const rawCash = carryCash + s.Assigned + s.Cash;
+        if (m === month) {
+          availableByCategory.set(categoryId, displayed);
+        } else {
+          if (rawCash < 0) priorCashOverspend += -rawCash;
+          carryTotal = Math.max(0, displayed);
+          carryCash = Math.max(0, rawCash);
+        }
+      }
+    }
+
+    // CC Payment-category pass: running balance across all payment categories.
+    const paymentAssignedByCat = new Map<number, Map<string, number>>();
+    for (const r of paymentAssignments) {
+      let byMonth = paymentAssignedByCat.get(r.CategoryID);
+      if (!byMonth) paymentAssignedByCat.set(r.CategoryID, (byMonth = new Map()));
+      byMonth.set(r.Month, r.Assigned);
+    }
+    const paymentsByPaymentCat = new Map<number, Map<string, number>>();
+    for (const r of cardPayments) {
+      const paymentCatId = cardToPaymentCat.get(r.AccountID);
+      if (!paymentCatId) continue;
+      let byMonth = paymentsByPaymentCat.get(paymentCatId);
+      if (!byMonth) paymentsByPaymentCat.set(paymentCatId, (byMonth = new Map()));
+      byMonth.set(r.Month, (byMonth.get(r.Month) ?? 0) + r.Payments);
+    }
+
+    const paymentCatIds = new Set<number>(cardToPaymentCat.values());
+    const paymentAvailableByCategory = new Map<number, number>();
+    for (const paymentCatId of paymentCatIds) {
+      let carry = 0;
+      for (const m of allMonths) {
+        const assigned = paymentAssignedByCat.get(paymentCatId)?.get(m) ?? 0;
+        const funded = fundedByPaymentCat.get(paymentCatId)?.get(m) ?? 0;
+        const payments = paymentsByPaymentCat.get(paymentCatId)?.get(m) ?? 0;
+        const raw = carry + assigned + funded - payments;
+        if (m === month) {
+          paymentAvailableByCategory.set(paymentCatId, raw);
+        } else {
+          if (raw < 0) priorCashOverspend += -raw; // overpaid card = cash overspend
+          carry = Math.max(0, raw);
+        }
+      }
+    }
+
+    const debtBreakdownByPaymentCat = new Map<
+      number,
+      { categoryId: number; month: string; amount: number }[]
+    >();
+    for (const [paymentCatId, byKey] of debtByPaymentCat) {
+      const events = [...byKey.values()]
+        .filter((e) => e.amount > 0)
+        .sort((a, b) => a.month.localeCompare(b.month));
+      if (events.length > 0) debtBreakdownByPaymentCat.set(paymentCatId, events);
+    }
+
+    return {
+      availableByCategory,
+      paymentAvailableByCategory,
+      debtBreakdownByPaymentCat,
+      priorCashOverspend,
+    };
   }
 
   /**

@@ -4,6 +4,14 @@
  */
 
 /**
+ * RtaMode - how a budget computes Ready to Assign.
+ * - 'cumulative': all-time income minus all-time assignments (Budgero's original static figure).
+ * - 'monthly': income through the selected month minus assignments through it, with prior-month
+ *   cash overspending pulled out of Ready to Assign (YNAB-style).
+ */
+export type RtaMode = 'cumulative' | 'monthly';
+
+/**
  * Budget type - represents a budget entity
  */
 export interface Budget {
@@ -13,6 +21,7 @@ export interface Budget {
   DisplayCurrency: string;
   BadgeIcon: string;
   NumberFormat: string;
+  RtaMode: RtaMode;
 }
 
 /**

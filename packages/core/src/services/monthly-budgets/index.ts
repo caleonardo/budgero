@@ -1,7 +1,13 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { asMilli, type MilliUnits } from '../../money/index.js';
 import { getLocalDateString } from '../../utils/date.js';
-import { Assignment, GetMonthlyBudgetRow, AssignmentsByMonthRow, FundingSource } from './types.js';
+import {
+  Assignment,
+  GetMonthlyBudgetRow,
+  AssignmentsByMonthRow,
+  FundingSource,
+  ReadyToAssignBreakdown,
+} from './types.js';
 import { MonthlyBudgetQueries } from './queries.js';
 
 // Re-export types for external use
@@ -10,6 +16,8 @@ export type {
   GetMonthlyBudgetRow,
   AssignmentsByMonthRow,
   FundingSource,
+  DebtSource,
+  ReadyToAssignBreakdown,
 } from './types.js';
 
 /**
@@ -31,6 +39,15 @@ export class MonthlyBudgetService {
    */
   getMonthlyBudget(month: string, budgetId: number): GetMonthlyBudgetRow[] {
     const rows = this.queries.getMonthlyBudget(month, budgetId);
+
+    // Split each category's current-month activity into cash vs credit so the
+    // UI can flag credit overspend (yellow) distinctly from cash (red).
+    const activityByKind = this.queries.getActivityByAccountKind(month, budgetId);
+    for (const row of rows) {
+      const kind = activityByKind.get(row.CategoryID);
+      row.CashActivity = asMilli(kind?.cash ?? 0);
+      row.CreditActivity = asMilli(kind?.credit ?? 0);
+    }
 
     // Get CC Payment adjustments for YNAB-style tracking
     const ccAdjustments = this.queries.getCCPaymentAdjustments(month, budgetId);
@@ -134,6 +151,36 @@ export class MonthlyBudgetService {
       }
     }
 
+    // Monthly (YNAB-style) mode: overwrite each category's Available with the
+    // month-by-month rollforward. Spending categories reset a prior month's
+    // overspend to zero instead of carrying it; CC Payment categories roll as a
+    // running balance whose funding is recomputed per month on the floored
+    // balances. Applied last so the cumulative CC funding math above still runs
+    // for cumulative mode; here its payment-row values are replaced.
+    if (this.queries.getRtaMode(budgetId) === 'monthly') {
+      const { availableByCategory, paymentAvailableByCategory, debtBreakdownByPaymentCat } =
+        this.queries.computeMonthlyRollforward(budgetId, month);
+      const nameById = new Map(rows.map((r) => [r.CategoryID, r.Category]));
+      for (const row of rows) {
+        const spendOverride = availableByCategory.get(row.CategoryID);
+        if (spendOverride !== undefined) {
+          row.Available = asMilli(spendOverride);
+          continue;
+        }
+        const paymentOverride = paymentAvailableByCategory.get(row.CategoryID);
+        if (paymentOverride !== undefined) row.Available = asMilli(paymentOverride);
+        const debt = debtBreakdownByPaymentCat.get(row.CategoryID);
+        if (debt) {
+          row.debtBreakdown = debt.map((d) => ({
+            categoryId: d.categoryId,
+            categoryName: nameById.get(d.categoryId) ?? '',
+            month: d.month,
+            amount: asMilli(d.amount),
+          }));
+        }
+      }
+    }
+
     return rows;
   }
 
@@ -210,12 +257,28 @@ export class MonthlyBudgetService {
   }
 
   /**
-   * GetReadyToAssign - Gets the available amount ready to assign for a budget
-   * This is a static value that doesn't depend on month
+   * GetReadyToAssign - Gets the amount ready to assign for a budget.
+   *
+   * In 'cumulative' mode this is the all-time static figure and `month` is
+   * ignored. In 'monthly' (YNAB-style) mode it is computed through the given
+   * month (defaulting to the current month), counting income and assignments up
+   * to that month and pulling prior-month cash overspending out of the total.
    */
-  getReadyToAssign(budgetId: number, asOfDate?: string): number {
-    const today = asOfDate ?? getLocalDateString();
-    return this.queries.readyToAssign(budgetId, today);
+  getReadyToAssign(budgetId: number, month?: string): number {
+    return this.getReadyToAssignBreakdown(budgetId, month).readyToAssign;
+  }
+
+  /**
+   * GetReadyToAssignBreakdown - Same figure as getReadyToAssign, but with the
+   * component amounts (income, assignments, transfers, revaluations, prior cash
+   * overspend) so the UI can always show the full math for the active mode.
+   */
+  getReadyToAssignBreakdown(budgetId: number, month?: string): ReadyToAssignBreakdown {
+    if (this.queries.getRtaMode(budgetId) === 'monthly') {
+      const targetMonth = month ?? getLocalDateString().slice(0, 7);
+      return this.queries.readyToAssignMonthly(budgetId, targetMonth);
+    }
+    return this.queries.readyToAssign(budgetId, getLocalDateString());
   }
 
   /**
