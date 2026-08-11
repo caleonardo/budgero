@@ -18,6 +18,21 @@ export function isWithinSelectHandle(target: EventTarget | null): boolean {
 }
 
 /**
+ * Tone for an overspent category's Available amount: 'amber' when the overspend
+ * is entirely on credit (it's card debt, not lost cash), otherwise 'red'. A
+ * mix of cash and credit overspend stays red — real cash is gone.
+ */
+export function overspendTone(
+  row: Pick<BudgetRow, 'available' | 'creditActivity'>
+): 'red' | 'amber' {
+  if (row.available >= 0) return 'red';
+  const creditActivity = row.creditActivity ?? 0;
+  const cashSide = row.available - creditActivity; // available ignoring credit activity
+  const cashOverspend = Math.max(0, 0 - cashSide);
+  return cashOverspend === 0 ? 'amber' : 'red';
+}
+
+/**
  * Determines the status indicator color based on category state
  */
 export type StatusColor = 'red' | 'green' | 'amber' | 'muted';

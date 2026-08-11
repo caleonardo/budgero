@@ -30,6 +30,8 @@ export interface CoverOverspendingPopoverProps {
   ) => Promise<void>;
   align?: 'start' | 'center' | 'end';
   triggerClassName?: string;
+  /** 'amber' for credit overspend (debt, not lost cash), 'red' for cash. */
+  tone?: 'red' | 'amber';
 }
 
 /**
@@ -46,6 +48,7 @@ export function CoverOverspendingPopover({
   onMoveMoney,
   align = 'end',
   triggerClassName,
+  tone = 'red',
 }: CoverOverspendingPopoverProps) {
   const amountInputId = useId();
   const [open, setOpen] = useState(false);
@@ -137,10 +140,13 @@ export function CoverOverspendingPopover({
         <button
           type="button"
           className={cn(
-            'underline decoration-dotted underline-offset-2 text-red-600 dark:text-red-300 focus:outline-none',
+            'underline decoration-dotted underline-offset-2 focus:outline-none',
+            tone === 'amber'
+              ? 'text-amber-600 dark:text-amber-300'
+              : 'text-red-600 dark:text-red-300',
             triggerClassName
           )}
-          title="Cover overspending"
+          title={tone === 'amber' ? 'Credit overspend — cover to avoid debt' : 'Cover overspending'}
           onClick={(e) => e.stopPropagation()}
         >
           <AnimatedNumber value={available} formatter={formatAmount} className="tabular-nums" />
@@ -149,7 +155,11 @@ export function CoverOverspendingPopover({
       <PopoverContent className="w-72 space-y-3" align={align}>
         <div className="text-sm font-medium">Cover Overspending</div>
         <div className="text-xs text-muted-foreground">
-          Overspent by <span className="font-medium text-red-600">{formatAmount(overspent)}</span>
+          {tone === 'amber' ? 'Overspent on credit by ' : 'Overspent by '}
+          <span className={cn('font-medium', tone === 'amber' ? 'text-amber-600' : 'text-red-600')}>
+            {formatAmount(overspent)}
+          </span>
+          {tone === 'amber' && ' — cover it to avoid creating debt.'}
         </div>
         <div className="space-y-1">
           {/* Caption, not a <label>: SearchableCategorySelect exposes no labelable control. */}

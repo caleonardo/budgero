@@ -2,6 +2,7 @@ import {
   GoalCalculations,
   type GetMonthlyBudgetRow,
   type FundingSource,
+  type DebtSource,
   type Goal,
   type CategoryFinancials,
 } from '@budgero/core/browser';
@@ -35,6 +36,11 @@ export interface BudgetRow {
   totalFunded?: MilliUnits;
   /** For CC Payment categories: linked card's signed balance (negative = debt) */
   cardBalance?: MilliUnits;
+  /** Current-month activity split by account kind (net; negative = spending). */
+  cashActivity?: MilliUnits;
+  creditActivity?: MilliUnits;
+  /** For CC Payment categories: credit-overspend events that created the debt. */
+  debtBreakdown?: DebtSource[];
 }
 
 /**
@@ -142,6 +148,9 @@ export function transformBudgetRows(
         fundingBreakdown: item.fundingBreakdown,
         totalFunded: item.totalFunded,
         cardBalance: item.cardBalance,
+        cashActivity: item.CashActivity,
+        creditActivity: item.CreditActivity,
+        debtBreakdown: item.debtBreakdown,
       });
     });
   });

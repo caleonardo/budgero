@@ -78,6 +78,16 @@ export function AvailableInfoPopover({
     });
   };
 
+  // Regular-category overspend split into cash (red) vs credit (amber). Credit
+  // overspend doesn't spend cash — it becomes card debt — so it's flagged
+  // distinctly and points at covering it before the debt sticks.
+  const creditActivity = item.creditActivity ?? 0;
+  const hasCreditActivity = creditActivity !== 0;
+  const totalOverspend = item.available < 0 ? 0 - item.available : 0;
+  const cashSide = item.available - creditActivity; // available ignoring credit activity
+  const cashOverspend = Math.max(0, 0 - cashSide);
+  const creditOverspend = Math.max(0, totalOverspend - cashOverspend);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -156,10 +166,23 @@ export function AvailableInfoPopover({
                   <span>Assigned this month:</span>
                   <span className="font-mono">{formatAmount(item.assigned)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Activity:</span>
-                  <span className="font-mono">{formatAmount(item.activity)}</span>
-                </div>
+                {hasCreditActivity ? (
+                  <>
+                    <div className="flex justify-between">
+                      <span>Cash spending:</span>
+                      <span className="font-mono">{formatAmount(item.cashActivity ?? 0)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Credit spending:</span>
+                      <span className="font-mono">{formatAmount(item.creditActivity ?? 0)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between">
+                    <span>Activity:</span>
+                    <span className="font-mono">{formatAmount(item.activity)}</span>
+                  </div>
+                )}
                 <div className="border-t pt-1 flex justify-between font-medium">
                   <span>{availableLabel}</span>
                   <span className="font-mono">{formatAmount(item.available)}</span>
@@ -254,12 +277,28 @@ export function AvailableInfoPopover({
           </div>
         )}
 
-        {item.available < 0 && (
+        {isCCPayment && item.available < 0 && (
           <div className="p-2 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg">
             <div className="text-xs text-red-600 dark:text-red-400 font-medium">
-              {isCCPayment
-                ? `Paid ${formatAmount(Math.abs(item.available))} more than set aside`
-                : `Overspent by ${formatAmount(Math.abs(item.available))}`}
+              Paid {formatAmount(Math.abs(item.available))} more than set aside
+            </div>
+          </div>
+        )}
+
+        {!isCCPayment && cashOverspend > 0 && (
+          <div className="p-2 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg">
+            <div className="text-xs text-red-600 dark:text-red-400 font-medium">
+              Overspent by {formatAmount(cashOverspend)} in cash
+            </div>
+          </div>
+        )}
+
+        {!isCCPayment && creditOverspend > 0 && (
+          <div className="p-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg">
+            <div className="text-xs text-amber-700 dark:text-amber-400">
+              You&apos;ve overspent this category by{' '}
+              <span className="font-medium">{formatAmount(creditOverspend)}</span> with credit.
+              Cover this overspending to avoid creating debt!
             </div>
           </div>
         )}

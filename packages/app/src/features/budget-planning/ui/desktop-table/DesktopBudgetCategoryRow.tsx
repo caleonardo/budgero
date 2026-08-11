@@ -22,7 +22,9 @@ import { AnimatedNumber } from '@shared/ui/animated-number';
 import { SearchableCategorySelect } from '@features/category-management/ui/SearchableCategorySelect';
 import { GoalCalculations, type CategoryFinancials } from '@budgero/core/browser';
 import { CCPaymentCoverPopover } from '@features/budget-planning/ui/category-row/CCPaymentCoverPopover';
+import { CCUnderfundedBadge } from '@features/budget-planning/ui/category-row/CCUnderfundedBadge';
 import { CoverOverspendingPopover } from '@features/budget-planning/ui/category-row/CoverOverspendingPopover';
+import { overspendTone } from '@features/budget-planning/ui/category-row/category-row.utils';
 import { AvailableInfoPopover } from '@features/budget-planning/ui/AvailableInfoPopover';
 import { getAvailableColorByGoalStatus, shouldPreventRowSelection } from './utils';
 import { useSortableDragHandle } from './useSortableDragHandle';
@@ -285,6 +287,7 @@ export function DesktopBudgetCategoryRow({
       </TableCell>
       <TableCell className="align-middle text-right pr-6 py-1.5">
         <div className="flex min-h-[28px] items-center justify-end gap-2">
+          <CCUnderfundedBadge item={row} globalLocalizer={globalLocalizer} />
           {row.available > 0 && row.fundingBreakdown !== undefined ? (
             <CCPaymentCoverPopover
               available={row.available}
@@ -376,6 +379,7 @@ export function DesktopBudgetCategoryRow({
               globalLocalizer={globalLocalizer}
               onMoveMoney={onMoveMoney}
               triggerClassName="inline-flex min-h-[28px] items-center rounded-md px-2 font-mono text-sm hover:bg-muted/40"
+              tone={overspendTone(row)}
             />
           ) : (
             <AnimatedNumber
