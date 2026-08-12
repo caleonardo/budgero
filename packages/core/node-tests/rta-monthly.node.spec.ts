@@ -454,4 +454,69 @@ describe('Ready to Assign — monthly mode, credit-card behaviour', () => {
     expect(foodRow.CreditActivity).toBe(asMilli(-90));
     expect(foodRow.CashActivity).toBe(asMilli(-30));
   });
+
+  it('credits off-budget → on-budget transfers to Ready to Assign (both modes)', async () => {
+    const { services, budgetId, incomeId } = await setup();
+    const checking = await services.accounts.createAccount(
+      'Checking',
+      budgetId,
+      'checking',
+      'USD',
+      asMilli(0)
+    );
+    const tracking = await services.accounts.createAccount(
+      'Tracking Savings',
+      budgetId,
+      'savings',
+      'USD',
+      asMilli(0),
+      undefined,
+      false // off budget
+    );
+    const transfersCat = services.categories.getCategoryByName('Transfers', budgetId)!.ID;
+
+    await services.transactions.addTransaction(
+      asMilli(1000),
+      0,
+      checking.ID,
+      incomeId,
+      budgetId,
+      '2024-01-05',
+      'pay'
+    );
+
+    const before = services.monthlyBudgets.getReadyToAssign(budgetId, '2024-01');
+
+    // Move 200 from the off-budget tracking account into on-budget checking.
+    const tId = `xfer_in_${Date.now()}`;
+    await services.transactions.addTransaction(
+      asMilli(200),
+      0,
+      checking.ID,
+      transfersCat,
+      budgetId,
+      '2024-01-10',
+      'from tracking',
+      tId
+    );
+    await services.transactions.addTransaction(
+      0,
+      asMilli(200),
+      tracking.ID,
+      transfersCat,
+      budgetId,
+      '2024-01-10',
+      'to checking',
+      tId
+    );
+
+    // Cumulative: the inbound transfer is fresh budgetable cash.
+    expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2024-01') - before).toBe(
+      asMilli(200)
+    );
+
+    // Monthly (YNAB-style): same, counted in the month it lands.
+    services.budgets.updateRtaMode(budgetId, 'monthly');
+    expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2024-01')).toBe(asMilli(1200));
+  });
 });

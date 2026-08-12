@@ -112,6 +112,15 @@ export function ReadyToAssignHelpPopover({
                   sign="−"
                 />
               )}
+              {breakdown.inBudgetTransfers !== 0 && (
+                <MathRow
+                  label="Transfers onto budget"
+                  value={breakdown.inBudgetTransfers}
+                  localizer={globalLocalizer}
+                  mask={mask}
+                  sign="+"
+                />
+              )}
               {breakdown.revaluations !== 0 && (
                 <MathRow
                   label="Currency rate changes"

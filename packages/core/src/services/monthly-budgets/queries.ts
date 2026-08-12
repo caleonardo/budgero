@@ -298,6 +298,40 @@ export class MonthlyBudgetQueries {
     );
     const totalOffBudgetTransfers = offBudgetTransfersResult?.total_offbudget_transfers ?? 0;
 
+    // Mirror of the above: money moved FROM an off-budget account (savings,
+    // investment, tracking) INTO an on-budget account is fresh budgetable cash,
+    // so it increases RTA. Same 'Transfers' category and non-debt off-budget
+    // source conditions as the outbound leg, just the inflow side.
+    const inBudgetTransfersResult = getRow<{ total_inbudget_transfers: number }>(
+      this.db,
+      `
+      SELECT IFNULL(SUM(t.InflowConverted), 0) as total_inbudget_transfers
+      FROM transactions t
+      INNER JOIN accounts dst ON t.AccountID = dst.ID
+      INNER JOIN categories c ON t.CategoryID = c.ID
+      INNER JOIN category_groups cg ON c.CategoryGroupID = cg.ID
+      WHERE t.BudgetID = ?1
+        AND dst.OnBudget = TRUE
+        AND t.InflowConverted > 0
+        AND t.TransferID IS NOT NULL
+        AND t.TransferID <> ''
+        AND DATE(t.Date) <= DATE(?2)
+        AND cg.Name = 'Transfers'
+        AND EXISTS (
+          SELECT 1
+          FROM transactions mirror
+          INNER JOIN accounts src ON mirror.AccountID = src.ID
+          WHERE mirror.TransferID = t.TransferID
+            AND mirror.ID != t.ID
+            AND src.OnBudget = FALSE
+            AND LOWER(src.Type) NOT IN ('credit', 'loan', 'mortgage')
+        )
+    `,
+      budgetId,
+      asOfDate
+    );
+    const totalInBudgetTransfers = inBudgetTransfersResult?.total_inbudget_transfers ?? 0;
+
     // Journaled rate true-ups on on-budget foreign-currency accounts: the
     // budget's purchasing power moved with the market, so RTA moves with it.
     const revaluationsResult = getRow<{ total_revaluations: number }>(
@@ -319,12 +353,14 @@ export class MonthlyBudgetQueries {
       incomeResult.total_income -
       assignmentsResult.total_assignments -
       totalOffBudgetTransfers +
+      totalInBudgetTransfers +
       totalRevaluations;
 
     debugLog(`Ready to Assign (static, all-time):`);
     debugLog(`  Total Income: ${incomeResult.total_income.toLocaleString()}`);
     debugLog(`  Total Assignments: ${assignmentsResult.total_assignments.toLocaleString()}`);
     debugLog(`  Off-budget transfers: ${totalOffBudgetTransfers.toLocaleString()}`);
+    debugLog(`  On-budget transfers: ${totalInBudgetTransfers.toLocaleString()}`);
     debugLog(`  Ready to Assign: ${readyToAssign.toLocaleString()}`);
 
     return {
@@ -333,6 +369,7 @@ export class MonthlyBudgetQueries {
       income: asMilli(incomeResult.total_income),
       assignments: asMilli(assignmentsResult.total_assignments),
       offBudgetTransfers: asMilli(totalOffBudgetTransfers),
+      inBudgetTransfers: asMilli(totalInBudgetTransfers),
       revaluations: asMilli(totalRevaluations),
       priorCashOverspend: asMilli(0),
       readyToAssign: asMilli(readyToAssign),
@@ -415,6 +452,35 @@ export class MonthlyBudgetQueries {
         month
       )?.total ?? 0;
 
+    const inBudgetTransfers =
+      getRow<{ total: number }>(
+        this.db,
+        `
+      SELECT IFNULL(SUM(t.InflowConverted), 0) as total
+      FROM transactions t
+      INNER JOIN accounts dst ON t.AccountID = dst.ID
+      INNER JOIN categories c ON t.CategoryID = c.ID
+      INNER JOIN category_groups cg ON c.CategoryGroupID = cg.ID
+      WHERE t.BudgetID = ?1
+        AND dst.OnBudget = TRUE
+        AND t.InflowConverted > 0
+        AND t.TransferID IS NOT NULL
+        AND t.TransferID <> ''
+        AND strftime('%Y-%m', t.Date) <= ?2
+        AND cg.Name = 'Transfers'
+        AND EXISTS (
+          SELECT 1 FROM transactions mirror
+          INNER JOIN accounts src ON mirror.AccountID = src.ID
+          WHERE mirror.TransferID = t.TransferID
+            AND mirror.ID != t.ID
+            AND src.OnBudget = FALSE
+            AND LOWER(src.Type) NOT IN ('credit', 'loan', 'mortgage')
+        )
+    `,
+        budgetId,
+        month
+      )?.total ?? 0;
+
     const revaluations =
       getRow<{ total: number }>(
         this.db,
@@ -431,12 +497,18 @@ export class MonthlyBudgetQueries {
     const { priorCashOverspend } = this.computeMonthlyRollforward(budgetId, month);
 
     const readyToAssign =
-      income - assignments - offBudgetTransfers + revaluations - priorCashOverspend;
+      income -
+      assignments -
+      offBudgetTransfers +
+      inBudgetTransfers +
+      revaluations -
+      priorCashOverspend;
 
     debugLog(`Ready to Assign (monthly, through ${month}):`);
     debugLog(`  Income: ${income.toLocaleString()}`);
     debugLog(`  Assignments: ${assignments.toLocaleString()}`);
     debugLog(`  Off-budget transfers: ${offBudgetTransfers.toLocaleString()}`);
+    debugLog(`  On-budget transfers: ${inBudgetTransfers.toLocaleString()}`);
     debugLog(`  Prior cash overspend: ${priorCashOverspend.toLocaleString()}`);
     debugLog(`  Ready to Assign: ${readyToAssign.toLocaleString()}`);
 
@@ -446,6 +518,7 @@ export class MonthlyBudgetQueries {
       income: asMilli(income),
       assignments: asMilli(assignments),
       offBudgetTransfers: asMilli(offBudgetTransfers),
+      inBudgetTransfers: asMilli(inBudgetTransfers),
       revaluations: asMilli(revaluations),
       priorCashOverspend: asMilli(priorCashOverspend),
       readyToAssign: asMilli(readyToAssign),

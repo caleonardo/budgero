@@ -17,6 +17,7 @@ export interface ReadyToAssignBreakdown {
   income: MilliUnits;
   assignments: MilliUnits;
   offBudgetTransfers: MilliUnits;
+  inBudgetTransfers: MilliUnits;
   revaluations: MilliUnits;
   priorCashOverspend: MilliUnits;
   readyToAssign: MilliUnits;
