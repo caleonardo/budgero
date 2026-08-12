@@ -56,10 +56,10 @@ export const docsSections: DocsSection[] = [
         id: 'ready-to-assign',
         title: 'Ready to assign',
         summary:
-          'See how new money arrives in Budgero, how it flows into ready to assign, and why giving every unit a job keeps you on-plan.',
+          'See how new money arrives in Budgero, how it flows into ready to assign, and how the Cumulative and Monthly (YNAB-style) modes differ.',
         takeaways: [
+          'Choosing between Cumulative and Monthly (YNAB-style) calculation',
           'How inflows, transfers, and reimbursements update ready to assign',
-          'Tips for reconciling cash and credit accounts without double counting',
           'Common reasons the balance might be negative and how to fix it fast',
         ],
       },
