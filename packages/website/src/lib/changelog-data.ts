@@ -16,11 +16,25 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.9.1',
+    date: 'August 12, 2026',
+    summary: 'Ready to Assign now counts money moved in from your off-budget accounts.',
+    isLatest: true,
+    items: [
+      {
+        type: 'fixed',
+        title: 'Transfers from off-budget accounts credit Ready to Assign',
+        description:
+          'Moving money from an off-budget account (savings, investments, or any tracking account) into an on-budget account now increases Ready to Assign — mirroring how transfers out to off-budget accounts already reduce it. Applies to both Cumulative and Monthly modes.',
+      },
+    ],
+  },
+  {
     version: 'v1.9.0',
     date: 'August 12, 2026',
     summary:
       'Ready to Assign can now work month-by-month like YNAB, and credit-card debt no longer hides in your budget.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
