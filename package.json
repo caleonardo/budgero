@@ -46,7 +46,8 @@
     "security:deps": "osv-scanner -r .",
     "security:go": "cd packages/server && go run golang.org/x/vuln/cmd/govulncheck@latest ./...",
     "i18n:check": "node scripts/i18n/check-catalogs.mjs",
-    "i18n:extract": "pnpm --dir packages/app run i18n:extract"
+    "i18n:extract": "pnpm --dir packages/app run i18n:extract",
+    "i18n:overflow": "node scripts/i18n/check-overflow.mjs"
   },
   "devDependencies": {
     "@types/jscodeshift": "^17.3.0",
