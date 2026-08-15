@@ -121,7 +121,7 @@ export function ServiceWorkerUpdateProvider({ enabled, children }: ProviderProps
       }
     } catch (error) {
       console.error('[PWA] Manual update check failed', error);
-      const message = 'Failed to check for updates';
+      const message = t`Failed to check for updates`;
       toast.error(message);
       finalize(message);
     } finally {

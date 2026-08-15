@@ -24,25 +24,27 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
             border: '1px dashed rgba(57,57,57,0.3)',
           }}
         >
-          <span style={{ fontWeight: 700, color: '#141414' }}>
-            <Trans>Before you export:</Trans>
-          </span>{' '}
-          in YNAB’s{' '}
-          <em>
-            <Trans>Plan Settings</Trans>
-          </em>
-          , set Date Format to <code>2025-12-30</code>, Number Format to <code>123,456.78</code> and
-          Currency Placement to “Don’t Show”. Skipping this can shift dates and break amounts.
-          Details in the{' '}
-          <a
-            href="https://budgero.app/docs/ynab-import"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#141414', fontWeight: 700 }}
-          >
-            <Trans>import guide</Trans>
-          </a>
-          .
+          <Trans>
+            <span style={{ fontWeight: 700, color: '#141414' }}>
+              <Trans>Before you export:</Trans>
+            </span>{' '}
+            in YNAB’s{' '}
+            <em>
+              <Trans>Plan Settings</Trans>
+            </em>
+            , set Date Format to <code>2025-12-30</code>, Number Format to <code>123,456.78</code>
+            and Currency Placement to “Don’t Show”. Skipping this can shift dates and break amounts.
+            Details in the{' '}
+            <a
+              href="https://budgero.app/docs/ynab-import"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#141414', fontWeight: 700 }}
+            >
+              <Trans>import guide</Trans>
+            </a>
+            .
+          </Trans>
         </div>
       )}
       {!file && (

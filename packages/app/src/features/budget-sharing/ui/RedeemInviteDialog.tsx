@@ -104,7 +104,7 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
         masterPassword: passwordToUse,
       });
       toast.success(t`Workspace joined`, {
-        description: `Joined workspace "${summary.display_name || summary.space_id}"`,
+        description: t`Joined workspace "${summary.display_name || summary.space_id}"`,
       });
       onOpenChange(false);
     } catch (error) {
@@ -151,12 +151,12 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
               loading={isInspecting}
             >
               {isInspecting ? (
-                'Checking…'
+                t`Checking…`
               ) : (
-                <>
+                <Trans>
                   <ShieldCheck className="h-4 w-4" />
                   Validate secret
-                </>
+                </Trans>
               )}
             </Button>
             {inspectionSummary && (
@@ -176,7 +176,7 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
               type="password"
               value={masterPassword}
               onChange={(event) => setMasterPassword(event.target.value)}
-              placeholder={hasCachedPassword ? 'leave blank to use cached password' : 'required'}
+              placeholder={hasCachedPassword ? t`leave blank to use cached password` : 'required'}
             />
             <p className="text-xs text-muted-foreground">
               <Trans>
@@ -209,7 +209,7 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
             disabled={disableRedeem}
             loading={redeemInvite.isPending}
           >
-            {redeemInvite.isPending ? 'Joining…' : 'Join workspace'}
+            {redeemInvite.isPending ? t`Joining…` : t`Join workspace`}
           </Button>
         </DialogFooter>
       </DialogContent>

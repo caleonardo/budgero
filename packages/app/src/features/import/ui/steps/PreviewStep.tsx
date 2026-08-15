@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Preview Step Component
  *
@@ -34,6 +34,8 @@ export function PreviewStep({
   onBack,
   onStartImport,
 }: PreviewStepProps) {
+  const { t } = useLingui();
+
   const canImport = hasBudgetSelected && (columnMapping.account || importConfig.defaultAccountId);
   const errorCount = previewData.filter((row) => row.errors.length > 0).length;
   const isPreviewCapped = previewTotalCount > previewData.length;
@@ -55,13 +57,17 @@ export function PreviewStep({
         {previewData.length > 0 && (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
             <span className="font-medium">
-              {previewImportableCount}{' '}
-              {previewImportableCount === 1 ? 'transaction' : 'transactions'} will be imported
+              <Trans>
+                {previewImportableCount}{' '}
+                {previewImportableCount === 1 ? 'transaction' : 'transactions'}will be imported
+              </Trans>
             </span>
             {previewSkippedCount > 0 && (
               <Badge variant="secondary">
-                {previewSkippedCount} {previewSkippedCount === 1 ? 'row' : 'rows'} will be skipped
-                (no/unreadable amount)
+                <Trans>
+                  {previewSkippedCount} {previewSkippedCount === 1 ? 'row' : 'rows'}will be skipped
+                  (no/unreadable amount)
+                </Trans>
               </Badge>
             )}
             {isPreviewCapped && (
@@ -114,7 +120,7 @@ export function PreviewStep({
                       </td>
                       <td className="px-3 py-2 max-w-48 truncate">{item.parsed.memo || '—'}</td>
                       <td className="px-3 py-2">{item.parsed.payee || '—'}</td>
-                      <td className="px-3 py-2">{item.parsed.account || 'Default Account'}</td>
+                      <td className="px-3 py-2">{item.parsed.account || t`Default Account`}</td>
                       <td className="px-3 py-2">
                         {item.errors.length > 0 && (
                           <ul className="space-y-0.5 text-xs text-destructive">

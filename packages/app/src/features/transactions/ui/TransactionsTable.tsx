@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { DateRange } from 'react-day-picker';
 import { Dialog, DialogContent } from '@shared/ui/dialog';
@@ -76,6 +77,8 @@ export function TransactionsTable({
   onFilteredStatsChange,
   headerActions,
 }: TransactionsTableProps) {
+  const { t } = useLingui();
+
   const isMobile = useIsMobile();
   // Pagination state (search state lives in useTransactionSearch, below)
   const [showOnlyUncategorized, setShowOnlyUncategorized] = React.useState(false);
@@ -182,8 +185,8 @@ export function TransactionsTable({
     transactionCurrencyDisplay === 'budget' ? globalLocalizer : accountLocalizer;
   const currencyLabel =
     transactionCurrencyDisplay === 'budget'
-      ? selectedBudget?.DisplayCurrency || 'Budget Currency'
-      : selectedAccount?.Currency || 'Account Currency';
+      ? selectedBudget?.DisplayCurrency || t`Budget Currency`
+      : selectedAccount?.Currency || t`Account Currency`;
 
   const { getPrimaryInflow, getPrimaryOutflow, getSecondaryInflow, getSecondaryOutflow } =
     React.useMemo(

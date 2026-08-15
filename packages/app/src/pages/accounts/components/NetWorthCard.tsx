@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Net Worth Card Component
  *
@@ -43,6 +43,8 @@ export function NetWorthCard({
   chartData,
   formatCurrency,
 }: NetWorthCardProps) {
+  const { t } = useLingui();
+
   const changePercent =
     netWorth - netWorthChange !== 0 ? (netWorthChange / (netWorth - netWorthChange)) * 100 : 0;
 
@@ -84,13 +86,13 @@ export function NetWorthCard({
           });
           // Plotted values are decimal; formatCurrency is milli-in.
           return tooltipHtml(title, [
-            { color, name: 'Net Worth', value: formatCurrency(fromDecimal(point.value)) },
+            { color, name: t`Net Worth`, value: formatCurrency(fromDecimal(point.value)) },
           ]);
         },
       },
       series: [
         {
-          name: 'Net Worth',
+          name: t`Net Worth`,
           type: 'line' as const,
           data: points.map((point) => point.value),
           lineStyle: { color, width: 2 },
@@ -102,7 +104,7 @@ export function NetWorthCard({
         },
       ],
     };
-  }, [chartData, formatCurrency, palette]);
+  }, [chartData, formatCurrency, palette, t]);
 
   return (
     <Card>

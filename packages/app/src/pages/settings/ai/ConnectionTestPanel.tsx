@@ -88,9 +88,11 @@ export function ConnectionTestPanel({
           />
         </div>
         <p className="text-xs text-muted-foreground">
-          Leave empty for local servers (Ollama, LM Studio). Sent as a{' '}
-          <code className="rounded bg-muted px-1 py-0.5 text-[11px]">Bearer</code> token to your
-          chosen provider.
+          <Trans>
+            Leave empty for local servers (Ollama, LM Studio). Sent as a{' '}
+            <code className="rounded bg-muted px-1 py-0.5 text-[11px]">Bearer</code>token to your
+            chosen provider.
+          </Trans>
         </p>
       </div>
     </div>
@@ -136,14 +138,16 @@ function ConnectionStatusMessage({
         </p>
         {isCorsLikely && (
           <p className="text-xs text-muted-foreground">
-            If you're accessing Budgero over HTTPS, Ollama needs to allow your origin. Start Ollama
-            with{' '}
-            <code className="rounded bg-muted px-1 py-0.5 text-[11px]">
-              OLLAMA_ORIGINS=* ollama serve
-            </code>{' '}
-            or set the{' '}
-            <code className="rounded bg-muted px-1 py-0.5 text-[11px]">OLLAMA_ORIGINS</code>{' '}
-            environment variable in your Ollama service config.
+            <Trans>
+              If you're accessing Budgero over HTTPS, Ollama needs to allow your origin. Start
+              Ollama with{' '}
+              <code className="rounded bg-muted px-1 py-0.5 text-[11px]">
+                OLLAMA_ORIGINS=* ollama serve
+              </code>{' '}
+              or set the{' '}
+              <code className="rounded bg-muted px-1 py-0.5 text-[11px]">OLLAMA_ORIGINS</code>{' '}
+              environment variable in your Ollama service config.
+            </Trans>
           </p>
         )}
       </div>

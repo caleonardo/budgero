@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { parseISO } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -20,6 +21,8 @@ interface DatePickerCellProps {
  * - On select, calls onCommit() with the new date in "yyyy-MM-dd" format
  */
 export function DatePickerCell({ value, onCommit }: DatePickerCellProps) {
+  const { t } = useLingui();
+
   const [date, setDate] = React.useState<Date | null>(() => {
     return value ? parseISO(value) : null;
   });
@@ -49,7 +52,7 @@ export function DatePickerCell({ value, onCommit }: DatePickerCellProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="p-2 h-8">
-          {date ? format(date, 'yyyy-MM-dd') : 'Pick a date'}
+          {date ? format(date, 'yyyy-MM-dd') : t`Pick a date`}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start" modal>

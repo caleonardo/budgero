@@ -1,6 +1,6 @@
 'use client';
 
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 /**
  * Transaction Form Actions
@@ -31,6 +31,8 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   isInflow,
   isOutflow,
 }: TransactionFormActionsProps) {
+  const { t } = useLingui();
+
   const submitButtonClassName = React.useMemo(() => {
     const base = 'h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial transition-colors';
     if (isInflow) {
@@ -45,21 +47,21 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   const submitButtonLabel = React.useMemo(() => {
     if (isCalculatingTransfer) {
       return (
-        <>
+        <Trans>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Processing...
-        </>
+        </Trans>
       );
     }
     if (isTransfer) {
-      return 'Add Transfer';
+      return t`Add Transfer`;
     }
-    return `Add ${isInflow ? 'Income' : 'Expense'}`;
-  }, [isCalculatingTransfer, isTransfer, isInflow]);
+    return isInflow ? t`Add Income` : t`Add Expense`;
+  }, [isCalculatingTransfer, isTransfer, isInflow, t]);
 
   return (
-    <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between gap-2 sm:gap-3">
-      <div className="flex gap-2 order-2 sm:order-1 items-center">
+    <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:flex-wrap justify-between gap-2 sm:gap-3">
+      <div className="flex min-w-0 gap-2 order-2 sm:order-1 items-center">
         <Button
           variant="outline"
           type="button"
@@ -68,11 +70,12 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
         >
           <Trans>Cancel</Trans>
         </Button>
-        <span className="hidden sm:inline-block text-[10px] text-muted-foreground ml-2">
+        {/* Hint must never squeeze the buttons — hide it before it wraps. */}
+        <span className="hidden md:inline-block whitespace-nowrap text-[10px] text-muted-foreground ml-2">
           <Trans>Press Cmd+Enter to save</Trans>
         </span>
       </div>
-      <div className="flex gap-2 order-1 sm:order-2">
+      <div className="flex shrink-0 gap-2 order-1 sm:order-2">
         <Button
           onClick={onQuickAdd}
           disabled={isCalculatingTransfer}

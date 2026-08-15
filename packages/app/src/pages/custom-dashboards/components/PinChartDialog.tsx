@@ -61,11 +61,11 @@ export function PinChartDialog({
     chartId: defaultChartId,
   });
   const { isRunning: isSubmitting, run: runSubmit } = useAsyncDialogAction({
-    errorMessage: 'Failed to pin chart',
+    errorMessage: t`Failed to pin chart`,
     onSuccess: () => onOpenChange(false),
   });
   const { isRunning: isCreatingDashboard, run: runCreateDashboard } = useAsyncDialogAction({
-    errorMessage: 'Failed to create dashboard',
+    errorMessage: t`Failed to create dashboard`,
   });
 
   // Pre-existing reset-on-open pattern; the setState-in-effect call is an
@@ -127,7 +127,7 @@ export function PinChartDialog({
                 onClick={handleCreateDashboard}
                 disabled={isCreatingDashboard}
               >
-                {isCreatingDashboard ? 'Creating...' : 'Create "My Dashboard"'}
+                {isCreatingDashboard ? t`Creating...` : t`Create "My Dashboard"`}
               </Button>
             )}
           </div>
@@ -172,7 +172,7 @@ export function PinChartDialog({
             onClick={handleSubmit}
             disabled={isSubmitting || noDashboards || noReports || isCreatingDashboard}
           >
-            {isSubmitting ? 'Saving...' : confirmLabel}
+            {isSubmitting ? t`Saving...` : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

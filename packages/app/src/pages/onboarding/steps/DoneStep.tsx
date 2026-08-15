@@ -1,4 +1,4 @@
-import { plural } from '@lingui/core/macro';
+import { plural, msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { THEMES_AVAILABLE } from '../onboarding-data';
@@ -94,8 +94,8 @@ export const DoneStep: React.FC<Omit<StepProps, 'set'> & DoneStepExtraProps> = (
               borderBottom: i < arr.length - 1 ? '1px dotted rgba(57,57,57,0.2)' : 'none',
             }}
           >
-            <span style={{ color: '#393939' }}>{k}</span>
-            <span style={{ fontWeight: 600 }}>{v}</span>
+            <span style={{ color: '#393939' }}>{typeof k === 'string' ? k : t(k)}</span>
+            <span style={{ fontWeight: 600 }}>{typeof v === 'string' ? v : t(v)}</span>
           </div>
         ))}
       </div>
@@ -110,8 +110,8 @@ export const DoneStep: React.FC<Omit<StepProps, 'set'> & DoneStepExtraProps> = (
       />
       {state.joinSecret ? (
         <Title
-          h="Ready to join."
-          sub="Click below and we’ll redeem the invite, decrypt the shared workspace key on this device, and drop you into the budget."
+          h={msg`Ready to join.`}
+          sub={msg`Click below and we’ll redeem the invite, decrypt the shared workspace key on this device, and drop you into the budget.`}
         />
       ) : (
         <>
@@ -145,8 +145,8 @@ export const DoneStep: React.FC<Omit<StepProps, 'set'> & DoneStepExtraProps> = (
             }}
           />
           {state.joinSecret
-            ? 'Decrypting shared workspace key and joining…'
-            : 'Encrypting your ledger and creating accounts…'}
+            ? t`Decrypting shared workspace key and joining…`
+            : t`Encrypting your ledger and creating accounts…`}
         </div>
       )}
       {applyState === 'error' && applyError && (

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import {
   DropdownMenu,
@@ -36,6 +37,8 @@ export function AssignDropdown({
   variant = 'default',
   fullWidth = false,
 }: AssignDropdownProps) {
+  const { t } = useLingui();
+
   const { data: allowOverAssignment = false } = useAllowOverAssignment();
   // Mask amounts in the dropdown and its action toasts while privacy mode is on.
   const maskedLocalizer = useMaskedLocalizer(globalLocalizer);
@@ -72,13 +75,13 @@ export function AssignDropdown({
           disabled={isAssigning && !showReduceOnly}
           className={`flex items-center gap-1 ${fullWidth ? 'w-full justify-center' : ''}`}
         >
-          {isAssigning ? 'Processing...' : showReduceOnly ? 'Manage' : 'Assign'}
+          {isAssigning ? t`Processing...` : showReduceOnly ? t`Manage` : t`Assign`}
           <ChevronDown className="h-3 w-3" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel className="text-xs text-muted-foreground">
-          Available: {formatMilli(maskedLocalizer, asMilli(readyToAssign))}
+          <Trans>Available: {formatMilli(maskedLocalizer, asMilli(readyToAssign))}</Trans>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 

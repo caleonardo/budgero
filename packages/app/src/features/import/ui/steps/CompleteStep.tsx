@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Complete Step Component
  *
@@ -16,6 +16,8 @@ interface CompleteStepProps {
 }
 
 export function CompleteStep({ importSummary, onReset }: CompleteStepProps) {
+  const { t } = useLingui();
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -64,7 +66,7 @@ export function CompleteStep({ importSummary, onReset }: CompleteStepProps) {
                   <Trans>New categories created:</Trans>
                 </span>
                 <span className="font-medium">
-                  {importSummary.categoriesCreated > 0 ? importSummary.categoriesCreated : 'None'}
+                  {importSummary.categoriesCreated > 0 ? importSummary.categoriesCreated : t`None`}
                 </span>
               </li>
             </ul>

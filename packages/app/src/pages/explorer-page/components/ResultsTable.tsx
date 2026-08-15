@@ -38,8 +38,10 @@ export const ResultsTable = memo(
             showTruncated={result.rowCount > result.rows.length}
             truncatedFooter={
               <div className="p-2 sm:p-3 text-center text-xs text-muted-foreground bg-muted/20 border-t">
-                Showing {result.rows.length.toLocaleString()} of {result.rowCount.toLocaleString()}{' '}
-                total rows
+                <Trans>
+                  Showing {result.rows.length.toLocaleString()}of {result.rowCount.toLocaleString()}{' '}
+                  total rows
+                </Trans>
               </div>
             }
             emptyMessage="Query executed successfully - no results returned"

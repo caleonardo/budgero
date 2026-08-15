@@ -1,4 +1,4 @@
-import { plural } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Shield, AlertTriangle, Lock, Eye, EyeOff, ShieldAlert } from 'lucide-react';
@@ -31,7 +31,7 @@ import { PrivacySettingsCard } from './components';
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   if (typeof error === 'string') return error;
-  return 'An unexpected error occurred';
+  return t`An unexpected error occurred`;
 }
 
 function PasswordField({
@@ -509,7 +509,7 @@ export default function SecurityPage() {
               onClick={handleChangePassword}
               disabled={isChanging || !currentPassword || !newPassword || !confirmPassword}
             >
-              {isChanging ? 'Changing...' : 'Change Password'}
+              {isChanging ? t`Changing...` : t`Change Password`}
             </Button>
           </DialogFooter>
         </DialogContent>

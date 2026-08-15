@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useLocation, Link } from 'react-router-dom';
 import { cn } from '@shared/lib/utils';
 import {
@@ -49,6 +49,8 @@ import {
 const LAST_USED_KEY = 'budgero:add-transaction:last-used';
 
 export function MobileBottomNav() {
+  const { t } = useLingui();
+
   const location = useLocation();
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const { data: accountsData = [] } = useAccounts(selectedBudget?.ID || 0);
@@ -73,8 +75,8 @@ export function MobileBottomNav() {
   });
 
   const safeAreaInsetBottom = isStandaloneMode
-    ? 'max(calc(env(safe-area-inset-bottom, 0px) - 12px), 0px)'
-    : 'env(safe-area-inset-bottom, 0px)';
+    ? t`max(calc(env(safe-area-inset-bottom, 0px) - 12px), 0px)`
+    : t`env(safe-area-inset-bottom, 0px)`;
 
   const toggleSettingsSection = (section: string) => {
     setOpenSettingsSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -219,45 +221,45 @@ export function MobileBottomNav() {
 
   const navItems = [
     {
-      title: 'Budgeting',
+      title: t`Budgeting`,
       icon: ClipboardList,
       path: dashboardPath,
       isActive: location.pathname === dashboardPath || location.pathname.startsWith(budgetingPath),
       options: [
         {
-          title: 'Dashboard',
+          title: t`Dashboard`,
           path: dashboardPath,
           icon: Home,
         },
         {
-          title: 'Planning',
+          title: t`Planning`,
           path: budgetingPath,
           icon: ClipboardList,
         },
       ],
     },
     {
-      title: 'Accounts',
+      title: t`Accounts`,
       icon: CreditCard,
       path: accountsPath,
       isActive: location.pathname.startsWith(accountsPath),
       hasDropdown: true,
     },
     {
-      title: 'Add',
+      title: t`Add`,
       icon: Plus,
       path: '#',
       isAction: true,
     },
     {
-      title: 'Reports',
+      title: t`Reports`,
       icon: ChartPie,
       path: reportsPath,
       isActive: location.pathname.startsWith(reportsPath),
       hasDropdown: true,
     },
     {
-      title: 'Settings',
+      title: t`Settings`,
       icon: Settings2,
       path: settingsPath,
       isActive:
@@ -448,7 +450,7 @@ export function MobileBottomNav() {
                             >
                               <Link to={link.to} className="flex items-center gap-2">
                                 <link.icon className="h-4 w-4" />
-                                {link.label}
+                                {t(link.label)}
                               </Link>
                             </DropdownMenuItem>
                           ))}
@@ -494,7 +496,7 @@ export function MobileBottomNav() {
                           >
                             <Link to={link.to} className="flex items-center gap-2">
                               <link.icon className="h-4 w-4" />
-                              {link.label}
+                              {t(link.label)}
                             </Link>
                           </DropdownMenuItem>
                         ))}
@@ -529,7 +531,7 @@ export function MobileBottomNav() {
                           >
                             <Link to={link.to} className="flex items-center gap-2">
                               <link.icon className="h-4 w-4" />
-                              {link.label}
+                              {t(link.label)}
                             </Link>
                           </DropdownMenuItem>
                         ))}
@@ -564,7 +566,7 @@ export function MobileBottomNav() {
                           >
                             <Link to={link.to} className="flex items-center gap-2">
                               <link.icon className="h-4 w-4" />
-                              {link.label}
+                              {t(link.label)}
                             </Link>
                           </DropdownMenuItem>
                         ))}
@@ -585,7 +587,7 @@ export function MobileBottomNav() {
                         className="flex items-center gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
                       >
                         <LogOut className="h-4 w-4" />
-                        {logout.isPending ? 'Signing out...' : 'Sign out'}
+                        {logout.isPending ? t`Signing out...` : t`Sign out`}
                       </DropdownMenuItem>
                     </>
                   </DropdownMenuContent>
@@ -610,7 +612,7 @@ export function MobileBottomNav() {
                       >
                         <Link to={link.to} className="flex items-center gap-2">
                           <link.icon className="h-4 w-4" />
-                          {link.label}
+                          {t(link.label)}
                         </Link>
                       </DropdownMenuItem>
                     ))}

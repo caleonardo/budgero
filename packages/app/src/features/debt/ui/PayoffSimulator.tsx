@@ -79,7 +79,7 @@ export function PayoffSimulator({
   const formattedPayment = formatMilli(formatter, roundMilli(payment));
   const collapsedSummary =
     sim.months === null
-      ? 'Payment too low'
+      ? t`Payment too low`
       : payoffDate
         ? `${formattedPayment}/mo · paid off ${payoffDate}`
         : `${formattedPayment}/mo`;

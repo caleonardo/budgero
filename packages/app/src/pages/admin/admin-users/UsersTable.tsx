@@ -1,5 +1,5 @@
 import { plural } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@shared/ui/table';
@@ -22,6 +22,8 @@ export const UsersTable = React.memo(function UsersTable({
   onAction,
   onCopyId,
 }: UsersTableProps) {
+  const { t } = useLingui();
+
   return (
     <Card>
       <CardHeader>
@@ -30,7 +32,7 @@ export const UsersTable = React.memo(function UsersTable({
         </CardTitle>
         <CardDescription>
           {loading
-            ? 'Loading...'
+            ? t`Loading...`
             : plural(users.length, {
                 one: `# user found`,
                 other: `# users found`,

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import {
   Dialog,
@@ -23,6 +23,8 @@ interface CancelDialogProps {
 }
 
 export const CancelDialog = React.memo(function CancelDialog({ vm }: CancelDialogProps) {
+  const { t } = useLingui();
+
   const {
     showCancelDialog,
     cancelReason,
@@ -77,7 +79,7 @@ export const CancelDialog = React.memo(function CancelDialog({ vm }: CancelDialo
                   <div className="flex items-center space-x-3">
                     <RadioGroupItem value={option.value} id={id} />
                     <Label htmlFor={id} className="font-medium text-sm">
-                      {option.label}
+                      {t(option.label)}
                     </Label>
                   </div>
                   {isSelected && (
@@ -87,8 +89,8 @@ export const CancelDialog = React.memo(function CancelDialog({ vm }: CancelDialo
                         onChange={(event) => setCancelReasonNotes(event.target.value)}
                         placeholder={
                           isOther
-                            ? 'Tell us more (required)'
-                            : 'Anything else you want to share? (optional)'
+                            ? t`Tell us more (required)`
+                            : t`Anything else you want to share? (optional)`
                         }
                         rows={3}
                         required={isOther}
@@ -96,8 +98,8 @@ export const CancelDialog = React.memo(function CancelDialog({ vm }: CancelDialo
                       />
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         {isOther
-                          ? 'A brief description helps us understand the issue.'
-                          : 'Optional notes help our team improve Budgero.'}
+                          ? t`A brief description helps us understand the issue.`
+                          : t`Optional notes help our team improve Budgero.`}
                       </p>
                     </div>
                   )}

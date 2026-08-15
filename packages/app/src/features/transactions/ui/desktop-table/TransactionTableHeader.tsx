@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { Checkbox } from '@shared/ui/checkbox';
@@ -28,6 +28,8 @@ export const TransactionTableHeader = React.memo(function TransactionTableHeader
   columnWidths,
   onResize,
 }: TransactionTableHeaderProps) {
+  const { t } = useLingui();
+
   return (
     <TableHeader>
       <TableRow>
@@ -36,7 +38,7 @@ export const TransactionTableHeader = React.memo(function TransactionTableHeader
             <Checkbox
               checked={somePageRowsSelected ? 'indeterminate' : allPageRowsSelected}
               onCheckedChange={(checked) => onToggleSelectPage(checked === true)}
-              aria-label="Select all transactions on this page"
+              aria-label={t`Select all transactions on this page`}
             />
           </div>
           <ResizeHandle column="checkbox" onResize={onResize} />

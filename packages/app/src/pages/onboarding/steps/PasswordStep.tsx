@@ -1,4 +1,5 @@
 import { Trans, useLingui } from '@lingui/react/macro';
+import { msg } from '@lingui/core/macro';
 import React from 'react';
 import { FieldLabel, InputRow, StepHeroImage, Title, type StepProps } from './shared';
 
@@ -27,8 +28,8 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
         alt={t`Coin character with a key approaching a Budgero padlock`}
       />
       <Title
-        h="Lock your ledger."
-        sub="Your budget lives on your device, encrypted with a master password only you know. Pick something memorable — we can’t reset it for you."
+        h={msg`Lock your ledger.`}
+        sub={msg`Your budget lives on your device, encrypted with a master password only you know. Pick something memorable — we can’t reset it for you.`}
       />
       <div style={{ display: 'grid', gap: 14, marginTop: 8 }}>
         <div>
@@ -89,7 +90,7 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
                 letterSpacing: 1,
               }}
             >
-              {matches ? '✓ MATCH' : '✗ DOES NOT MATCH'}
+              {matches ? t`✓ MATCH` : t`✗ DOES NOT MATCH`}
             </div>
           )}
         </div>
@@ -105,15 +106,17 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
           lineHeight: 1.55,
         }}
       >
-        <div style={{ fontWeight: 700, color: '#c6392c', letterSpacing: 1, marginBottom: 4 }}>
-          <Trans>⚠ READ THIS</Trans>
-        </div>
-        Your budget is encrypted with this password on your device. We never see it. If you forget
-        it,{' '}
-        <span style={{ fontWeight: 700, color: '#141414' }}>
-          <Trans>your ledger is unrecoverable</Trans>
-        </span>{' '}
-        — there is no reset email, no support line, no backdoor.
+        <Trans>
+          <div style={{ fontWeight: 700, color: '#c6392c', letterSpacing: 1, marginBottom: 4 }}>
+            <Trans>⚠ READ THIS</Trans>
+          </div>
+          Your budget is encrypted with this password on your device. We never see it. If you forget
+          it,{' '}
+          <span style={{ fontWeight: 700, color: '#141414' }}>
+            <Trans>your ledger is unrecoverable</Trans>
+          </span>{' '}
+          — there is no reset email, no support line, no backdoor.
+        </Trans>
       </div>
     </div>
   );

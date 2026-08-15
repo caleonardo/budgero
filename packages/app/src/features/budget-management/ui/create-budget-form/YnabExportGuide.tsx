@@ -21,27 +21,27 @@ const YNAB_WEB_APP_LINK = (
 
 // Rendered as the numbered steps in the "How to export from YNAB" guide.
 const YNAB_GUIDE_STEPS: ReactNode[] = [
-  <>
-    Open your budget in the {YNAB_WEB_APP_LINK} and go to{' '}
+  <Trans>
+    Open your budget in the {YNAB_WEB_APP_LINK}and go to{' '}
     <span className="font-medium text-foreground">
       <Trans>Plan Settings</Trans>
     </span>
-  </>,
-  <>
+  </Trans>,
+  <Trans>
     Set{' '}
     <span className="font-medium text-foreground">
       <Trans>Number Format</Trans>
     </span>{' '}
     to <span className="font-mono text-foreground">123,456.78</span>
-  </>,
-  <>
+  </Trans>,
+  <Trans>
     Set{' '}
     <span className="font-medium text-foreground">
       <Trans>Date Format</Trans>
     </span>{' '}
     to <span className="font-mono text-foreground">2025-12-30</span>
-  </>,
-  <>
+  </Trans>,
+  <Trans>
     Set{' '}
     <span className="font-medium text-foreground">
       <Trans>Currency Placement</Trans>
@@ -50,15 +50,15 @@ const YNAB_GUIDE_STEPS: ReactNode[] = [
     <span className="font-medium text-foreground">
       <Trans>"Don't Show"</Trans>
     </span>
-  </>,
-  <>
+  </Trans>,
+  <Trans>
     Click your budget name in the top-left corner and select{' '}
     <span className="font-medium text-foreground">
       <Trans>Export Budget</Trans>
     </span>
     , then save the ZIP file
-  </>,
-  <>Upload the ZIP file above</>,
+  </Trans>,
+  <Trans>Upload the ZIP file above</Trans>,
 ];
 
 const FULL_GUIDE_LINK = (

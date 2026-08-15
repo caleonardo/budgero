@@ -43,14 +43,14 @@ export default function AboutPage() {
   }, [swUpdates, t]);
 
   const rows: { label: string; value: string }[] = [
-    { label: 'Version', value: pkg.version ?? 'Unknown' },
+    { label: t`Version`, value: pkg.version ?? 'Unknown' },
     {
-      label: 'Build',
+      label: t`Build`,
       value: typeof __APP_BUILD_SHA__ === 'string' ? __APP_BUILD_SHA__ : 'Unknown',
     },
-    { label: 'Build Channel', value: buildChannel },
-    { label: 'Environment', value: import.meta.env.MODE },
-    { label: 'License', value: pkg.license ?? 'All rights reserved' },
+    { label: t`Build Channel`, value: buildChannel },
+    { label: t`Environment`, value: import.meta.env.MODE },
+    { label: t`License`, value: pkg.license ?? 'All rights reserved' },
   ];
 
   return (

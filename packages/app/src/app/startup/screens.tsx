@@ -1,3 +1,6 @@
+import type { MessageDescriptor } from '@lingui/core';
+import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -55,8 +58,8 @@ import type { MasterPasswordStartupSnapshot, WorkspaceStartupSnapshot } from './
 import { StartupLayout } from './StartupLayout';
 
 interface StartupSplashScreenProps {
-  message?: string;
-  detail?: string;
+  message?: MessageDescriptor;
+  detail?: MessageDescriptor;
 }
 
 export function StartupSplashScreen({ message, detail }: StartupSplashScreenProps) {
@@ -65,9 +68,11 @@ export function StartupSplashScreen({ message, detail }: StartupSplashScreenProp
   return (
     <div className="budgero-route-loader">
       <img className="budgero-route-loader__logo" src="/logo_128.png" alt={t`Budgero logo`} />
-      <p className="budgero-route-loader__text">{message ?? 'Preparing Budgero…'}</p>
+      <p className="budgero-route-loader__text">
+        {message ? i18n._(message) : t`Preparing Budgero…`}
+      </p>
       <div className="budgero-route-loader__progress" aria-hidden="true" />
-      {detail ? <p className="text-xs text-muted-foreground">{detail}</p> : null}
+      {detail ? <p className="text-xs text-muted-foreground">{i18n._(detail)}</p> : null}
     </div>
   );
 }
@@ -79,18 +84,6 @@ export function AccessBlockedScreen({ mode }: { mode: 'shared-locked' | 'subscri
 export function IntroRequiredScreen({ acknowledgeIntro }: { acknowledgeIntro: () => void }) {
   return <OnboardingFlow onComplete={acknowledgeIntro} />;
 }
-
-const PASSWORD_RULES = [
-  { key: 'length', label: 'At least 12 characters', test: (p: string) => p.length >= 12 },
-  { key: 'upper', label: 'One uppercase letter', test: (p: string) => /[A-Z]/.test(p) },
-  { key: 'lower', label: 'One lowercase letter', test: (p: string) => /[a-z]/.test(p) },
-  { key: 'number', label: 'One number', test: (p: string) => /\d/.test(p) },
-  {
-    key: 'special',
-    label: 'One special character (!@#$%...)',
-    test: (p: string) => /[^A-Za-z0-9]/.test(p),
-  },
-] as const;
 
 function PasswordRequirement({ met, label }: { met: boolean; label: string }) {
   return (
@@ -109,6 +102,18 @@ function PasswordRequirement({ met, label }: { met: boolean; label: string }) {
 
 function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnapshot }) {
   const { t } = useLingui();
+
+  const PASSWORD_RULES = [
+    { key: 'length', label: t`At least 12 characters`, test: (p: string) => p.length >= 12 },
+    { key: 'upper', label: t`One uppercase letter`, test: (p: string) => /[A-Z]/.test(p) },
+    { key: 'lower', label: t`One lowercase letter`, test: (p: string) => /[a-z]/.test(p) },
+    { key: 'number', label: t`One number`, test: (p: string) => /\d/.test(p) },
+    {
+      key: 'special',
+      label: t`One special character (!@#$%...)`,
+      test: (p: string) => /[^A-Za-z0-9]/.test(p),
+    },
+  ] as const;
 
   const showSetup = !snapshot.isOffline && snapshot.isFirstTimeSetup;
   const password = snapshot.inputPassword;
@@ -186,13 +191,15 @@ function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnaps
         className="w-full"
         disabled={showSetup && (!allRulesMet || !passwordsMatch)}
       >
-        {showSetup ? 'Set Master Password' : 'Unlock'}
+        {showSetup ? t`Set Master Password` : t`Unlock`}
       </Button>
     </form>
   );
 }
 
 function MasterPasswordResetDialog({ snapshot }: { snapshot: MasterPasswordStartupSnapshot }) {
+  const { t } = useLingui();
+
   return (
     <Dialog
       open={snapshot.showResetDialog}
@@ -258,12 +265,12 @@ function MasterPasswordResetDialog({ snapshot }: { snapshot: MasterPasswordStart
             disabled={snapshot.isResetting || snapshot.resetConfirmation !== 'RESET'}
           >
             {snapshot.isResetting ? (
-              <>
+              <Trans>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Resetting...
-              </>
+              </Trans>
             ) : (
-              'Delete everything'
+              t`Delete everything`
             )}
           </Button>
         </DialogFooter>
@@ -277,6 +284,8 @@ export function MasterPasswordRequiredScreen({
 }: {
   snapshot: MasterPasswordStartupSnapshot;
 }) {
+  const { t } = useLingui();
+
   const logout = useLogout();
 
   if (!snapshot.isOffline && snapshot.isFirstTimeSetup) {
@@ -342,10 +351,10 @@ export function MasterPasswordRequiredScreen({
     );
   }
 
-  const title = 'Enter Master Password';
+  const title = t`Enter Master Password`;
   const description = snapshot.isOffline
-    ? 'Unlock to decrypt your budget data (offline mode)'
-    : 'Your master password is required to decrypt your budget data';
+    ? t`Unlock to decrypt your budget data (offline mode)`
+    : t`Your master password is required to decrypt your budget data`;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
@@ -383,12 +392,12 @@ export function MasterPasswordRequiredScreen({
 
 function workspaceMessage(accessStatus: AccessStatus | null, isSelfHost: boolean) {
   if (isSelfHost) {
-    return 'Create your first workspace to start storing budgets on this instance.';
+    return t`Create your first workspace to start storing budgets on this instance.`;
   }
   if (accessStatus?.level === AccessLevel.COLLABORATOR) {
-    return 'Redeem a shared invite or upgrade to create your own workspace.';
+    return t`Redeem a shared invite or upgrade to create your own workspace.`;
   }
-  return 'You need an active subscription, trial, or free access before creating a workspace.';
+  return t`You need an active subscription, trial, or free access before creating a workspace.`;
 }
 
 export function WorkspaceRequiredScreen({
@@ -415,10 +424,10 @@ export function WorkspaceRequiredScreen({
   const redeemInvite = useRedeemSpaceInvite();
   const defaultWorkspaceName = React.useMemo(() => {
     const rawName = (profile?.name ?? '').trim();
-    if (!rawName) return 'Personal Budget Space';
+    if (!rawName) return t`Personal Budget Space`;
     const first = rawName.split(/\s+/)[0] ?? 'My';
-    return `${first}'s Budget Space`;
-  }, [profile?.name]);
+    return t`${first}'s Budget Space`;
+  }, [profile?.name, t]);
   const workspaceName = userEditedName ?? defaultWorkspaceName;
   const createWorkspace = useMutation({
     mutationFn: (displayName: string) => spaceApi.createSpace(displayName),
@@ -555,10 +564,12 @@ export function WorkspaceRequiredScreen({
                       <Trans>Cancel</Trans>
                     </Button>
                     <Button type="submit" disabled={redeemInvite.isPending || !inviteSecret.trim()}>
-                      {redeemInvite.isPending ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : null}
-                      Redeem invite
+                      <Trans>
+                        {redeemInvite.isPending ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : null}
+                        Redeem invite
+                      </Trans>
                     </Button>
                   </DialogFooter>
                 </form>
@@ -666,12 +677,12 @@ export function WorkspaceRequiredScreen({
             disabled={createWorkspace.isPending}
           >
             {createWorkspace.isPending ? (
-              <>
+              <Trans>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Creating workspace...
-              </>
+              </Trans>
             ) : (
-              'Create Workspace'
+              t`Create Workspace`
             )}
           </Button>
         </CardFooter>
@@ -679,27 +690,6 @@ export function WorkspaceRequiredScreen({
     </StartupLayout>
   );
 }
-
-const BUDGET_SOURCES = [
-  {
-    key: 'manual' as const,
-    icon: NotebookPen,
-    title: 'Start fresh',
-    description: 'Create a new budget from scratch',
-  },
-  {
-    key: 'import' as const,
-    icon: UploadCloud,
-    title: 'Import from YNAB',
-    description: 'Bring your categories, accounts, and history',
-  },
-  {
-    key: 'core' as const,
-    icon: HardDriveDownload,
-    title: 'Restore backup',
-    description: 'Upload a Budgero database backup',
-  },
-] as const;
 
 export function BudgetRequiredScreen({
   alternativeWorkspaces,
@@ -711,6 +701,27 @@ export function BudgetRequiredScreen({
   onSwitchWorkspace: (spaceId: string) => void;
 }) {
   const { t } = useLingui();
+
+  const BUDGET_SOURCES = [
+    {
+      key: 'manual' as const,
+      icon: NotebookPen,
+      title: t`Start fresh`,
+      description: t`Create a new budget from scratch`,
+    },
+    {
+      key: 'import' as const,
+      icon: UploadCloud,
+      title: t`Import from YNAB`,
+      description: t`Bring your categories, accounts, and history`,
+    },
+    {
+      key: 'core' as const,
+      icon: HardDriveDownload,
+      title: t`Restore backup`,
+      description: t`Upload a Budgero database backup`,
+    },
+  ] as const;
 
   const { status: onboardingStatus } = useOnboardingState();
   const { mutateAsync: updateOnboardingAsync } = useUpdateOnboarding();
@@ -787,7 +798,7 @@ export function BudgetRequiredScreen({
                     >
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium">
-                          {workspace.display_name || 'Unnamed workspace'}
+                          {workspace.display_name || t`Unnamed workspace`}
                         </div>
                         <div className="text-xs text-muted-foreground">
                           <Trans>Role: {workspace.role}</Trans>
@@ -799,12 +810,14 @@ export function BudgetRequiredScreen({
                         disabled={isSwitching}
                         onClick={() => onSwitchWorkspace(workspace.space_id)}
                       >
-                        {isSwitching ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <ArrowRightLeft className="mr-2 h-4 w-4" />
-                        )}
-                        Switch
+                        <Trans>
+                          {isSwitching ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <ArrowRightLeft className="mr-2 h-4 w-4" />
+                          )}
+                          Switch
+                        </Trans>
                       </Button>
                     </div>
                   );
@@ -824,17 +837,17 @@ export function BudgetRequiredScreen({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>
-                {selectedSource === 'manual' && 'Create a New Budget'}
-                {selectedSource === 'import' && 'Import from YNAB'}
-                {selectedSource === 'core' && 'Restore Budgero Backup'}
+                {selectedSource === 'manual' && t`Create a New Budget`}
+                {selectedSource === 'import' && t`Import from YNAB`}
+                {selectedSource === 'core' && t`Restore Budgero Backup`}
               </CardTitle>
               <CardDescription>
                 {selectedSource === 'manual' &&
-                  'Fill in the details below to set up your first budget.'}
+                  t`Fill in the details below to set up your first budget.`}
                 {selectedSource === 'import' &&
-                  'Bring your YNAB data into Budgero without re-entering anything.'}
+                  t`Bring your YNAB data into Budgero without re-entering anything.`}
                 {selectedSource === 'core' &&
-                  'Upload a Budgero database file to restore your data.'}
+                  t`Upload a Budgero database file to restore your data.`}
               </CardDescription>
             </div>
             <Button
@@ -877,6 +890,8 @@ export function BudgetBlockedScreen({
   switchingWorkspaceId: string | null;
   onSwitchWorkspace: (spaceId: string) => void;
 }) {
+  const { t } = useLingui();
+
   const logout = useLogout();
 
   return (
@@ -912,7 +927,7 @@ export function BudgetBlockedScreen({
                     >
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium">
-                          {workspace.display_name || 'Unnamed workspace'}
+                          {workspace.display_name || t`Unnamed workspace`}
                         </div>
                         <div className="text-xs text-muted-foreground">
                           <Trans>Role: {workspace.role}</Trans>
@@ -924,12 +939,14 @@ export function BudgetBlockedScreen({
                         disabled={isSwitching}
                         onClick={() => onSwitchWorkspace(workspace.space_id)}
                       >
-                        {isSwitching ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <ArrowRightLeft className="mr-2 h-4 w-4" />
-                        )}
-                        Switch
+                        <Trans>
+                          {isSwitching ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <ArrowRightLeft className="mr-2 h-4 w-4" />
+                          )}
+                          Switch
+                        </Trans>
                       </Button>
                     </div>
                   );
@@ -982,7 +999,7 @@ export function StartupSyncStatus({
   message,
 }: {
   phase: 'hidden' | 'syncing' | 'warning' | 'complete';
-  message: string;
+  message: MessageDescriptor | string;
 }) {
   if (phase === 'hidden') return null;
 
@@ -996,7 +1013,7 @@ export function StartupSyncStatus({
         ) : (
           <Wifi className="h-4 w-4 animate-pulse text-primary" />
         )}
-        <span>{message}</span>
+        <span>{typeof message === 'string' ? message : i18n._(message)}</span>
       </div>
     </div>
   );

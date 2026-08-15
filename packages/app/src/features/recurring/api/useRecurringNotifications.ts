@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRuntime } from '@shared/runtime/runtime-provider';
 import { useUiStore } from '@shared/store/useUiStore';
@@ -18,6 +19,8 @@ interface RecurringNotificationOptions {
 }
 
 export function useRecurringNotifications(options: RecurringNotificationOptions = {}) {
+  const { t } = useLingui();
+
   const autoCheck = options.autoCheck ?? true;
   const runtime = useRuntime();
   const selectedBudget = useUiStore((state) => state.selectedBudget);
@@ -50,8 +53,8 @@ export function useRecurringNotifications(options: RecurringNotificationOptions 
       const { template } = occurrence;
       const title =
         template.direction === 'inflow'
-          ? `Incoming: ${template.name}`
-          : `Upcoming bill: ${template.name}`;
+          ? t`Incoming: ${template.name}`
+          : t`Upcoming bill: ${template.name}`;
       const amount = formatMilli(currencyFormatter, template.amount);
       const prefix = template.direction === 'outflow' ? '-' : '';
       const body = `${occurrence.dueDate} • ${prefix}${amount}`;
@@ -99,7 +102,7 @@ export function useRecurringNotifications(options: RecurringNotificationOptions 
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [autoCheck, budgetId, markNotified, permission, runtime, selectedBudget?.DisplayCurrency]);
+  }, [autoCheck, budgetId, markNotified, permission, runtime, selectedBudget?.DisplayCurrency, t]);
 
   return {
     permission,

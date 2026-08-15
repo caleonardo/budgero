@@ -29,7 +29,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onValueChange, la
             {selectedIcon && (
               <div className="flex items-center">
                 <selectedIcon.component className="w-4 h-4" />
-                <span className="ml-2">{selectedIcon.label}</span>
+                <span className="ml-2">{t(selectedIcon.label)}</span>
               </div>
             )}
           </SelectValue>
@@ -39,7 +39,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onValueChange, la
             <SelectItem key={icon.value} value={icon.value}>
               <div className="flex items-center">
                 <icon.component className="w-4 h-4" />
-                <span className="ml-2">{icon.label}</span>
+                <span className="ml-2">{t(icon.label)}</span>
               </div>
             </SelectItem>
           ))}

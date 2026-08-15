@@ -1,3 +1,5 @@
+import { msg, t as gt } from '@lingui/core/macro';
+import type { MessageDescriptor } from '@lingui/core';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -93,15 +95,15 @@ export interface RecurringTransactionEditorProps {
   isSubmitting?: boolean;
 }
 
-const FREQUENCY_OPTIONS: { value: string; label: string }[] = [
-  { value: 'day:1', label: 'Daily' },
-  { value: 'week:1', label: 'Weekly' },
-  { value: 'week:2', label: 'Every 2 weeks' },
-  { value: 'month:1', label: 'Monthly' },
-  { value: 'month:2', label: 'Every 2 months' },
-  { value: 'month:3', label: 'Quarterly' },
-  { value: 'month:6', label: 'Every 6 months' },
-  { value: 'year:1', label: 'Yearly' },
+const FREQUENCY_OPTIONS: { value: string; label: MessageDescriptor | string }[] = [
+  { value: 'day:1', label: msg`Daily` },
+  { value: 'week:1', label: msg`Weekly` },
+  { value: 'week:2', label: msg`Every 2 weeks` },
+  { value: 'month:1', label: msg`Monthly` },
+  { value: 'month:2', label: msg`Every 2 months` },
+  { value: 'month:3', label: msg`Quarterly` },
+  { value: 'month:6', label: msg`Every 6 months` },
+  { value: 'year:1', label: msg`Yearly` },
 ];
 
 function scheduleToFrequency(schedule: RecurringSchedule): string {
@@ -119,29 +121,31 @@ function frequencyToSchedule(value: string, startDate: string): RecurringSchedul
   };
 }
 
-function addCustomFrequencyOption(value: string): { value: string; label: string }[] {
+function addCustomFrequencyOption(
+  value: string
+): { value: string; label: MessageDescriptor | string }[] {
   if (FREQUENCY_OPTIONS.some((option) => option.value === value)) {
     return FREQUENCY_OPTIONS;
   }
   const [unit, countRaw] = value.split(':');
   const count = Math.max(1, Number(countRaw || '1'));
-  const unitLabel =
+  // Whole sentences per unit so translators can reorder freely.
+  const label =
     unit === 'day'
       ? count === 1
-        ? 'day'
-        : 'days'
+        ? gt`Every day`
+        : gt`Every ${count} days`
       : unit === 'week'
         ? count === 1
-          ? 'week'
-          : 'weeks'
+          ? gt`Every week`
+          : gt`Every ${count} weeks`
         : unit === 'month'
           ? count === 1
-            ? 'month'
-            : 'months'
+            ? gt`Every month`
+            : gt`Every ${count} months`
           : count === 1
-            ? 'year'
-            : 'years';
-  const label = count === 1 ? `Every ${unitLabel}` : `Every ${count} ${unitLabel}`;
+            ? gt`Every year`
+            : gt`Every ${count} years`;
   return [...FREQUENCY_OPTIONS, { value, label }];
 }
 
@@ -254,7 +258,7 @@ export function RecurringTransactionEditor({
     return minSelectableDate;
   }, [selectedStartDate, minSelectableDate]);
 
-  const startDateLabel = selectedStartDate ? format(selectedStartDate, 'PPP') : 'Pick a date';
+  const startDateLabel = selectedStartDate ? format(selectedStartDate, 'PPP') : t`Pick a date`;
 
   const handleStartDateSelect = (date?: Date) => {
     if (!date) return;
@@ -360,7 +364,7 @@ export function RecurringTransactionEditor({
               </SelectContent>
             </Select>
           </Field>
-          <Field label={isTransfer ? 'From account' : 'Account'} className="space-y-2">
+          <Field label={isTransfer ? t`From account` : t`Account`} className="space-y-2">
             <Select
               value={formValues.accountId}
               onValueChange={(value) =>
@@ -480,7 +484,7 @@ export function RecurringTransactionEditor({
               <SelectContent>
                 {frequencyOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
-                    {option.label}
+                    {typeof option.label === 'string' ? option.label : t(option.label)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -542,7 +546,7 @@ export function RecurringTransactionEditor({
                 }
               />
               <span className="text-sm text-muted-foreground">
-                {formValues.active ? 'Active – keep reminding me' : 'Paused'}
+                {formValues.active ? t`Active – keep reminding me` : t`Paused`}
               </span>
             </div>
           </div>
@@ -578,10 +582,10 @@ export function RecurringTransactionEditor({
         data-testid="recurring-submit"
       >
         {isSubmitting
-          ? 'Saving...'
+          ? t`Saving...`
           : mode === 'create'
-            ? 'Create recurring transaction'
-            : 'Save changes'}
+            ? t`Create recurring transaction`
+            : t`Save changes`}
       </Button>
     </div>
   );
@@ -595,7 +599,7 @@ export function RecurringTransactionEditor({
         >
           <SheetHeader className="space-y-1 border-b px-6 py-5">
             <SheetTitle>
-              {mode === 'create' ? 'New recurring transaction' : 'Edit recurring transaction'}
+              {mode === 'create' ? t`New recurring transaction` : t`Edit recurring transaction`}
             </SheetTitle>
             <SheetDescription>
               <Trans>
@@ -616,7 +620,7 @@ export function RecurringTransactionEditor({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? 'New recurring transaction' : 'Edit recurring transaction'}
+            {mode === 'create' ? t`New recurring transaction` : t`Edit recurring transaction`}
           </DialogTitle>
           <DialogDescription>
             <Trans>

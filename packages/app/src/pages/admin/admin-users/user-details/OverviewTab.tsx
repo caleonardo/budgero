@@ -79,8 +79,10 @@ export function OverviewTab({
               <Trans>Recent App Activity Snapshot</Trans>
             </CardTitle>
             <CardDescription>
-              Daily app heartbeats captured over the last {details?.appActivity?.windowDays ?? 365}{' '}
-              days.
+              <Trans>
+                Daily app heartbeats captured over the last{' '}
+                {details?.appActivity?.windowDays ?? 365} days.
+              </Trans>
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -125,7 +127,7 @@ export function OverviewTab({
               {details?.mutations.lastMutation ? (
                 <div className="mt-3 space-y-2 text-sm">
                   <div className="font-medium">
-                    {details.mutations.lastMutation.op || 'Mutation'} v
+                    {details.mutations.lastMutation.op || t`Mutation`} v
                     {details.mutations.lastMutation.version}
                   </div>
                   <div className="text-muted-foreground">

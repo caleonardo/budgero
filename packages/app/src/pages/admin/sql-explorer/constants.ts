@@ -1,23 +1,24 @@
+import { msg } from '@lingui/core/macro';
 import type { CommonQuery } from './types';
 
 export const DEFAULT_SQL_QUERY = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;";
 
 export const COMMON_QUERIES: CommonQuery[] = [
   {
-    name: 'List all tables',
+    name: msg`List all tables`,
     query: "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;",
   },
   {
-    name: 'Database size',
+    name: msg`Database size`,
     query:
       'SELECT page_count * page_size AS database_bytes FROM pragma_page_count(), pragma_page_size();',
   },
   {
-    name: 'Recent users',
+    name: msg`Recent users`,
     query: 'SELECT id, email, created_at FROM users ORDER BY created_at DESC LIMIT 20;',
   },
   {
-    name: 'Invite summary',
+    name: msg`Invite summary`,
     query:
       'SELECT code, created_at, redeemed_at, expires_at FROM beta_invites ORDER BY created_at DESC LIMIT 10;',
   },

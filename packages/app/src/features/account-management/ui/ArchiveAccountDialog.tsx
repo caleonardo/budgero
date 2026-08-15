@@ -108,8 +108,8 @@ export function ArchiveAccountDialog({
 
       toast.success(t`Account archived`, {
         description: needsAdjustment
-          ? `${account.Name} balanced to zero and archived.`
-          : `${account.Name} has been archived.`,
+          ? t`${account.Name} balanced to zero and archived.`
+          : t`${account.Name} has been archived.`,
       });
       onOpenChange(false);
       onArchived?.();
@@ -140,17 +140,19 @@ export function ArchiveAccountDialog({
           <div className="space-y-3">
             <div className="rounded-md border border-border/60 bg-muted/30 p-3 text-xs sm:text-sm">
               <p>
-                <strong>{account.Name}</strong> has a current balance of{' '}
-                <strong>
-                  {toDecimal(asMilli(balance)).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}{' '}
-                  {account.Currency}
-                </strong>
-                . To archive it, Budgero will create the following adjusting transaction to bring
-                the balance to zero. You can edit the details below, and the transaction will remain
-                editable afterwards.
+                <Trans>
+                  <strong>{account.Name}</strong>has a current balance of{' '}
+                  <strong>
+                    {toDecimal(asMilli(balance)).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}{' '}
+                    {account.Currency}
+                  </strong>
+                  . To archive it, Budgero will create the following adjusting transaction to bring
+                  the balance to zero. You can edit the details below, and the transaction will
+                  remain editable afterwards.
+                </Trans>
               </p>
             </div>
 
@@ -253,7 +255,7 @@ export function ArchiveAccountDialog({
             onClick={handleArchive}
             disabled={isPending || (needsAdjustment && !categoryId)}
           >
-            {isPending ? 'Archiving...' : 'Archive'}
+            {isPending ? t`Archiving...` : t`Archive`}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -77,7 +77,7 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
       setLatestInvite(invite);
       trackSharedBudget();
       toast.success(t`Invite ready`, {
-        description: 'Copy the link or open it in your email client to share.',
+        description: t`Copy the link or open it in your email client to share.`,
       });
     } catch (error) {
       toastError('Invite failed', error, 'Failed to create invite. Please try again.');
@@ -104,7 +104,7 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
     try {
       await cancelInvite.mutateAsync(inviteId);
       toast.success(t`Invite cancelled`, {
-        description: 'The invite has been revoked.',
+        description: t`The invite has been revoked.`,
       });
     } catch (error) {
       toastError('Unable to cancel invite', error, 'Unable to cancel invite right now.');
@@ -115,7 +115,7 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
     try {
       await removeMember.mutateAsync(memberId);
       toast.success(t`Member removed`, {
-        description: 'The member no longer has access to this workspace.',
+        description: t`The member no longer has access to this workspace.`,
       });
     } catch (error) {
       toastError('Unable to remove member', error, 'Unable to remove member right now.');
@@ -165,20 +165,24 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
         <div className="space-y-4 rounded-lg border border-border/60 bg-muted/10 p-3">
           <div className="flex items-center justify-between gap-2 rounded-md border border-border/60 bg-background px-3 py-2 text-xs text-muted-foreground">
             <span>
-              Collaborator seats used across your owned workspaces:{' '}
-              <span className="font-medium text-foreground">
-                {seatUsage.isLoading ? 'Loading…' : `${seatUsage.occupiedSlots}/5`}
-              </span>
+              <Trans>
+                Collaborator seats used across your owned workspaces:{' '}
+                <span className="font-medium text-foreground">
+                  {seatUsage.isLoading ? t`Loading…` : `${seatUsage.occupiedSlots}/5`}
+                </span>
+              </Trans>
             </span>
             <span>
-              {seatUsage.isLoading ? 'Checking…' : `${seatUsage.remainingSlots} remaining`}
+              {seatUsage.isLoading ? t`Checking…` : `${seatUsage.remainingSlots} remaining`}
             </span>
           </div>
           <form className="space-y-3" onSubmit={handleCreateInvite}>
             <p className="text-xs text-muted-foreground">
-              Generate a fresh invite secret. Invites expire automatically after{' '}
-              {DEFAULT_INVITE_EXPIRY_DAYS} days. You can use up to 5 collaborator seats across all
-              of your owned workspaces, counting accepted members and pending invites together.
+              <Trans>
+                Generate a fresh invite secret. Invites expire automatically after{' '}
+                {DEFAULT_INVITE_EXPIRY_DAYS}days. You can use up to 5 collaborator seats across all
+                of your owned workspaces, counting accepted members and pending invites together.
+              </Trans>
             </p>
             <Button
               type="submit"
@@ -187,12 +191,12 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
               className="w-full"
             >
               {createInvite.isPending ? (
-                'Generating invite…'
+                t`Generating invite…`
               ) : (
-                <>
+                <Trans>
                   <MailPlus className="h-4 w-4" />
                   Create Invite
-                </>
+                </Trans>
               )}
             </Button>
           </form>
@@ -316,7 +320,7 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
                       ••••••••••••••••
                     </Badge>
                     <Badge variant={invite.encrypted_bundle ? 'secondary' : 'destructive'}>
-                      {invite.encrypted_bundle ? 'Bundle ready' : 'Missing bundle'}
+                      {invite.encrypted_bundle ? t`Bundle ready` : t`Missing bundle`}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-1">
@@ -336,7 +340,9 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
                   {invite.invitee_email && <span>{invite.invitee_email}</span>}
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {invite.expires_at ? new Date(invite.expires_at).toLocaleString() : 'No expiry'}
+                    {invite.expires_at
+                      ? new Date(invite.expires_at).toLocaleString()
+                      : t`No expiry`}
                   </span>
                   <span>
                     <Trans>Status: {invite.status}</Trans>
@@ -398,7 +404,7 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
                     </Button>
                   ) : (
                     <Badge variant="outline" className="shrink-0 text-[11px]">
-                      {member.role === 'owner' ? 'Owner' : member.role}
+                      {member.role === 'owner' ? t`Owner` : member.role}
                     </Badge>
                   )}
                 </div>

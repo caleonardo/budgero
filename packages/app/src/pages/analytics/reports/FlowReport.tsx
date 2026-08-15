@@ -174,7 +174,7 @@ export function FlowReport({ data }: FlowReportProps) {
               }
             />
             <StatTile
-              label={net >= 0 ? 'Saved' : 'Overspent'}
+              label={net >= 0 ? t`Saved` : t`Overspent`}
               value={money.tile(Math.abs(net))}
               valueClassName={trendTextClass(net)}
             />

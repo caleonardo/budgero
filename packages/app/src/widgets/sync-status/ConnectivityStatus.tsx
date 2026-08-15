@@ -47,22 +47,22 @@ export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
       : 'bg-red-500';
 
   const statusLabel = snapshot.overall
-    ? 'Connected - Real-time sync active'
+    ? t`Connected - Real-time sync active`
     : snapshot.wsConnected
-      ? 'Limited - WebSocket connected but API/Auth may be degraded'
-      : 'Offline - Changes will sync when connection is restored';
+      ? t`Limited - WebSocket connected but API/Auth may be degraded`
+      : t`Offline - Changes will sync when connection is restored`;
 
   const detailRows = useMemo(() => {
     const rows = [
       !snapshot.selfHostable && {
-        label: 'Clerk token',
+        label: t`Clerk token`,
         value: snapshot.clerkToken ? 'ready' : 'missing',
       },
-      { label: 'API health', value: snapshot.apiReachable ? 'reachable' : 'unreachable' },
-      { label: 'WebSocket', value: snapshot.wsConnected ? 'connected' : 'disconnected' },
+      { label: t`API health`, value: snapshot.apiReachable ? 'reachable' : 'unreachable' },
+      { label: t`WebSocket`, value: snapshot.wsConnected ? 'connected' : 'disconnected' },
     ].filter(Boolean) as { label: string; value: string }[];
     return rows;
-  }, [snapshot]);
+  }, [snapshot, t]);
 
   const lastChecked =
     snapshot.lastChecked > 0
@@ -98,7 +98,7 @@ export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
               snapshot.overall ? 'default' : snapshot.wsConnected ? 'secondary' : 'destructive'
             }
           >
-            {snapshot.overall ? 'Online' : snapshot.wsConnected ? 'Partial' : 'Offline'}
+            {snapshot.overall ? t`Online` : snapshot.wsConnected ? t`Partial` : t`Offline`}
           </Badge>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">{statusLabel}</p>

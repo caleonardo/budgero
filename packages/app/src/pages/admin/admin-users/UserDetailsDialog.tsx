@@ -1,5 +1,5 @@
 import { plural } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import {
   Ban,
@@ -47,6 +47,8 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
   onAction,
   onCopyId,
 }: UserDetailsDialogProps) {
+  const { t } = useLingui();
+
   if (!user) return null;
 
   const resolvedUser = details?.user ?? user;
@@ -73,7 +75,9 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
               <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <span>{resolvedUser.email}</span>
                 <span className="text-border">•</span>
-                <span>Joined {formatShortDate(resolvedUser.created_at)}</span>
+                <span>
+                  <Trans>Joined {formatShortDate(resolvedUser.created_at)}</Trans>
+                </span>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -112,7 +116,7 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
           <div className="grid gap-3 pt-4 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard
               icon={CalendarDays}
-              label="Last Login"
+              label={t`Last Login`}
               value={formatOptionalDate(resolvedUser.last_login, 'MMM d, yyyy HH:mm')}
               helper={
                 details?.activity?.lastActiveAt
@@ -122,7 +126,7 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
             />
             <MetricCard
               icon={Activity}
-              label="Total Mutations"
+              label={t`Total Mutations`}
               value={details?.mutations.totalMutations?.toLocaleString() ?? (loading ? '...' : '0')}
               helper={plural(details?.mutations.activeDays ?? 0, {
                 one: `${details?.mutations.activeDays ?? 0} active day in window`,
@@ -131,13 +135,13 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
             />
             <MetricCard
               icon={Users}
-              label="Workspaces"
+              label={t`Workspaces`}
               value={`${details?.workspaces.items.length ?? 0}`}
               helper={`${details?.workspaces.ownedShareSeatsUsed ?? 0}/${details?.workspaces.ownedShareSeatsLimit ?? 5} shares used`}
             />
             <MetricCard
               icon={CreditCard}
-              label="Plan / LTV"
+              label={t`Plan / LTV`}
               value={details?.subscription?.planName || 'No active plan'}
               helper={details?.subscription?.ltvFormatted || 'No revenue recorded'}
             />

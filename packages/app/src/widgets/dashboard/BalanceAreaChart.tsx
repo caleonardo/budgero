@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
@@ -18,6 +19,8 @@ export function BalanceAreaChart({
   className,
   tickFontSize,
 }: BalanceAreaChartProps) {
+  const { t } = useLingui();
+
   const palette = useChartPalette();
 
   const option = useMemo<EChartsCoreOption>(() => {
@@ -42,13 +45,13 @@ export function BalanceAreaChart({
           const point = data[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           return tooltipHtml(point.date, [
-            { color, name: 'Balance', value: formatAmount(point.balance) },
+            { color, name: t`Balance`, value: formatAmount(point.balance) },
           ]);
         },
       },
       series: [
         {
-          name: 'Balance',
+          name: t`Balance`,
           type: 'line' as const,
           data: data.map((point) => point.balance),
           lineStyle: { color, width: 2 },
@@ -60,7 +63,7 @@ export function BalanceAreaChart({
         },
       ],
     };
-  }, [data, formatAmount, palette, tickFontSize]);
+  }, [data, formatAmount, palette, tickFontSize, t]);
 
   return <EChart option={option} className={className} ariaLabel="Cash balance over time" />;
 }

@@ -255,7 +255,7 @@ export function SplitDetailsDialog({
             <Trans>Split details</Trans>
           </DialogTitle>
           <DialogDescription className="truncate max-w-full" title={transaction?.Memo || ''}>
-            {transaction ? transaction.Memo || `Transaction #${transaction.ID}` : ''}
+            {transaction ? transaction.Memo || t`Transaction #${transaction.ID}` : ''}
           </DialogDescription>
         </DialogHeader>
         {transaction && (
@@ -309,7 +309,7 @@ export function SplitDetailsDialog({
                       <Trans>Cancel</Trans>
                     </Button>
                     <Button size="sm" onClick={handleSave} disabled={!canSave}>
-                      {isClearing ? 'Remove splits' : 'Save'}
+                      {isClearing ? t`Remove splits` : t`Save`}
                     </Button>
                   </>
                 ) : (
@@ -323,15 +323,17 @@ export function SplitDetailsDialog({
             {editSplits && (
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-xs text-primary">
                 <span>
-                  {remaining >= 0 ? 'Remaining' : 'Over by'}{' '}
+                  {remaining >= 0 ? t`Remaining` : t`Over by`}{' '}
                   <strong>{formatMilli(editGlobalLocalizer, asMilli(Math.abs(remaining)))}</strong>
                 </span>
                 <span>
-                  Total:{' '}
-                  <strong className={remaining === 0 ? 'text-green-600' : 'text-red-600'}>
-                    {formatMilli(editGlobalLocalizer, asMilli(draftTotal))}
-                  </strong>{' '}
-                  / {formatMilli(editGlobalLocalizer, asMilli(targetTotal))}
+                  <Trans>
+                    Total:{' '}
+                    <strong className={remaining === 0 ? 'text-green-600' : 'text-red-600'}>
+                      {formatMilli(editGlobalLocalizer, asMilli(draftTotal))}
+                    </strong>{' '}
+                    / {formatMilli(editGlobalLocalizer, asMilli(targetTotal))}
+                  </Trans>
                 </span>
               </div>
             )}
@@ -342,8 +344,8 @@ export function SplitDetailsDialog({
             ) : displayedSplits.length === 0 ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
                 {editSplits
-                  ? 'No split lines yet. Add at least one line below.'
-                  : 'No split lines for this transaction.'}
+                  ? t`No split lines yet. Add at least one line below.`
+                  : t`No split lines for this transaction.`}
               </div>
             ) : (
               <div className="max-h-[360px] overflow-y-auto">
@@ -496,7 +498,9 @@ export function SplitDetailsDialog({
                   </Trans>
                 </Button>
                 <span className="text-xs text-muted-foreground">
-                  Splits must total {formatMilli(editGlobalLocalizer, asMilli(targetTotal))}.
+                  <Trans>
+                    Splits must total {formatMilli(editGlobalLocalizer, asMilli(targetTotal))}.
+                  </Trans>
                 </span>
               </div>
             )}

@@ -83,7 +83,7 @@ export const CurrencyStep: React.FC<StepProps> = ({ cur, state, set }) => {
               </span>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 13, fontWeight: 600 }}>{c.code}</div>
-                <div style={{ fontSize: 10, color: '#393939' }}>{c.name}</div>
+                <div style={{ fontSize: 10, color: '#393939' }}>{t(c.name)}</div>
               </div>
               {active && <span style={{ fontSize: 14 }}>✓</span>}
             </OnboardingOptionTile>

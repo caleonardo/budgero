@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 // Plain, React-free implementation of the onboarding "apply" pipeline —
 // extracted verbatim from OnboardingFlow's `applyOnboarding` useCallback so
 // it can be unit-tested by mocking `deps` instead of rendering the flow.
@@ -42,6 +44,8 @@ import {
   ACCOUNT_TYPES,
   CATEGORY_PRESETS,
   CATEGORY_TO_GROUP,
+  CATEGORY_ITEM_LABELS,
+  GOAL_TEMPLATES,
   resolveHeardValue,
   type ActivePath,
   type InviteFailure,
@@ -234,7 +238,7 @@ export async function runOnboardingApply(
       const result = await runtime.mutationsRouter().execute<number>({
         op: 'budgets.create',
         payload: {
-          name: state.budgetName.trim() || 'My budget',
+          name: state.budgetName.trim() || t`My budget`,
           displayCurrency: state.currency,
           badgeIcon: '💰',
           numberFormat: '$1,096.56',
@@ -298,10 +302,10 @@ export async function runOnboardingApply(
       const groupBuckets = new Map<string, string[]>();
       for (const cat of state.selectedCats) {
         const groupKey = CATEGORY_TO_GROUP[cat] ?? 'needs';
-        const { label } = CATEGORY_PRESETS[groupKey];
-        const bucket = groupBuckets.get(label) ?? [];
+        const groupName = i18n._(CATEGORY_PRESETS[groupKey].label);
+        const bucket = groupBuckets.get(groupName) ?? [];
         bucket.push(cat);
-        groupBuckets.set(label, bucket);
+        groupBuckets.set(groupName, bucket);
       }
       const groupIdByLabel = new Map<string, number>();
       for (const [groupLabel, cats] of groupBuckets) {
@@ -317,7 +321,12 @@ export async function runOnboardingApply(
           for (const cat of cats) {
             const catRes = await runtime.mutationsRouter().execute<number>({
               op: 'categories.create',
-              payload: { name: cat, parentId, budgetId, note: '' },
+              payload: {
+                name: CATEGORY_ITEM_LABELS[cat] ? i18n._(CATEGORY_ITEM_LABELS[cat]) : cat,
+                parentId,
+                budgetId,
+                note: '',
+              },
               spaceId,
               meta: { label: 'onboarding.createCategory' },
             });
@@ -335,10 +344,14 @@ export async function runOnboardingApply(
       // name. Every goal template the user can pick is savings-oriented, so
       // SAVINGS is always the right home. Skip the placeholder "Something
       // else" label — that means the user picked Custom but didn't rename.
-      const goalLabel = state.goal.label.trim();
+      const goalLabel =
+        state.goal.label.trim() ||
+        i18n._(
+          GOAL_TEMPLATES.find((g) => g.id === state.goal.id)?.label ?? GOAL_TEMPLATES[0].label
+        );
       const goalIsUsable = goalLabel.length > 0 && goalLabel.toLowerCase() !== 'something else';
       if (state.goal.target > 0 && goalIsUsable && goalCategoryId == null) {
-        const savingsLabel = CATEGORY_PRESETS.savings.label;
+        const savingsLabel = i18n._(CATEGORY_PRESETS.savings.label);
         try {
           let savingsGroupId = groupIdByLabel.get(savingsLabel);
           if (savingsGroupId == null) {
@@ -512,7 +525,7 @@ export async function runOnboardingApply(
     console.error('[Onboarding] Apply failed', err);
     setApplyError(message);
     setApplyStatus('error');
-    toast.error('Setup failed', {
+    toast.error(t`Setup failed`, {
       description: message,
     });
   }

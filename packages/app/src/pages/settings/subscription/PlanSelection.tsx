@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -11,6 +11,8 @@ interface PlanSelectionProps {
 }
 
 export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelectionProps) {
+  const { t } = useLingui();
+
   const {
     plans,
     billingPortalAvailable,
@@ -79,7 +81,7 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
                     >
                       <div className="flex items-center justify-between gap-3">
                         <h3 className="text-2xl font-semibold leading-none text-foreground">
-                          {isYearly ? 'Yearly' : 'Monthly'}
+                          {isYearly ? t`Yearly` : t`Monthly`}
                         </h3>
                       </div>
 
@@ -97,8 +99,7 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
                           ${yearlyMonthlyEquivalent}/month
                           {yearlySavingsPercent && yearlySavingsPercent > 0 ? (
                             <span className="text-amber-900/70">
-                              {' '}
-                              · save {yearlySavingsPercent}% vs. monthly
+                              <Trans> · save {yearlySavingsPercent}% vs. monthly</Trans>
                             </span>
                           ) : null}
                         </p>
@@ -117,10 +118,10 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
                         onClick={() => handleStartSubscription(plan.id)}
                       >
                         {checkoutMutation.isPending
-                          ? 'Opening checkout...'
+                          ? t`Opening checkout...`
                           : isYearly
-                            ? 'Start yearly plan'
-                            : 'Start monthly plan'}
+                            ? t`Start yearly plan`
+                            : t`Start monthly plan`}
                       </Button>
                     </div>
                   );
@@ -146,24 +147,26 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              Payment methods, invoice downloads, and billing info updates are handled in your Lemon
-              Squeezy customer portal. Click below to generate a secure, pre-signed session.
-              <Button
-                onClick={handleManageSubscription}
-                disabled={portalMutation.isPending}
-                loading={portalMutation.isPending}
-                variant="outline"
-                className="mt-2 flex items-center gap-2"
-              >
-                {portalMutation.isPending ? (
-                  'Preparing portal...'
-                ) : (
-                  <>
-                    <ExternalLink className="w-4 h-4" />
-                    Open Lemon Squeezy portal
-                  </>
-                )}
-              </Button>
+              <Trans>
+                Payment methods, invoice downloads, and billing info updates are handled in your
+                Lemon Squeezy customer portal. Click below to generate a secure, pre-signed session.
+                <Button
+                  onClick={handleManageSubscription}
+                  disabled={portalMutation.isPending}
+                  loading={portalMutation.isPending}
+                  variant="outline"
+                  className="mt-2 flex items-center gap-2"
+                >
+                  {portalMutation.isPending ? (
+                    t`Preparing portal...`
+                  ) : (
+                    <>
+                      <ExternalLink className="w-4 h-4" />
+                      Open Lemon Squeezy portal
+                    </>
+                  )}
+                </Button>
+              </Trans>
             </div>
 
             <Separator />

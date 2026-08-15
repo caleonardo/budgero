@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Label } from '@shared/ui/label';
 import { Switch } from '@shared/ui/switch';
 import { HelpTooltip } from '@shared/ui/HelpTooltip';
@@ -27,6 +27,8 @@ export function OnBudgetToggle({
   setIsLiability,
   switchTestId,
 }: OnBudgetToggleProps) {
+  const { t } = useLingui();
+
   return (
     <div className="flex flex-col space-y-1">
       <div className="flex items-center justify-between">
@@ -77,8 +79,8 @@ export function OnBudgetToggle({
       </div>
       <div className="text-xs text-muted-foreground hidden sm:block">
         {onBudget
-          ? 'This account will affect your budget calculations'
-          : 'This account will only be tracked for net worth'}
+          ? t`This account will affect your budget calculations`
+          : t`This account will only be tracked for net worth`}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { parseISO } from 'date-fns';
 import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
 import { Card, CardContent } from '@shared/ui/card';
@@ -46,6 +46,8 @@ export function RecurringOccurrenceCard({
   onMarkReady,
   onSkip,
 }: RecurringOccurrenceCardProps) {
+  const { t } = useLingui();
+
   const { template } = occurrence;
   const amountDisplay = formatRecurringAmount(template, localizer);
   const dueDate = parseISO(occurrence.dueDate);
@@ -58,10 +60,10 @@ export function RecurringOccurrenceCard({
           <div className="flex items-center gap-2">
             <Badge variant={template.direction === 'inflow' ? 'default' : 'secondary'}>
               {template.toAccountId != null
-                ? 'Transfer'
+                ? t`Transfer`
                 : template.direction === 'inflow'
-                  ? 'Income'
-                  : 'Bill'}
+                  ? t`Income`
+                  : t`Bill`}
             </Badge>
             <span className="text-sm text-muted-foreground">{template.name}</span>
           </div>
@@ -79,7 +81,7 @@ export function RecurringOccurrenceCard({
           </div>
           <div className="text-sm text-muted-foreground">
             <span className="font-medium text-foreground">
-              {template.toAccountId != null ? 'From account:' : 'Account:'}
+              {template.toAccountId != null ? t`From account:` : t`Account:`}
             </span>{' '}
             {accountName}
           </div>
@@ -88,7 +90,7 @@ export function RecurringOccurrenceCard({
               <span className="font-medium text-foreground">
                 <Trans>To account:</Trans>
               </span>{' '}
-              {toAccountName ?? 'Unknown account'}
+              {toAccountName ?? t`Unknown account`}
             </div>
           ) : (
             <div className="text-sm text-muted-foreground">
@@ -103,12 +105,14 @@ export function RecurringOccurrenceCard({
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button size="sm" disabled={isProcessing || isMarkReadyPending || isFetching}>
-                {isProcessing && isMarkReadyPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Sparkles className="mr-2 h-4 w-4" />
-                )}
-                Mark ready
+                <Trans>
+                  {isProcessing && isMarkReadyPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                  )}
+                  Mark ready
+                </Trans>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>

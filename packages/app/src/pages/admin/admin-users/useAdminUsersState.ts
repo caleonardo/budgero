@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAdminApi } from '@features/admin/api/useAdminApi';
 import { toast } from 'sonner';
@@ -12,6 +13,8 @@ import { DEFAULT_BETA_DAYS } from './constants';
 import { filterUsers } from './admin-users.utils';
 
 export function useAdminUsersState() {
+  const { t } = useLingui();
+
   const adminApi = useAdminApi();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,13 +37,13 @@ export function useAdminUsersState() {
       setUsers((data as unknown as User[]) || []);
     } catch (error) {
       console.error('Failed to load users:', error);
-      toast.error('Error', {
-        description: 'Failed to load users',
+      toast.error(t`Error`, {
+        description: t`Failed to load users`,
       });
     } finally {
       setLoading(false);
     }
-  }, [adminApi]);
+  }, [adminApi, t]);
 
   useEffect(() => {
     // Skip loading SaaS users in self-host mode - SelfHostAdminUsers has its own data fetching
@@ -95,42 +98,42 @@ export function useAdminUsersState() {
       switch (actionDialog.type) {
         case 'grant_founding':
           await adminApi.grantFoundingMember(actionDialog.user.id);
-          toast.success('Success', {
-            description: `Granted founding member access to ${actionDialog.user.email}`,
+          toast.success(t`Success`, {
+            description: t`Granted founding member access to ${actionDialog.user.email}`,
           });
           break;
         case 'grant_beta':
           await adminApi.grantBetaAccess(actionDialog.user.id, betaDays);
-          toast.success('Success', {
-            description: `Granted ${betaDays} days of free access to ${actionDialog.user.email}`,
+          toast.success(t`Success`, {
+            description: t`Granted ${betaDays} days of free access to ${actionDialog.user.email}`,
           });
           break;
         case 'revoke_access':
           await adminApi.revokeAccess(actionDialog.user.id);
-          toast.success('Success', {
-            description: `Revoked access for ${actionDialog.user.email}`,
+          toast.success(t`Success`, {
+            description: t`Revoked access for ${actionDialog.user.email}`,
           });
           break;
         case 'make_admin':
           await adminApi.makeAdmin(actionDialog.user.id);
-          toast.success('Success', {
-            description: `Made ${actionDialog.user.email} an admin`,
+          toast.success(t`Success`, {
+            description: t`Made ${actionDialog.user.email} an admin`,
           });
           break;
         case 'reset_data':
           await adminApi.resetUserData(actionDialog.user.id);
-          toast.success('Data reset', {
-            description: `Cleared stored data for ${actionDialog.user.email}`,
+          toast.success(t`Data reset`, {
+            description: t`Cleared stored data for ${actionDialog.user.email}`,
           });
           break;
         case 'block':
           await adminApi.blockUser(actionDialog.user.id);
-          toast.success('Blocked', { description: `${actionDialog.user.email} is now blocked` });
+          toast.success(t`Blocked`, { description: t`${actionDialog.user.email} is now blocked` });
           break;
         case 'unblock':
           await adminApi.unblockUser(actionDialog.user.id);
-          toast.success('Unblocked', {
-            description: `${actionDialog.user.email} can log in again`,
+          toast.success(t`Unblocked`, {
+            description: t`${actionDialog.user.email} can log in again`,
           });
           break;
       }
@@ -138,42 +141,45 @@ export function useAdminUsersState() {
       await loadUsers();
       closeActionDialog();
     } catch {
-      toast.error('Error', {
-        description: 'Failed to perform action',
+      toast.error(t`Error`, {
+        description: t`Failed to perform action`,
       });
     }
-  }, [actionDialog, adminApi, betaDays, loadUsers, closeActionDialog]);
+  }, [actionDialog, adminApi, betaDays, loadUsers, closeActionDialog, t]);
 
   const syncClerkUsers = useCallback(async () => {
     try {
       await adminApi.syncClerkUsers();
       await loadUsers();
-      toast.success('Synced', { description: 'Clerk users synchronized' });
+      toast.success(t`Synced`, { description: t`Clerk users synchronized` });
     } catch {
-      toast.error('Error', {
-        description: 'Failed to sync Clerk users',
+      toast.error(t`Error`, {
+        description: t`Failed to sync Clerk users`,
       });
     }
-  }, [adminApi, loadUsers]);
+  }, [adminApi, loadUsers, t]);
 
   const syncLemonSqueezy = useCallback(async () => {
     try {
       await adminApi.syncLemonSqueezy();
       await loadUsers();
-      toast.success('Synced', { description: 'LemonSqueezy subscriptions refreshed' });
+      toast.success(t`Synced`, { description: t`LemonSqueezy subscriptions refreshed` });
     } catch {
-      toast.error('Error', {
-        description: 'Failed to sync LemonSqueezy',
+      toast.error(t`Error`, {
+        description: t`Failed to sync LemonSqueezy`,
       });
     }
-  }, [adminApi, loadUsers]);
+  }, [adminApi, loadUsers, t]);
 
-  const copyUserId = useCallback((userId: string) => {
-    void navigator.clipboard.writeText(userId);
-    toast.success('Copied!', {
-      description: 'User ID copied to clipboard',
-    });
-  }, []);
+  const copyUserId = useCallback(
+    (userId: string) => {
+      void navigator.clipboard.writeText(userId);
+      toast.success(t`Copied!`, {
+        description: t`User ID copied to clipboard`,
+      });
+    },
+    [t]
+  );
 
   return {
     loading,

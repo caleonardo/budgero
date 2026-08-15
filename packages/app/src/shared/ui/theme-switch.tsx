@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Moon, Palette, Sun } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { useTheme } from 'next-themes';
@@ -17,6 +17,8 @@ import type { AppThemeId } from '@shared/lib/theme/presets';
 import { persistUserPreferencesPatch } from '@shared/lib/user-preferences-sync';
 
 export function ThemeSwitch() {
+  const { t } = useLingui();
+
   const { theme, resolvedTheme, setTheme } = useTheme();
   const { themeId, setThemeId, availableThemes } = useThemePreset();
   const [mounted, setMounted] = useState(false);
@@ -87,7 +89,9 @@ export function ThemeSwitch() {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
             <Palette className="h-4 w-4" />
-            <span className="hidden sm:inline">{selectedPreset?.name ?? 'Theme preset'}</span>
+            <span className="hidden sm:inline">
+              {selectedPreset ? t(selectedPreset.name) : t`Theme preset`}
+            </span>
             <span className="sr-only">
               <Trans>Open theme preset menu</Trans>
             </span>
@@ -101,7 +105,7 @@ export function ThemeSwitch() {
             {availableThemes.map((preset) => (
               <DropdownMenuRadioItem key={preset.id} value={preset.id} className="gap-2">
                 <div className="flex w-full items-center justify-between gap-3">
-                  <span className="text-sm font-medium">{preset.name}</span>
+                  <span className="text-sm font-medium">{t(preset.name)}</span>
                   <div className="flex items-center gap-1">
                     {preset.previewColors.map((swatch, index) => (
                       <span

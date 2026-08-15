@@ -63,6 +63,9 @@ jobs:
       - name: Check translation catalogs
         run: pnpm run i18n:check
 
+      - name: Audit untranslated strings
+        run: pnpm run i18n:sweep
+
       - name: Test core
         run: pnpm run test:core
 

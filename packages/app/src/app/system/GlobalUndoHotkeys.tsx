@@ -33,7 +33,7 @@ export function GlobalUndoHotkeys() {
             .then(() => {
               toast.success(t`Undid last action`, {
                 action: {
-                  label: 'Redo',
+                  label: t`Redo`,
                   onClick: () => void (canRedo() && redo()),
                 },
               });

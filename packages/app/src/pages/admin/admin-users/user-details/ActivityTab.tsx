@@ -26,8 +26,10 @@ export function ActivityTab({
             <Trans>App Activity</Trans>
           </CardTitle>
           <CardDescription>
-            Heartbeat-backed app usage across the last {details?.appActivity?.windowDays ?? 365}{' '}
-            days.
+            <Trans>
+              Heartbeat-backed app usage across the last {details?.appActivity?.windowDays ?? 365}{' '}
+              days.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -64,8 +66,10 @@ export function ActivityTab({
             <Trans>Clerk Session Activity</Trans>
           </CardTitle>
           <CardDescription>
-            Session-derived auth activity estimated from Clerk session ranges across the last{' '}
-            {details?.activity?.windowDays ?? 365} days.
+            <Trans>
+              Session-derived auth activity estimated from Clerk session ranges across the last{' '}
+              {details?.activity?.windowDays ?? 365}days.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

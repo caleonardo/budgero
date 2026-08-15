@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   useSpendingByDatesByCategories,
   useSpendingByCategoriesInGroup,
@@ -17,6 +17,8 @@ interface BreakdownDatum extends SpendingDonutDatum {
 }
 
 export function SpendingBreakdownContent() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const dateRange = useUiStore((state) => state.dateRange);
 
@@ -60,7 +62,7 @@ export function SpendingBreakdownContent() {
       const categoryTotals: Record<string, { value: number; id: number }> = {};
 
       breakdownData.forEach((item) => {
-        const groupName = item.CategoryGroupName || 'Uncategorized';
+        const groupName = item.CategoryGroupName || t`Uncategorized`;
         if (!categoryTotals[groupName]) {
           categoryTotals[groupName] = { value: 0, id: item.CategoryGroupID };
         }
@@ -74,7 +76,7 @@ export function SpendingBreakdownContent() {
         .sort((a, b) => b.value - a.value);
     }
     return [];
-  }, [breakdownData, categoryData, selectedCategoryGroup]);
+  }, [breakdownData, categoryData, selectedCategoryGroup, t]);
 
   const isLoading = isLoadingBreakdown || (selectedCategoryGroup && isLoadingCategories);
 

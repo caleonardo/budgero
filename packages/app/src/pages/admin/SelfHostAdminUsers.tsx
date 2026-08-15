@@ -117,7 +117,7 @@ export default function SelfHostAdminUsers() {
     if (!resetDialog.user) return;
     if (resetDialog.password.length < 8) {
       toast.error(t`Password too short`, {
-        description: 'Use at least 8 characters.',
+        description: t`Use at least 8 characters.`,
       });
       return;
     }
@@ -157,10 +157,10 @@ export default function SelfHostAdminUsers() {
     try {
       if (block) {
         await adminApi.blockUser(user.id);
-        toast.success(t`Blocked`, { description: `${user.email} cannot log in` });
+        toast.success(t`Blocked`, { description: t`${user.email} cannot log in` });
       } else {
         await adminApi.unblockUser(user.id);
-        toast.success(t`Unblocked`, { description: `${user.email} can log in again` });
+        toast.success(t`Unblocked`, { description: t`${user.email} can log in again` });
       }
       await loadUsers();
     } catch (error) {
@@ -197,7 +197,7 @@ export default function SelfHostAdminUsers() {
     }
     if (createDialog.password.length < 8) {
       toast.error(t`Password too short`, {
-        description: 'Use at least 8 characters.',
+        description: t`Use at least 8 characters.`,
       });
       return;
     }
@@ -332,7 +332,7 @@ export default function SelfHostAdminUsers() {
           </CardTitle>
           <CardDescription>
             {loading
-              ? 'Loading users...'
+              ? t`Loading users...`
               : plural(filteredUsers.length, {
                   one: `# matching user`,
                   other: `# matching users`,
@@ -401,10 +401,10 @@ export default function SelfHostAdminUsers() {
                         )}
                         <Badge variant="outline" className="text-xs">
                           <LockOpen className="w-3 h-3 mr-1" />
-                          {user.hasLocalPassword ? 'Password set' : 'No password'}
+                          {user.hasLocalPassword ? t`Password set` : t`No password`}
                         </Badge>
                         <Badge variant="outline" className="text-xs">
-                          {user.isMasterPasswordSet ? 'Master password set' : 'Needs onboarding'}
+                          {user.isMasterPasswordSet ? t`Master password set` : t`Needs onboarding`}
                         </Badge>
                       </div>
                     </TableCell>
@@ -445,7 +445,7 @@ export default function SelfHostAdminUsers() {
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleBlockUser(user, !user.isBlocked)}>
                             <Ban className="w-4 h-4 mr-2" />
-                            {user.isBlocked ? 'Unblock user' : 'Block user'}
+                            {user.isBlocked ? t`Unblock user` : t`Block user`}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -480,7 +480,9 @@ export default function SelfHostAdminUsers() {
               <Trans>Reset password</Trans>
             </DialogTitle>
             <DialogDescription>
-              Set a new password for {resetDialog.user?.email}. Share it securely with the user.
+              <Trans>
+                Set a new password for {resetDialog.user?.email}. Share it securely with the user.
+              </Trans>
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -517,7 +519,7 @@ export default function SelfHostAdminUsers() {
               <Trans>Cancel</Trans>
             </Button>
             <Button onClick={handleResetPassword} disabled={resetDialog.submitting}>
-              {resetDialog.submitting ? 'Resetting...' : 'Reset password'}
+              {resetDialog.submitting ? t`Resetting...` : t`Reset password`}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -535,8 +537,10 @@ export default function SelfHostAdminUsers() {
               <Trans>Delete user</Trans>
             </DialogTitle>
             <DialogDescription>
-              Permanently delete {deleteDialog.user?.email}. This removes their memberships and
-              owned spaces.
+              <Trans>
+                Permanently delete {deleteDialog.user?.email}. This removes their memberships and
+                owned spaces.
+              </Trans>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -548,7 +552,7 @@ export default function SelfHostAdminUsers() {
               onClick={handleDeleteUser}
               disabled={deleteDialog.submitting}
             >
-              {deleteDialog.submitting ? 'Deleting…' : 'Delete user'}
+              {deleteDialog.submitting ? t`Deleting…` : t`Delete user`}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -581,7 +585,7 @@ export default function SelfHostAdminUsers() {
                 onChange={(event) =>
                   setCreateDialog((prev) => ({ ...prev, email: event.target.value }))
                 }
-                placeholder={t`johndoe`}
+                placeholder="johndoe"
               />
             </div>
             <div className="space-y-2">
@@ -641,7 +645,7 @@ export default function SelfHostAdminUsers() {
               <Trans>Cancel</Trans>
             </Button>
             <Button onClick={handleCreateUser} disabled={createDialog.submitting}>
-              {createDialog.submitting ? 'Creating...' : 'Create user'}
+              {createDialog.submitting ? t`Creating...` : t`Create user`}
             </Button>
           </DialogFooter>
         </DialogContent>

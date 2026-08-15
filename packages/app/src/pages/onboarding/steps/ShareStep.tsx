@@ -139,7 +139,7 @@ export const ShareStep: React.FC<StepProps> = ({ cur, state, set }) => {
         </div>
       )}
       <OnboardingGhostButton onClick={addInvite} disabled={invites.length >= maxSeats}>
-        {invites.length >= maxSeats ? 'ALL 5 SEATS FILLED' : '+ INVITE SOMEONE'}
+        {invites.length >= maxSeats ? t`ALL 5 SEATS FILLED` : t`+ INVITE SOMEONE`}
       </OnboardingGhostButton>
 
       <div
@@ -150,13 +150,15 @@ export const ShareStep: React.FC<StepProps> = ({ cur, state, set }) => {
           lineHeight: 1.55,
         }}
       >
-        Everyone you invite becomes a{' '}
-        <span style={{ fontWeight: 700, color: '#141414' }}>
-          <Trans>collaborator</Trans>
-        </span>{' '}
-        with the same view and edit rights you have. After we set up your workspace we’ll generate a
-        private link for each person — Budgero never emails them on your behalf, you copy or send
-        each link yourself so the secret stays off our servers.
+        <Trans>
+          Everyone you invite becomes a{' '}
+          <span style={{ fontWeight: 700, color: '#141414' }}>
+            <Trans>collaborator</Trans>
+          </span>{' '}
+          with the same view and edit rights you have. After we set up your workspace we’ll generate
+          a private link for each person — Budgero never emails them on your behalf, you copy or
+          send each link yourself so the secret stays off our servers.
+        </Trans>
       </div>
     </div>
   );

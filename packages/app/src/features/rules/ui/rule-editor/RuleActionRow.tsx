@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -39,6 +39,8 @@ export const RuleActionRow = React.memo(function RuleActionRow({
   onUpdate,
   onRemove,
 }: RuleActionRowProps) {
+  const { t } = useLingui();
+
   const handlePayloadChange = (payload: Record<string, string | number | undefined>) => {
     onUpdate(index, { payload });
   };
@@ -51,7 +53,7 @@ export const RuleActionRow = React.memo(function RuleActionRow({
           onValueChange={(value: RuleActionType) => onUpdate(index, { type: value })}
         >
           <SelectTrigger className="w-full sm:w-56">
-            <SelectValue placeholder="Select action" />
+            <SelectValue placeholder={t`Select action`} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -143,6 +145,8 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
   accounts,
   budgetId,
 }: ActionPayloadEditorProps) {
+  const { t } = useLingui();
+
   switch (action.type) {
     case 'memo.remove_regex': {
       return (
@@ -159,18 +163,22 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
           </div>
           <div className="space-y-1">
             <Label className="flex items-center gap-1">
-              Flags
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Regex className="h-3.5 w-3.5 text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-xs">
-                    Accepts standard JavaScript regex flags, e.g. <code>gi</code> for global,
-                    case-insensitive matches.
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Trans>
+                Flags
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Regex className="h-3.5 w-3.5 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs text-xs">
+                      <Trans>
+                        Accepts standard JavaScript regex flags, e.g. <code>gi</code>for global,
+                        case-insensitive matches.
+                      </Trans>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </Trans>
             </Label>
             <Input
               placeholder="gi"
@@ -190,7 +198,7 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
             <Trans>Memo</Trans>
           </Label>
           <Input
-            placeholder="e.g. Groceries at Walmart"
+            placeholder={t`e.g. Groceries at Walmart`}
             value={action.payload.memo ?? ''}
             onChange={(event) => onChange({ memo: event.target.value })}
           />
@@ -211,7 +219,7 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
             onValueChange={(value) => onChange({ categoryId: Number(value) })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select category" />
+              <SelectValue placeholder={t`Select category`} />
             </SelectTrigger>
             <SelectContent>
               {categories.length === 0 ? (
@@ -259,7 +267,7 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
             onValueChange={(value) => onChange({ accountId: Number(value) })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select account" />
+              <SelectValue placeholder={t`Select account`} />
             </SelectTrigger>
             <SelectContent>
               {accounts.length === 0 ? (

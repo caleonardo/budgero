@@ -64,14 +64,14 @@ export default function AdminDashboard() {
       const result: ClerkSyncResult = await adminApi.syncClerkUsers();
       setClerkSyncResult(result);
       toast.success(t`Clerk sync complete`, {
-        description: `Synced ${result.Synced ?? 0} users (${result.Created ?? 0} created, ${
+        description: t`Synced ${result.Synced ?? 0} users (${result.Created ?? 0} created, ${
           result.Migrated ?? 0
         } migrated, ${result.Updated ?? 0} updated).`,
       });
     } catch (error) {
       console.error('Failed to sync Clerk users:', error);
       toast.error(t`Clerk sync failed`, {
-        description: 'Unable to sync Clerk users. Check server logs for details.',
+        description: t`Unable to sync Clerk users. Check server logs for details.`,
       });
     } finally {
       setSyncingClerk(false);
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
       const result = await adminApi.sendFeedbackBroadcast();
       setFeedbackResult(result);
       toast.success(t`Feedback broadcast complete`, {
-        description: `Sent ${result.sent ?? 0} of ${result.eligible ?? 0}, failed ${
+        description: t`Sent ${result.sent ?? 0} of ${result.eligible ?? 0}, failed ${
           result.failed ?? 0
         }${result.dryRun ? ' (dry run)' : ''}.`,
       });
@@ -108,7 +108,7 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Failed to send feedback broadcast:', error);
       toast.error(t`Feedback broadcast failed`, {
-        description: 'Check server logs. Re-sending is safe — delivered users are skipped.',
+        description: t`Check server logs. Re-sending is safe — delivered users are skipped.`,
       });
     } finally {
       setSendingFeedback(false);
@@ -169,9 +169,9 @@ export default function AdminDashboard() {
           label={t`Total Users`}
           value={stats?.totalUsers || 0}
           helper={
-            <>
-              <span className="text-green-600">+{stats?.activeUsers || 0}</span> active
-            </>
+            <Trans>
+              <span className="text-green-600">+{stats?.activeUsers || 0}</span>active
+            </Trans>
           }
         />
 
@@ -180,9 +180,9 @@ export default function AdminDashboard() {
           label={t`Paid Users`}
           value={stats?.paidUsers || 0}
           helper={
-            <>
-              <span className="text-blue-600">{stats?.trialUsers || 0}</span> on trial
-            </>
+            <Trans>
+              <span className="text-blue-600">{stats?.trialUsers || 0}</span>on trial
+            </Trans>
           }
         />
 
@@ -198,10 +198,10 @@ export default function AdminDashboard() {
           label={t`Special Access`}
           value={(stats?.foundingMembers || 0) + (stats?.betaUsers || 0)}
           helper={
-            <>
-              <span className="text-orange-600">{stats?.foundingMembers || 0}</span> founding,{' '}
-              <span className="text-indigo-600">{stats?.betaUsers || 0}</span> free access
-            </>
+            <Trans>
+              <span className="text-orange-600">{stats?.foundingMembers || 0}</span>founding,{' '}
+              <span className="text-indigo-600">{stats?.betaUsers || 0}</span>free access
+            </Trans>
           }
         />
       </div>
@@ -232,14 +232,16 @@ export default function AdminDashboard() {
               </div>
               {clerkSyncResult && (
                 <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                  Synced {clerkSyncResult.Synced ?? 0} | Created {clerkSyncResult.Created ?? 0} |
-                  Migrated {clerkSyncResult.Migrated ?? 0} | Updated {clerkSyncResult.Updated ?? 0}
+                  <Trans>
+                    Synced {clerkSyncResult.Synced ?? 0}| Created {clerkSyncResult.Created ?? 0}|
+                    Migrated {clerkSyncResult.Migrated ?? 0}| Updated {clerkSyncResult.Updated ?? 0}
+                  </Trans>
                 </div>
               )}
               <div>
                 <Button size="sm" onClick={handleSyncClerkUsers} disabled={syncingClerk}>
                   <RefreshCw className={cn('mr-2 h-4 w-4', syncingClerk && 'animate-spin')} />
-                  {syncingClerk ? 'Syncing...' : 'Sync Clerk Users'}
+                  {syncingClerk ? t`Syncing...` : t`Sync Clerk Users`}
                 </Button>
               </div>
             </div>
@@ -261,14 +263,18 @@ export default function AdminDashboard() {
               </div>
               {feedbackStatus && (
                 <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                  {feedbackStatus.quarter} | Eligible {feedbackStatus.eligible} | Already sent{' '}
-                  {feedbackStatus.alreadySent}
-                  {feedbackStatus.dryRun ? ' | DRY RUN' : ''}
+                  <Trans>
+                    {feedbackStatus.quarter}| Eligible {feedbackStatus.eligible}| Already sent{' '}
+                    {feedbackStatus.alreadySent}
+                    {feedbackStatus.dryRun ? t` | DRY RUN` : ''}
+                  </Trans>
                 </div>
               )}
               {feedbackResult && (
                 <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                  Last run: sent {feedbackResult.sent ?? 0} | failed {feedbackResult.failed ?? 0}
+                  <Trans>
+                    Last run: sent {feedbackResult.sent ?? 0}| failed {feedbackResult.failed ?? 0}
+                  </Trans>
                 </div>
               )}
               <div>
@@ -280,10 +286,10 @@ export default function AdminDashboard() {
                 >
                   <Send className={cn('mr-2 h-4 w-4', sendingFeedback && 'animate-pulse')} />
                   {sendingFeedback
-                    ? 'Sending...'
+                    ? t`Sending...`
                     : feedbackStatus && feedbackStatus.eligible === 0
-                      ? 'All caught up'
-                      : 'Send Feedback Email'}
+                      ? t`All caught up`
+                      : t`Send Feedback Email`}
                 </Button>
               </div>
             </div>

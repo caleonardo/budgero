@@ -355,7 +355,7 @@ export function ChartCanvas({
           {chartConfig.aggregateFunction}({chartConfig.yAxisColumn})
         </div>
         <div className="mt-1 text-xs text-muted-foreground">
-          {maskText(queryResult.rowCount.toLocaleString())} rows
+          <Trans>{maskText(queryResult.rowCount.toLocaleString())}rows</Trans>
         </div>
       </div>
     );

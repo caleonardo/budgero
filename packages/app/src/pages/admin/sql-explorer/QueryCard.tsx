@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { memo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -32,6 +32,8 @@ export const QueryCard = memo(
     onLoadQuery,
     onDeleteQuery,
   }: QueryCardProps) => {
+    const { t } = useLingui();
+
     return (
       <Card>
         <CardHeader className="pb-3">
@@ -41,10 +43,12 @@ export const QueryCard = memo(
                 <Trans>SQL Query</Trans>
               </CardTitle>
               <CardDescription>
-                Queries run against the production database.
-                {isDryRun
-                  ? ' Dry run mode enabled - changes will be simulated.'
-                  : ' Changes take effect immediately!'}
+                <Trans>
+                  Queries run against the production database.
+                  {isDryRun
+                    ? t` Dry run mode enabled - changes will be simulated.`
+                    : t` Changes take effect immediately!`}
+                </Trans>
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -54,7 +58,7 @@ export const QueryCard = memo(
                 ) : (
                   <AlertTriangle className="h-4 w-4 text-orange-500" />
                 )}
-                <span className="text-sm font-medium">{isDryRun ? 'Dry Run' : 'Live Mode'}</span>
+                <span className="text-sm font-medium">{isDryRun ? t`Dry Run` : t`Live Mode`}</span>
               </Label>
               <Switch
                 id="dry-run-toggle"
@@ -70,15 +74,15 @@ export const QueryCard = memo(
             <div className="flex gap-2">
               <Button type="button" onClick={() => executeQuery()} disabled={isExecuting}>
                 {isExecuting ? (
-                  <>
+                  <Trans>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Running...
-                  </>
+                  </Trans>
                 ) : (
-                  <>
+                  <Trans>
                     <Play className="h-4 w-4 mr-2" />
                     Run Query
-                  </>
+                  </Trans>
                 )}
               </Button>
               <Button
@@ -112,7 +116,7 @@ export const QueryCard = memo(
             <div className="flex flex-wrap gap-2">
               {COMMON_QUERIES.map((item) => (
                 <Button
-                  key={item.name}
+                  key={item.name.id}
                   type="button"
                   variant="outline"
                   size="sm"
@@ -121,7 +125,7 @@ export const QueryCard = memo(
                     executeQuery(item.query);
                   }}
                 >
-                  {item.name}
+                  {t(item.name)}
                 </Button>
               ))}
             </div>
@@ -133,7 +137,7 @@ export const QueryCard = memo(
             </h3>
             <div className="flex gap-2 mb-3">
               <Input
-                placeholder="Query name..."
+                placeholder={t`Query name...`}
                 value={saveQueryName}
                 onChange={(e) => setSaveQueryName(e.target.value)}
                 className="flex-1"

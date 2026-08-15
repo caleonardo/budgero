@@ -200,7 +200,7 @@ export default function ExplorerPage() {
                   onClick={() => setSqlQuery(query.query)}
                   className="whitespace-nowrap text-xs"
                 >
-                  {query.name}
+                  {t(query.name)}
                 </Button>
               ))}
             </div>
@@ -247,7 +247,7 @@ export default function ExplorerPage() {
                   >
                     <Save className="h-3 w-3" />
                     <span className="hidden sm:inline ml-1">
-                      {editingReport ? 'Update' : 'Save'}
+                      {editingReport ? t`Update` : t`Save`}
                     </span>
                   </Button>
                   <Button
@@ -258,7 +258,7 @@ export default function ExplorerPage() {
                   >
                     <Play className="h-3 w-3" />
                     <span className="hidden sm:inline ml-1">
-                      {isExecuting ? 'Running...' : 'Run'}
+                      {isExecuting ? t`Running...` : t`Run`}
                     </span>
                   </Button>
                   {queryResult && (
@@ -365,7 +365,7 @@ export default function ExplorerPage() {
         onCreateDashboard={async () => {
           await createDashboardMutation.mutateAsync({
             budgetId,
-            name: 'My Dashboard',
+            name: t`My Dashboard`,
           });
           await dashboardsQuery.refetch();
         }}

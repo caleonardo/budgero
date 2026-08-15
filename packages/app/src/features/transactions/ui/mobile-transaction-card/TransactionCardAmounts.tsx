@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import type { GetTransactionsByAccountRow, TransactionSplit } from '@budgero/core/browser';
@@ -109,7 +110,7 @@ export const TransactionCardAmounts = React.memo(function TransactionCardAmounts
 
       {!hideRunningBalance && balanceValue !== null && (
         <div className="text-xs text-muted-foreground font-mono">
-          Balance: {formatAmount(currentFormatter, balanceValue)}
+          <Trans>Balance: {formatAmount(currentFormatter, balanceValue)}</Trans>
         </div>
       )}
     </div>

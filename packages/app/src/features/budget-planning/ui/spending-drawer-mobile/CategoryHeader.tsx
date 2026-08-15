@@ -48,7 +48,9 @@ export const CategoryHeader = memo(function CategoryHeader({
                 </span>
                 {goalStatus.isOver && (
                   <span className="text-[11px] text-destructive whitespace-nowrap">
-                    Over by {formatMilli(globalLocalizer, asMilli(0 - goalStatus.remaining))}
+                    <Trans>
+                      Over by {formatMilli(globalLocalizer, asMilli(0 - goalStatus.remaining))}
+                    </Trans>
                   </span>
                 )}
               </div>

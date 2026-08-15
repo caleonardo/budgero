@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import {
   Landmark,
@@ -23,20 +23,6 @@ import { PlanRealityReport } from './reports/PlanRealityReport';
 import { ScenarioReport } from './reports/ScenarioReport';
 import { VsExpenseReport } from './reports/VsExpenseReport';
 
-/**
- * Question-based reports: each answers something a household asks, rather
- * than naming a chart type.
- */
-const REPORTS: { key: ReportKey; label: string; question: string; icon: LucideIcon }[] = [
-  { key: 'wealth', label: 'Wealth', question: 'Am I growing?', icon: Landmark },
-  { key: 'spending', label: 'Spending', question: 'Where does it go?', icon: Tag },
-  { key: 'in-out', label: 'In vs Out', question: 'Within our means?', icon: ArrowLeftRight },
-  { key: 'plan', label: 'Plan vs Reality', question: 'Did the budget hold?', icon: ClipboardCheck },
-  { key: 'money-map', label: 'Money Map', question: 'How does it move?', icon: Waypoints },
-  { key: 'scenario', label: 'Scenario', question: 'What if?', icon: FlaskConical },
-  { key: 'ledger', label: 'Ledger', question: 'Every category, every month', icon: Table2 },
-];
-
 /** Wealth is account-scoped; everything else takes the full filter set. */
 const CATEGORY_FILTER_REPORTS = new Set<ReportKey>([
   'spending',
@@ -47,6 +33,27 @@ const CATEGORY_FILTER_REPORTS = new Set<ReportKey>([
 ]);
 
 export default function AnalyticsPage() {
+  const { t } = useLingui();
+
+  /**
+   * Question-based reports: each answers something a household asks, rather
+   * than naming a chart type.
+   */
+  const REPORTS: { key: ReportKey; label: string; question: string; icon: LucideIcon }[] = [
+    { key: 'wealth', label: t`Wealth`, question: 'Am I growing?', icon: Landmark },
+    { key: 'spending', label: t`Spending`, question: 'Where does it go?', icon: Tag },
+    { key: 'in-out', label: t`In vs Out`, question: 'Within our means?', icon: ArrowLeftRight },
+    {
+      key: 'plan',
+      label: t`Plan vs Reality`,
+      question: 'Did the budget hold?',
+      icon: ClipboardCheck,
+    },
+    { key: 'money-map', label: t`Money Map`, question: 'How does it move?', icon: Waypoints },
+    { key: 'scenario', label: t`Scenario`, question: 'What if?', icon: FlaskConical },
+    { key: 'ledger', label: t`Ledger`, question: 'Every category, every month', icon: Table2 },
+  ];
+
   const [report, setReport] = useState<ReportKey>('wealth');
   const state = useAnalyticsPageState();
   const data = useAnalyticsData(state.filters);

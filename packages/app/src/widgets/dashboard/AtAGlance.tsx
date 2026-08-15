@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { useUiStore } from '@shared/store/useUiStore';
@@ -26,6 +26,8 @@ import { trendTextClass } from '@shared/lib/amount-color';
 import { focusCategoryNavState } from '@shared/hooks/useFocusCategoryFromNavState';
 
 export function AtAGlance() {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
@@ -48,7 +50,7 @@ export function AtAGlance() {
   const { data: onBudgetBalance = 0 } = useOnBudgetBalance(budgetId);
 
   const biggestOutflows = monthTx
-    .filter((t) => (t.OutflowConverted || 0) > 0 && !t.TransferID)
+    .filter((txn) => (txn.OutflowConverted || 0) > 0 && !txn.TransferID)
     .sort((a, b) => (b.OutflowConverted || 0) - (a.OutflowConverted || 0))
     .slice(0, 5);
 
@@ -64,7 +66,7 @@ export function AtAGlance() {
     )
   );
 
-  const monthSpent = monthTx.reduce((sum: number, t) => sum + (t.OutflowConverted || 0), 0);
+  const monthSpent = monthTx.reduce((sum: number, txn) => sum + (txn.OutflowConverted || 0), 0);
   const spentPct = assignedForMonth ? Math.min(100, (monthSpent / assignedForMonth) * 100) : 0;
 
   const paceDelta = spentPct - elapsedPct;
@@ -86,7 +88,7 @@ export function AtAGlance() {
       const progress = GoalCalculations.calculateProgress(g ?? null, finances, currentMonthString);
       return {
         id: g.ID,
-        name: row?.Category || 'Goal',
+        name: row?.Category || t`Goal`,
         categoryId: g.CategoryID,
         percentage: progress.percentage,
         amountSaved: progress.amountSaved,
@@ -99,11 +101,11 @@ export function AtAGlance() {
 
   // MTD on-budget income/outflow excluding transfers
   const totalIncome = monthTx.reduce(
-    (sum: number, t) => sum + (t.TransferID ? 0 : t.InflowConverted || 0),
+    (sum: number, txn) => sum + (txn.TransferID ? 0 : txn.InflowConverted || 0),
     0
   );
   const totalOutflow = monthTx.reduce(
-    (sum: number, t) => sum + (t.TransferID ? 0 : t.OutflowConverted || 0),
+    (sum: number, txn) => sum + (txn.TransferID ? 0 : txn.OutflowConverted || 0),
     0
   );
   const savingsRate = totalIncome > 0 ? ((totalIncome - totalOutflow) / totalIncome) * 100 : 0;
@@ -152,28 +154,28 @@ export function AtAGlance() {
                   <Trans>No outflows</Trans>
                 </div>
               ) : (
-                biggestOutflows.slice(0, 4).map((t, i) => (
+                biggestOutflows.slice(0, 4).map((txn, i) => (
                   <div
                     key={i}
                     className="p-2 rounded-lg bg-muted/20 hover:bg-muted/40 transition-all duration-200"
                   >
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="truncate" title={t.Category || 'Uncategorized'}>
-                        {format(parseISO(t.Date), 'MMM d')} • {t.Category || 'Uncategorized'}
+                      <span className="truncate" title={txn.Category || t`Uncategorized`}>
+                        {format(parseISO(txn.Date), 'MMM d')} • {txn.Category || t`Uncategorized`}
                       </span>
                       <span className="ml-3 font-semibold text-red-600 whitespace-nowrap">
                         {formatMaskedMilli(
                           globalLocalizer,
-                          t.OutflowConverted || 0,
+                          txn.OutflowConverted || 0,
                           privacyMaskNumbers
                         )}
                       </span>
                     </div>
                     <div
                       className="mt-1 block text-[11px] sm:text-sm text-foreground/90 truncate"
-                      title={t.Memo || 'No memo'}
+                      title={txn.Memo || t`No memo`}
                     >
-                      {t.Memo || 'No memo'}
+                      {txn.Memo || t`No memo`}
                     </div>
                   </div>
                 ))
@@ -268,12 +270,12 @@ export function AtAGlance() {
                   }`}
                 >
                   {assignedForMonth === 0
-                    ? 'No budget assigned'
+                    ? t`No budget assigned`
                     : paceState === 'good'
-                      ? 'On track'
+                      ? t`On track`
                       : paceState === 'warn'
-                        ? 'Ahead of pace'
-                        : 'Over pace'}
+                        ? t`Ahead of pace`
+                        : t`Over pace`}
                 </span>
               </div>
             </div>

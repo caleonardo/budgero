@@ -59,16 +59,16 @@ export default function WorkspaceSettingsPage() {
       return null;
     }
     if (!accessStatus) {
-      return 'Loading account access details…';
+      return t`Loading account access details…`;
     }
     if (accessStatus.level === AccessLevel.COLLABORATOR) {
-      return 'Shared collaborators can view the workspaces they are invited to. Upgrade to a paid plan to create your own.';
+      return t`Shared collaborators can view the workspaces they are invited to. Upgrade to a paid plan to create your own.`;
     }
     if (!canCreateNewWorkspace) {
-      return 'Create or import your own workspace once you have an active subscription, trial, or free access.';
+      return t`Create or import your own workspace once you have an active subscription, trial, or free access.`;
     }
     return null;
-  }, [accessStatus, canCreateNewWorkspace, isSelfHost]);
+  }, [accessStatus, canCreateNewWorkspace, isSelfHost, t]);
   const [loadingSpaceId, setLoadingSpaceId] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -132,7 +132,7 @@ export default function WorkspaceSettingsPage() {
         spaceId,
       });
       toast.success(t`Workspace switched`, {
-        description: 'You are now viewing this workspace.',
+        description: t`You are now viewing this workspace.`,
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Unable to switch workspace. Please try again.');
@@ -154,7 +154,7 @@ export default function WorkspaceSettingsPage() {
         await queryClient.invalidateQueries({ queryKey: ['space-members', activeSpaceId] });
       }
       toast.success(t`Workspace list refreshed`, {
-        description: 'Latest workspace information has been loaded.',
+        description: t`Latest workspace information has been loaded.`,
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to refresh workspaces. Please try again.');
@@ -170,7 +170,7 @@ export default function WorkspaceSettingsPage() {
     const trimmed = newSpaceName.trim();
     if (!trimmed) {
       toast.error(t`Name required`, {
-        description: 'Enter a name before creating the workspace.',
+        description: t`Enter a name before creating the workspace.`,
       });
       return;
     }
@@ -180,7 +180,7 @@ export default function WorkspaceSettingsPage() {
       await runtime.refreshSpaces();
       await spacesQuery.refetch();
       toast.success(t`Workspace created`, {
-        description: 'We switched you to the new workspace automatically.',
+        description: t`We switched you to the new workspace automatically.`,
       });
       setCreateDialogOpen(false);
       setNewSpaceName('');
@@ -208,11 +208,11 @@ export default function WorkspaceSettingsPage() {
     setStoredDefaultSpaceId(nextId);
     if (nextId) {
       toast.success(t`Default workspace set`, {
-        description: 'We will open this workspace first next time.',
+        description: t`We will open this workspace first next time.`,
       });
     } else {
       toast.success(t`Default workspace cleared`, {
-        description: 'We will follow your workspace list order.',
+        description: t`We will follow your workspace list order.`,
       });
     }
   };
@@ -267,8 +267,8 @@ export default function WorkspaceSettingsPage() {
 
       toast.success(t`Workspace deleted`, {
         description: deletingActive
-          ? 'The workspace was deleted and your session was updated.'
-          : 'The workspace and its data were deleted permanently.',
+          ? t`The workspace was deleted and your session was updated.`
+          : t`The workspace and its data were deleted permanently.`,
       });
       setDeletingSpace(null);
     } catch (error) {
@@ -304,7 +304,7 @@ export default function WorkspaceSettingsPage() {
       await runtime.refreshSpaces();
       await spacesQuery.refetch();
       toast.success(t`Workspace renamed`, {
-        description: 'The workspace name was updated successfully.',
+        description: t`The workspace name was updated successfully.`,
       });
       setEditingSpace(null);
       setEditingName('');
@@ -386,12 +386,14 @@ export default function WorkspaceSettingsPage() {
               onClick={handleRefreshSpaces}
               disabled={isRefreshing}
             >
-              {isRefreshing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="mr-2 h-4 w-4" />
-              )}
-              Refresh
+              <Trans>
+                {isRefreshing ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                )}
+                Refresh
+              </Trans>
             </Button>
             {!canCreateNewWorkspace ? (
               <Tooltip>
@@ -490,8 +492,8 @@ export default function WorkspaceSettingsPage() {
           {spaces.length === 0 && (
             <div className="rounded-md border border-dashed border-border/80 p-4 text-sm text-muted-foreground">
               {isCollaboratorOnly
-                ? 'No shared workspaces yet. Ask the workspace owner to send you an invite.'
-                : 'No workspaces yet. Use the button above to create your first workspace.'}
+                ? t`No shared workspaces yet. Ask the workspace owner to send you an invite.`
+                : t`No workspaces yet. Use the button above to create your first workspace.`}
             </div>
           )}
           {spacesQuery.isError ? (
@@ -539,12 +541,12 @@ export default function WorkspaceSettingsPage() {
         title={t`Delete workspace`}
         description={
           deletingSpace ? (
-            <>
+            <Trans>
               Delete{' '}
               <span className="font-semibold text-foreground">{deletingSpace.display_name}</span>{' '}
               permanently. This removes its data, members, invites, and backups. This action cannot
               be undone.
-            </>
+            </Trans>
           ) : null
         }
         confirmText={t`Delete workspace`}

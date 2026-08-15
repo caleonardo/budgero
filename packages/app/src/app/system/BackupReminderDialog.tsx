@@ -117,7 +117,7 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
           <AlertDialogDescription className="space-y-2">
             <p>
               {props.description ||
-                'You need a fresh backup to recover quickly if the database ever corrupts or you lose your master password.'}
+                t`You need a fresh backup to recover quickly if the database ever corrupts or you lose your master password.`}
             </p>
             <p className="font-medium text-foreground">
               <Trans>This reminder isn't skippable—download a backup now to stay protected.</Trans>
@@ -131,12 +131,12 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
             className="w-full sm:w-auto"
           >
             {isExporting ? (
-              'Preparing backup…'
+              t`Preparing backup…`
             ) : (
-              <>
+              <Trans>
                 <Database className="h-4 w-4 mr-2" />
                 Download backup
-              </>
+              </Trans>
             )}
           </Button>
         </AlertDialogFooter>

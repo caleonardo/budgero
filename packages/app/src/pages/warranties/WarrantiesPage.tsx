@@ -435,7 +435,9 @@ export default function WarrantiesPage() {
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         title={t`Delete Warranty`}
         description={
-          <>Are you sure you want to delete "{deleteTarget?.Name}"? This action cannot be undone.</>
+          <Trans>
+            Are you sure you want to delete "{deleteTarget?.Name}"? This action cannot be undone.
+          </Trans>
         }
         confirmText={t`Delete`}
         onConfirm={handleDelete}

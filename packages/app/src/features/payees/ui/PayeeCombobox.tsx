@@ -116,8 +116,8 @@ export function PayeeCombobox({
           <CommandList className="overflow-y-auto overscroll-contain touch-pan-y max-h-[44dvh]">
             <CommandEmpty>
               {normalizedSearch
-                ? 'No matching payees. Use "Create" below.'
-                : 'Type to search payees.'}
+                ? t`No matching payees. Use "Create" below.`
+                : t`Type to search payees.`}
             </CommandEmpty>
             {(normalizedSearch && !hasExactMatch) || (allowClear && normalizedValue) ? (
               <CommandGroup heading="Actions">

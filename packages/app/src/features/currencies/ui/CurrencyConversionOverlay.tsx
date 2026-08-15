@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Loader2, TrendingUp, AlertCircle } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
@@ -19,6 +19,8 @@ export function CurrencyConversionOverlay({
   progress,
   error,
 }: CurrencyConversionOverlayProps) {
+  const { t } = useLingui();
+
   if (!isVisible) return null;
 
   return (
@@ -45,7 +47,7 @@ export function CurrencyConversionOverlay({
 
             <div className="text-center space-y-2">
               <h3 className="text-lg font-semibold">
-                {error ? 'Conversion Failed' : 'Currency Conversion in Progress'}
+                {error ? t`Conversion Failed` : t`Currency Conversion in Progress`}
               </h3>
               <p className="text-sm text-muted-foreground">{error || message}</p>
             </div>

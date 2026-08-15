@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { subDays, subMonths, startOfYear, endOfDay } from 'date-fns';
 import { DateRange } from 'react-day-picker';
@@ -14,6 +15,8 @@ interface PeriodTabsProps {
 }
 
 export function PeriodTabs({ value, onChange, defaultPeriod = '1M', className }: PeriodTabsProps) {
+  const { t } = useLingui();
+
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>(defaultPeriod);
   const hasInitializedRef = useRef(false);
 
@@ -66,8 +69,7 @@ export function PeriodTabs({ value, onChange, defaultPeriod = '1M', className }:
     }
   }, [value, defaultPeriod, onChange, getPeriodDateRange]);
 
-  const TRIGGER_CLASS =
-    'data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none';
+  const TRIGGER_CLASS = t`data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none`;
 
   return (
     <Tabs

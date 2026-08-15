@@ -93,17 +93,19 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
   const historicalPatterns = useMemo(() => buildHistoricalPatterns(transactions), [transactions]);
 
   const uncategorizedTransactions = useMemo(() => {
-    return transactions.filter((t) => {
-      if (!t) return false;
-      if (t.Category === 'Split') return false;
-      return !t.CategoryID || t.CategoryID === 0 || !t.Category || t.Category === 'Uncategorized';
+    return transactions.filter((txn) => {
+      if (!txn) return false;
+      if (txn.Category === 'Split') return false;
+      return (
+        !txn.CategoryID || txn.CategoryID === 0 || !txn.Category || txn.Category === 'Uncategorized'
+      );
     });
   }, [transactions]);
 
   const handleAnalyze = async () => {
     if (!llmSettings?.Enabled) {
       toast.error(t`AI not enabled`, {
-        description: 'Please configure AI settings first',
+        description: t`Please configure AI settings first`,
       });
       return;
     }
@@ -135,17 +137,17 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
       const batches: TransactionForCategorization[][] = [];
 
       for (let i = 0; i < uncategorizedTransactions.length; i += batchSize) {
-        const batch = uncategorizedTransactions.slice(i, i + batchSize).map((t) => {
-          const account = accountById.get(t.AccountId || 0);
+        const batch = uncategorizedTransactions.slice(i, i + batchSize).map((txn) => {
+          const account = accountById.get(txn.AccountId || 0);
           return {
-            id: t.ID,
-            memo: t.Memo || '',
-            payee: t.Payee || '',
+            id: txn.ID,
+            memo: txn.Memo || '',
+            payee: txn.Payee || '',
             // Stored milliunits → decimal at the LLM boundary (the prompt's
             // amount guidelines reason about decimal currency amounts).
-            inflow: toDecimal(asMilli(t.InflowConverted || 0)),
-            outflow: toDecimal(asMilli(t.OutflowConverted || 0)),
-            date: t.Date || '',
+            inflow: toDecimal(asMilli(txn.InflowConverted || 0)),
+            outflow: toDecimal(asMilli(txn.OutflowConverted || 0)),
+            date: txn.Date || '',
             accountName: account?.Name,
             accountType: account?.Type,
           };
@@ -162,7 +164,7 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
         const result = await categorizeTransactions(config, batch, context);
 
         for (const cat of result.categorizations) {
-          const tx = batch.find((t) => t.id === cat.transactionId);
+          const tx = batch.find((txn) => txn.id === cat.transactionId);
           if (!tx) continue;
 
           const matchedCategory = categoryByName.get(cat.categoryName.toLowerCase());
@@ -201,23 +203,25 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
 
   const handleToggleSelect = (transactionId: number) => {
     setCategorizedTransactions((prev) =>
-      prev.map((t) => (t.transactionId === transactionId ? { ...t, selected: !t.selected } : t))
+      prev.map((txn) =>
+        txn.transactionId === transactionId ? { ...txn, selected: !txn.selected } : txn
+      )
     );
   };
 
   const handleSelectAll = () => {
-    const allSelected = categorizedTransactions.every((t) => t.selected);
+    const allSelected = categorizedTransactions.every((txn) => txn.selected);
     setCategorizedTransactions((prev) =>
-      prev.map((t) => ({
-        ...t,
-        selected: !allSelected && t.suggestedCategoryId !== null,
+      prev.map((txn) => ({
+        ...txn,
+        selected: !allSelected && txn.suggestedCategoryId !== null,
       }))
     );
   };
 
   const handleApply = async () => {
     const toApply = categorizedTransactions.filter(
-      (t) => t.selected && t.suggestedCategoryId !== null
+      (txn) => txn.selected && txn.suggestedCategoryId !== null
     );
 
     if (toApply.length === 0) {
@@ -230,14 +234,14 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
 
     try {
       for (let i = 0; i < toApply.length; i++) {
-        const t = toApply[i];
+        const txn = toApply[i];
         setProgress(Math.round((i / toApply.length) * 100));
 
-        const originalTx = transactions.find((tx) => tx.ID === t.transactionId);
+        const originalTx = transactions.find((tx) => tx.ID === txn.transactionId);
         const accountId = originalTx?.AccountId || 0;
 
         // Suppress per-item invalidation; one invalidation pass runs after the batch.
-        await cellCommit.mutateAsync(t.transactionId, 'CategoryID', t.suggestedCategoryId, {
+        await cellCommit.mutateAsync(txn.transactionId, 'CategoryID', txn.suggestedCategoryId, {
           accountId,
           skipInvalidate: true,
         });
@@ -246,7 +250,7 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
 
       setProgress(100);
       setStep('done');
-      toast.success(`Applied ${toApply.length} categories`);
+      toast.success(t`Applied ${toApply.length} categories`);
     } catch (err: unknown) {
       console.error('Failed to apply categories:', err);
       const errMessage = getErrorMessage(err, 'Failed to apply categories');
@@ -265,7 +269,7 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
   };
 
   const selectedCount = categorizedTransactions.filter(
-    (t) => t.selected && t.suggestedCategoryId !== null
+    (txn) => txn.selected && txn.suggestedCategoryId !== null
   ).length;
 
   const getConfidenceBadge = (confidence: number) => {
@@ -362,46 +366,46 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
                 </Trans>
               </p>
               <Button variant="ghost" size="sm" onClick={handleSelectAll}>
-                {categorizedTransactions.every((t) => t.selected)
-                  ? 'Deselect All'
-                  : 'Select All Valid'}
+                {categorizedTransactions.every((txn) => txn.selected)
+                  ? t`Deselect All`
+                  : t`Select All Valid`}
               </Button>
             </div>
 
             <div className="h-[350px] overflow-y-auto border rounded-lg p-2 space-y-2">
-              {categorizedTransactions.map((t) => (
+              {categorizedTransactions.map((txn) => (
                 <div
-                  key={t.transactionId}
+                  key={txn.transactionId}
                   className={`flex items-start gap-3 p-3 rounded-lg border ${
-                    t.selected ? 'border-primary/50 bg-primary/5' : 'border-border'
+                    txn.selected ? 'border-primary/50 bg-primary/5' : 'border-border'
                   }`}
                 >
                   <Checkbox
-                    checked={t.selected}
-                    onCheckedChange={() => handleToggleSelect(t.transactionId)}
-                    disabled={t.suggestedCategoryId === null}
+                    checked={txn.selected}
+                    onCheckedChange={() => handleToggleSelect(txn.transactionId)}
+                    disabled={txn.suggestedCategoryId === null}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 text-sm font-medium">
-                      <span className="truncate">{t.memo || t.payee || 'No description'}</span>
+                      <span className="truncate">{txn.memo || txn.payee || t`No description`}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                      <span>{t.date}</span>
+                      <span>{txn.date}</span>
                       <span>•</span>
-                      {t.outflow > 0 ? (
+                      {txn.outflow > 0 ? (
                         <span className="text-red-500">
-                          -{formatCurrency(t.outflow, currencyCode)}
+                          -{formatCurrency(txn.outflow, currencyCode)}
                         </span>
                       ) : (
                         <span className="text-green-500">
-                          +{formatCurrency(t.inflow, currencyCode)}
+                          +{formatCurrency(txn.inflow, currencyCode)}
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                       <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                      {t.suggestedCategoryId !== null ? (
-                        <Badge variant="secondary">{t.suggestedCategory}</Badge>
+                      {txn.suggestedCategoryId !== null ? (
+                        <Badge variant="secondary">{txn.suggestedCategory}</Badge>
                       ) : (
                         <Badge variant="outline" className="text-red-500">
                           <Trans>
@@ -410,10 +414,10 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
                           </Trans>
                         </Badge>
                       )}
-                      {getConfidenceBadge(t.confidence)}
+                      {getConfidenceBadge(txn.confidence)}
                     </div>
-                    {t.reasoning && (
-                      <p className="mt-1 text-xs text-muted-foreground italic">{t.reasoning}</p>
+                    {txn.reasoning && (
+                      <p className="mt-1 text-xs text-muted-foreground italic">{txn.reasoning}</p>
                     )}
                   </div>
                 </div>

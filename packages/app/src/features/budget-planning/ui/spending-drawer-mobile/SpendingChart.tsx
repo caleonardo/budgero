@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { memo, useMemo } from 'react';
 import { parseISO } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -19,6 +19,8 @@ export const SpendingChart = memo(function SpendingChart({
   shouldShowBudgetPace,
   globalLocalizer,
 }: SpendingChartProps) {
+  const { t } = useLingui();
+
   const palette = useChartPalette();
 
   const option = useMemo<EChartsCoreOption>(() => {
@@ -27,8 +29,8 @@ export const SpendingChart = memo(function SpendingChart({
     const paceColor = palette.series[1];
     const paceState = (isOverPace: boolean) =>
       isOverPace
-        ? { color: palette.flow.negative, name: 'Over pace' }
-        : { color: palette.flow.positive, name: 'Under pace' };
+        ? { color: palette.flow.negative, name: t`Over pace` }
+        : { color: palette.flow.positive, name: t`Under pace` };
 
     return {
       animation: false,
@@ -69,14 +71,14 @@ export const SpendingChart = memo(function SpendingChart({
           const rows: TooltipRow[] = [
             {
               color: cumulativeColor,
-              name: 'Cumulative',
+              name: t`Cumulative`,
               value: globalLocalizer.format(datum.cumulative),
             },
           ];
           if (shouldShowBudgetPace) {
             rows.push({
               color: paceColor,
-              name: 'Budget Pace',
+              name: t`Budget Pace`,
               value: globalLocalizer.format(datum.budgetPace),
             });
             const state = paceState(datum.isOverPace);
@@ -88,7 +90,7 @@ export const SpendingChart = memo(function SpendingChart({
           }
           rows.push({
             color: chrome.inkPrimary,
-            name: 'Daily',
+            name: t`Daily`,
             value: globalLocalizer.format(datum.value),
           });
           return tooltipHtml(format(parseISO(datum.date), 'MMM d'), rows);
@@ -96,7 +98,7 @@ export const SpendingChart = memo(function SpendingChart({
       },
       series: [
         {
-          name: 'Cumulative Spending',
+          name: t`Cumulative Spending`,
           type: 'line' as const,
           data: cumulativeData.map((datum) => datum.cumulative),
           lineStyle: { color: cumulativeColor, width: 2 },
@@ -107,7 +109,7 @@ export const SpendingChart = memo(function SpendingChart({
         ...(shouldShowBudgetPace
           ? [
               {
-                name: 'Budget Pace',
+                name: t`Budget Pace`,
                 type: 'line' as const,
                 data: cumulativeData.map((datum) => datum.budgetPace),
                 lineStyle: { color: paceColor, width: 2, opacity: 0.7, type: [5, 5] },
@@ -118,7 +120,7 @@ export const SpendingChart = memo(function SpendingChart({
           : []),
       ],
     };
-  }, [cumulativeData, maxValue, shouldShowBudgetPace, globalLocalizer, palette]);
+  }, [cumulativeData, maxValue, shouldShowBudgetPace, globalLocalizer, palette, t]);
 
   return (
     <Card>

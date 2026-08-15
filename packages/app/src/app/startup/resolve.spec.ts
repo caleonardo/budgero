@@ -231,7 +231,7 @@ describe('startupReducer', () => {
       resolution: {
         state: 'runtime_initializing',
         screen: 'splash',
-        message: 'Starting Budgero…',
+        message: expect.objectContaining({ id: 'Starting Budgero…' }),
       },
     });
 

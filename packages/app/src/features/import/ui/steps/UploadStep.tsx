@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { ChangeEvent, RefObject } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Input } from '@shared/ui/input';
@@ -20,6 +20,7 @@ export function UploadStep({
   error,
   hasBudgetSelected,
 }: UploadStepProps) {
+  const { t } = useLingui();
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -31,7 +32,8 @@ export function UploadStep({
         </CardTitle>
         <CardDescription>
           <Trans>
-            Upload a {SUPPORTED_IMPORT_FORMATS_LABEL} file to import your transactions into a budget
+            Upload a {t(SUPPORTED_IMPORT_FORMATS_LABEL)} file to import your transactions into a
+            budget
           </Trans>
         </CardDescription>
       </CardHeader>

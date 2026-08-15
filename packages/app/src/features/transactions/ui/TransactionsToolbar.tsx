@@ -231,7 +231,7 @@ export function TransactionsToolbar({
                   : selectedAccount?.Currency
               }
             />
-            {transactionCurrencyDisplay === 'budget' ? 'Budget Currency' : 'Account Currency'}
+            {transactionCurrencyDisplay === 'budget' ? t`Budget Currency` : t`Account Currency`}
           </Button>
         )}
         <span className="text-xs text-muted-foreground">
@@ -245,7 +245,7 @@ export function TransactionsToolbar({
             size="sm"
             onClick={handleToggleBalanceColumn}
             className="flex items-center gap-1.5 text-xs"
-            title={showBalanceColumn ? 'Hide balance column' : 'Show balance column'}
+            title={showBalanceColumn ? t`Hide balance column` : t`Show balance column`}
           >
             <Trans>
               <Columns className="h-4 w-4" />
@@ -261,7 +261,7 @@ export function TransactionsToolbar({
             size="sm"
             onClick={handleToggleLabelColumn}
             className="flex items-center gap-1.5 text-xs"
-            title={showLabelColumn ? 'Hide label column' : 'Show label column'}
+            title={showLabelColumn ? t`Hide label column` : t`Show label column`}
           >
             <Trans>
               <Tag className="h-4 w-4" />
@@ -297,14 +297,14 @@ export function TransactionsToolbar({
             size="sm"
             className="ml-auto flex items-center gap-1.5 text-xs"
             onClick={() => setShowOnlyUncategorized((v) => !v)}
-            title={showOnlyUncategorized ? 'Show all transactions' : 'Show uncategorized only'}
+            title={showOnlyUncategorized ? t`Show all transactions` : t`Show uncategorized only`}
           >
             <Filter className="h-4 w-4" />
             {!showOnlyUncategorized
-              ? `Uncategorized (${uncategorizedCount})`
+              ? t`Uncategorized (${uncategorizedCount})`
               : uncategorizedCount > 0
-                ? 'Showing Uncategorized'
-                : 'All transactions'}
+                ? t`Showing Uncategorized`
+                : t`All transactions`}
           </Button>
         )}
       </div>

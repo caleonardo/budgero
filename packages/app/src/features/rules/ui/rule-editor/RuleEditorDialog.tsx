@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   Dialog,
   DialogClose,
@@ -47,6 +47,8 @@ export function RuleEditorDialog({
   isSubmitting = false,
   onSubmit,
 }: RuleEditorDialogProps) {
+  const { t } = useLingui();
+
   const state = useRuleEditorState({
     open,
     budgetId,
@@ -115,7 +117,7 @@ export function RuleEditorDialog({
         <Trans>Cancel</Trans>
       </Button>
       <Button onClick={state.handleSubmit} disabled={isSubmitting} className="w-full sm:w-auto">
-        {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create rule' : 'Save changes'}
+        {isSubmitting ? t`Saving...` : mode === 'create' ? t`Create rule` : t`Save changes`}
       </Button>
     </>
   );

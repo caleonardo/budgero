@@ -64,7 +64,7 @@ export function DevSimulateRateMoveButton() {
         }),
       });
     } catch (err) {
-      toast.error(`Restore failed: ${getErrorMessage(err, 'unknown error')}`);
+      toast.error(t`Restore failed: ${getErrorMessage(err, 'unknown error')}`);
     } finally {
       setRestoring(false);
     }
@@ -90,7 +90,7 @@ export function DevSimulateRateMoveButton() {
       );
       if (foreignCurrencies.size === 0) {
         toast.info(t`No foreign-currency accounts`, {
-          description: 'Add an account in another currency (or crypto) first.',
+          description: t`Add an account in another currency (or crypto) first.`,
         });
         return;
       }
@@ -114,14 +114,14 @@ export function DevSimulateRateMoveButton() {
       const revalued = await services.currency.revalueAccounts(budgetId);
       await invalidateAll();
 
-      toast.success(`Simulated a market move`, {
+      toast.success(t`Simulated a market move`, {
         description: plural(moved, {
           one: `# rate shifted, ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
           other: `# rates shifted, ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
         }),
       });
     } catch (err) {
-      toast.error(`Rate simulation failed: ${getErrorMessage(err, 'unknown error')}`);
+      toast.error(t`Rate simulation failed: ${getErrorMessage(err, 'unknown error')}`);
     } finally {
       setRunning(false);
     }
@@ -137,7 +137,7 @@ export function DevSimulateRateMoveButton() {
         className="gap-1.5"
       >
         <Dices className="h-4 w-4" />
-        {running ? 'Moving rates…' : 'Simulate rate move'}
+        {running ? t`Moving rates…` : t`Simulate rate move`}
       </Button>
       <Button
         size="sm"
@@ -147,7 +147,7 @@ export function DevSimulateRateMoveButton() {
         className="gap-1.5"
       >
         <Undo2 className="h-4 w-4" />
-        {restoring ? 'Restoring…' : 'Restore real rates'}
+        {restoring ? t`Restoring…` : t`Restore real rates`}
       </Button>
     </div>
   );

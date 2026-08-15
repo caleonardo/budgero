@@ -45,14 +45,14 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
     if (target <= 0) return null;
     if (mode === 'monthly') {
       const perYear = target * 12;
-      return `At ${formatMoney(sym, target)}/month, you’ll have ${formatMoney(
+      return t`At ${formatMoney(sym, target)}/month, you’ll have ${formatMoney(
         sym,
         perYear
       )} saved after a year.`;
     }
     const months = monthsBetweenNow(state.goal.targetDate);
     const perMonth = target / months;
-    return `Budgero will assign about ${formatMoney(
+    return t`Budgero will assign about ${formatMoney(
       sym,
       perMonth
     )}/month to this jar until ${formatDateLabel(state.goal.targetDate)}.`;
@@ -79,7 +79,7 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
                 set({
                   goal: {
                     id: g.id,
-                    label: g.id === 'custom' && isCustom ? state.goal.label : g.label,
+                    label: g.id === 'custom' ? (isCustom ? state.goal.label : '') : t(g.label),
                     target: g.target,
                     mode: g.mode,
                     targetDate: addMonthsIso(g.monthsOut),
@@ -88,7 +88,7 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
               }
               style={{ padding: '12px 14px' }}
             >
-              <div style={{ fontSize: 13, fontWeight: 600 }}>{g.label}</div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>{t(g.label)}</div>
               <div style={{ fontSize: 10, color: '#393939', marginTop: 2 }}>
                 {g.mode === 'monthly'
                   ? `suggested ${sym}${g.target.toLocaleString()}/month`
@@ -105,7 +105,7 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
             <Trans>GOAL NAME</Trans>
           </FieldLabel>
           <InputRow
-            value={state.goal.label === 'Something else' ? '' : state.goal.label}
+            value={state.goal.label}
             onChange={(v) => set({ goal: { ...state.goal, label: v } })}
             placeholder={t`e.g. Wedding fund`}
           />
@@ -152,7 +152,7 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
       {/* Amount + (optional) date. Labels change to match the chosen mode. */}
       <div style={{ marginTop: 18, display: 'grid', gap: 14 }}>
         <div>
-          <FieldLabel>{mode === 'monthly' ? 'AMOUNT PER MONTH' : 'TOTAL TARGET'}</FieldLabel>
+          <FieldLabel>{mode === 'monthly' ? t`AMOUNT PER MONTH` : t`TOTAL TARGET`}</FieldLabel>
           <InputRow
             big
             prefix={sym}

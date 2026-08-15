@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Fragment, useMemo, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
@@ -20,10 +21,8 @@ const MAX_PIVOT_MONTHS = 24;
 // On phones the sticky Category+Total pair would cover almost the whole
 // viewport and leave no visible scroll area, so the Category column narrows
 // and the Total column only pins from `sm` up.
-const STICKY_LEFT =
-  'sticky left-0 z-10 max-w-[130px] truncate border-r px-2 py-2 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.15)] sm:max-w-none sm:px-3';
-const STICKY_RIGHT =
-  'z-10 whitespace-nowrap border-l px-2 py-2 text-right sm:sticky sm:right-0 sm:px-3 sm:shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.15)]';
+const STICKY_LEFT = msg`sticky left-0 z-10 max-w-[130px] truncate border-r px-2 py-2 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.15)] sm:max-w-none sm:px-3`;
+const STICKY_RIGHT = msg`z-10 whitespace-nowrap border-l px-2 py-2 text-right sm:sticky sm:right-0 sm:px-3 sm:shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.15)]`;
 
 interface VsExpenseReportProps {
   data: AnalyticsData;

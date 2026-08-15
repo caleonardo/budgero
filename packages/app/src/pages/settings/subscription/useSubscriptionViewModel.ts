@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useMemo, useCallback } from 'react';
 import { useProfile } from '@entities/user/api/useAuth';
 import {
@@ -28,6 +29,8 @@ import {
 } from '@pages/settings/subscription/subscription-status';
 
 export function useSubscriptionViewModel() {
+  const { t } = useLingui();
+
   const { data: user, isLoading: userLoading } = useProfile();
   const { data: subscriptionDetailsResponse } = useSubscriptionDetails(
     user?.subscription_id ?? undefined
@@ -88,8 +91,8 @@ export function useSubscriptionViewModel() {
     if (days >= 1) return days === 1 ? '1 day' : `${days} days`;
     const hours = Math.floor(msLeft / (1000 * 60 * 60));
     if (hours >= 1) return hours === 1 ? '1 hour' : `${hours} hours`;
-    return 'less than an hour';
-  }, [trialEndsAt, currentTime]);
+    return t`less than an hour`;
+  }, [trialEndsAt, currentTime, t]);
 
   const effectiveSubscriptionStatus = getEffectiveSubscriptionStatus({
     subscription_status: user?.subscription_status ?? 'inactive',
@@ -168,12 +171,12 @@ export function useSubscriptionViewModel() {
     (variantId?: string) => {
       const plan = plans.find((p) => p.id === variantId);
       if (plan) return plan.name;
-      if (user?.is_founding_member) return 'Founding Member';
-      if (hasBetaAccess) return 'Free Access';
-      if (variantId) return `Plan ${variantId}`;
-      return 'Plan not set';
+      if (user?.is_founding_member) return t`Founding Member`;
+      if (hasBetaAccess) return t`Free Access`;
+      if (variantId) return t`Plan ${variantId}`;
+      return t`Plan not set`;
     },
-    [plans, user?.is_founding_member, hasBetaAccess]
+    [plans, user?.is_founding_member, hasBetaAccess, t]
   );
 
   const planName = subscriptionDetails?.variant_name ?? getPlanNameFromVariant(user?.variant_id);

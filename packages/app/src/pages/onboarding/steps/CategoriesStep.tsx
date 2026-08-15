@@ -1,10 +1,11 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
-import { CATEGORY_PRESETS } from '../onboarding-data';
+import { CATEGORY_PRESETS, CATEGORY_ITEM_LABELS } from '../onboarding-data';
 import { CategoriesIllustration } from '../illustrations';
 import { Title, type StepProps } from './shared';
 
 export const CategoriesStep: React.FC<StepProps> = ({ cur, state, set }) => {
+  const { t } = useLingui();
   const toggleCat = (cat: string) => {
     const has = state.selectedCats.includes(cat);
     set({
@@ -32,7 +33,7 @@ export const CategoriesStep: React.FC<StepProps> = ({ cur, state, set }) => {
                 }}
               />
               <span style={{ fontSize: 11, letterSpacing: 1.2, fontWeight: 700 }}>
-                {group.label}
+                {t(group.label)}
               </span>
               <span style={{ flex: 1, borderBottom: '1px dashed rgba(57,57,57,0.3)', height: 1 }} />
             </div>
@@ -55,7 +56,7 @@ export const CategoriesStep: React.FC<StepProps> = ({ cur, state, set }) => {
                     }}
                   >
                     {on ? '✓ ' : '+ '}
-                    {item}
+                    {CATEGORY_ITEM_LABELS[item] ? t(CATEGORY_ITEM_LABELS[item]) : item}
                   </button>
                 );
               })}

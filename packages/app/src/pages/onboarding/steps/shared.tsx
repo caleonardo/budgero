@@ -1,3 +1,5 @@
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react/macro';
 /* eslint-disable react-refresh/only-export-components */
 // Shared bits for the onboarding step components: the common prop shape,
 // hand-rolled "paper" primitives (hero image, title, input row, selection
@@ -87,37 +89,40 @@ export const StepHeroImage: React.FC<{ src: string; alt: string }> = ({ src, alt
   </div>
 );
 
-export const Title: React.FC<{ h: string; sub?: string }> = ({ h, sub }) => (
-  <div style={{ marginBottom: 28 }}>
-    <h1
-      className="bo-title"
-      style={{
-        margin: 0,
-        fontSize: 34,
-        fontWeight: 700,
-        letterSpacing: -0.5,
-        lineHeight: 1.15,
-        color: INK,
-      }}
-    >
-      {h}
-    </h1>
-    {sub && (
-      <p
-        className="bo-title-sub"
+export const Title: React.FC<{ h: MessageDescriptor; sub?: MessageDescriptor }> = ({ h, sub }) => {
+  const { t } = useLingui();
+  return (
+    <div style={{ marginBottom: 28 }}>
+      <h1
+        className="bo-title"
         style={{
-          margin: '10px 0 0',
-          fontSize: 14,
-          color: INK_MUTED,
-          lineHeight: 1.55,
-          maxWidth: 520,
+          margin: 0,
+          fontSize: 34,
+          fontWeight: 700,
+          letterSpacing: -0.5,
+          lineHeight: 1.15,
+          color: INK,
         }}
       >
-        {sub}
-      </p>
-    )}
-  </div>
-);
+        {t(h)}
+      </h1>
+      {sub && (
+        <p
+          className="bo-title-sub"
+          style={{
+            margin: '10px 0 0',
+            fontSize: 14,
+            color: INK_MUTED,
+            lineHeight: 1.55,
+            maxWidth: 520,
+          }}
+        >
+          {sub ? t(sub) : null}
+        </p>
+      )}
+    </div>
+  );
+};
 
 export const InputRow: React.FC<{
   value: string;

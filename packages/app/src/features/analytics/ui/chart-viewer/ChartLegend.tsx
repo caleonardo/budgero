@@ -69,8 +69,8 @@ export function ChartLegend({
 
   const summaryText =
     visibleCount === legendItems.length
-      ? `All ${legendItems.length} series visible`
-      : `${visibleCount}/${legendItems.length} series visible`;
+      ? t`All ${legendItems.length} series visible`
+      : t`${visibleCount}/${legendItems.length} series visible`;
 
   return (
     <div

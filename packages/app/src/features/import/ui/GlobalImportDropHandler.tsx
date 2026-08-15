@@ -62,7 +62,7 @@ export function GlobalImportDropHandler() {
       const supportedFile = files.find((file) => isSupportedImportFile(file));
       if (!supportedFile) {
         toast.error(t`Unsupported file`, {
-          description: `Drop a ${SUPPORTED_IMPORT_FORMATS_LABEL} file to import transactions.`,
+          description: t`Drop a ${t(SUPPORTED_IMPORT_FORMATS_LABEL)} file to import transactions.`,
         });
         return;
       }
@@ -99,7 +99,7 @@ export function GlobalImportDropHandler() {
         </p>
         <p className="text-sm text-muted-foreground">
           <Trans>
-            {SUPPORTED_IMPORT_FORMATS_LABEL} files will open the Imports workspace automatically.
+            {t(SUPPORTED_IMPORT_FORMATS_LABEL)} files will open the Imports workspace automatically.
           </Trans>
         </p>
       </div>

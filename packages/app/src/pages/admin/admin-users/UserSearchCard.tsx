@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Input } from '@shared/ui/input';
@@ -13,6 +13,8 @@ export const UserSearchCard = React.memo(function UserSearchCard({
   searchTerm,
   onSearchChange,
 }: UserSearchCardProps) {
+  const { t } = useLingui();
+
   return (
     <Card>
       <CardHeader>
@@ -27,7 +29,7 @@ export const UserSearchCard = React.memo(function UserSearchCard({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
-            placeholder="Search by ID, email, or name..."
+            placeholder={t`Search by ID, email, or name...`}
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10"

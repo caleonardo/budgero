@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { Account } from '@budgero/core/browser';
 import type { RuleFormCondition } from './rule-editor.utils';
@@ -19,10 +20,12 @@ export const RuleConditionsEditor = React.memo(function RuleConditionsEditor({
   onUpdate,
   onRemove,
 }: RuleConditionsEditorProps) {
+  const { t } = useLingui();
+
   return (
     <RuleEditorSection
-      title="Conditions"
-      description="All conditions must match for the rule to fire."
+      title={t`Conditions`}
+      description={t`All conditions must match for the rule to fire.`}
       addLabel="Add condition"
       onAdd={onAdd}
     >

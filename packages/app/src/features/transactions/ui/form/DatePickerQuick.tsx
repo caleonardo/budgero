@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Date Picker with Quick Buttons Component
  *
@@ -20,6 +20,8 @@ interface DatePickerQuickProps {
 }
 
 export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePickerQuickProps) {
+  const { t } = useLingui();
+
   const handleDateSelect = useCallback(
     (date: Date | undefined) => {
       onChange(date || null);
@@ -56,7 +58,7 @@ export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePic
                   variant="outline"
                   className="w-full justify-start text-left h-8 sm:h-10 px-3 sm:px-4 bg-background border-input hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
-                  {value ? format(value, 'PPP') : 'Select date'}
+                  {value ? format(value, 'PPP') : t`Select date`}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start" modal>

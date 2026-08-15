@@ -17,15 +17,17 @@ export const ResultsTable = memo(
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <CardTitle className="text-base flex items-center gap-2">
-                Results
-                {result.isDryRun && (
-                  <Badge variant="outline" className="text-green-600 border-green-600">
-                    <Trans>
-                      <Shield className="h-3 w-3 mr-1" />
-                      Dry Run
-                    </Trans>
-                  </Badge>
-                )}
+                <Trans>
+                  Results
+                  {result.isDryRun && (
+                    <Badge variant="outline" className="text-green-600 border-green-600">
+                      <Trans>
+                        <Shield className="h-3 w-3 mr-1" />
+                        Dry Run
+                      </Trans>
+                    </Badge>
+                  )}
+                </Trans>
               </CardTitle>
               {result.message && (
                 <CardDescription className="mt-1 text-xs text-muted-foreground">
@@ -34,7 +36,9 @@ export const ResultsTable = memo(
               )}
             </div>
             <div className="flex gap-2 text-xs">
-              <Badge variant="secondary">{result.rowCount.toLocaleString()} total rows</Badge>
+              <Badge variant="secondary">
+                <Trans>{result.rowCount.toLocaleString()}total rows</Trans>
+              </Badge>
               <Badge variant="secondary">{result.executionTime.toFixed(1)}ms</Badge>
             </div>
           </div>
@@ -49,8 +53,10 @@ export const ResultsTable = memo(
             showTruncated={shouldShowTruncatedWarning(result)}
             truncatedFooter={
               <div className="p-2 text-center text-xs text-muted-foreground bg-muted/20 border-t">
-                Showing {result.fetchedRows.toLocaleString()} of {result.rowCount.toLocaleString()}{' '}
-                total rows
+                <Trans>
+                  Showing {result.fetchedRows.toLocaleString()}of {result.rowCount.toLocaleString()}{' '}
+                  total rows
+                </Trans>
               </div>
             }
             emptyMessage="Query executed successfully - no rows returned."

@@ -119,7 +119,7 @@ export default function AllTransactionsPage() {
               </h1>
               <p className="text-[10px] text-muted-foreground">
                 {mobilePageStats
-                  ? `Page ${mobilePageStats.pageNumber + 1}/${mobilePageStats.totalPages}`
+                  ? t`Page ${mobilePageStats.pageNumber + 1}/${mobilePageStats.totalPages}`
                   : `${transactionStats.recentCount} transactions`}
               </p>
             </div>
@@ -188,7 +188,7 @@ export default function AllTransactionsPage() {
               label={t`Inflow`}
               value={formatAmount(transactionStats.totalInflow)}
               color="success"
-              tooltip={`Total inflow from ${transactionStats.recentCount} transactions`}
+              tooltip={t`Total inflow from ${transactionStats.recentCount} transactions`}
             />
 
             <FlowStat
@@ -196,7 +196,7 @@ export default function AllTransactionsPage() {
               label={t`Outflow`}
               value={formatAmount(transactionStats.totalOutflow)}
               color="destructive"
-              tooltip={`Total outflow from ${transactionStats.recentCount} transactions`}
+              tooltip={t`Total outflow from ${transactionStats.recentCount} transactions`}
             />
           </div>
         </div>

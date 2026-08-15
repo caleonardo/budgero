@@ -1,8 +1,11 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { msg } from '@lingui/core/macro';
 import React from 'react';
 import { Title, getCurrencySym, type StepProps } from './shared';
 
 export const ZbbStep: React.FC<StepProps> = ({ state, set }) => {
+  const { t } = useLingui();
+
   const total = 2400;
   const sym = getCurrencySym(state.currency);
   const assigned =
@@ -11,20 +14,20 @@ export const ZbbStep: React.FC<StepProps> = ({ state, set }) => {
     Number(state.zbbAssigned.savings || 0);
   const remaining = total - assigned;
   const rows = [
-    { key: 'rent' as const, label: 'Rent', color: '#14b8a6', hint: `suggested: ${sym}1,200` },
+    { key: 'rent' as const, label: t`Rent`, color: '#14b8a6', hint: `suggested: ${sym}1,200` },
     {
       key: 'groceries' as const,
-      label: 'Groceries',
+      label: t`Groceries`,
       color: '#2f7d31',
       hint: `suggested: ${sym}450`,
     },
-    { key: 'savings' as const, label: 'Savings', color: '#c6392c', hint: `suggested: ${sym}300` },
+    { key: 'savings' as const, label: t`Savings`, color: '#c6392c', hint: `suggested: ${sym}300` },
   ];
   return (
     <div>
       <Title
-        h="Give every coin a job."
-        sub="At the start of the month, take your income, and divide it across everything you need to pay for — rent, food, savings, fun. When the pile hits zero, you’re done. That’s the whole trick."
+        h={msg`Give every coin a job.`}
+        sub={msg`At the start of the month, take your income, and divide it across everything you need to pay for — rent, food, savings, fun. When the pile hits zero, you’re done. That’s the whole trick.`}
       />
       <div
         style={{
@@ -148,10 +151,14 @@ export const ZbbStep: React.FC<StepProps> = ({ state, set }) => {
         )}
       </div>
       <div style={{ marginTop: 16, fontSize: 11, color: '#393939', display: 'flex', gap: 6 }}>
-        <span style={{ fontWeight: 700, letterSpacing: 1 }}>TIP:</span>
+        <span style={{ fontWeight: 700, letterSpacing: 1 }}>
+          <Trans>TIP:</Trans>
+        </span>
         <span>
-          Try spreading the {sym}
-          {total.toLocaleString()} across the three rows until &quot;left to assign&quot; hits zero.
+          <Trans>
+            Try spreading the {sym}
+            {total.toLocaleString()} across the three rows until "left to assign" hits zero.
+          </Trans>
         </span>
       </div>
     </div>

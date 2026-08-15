@@ -61,8 +61,10 @@ export function CCUnderfundedBadge({ item, globalLocalizer, className }: CCUnder
         className
       )}
     >
-      <AlertTriangle className="h-3 w-3 shrink-0" />
-      Underfunded {formatAmount(underfunded)}
+      <Trans>
+        <AlertTriangle className="h-3 w-3 shrink-0" />
+        Underfunded {formatAmount(underfunded)}
+      </Trans>
     </span>
   );
 

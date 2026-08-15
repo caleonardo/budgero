@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 /**
  * Theme-aware chrome shared by every ECharts surface (prebuilt analytics,
  * AI chat charts, dashboard widgets, explorer previews): the validated
@@ -169,7 +170,7 @@ export function tooltipHtml(title: string, rows: TooltipRow[]): string {
         `</div>`
     )
     .join('');
-  return `<div style="font-size:12px;opacity:0.72;">${escapeHtml(title)}</div>${body}`;
+  return t`<div style="font-size:12px;opacity:0.72;">${escapeHtml(title)}</div>${body}`;
 }
 
 /** White or near-black ink for text set inside a colored fill, by luminance. */

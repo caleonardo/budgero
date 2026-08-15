@@ -217,7 +217,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
       editAccountMutation.mutate(payload, {
         onSuccess: () => {
           toast.success(t`Account updated`, {
-            description: `${name} has been updated successfully.`,
+            description: t`${name} has been updated successfully.`,
           });
           setOpen(false);
         },
@@ -233,7 +233,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
       editAccountMutation.mutate(pendingEdit, {
         onSuccess: () => {
           toast.success(t`Account updated`, {
-            description: 'Account currency has been changed successfully.',
+            description: t`Account currency has been changed successfully.`,
           });
           setPendingEdit(null);
           setConfirmOpen(false);
@@ -255,7 +255,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
         archived: false,
       });
       toast.success(t`Account unarchived`, {
-        description: `${selectedAccount.Name} is visible again.`,
+        description: t`${selectedAccount.Name} is visible again.`,
       });
       setOpen(false);
     } catch (error) {
@@ -268,14 +268,14 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
 
     if (transactionCount > 0) {
       toast.error(t`Cannot delete account with transactions!`, {
-        description: `This account has ${transactionCount} transaction(s). Please move or delete all transactions first.`,
+        description: t`This account has ${transactionCount} transaction(s). Please move or delete all transactions first.`,
       });
       return;
     }
 
     if (selectedAccount?.BalanceNative !== 0) {
       toast.error(t`You can't delete an account with a non-zero balance!`, {
-        description: 'Please move or delete all transactions from this account first.',
+        description: t`Please move or delete all transactions from this account first.`,
       });
       return;
     }
@@ -289,7 +289,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
         {
           onSuccess: () => {
             toast.success(t`Account deleted`, {
-              description: `${selectedAccount.Name} has been permanently removed.`,
+              description: t`${selectedAccount.Name} has been permanently removed.`,
             });
             setOpen(false);
             // Navigate to the user's home page after deletion to avoid landing
@@ -456,7 +456,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                   onClick={handleDelete}
                   disabled={deleteAccountMutation.isPending}
                 >
-                  {deleteAccountMutation.isPending ? 'Deleting...' : 'Delete'}
+                  {deleteAccountMutation.isPending ? t`Deleting...` : t`Delete`}
                 </Button>
                 {selectedAccount?.Archived ? (
                   <Button
@@ -466,7 +466,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                     onClick={handleUnarchive}
                     disabled={setArchivedMutation.isPending}
                   >
-                    {setArchivedMutation.isPending ? 'Unarchiving...' : 'Unarchive'}
+                    {setArchivedMutation.isPending ? t`Unarchiving...` : t`Unarchive`}
                   </Button>
                 ) : (
                   <Button
@@ -509,7 +509,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                     type="submit"
                     disabled={editAccountMutation.isPending}
                   >
-                    {editAccountMutation.isPending ? 'Saving...' : 'Apply'}
+                    {editAccountMutation.isPending ? t`Saving...` : t`Apply`}
                   </Button>
                 )}
               </div>
@@ -523,13 +523,13 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
         onOpenChange={setConfirmOpen}
         title={t`Change account currency?`}
         description={
-          <>
-            This will convert all original transaction amounts from {selectedAccount?.Currency} to{' '}
-            {currency} using month-specific exchange rates, then recalculate running balances and
-            the account balance. Cached conversions and analytics will be cleared and recomputed.
-            You can switch back later, but values may not match the previous state exactly due to
+          <Trans>
+            This will convert all original transaction amounts from {selectedAccount?.Currency}to{' '}
+            {currency}using month-specific exchange rates, then recalculate running balances and the
+            account balance. Cached conversions and analytics will be cleared and recomputed. You
+            can switch back later, but values may not match the previous state exactly due to
             exchange-rate differences and rounding.
-          </>
+          </Trans>
         }
         confirmText={t`Continue`}
         onConfirm={proceedCurrencyChange}

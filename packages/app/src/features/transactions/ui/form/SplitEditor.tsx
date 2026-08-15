@@ -95,7 +95,7 @@ export function SplitEditor({
           type="button"
           onClick={onToggleSplit}
         >
-          {isSplit ? 'Disable Split' : 'Enable Split'}
+          {isSplit ? t`Disable Split` : t`Enable Split`}
         </Button>
       </div>
 

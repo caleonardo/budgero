@@ -1,3 +1,5 @@
+import type { MessageDescriptor } from '@lingui/core';
+
 export type StartupState =
   | 'boot'
   | 'auth_required'
@@ -26,8 +28,8 @@ export type StartupScreen =
 export interface StartupResolution {
   state: StartupState;
   screen: StartupScreen;
-  message?: string;
-  detail?: string;
+  message?: MessageDescriptor;
+  detail?: MessageDescriptor;
   error?: string;
   branch?: string;
 }

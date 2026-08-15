@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import type { MessageDescriptor } from '@lingui/core';
 // Onboarding step definitions, copy, and preset data.
 // Password is intentionally placed near the end of each path so the final
 // apply pipeline can set it immediately before creating the workspace.
@@ -14,103 +16,101 @@ export type ActivePath = StartMode | 'join';
 
 export interface OnboardingStepDef {
   id: string;
-  title: string;
-  subtitle: string;
-  hint: string;
+  title: MessageDescriptor;
+  subtitle: MessageDescriptor;
+  hint: MessageDescriptor;
 }
 
 export const ONBOARDING_STEPS: OnboardingStepDef[] = [
   {
     id: 'welcome',
-    title: 'Welcome to Budgero',
-    subtitle: 'A field guide to zero-based budgeting.',
-    hint: '2 min to set up',
+    title: msg`Welcome to Budgero`,
+    subtitle: msg`A field guide to zero-based budgeting.`,
+    hint: msg`2 min to set up`,
   },
   {
     id: 'start_mode',
-    title: 'How are you starting?',
-    subtitle: 'Fresh, or bringing a budget with you?',
-    hint: 'Pick your path',
+    title: msg`How are you starting?`,
+    subtitle: msg`Fresh, or bringing a budget with you?`,
+    hint: msg`Pick your path`,
   },
   {
     id: 'rules',
-    title: 'Three house rules',
-    subtitle: 'Before we build anything, here’s how Budgero thinks about money.',
-    hint: 'How Budgero thinks',
+    title: msg`Three house rules`,
+    subtitle: msg`Before we build anything, here’s how Budgero thinks about money.`,
+    hint: msg`How Budgero thinks`,
   },
   {
     id: 'currency',
-    title: 'Where do you keep your money?',
-    subtitle: 'Pick your currency and locale. Everything else adapts.',
-    hint: 'Language & money',
+    title: msg`Where do you keep your money?`,
+    subtitle: msg`Pick your currency and locale. Everything else adapts.`,
+    hint: msg`Language & money`,
   },
   {
     id: 'zbb',
-    title: 'Give every coin a job',
-    subtitle: 'The one rule of zero-based budgeting.',
-    hint: 'The core idea',
+    title: msg`Give every coin a job`,
+    subtitle: msg`The one rule of zero-based budgeting.`,
+    hint: msg`The core idea`,
   },
   {
     id: 'workspace',
-    title: 'Name your budget',
-    subtitle: 'A household, a side hustle, a trip — whatever you’re planning for.',
-    hint: 'Your workspace',
+    title: msg`Name your budget`,
+    subtitle: msg`A household, a side hustle, a trip — whatever you’re planning for.`,
+    hint: msg`Your workspace`,
   },
   {
     id: 'share',
-    title: 'Invite your people',
-    subtitle:
-      'Budgero is better together. Share this workspace with up to five others — included free.',
-    hint: 'Up to 5 seats · free',
+    title: msg`Invite your people`,
+    subtitle: msg`Budgero is better together. Share this workspace with up to five others — included free.`,
+    hint: msg`Up to 5 seats · free`,
   },
   {
     id: 'ynab_import',
-    title: 'Bring your YNAB budget over',
-    subtitle:
-      'Drop your YNAB export and we’ll rebuild accounts, categories, and history in Budgero.',
-    hint: 'Import & map',
+    title: msg`Bring your YNAB budget over`,
+    subtitle: msg`Drop your YNAB export and we’ll rebuild accounts, categories, and history in Budgero.`,
+    hint: msg`Import & map`,
   },
   {
     id: 'accounts',
-    title: 'Add your first accounts',
-    subtitle: 'Tell Budgero where the money actually lives.',
-    hint: 'Checking, savings, credit',
+    title: msg`Add your first accounts`,
+    subtitle: msg`Tell Budgero where the money actually lives.`,
+    hint: msg`Checking, savings, credit`,
   },
   {
     id: 'categories',
-    title: 'Make a few envelopes',
-    subtitle: 'Group by needs, wants, and savings — or invent your own.',
-    hint: 'Where money goes',
+    title: msg`Make a few envelopes`,
+    subtitle: msg`Group by needs, wants, and savings — or invent your own.`,
+    hint: msg`Where money goes`,
   },
   {
     id: 'goal',
-    title: 'Pick a savings goal',
-    subtitle: 'One jar to get you started. Big or small.',
-    hint: 'Optional but encouraged',
+    title: msg`Pick a savings goal`,
+    subtitle: msg`One jar to get you started. Big or small.`,
+    hint: msg`Optional but encouraged`,
   },
   {
     id: 'where_heard',
-    title: 'How did you hear about us?',
-    subtitle: 'Totally optional — it just helps us know where to find more people like you.',
-    hint: 'Optional',
+    title: msg`How did you hear about us?`,
+    subtitle: msg`Totally optional — it just helps us know where to find more people like you.`,
+    hint: msg`Optional`,
   },
   {
     id: 'theme',
-    title: 'Pick a look',
-    subtitle: 'Budgero comes in a few flavors. Pick one that feels like you.',
-    hint: 'Make it yours',
+    title: msg`Pick a look`,
+    subtitle: msg`Budgero comes in a few flavors. Pick one that feels like you.`,
+    hint: msg`Make it yours`,
   },
   {
     id: 'password',
-    title: 'Lock it with a master password',
-    subtitle: 'Budgero encrypts everything on your device. Only you hold the key.',
-    hint: 'Encryption key',
+    title: msg`Lock it with a master password`,
+    subtitle: msg`Budgero encrypts everything on your device. Only you hold the key.`,
+    hint: msg`Encryption key`,
   },
   {
     id: 'done',
-    title: 'You’re ready',
-    subtitle: 'Every coin now has a place to land.',
-    hint: 'Finish line',
+    title: msg`You’re ready`,
+    subtitle: msg`Every coin now has a place to land.`,
+    hint: msg`Finish line`,
   },
 ];
 
@@ -154,23 +154,23 @@ export const PATH_STEPS: Record<ActivePath, string[]> = {
 export interface CurrencyDef {
   code: string;
   sym: string;
-  name: string;
+  name: MessageDescriptor;
 }
 
 export const CURRENCIES: CurrencyDef[] = [
-  { code: 'USD', sym: '$', name: 'US Dollar' },
-  { code: 'EUR', sym: '€', name: 'Euro' },
-  { code: 'GBP', sym: '£', name: 'British Pound' },
-  { code: 'CAD', sym: 'C$', name: 'Canadian Dollar' },
-  { code: 'AUD', sym: 'A$', name: 'Australian Dollar' },
-  { code: 'JPY', sym: '¥', name: 'Japanese Yen' },
-  { code: 'INR', sym: '₹', name: 'Indian Rupee' },
-  { code: 'BRL', sym: 'R$', name: 'Brazilian Real' },
+  { code: 'USD', sym: '$', name: msg`US Dollar` },
+  { code: 'EUR', sym: '€', name: msg`Euro` },
+  { code: 'GBP', sym: '£', name: msg`British Pound` },
+  { code: 'CAD', sym: 'C$', name: msg`Canadian Dollar` },
+  { code: 'AUD', sym: 'A$', name: msg`Australian Dollar` },
+  { code: 'JPY', sym: '¥', name: msg`Japanese Yen` },
+  { code: 'INR', sym: '₹', name: msg`Indian Rupee` },
+  { code: 'BRL', sym: 'R$', name: msg`Brazilian Real` },
 ];
 
 export interface AccountTypeDef {
   id: 'checking' | 'savings' | 'cash' | 'credit';
-  name: string;
+  name: MessageDescriptor;
   /**
    * The canonical account type stored in the DB. MUST be an
    * {@link AccountTypeEnum} value — the rest of the app resolves display and
@@ -186,68 +186,86 @@ export interface AccountTypeDef {
    */
   isDebt: boolean;
   /** Balance-field label + placeholder shown in onboarding. */
-  balanceLabel: string;
+  balanceLabel: MessageDescriptor;
 }
 
 export const ACCOUNT_TYPES: AccountTypeDef[] = [
   {
     id: 'checking',
-    name: 'Checking',
+    name: msg`Checking`,
     coreType: AccountTypeEnum.CHECKING,
     onBudget: true,
     isDebt: false,
-    balanceLabel: 'Starting balance',
+    balanceLabel: msg`Starting balance`,
   },
   {
     id: 'savings',
-    name: 'Savings',
+    name: msg`Savings`,
     coreType: AccountTypeEnum.SAVINGS,
     onBudget: true,
     isDebt: false,
-    balanceLabel: 'Starting balance',
+    balanceLabel: msg`Starting balance`,
   },
   {
     id: 'cash',
-    name: 'Cash',
+    name: msg`Cash`,
     coreType: AccountTypeEnum.CASH,
     onBudget: true,
     isDebt: false,
-    balanceLabel: 'Starting balance',
+    balanceLabel: msg`Starting balance`,
   },
   {
     // On-budget: YNAB-style CC payment mechanics (spending auto-funds the
     // per-card payment category) only engage for on-budget credit accounts.
     id: 'credit',
-    name: 'Credit card',
+    name: msg`Credit card`,
     coreType: AccountTypeEnum.CREDIT,
     onBudget: true,
     isDebt: true,
-    balanceLabel: 'Balance owed',
+    balanceLabel: msg`Balance owed`,
   },
 ];
 
 export interface CategoryPreset {
-  label: string;
+  label: MessageDescriptor;
   color: string;
   items: string[];
 }
 
 export const CATEGORY_PRESETS: Record<'needs' | 'wants' | 'savings', CategoryPreset> = {
   needs: {
-    label: 'NEEDS',
+    label: msg`NEEDS`,
     color: '#14b8a6',
     items: ['Rent / Mortgage', 'Groceries', 'Utilities', 'Transportation', 'Insurance'],
   },
   wants: {
-    label: 'WANTS',
+    label: msg`WANTS`,
     color: '#f97316',
     items: ['Dining out', 'Subscriptions', 'Hobbies', 'Shopping'],
   },
   savings: {
-    label: 'SAVINGS',
+    label: msg`SAVINGS`,
     color: '#2f7d31',
     items: ['Emergency fund', 'Vacation', 'Retirement'],
   },
+};
+
+// Category items double as selection keys and DB seeds, so they stay stable
+// English internally. Display (and created category names) resolve through
+// this map, falling back to the key for anything unmapped.
+export const CATEGORY_ITEM_LABELS: Record<string, MessageDescriptor> = {
+  'Rent / Mortgage': msg`Rent / Mortgage`,
+  Groceries: msg`Groceries`,
+  Utilities: msg`Utilities`,
+  Transportation: msg`Transportation`,
+  Insurance: msg`Insurance`,
+  'Dining out': msg`Dining out`,
+  Subscriptions: msg`Subscriptions`,
+  Hobbies: msg`Hobbies`,
+  Shopping: msg`Shopping`,
+  'Emergency fund': msg`Emergency fund`,
+  Vacation: msg`Vacation`,
+  Retirement: msg`Retirement`,
 };
 
 // Reverse-lookup: category-name → group. Used when flattening selected envelopes.
@@ -265,7 +283,7 @@ export type GoalMode = 'monthly' | 'target';
 
 export interface GoalTemplate {
   id: string;
-  label: string;
+  label: MessageDescriptor;
   /** Default-mode amount. For 'monthly' this is $/month, for 'target' it's total. */
   target: number;
   mode: GoalMode;
@@ -274,17 +292,17 @@ export interface GoalTemplate {
 }
 
 export const GOAL_TEMPLATES: GoalTemplate[] = [
-  { id: 'emergency', label: 'Emergency fund', target: 250, mode: 'monthly', monthsOut: 12 },
-  { id: 'vacation', label: 'Vacation', target: 2500, mode: 'target', monthsOut: 6 },
-  { id: 'home', label: 'Home down payment', target: 25000, mode: 'target', monthsOut: 36 },
-  { id: 'car', label: 'New car', target: 8000, mode: 'target', monthsOut: 12 },
-  { id: 'custom', label: 'Something else', target: 500, mode: 'monthly', monthsOut: 6 },
+  { id: 'emergency', label: msg`Emergency fund`, target: 250, mode: 'monthly', monthsOut: 12 },
+  { id: 'vacation', label: msg`Vacation`, target: 2500, mode: 'target', monthsOut: 6 },
+  { id: 'home', label: msg`Home down payment`, target: 25000, mode: 'target', monthsOut: 36 },
+  { id: 'car', label: msg`New car`, target: 8000, mode: 'target', monthsOut: 12 },
+  { id: 'custom', label: msg`Something else`, target: 500, mode: 'monthly', monthsOut: 6 },
 ];
 
 export interface ThemeOption {
   id: string;
-  name: string;
-  tag: string;
+  name: MessageDescriptor;
+  tag: MessageDescriptor;
   bg: string;
   fg: string;
   accent: string;
@@ -296,8 +314,8 @@ export interface ThemeOption {
 export const THEMES_AVAILABLE: ThemeOption[] = [
   {
     id: 'paper',
-    name: 'Paper',
-    tag: 'Editorial, parchment. The Budgero classic.',
+    name: msg`Paper`,
+    tag: msg`Editorial, parchment. The Budgero classic.`,
     bg: '#fbf7eb',
     fg: '#141414',
     accent: '#c6392c',
@@ -305,32 +323,32 @@ export const THEMES_AVAILABLE: ThemeOption[] = [
   },
   {
     id: 'default',
-    name: 'Classic',
-    tag: 'Clean, neutral, out of the way.',
+    name: msg`Classic`,
+    tag: msg`Clean, neutral, out of the way.`,
     bg: '#ffffff',
     fg: '#18181b',
     accent: '#2f7d31',
   },
   {
     id: 'phosphor',
-    name: 'Phosphor',
-    tag: 'CRT green-on-black. For terminal lovers.',
+    name: msg`Phosphor`,
+    tag: msg`CRT green-on-black. For terminal lovers.`,
     bg: '#0a140a',
     fg: '#5dff8f',
     accent: '#5dff8f',
   },
   {
     id: 'obsidian',
-    name: 'Obsidian',
-    tag: 'Dark with copper warmth.',
+    name: msg`Obsidian`,
+    tag: msg`Dark with copper warmth.`,
     bg: '#1e1e2a',
     fg: '#e8d4a8',
     accent: '#d89a5e',
   },
   {
     id: 'mesa',
-    name: 'Mesa',
-    tag: 'Warm desert clay.',
+    name: msg`Mesa`,
+    tag: msg`Warm desert clay.`,
     bg: '#efe0c5',
     fg: '#3a2418',
     accent: '#c06a3c',
@@ -370,21 +388,21 @@ export interface AccountInput {
 // text field whose contents are stored verbatim instead.
 export interface HeardOption {
   id: string;
-  label: string;
+  label: MessageDescriptor;
 }
 
 export const HEARD_OPTIONS: HeardOption[] = [
-  { id: 'search', label: 'Search engine (Google, etc.)' },
-  { id: 'friend', label: 'Friend or colleague' },
-  { id: 'reddit', label: 'Reddit' },
-  { id: 'x', label: 'X (Twitter)' },
-  { id: 'facebook', label: 'Facebook' },
-  { id: 'instagram', label: 'Instagram' },
-  { id: 'tiktok', label: 'TikTok' },
-  { id: 'youtube', label: 'YouTube' },
-  { id: 'product_hunt', label: 'Product Hunt' },
-  { id: 'blog', label: 'Blog or article' },
-  { id: 'other', label: 'Other' },
+  { id: 'search', label: msg`Search engine (Google, etc.)` },
+  { id: 'friend', label: msg`Friend or colleague` },
+  { id: 'reddit', label: msg`Reddit` },
+  { id: 'x', label: msg`X (Twitter)` },
+  { id: 'facebook', label: msg`Facebook` },
+  { id: 'instagram', label: msg`Instagram` },
+  { id: 'tiktok', label: msg`TikTok` },
+  { id: 'youtube', label: msg`YouTube` },
+  { id: 'product_hunt', label: msg`Product Hunt` },
+  { id: 'blog', label: msg`Blog or article` },
+  { id: 'other', label: msg`Other` },
 ];
 
 /**
@@ -446,11 +464,11 @@ export const INITIAL_STATE: OnboardingFormState = {
   password: '',
   passwordConfirm: '',
   acknowledgedRules: false,
-  accounts: [{ id: 1, type: 'checking', name: 'Everyday checking', balance: '' }],
+  accounts: [{ id: 1, type: 'checking', name: '', balance: '' }],
   selectedCats: ['Rent / Mortgage', 'Groceries', 'Utilities', 'Dining out', 'Emergency fund'],
   goal: {
     id: EMERGENCY_TEMPLATE.id,
-    label: EMERGENCY_TEMPLATE.label,
+    label: '',
     target: EMERGENCY_TEMPLATE.target,
     mode: EMERGENCY_TEMPLATE.mode,
     targetDate: addMonthsIso(EMERGENCY_TEMPLATE.monthsOut),
@@ -463,9 +481,9 @@ export const INITIAL_STATE: OnboardingFormState = {
   heardOther: '',
 };
 
-export const WORKSPACE_SUGGESTIONS = [
-  'Household 2026',
-  'Freelance',
-  'Europe trip',
-  'Emergency rebuild',
+export const WORKSPACE_SUGGESTIONS: MessageDescriptor[] = [
+  msg`Household 2026`,
+  msg`Freelance`,
+  msg`Europe trip`,
+  msg`Emergency rebuild`,
 ];

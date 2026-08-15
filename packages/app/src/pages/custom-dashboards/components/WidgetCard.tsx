@@ -55,35 +55,6 @@ const MOBILE_HEIGHTS: Record<'s' | 'm' | 'l', string> = {
   l: 'h-[520px]',
 };
 
-const DESKTOP_LAYOUT_BUTTONS: {
-  label: string;
-  icon: typeof MoveHorizontal;
-  patch: (
-    layout: CustomDashboardWidget['desktopLayout']
-  ) => Partial<{ colSpan: number; rowSpan: number }>;
-}[] = [
-  {
-    label: 'Width -',
-    icon: MoveHorizontal,
-    patch: (layout) => ({ colSpan: Math.max(3, layout.colSpan - 1) }),
-  },
-  {
-    label: 'Width +',
-    icon: MoveHorizontal,
-    patch: (layout) => ({ colSpan: Math.min(12, layout.colSpan + 1) }),
-  },
-  {
-    label: 'Height -',
-    icon: MoveVertical,
-    patch: (layout) => ({ rowSpan: Math.max(3, layout.rowSpan - 1) }),
-  },
-  {
-    label: 'Height +',
-    icon: MoveVertical,
-    patch: (layout) => ({ rowSpan: Math.min(8, layout.rowSpan + 1) }),
-  },
-];
-
 /** Edit-mode layout controls: desktop col/row span steppers or mobile size picker. */
 function WidgetLayoutControls({
   widget,
@@ -96,6 +67,37 @@ function WidgetLayoutControls({
   onUpdateDesktopLayout: WidgetCardProps['onUpdateDesktopLayout'];
   onUpdateMobileSize: WidgetCardProps['onUpdateMobileSize'];
 }) {
+  const { t } = useLingui();
+
+  const DESKTOP_LAYOUT_BUTTONS: {
+    label: string;
+    icon: typeof MoveHorizontal;
+    patch: (
+      layout: CustomDashboardWidget['desktopLayout']
+    ) => Partial<{ colSpan: number; rowSpan: number }>;
+  }[] = [
+    {
+      label: t`Width -`,
+      icon: MoveHorizontal,
+      patch: (layout) => ({ colSpan: Math.max(3, layout.colSpan - 1) }),
+    },
+    {
+      label: t`Width +`,
+      icon: MoveHorizontal,
+      patch: (layout) => ({ colSpan: Math.min(12, layout.colSpan + 1) }),
+    },
+    {
+      label: t`Height -`,
+      icon: MoveVertical,
+      patch: (layout) => ({ rowSpan: Math.max(3, layout.rowSpan - 1) }),
+    },
+    {
+      label: t`Height +`,
+      icon: MoveVertical,
+      patch: (layout) => ({ rowSpan: Math.min(8, layout.rowSpan + 1) }),
+    },
+  ];
+
   if (isMobile) {
     return (
       <div className="flex items-center gap-2 pt-2">
@@ -199,7 +201,7 @@ export function WidgetCard({
     staleTime: 30 * 1000,
   });
 
-  const title = widget.titleOverride || chart?.title || report?.name || 'Widget';
+  const title = widget.titleOverride || chart?.title || report?.name || t`Widget`;
 
   const refreshWidgetData = async () => {
     await queryClient.invalidateQueries({
@@ -244,7 +246,7 @@ export function WidgetCard({
         title={title}
         description={
           isNonReadOnlyError
-            ? 'This report query is not read-only and cannot run in dashboard widgets.'
+            ? t`This report query is not read-only and cannot run in dashboard widgets.`
             : queryError.message
         }
         onSelectNewChart={() => onSelectNewChart(widget.id)}
@@ -268,8 +270,8 @@ export function WidgetCard({
               size="icon"
               onClick={() => void refreshWidgetData()}
               disabled={dataQuery.isFetching}
-              aria-label={dataQuery.isFetching ? 'Refreshing widget data' : 'Refresh widget data'}
-              title={dataQuery.isFetching ? 'Refreshing...' : 'Refresh widget data'}
+              aria-label={dataQuery.isFetching ? t`Refreshing widget data` : t`Refresh widget data`}
+              title={dataQuery.isFetching ? t`Refreshing...` : t`Refresh widget data`}
             >
               <RefreshCcw className={`h-4 w-4 ${dataQuery.isFetching ? 'animate-spin' : ''}`} />
             </Button>

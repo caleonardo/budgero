@@ -53,7 +53,7 @@ export default function ImportsPage() {
           toast.info(t`Import already undone`);
         } else {
           toast.success(t`Import undone`, {
-            description: `Removed ${result.transactionsRemoved} transactions${
+            description: t`Removed ${result.transactionsRemoved} transactions${
               result.accountsRemoved
                 ? plural(result.accountsRemoved, {
                     one: `, # account`,
@@ -88,7 +88,7 @@ export default function ImportsPage() {
     <div className="container max-w-5xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
         title={t`Imports`}
-        description={`Import transactions from ${SUPPORTED_IMPORT_FORMATS_LABEL} files and manage previous imports.`}
+        description={t`Import transactions from ${SUPPORTED_IMPORT_FORMATS_LABEL} files and manage previous imports.`}
       />
 
       <Card>
@@ -191,7 +191,7 @@ export default function ImportsPage() {
                       </TableCell>
                       <TableCell>
                         <Badge variant={run.status === 'undone' ? 'outline' : 'secondary'}>
-                          {run.status === 'undone' ? 'Undone' : 'Completed'}
+                          {run.status === 'undone' ? t`Undone` : t`Completed`}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
@@ -244,15 +244,15 @@ export default function ImportsPage() {
       <ConfirmDialog
         open={pendingAction !== null}
         onOpenChange={(open) => !open && setPendingAction(null)}
-        title={pendingAction?.type === 'undo' ? 'Undo this import?' : 'Delete history entry?'}
+        title={pendingAction?.type === 'undo' ? t`Undo this import?` : t`Delete history entry?`}
         description={
           <>
             {pendingAction?.label && (
               <span className="block font-medium text-foreground mb-2">{pendingAction.label}</span>
             )}
             {pendingAction?.type === 'undo'
-              ? 'This will remove transactions (and any empty accounts or categories created by this import).'
-              : 'This removes the history entry only. Your transactions remain untouched.'}
+              ? t`This will remove transactions (and any empty accounts or categories created by this import).`
+              : t`This removes the history entry only. Your transactions remain untouched.`}
           </>
         }
         loadingText="Working..."

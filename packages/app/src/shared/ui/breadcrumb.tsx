@@ -1,4 +1,4 @@
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Trans } from '@lingui/react/macro';
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRight, MoreHorizontal } from 'lucide-react';
@@ -6,9 +6,7 @@ import { ChevronRight, MoreHorizontal } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 
 function Breadcrumb({ ...props }: React.ComponentProps<'nav'>) {
-  const { t } = useLingui();
-
-  return <nav aria-label={t`breadcrumb`} data-slot="breadcrumb" {...props} />;
+  return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }
 
 function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {

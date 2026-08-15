@@ -103,7 +103,7 @@ export default function DataManagementPage() {
 
   const lastBackupDisplay = (() => {
     const last = profile?.last_user_db_backup;
-    return last ? new Date(last).toLocaleString() : 'No backups yet';
+    return last ? new Date(last).toLocaleString() : t`No backups yet`;
   })();
   const isSavingFrequency = updateBackupSettings.isPending;
   const disableFrequencyControls = isSavingFrequency || isExporting || isRestoring;
@@ -310,10 +310,10 @@ export default function DataManagementPage() {
                 </p>
                 <p className="font-semibold text-foreground">
                   {dbSizeQuery.isLoading
-                    ? 'Calculating…'
+                    ? t`Calculating…`
                     : dbSizeQuery.data != null
                       ? formatBytes(dbSizeQuery.data)
-                      : 'Unavailable'}
+                      : t`Unavailable`}
                 </p>
               </div>
             </div>
@@ -337,7 +337,7 @@ export default function DataManagementPage() {
                   onClick={handleSaveFrequency}
                   disabled={disableFrequencyControls}
                 >
-                  {isSavingFrequency ? 'Saving…' : 'Save'}
+                  {isSavingFrequency ? t`Saving…` : t`Save`}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
@@ -403,10 +403,10 @@ export default function DataManagementPage() {
               {(['sqlite', 'csv'] as const).map((type) => {
                 const disabled = !isOwner || isExporting || isRestoring;
                 const label = isExporting
-                  ? 'Exporting...'
+                  ? t`Exporting...`
                   : type === 'sqlite'
-                    ? 'Download SQLite Database'
-                    : 'Download CSV Files';
+                    ? t`Download SQLite Database`
+                    : t`Download CSV Files`;
 
                 if (!disabled) {
                   return (
@@ -458,14 +458,16 @@ export default function DataManagementPage() {
           ) : null}
           <div className="text-sm text-muted-foreground space-y-2">
             <p>
-              Exports cover only the currently active workspace
-              {activeSpace?.display_name ? (
-                <>
-                  {' '}
-                  (<strong>{activeSpace.display_name}</strong>)
-                </>
-              ) : null}
-              . Switch workspaces and export again to back up the others.
+              <Trans>
+                Exports cover only the currently active workspace
+                {activeSpace?.display_name ? (
+                  <>
+                    {' '}
+                    (<strong>{activeSpace.display_name}</strong>)
+                  </>
+                ) : null}
+                . Switch workspaces and export again to back up the others.
+              </Trans>
             </p>
             <p>
               <Trans>
@@ -512,7 +514,7 @@ export default function DataManagementPage() {
           />
           {(() => {
             const disabled = !canRestoreWorkspace || isRestoring || isExporting;
-            const label = isRestoring ? 'Restoring...' : 'Restore from Database File';
+            const label = isRestoring ? t`Restoring...` : t`Restore from Database File`;
 
             if (!disabled) {
               return (
@@ -545,8 +547,8 @@ export default function DataManagementPage() {
                 </PopoverTrigger>
                 <PopoverContent align="start" className="text-sm max-w-xs">
                   {!isOwner
-                    ? 'Only the workspace owner can restore a Budgero Core backup into this workspace.'
-                    : 'Restore is unavailable while your workspace access is locked. Subscribe again to unlock owned workspace changes.'}
+                    ? t`Only the workspace owner can restore a Budgero Core backup into this workspace.`
+                    : t`Restore is unavailable while your workspace access is locked. Subscribe again to unlock owned workspace changes.`}
                 </PopoverContent>
               </Popover>
             );
@@ -555,18 +557,20 @@ export default function DataManagementPage() {
             <p className="flex items-start gap-2">
               <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
               <span>
-                <strong>
-                  <Trans>Warning:</Trans>
-                </strong>{' '}
-                Restore replaces the data in the currently active workspace
-                {activeSpace?.display_name ? (
-                  <>
-                    {' '}
-                    (<strong>{activeSpace.display_name}</strong>)
-                  </>
-                ) : null}{' '}
-                — on this device and on the server. Other workspaces are not affected. This action
-                cannot be undone, so export this workspace first if you want a backup.
+                <Trans>
+                  <strong>
+                    <Trans>Warning:</Trans>
+                  </strong>{' '}
+                  Restore replaces the data in the currently active workspace
+                  {activeSpace?.display_name ? (
+                    <>
+                      {' '}
+                      (<strong>{activeSpace.display_name}</strong>)
+                    </>
+                  ) : null}{' '}
+                  — on this device and on the server. Other workspaces are not affected. This action
+                  cannot be undone, so export this workspace first if you want a backup.
+                </Trans>
               </span>
             </p>
           </div>
@@ -582,19 +586,23 @@ export default function DataManagementPage() {
         description={
           <span className="block space-y-3">
             <p className="font-semibold text-foreground">
-              This will permanently replace the data in{' '}
-              {activeSpace?.display_name ? (
-                <>
-                  workspace <span className="font-semibold">{activeSpace.display_name}</span>
-                </>
-              ) : (
-                'the currently active workspace'
-              )}
-              .
+              <Trans>
+                This will permanently replace the data in{' '}
+                {activeSpace?.display_name ? (
+                  <>
+                    workspace <span className="font-semibold">{activeSpace.display_name}</span>
+                  </>
+                ) : (
+                  t`the currently active workspace`
+                )}
+                .
+              </Trans>
             </p>
             <p>
-              You are about to restore from:{' '}
-              <span className="font-mono text-xs">{selectedFile?.name}</span>
+              <Trans>
+                You are about to restore from:{' '}
+                <span className="font-mono text-xs">{selectedFile?.name}</span>
+              </Trans>
             </p>
             <ul className="list-disc list-inside space-y-1 text-sm">
               <li>

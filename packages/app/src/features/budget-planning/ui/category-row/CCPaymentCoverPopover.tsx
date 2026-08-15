@@ -108,8 +108,7 @@ export function CCPaymentCoverPopover({
           );
           if (!localOrManual) {
             toast.error(t`No exchange rate available`, {
-              description:
-                'Please add a manual exchange rate in Settings → Currencies, or create this transfer from the transaction form.',
+              description: t`Please add a manual exchange rate in Settings → Currencies, or create this transfer from the transaction form.`,
             });
             setIsConfirming(false);
             return;
@@ -183,7 +182,7 @@ export function CCPaymentCoverPopover({
       });
 
       toast.success(t`Card payment recorded`, {
-        description: `${formatAmount(sourceOutflow)} ${sourceAccount.Currency} transferred to ${ccAccount.Name}.`,
+        description: t`${formatAmount(sourceOutflow)} ${sourceAccount.Currency} transferred to ${ccAccount.Name}.`,
       });
       setOpen(false);
     } catch (err) {
@@ -224,7 +223,9 @@ export function CCPaymentCoverPopover({
       </PopoverTrigger>
       <PopoverContent className={cn('w-72 p-3', className)} align={align}>
         <div className="space-y-3">
-          <div className="text-sm font-medium">Cover {ccAccount?.Name || 'card'}</div>
+          <div className="text-sm font-medium">
+            <Trans>Cover {ccAccount?.Name || 'card'}</Trans>
+          </div>
 
           {sourceAccounts.length === 0 ? (
             <div className="text-xs text-muted-foreground">
@@ -249,7 +250,7 @@ export function CCPaymentCoverPopover({
                   inputClassName="h-9"
                 />
                 <div className="text-[10px] text-muted-foreground">
-                  Available to cover: {formatAmount(Math.max(0, available || 0))}
+                  <Trans>Available to cover: {formatAmount(Math.max(0, available || 0))}</Trans>
                 </div>
               </div>
 
@@ -282,7 +283,7 @@ export function CCPaymentCoverPopover({
                   <Trans>Cancel</Trans>
                 </Button>
                 <Button size="sm" onClick={handleConfirm} disabled={!canConfirm}>
-                  {addTransaction.isPending || isConfirming ? 'Recording…' : 'Pay'}
+                  {addTransaction.isPending || isConfirming ? t`Recording…` : 'Pay'}
                 </Button>
               </div>
             </>

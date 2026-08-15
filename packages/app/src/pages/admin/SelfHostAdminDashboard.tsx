@@ -42,7 +42,7 @@ export default function SelfHostAdminDashboard() {
     } catch (error) {
       console.error('Failed to load self-host stats', error);
       toast.error(t`Unable to load stats`, {
-        description: 'Check that the server is reachable and you have admin access.',
+        description: t`Check that the server is reachable and you have admin access.`,
       });
     } finally {
       setLoading(false);
@@ -57,7 +57,7 @@ export default function SelfHostAdminDashboard() {
   const overviewCards = useMemo(
     () => [
       {
-        label: 'Total Users',
+        label: t`Total Users`,
         value: stats?.totalUsers ?? 0,
         helper: plural(stats?.adminUsers ?? 0, {
           one: `${stats?.adminUsers ?? 0} admin`,
@@ -66,25 +66,25 @@ export default function SelfHostAdminDashboard() {
         icon: Users,
       },
       {
-        label: 'Local Accounts',
+        label: t`Local Accounts`,
         value: stats?.localAccounts ?? 0,
         helper: `${stats?.masterPasswordUsers ?? 0} master passwords set`,
         icon: Shield,
       },
       {
-        label: 'Budget Spaces',
+        label: t`Budget Spaces`,
         value: stats?.spaceCount ?? 0,
         helper: `${stats?.spacesWithMembers ?? 0} active`,
         icon: Layers,
       },
       {
-        label: 'Database Size',
+        label: t`Database Size`,
         value: stats ? formatBytes(stats.databaseSizeBytes) : '—',
         helper: stats?.databasePath || 'Not configured',
         icon: HardDrive,
       },
     ],
-    [stats]
+    [stats, t]
   );
 
   if (loading && !stats) {
@@ -141,7 +141,7 @@ export default function SelfHostAdminDashboard() {
             </Link>
           </Button>
           <Button variant="outline" onClick={handleDownloadDb} disabled={downloadingDb}>
-            {downloadingDb ? 'Downloading…' : 'Download SQLite'}
+            {downloadingDb ? t`Downloading…` : t`Download SQLite`}
           </Button>
           <Button size="sm" onClick={loadStats} disabled={refreshing}>
             <Trans>
@@ -218,7 +218,7 @@ export default function SelfHostAdminDashboard() {
                 <p className="text-lg font-semibold">
                   {stats?.databaseLastModified
                     ? formatDistanceToNow(new Date(stats.databaseLastModified), { addSuffix: true })
-                    : 'Unknown'}
+                    : t`Unknown`}
                 </p>
               </div>
             </div>

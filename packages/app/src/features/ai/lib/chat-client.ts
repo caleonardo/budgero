@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { streamText, stepCountIs, type ModelMessage } from 'ai';
 import { capitalize } from '@shared/lib/utils';
 import { getTodayISO } from '@shared/lib/date-utils';
@@ -56,7 +57,7 @@ function stripThinkBlocks(text: string): string {
 function buildSystemPrompt(budgetContext: BudgetContext): string {
   const todayStr = getTodayISO();
 
-  return `You are a helpful budget assistant for Budgero, a zero-based budgeting app.
+  return t`You are a helpful budget assistant for Budgero, a zero-based budgeting app.
 
 ## Today's Date
 ${todayStr}
@@ -269,8 +270,7 @@ export async function streamChat(
   let cleanText = stripThinkBlocks(accumulated);
 
   if (cutOff && !pendingTool) {
-    const note =
-      '_(I hit my tool-step limit before finishing. Ask me to continue and I’ll pick up where I left off.)_';
+    const note = t`_(I hit my tool-step limit before finishing. Ask me to continue and I’ll pick up where I left off.)_`;
     cleanText = cleanText ? `${cleanText}\n\n${note}` : note;
   }
 
@@ -352,5 +352,5 @@ function generateLocalTitle(userMessage: string): string {
     title += '...';
   }
 
-  return title || 'Chat';
+  return title || t`Chat`;
 }

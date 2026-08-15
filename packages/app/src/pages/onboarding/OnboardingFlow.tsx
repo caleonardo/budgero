@@ -211,12 +211,12 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const isFirst = safeStep === 0;
 
   const primaryLabel = isFirst
-    ? 'Let’s begin →'
+    ? t`Let’s begin →`
     : isFinal
       ? activePath === 'join'
-        ? 'Join workspace →'
-        : 'Open my budget →'
-      : 'Next →';
+        ? t`Join workspace →`
+        : t`Open my budget →`
+      : t`Next →`;
   const primaryAction = isFinal
     ? () => {
         if (applyStatus === 'running') return;
@@ -334,7 +334,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
             padding: '3px 8px',
           }}
         >
-          {cur.hint.toUpperCase()}
+          {t(cur.hint).toUpperCase()}
         </div>
 
         {curId === 'welcome' && <WelcomeStep cur={cur} state={state} set={set} />}
@@ -431,9 +431,9 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
               }}
             >
               {isFinal && applyStatus === 'running'
-                ? 'Working…'
+                ? t`Working…`
                 : isFinal && applyStatus === 'error'
-                  ? 'Try again →'
+                  ? t`Try again →`
                   : primaryLabel}
             </button>
           </div>

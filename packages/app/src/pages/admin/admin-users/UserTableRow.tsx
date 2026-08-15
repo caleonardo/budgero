@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -28,6 +28,8 @@ export const UserTableRow = React.memo(function UserTableRow({
   onAction,
   onCopyId,
 }: UserTableRowProps) {
+  const { t } = useLingui();
+
   return (
     <TableRow>
       <TableCell>
@@ -139,7 +141,7 @@ export const UserTableRow = React.memo(function UserTableRow({
               className="text-red-600"
             >
               <Ban className="w-4 h-4 mr-2" />
-              {user.is_blocked ? 'Unblock User' : 'Block User'}
+              {user.is_blocked ? t`Unblock User` : t`Block User`}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onAction('revoke_access', user)}

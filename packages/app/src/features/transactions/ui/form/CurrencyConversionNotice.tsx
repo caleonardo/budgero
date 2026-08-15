@@ -53,7 +53,9 @@ export function CurrencyConversionNotice({
               </p>
               {exchangeRate != null && (
                 <p className="text-xs text-sky-700 dark:text-sky-300 mt-1">
-                  Rate: 1 {fromCurrency} = {formatExchangeRate(exchangeRate)} {toCurrency}
+                  <Trans>
+                    Rate: 1 {fromCurrency}= {formatExchangeRate(exchangeRate)} {toCurrency}
+                  </Trans>
                 </p>
               )}
             </div>

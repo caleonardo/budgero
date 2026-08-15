@@ -98,7 +98,7 @@ export function UncategorizedTransactionsCard({
 
   const toTransactionCardRow = (transaction: GetAllTransactions): TransactionCardRow => {
     const accountId = transaction.AccountId ?? 0;
-    const accountName = accountById.get(accountId) || transaction.AccountName || 'Unknown account';
+    const accountName = accountById.get(accountId) || transaction.AccountName || t`Unknown account`;
 
     return {
       ID: transaction.ID,
@@ -156,7 +156,7 @@ export function UncategorizedTransactionsCard({
         accountId,
       });
       toast.success(t`Transaction deleted`, {
-        description: 'The transaction has been permanently removed.',
+        description: t`The transaction has been permanently removed.`,
       });
       setConfirmDeleteOpen(false);
       setQuickViewOpen(false);
@@ -208,13 +208,13 @@ export function UncategorizedTransactionsCard({
               {uncategorized.map((transaction) => {
                 const dateLabel = transaction.Date
                   ? format(parseISO(transaction.Date), 'MMM d')
-                  : 'Unknown date';
-                const memo = transaction.Memo?.trim() ? transaction.Memo : 'No memo';
+                  : t`Unknown date`;
+                const memo = transaction.Memo?.trim() ? transaction.Memo : t`No memo`;
                 const accountName =
                   accountById.get(transaction.AccountId ?? 0) ||
                   transaction.AccountName ||
                   String((transaction as { Account?: string }).Account ?? '') ||
-                  'Unknown account';
+                  t`Unknown account`;
                 const inflow = Number(transaction.InflowConverted || 0);
                 const outflow = Number(transaction.OutflowConverted || 0);
                 const amount = inflow > 0 ? inflow : outflow;
@@ -277,7 +277,7 @@ export function UncategorizedTransactionsCard({
                   one: `# transaction waiting`,
                   other: `# transactions waiting`,
                 })
-              : 'All caught up'}
+              : t`All caught up`}
           </span>
         </CardFooter>
       </Card>

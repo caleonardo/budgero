@@ -162,7 +162,7 @@ export function DashboardSwitcher({
               onClick={() => void handleCreate()}
               disabled={pendingAction === 'create'}
             >
-              {pendingAction === 'create' ? 'Creating...' : 'Create'}
+              {pendingAction === 'create' ? t`Creating...` : t`Create`}
             </Button>
           </div>
         </PopoverContent>
@@ -183,7 +183,9 @@ export function DashboardSwitcher({
               <Trans>Rename dashboard</Trans>
             </p>
             <p className="text-xs text-muted-foreground">
-              Update the name for <span className="font-medium">{activeDashboard?.name}</span>.
+              <Trans>
+                Update the name for <span className="font-medium">{activeDashboard?.name}</span>.
+              </Trans>
             </p>
           </div>
           <div className="space-y-2">
@@ -211,7 +213,7 @@ export function DashboardSwitcher({
               onClick={() => void handleRename()}
               disabled={pendingAction === 'rename'}
             >
-              {pendingAction === 'rename' ? 'Saving...' : 'Save'}
+              {pendingAction === 'rename' ? t`Saving...` : t`Save`}
             </Button>
           </div>
         </PopoverContent>
@@ -232,8 +234,10 @@ export function DashboardSwitcher({
               <Trans>Delete dashboard</Trans>
             </p>
             <p className="text-xs text-muted-foreground">
-              Delete <span className="font-medium">{activeDashboard?.name}</span>? This removes all
-              widgets on it.
+              <Trans>
+                Delete <span className="font-medium">{activeDashboard?.name}</span>? This removes
+                all widgets on it.
+              </Trans>
             </p>
           </div>
           <div className="flex justify-end gap-2">
@@ -251,7 +255,7 @@ export function DashboardSwitcher({
               onClick={() => void handleDelete()}
               disabled={pendingAction === 'delete'}
             >
-              {pendingAction === 'delete' ? 'Deleting...' : 'Delete'}
+              {pendingAction === 'delete' ? t`Deleting...` : t`Delete`}
             </Button>
           </div>
         </PopoverContent>

@@ -39,6 +39,7 @@ import {
 } from './screens';
 
 const RUNTIME_READY_STATES = new Set(['Ready', 'Degraded', 'Reconnecting']);
+// Compared against Error.message thrown in the runtime — locale-stable by design.
 const NO_ACCEPTED_SPACES_ERROR = 'No accepted budget spaces available for this account';
 
 function markStartup(name: string) {
@@ -329,7 +330,7 @@ export default function StartupController() {
         spaceId,
       });
       toast.success(t`Workspace switched`, {
-        description: 'You are now viewing this workspace.',
+        description: t`You are now viewing this workspace.`,
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Unable to switch workspace. Please try again.');

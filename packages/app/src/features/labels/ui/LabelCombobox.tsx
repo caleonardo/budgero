@@ -123,10 +123,10 @@ export function LabelCombobox({
           <CommandList>
             <CommandEmpty>
               {normalizedSearch
-                ? 'No matching labels.'
+                ? t`No matching labels.`
                 : labels.length === 0
-                  ? 'No labels yet.'
-                  : 'Type to filter labels.'}
+                  ? t`No labels yet.`
+                  : t`Type to filter labels.`}
             </CommandEmpty>
 
             {allowClear && (

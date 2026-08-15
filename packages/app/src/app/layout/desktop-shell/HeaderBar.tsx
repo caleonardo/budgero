@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Home, Plus, Search } from 'lucide-react';
@@ -26,6 +26,8 @@ interface HeaderBarProps {
 }
 
 export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBarProps) {
+  const { t } = useLingui();
+
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const togglePrivacyMaskNumbers = useUiStore((state) => state.togglePrivacyMaskNumbers);
   const feedbackEnabled = !IS_SELF_HOSTABLE_BUILD;
@@ -69,8 +71,8 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             size="sm"
             className="gap-2"
             onClick={triggerAddTransaction}
-            title="Add transaction (⌘⌥T)"
-            aria-label="Add transaction"
+            title={t`Add transaction (⌘⌥T)`}
+            aria-label={t`Add transaction`}
           >
             <Plus className="h-4 w-4" />
             <span className="hidden lg:inline">
@@ -86,8 +88,8 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             size="sm"
             className="gap-2"
             onClick={togglePrivacyMaskNumbers}
-            title={privacyMaskNumbers ? 'Disable privacy mode' : 'Enable privacy mode'}
-            aria-label={privacyMaskNumbers ? 'Disable privacy mode' : 'Enable privacy mode'}
+            title={privacyMaskNumbers ? t`Disable privacy mode` : t`Enable privacy mode`}
+            aria-label={privacyMaskNumbers ? t`Disable privacy mode` : t`Enable privacy mode`}
           >
             {privacyMaskNumbers ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             <span className="hidden lg:inline">
@@ -100,8 +102,8 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
               size="sm"
               className="gap-2 text-muted-foreground"
               onClick={openQuackback}
-              title="Send feedback"
-              aria-label="Send feedback"
+              title={t`Send feedback`}
+              aria-label={t`Send feedback`}
             >
               <FeedbackIcon className="h-4 w-4" />
               <span className="hidden lg:inline">

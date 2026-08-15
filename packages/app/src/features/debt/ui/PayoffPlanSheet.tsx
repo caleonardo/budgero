@@ -166,15 +166,15 @@ export function PayoffPlanSheet({
           const row = chartData[items[0]?.dataIndex ?? 0];
           if (!row) return '';
           return tooltipHtml(`Month ${row.idx + 1} — ${row.monthLabel}`, [
-            { color: principalColor, name: 'Principal', value: formatter.format(row.principal) },
-            { color: interestColor, name: 'Interest', value: formatter.format(row.interest) },
-            { color: remainingColor, name: 'Remaining', value: formatter.format(row.remaining) },
+            { color: principalColor, name: t`Principal`, value: formatter.format(row.principal) },
+            { color: interestColor, name: t`Interest`, value: formatter.format(row.interest) },
+            { color: remainingColor, name: t`Remaining`, value: formatter.format(row.remaining) },
           ]);
         },
       },
       series: [
         {
-          name: 'Principal',
+          name: t`Principal`,
           type: 'bar' as const,
           stack: 'payment',
           data: chartData.map((row) => row.principal),
@@ -182,7 +182,7 @@ export function PayoffPlanSheet({
           itemStyle: { color: principalColor, borderColor: chrome.surface, borderWidth: 1 },
         },
         {
-          name: 'Interest',
+          name: t`Interest`,
           type: 'bar' as const,
           stack: 'payment',
           data: chartData.map((row) => row.interest),
@@ -190,7 +190,7 @@ export function PayoffPlanSheet({
           itemStyle: { color: interestColor, borderColor: chrome.surface, borderWidth: 1 },
         },
         {
-          name: 'Remaining',
+          name: t`Remaining`,
           type: 'line' as const,
           yAxisIndex: 1,
           data: chartData.map((row) => row.remaining),
@@ -202,7 +202,7 @@ export function PayoffPlanSheet({
         },
       ],
     };
-  }, [chartData, palette, formatter]);
+  }, [chartData, palette, formatter, t]);
 
   return (
     <Drawer open={open} onOpenChange={setOpen} direction="right">
@@ -285,10 +285,12 @@ export function PayoffPlanSheet({
                   />
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">
-                  Suggested minimum:{' '}
-                  <span className="font-mono">
-                    {formatMilli(formatter, roundMilli(suggestedMin))}
-                  </span>
+                  <Trans>
+                    Suggested minimum:{' '}
+                    <span className="font-mono">
+                      {formatMilli(formatter, roundMilli(suggestedMin))}
+                    </span>
+                  </Trans>
                 </div>
               </div>
               <Separator />
@@ -391,11 +393,13 @@ export function PayoffPlanSheet({
           <div className="bg-muted/30 rounded-lg p-2">
             {sim.months === null && (
               <div className="text-xs text-destructive mb-2">
-                Payment too low to cover monthly interest. Increase payment above{' '}
-                <span className="font-mono">
-                  {formatMilli(formatter, roundMilli(outstanding * rMonthly))}
-                </span>
-                .
+                <Trans>
+                  Payment too low to cover monthly interest. Increase payment above{' '}
+                  <span className="font-mono">
+                    {formatMilli(formatter, roundMilli(outstanding * rMonthly))}
+                  </span>
+                  .
+                </Trans>
               </div>
             )}
             <div>
@@ -406,9 +410,9 @@ export function PayoffPlanSheet({
               />
               <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
                 {[
-                  { color: palette.series[0], label: 'Principal' },
-                  { color: palette.series[3], label: 'Interest' },
-                  { color: palette.series[6], label: 'Remaining' },
+                  { color: palette.series[0], label: t`Principal` },
+                  { color: palette.series[3], label: t`Interest` },
+                  { color: palette.series[6], label: t`Remaining` },
                 ].map((item) => (
                   <span
                     key={item.label}

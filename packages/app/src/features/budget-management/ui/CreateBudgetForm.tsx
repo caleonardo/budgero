@@ -96,7 +96,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         onCreated(budgetId);
         resetForm();
       } else {
-        toast.success(`Budget "${name}" created successfully!`);
+        toast.success(t`Budget "${name}" created successfully!`);
       }
     } catch (err: unknown) {
       const errorMessage = getErrorMessage(err, 'Failed to create budget');
@@ -176,7 +176,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         onCreated(budgetId);
         resetForm();
       } else {
-        toast.success(`Successfully imported YNAB budget "${budgetName}"!`);
+        toast.success(t`Successfully imported YNAB budget "${budgetName}"!`);
         setFile(null);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';

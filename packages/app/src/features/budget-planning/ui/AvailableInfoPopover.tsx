@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Available Info Popover Component
  *
@@ -52,6 +52,8 @@ export function AvailableInfoPopover({
   month,
   budgetId,
 }: AvailableInfoPopoverProps) {
+  const { t } = useLingui();
+
   const isCCPayment = item.fundingBreakdown !== undefined;
   const formatAmount = useFormatMaskedMilli(globalLocalizer);
   const upsertAssignment = useUpsertAssignment();
@@ -97,10 +99,10 @@ export function AvailableInfoPopover({
           onClick={(e) => e.stopPropagation()}
           aria-label={
             overAssigned > 0
-              ? `Over-assigned by ${formatAmount(overAssigned)} — details`
-              : 'Available calculation details'
+              ? t`Over-assigned by ${formatAmount(overAssigned)} — details`
+              : t`Available calculation details`
           }
-          title={overAssigned > 0 ? `Over-assigned by ${formatAmount(overAssigned)}` : undefined}
+          title={overAssigned > 0 ? t`Over-assigned by ${formatAmount(overAssigned)}` : undefined}
           className={cn(
             'inline-flex items-center justify-center rounded-full transition-colors',
             triggerSize === 'sm' ? 'h-3 w-3' : 'h-4 w-4',
@@ -120,7 +122,7 @@ export function AvailableInfoPopover({
       </PopoverTrigger>
       <PopoverContent className="w-72 space-y-3 p-4" side={side} align={align}>
         <div className="font-medium text-sm">
-          {isCCPayment ? 'CC Payment Calculation' : 'Available Calculation'}
+          {isCCPayment ? t`CC Payment Calculation` : t`Available Calculation`}
         </div>
 
         <div
@@ -158,7 +160,7 @@ export function AvailableInfoPopover({
                 </div>
                 {item.cardBalance !== undefined && (
                   <div className="flex justify-between text-muted-foreground">
-                    <span>{item.cardBalance >= 0 ? 'Card credit:' : 'Card balance owed:'}</span>
+                    <span>{item.cardBalance >= 0 ? t`Card credit:` : t`Card balance owed:`}</span>
                     <span className="font-mono">{formatAmount(Math.abs(item.cardBalance))}</span>
                   </div>
                 )}
@@ -315,12 +317,14 @@ export function AvailableInfoPopover({
         {overAssigned > 0 && (
           <div className="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg space-y-2">
             <div className="text-xs text-amber-700 dark:text-amber-400 font-medium">
-              Over-assigned by {formatAmount(overAssigned)}
+              <Trans>Over-assigned by {formatAmount(overAssigned)}</Trans>
             </div>
             <div className="text-xs text-amber-700/80 dark:text-amber-400/80">
-              You have {formatAmount(item.available)} set aside but the card only needs{' '}
-              {formatAmount(cardDebt ?? 0)}. The extra is your money — it just isn&apos;t needed for
-              this card.
+              <Trans>
+                You have {formatAmount(item.available)} set aside but the card only needs{' '}
+                {formatAmount(cardDebt ?? 0)}. The extra is your money — it just isn't needed for
+                this card.
+              </Trans>
             </div>
             {canReduce && (
               <button
@@ -331,8 +335,8 @@ export function AvailableInfoPopover({
               >
                 <Undo2 className="h-3 w-3" />
                 {upsertAssignment.isPending
-                  ? 'Reducing…'
-                  : `Reduce assignment by ${formatAmount(reducible)} (back to Ready to Assign)`}
+                  ? t`Reducing…`
+                  : t`Reduce assignment by ${formatAmount(reducible)} (back to Ready to Assign)`}
               </button>
             )}
           </div>
@@ -341,7 +345,7 @@ export function AvailableInfoPopover({
         {isCCPayment && item.available < 0 && (
           <div className="p-2 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg">
             <div className="text-xs text-red-600 dark:text-red-400 font-medium">
-              Paid {formatAmount(Math.abs(item.available))} more than set aside
+              <Trans>Paid {formatAmount(Math.abs(item.available))}more than set aside</Trans>
             </div>
           </div>
         )}
@@ -349,7 +353,7 @@ export function AvailableInfoPopover({
         {!isCCPayment && cashOverspend > 0 && (
           <div className="p-2 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg">
             <div className="text-xs text-red-600 dark:text-red-400 font-medium">
-              Overspent by {formatAmount(cashOverspend)} in cash
+              <Trans>Overspent by {formatAmount(cashOverspend)}in cash</Trans>
             </div>
           </div>
         )}

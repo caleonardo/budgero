@@ -46,7 +46,7 @@ export function AddWidgetDialog({
     setSelectedChartId,
   } = useReportChartSelection(reports, open);
   const { isRunning: isSubmitting, run: runSubmit } = useAsyncDialogAction({
-    errorMessage: 'Failed to add widget',
+    errorMessage: t`Failed to add widget`,
     onSuccess: () => onOpenChange(false),
   });
 
@@ -121,7 +121,7 @@ export function AddWidgetDialog({
             onClick={handleSubmit}
             disabled={isSubmitting || selectableReports.length === 0 || !selectedChartId}
           >
-            {isSubmitting ? 'Adding...' : 'Add Widget'}
+            {isSubmitting ? t`Adding...` : t`Add Widget`}
           </Button>
         </DialogFooter>
       </DialogContent>

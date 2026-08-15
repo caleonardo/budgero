@@ -231,11 +231,12 @@ export function SearchableCategorySelect({
       setOpen(false);
       setSearchTerm('');
     } catch (err) {
-      const fallback = 'Failed to create category.';
+      const fallback = t`Failed to create category.`;
       // `|| fallback` also covers Error instances with an empty message.
       setCreateError(getErrorMessage(err, fallback) || fallback);
     }
   }, [
+    t,
     addCategoryMutation,
     budgetId,
     onCategorySelect,
@@ -412,7 +413,7 @@ export function SearchableCategorySelect({
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={openCreateDialog}
                     >
-                      Create “{searchTerm.trim()}”
+                      <Trans>Create “{searchTerm.trim()}”</Trans>
                     </Button>
                   )}
                 </div>

@@ -493,7 +493,7 @@ export function CommandPalette() {
               NAV_SETTINGS_ACCOUNT.map((item) => (
                 <CommandItem key={item.to} onSelect={() => handleNavigation(item.to)}>
                   <item.icon className="mr-2 h-4 w-4" />
-                  <span>{item.label}</span>
+                  <span>{t(item.label)}</span>
                 </CommandItem>
               ))}
             {IS_SELF_HOSTABLE_BUILD && (
@@ -507,20 +507,20 @@ export function CommandPalette() {
             {NAV_SETTINGS_DATA.map((item) => (
               <CommandItem key={item.to} onSelect={() => handleNavigation(item.to)}>
                 <item.icon className="mr-2 h-4 w-4" />
-                <span>{item.label}</span>
+                <span>{t(item.label)}</span>
               </CommandItem>
             ))}
             {NAV_SETTINGS_AUTOMATION.map((item) => (
               <CommandItem key={item.to} onSelect={() => handleNavigation(item.to)}>
                 <item.icon className="mr-2 h-4 w-4" />
-                <span>{item.label}</span>
+                <span>{t(item.label)}</span>
               </CommandItem>
             ))}
             {NAV_SETTINGS_PREFERENCES.filter((item) => item.to !== '/settings/appearance').map(
               (item) => (
                 <CommandItem key={item.to} onSelect={() => handleNavigation(item.to)}>
                   <item.icon className="mr-2 h-4 w-4" />
-                  <span>{item.label}</span>
+                  <span>{t(item.label)}</span>
                 </CommandItem>
               )
             )}
@@ -612,7 +612,7 @@ export function CommandPalette() {
                       <Receipt className="mr-2 h-4 w-4" />
                       <div className="flex flex-1 items-center justify-between">
                         <div>
-                          <span className="font-medium">{transaction.Memo || 'No memo'}</span>
+                          <span className="font-medium">{transaction.Memo || t`No memo`}</span>
                           <span className="ml-2 text-xs text-muted-foreground">
                             {transaction.Category}
                           </span>
@@ -666,7 +666,9 @@ export function CommandPalette() {
           selectedTransaction ? (
             <div className="pt-3 pb-4">
               <div className="text-center text-xs text-muted-foreground">
-                Transaction from {parseISO(selectedTransaction.Date).toLocaleDateString()}
+                <Trans>
+                  Transaction from {parseISO(selectedTransaction.Date).toLocaleDateString()}
+                </Trans>
               </div>
             </div>
           ) : null

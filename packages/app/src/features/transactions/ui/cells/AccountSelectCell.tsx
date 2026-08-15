@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { useAccounts } from '@entities/account/api/useAccounts';
@@ -14,6 +15,8 @@ export function AccountSelectCell({
   onCommit,
   triggerClassName,
 }: AccountSelectCellProps) {
+  const { t } = useLingui();
+
   const { selectedBudget } = useUiStore();
   const { data: allAccounts = [], isLoading } = useAccounts(selectedBudget?.ID || 0);
   // Hide archived accounts from the picker, but keep the current selection visible if it
@@ -44,7 +47,7 @@ export function AccountSelectCell({
   return (
     <Select value={selectedValue} onValueChange={handleChange} disabled={isLoading}>
       <SelectTrigger className={triggerClassName}>
-        <SelectValue placeholder={isLoading ? 'Loading...' : 'Select account'} />
+        <SelectValue placeholder={isLoading ? t`Loading...` : t`Select account`} />
       </SelectTrigger>
       <SelectContent>
         {accounts.map((account) => (

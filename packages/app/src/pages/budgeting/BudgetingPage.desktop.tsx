@@ -379,15 +379,15 @@ export function BudgetingPageDesktop() {
                   onClick={handleToggleGlobalCollapsed}
                 >
                   {globalCollapsed ? (
-                    <>
+                    <Trans>
                       <ChevronDown className="h-3.5 w-3.5" />
                       Expand All
-                    </>
+                    </Trans>
                   ) : (
-                    <>
+                    <Trans>
                       <ChevronUp className="h-3.5 w-3.5" />
                       Collapse All
-                    </>
+                    </Trans>
                   )}
                 </Button>
               </div>

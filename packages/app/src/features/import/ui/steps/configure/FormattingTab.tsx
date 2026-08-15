@@ -104,7 +104,7 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
             <SelectContent>
               {SUPPORTED_NUMBER_FORMATS.map((format) => (
                 <SelectItem key={format.value} value={format.value}>
-                  {format.label}
+                  {t(format.label)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -125,7 +125,7 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
             <SelectContent>
               {SUPPORTED_DATE_FORMATS.map((format) => (
                 <SelectItem key={format.value} value={format.value}>
-                  {format.label}
+                  {t(format.label)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -142,13 +142,19 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
             <Trans>With your current settings:</Trans>
           </p>
           <p>
-            • Thousand separator:{' '}
-            <code>
-              {importConfig.thousandSeparator === 'none' ? 'None' : importConfig.thousandSeparator}
-            </code>
+            <Trans>
+              • Thousand separator:{' '}
+              <code>
+                {importConfig.thousandSeparator === 'none'
+                  ? 'None'
+                  : importConfig.thousandSeparator}
+              </code>
+            </Trans>
           </p>
           <p>
-            • Decimal separator: <code>{importConfig.decimalSeparator}</code>
+            <Trans>
+              • Decimal separator: <code>{importConfig.decimalSeparator}</code>
+            </Trans>
           </p>
           <p className="mt-2">
             <Trans>Examples:</Trans>
@@ -163,13 +169,15 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
             )}
           </p>
           <p>
-            • "RSD 123
-            {importConfig.thousandSeparator === 'none' ? '' : importConfig.thousandSeparator}
-            123" →{' '}
-            {parseAmount(
-              `RSD 123${importConfig.thousandSeparator === 'none' ? '' : importConfig.thousandSeparator}123`,
-              importConfig
-            )}
+            <Trans>
+              • "RSD 123
+              {importConfig.thousandSeparator === 'none' ? '' : importConfig.thousandSeparator}123"
+              →{' '}
+              {parseAmount(
+                `RSD 123${importConfig.thousandSeparator === 'none' ? '' : importConfig.thousandSeparator}123`,
+                importConfig
+              )}
+            </Trans>
           </p>
         </div>
       </div>

@@ -99,10 +99,10 @@ export function GoalSection({
 
       setHighlightGoalCategoryId(null);
       setIsFormOpen(false);
-      toast.success(goal ? 'Goal updated' : 'Goal created', {
+      toast.success(goal ? t`Goal updated` : t`Goal created`, {
         description: goal
-          ? 'Your goal has been updated successfully.'
-          : 'Your new goal has been created.',
+          ? t`Your goal has been updated successfully.`
+          : t`Your new goal has been created.`,
       });
     } catch (error) {
       toastError('Failed to save goal', error, 'Please try again.');
@@ -121,11 +121,11 @@ export function GoalSection({
 
       setIsFormOpen(false);
       toast.success(t`Goal deleted`, {
-        description: 'The goal has been permanently removed.',
+        description: t`The goal has been permanently removed.`,
       });
     } catch {
       toast.error(t`Failed to delete goal`, {
-        description: 'Please try again.',
+        description: t`Please try again.`,
       });
     }
   };

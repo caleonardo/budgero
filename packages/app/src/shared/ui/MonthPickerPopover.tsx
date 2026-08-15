@@ -77,7 +77,7 @@ export default function MonthPickerPopover({
       <PopoverTrigger asChild>
         <button
           type="button"
-          aria-label={`Change month — currently ${fullLabel}`}
+          aria-label={t`Change month — currently ${fullLabel}`}
           className={cn(
             'inline-flex min-w-0 items-center justify-center gap-1 rounded-md px-1.5 py-1 font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             triggerClassName

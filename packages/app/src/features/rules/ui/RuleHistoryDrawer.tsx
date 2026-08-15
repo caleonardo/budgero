@@ -41,6 +41,8 @@ export function RuleHistoryDrawer({
   onUndoRun,
   undoingRunId,
 }: RuleHistoryDrawerProps) {
+  const { t } = useLingui();
+
   const ruleId = rule?.id ?? 0;
   const { data: runs = [], isLoading } = useRuleRuns(ruleId, 25, open);
   // Runs are newest-first. Only the newest run whose changes are still applied
@@ -59,14 +61,16 @@ export function RuleHistoryDrawer({
           <SheetDescription>
             {rule ? (
               <span className="text-sm text-muted-foreground">
-                {rule.name} •{' '}
-                {{ continuous: 'Continuous', one_time: 'One time', autofill: 'Autofill' }[
-                  rule.mode
-                ] ?? 'Continuous'}{' '}
-                rule
+                <Trans>
+                  {rule.name}•{' '}
+                  {{ continuous: 'Continuous', one_time: 'One time', autofill: 'Autofill' }[
+                    rule.mode
+                  ] ?? t`Continuous`}{' '}
+                  rule
+                </Trans>
               </span>
             ) : (
-              'Automation run details'
+              t`Automation run details`
             )}
           </SheetDescription>
         </SheetHeader>
@@ -128,12 +132,12 @@ function RunAccordionItem({
     const completedDate = parseUtcDate(run.completedAt);
     const relative = completedDate
       ? formatDistanceToNow(completedDate, { addSuffix: true })
-      : 'in progress';
+      : t`in progress`;
     return plural(run.transactionCount, {
       one: `${run.status.toUpperCase()} • # transaction • ${relative}`,
       other: `${run.status.toUpperCase()} • # transactions • ${relative}`,
     });
-  }, [run.completedAt, run.status, run.transactionCount]);
+  }, [run.completedAt, run.status, run.transactionCount, t]);
 
   const canUndo =
     isLatest &&
@@ -162,8 +166,8 @@ function RunAccordionItem({
             {(() => {
               const startedDate = parseUtcDate(run.startedAt);
               return startedDate
-                ? `Started ${formatDistanceToNow(startedDate, { addSuffix: true })}`
-                : 'Started —';
+                ? t`Started ${formatDistanceToNow(startedDate, { addSuffix: true })}`
+                : t`Started —`;
             })()}
           </div>
         </div>
@@ -180,27 +184,31 @@ function RunAccordionItem({
         {canUndo ? (
           <div className="mb-3 flex flex-col gap-3 rounded-md border border-dashed bg-muted/40 p-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-sm text-muted-foreground">
-              Restore {run.transactionCount} transaction{run.transactionCount === 1 ? '' : 's'} to
-              their pre-run values.
+              <Trans>
+                Restore {run.transactionCount}transaction{run.transactionCount === 1 ? '' : 's'}to
+                their pre-run values.
+              </Trans>
             </div>
             <ConfirmDialog
               trigger={
                 <Button size="sm" disabled={!canUndo || isUndoing}>
-                  {isUndoing ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <RotateCcw className="mr-2 h-4 w-4" />
-                  )}
-                  Undo changes
+                  <Trans>
+                    {isUndoing ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <RotateCcw className="mr-2 h-4 w-4" />
+                    )}
+                    Undo changes
+                  </Trans>
                 </Button>
               }
               title={t`Undo this rule run?`}
               description={t`Budgero will revert every transaction touched by this run back to its original values. You can re-run the rule afterward if needed.`}
               confirmText={
-                <>
+                <Trans>
                   <RotateCcw className="mr-2 h-4 w-4" />
                   Undo run
-                </>
+                </Trans>
               }
               confirmDisabled={isUndoing}
               onConfirm={() => {

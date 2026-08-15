@@ -1,0 +1,90 @@
+{
+  "comment": "Strings audited and intentionally left in English. Every entry needs a reason.",
+  "entries": [
+    {
+      "file": "src/features/ai/lib/tools/query-transactions.ts",
+      "text": "*",
+      "reason": "LLM tool schema — consumed by the model, not shown to users"
+    },
+    {
+      "file": "src/features/ai/lib/tools/tool-registry.ts",
+      "text": "*",
+      "reason": "LLM tool schema"
+    },
+    {
+      "file": "src/features/ai/lib/tools/edit-transaction.ts",
+      "text": "*",
+      "reason": "LLM tool schema"
+    },
+    {
+      "file": "src/features/ai/lib/tools/query-budget.ts",
+      "text": "*",
+      "reason": "LLM tool schema"
+    },
+    {
+      "file": "src/features/ai/lib/tools/query-chart.ts",
+      "text": "*",
+      "reason": "LLM tool schema"
+    },
+    {
+      "file": "src/features/ai/lib/tools/query-sql.ts",
+      "text": "*",
+      "reason": "LLM tool schema"
+    },
+    {
+      "file": "src/features/ai/lib/tools/add-transaction.ts",
+      "text": "*",
+      "reason": "LLM tool schema"
+    },
+    {
+      "file": "src/features/ai/lib/tools/index.ts",
+      "text": "*",
+      "reason": "LLM tool schema"
+    },
+    {
+      "file": "src/features/ai/lib/prompts.ts",
+      "text": "*",
+      "reason": "LLM system prompts — instruct the model to answer in the user's language"
+    },
+    {
+      "file": "src/features/account-management/ui/DevSeedAccountsButton.tsx",
+      "text": "*",
+      "reason": "dev-only seeding tool, hidden in production"
+    },
+    {
+      "file": "src/shared/lib/whisper/whisper.worker.ts",
+      "text": "*",
+      "reason": "worker thread has no i18n instance; needs status-code refactor — tracked follow-up"
+    },
+    {
+      "file": "src/app/startup/StartupController.tsx",
+      "text": "No accepted budget spaces available for this account",
+      "reason": "Error.message sentinel compared for control flow — locale-stable by design"
+    },
+    {
+      "file": "src/features/category-management/api/useHideCategory.ts",
+      "text": "Hidden Categories",
+      "reason": "system group name stored in user data and compared on read; display localization is a tracked follow-up"
+    },
+    {
+      "file": "src/pages/admin/sql-explorer/sql-explorer.utils.ts",
+      "text": "*",
+      "reason": "SQL dry-run scaffolding — queries, not copy"
+    },
+    {
+      "file": "src/shared/lib/sql/duckdb-reporting-engine.ts",
+      "text": "*",
+      "reason": "SQL builder — queries, not copy"
+    },
+    {
+      "file": "src/shared/ui/sql-code-mirror-editor.tsx",
+      "text": "ui-monospace, SFMono-Regular, \"SF Mono\", Consolas, \"Liberation Mono\", Menlo, monospace",
+      "reason": "font stack"
+    },
+    {
+      "file": "src/shared/hooks/useUserPreferences.ts",
+      "text": "*",
+      "reason": "mutation audit meta labels are stored in the DB — locale-stable like sibling op slugs"
+    }
+  ]
+}

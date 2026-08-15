@@ -58,7 +58,7 @@ export const AccountsStep: React.FC<StepProps> = ({ cur, state, set }) => {
               >
                 {ACCOUNT_TYPES.map((tp) => (
                   <option key={tp.id} value={tp.id}>
-                    {tp.name}
+                    {t(tp.name)}
                   </option>
                 ))}
               </select>
@@ -66,7 +66,7 @@ export const AccountsStep: React.FC<StepProps> = ({ cur, state, set }) => {
                 className="bo-account-name"
                 value={a.name}
                 onChange={(e) => updateAcct(a.id, { name: e.target.value })}
-                placeholder={`${type.name} name`}
+                placeholder={t`${t(type.name)} name`}
                 style={{
                   border: '1px solid #141414',
                   background: '#fffdf8',
@@ -93,8 +93,8 @@ export const AccountsStep: React.FC<StepProps> = ({ cur, state, set }) => {
                 <input
                   value={a.balance}
                   onChange={(e) => updateAcct(a.id, { balance: e.target.value })}
-                  placeholder={type.isDebt ? 'Amount owed' : '0.00'}
-                  aria-label={`${type.balanceLabel} for ${a.name.trim() || type.name}`}
+                  placeholder={type.isDebt ? t`Amount owed` : '0.00'}
+                  aria-label={t`${t(type.balanceLabel)} for ${a.name.trim() || t(type.name)}`}
                   type="number"
                   min={type.isDebt ? 0 : undefined}
                   style={{

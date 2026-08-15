@@ -1,5 +1,5 @@
 import { plural } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { DropdownMenuItem, DropdownMenuSeparator } from '@shared/ui/dropdown-menu';
 import { Target, AlertTriangle, TrendingDown, RotateCcw, RefreshCw } from 'lucide-react';
 import type { GetMonthlyBudgetRow } from '@budgero/core/browser';
@@ -50,6 +50,8 @@ export function AssignQuickActions({
   onResetAvailable,
   onResetAssigned,
 }: AssignQuickActionsProps) {
+  const { t } = useLingui();
+
   const { nonZeroCount, overspentCount, overfundedCount } = getResetAvailableCounts(budgetData);
   const { count: resetAssignedCount, totalAbs: resetAssignedTotal } =
     getResetAssignedCounts(budgetData);
@@ -72,7 +74,7 @@ export function AssignQuickActions({
           </div>
           <div className="text-xs text-muted-foreground">
             {underfundedGoals.length === 0
-              ? 'All goals funded'
+              ? t`All goals funded`
               : plural(underfundedGoals.length, {
                   one: `# goal needs ${formatMilli(globalLocalizer, asMilli(Math.min(totalUnderfunded, readyToAssign)))}`,
                   other: `# goals need ${formatMilli(globalLocalizer, asMilli(Math.min(totalUnderfunded, readyToAssign)))}`,
@@ -97,7 +99,7 @@ export function AssignQuickActions({
           </div>
           <div className="text-xs text-muted-foreground">
             {overspentCategories.length === 0
-              ? 'No overspending'
+              ? t`No overspending`
               : plural(overspentCategories.length, {
                   one: `# category needs ${formatMilli(globalLocalizer, asMilli(Math.min(totalOverspent, readyToAssign)))}`,
                   other: `# categories need ${formatMilli(globalLocalizer, asMilli(Math.min(totalOverspent, readyToAssign)))}`,
@@ -120,7 +122,7 @@ export function AssignQuickActions({
           </div>
           <div className="text-xs text-muted-foreground">
             {overfundedCategories.length === 0
-              ? 'No overfunding'
+              ? t`No overfunding`
               : plural(overfundedCategories.length, {
                   one: `Free up ${formatMilli(globalLocalizer, totalSafeReduction)} from # category`,
                   other: `Free up ${formatMilli(globalLocalizer, totalSafeReduction)} from # categories`,
@@ -144,7 +146,7 @@ export function AssignQuickActions({
           <div className="text-xs text-muted-foreground">
             {(() => {
               if (nonZeroCount === 0) {
-                return 'All categories already at zero';
+                return t`All categories already at zero`;
               }
               const parts = [];
               if (overspentCount > 0) parts.push(`${overspentCount} overspent`);
@@ -170,7 +172,7 @@ export function AssignQuickActions({
           </div>
           <div className="text-xs text-muted-foreground">
             {resetAssignedCount === 0
-              ? 'All assignments already zero'
+              ? t`All assignments already zero`
               : plural(resetAssignedCount, {
                   one: `Reset ${formatMilli(globalLocalizer, resetAssignedTotal)} across # category`,
                   other: `Reset ${formatMilli(globalLocalizer, resetAssignedTotal)} across # categories`,

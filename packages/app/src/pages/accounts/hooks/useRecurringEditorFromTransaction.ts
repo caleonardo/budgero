@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
@@ -25,6 +26,8 @@ export function useRecurringEditorFromTransaction({
   budgetId: number;
   accountId?: number;
 }) {
+  const { t } = useLingui();
+
   const createRecurring = useCreateRecurringTransaction();
   const [open, setOpen] = useState(false);
   const [initialValues, setInitialValues] =
@@ -37,7 +40,7 @@ export function useRecurringEditorFromTransaction({
     const startDate = transaction.Date || getTodayISO();
 
     setInitialValues({
-      name: transaction.Memo || 'Recurring transaction',
+      name: transaction.Memo || t`Recurring transaction`,
       memo: transaction.Memo || '',
       // OutflowConverted/InflowConverted are stored milliunits; Math.abs drops the brand only.
       amount: asMilli(Math.abs(rawAmount)),
@@ -58,20 +61,20 @@ export function useRecurringEditorFromTransaction({
   const handleSubmit = async (values: RecurringTransactionEditorSubmit) => {
     if (!budgetId) return;
     if (!values.accountId) {
-      toast.error('Select an account');
+      toast.error(t`Select an account`);
       return;
     }
     if (values.toAccountId != null) {
       if (values.toAccountId === values.accountId) {
-        toast.error('Pick two different accounts for a transfer');
+        toast.error(t`Pick two different accounts for a transfer`);
         return;
       }
     } else if (!values.categoryId) {
-      toast.error('Select a category');
+      toast.error(t`Select a category`);
       return;
     }
     if (!values.amount || Number.isNaN(values.amount)) {
-      toast.error('Enter a valid amount');
+      toast.error(t`Enter a valid amount`);
       return;
     }
 
@@ -89,13 +92,13 @@ export function useRecurringEditorFromTransaction({
         notifyDaysBefore: values.notifyDaysBefore,
         active: values.active,
       });
-      toast.success('Recurring transaction created', {
-        description: 'We will remind you when it is almost due.',
+      toast.success(t`Recurring transaction created`, {
+        description: t`We will remind you when it is almost due.`,
       });
       setOpen(false);
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
-      toast.error('Unable to save recurring transaction', {
+      toast.error(t`Unable to save recurring transaction`, {
         description: message,
       });
     }

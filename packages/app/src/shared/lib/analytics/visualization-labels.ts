@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type { ChartConfiguration } from '@budgero/core/browser';
 
 export type ExtendedChartType = ChartConfiguration['chartType'] | 'table' | 'stat';
@@ -5,15 +6,15 @@ export type ExtendedChartType = ChartConfiguration['chartType'] | 'table' | 'sta
 export function getVisualizationTypeLabel(chartType: ExtendedChartType): string {
   switch (chartType) {
     case 'bar':
-      return 'Bar Chart';
+      return t`Bar Chart`;
     case 'line':
-      return 'Line Chart';
+      return t`Line Chart`;
     case 'area':
-      return 'Area Chart';
+      return t`Area Chart`;
     case 'pie':
-      return 'Pie Chart';
+      return t`Pie Chart`;
     case 'scatter':
-      return 'Scatter Plot';
+      return t`Scatter Plot`;
     case 'table':
       return 'Table';
     case 'stat':

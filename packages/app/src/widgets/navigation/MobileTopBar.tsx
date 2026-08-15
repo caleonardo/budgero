@@ -89,8 +89,8 @@ export function MobileTopBar() {
       setBudgetDropdownOpen(false);
       toast.success(t`Budget created`, {
         description: createdBudget
-          ? `Switched to "${createdBudget.Name}".`
-          : 'Switched to your new budget.',
+          ? t`Switched to "${createdBudget.Name}".`
+          : t`Switched to your new budget.`,
       });
       void navigate('/', { replace: true });
     },
@@ -189,8 +189,10 @@ export function MobileTopBar() {
                     size="icon"
                     className="h-8 w-6 mr-1"
                     onClick={togglePrivacyMaskNumbers}
-                    title={privacyMaskNumbers ? 'Disable privacy mode' : 'Enable privacy mode'}
-                    aria-label={privacyMaskNumbers ? 'Disable privacy mode' : 'Enable privacy mode'}
+                    title={privacyMaskNumbers ? t`Disable privacy mode` : t`Enable privacy mode`}
+                    aria-label={
+                      privacyMaskNumbers ? t`Disable privacy mode` : t`Enable privacy mode`
+                    }
                   >
                     {privacyMaskNumbers ? (
                       <EyeOff className="h-4 w-4" />

@@ -37,7 +37,7 @@ describe('onboarding account types', () => {
     for (const def of ACCOUNT_TYPES) {
       const isLiability = getAccountTypeDefinition(def.coreType)?.category === 'liability';
       expect(def.isDebt, `${def.id} isDebt`).toBe(isLiability);
-      expect(def.balanceLabel).toBe(isLiability ? 'Balance owed' : 'Starting balance');
+      expect(def.balanceLabel.message).toBe(isLiability ? 'Balance owed' : 'Starting balance');
     }
   });
 });

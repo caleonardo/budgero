@@ -319,15 +319,15 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
               </Button>
               <Button type="submit" disabled={isExporting || !masterPassword.trim()}>
                 {isExporting ? (
-                  <>
+                  <Trans>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Exporting...
-                  </>
+                  </Trans>
                 ) : (
-                  <>
+                  <Trans>
                     <Download className="h-4 w-4 mr-2" />
-                    Export {exportType === 'sqlite' ? 'Database' : 'CSV'}
-                  </>
+                    Export {exportType === 'sqlite' ? t`Database` : 'CSV'}
+                  </Trans>
                 )}
               </Button>
             </DialogFooter>

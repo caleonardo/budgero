@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import { useAccounts } from '@entities/account/api/useAccounts';
@@ -29,6 +30,8 @@ export function useReceiptScannerState({
   defaultAccountId,
   onOpenChange,
 }: UseReceiptScannerStateProps) {
+  const { t } = useLingui();
+
   const { data: accounts = [] } = useAccounts(budgetId);
   const { data: categories = [] } = useCategories(budgetId);
   const { data: llmSettings } = useLLMSettings(budgetId);
@@ -56,7 +59,7 @@ export function useReceiptScannerState({
     if (!file) return;
 
     if (!isValidImageFile(file)) {
-      toast.error('Please select an image file');
+      toast.error(t`Please select an image file`);
       return;
     }
 
@@ -71,7 +74,7 @@ export function useReceiptScannerState({
     if (!file) return;
 
     if (!isValidImageFile(file)) {
-      toast.error('Please drop an image file');
+      toast.error(t`Please drop an image file`);
       return;
     }
 
@@ -114,8 +117,8 @@ export function useReceiptScannerState({
       setConfidence(result.confidence);
 
       if (result.transactions.length === 0) {
-        toast.warning('No transactions found', {
-          description: 'Could not extract any transactions from this image.',
+        toast.warning(t`No transactions found`, {
+          description: t`Could not extract any transactions from this image.`,
         });
         setStep('upload');
         return;
@@ -130,7 +133,7 @@ export function useReceiptScannerState({
       console.error('Receipt scanning failed:', err);
       const message = getErrorMessage(err, 'Failed to scan receipt');
       setStep('upload');
-      toast.error('Scanning failed', { description: message });
+      toast.error(t`Scanning failed`, { description: message });
     }
   };
 
@@ -150,12 +153,12 @@ export function useReceiptScannerState({
     const toImport = extractedTransactions.filter((t) => t.selected);
 
     if (toImport.length === 0) {
-      toast.info('No transactions selected');
+      toast.info(t`No transactions selected`);
       return;
     }
 
     if (!selectedAccountId) {
-      toast.error('Please select an account');
+      toast.error(t`Please select an account`);
       return;
     }
 
@@ -183,11 +186,11 @@ export function useReceiptScannerState({
 
       setProgress(100);
       setStep('done');
-      toast.success(`Imported ${toImport.length} transactions`);
+      toast.success(t`Imported ${toImport.length} transactions`);
     } catch (err) {
       console.error('Failed to import transactions:', err);
       const message = getErrorMessage(err, 'Failed to import transactions');
-      toast.error('Import failed', { description: message });
+      toast.error(t`Import failed`, { description: message });
     }
   };
 

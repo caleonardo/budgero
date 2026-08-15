@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 /**
  * Cookieless funnel event → self-hosted Umami (stats.budgero.app).
  *
@@ -45,7 +46,7 @@ export function sendTrialStartedToUmami(): void {
           website: UMAMI_WEBSITE_ID,
           hostname: window.location.hostname,
           url: '/trial-started',
-          name: 'Trial Started',
+          name: t`Trial Started`,
           language: navigator.language,
           screen: `${window.screen.width}x${window.screen.height}`,
         },

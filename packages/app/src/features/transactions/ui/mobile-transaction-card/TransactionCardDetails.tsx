@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
@@ -131,6 +131,8 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
   onUpdateSplitLine,
   onSaveSplits,
 }: TransactionCardDetailsProps) {
+  const { t } = useLingui();
+
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const selectedAccount = useUiStore((state) => state.selectedAccount);
   // In account display mode the cells edit the NATIVE amount, whose storage
@@ -168,7 +170,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                     displayFormatter={(val) => currentFormatter.format(val)}
                     localizer={currentFormatter}
                     inputAlign="center"
-                    placeholder="100 + 25 or 150 / 2"
+                    placeholder={t`100 + 25 or 150 / 2`}
                     className="text-success"
                     inputClassName="h-10 text-center font-semibold text-success"
                     displayClassName="bg-background border border-input hover:bg-muted/40 px-3 py-2 rounded-md font-mono text-success shadow-sm"
@@ -205,7 +207,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                     displayFormatter={(val) => currentFormatter.format(val)}
                     localizer={currentFormatter}
                     inputAlign="center"
-                    placeholder="100 - 25 or 50 * 2"
+                    placeholder={t`100 - 25 or 50 * 2`}
                     className="text-destructive"
                     inputClassName="h-10 text-center font-semibold text-destructive"
                     displayClassName="bg-background border border-input hover:bg-muted/40 px-3 py-2 rounded-md font-mono text-destructive shadow-sm"
@@ -313,7 +315,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                 </div>
               ) : readOnlyCategory ? (
                 <div className="text-sm p-2 bg-muted/30 rounded-md truncate">
-                  {displayCategoryOverride || transaction.Category || 'Unknown'}
+                  {displayCategoryOverride || transaction.Category || t`Unknown`}
                 </div>
               ) : (
                 <div className="[&>div]:text-sm [&>button]:text-sm [&>button]:p-2 [&>button]:h-9 [&>button]:bg-muted/30 [&>button]:border-0 [&>button]:shadow-none [&>button]:hover:bg-muted/50 [&>button]:justify-between [&>button]:font-normal [&>button]:w-full [&>button]:truncate">
@@ -360,7 +362,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                     disabled={splitSaveDisabled}
                     onClick={onSaveSplits}
                   >
-                    {isClearingSplits ? 'Remove splits' : 'Save'}
+                    {isClearingSplits ? t`Remove splits` : t`Save`}
                   </Button>
                 </div>
               ) : (
@@ -406,9 +408,9 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                               {s.category_name ||
                                 s.CategoryName ||
                                 ((s.category_id ?? s.CategoryID)
-                                  ? `Category #${s.category_id ?? s.CategoryID}`
+                                  ? t`Category #${s.category_id ?? s.CategoryID}`
                                   : (s.transfer_account_id ?? s.TransferAccountID)
-                                    ? `Transfer to ${
+                                    ? t`Transfer to ${
                                         s.transfer_account_name ||
                                         s.TransferAccountName ||
                                         `#${s.transfer_account_id ?? s.TransferAccountID}`
@@ -433,13 +435,13 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                         {editSplits ? (
                           <Input
                             className="h-8"
-                            placeholder="Memo"
+                            placeholder={t`Memo`}
                             value={s.memo ?? s.Memo ?? ''}
                             onChange={(e) => onUpdateSplitLine(idx, { memo: e.target.value })}
                           />
                         ) : (
                           <span className="text-xs text-muted-foreground block truncate">
-                            {s.memo ?? s.Memo ?? 'No memo'}
+                            {s.memo ?? s.Memo ?? t`No memo`}
                           </span>
                         )}
                       </div>

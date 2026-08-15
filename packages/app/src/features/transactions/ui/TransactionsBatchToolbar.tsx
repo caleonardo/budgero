@@ -101,7 +101,7 @@ export function TransactionsBatchToolbar({
           other: `# transactions deleted`,
         }),
         {
-          description: 'The selected transaction(s) have been permanently removed.',
+          description: t`The selected transaction(s) have been permanently removed.`,
         }
       );
 
@@ -110,7 +110,7 @@ export function TransactionsBatchToolbar({
       console.error('Error deleting transactions:', error);
       toastError('Failed to delete transactions', error, 'Please try again.');
     }
-  }, [selectedRowIds, selectedAccount, deleteTransactionMutation, clearSelection, queryClient]);
+  }, [selectedRowIds, selectedAccount, deleteTransactionMutation, clearSelection, queryClient, t]);
 
   async function handleBatchEdits() {
     setWorking(true);
@@ -326,15 +326,15 @@ export function TransactionsBatchToolbar({
               moveToNewCategoryMutation.isPending ||
               moveToNewAccountMutation.isPending ||
               updateTransactionColumnMutation.isPending ? (
-                <>
+                <Trans>
                   <Loader2 className="h-3 w-3 mr-2 animate-spin" />
                   Applying...
-                </>
+                </Trans>
               ) : (
-                <>
+                <Trans>
                   <MoveHorizontal className="h-3 w-3 mr-2" />
                   Apply Changes
-                </>
+                </Trans>
               )}
             </DropdownMenuItem>
           </DropdownMenuContent>

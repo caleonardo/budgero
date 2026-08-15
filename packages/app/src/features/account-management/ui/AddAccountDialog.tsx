@@ -188,7 +188,7 @@ export function AddAccountDialog({
       });
 
       toast.success(t`Account created`, {
-        description: `${name} has been added successfully.`,
+        description: t`${name} has been added successfully.`,
       });
 
       // Reset the form and close the modal first
@@ -288,8 +288,8 @@ export function AddAccountDialog({
                 hint={
                   <span className="hidden sm:block">
                     {onBudget
-                      ? 'Showing account types that can affect your budget'
-                      : 'Showing account types for net worth tracking'}
+                      ? t`Showing account types that can affect your budget`
+                      : t`Showing account types for net worth tracking`}
                   </span>
                 }
               >
@@ -464,14 +464,14 @@ export function AddAccountDialog({
               </div>
               {/* Balance / Value Field */}
               <Field
-                label={isLiability ? 'Paid So Far (optional)' : 'Starting Balance'}
+                label={isLiability ? t`Paid So Far (optional)` : t`Starting Balance`}
                 htmlFor="balance"
                 className="space-y-1"
                 help={
                   <p>
                     {isLiability
-                      ? 'Amount already repaid on this debt.'
-                      : 'Opening balance for this account.'}
+                      ? t`Amount already repaid on this debt.`
+                      : t`Opening balance for this account.`}
                   </p>
                 }
               >
@@ -483,7 +483,7 @@ export function AddAccountDialog({
                     formatter={accountCurrencyFormatter.format}
                     localizer={accountCurrencyFormatter}
                     inputAlign="left"
-                    placeholder={isLiability ? 'e.g. amount you have already paid' : '0.00'}
+                    placeholder={isLiability ? t`e.g. amount you have already paid` : '0.00'}
                     zeroAsEmpty
                     useFormatterForDisplay
                     onEditingChange={setIsBalanceEditing}
@@ -514,7 +514,7 @@ export function AddAccountDialog({
                     disabled={addAccountMutation.isPending}
                     data-testid="add-account-submit"
                   >
-                    {addAccountMutation.isPending ? 'Adding...' : 'Add Account'}
+                    {addAccountMutation.isPending ? t`Adding...` : t`Add Account`}
                   </Button>
                 )}
               </div>

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -68,6 +68,8 @@ function indexCells(cells: CohortRetentionCell[]): RetentionLookup {
 }
 
 export default function StickinessAnalyticsSection() {
+  const { t } = useLingui();
+
   const adminApi = useAdminApi();
 
   const [cohort, setCohort] = useState<AnalyticsGranularity>('weekly');
@@ -80,7 +82,7 @@ export default function StickinessAnalyticsSection() {
     [AnalyticsGranularity, number]
   >({
     defaultDaysBack: 90,
-    errorMessage: 'Failed to load stickiness analytics',
+    errorMessage: t`Failed to load stickiness analytics`,
     initialArgs: ['weekly', 30],
     fetcher: (f, t, g, n) =>
       adminApi.getStickinessAnalytics(dateInputToISO(f), dateInputToISO(t), g, n),
@@ -125,13 +127,13 @@ export default function StickinessAnalyticsSection() {
           const point = series[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           return tooltipHtml(`Day ${point.day}`, [
-            { color: lineColor, name: 'DAU/MAU', value: pct(point.stickiness) },
+            { color: lineColor, name: t`DAU/MAU`, value: pct(point.stickiness) },
           ]);
         },
       },
       series: [
         {
-          name: 'DAU/MAU',
+          name: t`DAU/MAU`,
           type: 'line',
           data: series.map((p) => p.stickiness * 100),
           lineStyle: { color: lineColor, width: 2 },
@@ -142,7 +144,7 @@ export default function StickinessAnalyticsSection() {
         },
       ],
     };
-  }, [series, palette]);
+  }, [series, palette, t]);
 
   return (
     <Card>
@@ -169,7 +171,9 @@ export default function StickinessAnalyticsSection() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="stickiness-to">To</Label>
+            <Label htmlFor="stickiness-to">
+              <Trans>To</Trans>
+            </Label>
             <Input
               id="stickiness-to"
               type="date"
@@ -223,7 +227,7 @@ export default function StickinessAnalyticsSection() {
             </Select>
           </div>
           <Button onClick={() => void fetchData(from, to, cohort, maxDayN)} disabled={loading}>
-            {loading ? 'Loading…' : 'Refresh'}
+            {loading ? t`Loading…` : t`Refresh`}
           </Button>
         </div>
 
@@ -244,8 +248,8 @@ export default function StickinessAnalyticsSection() {
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 {current
-                  ? `${current.dau.toLocaleString()} active today / ${current.mau.toLocaleString()} active in last 30 days`
-                  : 'No data yet'}
+                  ? t`${current.dau.toLocaleString()} active today / ${current.mau.toLocaleString()} active in last 30 days`
+                  : t`No data yet`}
               </p>
               <div className="mt-3 text-xs text-muted-foreground space-y-0.5">
                 <p>
@@ -339,8 +343,8 @@ export default function StickinessAnalyticsSection() {
                             )}`}
                             title={
                               cell
-                                ? `${cell.active}/${cell.cohort_size} active on day ${n}`
-                                : 'No data'
+                                ? t`${cell.active}/${cell.cohort_size} active on day ${n}`
+                                : t`No data`
                             }
                           >
                             {cell ? pct(r) : '—'}

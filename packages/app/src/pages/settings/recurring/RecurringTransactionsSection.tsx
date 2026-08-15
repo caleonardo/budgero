@@ -163,7 +163,7 @@ export function RecurringTransactionsSection() {
           active: values.active,
         });
         toast.success(t`Recurring transaction created`, {
-          description: 'We will remind you when it is almost due.',
+          description: t`We will remind you when it is almost due.`,
         });
       } else if (editingTemplate) {
         setProcessingTemplateId(editingTemplate.id);
@@ -184,7 +184,7 @@ export function RecurringTransactionsSection() {
           },
         });
         toast.success(t`Recurring transaction updated`, {
-          description: 'Your schedule has been refreshed.',
+          description: t`Your schedule has been refreshed.`,
         });
       }
 
@@ -204,7 +204,7 @@ export function RecurringTransactionsSection() {
       setProcessingTemplateId(template.id);
       await deleteRecurring.mutateAsync({ id: template.id, budgetId: template.budgetId });
       toast.success(t`Recurring transaction removed`, {
-        description: 'Future reminders for this item were cleared.',
+        description: t`Future reminders for this item were cleared.`,
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
@@ -224,11 +224,14 @@ export function RecurringTransactionsSection() {
         budgetId: template.budgetId,
         patch: { active: nextActive },
       });
-      toast.success(nextActive ? 'Recurring transaction enabled' : 'Recurring transaction paused', {
-        description: nextActive
-          ? 'We will resume reminding you when it is due.'
-          : 'Reminders are paused until you re-enable it.',
-      });
+      toast.success(
+        nextActive ? t`Recurring transaction enabled` : t`Recurring transaction paused`,
+        {
+          description: nextActive
+            ? t`We will resume reminding you when it is due.`
+            : t`Reminders are paused until you re-enable it.`,
+        }
+      );
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
       toast.error(t`Unable to update recurring transaction`, {
@@ -246,8 +249,8 @@ export function RecurringTransactionsSection() {
       const accountName = accountsById.get(result.occurrence.template.accountId);
       toast.success(t`Transaction posted`, {
         description: accountName
-          ? `Recorded in ${accountName}. You can review it in the Transactions view.`
-          : 'Recorded successfully. Review it in the Transactions view.',
+          ? t`Recorded in ${accountName}. You can review it in the Transactions view.`
+          : t`Recorded successfully. Review it in the Transactions view.`,
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
@@ -262,7 +265,7 @@ export function RecurringTransactionsSection() {
       setProcessingOccurrenceId(occurrence.id);
       await skipOccurrence.mutateAsync({ id: occurrence.id });
       toast.success(t`Occurrence skipped`, {
-        description: 'We will remind you again next time.',
+        description: t`We will remind you again next time.`,
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
@@ -278,11 +281,11 @@ export function RecurringTransactionsSection() {
       const result = await requestPermission();
       if (result === 'granted') {
         toast.success(t`Notifications enabled`, {
-          description: 'We will send reminders before recurring items are due.',
+          description: t`We will send reminders before recurring items are due.`,
         });
       } else if (result === 'denied') {
         toast.error(t`Notifications blocked`, {
-          description: 'You can enable notifications later from your browser or system settings.',
+          description: t`You can enable notifications later from your browser or system settings.`,
         });
       }
     } catch (error) {
@@ -416,8 +419,8 @@ export function RecurringTransactionsSection() {
         {occurrences.map((occurrence) => {
           const { template } = occurrence;
           const categoryName = template.categoryId
-            ? categoriesById.get(template.categoryId) || 'Unassigned category'
-            : 'Unassigned category';
+            ? categoriesById.get(template.categoryId) || t`Unassigned category`
+            : t`Unassigned category`;
 
           return (
             <RecurringOccurrenceCard
@@ -483,7 +486,7 @@ export function RecurringTransactionsSection() {
               disabled={requestingPermission}
               className="sm:w-auto"
             >
-              {requestingPermission ? 'Requesting...' : 'Enable notifications'}
+              {requestingPermission ? t`Requesting...` : t`Enable notifications`}
             </Button>
           </div>
         ) : null}

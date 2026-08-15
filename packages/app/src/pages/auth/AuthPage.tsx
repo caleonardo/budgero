@@ -47,10 +47,10 @@ export default function AuthPage() {
 
   const mode = searchParams.get('mode');
   const isSignup = mode === 'signup';
-  const metaTitle = isSignup ? 'Create a Free Account | Budgero' : 'Login to Budgero Cloud';
+  const metaTitle = isSignup ? t`Create a Free Account | Budgero` : t`Login to Budgero Cloud`;
   const metaDescription = isSignup
-    ? 'Start your zero-based budget today. No credit card required for Budgero Core. Private by design.'
-    : 'Securely access your encrypted budget. Enter your master password to decrypt your data.';
+    ? t`Start your zero-based budget today. No credit card required for Budgero Core. Private by design.`
+    : t`Securely access your encrypted budget. Enter your master password to decrypt your data.`;
 
   return (
     <>
@@ -190,7 +190,7 @@ function SelfHostAuthPage() {
               value={username}
               autoComplete="username"
               onChange={(e) => setUsername(e.target.value)}
-              placeholder={t`admin`}
+              placeholder="admin"
               required
             />
           </div>
@@ -220,12 +220,12 @@ function SelfHostAuthPage() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {mode === 'signin' ? 'Signing in…' : 'Creating account…'}
+                {mode === 'signin' ? t`Signing in…` : t`Creating account…`}
               </>
             ) : mode === 'signin' ? (
-              'Sign in'
+              t`Sign in`
             ) : (
-              'Create account'
+              t`Create account`
             )}
           </Button>
         </form>

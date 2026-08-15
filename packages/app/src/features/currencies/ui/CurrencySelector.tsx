@@ -100,7 +100,7 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     <div className="flex flex-col space-y-1">
       <div className="flex items-center gap-2">
         <Label htmlFor="currency" className="flex items-center gap-1">
-          <span>{label ?? 'Currency'}</span>
+          <span>{label ?? t`Currency`}</span>
           {!canUseCurrencyApi && (
             <span className="text-xs text-muted-foreground">
               <Trans>(Offline)</Trans>

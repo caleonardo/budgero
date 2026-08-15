@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 
 import { Button } from '@shared/ui/button';
@@ -48,6 +48,8 @@ export function CreateCategoryDialog({
   isPending,
   onConfirm,
 }: CreateCategoryDialogProps) {
+  const { t } = useLingui();
+
   const noGroupsAvailable = (categoryGroups?.length ?? 0) === 0;
 
   return (
@@ -58,7 +60,7 @@ export function CreateCategoryDialog({
             <Trans>Create new category</Trans>
           </DialogTitle>
           <DialogDescription>
-            Choose where to file “{pendingCategoryName || searchTerm.trim()}”.
+            <Trans>Choose where to file “{pendingCategoryName || searchTerm.trim()}”.</Trans>
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -85,7 +87,7 @@ export function CreateCategoryDialog({
             >
               <SelectTrigger id="new-category-group" className="w-full">
                 <SelectValue
-                  placeholder={noGroupsAvailable ? 'No groups available' : 'Select a group'}
+                  placeholder={noGroupsAvailable ? t`No groups available` : t`Select a group`}
                 />
               </SelectTrigger>
               <SelectContent>
@@ -123,7 +125,7 @@ export function CreateCategoryDialog({
               noGroupsAvailable
             }
           >
-            {isPending ? 'Creating…' : 'Create'}
+            {isPending ? t`Creating…` : t`Create`}
           </Button>
         </DialogFooter>
       </DialogContent>

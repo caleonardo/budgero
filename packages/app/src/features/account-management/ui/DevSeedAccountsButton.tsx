@@ -155,9 +155,9 @@ export function DevSeedAccountsButton() {
         created += 1;
         setProgress(created);
       }
-      toast.success(`Seeded ${created} accounts`);
+      toast.success(t`Seeded ${created} accounts`);
     } catch (err) {
-      toast.error(`Stopped after ${created}: ${getErrorMessage(err, 'unknown error')}`);
+      toast.error(t`Stopped after ${created}: ${getErrorMessage(err, 'unknown error')}`);
     } finally {
       setProgress(null);
     }
@@ -183,7 +183,7 @@ export function DevSeedAccountsButton() {
         className="gap-1.5"
       >
         <Sprout className="h-4 w-4" />
-        {running ? `Seeding ${progress}/${count}…` : 'Seed accounts'}
+        {running ? t`Seeding ${progress}/${count}…` : t`Seed accounts`}
       </Button>
     </div>
   );

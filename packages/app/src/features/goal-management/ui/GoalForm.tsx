@@ -52,58 +52,6 @@ type GoalPreset =
   | 'yearly-allocation'
   | 'yearly-available';
 
-const GOAL_PRESETS: {
-  key: GoalPreset;
-  type: GoalType;
-  purpose: GoalPurpose;
-  icon: React.ReactNode;
-  title: string;
-  subtitle: string;
-  buildExample: (amount: string, date: string) => string;
-  needsDate: boolean;
-}[] = [
-  {
-    key: 'monthly-available',
-    type: GoalType.MONTHLY,
-    purpose: GoalPurpose.SPENDING,
-    icon: <Wallet className="h-5 w-5" />,
-    title: 'Monthly Available Target',
-    subtitle: 'Start each month with a certain amount available',
-    buildExample: (amount) => `e.g. Groceries — start each month with ${amount}`,
-    needsDate: false,
-  },
-  {
-    key: 'monthly-allocation',
-    type: GoalType.MONTHLY_SAVINGS,
-    purpose: GoalPurpose.SAVINGS,
-    icon: <ArrowUpFromLine className="h-5 w-5" />,
-    title: 'Monthly Allocation Target',
-    subtitle: 'Assign a fixed amount every month, regardless of spending',
-    buildExample: (amount) => `e.g. Savings — put aside ${amount} each month`,
-    needsDate: false,
-  },
-  {
-    key: 'yearly-allocation',
-    type: GoalType.TARGET_DATE,
-    purpose: GoalPurpose.SAVINGS,
-    icon: <CalendarClock className="h-5 w-5" />,
-    title: 'Yearly Allocation Target',
-    subtitle: 'Allocate a total amount over a period by a target date',
-    buildExample: (amount, date) => `e.g. Vacation — allocate ${amount} total by ${date}`,
-    needsDate: true,
-  },
-  {
-    key: 'yearly-available',
-    type: GoalType.YEARLY,
-    purpose: GoalPurpose.SPENDING,
-    icon: <PiggyBank className="h-5 w-5" />,
-    title: 'Yearly Available Target',
-    subtitle: 'Have a specific amount available by a target date',
-    buildExample: (amount, date) => `e.g. Car registration — need ${amount} ready by ${date}`,
-    needsDate: true,
-  },
-];
-
 function presetFromGoal(goal: Goal): GoalPreset {
   if (goal.Type === GoalType.MONTHLY) return 'monthly-available';
   if (goal.Type === GoalType.MONTHLY_SAVINGS) return 'monthly-allocation';
@@ -127,6 +75,58 @@ export function GoalForm({
   asCard = true,
 }: GoalFormProps) {
   const { t } = useLingui();
+
+  const GOAL_PRESETS: {
+    key: GoalPreset;
+    type: GoalType;
+    purpose: GoalPurpose;
+    icon: React.ReactNode;
+    title: string;
+    subtitle: string;
+    buildExample: (amount: string, date: string) => string;
+    needsDate: boolean;
+  }[] = [
+    {
+      key: 'monthly-available',
+      type: GoalType.MONTHLY,
+      purpose: GoalPurpose.SPENDING,
+      icon: <Wallet className="h-5 w-5" />,
+      title: t`Monthly Available Target`,
+      subtitle: t`Start each month with a certain amount available`,
+      buildExample: (amount) => t`e.g. Groceries — start each month with ${amount}`,
+      needsDate: false,
+    },
+    {
+      key: 'monthly-allocation',
+      type: GoalType.MONTHLY_SAVINGS,
+      purpose: GoalPurpose.SAVINGS,
+      icon: <ArrowUpFromLine className="h-5 w-5" />,
+      title: t`Monthly Allocation Target`,
+      subtitle: t`Assign a fixed amount every month, regardless of spending`,
+      buildExample: (amount) => t`e.g. Savings — put aside ${amount} each month`,
+      needsDate: false,
+    },
+    {
+      key: 'yearly-allocation',
+      type: GoalType.TARGET_DATE,
+      purpose: GoalPurpose.SAVINGS,
+      icon: <CalendarClock className="h-5 w-5" />,
+      title: t`Yearly Allocation Target`,
+      subtitle: t`Allocate a total amount over a period by a target date`,
+      buildExample: (amount, date) => t`e.g. Vacation — allocate ${amount} total by ${date}`,
+      needsDate: true,
+    },
+    {
+      key: 'yearly-available',
+      type: GoalType.YEARLY,
+      purpose: GoalPurpose.SPENDING,
+      icon: <PiggyBank className="h-5 w-5" />,
+      title: t`Yearly Available Target`,
+      subtitle: t`Have a specific amount available by a target date`,
+      buildExample: (amount, date) => t`e.g. Car registration — need ${amount} ready by ${date}`,
+      needsDate: true,
+    },
+  ];
 
   const isEditing = !!goal;
 
@@ -190,8 +190,10 @@ export function GoalForm({
     <div className="w-full">
       <CardHeader className={asCard ? undefined : 'px-0 sm:px-6'}>
         <CardTitle className="flex items-center gap-2">
-          <Target className="h-5 w-5" />
-          {isEditing ? 'Edit Goal' : 'Create Goal'} for {categoryName}
+          <Trans>
+            <Target className="h-5 w-5" />
+            {isEditing ? t`Edit Goal` : t`Create Goal`}for {categoryName}
+          </Trans>
         </CardTitle>
         <CardDescription>
           <Trans>Choose how you want to track this category.</Trans>
@@ -285,13 +287,13 @@ export function GoalForm({
             />
             <p className="text-xs text-muted-foreground">
               {selectedPreset === 'monthly-available' &&
-                'The available balance you want in this category each month.'}
+                t`The available balance you want in this category each month.`}
               {selectedPreset === 'monthly-allocation' &&
-                'How much you want to assign to this category every month.'}
+                t`How much you want to assign to this category every month.`}
               {selectedPreset === 'yearly-allocation' &&
-                'The total amount to allocate across the period. Monthly target is calculated automatically.'}
+                t`The total amount to allocate across the period. Monthly target is calculated automatically.`}
               {selectedPreset === 'yearly-available' &&
-                'The amount you need available in this category by the target date.'}
+                t`The amount you need available in this category by the target date.`}
             </p>
           </div>
 
@@ -369,13 +371,13 @@ export function GoalForm({
                   onClick={onDelete}
                   disabled={isDeleting}
                 >
-                  {isDeleting ? 'Deleting...' : 'Delete Goal'}
+                  {isDeleting ? t`Deleting...` : t`Delete Goal`}
                 </Button>
               )}
             </div>
             <Button type="submit" disabled={isSaving || isDeleting}>
               <Save className="h-4 w-4 mr-2" />
-              {isSaving ? 'Saving...' : isEditing ? 'Update Goal' : 'Create Goal'}
+              {isSaving ? t`Saving...` : isEditing ? t`Update Goal` : t`Create Goal`}
             </Button>
           </div>
         </form>

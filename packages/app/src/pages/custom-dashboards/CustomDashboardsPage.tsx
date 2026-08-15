@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -26,7 +27,7 @@ import { AddWidgetDialog } from './components/AddWidgetDialog';
 import { PinChartDialog } from './components/PinChartDialog';
 import { EditWidgetChartDialog } from './components/EditWidgetChartDialog';
 
-const DEFAULT_DASHBOARD_NAME = 'My Dashboard';
+const DEFAULT_DASHBOARD_NAME = msg`My Dashboard`;
 
 export default function CustomDashboardsPage() {
   const { t } = useLingui();
@@ -92,7 +93,7 @@ export default function CustomDashboardsPage() {
     }
     defaultCreatedRef.current = true;
     void createDashboardMutation
-      .mutateAsync({ budgetId, name: DEFAULT_DASHBOARD_NAME })
+      .mutateAsync({ budgetId, name: t(DEFAULT_DASHBOARD_NAME) })
       .then((dashboard) => {
         void navigate(`/reports/dashboards/${dashboard.id}`, { replace: true });
       })
@@ -100,7 +101,14 @@ export default function CustomDashboardsPage() {
         defaultCreatedRef.current = false;
         toast.error(getErrorMessage(error, 'Failed to create default dashboard'));
       });
-  }, [budgetId, dashboardsQuery.isLoading, dashboards.length, createDashboardMutation, navigate]);
+  }, [
+    budgetId,
+    dashboardsQuery.isLoading,
+    dashboards.length,
+    createDashboardMutation,
+    navigate,
+    t,
+  ]);
 
   useEffect(() => {
     if (!activeDashboardId || !dashboards.length) return;
@@ -140,7 +148,7 @@ export default function CustomDashboardsPage() {
 
     const created = await createDashboardMutation.mutateAsync({
       budgetId,
-      name: DEFAULT_DASHBOARD_NAME,
+      name: t(DEFAULT_DASHBOARD_NAME),
     });
     await navigate(`/reports/dashboards/${created.id}`, { replace: true });
   };
@@ -285,7 +293,7 @@ export default function CustomDashboardsPage() {
             onClick={() => setIsEditMode((prev) => !prev)}
             disabled={!activeDashboard}
           >
-            {isEditMode ? 'Done Editing' : 'Edit Layout'}
+            {isEditMode ? t`Done Editing` : t`Edit Layout`}
           </Button>
           <Button onClick={() => setAddWidgetDialogOpen(true)} disabled={!activeDashboard}>
             <Trans>Add Widget</Trans>

@@ -1,5 +1,7 @@
 'use client';
 
+import { useLingui } from '@lingui/react/macro';
+
 import { useState, useRef, ChangeEvent, useEffect, useCallback } from 'react';
 import { useBudgets } from '@entities/budget/api/useBudgets';
 import {
@@ -89,6 +91,8 @@ export interface ImportDialogState {
 }
 
 export function useImportDialogState(): ImportDialogState {
+  const { t } = useLingui();
+
   const [currentStep, setCurrentStep] = useState<ImportStep>('upload');
   const [parsedData, setParsedData] = useState<ParsedData | null>(null);
   const [columnMapping, setColumnMapping] = useState<ColumnMapping>({});
@@ -493,7 +497,7 @@ export function useImportDialogState(): ImportDialogState {
         destinationAccountName = selectedAccount?.Name || 'Existing account';
       } else {
         const defaultAccount = await addAccountMutation.mutateAsync({
-          name: 'Import Account',
+          name: t`Import Account`,
           budget_id: budgetId,
           type: 'Checking',
           currency: importConfig.accountCurrency,
@@ -649,6 +653,7 @@ export function useImportDialogState(): ImportDialogState {
       setIsImporting(false);
     }
   }, [
+    t,
     parsedData,
     skippedRowIndices,
     selectedBudget,

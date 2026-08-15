@@ -13,23 +13,23 @@ import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
 
 type RtaMode = 'cumulative' | 'monthly';
 
-const RTA_OPTIONS: { value: RtaMode; title: string; blurb: string }[] = [
-  {
-    value: 'cumulative',
-    title: 'Cumulative',
-    blurb:
-      'All income and assignments add up across all time, so Ready to Assign is one running total that ignores the month you are viewing. Overspending stays inside the category and carries forward.',
-  },
-  {
-    value: 'monthly',
-    title: 'Monthly',
-    blurb:
-      'Ready to Assign reflects money received through the month you are viewing, and a category’s overspending is pulled out of the next month’s Ready to Assign instead of carrying inside the category. This matches what people moving from YNAB expect.',
-  },
-];
-
 function RtaModeCard() {
   const { t } = useLingui();
+
+  const RTA_OPTIONS: { value: RtaMode; title: string; blurb: string }[] = [
+    {
+      value: 'cumulative',
+      title: t`Cumulative`,
+      blurb:
+        'All income and assignments add up across all time, so Ready to Assign is one running total that ignores the month you are viewing. Overspending stays inside the category and carries forward.',
+    },
+    {
+      value: 'monthly',
+      title: t`Monthly`,
+      blurb:
+        'Ready to Assign reflects money received through the month you are viewing, and a category’s overspending is pulled out of the next month’s Ready to Assign instead of carrying inside the category. This matches what people moving from YNAB expect.',
+    },
+  ];
 
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const { data: budgets = [] } = useBudgets();
@@ -48,8 +48,8 @@ function RtaModeCard() {
         onSuccess: () =>
           toast.success(
             next === 'monthly'
-              ? 'Ready to Assign is now calculated monthly'
-              : 'Ready to Assign is now calculated cumulatively'
+              ? t`Ready to Assign is now calculated monthly`
+              : t`Ready to Assign is now calculated cumulatively`
           ),
         onError: () => toast.error(t`Could not change the Ready to Assign calculation`),
       }

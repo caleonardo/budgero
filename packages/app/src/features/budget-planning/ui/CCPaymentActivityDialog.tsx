@@ -96,7 +96,7 @@ export function CCPaymentActivityDialog({
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium tabular-nums">{p.Date}</div>
                     <div className="mt-0.5 line-clamp-2 break-words text-xs text-muted-foreground">
-                      {p.Memo || 'Transfer'}
+                      {p.Memo || t`Transfer`}
                     </div>
                   </div>
                   <div className="shrink-0 text-sm font-semibold tabular-nums text-foreground">

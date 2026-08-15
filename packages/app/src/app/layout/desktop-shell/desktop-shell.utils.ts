@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { capitalize } from '@shared/lib/utils';
 import { BREADCRUMB_LABEL_MAP } from './constants';
 import type { BreadcrumbItem } from './types';
@@ -38,7 +39,7 @@ export function generateBreadcrumbs(
   }
 
   if (crumbs.length === 0) {
-    return [{ href: '/dashboard', label: 'Dashboard', last: true }];
+    return [{ href: '/dashboard', label: t`Dashboard`, last: true }];
   }
 
   return crumbs;

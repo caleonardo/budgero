@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import type { MessageDescriptor } from '@lingui/core';
 import {
   Wallet,
   PiggyBank,
@@ -19,102 +21,102 @@ import { AccountTypeEnum } from '@budgero/core/browser';
 export { AccountTypeEnum };
 
 export interface AccountTypeDefinition {
-  name: string;
+  name: MessageDescriptor;
   category: 'asset' | 'liability';
   budgetType: 'always-on' | 'always-off' | 'flexible';
   color: string; // CSS variable name
   icon: LucideIcon;
-  description: string;
+  description: MessageDescriptor;
 }
 
 export const ACCOUNT_TYPES: Record<AccountTypeEnum, AccountTypeDefinition> = {
   [AccountTypeEnum.CHECKING]: {
-    name: 'Checking',
+    name: msg`Checking`,
     category: 'asset',
     budgetType: 'always-on',
     color: 'var(--color-account-checking)',
     icon: Wallet,
-    description: 'Primary spending account for everyday transactions',
+    description: msg`Primary spending account for everyday transactions`,
   },
   [AccountTypeEnum.SAVINGS]: {
-    name: 'Savings',
+    name: msg`Savings`,
     category: 'asset',
     budgetType: 'always-on',
     color: 'var(--color-account-savings)',
     icon: PiggyBank,
-    description: 'Savings account for storing money and earning interest',
+    description: msg`Savings account for storing money and earning interest`,
   },
   [AccountTypeEnum.CASH]: {
-    name: 'Cash',
+    name: msg`Cash`,
     category: 'asset',
     budgetType: 'always-on',
     color: 'var(--color-account-cash)',
     icon: Coins,
-    description: 'Physical cash and petty cash funds',
+    description: msg`Physical cash and petty cash funds`,
   },
   [AccountTypeEnum.CREDIT]: {
-    name: 'Credit',
+    name: msg`Credit`,
     category: 'liability',
     budgetType: 'flexible',
     color: 'var(--color-account-credit)',
     icon: CreditCard,
-    description: 'Credit cards and revolving credit accounts',
+    description: msg`Credit cards and revolving credit accounts`,
   },
   [AccountTypeEnum.LOAN]: {
-    name: 'Loan',
+    name: msg`Loan`,
     category: 'liability',
     budgetType: 'flexible',
     color: 'var(--color-account-loan)',
     icon: Landmark,
-    description: 'Personal loans, auto loans, and installment debt',
+    description: msg`Personal loans, auto loans, and installment debt`,
   },
   [AccountTypeEnum.MORTGAGE]: {
-    name: 'Mortgage',
+    name: msg`Mortgage`,
     category: 'liability',
     budgetType: 'always-off',
     color: 'var(--color-account-mortgage)',
     icon: Home,
-    description: 'Home mortgage and real estate loans',
+    description: msg`Home mortgage and real estate loans`,
   },
   [AccountTypeEnum.REAL_ESTATE]: {
-    name: 'Real Estate',
+    name: msg`Real Estate`,
     category: 'asset',
     budgetType: 'always-off',
     color: 'var(--color-account-real-estate)',
     icon: Building2,
-    description: 'Property investments and real estate holdings',
+    description: msg`Property investments and real estate holdings`,
   },
   [AccountTypeEnum.OTHER_ASSET]: {
-    name: 'Other Asset',
+    name: msg`Other Asset`,
     category: 'asset',
     budgetType: 'always-off',
     color: 'var(--color-account-other-asset)',
     icon: Package,
-    description: 'Vehicles, collectibles, and other valuable assets',
+    description: msg`Vehicles, collectibles, and other valuable assets`,
   },
   [AccountTypeEnum.INVESTMENT]: {
-    name: 'Investment',
+    name: msg`Investment`,
     category: 'asset',
     budgetType: 'always-off',
     color: 'var(--color-account-investment)',
     icon: TrendingUp,
-    description: 'Brokerage accounts, stocks, bonds, and mutual funds',
+    description: msg`Brokerage accounts, stocks, bonds, and mutual funds`,
   },
   [AccountTypeEnum.RETIREMENT]: {
-    name: 'Retirement',
+    name: msg`Retirement`,
     category: 'asset',
     budgetType: 'always-off',
     color: 'var(--color-account-retirement)',
     icon: Briefcase,
-    description: '401(k), IRA, pension, and other retirement accounts',
+    description: msg`401(k), IRA, pension, and other retirement accounts`,
   },
   [AccountTypeEnum.CRYPTO]: {
-    name: 'Crypto',
+    name: msg`Crypto`,
     category: 'asset',
     budgetType: 'flexible',
     color: 'var(--color-account-investment)',
     icon: Bitcoin,
-    description: 'Wallets and exchange balances held in cryptocurrency',
+    description: msg`Wallets and exchange balances held in cryptocurrency`,
   },
 };
 

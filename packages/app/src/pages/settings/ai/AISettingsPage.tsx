@@ -43,12 +43,12 @@ export default function AISettingsPage() {
       {/* Page Header */}
       <SettingsPageHeader
         title={
-          <>
+          <Trans>
             AI Assistant{' '}
             <span className="text-base font-normal text-muted-foreground">
               <Trans>(Experimental)</Trans>
             </span>
-          </>
+          </Trans>
         }
         description={t`Connect to a local LLM for privacy, or any OpenAI-compatible provider with an API key`}
       />
@@ -193,8 +193,10 @@ export default function AISettingsPage() {
               </p>
               {state.uncategorizedCount > 0 && (
                 <p className="text-xs text-muted-foreground">
-                  {state.uncategorizedCount} transaction{state.uncategorizedCount === 1 ? '' : 's'}{' '}
-                  waiting
+                  <Trans>
+                    {state.uncategorizedCount}transaction{state.uncategorizedCount === 1 ? '' : 's'}{' '}
+                    waiting
+                  </Trans>
                 </p>
               )}
               <Button
@@ -322,8 +324,8 @@ export default function AISettingsPage() {
             </div>
             <p className="text-xs text-muted-foreground">
               {state.chatExecutionMode === 'confirm'
-                ? 'The assistant will ask for confirmation before making changes like adding transactions.'
-                : 'The assistant will automatically execute actions without asking for confirmation.'}
+                ? t`The assistant will ask for confirmation before making changes like adding transactions.`
+                : t`The assistant will automatically execute actions without asking for confirmation.`}
             </p>
 
             <Separator />

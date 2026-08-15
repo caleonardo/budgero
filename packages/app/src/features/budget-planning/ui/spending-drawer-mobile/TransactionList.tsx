@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { memo, useMemo } from 'react';
 import { parseISO } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -138,8 +138,10 @@ const DateCard = memo(function DateCard({
               <div className="flex items-center gap-2 text-xs text-muted-foreground min-w-0">
                 <span className="flex-shrink-0">-</span>
                 <span className="truncate">
-                  {dateTransactions.length} transaction
-                  {dateTransactions.length !== 1 ? 's' : ''}
+                  <Trans>
+                    {dateTransactions.length}transaction
+                    {dateTransactions.length !== 1 ? 's' : ''}
+                  </Trans>
                 </span>
                 <span className="flex-shrink-0">-</span>
                 <span className="font-mono font-medium whitespace-nowrap">
@@ -190,6 +192,8 @@ const TransactionRow = memo(function TransactionRow({
   onRecategorize,
   onDelete,
 }: TransactionRowProps) {
+  const { t } = useLingui();
+
   const signedAmount = getTransactionSignedAmount(transaction);
 
   return (
@@ -202,7 +206,7 @@ const TransactionRow = memo(function TransactionRow({
       <div className="flex items-center justify-between py-2 px-2 rounded-md hover:bg-muted/40 cursor-pointer transition-colors group max-w-full overflow-hidden">
         <div className="flex-1 min-w-0 pr-2">
           <div className="block max-w-[10rem] sm:max-w-[14rem] md:max-w-[18rem] lg:max-w-[22rem] text-[11px] leading-tight text-current truncate">
-            {transaction.Memo || 'No memo'}
+            {transaction.Memo || t`No memo`}
           </div>
           <div className="text-xs text-muted-foreground truncate">{transaction.Account}</div>
         </div>

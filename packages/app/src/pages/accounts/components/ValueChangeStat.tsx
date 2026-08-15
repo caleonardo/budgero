@@ -129,8 +129,10 @@ export function ValueChangeStat({
             <Trans>Value change</Trans>
           </p>
           <p className="text-xs text-muted-foreground">
-            How much this account's worth in {budgetCurrency} moved with exchange rates. Your{' '}
-            {accountCurrency} balance itself is unchanged.
+            <Trans>
+              How much this account's worth in {budgetCurrency}moved with exchange rates. Your{' '}
+              {accountCurrency}balance itself is unchanged.
+            </Trans>
           </p>
         </div>
 
@@ -186,8 +188,8 @@ export function ValueChangeStat({
 
         <p className="text-[11px] text-muted-foreground border-t border-border pt-2">
           {onBudget
-            ? 'This account is on-budget: these changes are included in Ready to Assign.'
-            : 'Tracking-only account: these changes affect net worth but not Ready to Assign.'}
+            ? t`This account is on-budget: these changes are included in Ready to Assign.`
+            : t`Tracking-only account: these changes affect net worth but not Ready to Assign.`}
         </p>
       </PopoverContent>
     </Popover>

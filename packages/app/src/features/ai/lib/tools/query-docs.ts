@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { z } from 'zod';
 import type { ToolExecutionResult } from './types';
 import type { KnowledgeDoc } from '../knowledge/knowledge-base.generated';
@@ -62,7 +63,7 @@ function snippet(doc: KnowledgeDoc, terms: string[]): string {
 export async function executeSearchDocs(args: SearchDocsArgs): Promise<ToolExecutionResult> {
   const terms = tokenize(args.query);
   if (terms.length === 0) {
-    return { success: false, message: 'Empty search query.', error: 'empty query' };
+    return { success: false, message: t`Empty search query.`, error: 'empty query' };
   }
 
   // Lazy-load the (large) knowledge bundle so it stays out of the main chunk.
@@ -77,7 +78,7 @@ export async function executeSearchDocs(args: SearchDocsArgs): Promise<ToolExecu
     const titles = KNOWLEDGE_DOCS.map((d) => d.title).join(', ');
     return {
       success: true,
-      message: `No Budgero docs matched "${args.query}". Available docs: ${titles}. You can answer from general knowledge but say it's not from the official docs.`,
+      message: t`No Budgero docs matched "${args.query}". Available docs: ${titles}. You can answer from general knowledge but say it's not from the official docs.`,
     };
   }
 
@@ -87,7 +88,7 @@ export async function executeSearchDocs(args: SearchDocsArgs): Promise<ToolExecu
 
   return {
     success: true,
-    message: `From Budgero's official docs/policy:\n\n${sections.join('\n\n---\n\n')}`,
+    message: t`From Budgero's official docs/policy:\n\n${sections.join('\n\n---\n\n')}`,
     data: { matched: ranked.map((r) => r.doc.id) },
   };
 }

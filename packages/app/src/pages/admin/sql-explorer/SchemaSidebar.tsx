@@ -35,7 +35,9 @@ export const SchemaSidebar = memo(
                     {table.name}
                   </span>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Badge variant="outline">{table.rowCount.toLocaleString()} rows</Badge>
+                    <Badge variant="outline">
+                      <Trans>{table.rowCount.toLocaleString()}rows</Trans>
+                    </Badge>
                     {isExpanded ? (
                       <ChevronDown className="h-4 w-4" />
                     ) : (

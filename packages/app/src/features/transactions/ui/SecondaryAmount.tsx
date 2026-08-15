@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 
@@ -54,7 +55,7 @@ export function SecondaryAmount({
     </div>
   ) : (
     <div className={className}>
-      ({formatMaskedMilli(accountLocalizer, value, privacyMaskNumbers)} original)
+      <Trans>({formatMaskedMilli(accountLocalizer, value, privacyMaskNumbers)}original)</Trans>
     </div>
   );
 }

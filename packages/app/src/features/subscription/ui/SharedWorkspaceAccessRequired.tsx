@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, CreditCard, LifeBuoy, LockKeyhole } from 'lucide-react';
@@ -13,70 +13,72 @@ interface SharedWorkspaceAccessRequiredProps {
 export default function SharedWorkspaceAccessRequired({
   mode = 'shared-locked',
 }: SharedWorkspaceAccessRequiredProps) {
+  const { t } = useLingui();
+
   const logout = useLogout();
   const isSharedLocked = mode === 'shared-locked';
 
-  const eyebrow = isSharedLocked ? 'Shared Workspace Unavailable' : 'Access Required';
+  const eyebrow = isSharedLocked ? t`Shared Workspace Unavailable` : t`Access Required`;
   const title = isSharedLocked
-    ? 'The workspace owner needs to renew access'
-    : 'Your Budgero plan is inactive';
+    ? t`The workspace owner needs to renew access`
+    : t`Your Budgero plan is inactive`;
   const description = isSharedLocked
-    ? 'You still have a shared workspace membership, but that workspace is locked because the owner no longer has an active Budgero plan.'
-    : 'Your own workspaces are locked because your Budgero plan is no longer active. Subscribe again to regain access.';
+    ? t`You still have a shared workspace membership, but that workspace is locked because the owner no longer has an active Budgero plan.`
+    : t`Your own workspaces are locked because your Budgero plan is no longer active. Subscribe again to regain access.`;
   const primaryCardTitle = isSharedLocked
-    ? 'Ask the owner to resubscribe'
-    : 'Subscribe to unlock your workspaces';
+    ? t`Ask the owner to resubscribe`
+    : t`Subscribe to unlock your workspaces`;
   const primaryCardBody = isSharedLocked
-    ? 'Once the workspace owner renews their plan, your shared workspace access comes back automatically.'
-    : 'Resubscribing restores access to your owned workspaces immediately and lets you create new ones again.';
+    ? t`Once the workspace owner renews their plan, your shared workspace access comes back automatically.`
+    : t`Resubscribing restores access to your owned workspaces immediately and lets you create new ones again.`;
   const secondaryCardTitle = isSharedLocked
-    ? 'Subscribe to unlock your own workspaces'
-    : 'Review workspace status';
+    ? t`Subscribe to unlock your own workspaces`
+    : t`Review workspace status`;
   const PrimaryIcon = isSharedLocked ? LifeBuoy : CreditCard;
   const SecondaryIcon = isSharedLocked ? CreditCard : LockKeyhole;
   const stillAvailableTitle = isSharedLocked
-    ? 'What you can still do'
-    : 'What is still available right now';
+    ? t`What you can still do`
+    : t`What is still available right now`;
   const stillAvailableItems: ReactNode[] = isSharedLocked
     ? [
-        <>
+        <Trans>
           Open{' '}
           <Link to="/settings/workspaces" className="underline underline-offset-2">
             <Trans>workspace settings</Trans>
           </Link>{' '}
           to see which shared workspaces are locked.
-        </>,
-        <>
+        </Trans>,
+        <Trans>
           Manage your{' '}
           <Link to="/settings/subscription" className="underline underline-offset-2">
             <Trans>subscription</Trans>
           </Link>{' '}
           and resubscribe at any time.
-        </>,
-        <>
+        </Trans>,
+        <Trans>
           Open{' '}
           <Link to="/settings/account" className="underline underline-offset-2">
             <Trans>account settings</Trans>
           </Link>{' '}
           and sign out normally.
-        </>,
+        </Trans>,
       ]
     : [
-        <>
+        <Trans>
           Manage your{' '}
           <Link to="/settings/subscription" className="underline underline-offset-2">
             <Trans>subscription</Trans>
           </Link>{' '}
           and resubscribe at any time.
-        </>,
-        <>
+        </Trans>,
+        <Trans>
           Open{' '}
           <Link to="/settings/workspaces" className="underline underline-offset-2">
             <Trans>workspace settings</Trans>
           </Link>{' '}
           to review locked workspaces and any shared access you still have.
-        </>,
-        <>
+        </Trans>,
+        <Trans>
           Open{' '}
           <Link to="/settings/account" className="underline underline-offset-2">
             <Trans>account settings</Trans>
@@ -86,7 +88,7 @@ export default function SharedWorkspaceAccessRequired({
             <Trans>data management</Trans>
           </Link>
           .
-        </>,
+        </Trans>,
       ];
 
   return (
@@ -120,23 +122,23 @@ export default function SharedWorkspaceAccessRequired({
               </div>
               <p>
                 {isSharedLocked ? (
-                  <>
+                  <Trans>
                     If you subscribe, you can immediately regain access to your own workspaces and
                     create new ones from{' '}
                     <Link to="/settings/subscription" className="underline underline-offset-2">
                       <Trans>subscription settings</Trans>
                     </Link>
                     .
-                  </>
+                  </Trans>
                 ) : (
-                  <>
+                  <Trans>
                     Open{' '}
                     <Link to="/settings/workspaces" className="underline underline-offset-2">
                       <Trans>workspace settings</Trans>
                     </Link>{' '}
                     to review locked workspaces and any shared access that is still available to
                     you.
-                  </>
+                  </Trans>
                 )}
               </p>
             </div>

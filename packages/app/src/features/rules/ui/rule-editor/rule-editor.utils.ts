@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type {
   RuleCondition,
   RuleAction,
@@ -237,75 +238,75 @@ export function validateForm(
   actions: RuleFormAction[]
 ): string | null {
   if (!name.trim()) {
-    return 'Give your rule a name so you can recognise it later.';
+    return t`Give your rule a name so you can recognise it later.`;
   }
 
   if (conditions.length === 0) {
-    return 'Add at least one condition to control when the rule runs.';
+    return t`Add at least one condition to control when the rule runs.`;
   }
 
   for (const condition of conditions) {
     if (condition.field === 'amount') {
       if (condition.value === '' || Number.isNaN(Number(condition.value))) {
-        return 'Amount conditions require a numeric value.';
+        return t`Amount conditions require a numeric value.`;
       }
     } else if (condition.field === 'account') {
       if (!condition.value || Number.isNaN(Number(condition.value))) {
-        return 'Select an account for the account condition.';
+        return t`Select an account for the account condition.`;
       }
     } else if (condition.field === 'payee') {
       if (!condition.value.trim()) {
-        return 'Payee conditions cannot be empty.';
+        return t`Payee conditions cannot be empty.`;
       }
     } else if (!condition.value.trim()) {
-      return 'Memo conditions cannot be empty.';
+      return t`Memo conditions cannot be empty.`;
     }
   }
 
   if (actions.length === 0) {
-    return 'Add at least one action for Budgero to perform.';
+    return t`Add at least one action for Budgero to perform.`;
   }
 
   for (const action of actions) {
     switch (action.type) {
       case 'memo.remove_regex':
         if (!action.payload.pattern?.toString().trim()) {
-          return 'Provide a regex pattern for the memo action.';
+          return t`Provide a regex pattern for the memo action.`;
         }
         break;
       case 'memo.set':
         if (typeof action.payload.memo !== 'string') {
-          return 'Enter a memo value for the memo action.';
+          return t`Enter a memo value for the memo action.`;
         }
         break;
       case 'category.set':
         if (!Number.isFinite(Number(action.payload.categoryId))) {
-          return 'Pick a category for the category action.';
+          return t`Pick a category for the category action.`;
         }
         break;
       case 'payee.set':
         if (typeof action.payload.payee !== 'string') {
-          return 'Enter a payee name for the payee action.';
+          return t`Enter a payee name for the payee action.`;
         }
         break;
       case 'account.set':
         if (!Number.isFinite(Number(action.payload.accountId))) {
-          return 'Choose an account for the account action.';
+          return t`Choose an account for the account action.`;
         }
         break;
       case 'amount.set':
         if (action.payload.amount === '' || Number.isNaN(Number(action.payload.amount))) {
-          return 'Provide a valid amount for the set amount action.';
+          return t`Provide a valid amount for the set amount action.`;
         }
         break;
       case 'amount.adjust_value':
         if (action.payload.delta === '' || Number.isNaN(Number(action.payload.delta))) {
-          return 'Provide a numeric delta for the adjust value action.';
+          return t`Provide a numeric delta for the adjust value action.`;
         }
         break;
       case 'amount.adjust_percent':
         if (action.payload.percent === '' || Number.isNaN(Number(action.payload.percent))) {
-          return 'Provide a numeric percentage for the adjust percent action.';
+          return t`Provide a numeric percentage for the adjust percent action.`;
         }
         break;
       default:
@@ -319,9 +320,9 @@ export function validateForm(
 export function getOperatorLabel(operator: string): string {
   switch (operator) {
     case 'regex':
-      return 'Regex match';
+      return t`Regex match`;
     case 'is_not':
-      return 'is not';
+      return t`is not`;
     case 'is':
       return 'is';
     default:

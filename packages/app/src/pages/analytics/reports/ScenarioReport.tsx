@@ -242,15 +242,15 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
         const point = chartedPoints[index];
         if (!point) return '';
         const rows = [
-          { color: scenarioColor, name: 'Balance', value: money.amount(point.balance) },
-          { color: palette.flow.positive, name: 'Income', value: money.amount(point.income) },
-          { color: palette.flow.negative, name: 'Spending', value: money.amount(-point.spending) },
+          { color: scenarioColor, name: t`Balance`, value: money.amount(point.balance) },
+          { color: palette.flow.positive, name: t`Income`, value: money.amount(point.income) },
+          { color: palette.flow.negative, name: t`Spending`, value: money.amount(-point.spending) },
         ];
         for (const oneOff of payload.oneOffs) {
           if (oneOff.monthKey !== point.monthKey || oneOff.amount <= 0) continue;
           rows.push({
             color: oneOff.kind === 'inflow' ? palette.flow.positive : palette.flow.negative,
-            name: oneOff.label.trim() || 'One-off',
+            name: oneOff.label.trim() || t`One-off`,
             value: money.amount(oneOff.kind === 'inflow' ? oneOff.amount : -oneOff.amount),
           });
         }
@@ -290,7 +290,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
     })();
 
     const balanceLine = {
-      name: 'Balance',
+      name: t`Balance`,
       type: 'line' as const,
       data: chartedPoints.map((point) => point.balance / 1000),
       lineStyle: { color: scenarioColor, width: 2 },
@@ -358,7 +358,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
       tooltip,
       series: [
         {
-          name: 'Income',
+          name: t`Income`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartedPoints.map((point) => point.income / 1000),
@@ -371,7 +371,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
           },
         },
         {
-          name: 'One-off in',
+          name: t`One-off in`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartedPoints.map((point) => (point.oneOff > 0 ? point.oneOff / 1000 : 0)),
@@ -384,7 +384,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
           },
         },
         {
-          name: 'Spending',
+          name: t`Spending`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartedPoints.map((point) => -point.spending / 1000),
@@ -397,7 +397,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
           },
         },
         {
-          name: 'One-off out',
+          name: t`One-off out`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartedPoints.map((point) => (point.oneOff < 0 ? point.oneOff / 1000 : 0)),
@@ -412,7 +412,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
         { ...balanceLine, yAxisIndex: 1 },
       ],
     };
-  }, [view, chartedMonths, chartedPoints, payload.oneOffs, palette, money, scenarioColor]);
+  }, [view, chartedMonths, chartedPoints, payload.oneOffs, palette, money, scenarioColor, t]);
 
   // Gross one-off in/out per month (ScenarioPoint carries only the net).
   const oneOffGrossByMonth = useMemo(() => {
@@ -486,8 +486,8 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             onChange={setView}
             ariaLabel="Scenario chart view"
             options={[
-              { value: 'balance', label: 'Balance' },
-              { value: 'flow', label: 'Composition' },
+              { value: 'balance', label: t`Balance` },
+              { value: 'flow', label: t`Composition` },
             ]}
           />
           <Select
@@ -511,7 +511,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                 <Trans>Damped trend (Holt)</Trans>
               </SelectItem>
               <SelectItem value="seasonal" disabled={!seasonalReady}>
-                Seasonal average{seasonalReady ? '' : ' (needs 12+ mo)'}
+                <Trans>Seasonal average{seasonalReady ? '' : t` (needs 12+ mo)`}</Trans>
               </SelectItem>
             </SelectContent>
           </Select>
@@ -536,15 +536,15 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
         view === 'flow' ? (
           <LegendChips
             items={[
-              { color: palette.flow.positive, label: 'Income' },
-              { color: palette.flow.negative, label: 'Spending' },
+              { color: palette.flow.positive, label: t`Income` },
+              { color: palette.flow.negative, label: t`Spending` },
               ...(payload.oneOffs.some((row) => row.kind === 'inflow')
-                ? [{ color: palette.series[4], label: 'One-off in' }]
+                ? [{ color: palette.series[4], label: t`One-off in` }]
                 : []),
               ...(payload.oneOffs.some((row) => row.kind === 'outflow')
-                ? [{ color: palette.series[5], label: 'One-off out' }]
+                ? [{ color: palette.series[5], label: t`One-off out` }]
                 : []),
-              { color: scenarioColor, label: 'Balance' },
+              { color: scenarioColor, label: t`Balance` },
             ]}
           />
         ) : null
@@ -733,7 +733,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
               disabled={!scenarioName.trim() || saveMutation.isPending}
             >
               <Save className="mr-1 h-3.5 w-3.5" />
-              {loadedId ? 'Update' : 'Save'}
+              {loadedId ? t`Update` : t`Save`}
             </Button>
           </div>
           {saveMutation.isError ? (
@@ -766,7 +766,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                         deleteMutation.mutate({ id: record.ID });
                         if (record.ID === loadedId) setLoadedId(null);
                       }}
-                      aria-label={`Delete scenario ${record.Name}`}
+                      aria-label={t`Delete scenario ${record.Name}`}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -785,7 +785,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                 <Trans>Month</Trans>
               </span>
               <span className="sticky top-0 z-10 bg-card pb-1 text-right font-medium uppercase tracking-wide text-muted-foreground">
-                In
+                <Trans>In</Trans>
               </span>
               <span className="sticky top-0 z-10 bg-card pb-1 text-right font-medium uppercase tracking-wide text-muted-foreground">
                 <Trans>Out</Trans>

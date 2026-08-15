@@ -28,10 +28,12 @@ export function LineItemsTable({
     <div className="flex flex-col flex-1 overflow-hidden">
       <div className="flex items-center justify-between py-2">
         <div className="text-sm text-muted-foreground">
-          Found {transactions.length} transactions
-          <Badge variant="outline" className="ml-2">
-            {Math.round(confidence * 100)}% confidence
-          </Badge>
+          <Trans>
+            Found {transactions.length}transactions
+            <Badge variant="outline" className="ml-2">
+              {Math.round(confidence * 100)}% confidence
+            </Badge>
+          </Trans>
         </div>
       </div>
 

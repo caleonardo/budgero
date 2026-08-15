@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { DateRange } from 'react-day-picker';
 import { CenteredLoader } from '@shared/ui/CenteredLoader';
@@ -30,11 +31,13 @@ export const AccountTransactionsSection = React.memo(function AccountTransaction
   onFilteredStatsChange,
   headerActions,
 }: AccountTransactionsSectionProps) {
+  const { t } = useLingui();
+
   if (isTransactionsLoading || isProcessingTransfer) {
     return (
       <CenteredLoader
         className="py-12"
-        label={isProcessingTransfer ? 'Processing transfer...' : 'Loading transactions...'}
+        label={isProcessingTransfer ? t`Processing transfer...` : t`Loading transactions...`}
       />
     );
   }

@@ -40,10 +40,10 @@ export const DeleteBudgetButton: React.FC<DeleteBudgetButtonProps> = ({
       }
       title={t`Are you absolutely sure?`}
       description={
-        <>
+        <Trans>
           This action cannot be undone. This will permanently delete the budget "{budget.Name}" and
           all its associated data.
-        </>
+        </Trans>
       }
       confirmText={t`Delete Budget`}
       loadingText="Deleting..."

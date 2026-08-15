@@ -63,7 +63,9 @@ export const ReportsPanel = memo(
                         <p className="text-xs text-muted-foreground mt-1">{report.description}</p>
                       )}
                       <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                        <span>Updated: {new Date(report.updatedAt).toLocaleDateString()}</span>
+                        <span>
+                          <Trans>Updated: {new Date(report.updatedAt).toLocaleDateString()}</Trans>
+                        </span>
                         {report.isFavorite && (
                           <Badge variant="secondary" className="text-xs">
                             <Trans>Favorite</Trans>

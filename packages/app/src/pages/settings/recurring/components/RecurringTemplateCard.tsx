@@ -1,4 +1,5 @@
-import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { parseISO } from 'date-fns';
 import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -29,19 +30,19 @@ function frequencyLabelFor(schedule: RecurringTransaction['schedule']): string {
     case 'week:1':
       return 'Weekly';
     case 'week:2':
-      return 'Every 2 weeks';
+      return t`Every 2 weeks`;
     case 'month:1':
       return 'Monthly';
     case 'month:2':
-      return 'Every 2 months';
+      return t`Every 2 months`;
     case 'month:3':
       return 'Quarterly';
     case 'month:6':
-      return 'Every 6 months';
+      return t`Every 6 months`;
     case 'year:1':
       return 'Yearly';
     default:
-      return 'Custom cadence';
+      return t`Custom cadence`;
   }
 }
 
@@ -72,9 +73,11 @@ export function RecurringTemplateCard({
   onEdit,
   onDelete,
 }: RecurringTemplateCardProps) {
+  const { t } = useLingui();
+
   const dueLabel = nextOccurrence
     ? formatDistanceToNow(parseISO(nextOccurrence.dueDate), { addSuffix: true })
-    : 'No upcoming dates';
+    : t`No upcoming dates`;
   const amountDisplay = formatRecurringAmount(template, localizer);
   const frequencyLabel = frequencyLabelFor(template.schedule);
 
@@ -89,13 +92,13 @@ export function RecurringTemplateCard({
               {template.name}
               <Badge variant={template.direction === 'inflow' ? 'default' : 'secondary'}>
                 {template.toAccountId != null
-                  ? 'Transfer'
+                  ? t`Transfer`
                   : template.direction === 'inflow'
-                    ? 'Income'
-                    : 'Bill'}
+                    ? t`Income`
+                    : t`Bill`}
               </Badge>
             </CardTitle>
-            <CardDescription>{template.memo || 'No memo provided'}</CardDescription>
+            <CardDescription>{template.memo || t`No memo provided`}</CardDescription>
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-3 self-end sm:mt-0 sm:justify-end sm:self-auto">
             <Badge variant="outline">{amountDisplay}</Badge>
@@ -105,7 +108,7 @@ export function RecurringTemplateCard({
               onClick={() => onToggleActive(!template.active)}
               disabled={isProcessing || isTogglePending}
             >
-              {template.active ? 'Pause' : 'Resume'}
+              {template.active ? t`Pause` : t`Resume`}
             </Button>
           </div>
         </div>
@@ -131,7 +134,7 @@ export function RecurringTemplateCard({
         <div className="grid gap-2 text-sm text-muted-foreground">
           <div>
             <span className="font-medium text-foreground">
-              {template.toAccountId != null ? 'From account:' : 'Account:'}
+              {template.toAccountId != null ? t`From account:` : t`Account:`}
             </span>{' '}
             {accountName}
           </div>
@@ -140,7 +143,7 @@ export function RecurringTemplateCard({
               <span className="font-medium text-foreground">
                 <Trans>To account:</Trans>
               </span>{' '}
-              {toAccountName ?? 'Unknown account'}
+              {toAccountName ?? t`Unknown account`}
             </div>
           ) : (
             <div>
@@ -151,10 +154,12 @@ export function RecurringTemplateCard({
             </div>
           )}
           <div>
-            <span className="font-medium text-foreground">
-              <Trans>Remind me:</Trans>
-            </span>{' '}
-            {template.notifyDaysBefore || 0} day(s) before
+            <Trans>
+              <span className="font-medium text-foreground">
+                <Trans>Remind me:</Trans>
+              </span>{' '}
+              {template.notifyDaysBefore || 0}day(s) before
+            </Trans>
           </div>
         </div>
         <Separator />

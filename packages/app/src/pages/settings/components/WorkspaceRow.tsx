@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -43,6 +43,8 @@ export function WorkspaceRow({
   onSwitch,
   onToggleDefault,
 }: WorkspaceRowProps) {
+  const { t } = useLingui();
+
   const isAccessible = space.invitation_status === 'accepted' && space.is_accessible !== false;
   const isLocked = space.invitation_status === 'accepted' && !isAccessible;
   const canSetDefault = isAccessible;
@@ -50,9 +52,9 @@ export function WorkspaceRow({
   const canDelete = space.role === 'owner' && isAccessible;
   const lockMessage =
     space.access_reason === 'owned_subscription_required'
-      ? 'This workspace is locked because your plan is inactive. Subscribe to regain access.'
+      ? t`This workspace is locked because your plan is inactive. Subscribe to regain access.`
       : space.access_reason === 'shared_owner_inactive'
-        ? 'This shared workspace is locked until the owner renews their plan.'
+        ? t`This shared workspace is locked until the owner renews their plan.`
         : null;
 
   return (
@@ -72,11 +74,13 @@ export function WorkspaceRow({
             autoFocus
           />
         ) : (
-          <div className="text-sm font-medium">{space.display_name || 'Unnamed workspace'}</div>
+          <div className="text-sm font-medium">{space.display_name || t`Unnamed workspace`}</div>
         )}
         <div className="text-xs text-muted-foreground">
-          Role: {space.role}
-          {space.invitation_status !== 'accepted' && ` • ${space.invitation_status}`}
+          <Trans>
+            Role: {space.role}
+            {space.invitation_status !== 'accepted' && ` • ${space.invitation_status}`}
+          </Trans>
         </div>
         {lockMessage ? (
           <div className="flex items-start gap-2 text-xs text-amber-700 dark:text-amber-300">
@@ -122,7 +126,7 @@ export function WorkspaceRow({
           <Button
             variant="ghost"
             size="icon"
-            aria-label={`Delete ${space.display_name || 'workspace'}`}
+            aria-label={t`Delete ${space.display_name || 'workspace'}`}
             onClick={onDelete}
             className="h-8 w-8 text-destructive hover:text-destructive"
           >
@@ -131,7 +135,7 @@ export function WorkspaceRow({
         ) : null}
         {!isActive && isAccessible ? (
           <Button variant="outline" size="sm" disabled={isLoading} onClick={onSwitch}>
-            {isLoading ? <Spinner /> : 'Switch'}
+            {isLoading ? <Spinner /> : t`Switch`}
           </Button>
         ) : null}
         {isLocked && space.access_reason === 'owned_subscription_required' ? (
@@ -147,7 +151,7 @@ export function WorkspaceRow({
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label={isDefault ? 'Clear default workspace' : 'Set as default workspace'}
+                aria-label={isDefault ? t`Clear default workspace` : t`Set as default workspace`}
                 onClick={onToggleDefault}
                 className={cn(
                   'h-8 w-8 text-muted-foreground',
@@ -158,7 +162,7 @@ export function WorkspaceRow({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              {isDefault ? 'Clear default workspace' : 'Set as default workspace'}
+              {isDefault ? t`Clear default workspace` : t`Set as default workspace`}
             </TooltipContent>
           </Tooltip>
         ) : null}

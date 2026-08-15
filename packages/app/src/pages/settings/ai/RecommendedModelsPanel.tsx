@@ -1,8 +1,9 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { RECOMMENDED_TEXT_MODELS, RECOMMENDED_VISION_MODELS } from './ai-settings.constants';
 
 export function RecommendedModelsPanel() {
+  const { t } = useLingui();
   return (
     <Card>
       <CardHeader>
@@ -23,7 +24,7 @@ export function RecommendedModelsPanel() {
               {RECOMMENDED_TEXT_MODELS.map((model) => (
                 <li key={model.name}>
                   <code className="text-xs bg-muted px-1 py-0.5 rounded">{model.name}</code> -{' '}
-                  {model.description}
+                  {t(model.description)}
                 </li>
               ))}
             </ul>
@@ -36,7 +37,7 @@ export function RecommendedModelsPanel() {
               {RECOMMENDED_VISION_MODELS.map((model) => (
                 <li key={model.name}>
                   <code className="text-xs bg-muted px-1 py-0.5 rounded">{model.name}</code> -{' '}
-                  {model.description}
+                  {t(model.description)}
                 </li>
               ))}
             </ul>

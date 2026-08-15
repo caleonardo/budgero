@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type { TransactionSplit } from '@budgero/core/browser';
 
 /**
@@ -71,14 +72,14 @@ export const getSplitCategoryLabel = (split: SplitLike & Record<string, unknown>
     split.CategoryName ||
     split.category ||
     ((split.category_id ?? split.CategoryID)
-      ? `Category #${split.category_id ?? split.CategoryID}`
+      ? t`Category #${String(split.category_id ?? split.CategoryID)}`
       : null);
   if (cat) return String(cat);
   if (split.transfer_account_name || split.TransferAccountName) {
-    return `Transfer to ${split.transfer_account_name || split.TransferAccountName}`;
+    return t`Transfer to ${String(split.transfer_account_name || split.TransferAccountName)}`;
   }
   if (split.transfer_account_id || split.TransferAccountID) {
-    return `Transfer acct #${split.transfer_account_id ?? split.TransferAccountID}`;
+    return t`Transfer acct #${String(split.transfer_account_id ?? split.TransferAccountID)}`;
   }
   return 'Unassigned';
 };

@@ -67,8 +67,8 @@ export function TrialEndingBanner() {
   };
 
   const timeLabel =
-    daysLeft === 0 ? 'Less than a day' : daysLeft === 1 ? '1 day' : `${daysLeft} days`;
-  const message = `${timeLabel} left in your trial`;
+    daysLeft === 0 ? t`Less than a day` : daysLeft === 1 ? '1 day' : `${daysLeft} days`;
+  const message = t`${timeLabel} left in your trial`;
 
   return (
     <div className="bg-amber-500 text-white w-full">

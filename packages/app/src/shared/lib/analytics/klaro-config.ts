@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 /**
  * Klaro consent manager config — app (my.budgero.app).
  *
@@ -34,14 +35,12 @@ export const klaroConfig: KlaroConfig = {
       privacyPolicyUrl: 'https://budgero.app/privacy',
       consentNotice: {
         title: '',
-        description:
-          'We use a couple of cookies for product analytics and ad attribution. Your encrypted budget data is never tracked. Up to you whether to allow these.',
+        description: msg`We use a couple of cookies for product analytics and ad attribution. Your encrypted budget data is never tracked. Up to you whether to allow these.`,
         learnMore: 'Choose what to allow',
       },
       consentModal: {
-        title: 'Cookies on Budgero',
-        description:
-          'Pick which cookies are OK with you. Your encrypted budget data is never tracked either way. You can change this any time from Settings → Security.',
+        title: msg`Cookies on Budgero`,
+        description: msg`Pick which cookies are OK with you. Your encrypted budget data is never tracked either way. You can change this any time from Settings → Security.`,
       },
       acceptAll: 'Accept all',
       acceptSelected: 'Save choices',
@@ -52,15 +51,15 @@ export const klaroConfig: KlaroConfig = {
       poweredBy: '',
       purposes: {
         analytics: {
-          title: 'Product analytics',
-          description: 'Which features get used. No personal or financial data.',
+          title: msg`Product analytics`,
+          description: msg`Which features get used. No personal or financial data.`,
         },
       },
       purposeItem: { service: 'service', services: 'services' },
       service: {
         purpose: 'Purpose',
         purposes: 'Purposes',
-        required: { title: 'Always on', description: 'Required, no consent needed.' },
+        required: { title: msg`Always on`, description: msg`Required, no consent needed.` },
         optOut: { title: '(opt-out)', description: '' },
       },
     },
@@ -69,9 +68,8 @@ export const klaroConfig: KlaroConfig = {
   services: [
     {
       name: 'posthog',
-      title: 'PostHog (EU)',
-      description:
-        'Self-hosted-friendly product analytics. Tracks event names and page views, never amounts or personal data.',
+      title: msg`PostHog (EU)`,
+      description: msg`Self-hosted-friendly product analytics. Tracks event names and page views, never amounts or personal data.`,
       purposes: ['analytics'],
       cookies: [
         [/^ph_/, '/', '.budgero.app'],

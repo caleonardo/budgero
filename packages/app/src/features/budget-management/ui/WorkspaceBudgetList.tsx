@@ -106,7 +106,7 @@ export function WorkspaceBudgetList({
   const handleChangeBudget = (budget: Budget) => {
     if (selectedBudget?.ID !== budget.ID) {
       setSelectedBudget(budget);
-      toast.success(t`Budget switched`, { description: `Switched to "${budget.Name}".` });
+      toast.success(t`Budget switched`, { description: t`Switched to "${budget.Name}".` });
       void navigate('/', { replace: true });
     }
     onItemSelected?.();
@@ -118,11 +118,11 @@ export function WorkspaceBudgetList({
     setStoredDefaultBudgetId(nextId);
     if (nextId) {
       toast.success(t`Default budget set`, {
-        description: `${budget.Name} will open automatically next time.`,
+        description: t`${budget.Name} will open automatically next time.`,
       });
     } else {
       toast.success(t`Default budget cleared`, {
-        description: 'Budgets will open in list order.',
+        description: t`Budgets will open in list order.`,
       });
     }
   };
@@ -137,7 +137,7 @@ export function WorkspaceBudgetList({
         spaceId: space.space_id,
       });
       toast.success(t`Workspace switched`, {
-        description: `You are now in "${space.display_name}".`,
+        description: t`You are now in "${space.display_name}".`,
       });
       void navigate('/', { replace: true });
     } catch (error) {
@@ -166,7 +166,7 @@ export function WorkspaceBudgetList({
       <section className="space-y-1">
         <div className="flex items-center gap-2 px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           <Users className="h-3.5 w-3.5" />
-          <span className="truncate">{activeSpace?.display_name ?? 'Workspace'}</span>
+          <span className="truncate">{activeSpace?.display_name ?? t`Workspace`}</span>
         </div>
 
         {budgetsLoading ? (
@@ -208,7 +208,7 @@ export function WorkspaceBudgetList({
                     <Button
                       variant="ghost"
                       size="icon"
-                      aria-label={isDefault ? 'Clear default budget' : 'Set as default budget'}
+                      aria-label={isDefault ? t`Clear default budget` : t`Set as default budget`}
                       className={cn(
                         'h-6 w-6 text-muted-foreground',
                         isDefault && 'text-amber-500 dark:text-amber-300'

@@ -173,7 +173,7 @@ export function DashboardPageDesktop() {
                 </span>
               </div>
               <div className="text-sm text-muted-foreground">
-                out of {formatMilliAmount(totalAssignedAmount || 0)} budgeted
+                <Trans>out of {formatMilliAmount(totalAssignedAmount || 0)}budgeted</Trans>
               </div>
             </div>
             <SpendingOverviewContent />

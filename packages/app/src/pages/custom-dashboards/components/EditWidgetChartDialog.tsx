@@ -57,7 +57,7 @@ export function EditWidgetChartDialog({
 
   const [form, setForm] = useState<ChartFormData>(DEFAULT_FORM);
   const { isRunning: isSaving, run: runSave } = useAsyncDialogAction({
-    errorMessage: 'Failed to update chart',
+    errorMessage: t`Failed to update chart`,
     onSuccess: () => onOpenChange(false),
   });
 
@@ -89,8 +89,8 @@ export function EditWidgetChartDialog({
     if (!requiredColumnsSelected) {
       toast.error(
         form.chartType === 'stat'
-          ? 'Please select a metric column.'
-          : 'Please select both X and Y axis columns.'
+          ? t`Please select a metric column.`
+          : t`Please select both X and Y axis columns.`
       );
       return;
     }
@@ -118,7 +118,10 @@ export function EditWidgetChartDialog({
             <Trans>Edit Chart</Trans>
           </DialogTitle>
           <DialogDescription>
-            Update the selected chart widget configuration{reportName ? ` for ${reportName}` : ''}.
+            <Trans>
+              Update the selected chart widget configuration{reportName ? ` for ${reportName}` : ''}
+              .
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -185,7 +188,7 @@ export function EditWidgetChartDialog({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {form.chartType !== 'stat' && (
               <div className="space-y-2">
-                <Label>{form.chartType === 'pie' ? 'Labels' : 'X-Axis'} *</Label>
+                <Label>{form.chartType === 'pie' ? t`Labels` : t`X-Axis`} *</Label>
                 <Select
                   value={form.xAxisColumn}
                   onValueChange={(value) => setForm((prev) => ({ ...prev, xAxisColumn: value }))}
@@ -207,10 +210,10 @@ export function EditWidgetChartDialog({
             <div className={form.chartType === 'stat' ? 'sm:col-span-2 space-y-2' : 'space-y-2'}>
               <Label>
                 {form.chartType === 'pie'
-                  ? 'Values'
+                  ? t`Values`
                   : form.chartType === 'stat'
-                    ? 'Metric Column'
-                    : 'Y-Axis'}{' '}
+                    ? t`Metric Column`
+                    : t`Y-Axis`}{' '}
                 *
               </Label>
               <Select
@@ -305,7 +308,7 @@ export function EditWidgetChartDialog({
             <Trans>Cancel</Trans>
           </Button>
           <Button onClick={() => void handleSave()} disabled={isSaving || !requiredColumnsSelected}>
-            {isSaving ? 'Saving...' : 'Update Chart'}
+            {isSaving ? t`Saving...` : t`Update Chart`}
           </Button>
         </DialogFooter>
       </DialogContent>

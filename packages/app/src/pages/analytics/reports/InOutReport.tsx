@@ -124,15 +124,15 @@ export function InOutReport({ data, months }: InOutReportProps) {
             const point = points[items[0]?.dataIndex ?? 0];
             if (!point) return '';
             return tooltipHtml(shortMonthLabel(point.monthKey), [
-              { color: netColor, name: 'Net', value: money.amount(point.net) },
-              { color: inColor, name: 'Money in', value: money.amount(point.income) },
-              { color: outColor, name: 'Money out', value: money.amount(-point.spending) },
+              { color: netColor, name: t`Net`, value: money.amount(point.net) },
+              { color: inColor, name: t`Money in`, value: money.amount(point.income) },
+              { color: outColor, name: t`Money out`, value: money.amount(-point.spending) },
             ]);
           },
         },
         series: [
           {
-            name: 'Money in',
+            name: t`Money in`,
             type: 'bar',
             stack: 'flow',
             data: points.map((point) => point.income / 1000),
@@ -140,7 +140,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
             itemStyle: { color: inColor, borderRadius: BAR_RADIUS_TOP },
           },
           {
-            name: 'Money out',
+            name: t`Money out`,
             type: 'bar',
             stack: 'flow',
             data: points.map((point) => -point.spending / 1000),
@@ -148,7 +148,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
             itemStyle: { color: outColor, borderRadius: BAR_RADIUS_BOTTOM },
           },
           {
-            name: 'Net',
+            name: t`Net`,
             type: 'line',
             data: points.map((point) => point.net / 1000),
             lineStyle: { color: netColor, width: 2 },
@@ -184,7 +184,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
           return tooltipHtml(shortMonthLabel(months[index]), [
             {
               color: rate !== null && rate >= 0 ? palette.flow.positive : palette.flow.negative,
-              name: 'Savings rate',
+              name: t`Savings rate`,
               value: rate === null ? 'no income' : `${rate.toFixed(1)}%`,
             },
           ]);
@@ -192,7 +192,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
       },
       series: [
         {
-          name: 'Savings rate',
+          name: t`Savings rate`,
           type: 'line',
           data: monthlyRates,
           lineStyle: { color: palette.series[0], width: 2 },
@@ -231,7 +231,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
         },
       ],
     };
-  }, [mode, months, points, monthlyRates, target, palette, money, inColor, outColor, netColor]);
+  }, [mode, months, points, monthlyRates, target, palette, money, inColor, outColor, netColor, t]);
 
   const monthlyRows = useMemo(() => [...points].reverse().slice(0, 12), [points]);
 
@@ -277,8 +277,8 @@ export function InOutReport({ data, months }: InOutReportProps) {
             onChange={setMode}
             ariaLabel="In vs Out chart mode"
             options={[
-              { value: 'flow', label: 'Inflow vs Outflow', icon: Layers },
-              { value: 'rate', label: 'Savings rate', icon: Percent },
+              { value: 'flow', label: t`Inflow vs Outflow`, icon: Layers },
+              { value: 'rate', label: t`Savings rate`, icon: Percent },
             ]}
           />
         </>
@@ -288,9 +288,9 @@ export function InOutReport({ data, months }: InOutReportProps) {
         mode === 'flow' ? (
           <LegendChips
             items={[
-              { color: inColor, label: 'Money in' },
-              { color: outColor, label: 'Money out' },
-              { color: netColor, label: 'Net' },
+              { color: inColor, label: t`Money in` },
+              { color: outColor, label: t`Money out` },
+              { color: netColor, label: t`Net` },
             ]}
           />
         ) : null

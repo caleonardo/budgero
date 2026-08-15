@@ -123,7 +123,7 @@ export default function AutomationRulesPage() {
           enabled: values.enabled,
           runOrder: values.runOrder,
         });
-        toast.success(t`Rule created`, { description: 'Your automation rule is ready to run.' });
+        toast.success(t`Rule created`, { description: t`Your automation rule is ready to run.` });
       } else if (editingRule) {
         await updateRule.mutateAsync({
           id: editingRule.id,
@@ -138,7 +138,7 @@ export default function AutomationRulesPage() {
             runOrder: values.runOrder,
           },
         });
-        toast.success(t`Rule updated`, { description: 'Changes saved successfully.' });
+        toast.success(t`Rule updated`, { description: t`Changes saved successfully.` });
       }
 
       setEditorOpen(false);
@@ -155,10 +155,10 @@ export default function AutomationRulesPage() {
         budgetId,
         patch: { enabled: nextEnabled },
       });
-      toast.success(nextEnabled ? 'Rule enabled' : 'Rule paused', {
+      toast.success(nextEnabled ? t`Rule enabled` : t`Rule paused`, {
         description: nextEnabled
-          ? 'New matching transactions will run through this rule.'
-          : 'Automation paused until you re-enable it.',
+          ? t`New matching transactions will run through this rule.`
+          : t`Automation paused until you re-enable it.`,
       });
     } catch (error) {
       toastError('Unable to update rule', error, 'Toggle failed. Try again.');
@@ -207,7 +207,7 @@ export default function AutomationRulesPage() {
     if (!budgetId) return;
     try {
       await deleteRule.mutateAsync({ id: rule.id, budgetId });
-      toast.success(t`Rule deleted`, { description: 'Automation removed successfully.' });
+      toast.success(t`Rule deleted`, { description: t`Automation removed successfully.` });
     } catch (error) {
       toastError('Unable to delete rule', error, 'Please try again.');
     }
@@ -267,7 +267,7 @@ export default function AutomationRulesPage() {
       }
       setRunOverlay((prev) => ({ ...prev, phase: 'done', undoResult: result }));
       toast.success(t`Run undone`, {
-        description: 'Transactions were restored to their previous values.',
+        description: t`Transactions were restored to their previous values.`,
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Unable to undo run.');
@@ -353,7 +353,7 @@ export default function AutomationRulesPage() {
           {orderedRules.map((rule) => {
             const lastRunLabel = rule.lastRunAt
               ? formatDistanceToNow(new Date(rule.lastRunAt), { addSuffix: true })
-              : 'Never';
+              : t`Never`;
             const isOneTimeConsumed = rule.mode === 'one_time' && rule.oneTimeConsumed;
 
             return (
@@ -371,10 +371,10 @@ export default function AutomationRulesPage() {
                         {rule.name}
                         <Badge variant={rule.mode === 'one_time' ? 'secondary' : 'outline'}>
                           {rule.mode === 'one_time'
-                            ? 'One time'
+                            ? t`One time`
                             : rule.mode === 'autofill'
-                              ? 'Autofill'
-                              : 'Continuous'}
+                              ? t`Autofill`
+                              : t`Continuous`}
                         </Badge>
                       </CardTitle>
                       {rule.description ? (
@@ -429,14 +429,16 @@ export default function AutomationRulesPage() {
                       onClick={() => handleExecute(rule, 'manual')}
                       disabled={!!executingCurrent && executingCurrent !== rule.id}
                     >
-                      {executeRule.isPending &&
-                      executingCurrent === rule.id &&
-                      executingTrigger === 'manual' ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <Play className="mr-2 h-4 w-4" />
-                      )}
-                      Run now
+                      <Trans>
+                        {executeRule.isPending &&
+                        executingCurrent === rule.id &&
+                        executingTrigger === 'manual' ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Play className="mr-2 h-4 w-4" />
+                        )}
+                        Run now
+                      </Trans>
                     </Button>
                     <ConfirmDialog
                       trigger={
@@ -449,14 +451,16 @@ export default function AutomationRulesPage() {
                             (!!executingCurrent && executingCurrent !== rule.id)
                           }
                         >
-                          {executeRule.isPending &&
-                          executingCurrent === rule.id &&
-                          executingTrigger === 'retroactive' ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : (
-                            <Rocket className="mr-2 h-4 w-4" />
-                          )}
-                          Retro run
+                          <Trans>
+                            {executeRule.isPending &&
+                            executingCurrent === rule.id &&
+                            executingTrigger === 'retroactive' ? (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                              <Rocket className="mr-2 h-4 w-4" />
+                            )}
+                            Retro run
+                          </Trans>
                         </Button>
                       }
                       title={t`Run this rule on past transactions?`}
@@ -559,7 +563,7 @@ function DeleteRuleButton({
           </Trans>
         </Button>
       }
-      title={<>Delete “{rule.name}”?</>}
+      title={<Trans>Delete “{rule.name}”?</Trans>}
       description={t`This rule and its history will be removed. Recent runs can still be undone from the global undo menu.`}
       confirmText={t`Delete rule`}
       variant="destructive"

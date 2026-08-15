@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { ArrowUpRight, ArrowDownRight, CheckCircle2 } from 'lucide-react';
@@ -25,6 +25,8 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
   formatter,
   valueChangeSlot,
 }: AccountSummaryCardsProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-3 mb-4">
       <div className="flex items-center gap-6 flex-wrap">
@@ -41,18 +43,18 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
 
         <FlowStat
           icon={ArrowUpRight}
-          label="Inflow"
+          label={t`Inflow`}
           value={formatMilli(formatter, asMilli(transactionStats.totalInflow))}
           color="success"
-          tooltip={`Total inflow from recent ${transactionStats.recentCount} transactions`}
+          tooltip={t`Total inflow from recent ${transactionStats.recentCount} transactions`}
         />
 
         <FlowStat
           icon={ArrowDownRight}
-          label="Outflow"
+          label={t`Outflow`}
           value={formatMilli(formatter, asMilli(transactionStats.totalOutflow))}
           color="destructive"
-          tooltip={`Total outflow from recent ${transactionStats.recentCount} transactions`}
+          tooltip={t`Total outflow from recent ${transactionStats.recentCount} transactions`}
         />
 
         {valueChangeSlot && (

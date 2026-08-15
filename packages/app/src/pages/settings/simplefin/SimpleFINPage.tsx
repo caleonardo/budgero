@@ -131,8 +131,8 @@ export default function SimpleFINPage() {
           </CardTitle>
           <CardDescription>
             {isConnected
-              ? 'Your SimpleFIN Bridge connection is active.'
-              : 'Connect to SimpleFIN Bridge to sync your bank accounts.'}
+              ? t`Your SimpleFIN Bridge connection is active.`
+              : t`Connect to SimpleFIN Bridge to sync your bank accounts.`}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -152,18 +152,22 @@ export default function SimpleFINPage() {
                     </Trans>
                   </p>
                   {credentials?.createdAt && (
-                    <p>Connected: {formatDate(new Date(credentials.createdAt))}</p>
+                    <p>
+                      <Trans>Connected: {formatDate(new Date(credentials.createdAt))}</Trans>
+                    </p>
                   )}
                 </div>
               )}
               <div className="flex gap-2">
                 <Button variant="outline" onClick={refresh} disabled={isFetching}>
-                  {isFetching ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                  )}
-                  Refresh
+                  <Trans>
+                    {isFetching ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                    )}
+                    Refresh
+                  </Trans>
                 </Button>
                 <Button variant="destructive" onClick={() => setShowDisconnectDialog(true)}>
                   <Trans>
@@ -177,18 +181,20 @@ export default function SimpleFINPage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  To connect, you need a SimpleFIN setup token. Get one from{' '}
-                  <a
-                    href="https://beta-bridge.simplefin.org/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline inline-flex items-center gap-1"
-                  >
-                    <Trans>
-                      SimpleFIN Bridge
-                      <ExternalLink className="h-3 w-3" />
-                    </Trans>
-                  </a>
+                  <Trans>
+                    To connect, you need a SimpleFIN setup token. Get one from{' '}
+                    <a
+                      href="https://beta-bridge.simplefin.org/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-1"
+                    >
+                      <Trans>
+                        SimpleFIN Bridge
+                        <ExternalLink className="h-3 w-3" />
+                      </Trans>
+                    </a>
+                  </Trans>
                 </p>
                 <Input
                   type="text"
@@ -204,12 +210,14 @@ export default function SimpleFINPage() {
                 )}
               </div>
               <Button onClick={handleConnect} disabled={isClaiming || !setupToken.trim()}>
-                {isClaiming ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
-                )}
-                Connect
+                <Trans>
+                  {isClaiming ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                  )}
+                  Connect
+                </Trans>
               </Button>
             </div>
           )}
@@ -304,7 +312,7 @@ export default function SimpleFINPage() {
                         }}
                       >
                         <TableCell>
-                          <div className="font-medium">{account.org.name || 'Unknown'}</div>
+                          <div className="font-medium">{account.org.name || t`Unknown`}</div>
                           {account.org.domain && (
                             <div className="text-xs text-muted-foreground">
                               {account.org.domain}

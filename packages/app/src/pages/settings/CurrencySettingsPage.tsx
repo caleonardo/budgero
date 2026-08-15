@@ -260,11 +260,11 @@ function RateFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[90dvh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{editing ? 'Edit Exchange Rate' : 'Add Exchange Rate'}</DialogTitle>
+          <DialogTitle>{editing ? t`Edit Exchange Rate` : t`Add Exchange Rate`}</DialogTitle>
           <DialogDescription>
             {editing
-              ? 'Update the rate and date range. Affected transactions will be recalculated.'
-              : 'Set a custom exchange rate for a specific date range.'}
+              ? t`Update the rate and date range. Affected transactions will be recalculated.`
+              : t`Set a custom exchange rate for a specific date range.`}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-5 py-1">
@@ -287,7 +287,9 @@ function RateFormDialog({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">To</Label>
+                <Label className="text-sm">
+                  <Trans>To</Trans>
+                </Label>
                 <CurrencySelector
                   value={formData.toCurrency}
                   onValueChange={(v) => setFormData((f) => ({ ...f, toCurrency: v }))}
@@ -331,11 +333,11 @@ function RateFormDialog({
                     const parsed = Number.parseFloat(formData.rate);
                     if (!Number.isFinite(parsed) || parsed <= 0) return null;
                     return (
-                      <>
-                        {' · '}the reverse (1 {formData.toCurrency} ={' '}
+                      <Trans>
+                        {' · '}the reverse (1 {formData.toCurrency}={' '}
                         {Number((1 / parsed).toFixed(EXCHANGE_RATE_PRECISION))}{' '}
                         {formData.fromCurrency}) is applied automatically
-                      </>
+                      </Trans>
                     );
                   })()}
               </p>
@@ -360,10 +362,12 @@ function RateFormDialog({
                     />
                     <div>
                       <Label htmlFor="also-reverse-rate" className="text-sm font-normal">
-                        Also add the reverse rate
-                        {reverseValue !== null
-                          ? ` (1 ${formData.toCurrency} = ${reverseValue} ${formData.fromCurrency})`
-                          : ''}
+                        <Trans>
+                          Also add the reverse rate
+                          {reverseValue !== null
+                            ? ` (1 ${formData.toCurrency} = ${reverseValue} ${formData.fromCurrency})`
+                            : ''}
+                        </Trans>
                       </Label>
                       {!formData.alsoReverse && (
                         <p className="text-xs text-muted-foreground">
@@ -393,12 +397,12 @@ function RateFormDialog({
               />
               <DateField
                 label={
-                  <>
+                  <Trans>
                     End Date{' '}
                     <span className="font-normal text-muted-foreground">
                       <Trans>(optional)</Trans>
                     </span>
-                  </>
+                  </Trans>
                 }
                 value={formData.endDate}
                 emptyLabel="Open-ended"
@@ -413,7 +417,7 @@ function RateFormDialog({
             <Trans>Cancel</Trans>
           </Button>
           <Button onClick={onSave} disabled={isSaving}>
-            {isSaving ? 'Saving...' : editing ? 'Update' : 'Add'}
+            {isSaving ? t`Saving...` : editing ? t`Update` : t`Add`}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -460,16 +464,16 @@ export default function CurrencySettingsPage() {
     const rateNum = parseFloat(formData.rate);
     if (!formData.fromCurrency || !formData.toCurrency || isNaN(rateNum) || rateNum <= 0) {
       toast.error(t`Invalid input`, {
-        description: 'Please fill in all required fields with valid values.',
+        description: t`Please fill in all required fields with valid values.`,
       });
       return;
     }
     if (formData.fromCurrency === formData.toCurrency) {
-      toast.error(t`Same currency`, { description: 'From and To currencies must be different.' });
+      toast.error(t`Same currency`, { description: t`From and To currencies must be different.` });
       return;
     }
     if (!formData.startDate) {
-      toast.error(t`Missing start date`, { description: 'Please specify a start date.' });
+      toast.error(t`Missing start date`, { description: t`Please specify a start date.` });
       return;
     }
 
@@ -493,7 +497,7 @@ export default function CurrencySettingsPage() {
                   one: `# transaction recalculated.`,
                   other: `# transactions recalculated.`,
                 })
-              : 'No transactions were affected.',
+              : t`No transactions were affected.`,
         });
       } else {
         const result = await addMutation.mutateAsync({
@@ -513,13 +517,13 @@ export default function CurrencySettingsPage() {
                   one: `# transaction recalculated.`,
                   other: `# transactions recalculated.`,
                 })
-              : 'Rate saved. New transactions will use this rate.',
+              : t`Rate saved. New transactions will use this rate.`,
         });
       }
       setDialogOpen(false);
     } catch (err) {
       console.error('Failed to save rate:', err);
-      toast.error(t`Failed to save`, { description: 'An error occurred while saving the rate.' });
+      toast.error(t`Failed to save`, { description: t`An error occurred while saving the rate.` });
     }
   };
 
@@ -538,12 +542,12 @@ export default function CurrencySettingsPage() {
                 one: `# transaction recalculated using fallback rates.`,
                 other: `# transactions recalculated using fallback rates.`,
               })
-            : 'No transactions were affected.',
+            : t`No transactions were affected.`,
       });
     } catch (err) {
       console.error('Failed to delete rate:', err);
       toast.error(t`Failed to delete`, {
-        description: 'An error occurred while deleting the rate.',
+        description: t`An error occurred while deleting the rate.`,
       });
     } finally {
       setDeleteTarget(null);
@@ -610,7 +614,9 @@ export default function CurrencySettingsPage() {
                     <TableHead>
                       <Trans>From</Trans>
                     </TableHead>
-                    <TableHead>To</TableHead>
+                    <TableHead>
+                      <Trans>To</Trans>
+                    </TableHead>
                     <TableHead className="text-right">
                       <Trans>Rate</Trans>
                     </TableHead>
@@ -734,11 +740,11 @@ export default function CurrencySettingsPage() {
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         title={t`Delete custom rate?`}
         description={
-          <>
-            This will delete the {deleteTarget?.FromCurrency} → {deleteTarget?.ToCurrency} rate (
-            {deleteTarget?.StartDate} – {deleteTarget?.EndDate || 'open'}). Affected transactions
+          <Trans>
+            This will delete the {deleteTarget?.FromCurrency}→ {deleteTarget?.ToCurrency}rate (
+            {deleteTarget?.StartDate}– {deleteTarget?.EndDate || 'open'}). Affected transactions
             will be recalculated using fallback rates.
-          </>
+          </Trans>
         }
         confirmText={t`Delete`}
         loadingText="Deleting..."

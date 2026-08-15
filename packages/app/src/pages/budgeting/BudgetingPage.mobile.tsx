@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -19,6 +19,8 @@ import { useClearCategorySelectionOnMount } from '@shared/hooks/useClearCategory
 import { useNavigateMonth } from '@shared/hooks/useNavigateMonth';
 
 export function BudgetingPageMobile() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
   const currentMonth = useUiStore((state) => state.currentMonth);
@@ -66,7 +68,7 @@ export function BudgetingPageMobile() {
   }
 
   const contextButtonLabel =
-    selectedCategories.length > 0 ? `Context (${selectedCategories.length})` : 'View context';
+    selectedCategories.length > 0 ? t`Context (${selectedCategories.length})` : t`View context`;
 
   return (
     <div className="flex h-[calc(100dvh-6rem)] flex-col p-4">

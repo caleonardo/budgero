@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -10,6 +11,8 @@ import { toast } from 'sonner';
  * 'upload' step; the warranties page sets a preview directly).
  */
 export function useReceiptCamera(onCapture: (file: File) => void) {
+  const { t } = useLingui();
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -54,12 +57,12 @@ export function useReceiptCamera(onCapture: (file: File) => void) {
       setCameraActive(true);
       return true;
     } catch {
-      toast.error('Camera access denied', {
-        description: 'Please allow camera access or use file upload instead.',
+      toast.error(t`Camera access denied`, {
+        description: t`Please allow camera access or use file upload instead.`,
       });
       return false;
     }
-  }, []);
+  }, [t]);
 
   const capturePhoto = useCallback(() => {
     if (!videoRef.current || !canvasRef.current) return;

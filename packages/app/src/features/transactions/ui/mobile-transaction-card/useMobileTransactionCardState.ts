@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useMemo } from 'react';
 import type { GetTransactionsByAccountRow, TransactionSplit } from '@budgero/core/browser';
 import {
@@ -31,6 +32,8 @@ export function useMobileTransactionCardState({
   forceExpand = false,
   forceLoadSplits = false,
 }: UseMobileTransactionCardStateProps) {
+  const { t } = useLingui();
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [editSplits, setEditSplits] = useState<SplitLine[] | null>(null);
   // Edited transaction total while in split edit mode; null = keep current total
@@ -176,7 +179,7 @@ export function useMobileTransactionCardState({
 
     if (currentParentAmount !== newTotal) {
       // Update parent transaction amount before saving splits
-      const column = isInflowType ? 'InflowConverted' : 'OutflowConverted';
+      const column = isInflowType ? t`InflowConverted` : t`OutflowConverted`;
       await updateTransactionColumn.mutateAsync({
         transactionId: transaction.ID,
         column,

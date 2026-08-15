@@ -46,49 +46,49 @@ export default function AppearancePage() {
   const classicFontOptions: { id: ClassicFontId; label: string; sampleFamily: string }[] = [
     {
       id: 'fira-code',
-      label: 'Fira Code',
+      label: t`Fira Code`,
       sampleFamily:
         "'Fira Code', 'Fira Code Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
     },
     {
       id: 'ibm-plex-mono',
-      label: 'IBM Plex Mono',
+      label: t`IBM Plex Mono`,
       sampleFamily:
         "'IBM Plex Mono', 'Fira Code', 'Fira Code Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
     },
     {
       id: 'montserrat',
-      label: 'Montserrat',
+      label: t`Montserrat`,
       sampleFamily:
         "'Montserrat', 'Fira Code', 'Fira Code Variable', ui-sans-serif, system-ui, sans-serif",
     },
     {
       id: 'exo-2',
-      label: 'Exo 2',
+      label: t`Exo 2`,
       sampleFamily:
         "'Exo 2', 'Fira Code', 'Fira Code Variable', ui-sans-serif, system-ui, sans-serif",
     },
     {
       id: 'azeret',
-      label: 'Azeret Mono',
+      label: t`Azeret Mono`,
       sampleFamily:
         "'Azeret Mono', 'Fira Code', 'Fira Code Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
     },
     {
       id: 'inter',
-      label: 'Inter',
+      label: t`Inter`,
       sampleFamily:
         "'Inter', 'Fira Code', 'Fira Code Variable', ui-sans-serif, system-ui, sans-serif",
     },
     {
       id: 'roboto',
-      label: 'Roboto',
+      label: t`Roboto`,
       sampleFamily:
         "'Roboto', 'Fira Code', 'Fira Code Variable', ui-sans-serif, system-ui, sans-serif",
     },
     {
       id: 'poppins',
-      label: 'Poppins',
+      label: t`Poppins`,
       sampleFamily:
         "'Poppins', 'Fira Code', 'Fira Code Variable', ui-sans-serif, system-ui, sans-serif",
     },
@@ -201,11 +201,13 @@ export default function AppearancePage() {
             </div>
           ) : (
             <div className="rounded-md border border-dashed border-border/60 bg-muted/30 p-4 text-sm text-muted-foreground">
-              Switch to the{' '}
-              <span className="font-medium text-foreground">
-                <Trans>Budgero Classic</Trans>
-              </span>{' '}
-              theme to choose a custom font.
+              <Trans>
+                Switch to the{' '}
+                <span className="font-medium text-foreground">
+                  <Trans>Budgero Classic</Trans>
+                </span>{' '}
+                theme to choose a custom font.
+              </Trans>
             </div>
           )}
         </CardContent>
@@ -235,18 +237,18 @@ export default function AppearancePage() {
               [
                 {
                   value: 'cards',
-                  title: 'Card layout',
-                  description: 'Rich cards with goal details and drag-and-drop ordering.',
+                  title: t`Card layout`,
+                  description: t`Rich cards with goal details and drag-and-drop ordering.`,
                 },
                 {
                   value: 'compact',
-                  title: 'Compact cards',
-                  description: 'Denser card layout with column summaries for faster scanning.',
+                  title: t`Compact cards`,
+                  description: t`Denser card layout with column summaries for faster scanning.`,
                 },
                 {
                   value: 'table',
-                  title: 'Table view',
-                  description: 'Spreadsheet-style table with collapsible groups and goal column.',
+                  title: t`Table view`,
+                  description: t`Spreadsheet-style table with collapsible groups and goal column.`,
                 },
               ] satisfies { value: DesktopBudgetLayout; title: string; description: string }[]
             ).map((option) => {
@@ -318,18 +320,18 @@ export default function AppearancePage() {
                 [
                   {
                     value: 'cards',
-                    title: 'Cards',
-                    description: 'Full cards with all details visible.',
+                    title: t`Cards`,
+                    description: t`Full cards with all details visible.`,
                   },
                   {
                     value: 'compact',
-                    title: 'Compact cards',
-                    description: 'Smaller cards, Activity hidden.',
+                    title: t`Compact cards`,
+                    description: t`Smaller cards, Activity hidden.`,
                   },
                   {
                     value: 'table',
-                    title: 'Table',
-                    description: 'Minimal rows, tap to expand.',
+                    title: t`Table`,
+                    description: t`Minimal rows, tap to expand.`,
                   },
                 ] satisfies { value: MobileBudgetLayout; title: string; description: string }[]
               ).map((option) => {
@@ -372,23 +374,23 @@ export default function AppearancePage() {
               [
                 {
                   value: 'dashboard',
-                  label: 'Dashboard',
-                  description: 'At-a-glance overview of balances, spending, and goals.',
+                  label: t`Dashboard`,
+                  description: t`At-a-glance overview of balances, spending, and goals.`,
                 },
                 {
                   value: 'planning',
-                  label: 'Planning',
-                  description: 'Jump straight into the budgeting workspace to assign funds.',
+                  label: t`Planning`,
+                  description: t`Jump straight into the budgeting workspace to assign funds.`,
                 },
                 {
                   value: 'accounts',
-                  label: 'All Accounts',
-                  description: 'Review account balances and transactions first.',
+                  label: t`All Accounts`,
+                  description: t`Review account balances and transactions first.`,
                 },
                 {
                   value: 'analytics',
-                  label: 'Analytics',
-                  description: 'Open the prebuilt reports for deeper insights.',
+                  label: t`Analytics`,
+                  description: t`Open the prebuilt reports for deeper insights.`,
                 },
               ] satisfies { value: HomePageOption; label: string; description: string }[]
             ).map((option) => {
@@ -435,10 +437,10 @@ export default function AppearancePage() {
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
                 {installSupport === 'manual-ios'
-                  ? 'Safari does not allow apps to trigger installation automatically. Follow these steps:'
+                  ? t`Safari does not allow apps to trigger installation automatically. Follow these steps:`
                   : installSupport === 'manual-firefox'
-                    ? 'Firefox does not expose the install prompt on desktop. Use the menu instructions below:'
-                    : 'Your browser does not support the automatic install prompt. You can still try manual installation:'}
+                    ? t`Firefox does not expose the install prompt on desktop. Use the menu instructions below:`
+                    : t`Your browser does not support the automatic install prompt. You can still try manual installation:`}
               </p>
               <pre className="rounded-md border border-border/70 bg-muted/40 p-3 text-sm text-muted-foreground whitespace-pre-wrap">
                 {installInstructions}

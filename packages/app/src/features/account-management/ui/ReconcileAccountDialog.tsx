@@ -117,7 +117,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
         const isInflow = difference > 0;
         const amount = asMilli(Math.abs(difference));
         toast.success(
-          `Account reconciled successfully. ${isInflow ? 'Added' : 'Removed'} ${formatMilli(accountLocalizer, amount)}`
+          t`Account reconciled successfully. ${isInflow ? 'Added' : 'Removed'} ${formatMilli(accountLocalizer, amount)}`
         );
       } else {
         toast.success(t`Account reconciled successfully. Balance matches - no adjustment needed.`);
@@ -266,7 +266,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
             <Trans>Cancel</Trans>
           </Button>
           <Button onClick={handleSubmit} disabled={actualBalance === null || isSubmitting}>
-            {isSubmitting ? 'Reconciling...' : 'Reconcile Account'}
+            {isSubmitting ? t`Reconciling...` : t`Reconcile Account`}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { parseISO, differenceInCalendarDays, subDays } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -37,6 +37,8 @@ export function CashflowTrendCard({
   startDate,
   endDate,
 }: CashflowTrendCardProps) {
+  const { t } = useLingui();
+
   const compactFormatter = useCompactNumberFormat(globalLocalizer.resolvedOptions().locale);
   const today = new Date();
   const effectiveEndDate = endDate && endDate.length > 0 ? endDate : format(today, 'yyyy-MM-dd');
@@ -126,9 +128,9 @@ export function CashflowTrendCard({
           const point = chartData[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           const rows: TooltipRow[] = [
-            { color: chrome.inkPrimary, name: 'Net', value: formatAmount(point.net) },
-            { color: flow.positive, name: 'Money in', value: formatAmount(point.income) },
-            { color: flow.negative, name: 'Money out', value: formatAmount(-point.expense) },
+            { color: chrome.inkPrimary, name: t`Net`, value: formatAmount(point.net) },
+            { color: flow.positive, name: t`Money in`, value: formatAmount(point.income) },
+            { color: flow.negative, name: t`Money out`, value: formatAmount(-point.expense) },
           ];
           return tooltipHtml(point.label, rows);
         },
@@ -138,7 +140,7 @@ export function CashflowTrendCard({
       // report, so the dashboard and analytics read identically.
       series: [
         {
-          name: 'Money in',
+          name: t`Money in`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartData.map((item) => item.income),
@@ -146,7 +148,7 @@ export function CashflowTrendCard({
           itemStyle: { color: flow.positive, borderRadius: BAR_RADIUS_TOP },
         },
         {
-          name: 'Money out',
+          name: t`Money out`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartData.map((item) => -item.expense),
@@ -154,7 +156,7 @@ export function CashflowTrendCard({
           itemStyle: { color: flow.negative, borderRadius: BAR_RADIUS_BOTTOM },
         },
         {
-          name: 'Net',
+          name: t`Net`,
           type: 'line' as const,
           data: chartData.map((item) => item.net),
           lineStyle: { color: chrome.inkPrimary, width: 2 },
@@ -165,7 +167,7 @@ export function CashflowTrendCard({
         },
       ],
     };
-  }, [chartData, palette, compactFormatter, formatAmount]);
+  }, [chartData, palette, compactFormatter, formatAmount, t]);
 
   return (
     <Card className="h-full">
@@ -213,9 +215,9 @@ export function CashflowTrendCard({
 
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
           {[
-            { color: palette.flow.positive, label: 'Money in' },
-            { color: palette.flow.negative, label: 'Money out' },
-            { color: palette.chrome.inkPrimary, label: 'Net' },
+            { color: palette.flow.positive, label: t`Money in` },
+            { color: palette.flow.negative, label: t`Money out` },
+            { color: palette.chrome.inkPrimary, label: t`Net` },
           ].map((item) => (
             <span
               key={item.label}

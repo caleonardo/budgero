@@ -130,7 +130,7 @@ export function ManualBudgetTab({
           className="w-full h-8 sm:h-9"
           data-testid="create-budget-submit"
         >
-          {isPending ? 'Creating...' : 'Create Budget'}
+          {isPending ? t`Creating...` : t`Create Budget`}
         </Button>
       </div>
     </form>

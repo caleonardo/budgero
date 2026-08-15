@@ -113,7 +113,7 @@ export function WarrantyFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md max-h-[90dvh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>{editingWarranty ? 'Edit Warranty' : 'Add Warranty'}</DialogTitle>
+          <DialogTitle>{editingWarranty ? t`Edit Warranty` : t`Add Warranty`}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-2 overflow-y-auto flex-1 min-h-0">
           <div>
@@ -140,7 +140,7 @@ export function WarrantyFormDialog({
                     className="w-full justify-start text-left font-normal"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {expiresAtDate ? format(expiresAtDate, 'PP') : 'Select'}
+                    {expiresAtDate ? format(expiresAtDate, 'PP') : t`Select`}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start" modal>
@@ -228,7 +228,7 @@ export function WarrantyFormDialog({
                     !form.transactionId && 'text-muted-foreground'
                   )}
                 >
-                  <span className="truncate">{selectedTxLabel || 'None'}</span>
+                  <span className="truncate">{selectedTxLabel || t`None`}</span>
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
@@ -309,7 +309,7 @@ export function WarrantyFormDialog({
             <Trans>Cancel</Trans>
           </Button>
           <Button onClick={onSubmit} disabled={submitting}>
-            {submitting ? 'Saving...' : editingWarranty ? 'Update' : 'Create'}
+            {submitting ? t`Saving...` : editingWarranty ? t`Update` : t`Create`}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,5 +1,5 @@
 import { plural } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   Dialog,
   DialogContent,
@@ -22,30 +22,6 @@ type Step = {
   label: string;
   description?: string;
 };
-
-const executeSteps: Step[] = [
-  {
-    id: 'run',
-    label: 'Applying rule to transactions',
-  },
-  {
-    id: 'refresh',
-    label: 'Refreshing budget data',
-    description: 'Updating cached queries so everything reflects the new changes',
-  },
-];
-
-const undoSteps: Step[] = [
-  {
-    id: 'run',
-    label: 'Restoring previous values',
-  },
-  {
-    id: 'refresh',
-    label: 'Refreshing budget data',
-    description: 'Updating cached queries so everything reflects the new changes',
-  },
-];
 
 function stepState(
   phase: RuleRunPhase,
@@ -128,6 +104,32 @@ export function RuleRunOverlay({
   error,
   onClose,
 }: RuleRunOverlayProps) {
+  const { t } = useLingui();
+
+  const undoSteps: Step[] = [
+    {
+      id: 'run',
+      label: t`Restoring previous values`,
+    },
+    {
+      id: 'refresh',
+      label: t`Refreshing budget data`,
+      description: t`Updating cached queries so everything reflects the new changes`,
+    },
+  ];
+
+  const executeSteps: Step[] = [
+    {
+      id: 'run',
+      label: t`Applying rule to transactions`,
+    },
+    {
+      id: 'refresh',
+      label: t`Refreshing budget data`,
+      description: t`Updating cached queries so everything reflects the new changes`,
+    },
+  ];
+
   const progressValue = (() => {
     switch (phase) {
       case 'running':
@@ -152,20 +154,20 @@ export function RuleRunOverlay({
 
   const summaryText = (() => {
     if (phase === 'error') {
-      return error || 'We could not apply this rule. Try again in a moment.';
+      return error || t`We could not apply this rule. Try again in a moment.`;
     }
 
     if (mode === 'undo') {
-      if (phase === 'running') return 'Restoring transactions to their previous values...';
-      if (phase === 'refreshing') return 'Updating cached data...';
+      if (phase === 'running') return t`Restoring transactions to their previous values...`;
+      if (phase === 'refreshing') return t`Updating cached data...`;
       return plural(restoredCount, {
         one: `Restored # transaction.`,
         other: `Restored # transactions.`,
       });
     }
 
-    if (phase === 'running') return 'Evaluating matching transactions...';
-    if (phase === 'refreshing') return 'Updating cached data...';
+    if (phase === 'running') return t`Evaluating matching transactions...`;
+    if (phase === 'refreshing') return t`Updating cached data...`;
     return plural(matchedCount, {
       one: `# transaction updated.`,
       other: `# transactions updated.`,
@@ -183,14 +185,14 @@ export function RuleRunOverlay({
         <DialogHeader className="space-y-2">
           <DialogTitle>
             {phase === 'error'
-              ? 'Rule execution failed'
+              ? t`Rule execution failed`
               : phase === 'done'
                 ? mode === 'undo'
-                  ? 'Undo completed'
-                  : 'Rule execution completed'
+                  ? t`Undo completed`
+                  : t`Rule execution completed`
                 : mode === 'undo'
-                  ? 'Undoing automation run'
-                  : 'Running automation rule'}
+                  ? t`Undoing automation run`
+                  : t`Running automation rule`}
           </DialogTitle>
           <DialogDescription className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <Badge variant="outline" className="uppercase">

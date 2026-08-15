@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Alert, AlertDescription } from '@shared/ui/alert';
@@ -16,6 +16,8 @@ import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
 
 /** Self-contained privacy/analytics card: owns its own state, sync effect, and mutation. */
 export function PrivacySettingsCard() {
+  const { t } = useLingui();
+
   const { data: profile } = useProfile();
   const setAnalyticsDisabledMutation = useSetAnalyticsDisabled();
   const [analyticsEnabled, setAnalyticsEnabled] = useState(() => !isAnalyticsDisabled());
@@ -68,8 +70,8 @@ export function PrivacySettingsCard() {
         </CardTitle>
         <CardDescription>
           {IS_SELF_HOSTABLE_BUILD
-            ? 'Analytics is not available in self-hosted builds.'
-            : 'Control what anonymous usage data Budgero collects.'}
+            ? t`Analytics is not available in self-hosted builds.`
+            : t`Control what anonymous usage data Budgero collects.`}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -94,8 +96,8 @@ export function PrivacySettingsCard() {
             </Label>
             <p className="text-sm text-muted-foreground">
               {IS_SELF_HOSTABLE_BUILD
-                ? 'Not available in self-hosted builds.'
-                : 'Help improve Budgero by sending anonymous usage events. Off by default — nothing is collected unless you turn this on.'}
+                ? t`Not available in self-hosted builds.`
+                : t`Help improve Budgero by sending anonymous usage events. Off by default — nothing is collected unless you turn this on.`}
             </p>
           </div>
           <Switch

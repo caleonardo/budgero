@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -25,6 +25,8 @@ export function ManualRatePrompt({
   onConfirm: (rate: number, from: string, to: string) => void;
   onCancel: () => void;
 }) {
+  const { t } = useLingui();
+
   const [base, setBase] = useState(from);
   const [quote, setQuote] = useState(to);
   // Prefill with the closest cached rate (any age) — best-effort, offline-safe.
@@ -76,8 +78,8 @@ export function ManualRatePrompt({
           </CardTitle>
           <CardDescription>
             {prefilled
-              ? 'No fresh rate available. Prefilled with the closest cached rate — adjust if needed.'
-              : 'No cached rate found. Provide a temporary rate for offline use.'}
+              ? t`No fresh rate available. Prefilled with the closest cached rate — adjust if needed.`
+              : t`No cached rate found. Provide a temporary rate for offline use.`}
           </CardDescription>
         </CardHeader>
         <div className="px-6 pb-2 space-y-3">

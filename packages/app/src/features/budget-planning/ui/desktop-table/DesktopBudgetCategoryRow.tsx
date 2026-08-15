@@ -349,7 +349,7 @@ export function DesktopBudgetCategoryRow({
                     max={String(toDecimal(row.available > 0 ? row.available : ZERO_MILLI))}
                   />
                   <div className="text-[11px] text-muted-foreground">
-                    Available: {formatAmount(Math.max(0, row.available || 0))}
+                    <Trans>Available: {formatAmount(Math.max(0, row.available || 0))}</Trans>
                   </div>
                 </div>
                 <div className="space-y-1">

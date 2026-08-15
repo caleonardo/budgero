@@ -74,7 +74,8 @@ interface BudgetContextPanelProps {
 const cardClass = 'gap-2 py-3 rounded-xl';
 const headerClass = 'px-3';
 const contentClass = 'px-3';
-const titleClass = 'text-sm';
+// leading-snug so titles that wrap to two lines in longer languages stay legible.
+const titleClass = 'text-sm leading-snug';
 
 interface QuickActionButtonProps {
   icon: LucideIcon;
@@ -99,12 +100,18 @@ function QuickActionButton({
       size="sm"
       onClick={onClick}
       disabled={pending}
-      className="justify-start gap-2"
+      // Button is whitespace-nowrap by default; translated labels run ~50% longer
+      // than English and would overflow this fixed-width panel.
+      className="h-auto min-h-8 w-full justify-start gap-2 whitespace-normal py-1.5 text-left"
     >
-      {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}
-      {label}
+      {pending ? (
+        <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
+      ) : (
+        <Icon className="h-4 w-4 shrink-0" />
+      )}
+      <span className="min-w-0 flex-1">{label}</span>
       {suffix !== undefined && (
-        <span className="ml-auto font-mono text-xs text-muted-foreground">{suffix}</span>
+        <span className="shrink-0 font-mono text-xs text-muted-foreground">{suffix}</span>
       )}
     </Button>
   );
@@ -375,11 +382,11 @@ export function BudgetContextPanel({
           const datum = points[items[0]?.dataIndex ?? 0];
           if (!datum) return '';
           const rows: TooltipRow[] = [
-            { color: cumulativeColor, name: 'Cumulative', value: formatAmount(datum.cumulative) },
-            { color: paceColor, name: 'Budget Pace', value: formatAmount(datum.budgetPace) },
+            { color: cumulativeColor, name: t`Cumulative`, value: formatAmount(datum.cumulative) },
+            { color: paceColor, name: t`Budget Pace`, value: formatAmount(datum.budgetPace) },
             {
               color: datum.isOverPace ? palette.flow.negative : palette.flow.positive,
-              name: datum.isOverPace ? 'Over pace' : 'Under pace',
+              name: datum.isOverPace ? t`Over pace` : t`Under pace`,
               value: formatAmount(Math.abs(datum.budgetPace - datum.cumulative)),
             },
           ];
@@ -388,7 +395,7 @@ export function BudgetContextPanel({
       },
       series: [
         {
-          name: 'Cumulative Spending',
+          name: t`Cumulative Spending`,
           type: 'line' as const,
           data: points.map((datum) => datum.cumulative),
           lineStyle: { color: cumulativeColor, width: 2 },
@@ -397,7 +404,7 @@ export function BudgetContextPanel({
           areaStyle: { color: cumulativeColor, opacity: 0.1 },
         },
         {
-          name: 'Budget Pace',
+          name: t`Budget Pace`,
           type: 'line' as const,
           data: points.map((datum) => datum.budgetPace),
           lineStyle: { color: paceColor, width: 2, opacity: 0.7, type: [5, 5] },
@@ -406,7 +413,7 @@ export function BudgetContextPanel({
         },
       ],
     };
-  }, [budgetPacingData, palette, formatAmount]);
+  }, [budgetPacingData, palette, formatAmount, t]);
 
   const historyOption = useMemo<EChartsCoreOption>(() => {
     const { chrome } = palette;
@@ -434,21 +441,21 @@ export function BudgetContextPanel({
           const datum = combinedChartData[items[0]?.dataIndex ?? 0];
           if (!datum) return '';
           return tooltipHtml(datum.month, [
-            { color: spendingColor, name: 'Spending', value: formatAmount(datum.spending) },
-            { color: assignedColor, name: 'Assigned', value: formatAmount(datum.assigned) },
+            { color: spendingColor, name: t`Spending`, value: formatAmount(datum.spending) },
+            { color: assignedColor, name: t`Assigned`, value: formatAmount(datum.assigned) },
           ]);
         },
       },
       series: [
         {
-          name: 'Spending',
+          name: t`Spending`,
           type: 'bar' as const,
           data: combinedChartData.map((datum) => datum.spending),
           barMaxWidth: BAR_MAX_WIDTH,
           itemStyle: { color: spendingColor, borderRadius: BAR_RADIUS_TOP },
         },
         {
-          name: 'Assigned',
+          name: t`Assigned`,
           type: 'bar' as const,
           data: combinedChartData.map((datum) => datum.assigned),
           barMaxWidth: BAR_MAX_WIDTH,
@@ -456,7 +463,7 @@ export function BudgetContextPanel({
         },
       ],
     };
-  }, [combinedChartData, palette, formatAmount]);
+  }, [combinedChartData, palette, formatAmount, t]);
 
   const handleApplyAssignments = (
     assignments: { categoryId: number; amount: number }[],
@@ -562,7 +569,7 @@ export function BudgetContextPanel({
     <Card className={cardClass}>
       <CardHeader className={headerClass}>
         <CardTitle className={titleClass}>
-          {selectedCategory ? `${selectedCategory.name} Summary` : 'Summary'}
+          {selectedCategory ? t`${selectedCategory.name} Summary` : t`Summary`}
         </CardTitle>
       </CardHeader>
       <CardContent className={cn(contentClass, 'space-y-1.5 text-sm')}>
@@ -575,7 +582,7 @@ export function BudgetContextPanel({
               Categories
             </Trans>
           </span>
-          <span className="font-medium">{isUsingAllCategories ? 'All' : selectedRows.length}</span>
+          <span className="font-medium">{isUsingAllCategories ? t`All` : selectedRows.length}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
@@ -750,10 +757,12 @@ export function BudgetContextPanel({
         </CardHeader>
         <CardContent className={contentClass}>
           <div className="mb-2 text-sm text-muted-foreground">
-            Average monthly spend:{' '}
-            <span className="font-medium text-foreground">
-              {formatAmount(averageMonthlySpending)}
-            </span>
+            <Trans>
+              Average monthly spend:{' '}
+              <span className="font-medium text-foreground">
+                {formatAmount(averageMonthlySpending)}
+              </span>
+            </Trans>
           </div>
           {spendingQuery.isLoading || assignmentsQuery.isLoading ? (
             <Skeleton className="h-[200px] w-full" />

@@ -78,8 +78,8 @@ vi.mock('./hooks', () => ({
 }));
 
 vi.mock('./screens', () => ({
-  StartupSplashScreen: ({ message }: { message?: string }) => (
-    <div data-testid="startup-splash">{message ?? 'splash'}</div>
+  StartupSplashScreen: ({ message }: { message?: { id: string } }) => (
+    <div data-testid="startup-splash">{message?.id ?? 'splash'}</div>
   ),
   AccessBlockedScreen: () => <div data-testid="access-blocked-screen" />,
   IntroRequiredScreen: () => <div data-testid="intro-required-screen" />,

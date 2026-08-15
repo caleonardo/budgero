@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@shared/ui/sidebar';
 import { cn } from '@shared/lib/utils';
@@ -45,6 +45,8 @@ const SETTINGS_SECTION_LABEL_CLASS =
   'text-[10px] font-medium text-muted-foreground uppercase tracking-wider';
 
 export const SidebarNav = React.memo(function SidebarNav() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
   const { data: accountsData = [] } = useAccounts(selectedBudget?.ID || 0);
@@ -59,22 +61,22 @@ export const SidebarNav = React.memo(function SidebarNav() {
   return (
     <SidebarMenu className="space-y-1 min-w-0">
       {/* Dashboard */}
-      <SidebarNavLink topLevel to="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+      <SidebarNavLink topLevel to="/dashboard" icon={LayoutDashboard} label={t`Dashboard`} />
 
       <SidebarNavLink
         topLevel
         to="/budgeting"
         icon={ClipboardList}
-        label="Planning"
+        label={t`Planning`}
         match="startsWith"
         testId="nav-planning"
       />
 
       {/* All Transactions - Top Level */}
-      <SidebarNavLink topLevel to="/accounts/all" icon={List} label="All Transactions" />
+      <SidebarNavLink topLevel to="/accounts/all" icon={List} label={t`All Transactions`} />
 
       {/* Warranties */}
-      <SidebarNavLink topLevel to="/warranties" icon={ShieldCheck} label="Warranties" />
+      <SidebarNavLink topLevel to="/warranties" icon={ShieldCheck} label={t`Warranties`} />
 
       {/* Accounts Dropdown */}
       <SidebarMenuItem>
@@ -107,7 +109,7 @@ export const SidebarNav = React.memo(function SidebarNav() {
             <SidebarNavLink
               to="/accounts"
               icon={Wallet}
-              label="All Accounts"
+              label={t`All Accounts`}
               indentClassName="mx-2"
             />
 
@@ -199,7 +201,7 @@ export const SidebarNav = React.memo(function SidebarNav() {
               <SidebarNavLink
                 to="/settings/security"
                 icon={Shield}
-                label="Security & Privacy"
+                label={t`Security & Privacy`}
                 indentClassName="ml-4 mr-2 mt-1"
               />
             )}
@@ -227,9 +229,9 @@ export const SidebarNav = React.memo(function SidebarNav() {
               <SidebarNavLink
                 to="/settings/simplefin"
                 icon={Building2}
-                label="SimpleFIN"
+                label={t`SimpleFIN`}
                 badge={{
-                  label: 'Beta',
+                  label: t`Beta`,
                   variant: 'outline',
                   className: 'ml-auto text-[10px] px-1 py-0 h-4 text-amber-600 border-amber-600',
                 }}

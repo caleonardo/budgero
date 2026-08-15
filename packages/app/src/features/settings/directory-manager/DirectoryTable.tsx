@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Checkbox } from '@shared/ui/checkbox';
@@ -62,6 +62,8 @@ export function DirectoryTable<
   onRequestDeleteSelected,
   isDeletingMany,
 }: DirectoryTableProps<TItem, TKey, TDraft>) {
+  const { t } = useLingui();
+
   const bulk = config.bulkDelete;
   const unusedItems = bulk ? items.filter((item) => config.getUsageCount(item) === 0) : [];
   const allSelected = items.length > 0 && selectedCount === items.length;
@@ -126,7 +128,7 @@ export function DirectoryTable<
                   <TableHead className="w-10">
                     <Checkbox
                       checked={allSelected}
-                      aria-label={allSelected ? 'Deselect all' : 'Select all'}
+                      aria-label={allSelected ? t`Deselect all` : t`Select all`}
                       onCheckedChange={(checked) =>
                         checked === true
                           ? onSetSelection(items.map((item) => config.getKey(item)))
@@ -196,7 +198,7 @@ export function DirectoryTable<
                         </span>
                       )}
                     </TableCell>
-                    <TableCell>{usageCount === 0 ? 'Not used yet' : usageLabel}</TableCell>
+                    <TableCell>{usageCount === 0 ? t`Not used yet` : usageLabel}</TableCell>
                     <TableCell className="text-right">
                       {isEditing ? (
                         <div className="flex justify-end gap-2">

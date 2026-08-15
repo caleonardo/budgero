@@ -68,13 +68,13 @@ export function MutationsTab({
           const point = points[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           return tooltipHtml(format(parseISO(point.day), 'MMM d, yyyy'), [
-            { color: barColor, name: 'Count', value: `${point.count} mutations` },
+            { color: barColor, name: t`Count`, value: `${point.count} mutations` },
           ]);
         },
       },
       series: [
         {
-          name: 'Count',
+          name: t`Count`,
           type: 'bar',
           data: points.map((entry) => entry.count),
           barMaxWidth: BAR_MAX_WIDTH,
@@ -82,7 +82,7 @@ export function MutationsTab({
         },
       ],
     };
-  }, [days, palette]);
+  }, [days, palette, t]);
 
   return (
     <TabSection loading={loading} error={error} onRetry={onRetry}>
@@ -114,8 +114,10 @@ export function MutationsTab({
             <Trans>Mutations Per Day</Trans>
           </CardTitle>
           <CardDescription>
-            Daily mutation counts over the same{' '}
-            {details?.activity?.windowDays ?? details?.mutations.days?.length ?? 365}-day window.
+            <Trans>
+              Daily mutation counts over the same{' '}
+              {details?.activity?.windowDays ?? details?.mutations.days?.length ?? 365}-day window.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

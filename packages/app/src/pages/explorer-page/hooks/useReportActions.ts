@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { getErrorMessage, toastError } from '@shared/lib/errors';
@@ -17,6 +18,8 @@ interface UseReportActionsArgs {
 
 /** Saved-report CRUD, the reports/save dialogs, and the active chart selection. */
 export function useReportActions({ sqlQuery, setSqlQuery, executeQuery }: UseReportActionsArgs) {
+  const { t } = useLingui();
+
   const [showReportsDialog, setShowReportsDialog] = useState(false);
   const [showSaveReportDialog, setShowSaveReportDialog] = useState(false);
   const [editingReport, setEditingReport] = useState<UnifiedReport | null>(null);
@@ -105,8 +108,8 @@ export function useReportActions({ sqlQuery, setSqlQuery, executeQuery }: UseRep
       setSqlQuery(report.query);
       setEditingReport(report);
       setShowReportsDialog(false);
-      toast.success('Report Loaded', {
-        description: `Successfully loaded "${report.name}"`,
+      toast.success(t`Report Loaded`, {
+        description: t`Successfully loaded "${report.name}"`,
       });
 
       if (report.charts && report.charts.length > 0) {
@@ -115,7 +118,7 @@ export function useReportActions({ sqlQuery, setSqlQuery, executeQuery }: UseRep
         setSelectedChartConfig(null);
       }
     },
-    [setSqlQuery]
+    [setSqlQuery, t]
   );
 
   const handleEditReport = useCallback(
@@ -138,8 +141,8 @@ export function useReportActions({ sqlQuery, setSqlQuery, executeQuery }: UseRep
     async (reportId: string) => {
       try {
         await deleteReportMutation.mutateAsync(reportId);
-        toast.success('Report Deleted', {
-          description: 'The report has been deleted successfully.',
+        toast.success(t`Report Deleted`, {
+          description: t`The report has been deleted successfully.`,
         });
 
         if (editingReport?.id === reportId) {
@@ -150,7 +153,7 @@ export function useReportActions({ sqlQuery, setSqlQuery, executeQuery }: UseRep
         toastError('Delete Failed', error, 'Failed to delete report');
       }
     },
-    [editingReport, deleteReportMutation]
+    [editingReport, deleteReportMutation, t]
   );
 
   const handleCreateReport = useCallback(() => {

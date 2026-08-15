@@ -60,7 +60,7 @@ export function ModelSelectionSection({
                 aria-expanded={textModelOpen}
                 className="w-full justify-between font-normal"
               >
-                <span className="truncate">{textModel || 'Select model...'}</span>
+                <span className="truncate">{textModel || t`Select model...`}</span>
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -124,7 +124,7 @@ export function ModelSelectionSection({
                 aria-expanded={visionModelOpen}
                 className="w-full justify-between font-normal"
               >
-                <span className="truncate">{visionModel || 'Select model...'}</span>
+                <span className="truncate">{visionModel || t`Select model...`}</span>
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -164,7 +164,7 @@ export function ModelSelectionSection({
             id="visionModel"
             value={visionModel}
             onChange={(e) => onVisionModelChange(e.target.value)}
-            placeholder={t`llava`}
+            placeholder="llava"
           />
         )}
       </div>

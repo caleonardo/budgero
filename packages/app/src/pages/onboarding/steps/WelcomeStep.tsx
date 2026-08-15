@@ -1,4 +1,5 @@
 import { Trans, useLingui } from '@lingui/react/macro';
+import { msg } from '@lingui/core/macro';
 import React from 'react';
 import { Title, type StepProps } from './shared';
 
@@ -15,8 +16,8 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
     return (
       <div>
         <Title
-          h="You’re joining a Budgero workspace."
-          sub="Someone shared their budget with you. We’ll set up an encryption key on this device, then drop you straight into their ledger — no setup of your own required."
+          h={msg`You’re joining a Budgero workspace.`}
+          sub={msg`Someone shared their budget with you. We’ll set up an encryption key on this device, then drop you straight into their ledger — no setup of your own required.`}
         />
         <ul
           style={{
@@ -65,11 +66,13 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
             lineHeight: 1.55,
           }}
         >
-          <span style={{ fontWeight: 700, color: '#141414', letterSpacing: 0.5 }}>
-            <Trans>HEADS UP:</Trans>
-          </span>{' '}
-          Your master password encrypts the shared workspace key on this device. Pick something
-          memorable — Budgero never sees it and we can’t reset it for you.
+          <Trans>
+            <span style={{ fontWeight: 700, color: '#141414', letterSpacing: 0.5 }}>
+              <Trans>HEADS UP:</Trans>
+            </span>{' '}
+            Your master password encrypts the shared workspace key on this device. Pick something
+            memorable — Budgero never sees it and we can’t reset it for you.
+          </Trans>
         </div>
       </div>
     );
@@ -77,8 +80,8 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
   return (
     <div>
       <Title
-        h="Welcome to Budgero."
-        sub="We’ll walk through it together. The idea is simple: every coin you earn gets a job before you spend it. Here’s what we’ll do, in six small steps."
+        h={msg`Welcome to Budgero.`}
+        sub={msg`We’ll walk through it together. The idea is simple: every coin you earn gets a job before you spend it. Here’s what we’ll do, in six small steps.`}
       />
       <div
         style={{

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
@@ -45,7 +46,7 @@ const MAX_RUNWAY_PROJECTION = 36;
 
 function formatRunway(months: number | null): string {
   if (months === null) return '∞';
-  if (months >= 120) return '10+ years';
+  if (months >= 120) return t`10+ years`;
   return months >= 10 ? `${Math.round(months)} mo` : `${months.toFixed(1)} mo`;
 }
 
@@ -145,7 +146,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
               const point = points[index];
               return point
                 ? tooltipHtml(shortMonthLabel(point.monthKey), [
-                    { color: lineColor, name: 'Net worth', value: money.amount(point.netWorth) },
+                    { color: lineColor, name: t`Net worth`, value: money.amount(point.netWorth) },
                   ])
                 : '';
             }
@@ -154,7 +155,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             return tooltipHtml(`${shortMonthLabel(axisKeys[index])} (forecast)`, [
               {
                 color: assetColor,
-                name: 'Predicted',
+                name: t`Predicted`,
                 value: money.amount(Math.round(fp.predicted)),
               },
               {
@@ -167,7 +168,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         },
         series: [
           {
-            name: 'Net worth',
+            name: t`Net worth`,
             type: 'line',
             data: axisKeys.map((_, index) =>
               index <= lastIndex ? points[index].netWorth / 1000 : null
@@ -211,7 +212,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             areaStyle: { color: assetColor, opacity: 0.12 },
           },
           {
-            name: 'Forecast',
+            name: t`Forecast`,
             type: 'line',
             data: axisKeys.map((_, index) =>
               index >= lastIndex
@@ -242,9 +243,9 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           const point = points[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           return tooltipHtml(shortMonthLabel(point.monthKey), [
-            { color: lineColor, name: 'Net worth', value: money.amount(point.netWorth) },
-            { color: assetColor, name: 'Assets', value: money.amount(point.assets) },
-            { color: debtColor, name: 'Debt', value: money.amount(-point.debt) },
+            { color: lineColor, name: t`Net worth`, value: money.amount(point.netWorth) },
+            { color: assetColor, name: t`Assets`, value: money.amount(point.assets) },
+            { color: debtColor, name: t`Debt`, value: money.amount(-point.debt) },
           ]);
         },
       },
@@ -254,7 +255,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         ...shared,
         series: [
           {
-            name: 'Assets',
+            name: t`Assets`,
             type: 'bar',
             stack: 'worth',
             data: points.map((point) => point.assets / 1000),
@@ -262,7 +263,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             itemStyle: { color: assetColor, borderRadius: BAR_RADIUS_TOP },
           },
           {
-            name: 'Debt',
+            name: t`Debt`,
             type: 'bar',
             stack: 'worth',
             data: points.map((point) => -point.debt / 1000),
@@ -270,7 +271,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             itemStyle: { color: debtColor, borderRadius: BAR_RADIUS_BOTTOM },
           },
           {
-            name: 'Net worth',
+            name: t`Net worth`,
             type: 'line',
             data: points.map((point) => point.netWorth / 1000),
             lineStyle: { color: lineColor, width: 2 },
@@ -298,7 +299,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           return tooltipHtml(shortMonthLabel(months[index]), [
             {
               color: delta >= 0 ? palette.flow.positive : palette.flow.negative,
-              name: 'Change vs previous month',
+              name: t`Change vs previous month`,
               value: money.amount(delta),
             },
           ]);
@@ -306,7 +307,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
       },
       series: [
         {
-          name: 'Change',
+          name: t`Change`,
           type: 'bar',
           data: deltas.map((delta) => ({
             value: delta / 1000,
@@ -319,7 +320,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         },
       ],
     };
-  }, [mode, months, points, forecast, palette, money, assetColor, debtColor, lineColor]);
+  }, [mode, months, points, forecast, palette, money, assetColor, debtColor, lineColor, t]);
 
   const monthlyRows = useMemo(
     () =>
@@ -359,10 +360,10 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           onChange={setMode}
           ariaLabel="Wealth chart mode"
           options={[
-            { value: 'assets-debt', label: 'Assets vs Debt' },
-            { value: 'by-type', label: 'By Type' },
-            { value: 'change', label: 'Change' },
-            { value: 'forecast', label: 'Forecast' },
+            { value: 'assets-debt', label: t`Assets vs Debt` },
+            { value: 'by-type', label: t`By Type` },
+            { value: 'change', label: t`Change` },
+            { value: 'forecast', label: t`Forecast` },
           ]}
         />
       }
@@ -371,16 +372,16 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         mode === 'assets-debt' ? (
           <LegendChips
             items={[
-              { color: assetColor, label: 'Assets' },
-              { color: debtColor, label: 'Debt' },
-              { color: lineColor, label: 'Net worth' },
+              { color: assetColor, label: t`Assets` },
+              { color: debtColor, label: t`Debt` },
+              { color: lineColor, label: t`Net worth` },
             ]}
           />
         ) : mode === 'forecast' ? (
           <LegendChips
             items={[
-              { color: lineColor, label: 'Net worth' },
-              { color: assetColor, label: 'Forecast (95% interval shaded)' },
+              { color: lineColor, label: t`Net worth` },
+              { color: assetColor, label: t`Forecast (95% interval shaded)` },
             ]}
           />
         ) : null
@@ -419,11 +420,13 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
                 </span>
               ) : null}
               <span className="text-muted-foreground">
-                burn{' '}
-                <span className="font-medium text-foreground">
-                  {money.amount(runway.avgMonthlySpend)}
-                </span>
-                /month
+                <Trans>
+                  burn{' '}
+                  <span className="font-medium text-foreground">
+                    {money.amount(runway.avgMonthlySpend)}
+                  </span>
+                  /month
+                </Trans>
               </span>
             </div>
           </>
@@ -453,11 +456,13 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           </div>
           {forecast ? (
             <p className="mt-3 text-xs text-muted-foreground">
-              Forecast: OLS over {points.length} months, slope{' '}
-              {money.amount(Math.round(forecast.slope))}/mo ±{' '}
-              {money.amount(Math.round(forecast.slopeSE))}, p{' '}
-              {forecast.pValue < 0.001 ? '< 0.001' : `= ${forecast.pValue.toFixed(3)}`}, R²{' '}
-              {forecast.rSquared.toFixed(2)}. Shaded band is the 95% prediction interval.
+              <Trans>
+                Forecast: OLS over {points.length}months, slope{' '}
+                {money.amount(Math.round(forecast.slope))}/mo ±{' '}
+                {money.amount(Math.round(forecast.slopeSE))}, p{' '}
+                {forecast.pValue < 0.001 ? '< 0.001' : `= ${forecast.pValue.toFixed(3)}`}, R²{' '}
+                {forecast.rSquared.toFixed(2)}. Shaded band is the 95% prediction interval.
+              </Trans>
             </p>
           ) : null}
           <PanelSectionTitle>

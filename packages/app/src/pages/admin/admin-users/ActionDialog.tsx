@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
@@ -26,19 +27,19 @@ interface ActionDialogProps {
 function getDialogTitle(type: ActionDialogState['type']): string {
   switch (type) {
     case 'grant_founding':
-      return 'Grant Founding Member Access';
+      return t`Grant Founding Member Access`;
     case 'grant_beta':
-      return 'Grant Free Access';
+      return t`Grant Free Access`;
     case 'revoke_access':
-      return 'Revoke Access';
+      return t`Revoke Access`;
     case 'reset_data':
-      return 'Reset User Data';
+      return t`Reset User Data`;
     case 'make_admin':
-      return 'Make Administrator';
+      return t`Make Administrator`;
     case 'block':
-      return 'Block User';
+      return t`Block User`;
     case 'unblock':
-      return 'Unblock User';
+      return t`Unblock User`;
     default:
       return '';
   }
@@ -47,9 +48,9 @@ function getDialogTitle(type: ActionDialogState['type']): string {
 function getConfirmButtonText(type: ActionDialogState['type']): string {
   switch (type) {
     case 'revoke_access':
-      return 'Revoke Access';
+      return t`Revoke Access`;
     case 'reset_data':
-      return 'Reset Data';
+      return t`Reset Data`;
     default:
       return 'Confirm';
   }

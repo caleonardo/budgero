@@ -62,13 +62,15 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
             <Trans>Delete Category</Trans>
           </DialogTitle>
           <DialogDescription>
-            Before you can delete the category, you need to reassign all
-            {currentCategoryTotalTransactions > 0 && currentCategoryAssigned > 0
-              ? ' transactions and assignments'
-              : currentCategoryTotalTransactions > 0
-                ? ' transactions'
-                : ' assignments'}{' '}
-            to a new category.
+            <Trans>
+              Before you can delete the category, you need to reassign all
+              {currentCategoryTotalTransactions > 0 && currentCategoryAssigned > 0
+                ? t` transactions and assignments`
+                : currentCategoryTotalTransactions > 0
+                  ? t` transactions`
+                  : t` assignments`}{' '}
+              to a new category.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -106,7 +108,9 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
                 </li>
               )}
               {currentCategoryAssigned > 0 && (
-                <li>Assigned amount ({formatAmount(currentCategoryAssigned)})</li>
+                <li>
+                  <Trans>Assigned amount ({formatAmount(currentCategoryAssigned)})</Trans>
+                </li>
               )}
               <li>
                 <Trans>Any remaining available amount</Trans>
@@ -123,7 +127,7 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
             onClick={handleDelete}
             disabled={selectedCategoryId === null || isLoading}
           >
-            {isLoading ? 'Deleting...' : 'Delete'}
+            {isLoading ? t`Deleting...` : t`Delete`}
           </Button>
         </DialogFooter>
       </DialogContent>

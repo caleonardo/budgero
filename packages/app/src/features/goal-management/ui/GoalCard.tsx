@@ -272,13 +272,13 @@ export function GoalCard({
   const getGoalTypeLabel = () => {
     switch (goal.Type) {
       case 'monthly':
-        return 'Monthly Available Target';
+        return t`Monthly Available Target`;
       case 'monthly-savings':
-        return 'Monthly Allocation Target';
+        return t`Monthly Allocation Target`;
       case 'target-date':
-        return 'Yearly Allocation Target';
+        return t`Yearly Allocation Target`;
       case 'yearly':
-        return 'Yearly Available Target';
+        return t`Yearly Available Target`;
       default:
         return 'Goal';
     }

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import { roundMilli } from '@shared/lib/currency/round-amount';
 import { formatMilli } from '@shared/lib/currency/milli';
@@ -24,6 +24,8 @@ export function PayoffSummaryGrid({
   formatter,
   leading,
 }: PayoffSummaryGridProps) {
+  const { t } = useLingui();
+
   return (
     <div className="grid grid-cols-2 gap-3 text-sm">
       {leading}
@@ -31,7 +33,7 @@ export function PayoffSummaryGrid({
         <div className="text-xs text-muted-foreground">
           <Trans>Estimated months</Trans>
         </div>
-        <div className="font-mono">{months === null ? 'Payment too low' : months}</div>
+        <div className="font-mono">{months === null ? t`Payment too low` : months}</div>
       </div>
       <div>
         <div className="text-xs text-muted-foreground">

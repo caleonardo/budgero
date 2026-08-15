@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { isFutureDate } from '@shared/lib/date-utils';
@@ -77,6 +77,8 @@ export const TransactionRow = React.memo(function TransactionRow({
   onSplitView,
   onSplitCreate,
 }: TransactionRowProps) {
+  const { t } = useLingui();
+
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const selectedAccount = useUiStore((state) => state.selectedAccount);
   // In account display mode the cell edits the NATIVE amount, whose storage
@@ -107,7 +109,7 @@ export const TransactionRow = React.memo(function TransactionRow({
         )}
         title={
           isProjectedBalance
-            ? 'Projected balance — includes scheduled recurring entries'
+            ? t`Projected balance — includes scheduled recurring entries`
             : undefined
         }
       >
@@ -148,11 +150,13 @@ export const TransactionRow = React.memo(function TransactionRow({
             </PopoverTrigger>
             <PopoverContent className="w-60 text-sm">
               <p>
-                This is the total of the split lines. To change it, click{' '}
-                <span className="font-medium">
-                  <Trans>View splits</Trans>
-                </span>
-                .
+                <Trans>
+                  This is the total of the split lines. To change it, click{' '}
+                  <span className="font-medium">
+                    <Trans>View splits</Trans>
+                  </span>
+                  .
+                </Trans>
               </p>
             </PopoverContent>
           </Popover>
@@ -197,7 +201,7 @@ export const TransactionRow = React.memo(function TransactionRow({
       <TableRow className="bg-primary/[0.04]">
         <TableCell className="text-center">
           <div className="flex items-center justify-center">
-            <Checkbox disabled aria-label="Projected transactions cannot be selected" />
+            <Checkbox disabled aria-label={t`Projected transactions cannot be selected`} />
           </div>
         </TableCell>
         <TableCell>
@@ -261,7 +265,7 @@ export const TransactionRow = React.memo(function TransactionRow({
             checked={isSelected}
             onPointerDown={onCheckboxPointerDown}
             onCheckedChange={(checked) => onCheckboxChange(checked === true)}
-            aria-label={`Select transaction ${transaction.Memo || transaction.ID}`}
+            aria-label={t`Select transaction ${transaction.Memo || transaction.ID}`}
           />
         </div>
       </TableCell>

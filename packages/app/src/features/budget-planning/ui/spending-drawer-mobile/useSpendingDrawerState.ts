@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useUiStore } from '@shared/store/useUiStore';
 import {
@@ -25,6 +26,8 @@ export function useSpendingDrawerState(
   currentMonth: string,
   options?: { deferCalculations?: boolean }
 ) {
+  const { t } = useLingui();
+
   const deferCalculations = options?.deferCalculations ?? false;
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
@@ -147,9 +150,9 @@ export function useSpendingDrawerState(
       setQuickViewOpen(false);
       setQuickViewTx(null);
     } catch {
-      toast.error('Failed to delete');
+      toast.error(t`Failed to delete`);
     }
-  }, [quickViewTx, accounts, deleteTransaction]);
+  }, [quickViewTx, accounts, deleteTransaction, t]);
 
   const handleRecategorize = useCallback(
     (categoryId: number) => {

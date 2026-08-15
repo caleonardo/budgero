@@ -64,12 +64,14 @@ export function QueueStatsPanel({ state }: QueueStatsPanelProps) {
                   onClick={handlePullMutations}
                   disabled={isProcessingQueue}
                 >
-                  {isProcessingQueue ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <Download className="h-4 w-4 mr-2" />
-                  )}
-                  Pull Mutations
+                  <Trans>
+                    {isProcessingQueue ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4 mr-2" />
+                    )}
+                    Pull Mutations
+                  </Trans>
                 </Button>
                 <Button
                   variant="outline"
@@ -77,12 +79,14 @@ export function QueueStatsPanel({ state }: QueueStatsPanelProps) {
                   onClick={() => clearQueueMutation.mutate()}
                   disabled={clearQueueMutation.isPending}
                 >
-                  {clearQueueMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-4 w-4 mr-2" />
-                  )}
-                  Clear Queue
+                  <Trans>
+                    {clearQueueMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4 mr-2" />
+                    )}
+                    Clear Queue
+                  </Trans>
                 </Button>
               </div>
             )}

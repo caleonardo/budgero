@@ -140,12 +140,14 @@ export function TokenStatusCard({ state }: TokenStatusCardProps) {
               </Trans>
             </p>
             <Button onClick={handleGenerateToken} disabled={generateTokenMutation.isPending}>
-              {generateTokenMutation.isPending ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Key className="h-4 w-4 mr-2" />
-              )}
-              Generate API Token
+              <Trans>
+                {generateTokenMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Key className="h-4 w-4 mr-2" />
+                )}
+                Generate API Token
+              </Trans>
             </Button>
           </div>
         )}

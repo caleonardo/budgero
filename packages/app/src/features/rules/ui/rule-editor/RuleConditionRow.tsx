@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -32,6 +32,8 @@ export const RuleConditionRow = React.memo(function RuleConditionRow({
   onUpdate,
   onRemove,
 }: RuleConditionRowProps) {
+  const { t } = useLingui();
+
   const operators =
     condition.field === 'memo'
       ? memoOperators
@@ -49,7 +51,7 @@ export const RuleConditionRow = React.memo(function RuleConditionRow({
           onValueChange={(value: RuleConditionField) => onUpdate(index, { field: value })}
         >
           <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="Field" />
+            <SelectValue placeholder={t`Field`} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="memo">
@@ -71,7 +73,7 @@ export const RuleConditionRow = React.memo(function RuleConditionRow({
           onValueChange={(value: RuleConditionOperator) => onUpdate(index, { operator: value })}
         >
           <SelectTrigger className="w-full sm:w-36">
-            <SelectValue placeholder="Operator" />
+            <SelectValue placeholder={t`Operator`} />
           </SelectTrigger>
           <SelectContent>
             {operators.map((operator) => (
@@ -83,14 +85,14 @@ export const RuleConditionRow = React.memo(function RuleConditionRow({
         </Select>
         {condition.field === 'memo' || condition.field === 'payee' ? (
           <Input
-            placeholder={condition.operator === 'regex' ? 'Regular expression' : 'Text to match'}
+            placeholder={condition.operator === 'regex' ? t`Regular expression` : t`Text to match`}
             value={condition.value}
             onChange={(event) => onUpdate(index, { value: event.target.value })}
             className="w-full"
           />
         ) : condition.field === 'amount' ? (
           <Input
-            placeholder="Amount"
+            placeholder={t`Amount`}
             type="number"
             value={condition.value}
             onChange={(event) => onUpdate(index, { value: event.target.value })}
@@ -102,7 +104,7 @@ export const RuleConditionRow = React.memo(function RuleConditionRow({
             onValueChange={(value) => onUpdate(index, { value })}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select account" />
+              <SelectValue placeholder={t`Select account`} />
             </SelectTrigger>
             <SelectContent>
               {accounts.length === 0 ? (

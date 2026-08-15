@@ -139,7 +139,7 @@ export default function JoinWorkspacePage() {
         masterPassword: masterPasswordInput.trim() || undefined,
       });
       toast.success(t`Workspace joined`, {
-        description: 'You now have access to the shared budget space.',
+        description: t`You now have access to the shared budget space.`,
       });
       await clearPendingSpaceInvite();
       void navigate('/', { replace: true });
@@ -276,12 +276,12 @@ export default function JoinWorkspacePage() {
               autoFocus
             >
               {redeemInvite.isPending ? (
-                <>
+                <Trans>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Joining…
-                </>
+                </Trans>
               ) : (
-                'Join workspace'
+                t`Join workspace`
               )}
             </Button>
           </div>

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import {
   formatDate as format,
@@ -53,6 +53,8 @@ function StatusIcon({
 export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard({
   vm,
 }: SubscriptionStatusCardProps) {
+  const { t } = useLingui();
+
   const {
     user,
     subscriptionDetails,
@@ -129,13 +131,13 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
                 <span className="text-gray-600 dark:text-gray-300">
                   <Trans>Plan:</Trans>
                 </span>
-                <span className="font-medium">{planName || 'Plan not set'}</span>
+                <span className="font-medium">{planName || t`Plan not set`}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-300">
                   <Trans>Billing cadence:</Trans>
                 </span>
-                <span className="font-medium">{planIntervalLabel ?? 'Not set'}</span>
+                <span className="font-medium">{planIntervalLabel ?? t`Not set`}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-300">
@@ -339,14 +341,16 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
                   <Trans>Free Access</Trans>
                 </h4>
                 <p className="text-sm text-indigo-700 dark:text-indigo-200 mt-1">
-                  You have full, unlimited access to every Budgero feature—on us—until{' '}
-                  <span className="font-semibold">{format(betaExpiresAt, 'MMMM dd, yyyy')}</span>.
-                  Thanks for being part of Budgero.
-                  {daysLeftInBeta <= 7 && (
-                    <span className="font-semibold">
-                      <Trans>Only {daysLeftInBeta} days remaining!</Trans>
-                    </span>
-                  )}
+                  <Trans>
+                    You have full, unlimited access to every Budgero feature—on us—until{' '}
+                    <span className="font-semibold">{format(betaExpiresAt, 'MMMM dd, yyyy')}</span>.
+                    Thanks for being part of Budgero.
+                    {daysLeftInBeta <= 7 && (
+                      <span className="font-semibold">
+                        <Trans>Only {daysLeftInBeta} days remaining!</Trans>
+                      </span>
+                    )}
+                  </Trans>
                 </p>
               </div>
             </div>
@@ -374,7 +378,7 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
                       : 'text-gray-900 dark:text-gray-100'
                   }`}
                 >
-                  {daysLeftInTrial <= 7 ? 'Trial Ending Soon' : 'Free Trial Active'}
+                  {daysLeftInTrial <= 7 ? t`Trial Ending Soon` : t`Free Trial Active`}
                 </h4>
                 <p
                   className={`text-sm mt-1 ${
@@ -383,22 +387,26 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
                       : 'text-gray-700 dark:text-gray-200'
                   }`}
                 >
-                  Your free trial expires in {trialTimeLeftLabel}.{' '}
-                  {user.customer_id ? (
-                    <>
-                      We'll process your first subscription charge on{' '}
-                      <span className="font-semibold">
-                        {trialEndsAt ? format(trialEndsAt, 'MMM dd, yyyy') : 'your trial end date'}
-                      </span>{' '}
-                      when your trial ends. You can review or change your billing details anytime
-                      from the Lemon Squeezy portal below.
-                    </>
-                  ) : (
-                    <>
-                      Enjoy full access to Budgero during your trial. When your trial ends, you'll
-                      need to subscribe to continue using the app.
-                    </>
-                  )}
+                  <Trans>
+                    Your free trial expires in {trialTimeLeftLabel}.{' '}
+                    {user.customer_id ? (
+                      <>
+                        We'll process your first subscription charge on{' '}
+                        <span className="font-semibold">
+                          {trialEndsAt
+                            ? format(trialEndsAt, 'MMM dd, yyyy')
+                            : t`your trial end date`}
+                        </span>{' '}
+                        when your trial ends. You can review or change your billing details anytime
+                        from the Lemon Squeezy portal below.
+                      </>
+                    ) : (
+                      <>
+                        Enjoy full access to Budgero during your trial. When your trial ends, you'll
+                        need to subscribe to continue using the app.
+                      </>
+                    )}
+                  </Trans>
                 </p>
               </div>
             </div>
@@ -415,8 +423,10 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
                   <Trans>Subscription Cancelled</Trans>
                 </h4>
                 <p className="text-sm text-yellow-700 dark:text-yellow-200 mt-1">
-                  You'll continue to have access until {format(cancelledEndDate, 'MMM dd, yyyy')}.
-                  You can reactivate anytime before then.
+                  <Trans>
+                    You'll continue to have access until {format(cancelledEndDate, 'MMM dd, yyyy')}.
+                    You can reactivate anytime before then.
+                  </Trans>
                 </p>
               </div>
             </div>

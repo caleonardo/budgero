@@ -90,10 +90,10 @@ export function ReadyToAssignHelpPopover({
           <div className="mt-3 border-t border-border pt-2">
             <p className="mb-1 flex items-center justify-between">
               <span className="font-medium">
-                {isMonthly ? 'Monthly calculation' : 'Cumulative calculation'}
+                {isMonthly ? t`Monthly calculation` : t`Cumulative calculation`}
               </span>
               <span className="text-muted-foreground">
-                {isMonthly ? 'through this month' : 'all time'}
+                {isMonthly ? t`through this month` : t`all time`}
               </span>
             </p>
             <div className="space-y-1">
@@ -159,18 +159,20 @@ export function ReadyToAssignHelpPopover({
 
             <p className="mt-2 text-muted-foreground">
               {isMonthly
-                ? 'Income counts as it arrives and last month’s overspending is pulled from this month (YNAB-style).'
-                : 'Income and assignments accumulate across all time, so this figure is the same in every month.'}
+                ? t`Income counts as it arrives and last month’s overspending is pulled from this month (YNAB-style).`
+                : t`Income and assignments accumulate across all time, so this figure is the same in every month.`}
             </p>
             <p className="mt-2 text-muted-foreground">
-              Switch between Monthly and Cumulative in{' '}
-              <Link
-                to="/settings/budget"
-                className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
-              >
-                <Trans>Settings → Budget Settings</Trans>
-              </Link>
-              .
+              <Trans>
+                Switch between Monthly and Cumulative in{' '}
+                <Link
+                  to="/settings/budget"
+                  className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+                >
+                  <Trans>Settings → Budget Settings</Trans>
+                </Link>
+                .
+              </Trans>
             </p>
           </div>
         )}

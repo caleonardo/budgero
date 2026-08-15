@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 
@@ -31,14 +32,23 @@ export const TransactionTableFooter = React.memo(function TransactionTableFooter
         disabled={!hasPreviousPage}
         className="flex items-center gap-2"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Previous
+        <Trans>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Previous
+        </Trans>
       </Button>
 
       <div className="text-sm text-muted-foreground">
-        Page {currentPage + 1} of {totalPages}
+        <Trans>
+          Page {currentPage + 1}of {totalPages}
+        </Trans>
       </div>
 
       <Button
@@ -48,10 +58,12 @@ export const TransactionTableFooter = React.memo(function TransactionTableFooter
         disabled={!hasNextPage}
         className="flex items-center gap-2"
       >
-        Next
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
+        <Trans>
+          Next
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </Trans>
       </Button>
     </div>
   );

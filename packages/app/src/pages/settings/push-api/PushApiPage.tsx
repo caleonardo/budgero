@@ -135,10 +135,12 @@ export default function PushApiPage() {
                 <Trans>Payload Format v2 (before encryption)</Trans>
               </p>
               <p className="text-muted-foreground">
-                The decrypted payload should follow this structure. Monetary values are integer
-                milliunits — 1/1000 of a currency unit, so 25.50 is sent as{' '}
-                <code className="text-xs bg-muted px-1 py-0.5 rounded">25500</code>. Payees are
-                referenced by name.
+                <Trans>
+                  The decrypted payload should follow this structure. Monetary values are integer
+                  milliunits — 1/1000 of a currency unit, so 25.50 is sent as{' '}
+                  <code className="text-xs bg-muted px-1 py-0.5 rounded">25500</code>. Payees are
+                  referenced by name.
+                </Trans>
               </p>
               <pre className="mt-1 p-2 bg-muted rounded text-xs overflow-x-auto">
                 {`{
@@ -157,11 +159,13 @@ export default function PushApiPage() {
 }`}
               </pre>
               <p className="text-muted-foreground mt-1">
-                Legacy payloads without the{' '}
-                <code className="text-xs bg-muted px-1 py-0.5 rounded">&quot;v&quot;</code> field
-                are treated as format 1 (decimal amounts, e.g.{' '}
-                <code className="text-xs bg-muted px-1 py-0.5 rounded">25.50</code>) and upgraded on
-                import. New integrations should send format 2.
+                <Trans>
+                  Legacy payloads without the{' '}
+                  <code className="text-xs bg-muted px-1 py-0.5 rounded">&quot;v&quot;</code>field
+                  are treated as format 1 (decimal amounts, e.g.{' '}
+                  <code className="text-xs bg-muted px-1 py-0.5 rounded">25.50</code>) and upgraded
+                  on import. New integrations should send format 2.
+                </Trans>
               </p>
             </div>
 

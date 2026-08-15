@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React, { useMemo } from 'react';
 import { Checkbox } from '@shared/ui/checkbox';
 import { Badge } from '@shared/ui/badge';
@@ -28,13 +29,15 @@ export const TransactionCardHeader = React.memo(function TransactionCardHeader({
   accountLocalizer,
   onSelectionChange,
 }: TransactionCardHeaderProps) {
+  const { t } = useLingui();
+
   const displayDate = useMemo(() => {
     const rawDate = transaction.Date;
-    if (!rawDate) return 'No date';
+    if (!rawDate) return t`No date`;
     const dateObj = parseISO(rawDate);
-    if (isNaN(dateObj.getTime())) return 'No date';
+    if (isNaN(dateObj.getTime())) return t`No date`;
     return formatShortDate(dateObj, { hideCurrentYear: true });
-  }, [transaction]);
+  }, [transaction, t]);
 
   const categoryDisplay = displayCategoryOverride || transaction.Category || '';
   const labelColor = transaction.LabelColor || '#9CA3AF';
@@ -46,7 +49,7 @@ export const TransactionCardHeader = React.memo(function TransactionCardHeader({
           <Checkbox
             checked={isSelected}
             onCheckedChange={onSelectionChange}
-            aria-label={`Select transaction: ${transaction.Memo || 'No memo'} - ${formatMilli(accountLocalizer, asMilli(transaction.InflowConverted > 0 ? transaction.InflowConverted : transaction.OutflowConverted))}`}
+            aria-label={t`Select transaction: ${transaction.Memo || 'No memo'} - ${formatMilli(accountLocalizer, asMilli(transaction.InflowConverted > 0 ? transaction.InflowConverted : transaction.OutflowConverted))}`}
             className="rounded-full"
           />
         </div>
@@ -89,7 +92,7 @@ export const TransactionCardHeader = React.memo(function TransactionCardHeader({
                 borderColor: hexToRgba(labelColor, 0.4),
               }}
               title={transaction.Label}
-              aria-label={`Label: ${transaction.Label}`}
+              aria-label={t`Label: ${transaction.Label}`}
             >
               <span
                 className="inline-block h-2 w-2 rounded-full border border-white/60 shrink-0"

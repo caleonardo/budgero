@@ -47,8 +47,10 @@ export const ChartsPanel = memo(
                 <Trans>Chart Visualizations</Trans>
               </h3>
               <Badge variant="secondary" className="text-xs">
-                {charts.length} chart
-                {charts.length > 1 ? 's' : ''}
+                <Trans>
+                  {charts.length}chart
+                  {charts.length > 1 ? 's' : ''}
+                </Trans>
               </Badge>
             </div>
             <div className="flex gap-1.5 sm:gap-2 flex-wrap">

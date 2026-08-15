@@ -35,13 +35,6 @@ import { useCompactNumberFormat } from '@shared/lib/useCompactNumberFormat';
 import { formatMaskedAmount, maskFormattedIfEnabled } from '@shared/lib/privacy/mask-numbers';
 import { asMilli, toDecimal, ZERO_MILLI } from '@shared/lib/currency/milli';
 
-const groupingOptions: { value: Grouping; label: string }[] = [
-  { value: 'day', label: 'Daily' },
-  { value: 'week', label: 'Weekly' },
-  { value: 'month', label: 'Monthly' },
-  { value: 'quarter', label: 'Quarterly' },
-];
-
 type Grouping = 'day' | 'week' | 'month' | 'quarter';
 
 interface ChartDatum {
@@ -92,6 +85,13 @@ function getLabel(grouping: Grouping, start: Date, end: Date) {
 
 export function IncomeExpenseByGroupChart() {
   const { t } = useLingui();
+
+  const groupingOptions: { value: Grouping; label: string }[] = [
+    { value: 'day', label: t`Daily` },
+    { value: 'week', label: t`Weekly` },
+    { value: 'month', label: t`Monthly` },
+    { value: 'quarter', label: t`Quarterly` },
+  ];
 
   const [grouping, setGrouping] = useState<Grouping>('month');
   const [selectedAccountIds, setSelectedAccountIds] = useState<number[]>([]);
@@ -161,20 +161,20 @@ export function IncomeExpenseByGroupChart() {
 
   const accountButtonLabel = useMemo(() => {
     if (isLoadingAccounts) {
-      return 'Loading accounts...';
+      return t`Loading accounts...`;
     }
     if (onBudgetAccounts.length === 0) {
-      return 'No on-budget accounts';
+      return t`No on-budget accounts`;
     }
     if (selectedAccountIds.length === 0) {
-      return 'All on-budget accounts';
+      return t`All on-budget accounts`;
     }
     if (selectedAccountIds.length === 1) {
       const account = onBudgetAccounts.find((item) => item.ID === selectedAccountIds[0]);
       return account?.Name ?? '1 account';
     }
     return `${selectedAccountIds.length} accounts`;
-  }, [isLoadingAccounts, onBudgetAccounts, selectedAccountIds]);
+  }, [isLoadingAccounts, onBudgetAccounts, selectedAccountIds, t]);
 
   const chartData = useMemo<ChartDatum[]>(() => {
     if (!data || data.length === 0) {
@@ -273,12 +273,12 @@ export function IncomeExpenseByGroupChart() {
           const rows: TooltipRow[] = [
             {
               color: incomeColor,
-              name: 'Income',
+              name: t`Income`,
               value: formatMaskedAmount(globalLocalizer, datum.income, privacyMaskNumbers),
             },
             {
               color: expenseColor,
-              name: 'Expense',
+              name: t`Expense`,
               value: formatMaskedAmount(
                 globalLocalizer,
                 Math.abs(datum.expense),
@@ -287,14 +287,14 @@ export function IncomeExpenseByGroupChart() {
             },
             {
               color: chrome.inkPrimary,
-              name: 'Net',
+              name: t`Net`,
               value: formatMaskedAmount(globalLocalizer, datum.net, privacyMaskNumbers),
             },
           ];
           if (typeof datum.netWorth === 'number') {
             rows.push({
               color: netWorthColor,
-              name: 'Net worth',
+              name: t`Net worth`,
               value: formatMaskedAmount(globalLocalizer, datum.netWorth, privacyMaskNumbers),
             });
           }
@@ -303,7 +303,7 @@ export function IncomeExpenseByGroupChart() {
       },
       series: [
         {
-          name: 'Income',
+          name: t`Income`,
           type: 'bar' as const,
           stack: 'net',
           yAxisIndex: 0,
@@ -312,7 +312,7 @@ export function IncomeExpenseByGroupChart() {
           itemStyle: { color: incomeColor, borderRadius: BAR_RADIUS_TOP },
         },
         {
-          name: 'Expense',
+          name: t`Expense`,
           type: 'bar' as const,
           stack: 'net',
           yAxisIndex: 0,
@@ -321,7 +321,7 @@ export function IncomeExpenseByGroupChart() {
           itemStyle: { color: expenseColor, borderRadius: BAR_RADIUS_BOTTOM },
         },
         {
-          name: 'Net worth',
+          name: t`Net worth`,
           type: 'line' as const,
           yAxisIndex: 1,
           data: chartData.map((datum) => datum.netWorth),
@@ -335,7 +335,7 @@ export function IncomeExpenseByGroupChart() {
         },
       ],
     };
-  }, [chartData, palette, compactFormatter, privacyMaskNumbers, globalLocalizer]);
+  }, [chartData, palette, compactFormatter, privacyMaskNumbers, globalLocalizer, t]);
 
   return (
     <Card className="shadow-sm">

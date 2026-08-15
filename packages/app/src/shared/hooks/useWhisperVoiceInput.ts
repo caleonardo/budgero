@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useAudioRecorder } from '@shared/hooks/useAudioRecorder';
 import {
@@ -44,6 +45,8 @@ export interface UseWhisperVoiceInputReturn {
 export function useWhisperVoiceInput(
   options: UseWhisperVoiceInputOptions = {}
 ): UseWhisperVoiceInputReturn {
+  const { t } = useLingui();
+
   const { modelSize = 'base', language, onTranscript, onError } = options;
 
   const [state, setState] = useState<VoiceInputState>('idle');
@@ -85,7 +88,7 @@ export function useWhisperVoiceInput(
 
   const startListening = useCallback(async () => {
     if (!isSupported) {
-      const err = 'Voice input is not supported in this browser';
+      const err = t`Voice input is not supported in this browser`;
       setError(err);
       setState('error');
       onError?.(err);
@@ -123,7 +126,7 @@ export function useWhisperVoiceInput(
       setState('error');
       onError?.(errMsg);
     }
-  }, [isSupported, modelSize, language, audioRecorder, onError]);
+  }, [isSupported, modelSize, language, audioRecorder, onError, t]);
 
   const stopListening = useCallback(async (): Promise<string | null> => {
     if (!audioRecorder.isRecording) {

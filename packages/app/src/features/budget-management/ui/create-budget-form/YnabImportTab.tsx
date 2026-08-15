@@ -134,7 +134,7 @@ export function YnabImportTab({
             </Trans>
           </Button>
           <span className="truncate text-xs sm:text-sm text-muted-foreground">
-            {file ? file.name : 'No file chosen'}
+            {file ? file.name : t`No file chosen`}
           </span>
         </div>
         <YnabExportGuide />

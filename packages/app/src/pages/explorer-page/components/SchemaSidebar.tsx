@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { memo, useMemo, useState } from 'react';
 import { Badge } from '@shared/ui/badge';
 import { Input } from '@shared/ui/input';
@@ -34,6 +34,8 @@ export const SchemaSidebar = memo(
     onInsertColumnName,
     onCloseSidebar,
   }: SchemaSidebarProps) => {
+    const { t } = useLingui();
+
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredSchema = useMemo(() => {
@@ -75,7 +77,7 @@ export const SchemaSidebar = memo(
             <Input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search tables, views, columns..."
+              placeholder={t`Search tables, views, columns...`}
               className="h-8 pl-8 text-xs"
             />
           </div>

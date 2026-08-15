@@ -181,10 +181,10 @@ export function DashboardPageMobile() {
               ) : (
                 <div>
                   <div className="text-2xl font-medium">
-                    {formatMilliAmount(budgetRemaining)} left
+                    <Trans>{formatMilliAmount(budgetRemaining)}left</Trans>
                   </div>
                   <div className="text-sm opacity-70">
-                    out of {formatMilliAmount(totalAssignedAmount || 0)} budgeted
+                    <Trans>out of {formatMilliAmount(totalAssignedAmount || 0)}budgeted</Trans>
                   </div>
                 </div>
               )}

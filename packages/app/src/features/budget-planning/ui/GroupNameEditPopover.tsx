@@ -67,7 +67,7 @@ export function GroupNameEditPopover({
               disabled={isDeleting}
             >
               <Trash className="h-4 w-4" />
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? t`Deleting...` : t`Delete`}
             </Button>
 
             <div className="flex gap-2">
@@ -75,7 +75,7 @@ export function GroupNameEditPopover({
                 <Trans>Cancel</Trans>
               </Button>
               <Button onClick={onSave} size="sm" disabled={isUpdating}>
-                {isUpdating ? 'Saving...' : 'Save'}
+                {isUpdating ? t`Saving...` : t`Save`}
               </Button>
             </div>
           </div>

@@ -24,6 +24,8 @@ interface ReorderListProps {
 }
 
 function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
+  const { t } = useLingui();
+
   if (accounts.length === 0) return null;
 
   const move = (index: number, direction: -1 | 1) => {
@@ -57,7 +59,7 @@ function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7"
-                  aria-label={`Move ${account.Name} up`}
+                  aria-label={t`Move ${account.Name} up`}
                   disabled={busy || index === 0}
                   onClick={() => move(index, -1)}
                 >
@@ -67,7 +69,7 @@ function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7"
-                  aria-label={`Move ${account.Name} down`}
+                  aria-label={t`Move ${account.Name} down`}
                   disabled={busy || index === accounts.length - 1}
                   onClick={() => move(index, 1)}
                 >

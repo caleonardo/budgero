@@ -267,12 +267,12 @@ export default function AccountPage() {
         const result = await markRecurringReady.mutateAsync({ occurrenceId });
         const { template } = result.occurrence;
         toast.success(t`Transaction posted`, {
-          description: `${template.name} was added to your register.`,
+          description: t`${template.name} was added to your register.`,
         });
       } else {
         await skipRecurring.mutateAsync({ id: occurrenceId });
         toast.success(t`Occurrence skipped`, {
-          description: 'We will remind you again next time.',
+          description: t`We will remind you again next time.`,
         });
       }
     } catch (error) {
@@ -365,12 +365,14 @@ export default function AccountPage() {
                 {selectedAccount?.Currency}
                 {' · '}
                 {mobilePageStats
-                  ? `Page ${mobilePageStats.pageNumber + 1}/${mobilePageStats.totalPages}`
+                  ? t`Page ${mobilePageStats.pageNumber + 1}/${mobilePageStats.totalPages}`
                   : `${transactionStats.recentCount} txns`}
                 {selectedAccount?.ReconciledAt && (
                   <span>
-                    {' '}
-                    · Reconciled {new Date(selectedAccount.ReconciledAt).toLocaleDateString()}
+                    <Trans>
+                      {' '}
+                      · Reconciled {new Date(selectedAccount.ReconciledAt).toLocaleDateString()}
+                    </Trans>
                   </span>
                 )}
               </p>

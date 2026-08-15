@@ -167,7 +167,7 @@ export function BudgetModals({
         open={modalState.confirmDeleteOpen}
         onOpenChange={(open) => !open && onConfirmDeleteClose()}
         title={t`Delete Category`}
-        description={`Are you sure you want to delete the category "${modalState.pendingDelete?.name}"? This action cannot be undone.`}
+        description={t`Are you sure you want to delete the category "${modalState.pendingDelete?.name}"? This action cannot be undone.`}
         confirmText={t`Delete`}
         cancelText={t`Cancel`}
         variant="destructive"

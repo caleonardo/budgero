@@ -9,21 +9,21 @@ export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
   const rules = [
     {
       n: 'I.',
-      title: 'Only money you have now',
+      title: t`Only money you have now`,
       body: 'No projections, no credit limits. We budget paychecks that have actually landed — never money you hope will arrive.',
       icon: '/onboarding-rules-wallet.png',
       alt: 'Wallet with cash',
     },
     {
       n: 'II.',
-      title: 'Every dollar gets a job',
+      title: t`Every dollar gets a job`,
       body: "Rent, groceries, future-you. If a coin walks into Budgero with no assignment, it doesn't leave the front desk.",
       icon: '/onboarding-rules-worker.png',
       alt: 'Coin character with hardhat and briefcase',
     },
     {
       n: 'III.',
-      title: 'You are the accountant',
+      title: t`You are the accountant`,
       body: "Transactions are entered by hand — no bank sync, no background fetch. Slow is the feature. You'll feel every transaction.",
       icon: '/onboarding-rules-clipboard.png',
       alt: 'Clipboard with checkmarks',

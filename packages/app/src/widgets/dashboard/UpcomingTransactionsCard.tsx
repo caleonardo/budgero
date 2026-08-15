@@ -1,5 +1,5 @@
 import { plural } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addMonths, parseISO, differenceInCalendarDays } from 'date-fns';
@@ -67,6 +67,8 @@ export function UpcomingTransactionsCard({
   budgetId,
   globalLocalizer,
 }: UpcomingTransactionsCardProps) {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const today = useMemo(() => new Date(), []);
@@ -190,7 +192,7 @@ export function UpcomingTransactionsCard({
         const isOutflow = (tx.OutflowConverted ?? 0) > 0;
         return {
           key: `transaction-${tx.ID}`,
-          name: tx.Payee || tx.Memo || tx.Category || 'Scheduled transaction',
+          name: tx.Payee || tx.Memo || tx.Category || t`Scheduled transaction`,
           date: parseISO(tx.Date),
           amount: Math.abs(isOutflow ? (tx.OutflowConverted ?? 0) : (tx.InflowConverted ?? 0)),
           isOutflow,
@@ -207,7 +209,7 @@ export function UpcomingTransactionsCard({
     return [...recurringItems, ...oneOffItems]
       .sort((a, b) => a.date.getTime() - b.date.getTime())
       .slice(0, MAX_ITEMS);
-  }, [occurrences, transactions, accountById, accountIdByName, today, oneOffHorizon]);
+  }, [occurrences, transactions, accountById, accountIdByName, today, oneOffHorizon, t]);
 
   const isLoading = occurrencesLoading || transactionsLoading;
 
@@ -245,7 +247,7 @@ export function UpcomingTransactionsCard({
               <Badge variant={item.badgeVariant}>{item.badgeLabel}</Badge>
               <span className="text-[11px] text-muted-foreground">
                 {daysUntil <= 0
-                  ? 'Due today'
+                  ? t`Due today`
                   : plural(daysUntil, {
                       one: `Due in # day`,
                       other: `Due in # days`,
@@ -268,8 +270,10 @@ export function UpcomingTransactionsCard({
           </Trans>
         </CardTitle>
         <CardDescription className="text-xs">
-          Next charge for each recurring series, plus scheduled transactions in the next{' '}
-          {ONE_OFF_LOOKAHEAD_MONTHS} months.
+          <Trans>
+            Next charge for each recurring series, plus scheduled transactions in the next{' '}
+            {ONE_OFF_LOOKAHEAD_MONTHS}months.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -282,8 +286,10 @@ export function UpcomingTransactionsCard({
           <ul className="space-y-2">{upcoming.map(renderItem)}</ul>
         ) : (
           <EmptyStateRow icon={AlertCircle}>
-            Nothing upcoming. Recurring charges and transactions dated in the next{' '}
-            {ONE_OFF_LOOKAHEAD_MONTHS} months appear here.
+            <Trans>
+              Nothing upcoming. Recurring charges and transactions dated in the next{' '}
+              {ONE_OFF_LOOKAHEAD_MONTHS}months appear here.
+            </Trans>
           </EmptyStateRow>
         )}
       </CardContent>

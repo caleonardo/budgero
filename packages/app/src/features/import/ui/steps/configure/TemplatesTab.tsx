@@ -108,8 +108,10 @@ export function TemplatesTab({
                   <div className="min-w-0">
                     <div className="truncate font-medium">{template.name}</div>
                     <div className="text-sm text-muted-foreground break-words">
-                      Thousand: {template.thousandSeparator || ','} | Decimal:{' '}
-                      {template.decimalSeparator || '.'} | Date: {template.dateFormat}
+                      <Trans>
+                        Thousand: {template.thousandSeparator || ','}| Decimal:{' '}
+                        {template.decimalSeparator || '.'}| Date: {template.dateFormat}
+                      </Trans>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => onDeleteTemplate(template.id)}>

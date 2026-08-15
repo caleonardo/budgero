@@ -59,8 +59,8 @@ export function BudgetSwitcher() {
       setCreateDialogOpen(false);
       toast.success(t`Budget created`, {
         description: createdBudget
-          ? `Switched to "${createdBudget.Name}".`
-          : 'Switched to your new budget.',
+          ? t`Switched to "${createdBudget.Name}".`
+          : t`Switched to your new budget.`,
       });
       void navigate('/', { replace: true });
     },

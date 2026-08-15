@@ -107,7 +107,7 @@ export const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
             <Trans>Cancel</Trans>
           </Button>
           <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save Changes'}
+            {isSaving ? t`Saving...` : t`Save Changes`}
           </Button>
         </DialogFooter>
       </DialogContent>

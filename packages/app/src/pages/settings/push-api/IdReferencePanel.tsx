@@ -119,7 +119,7 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
                         onClick={() => handleCopyId(budget.ID, 'Budget')}
                       >
                         <Badge variant="secondary" className="font-mono text-xs">
-                          ID: {budget.ID}
+                          <Trans>ID: {budget.ID}</Trans>
                         </Badge>
                         <Copy className="h-3 w-3 ml-1" />
                       </Button>

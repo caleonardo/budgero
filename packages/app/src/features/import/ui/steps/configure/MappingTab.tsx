@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Mapping Tab
  *
@@ -30,10 +30,12 @@ interface SkipRowCheckboxProps {
 }
 
 function SkipRowCheckbox({ skipped, onClick, onCheckedChange }: SkipRowCheckboxProps) {
+  const { t } = useLingui();
+
   return (
     <Checkbox
       className="mr-2 size-5 align-middle [&_svg]:size-4"
-      aria-label={skipped ? 'Include this row in import' : 'Skip this row from import'}
+      aria-label={skipped ? t`Include this row in import` : t`Skip this row from import`}
       checked={!skipped}
       onClick={onClick}
       onCheckedChange={onCheckedChange}
@@ -68,6 +70,8 @@ export function MappingTab({
   onSetSkippedRowsInRange,
   onHeaderSelect,
 }: MappingTabProps) {
+  const { t } = useLingui();
+
   const handleColumnChange = (field: keyof ColumnMapping, value: string) => {
     onColumnMappingChange({
       ...columnMapping,
@@ -108,7 +112,7 @@ export function MappingTab({
     const seenLabels = new Set<string>();
     const headers: string[] = row.map((cell: string, i: number) => {
       const trimmed = (cell || '').trim();
-      const base = trimmed.length > 0 ? trimmed : `Column ${i + 1}`;
+      const base = trimmed.length > 0 ? trimmed : t`Column ${i + 1}`;
       // Disambiguate accidental duplicate header labels by suffixing the
       // column index, otherwise the row object below would collapse them.
       let label = base;
@@ -230,17 +234,17 @@ export function MappingTab({
               <Label htmlFor={field} className="capitalize">
                 {field}{' '}
                 {field === 'date'
-                  ? '(Required)'
+                  ? t`(Required)`
                   : field === 'amount'
-                    ? '(Required - or use InflowConverted/OutflowConverted)'
-                    : '(Optional)'}
+                    ? t`(Required - or use InflowConverted/OutflowConverted)`
+                    : t`(Optional)`}
               </Label>
               <Select
                 value={columnMapping[field as keyof ColumnMapping] || 'none'}
                 onValueChange={(value) => handleColumnChange(field as keyof ColumnMapping, value)}
               >
                 <SelectTrigger className="w-full min-w-0">
-                  <SelectValue placeholder={`Select ${field} column`} />
+                  <SelectValue placeholder={t`Select ${field} column`} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">
@@ -322,15 +326,19 @@ export function MappingTab({
             <Trans>Select Header Row:</Trans>
           </h4>
           <p className="text-sm text-muted-foreground mb-4">
-            Click on the row that contains your table headers.{' '}
-            {visibleSuggestedHeaderIndex !== null &&
-              visibleSuggestedHeaderIndex < visibleRawRows.length &&
-              `Row ${visibleSuggestedHeaderIndex + 1} is suggested.`}{' '}
-            Showing {visibleRawRows.length} of {rawTableData.allRows.length} detected rows
-            {skipRows > 0 ? ` (first ${skipRows} skipped)` : ''}
-            {skippedRowIndices.size > 0 ? `, ${skippedRowIndices.size} excluded from import` : ''}.
-            Once a header is selected, uncheck the box in any data row to exclude it. Hold Shift and
-            click to toggle a range.
+            <Trans>
+              Click on the row that contains your table headers.{' '}
+              {visibleSuggestedHeaderIndex !== null &&
+                visibleSuggestedHeaderIndex < visibleRawRows.length &&
+                t`Row ${visibleSuggestedHeaderIndex + 1} is suggested.`}{' '}
+              Showing {visibleRawRows.length}of {rawTableData.allRows.length}detected rows
+              {skipRows > 0 ? ` (first ${skipRows} skipped)` : ''}
+              {skippedRowIndices.size > 0
+                ? t`, ${skippedRowIndices.size} excluded from import`
+                : ''}
+              . Once a header is selected, uncheck the box in any data row to exclude it. Hold Shift
+              and click to toggle a range.
+            </Trans>
           </p>
           <div className="border rounded-lg overflow-hidden">
             <div className="overflow-auto max-h-96">
@@ -339,7 +347,7 @@ export function MappingTab({
                   <thead className="sticky top-0 z-10">
                     <tr className="bg-primary/15 border-b-2 border-primary">
                       <th className="px-2 py-1 text-xs text-muted-foreground border-r whitespace-nowrap text-left bg-primary/15">
-                        {selectedHeaderIndex + 1} (header)
+                        <Trans>{selectedHeaderIndex + 1}(header)</Trans>
                       </th>
                       {rawTableData.allRows[selectedHeaderIndex].map(
                         (cell: string, cellIndex: number) => (
@@ -390,8 +398,8 @@ export function MappingTab({
                             />
                           )}
                           {absoluteIndex + 1}
-                          {absoluteIndex === rawTableData.suggestedHeaderIndex && ' (suggested)'}
-                          {selectedHeaderIndex === absoluteIndex && ' (selected)'}
+                          {absoluteIndex === rawTableData.suggestedHeaderIndex && t` (suggested)`}
+                          {selectedHeaderIndex === absoluteIndex && t` (selected)`}
                         </td>
                         {row.map((cell: string, cellIndex: number) => (
                           <td
@@ -417,10 +425,12 @@ export function MappingTab({
             <Trans>Preview of your data:</Trans>
           </h4>
           <p className="text-xs text-muted-foreground mb-2">
-            Showing {Math.min(parsedData.rows.length, 500)} of {parsedData.rows.length} rows
-            {skipRows > 0 ? ` (first ${skipRows} skipped)` : ''}
-            {skippedRowIndices.size > 0 ? `, ${skippedRowIndices.size} excluded` : ''}. Uncheck the
-            box to exclude a row from import. Hold Shift and click to toggle a range.
+            <Trans>
+              Showing {Math.min(parsedData.rows.length, 500)}of {parsedData.rows.length}rows
+              {skipRows > 0 ? ` (first ${skipRows} skipped)` : ''}
+              {skippedRowIndices.size > 0 ? `, ${skippedRowIndices.size} excluded` : ''}. Uncheck
+              the box to exclude a row from import. Hold Shift and click to toggle a range.
+            </Trans>
           </p>
           <div className="border rounded-lg overflow-hidden">
             <div className="overflow-auto max-h-96">

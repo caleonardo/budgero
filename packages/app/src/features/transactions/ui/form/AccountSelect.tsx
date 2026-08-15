@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 /**
  * Account Select Components
  *
@@ -33,6 +34,8 @@ export function FromAccountSelect({
   transactionType,
   showAutofillIndicator = false,
 }: FromAccountSelectProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-1.5 sm:space-y-2 w-full">
       <div className="flex items-center gap-2">
@@ -56,10 +59,10 @@ export function FromAccountSelect({
               <SelectValue
                 placeholder={
                   isLoading
-                    ? 'Loading accounts...'
+                    ? t`Loading accounts...`
                     : transactionType === 'transfer'
-                      ? 'Select from account'
-                      : 'Select account'
+                      ? t`Select from account`
+                      : t`Select account`
                 }
               />
             </SelectTrigger>
@@ -92,6 +95,8 @@ export function ToAccountSelect({
   excludeAccountId,
   isLoading,
 }: ToAccountSelectProps) {
+  const { t } = useLingui();
+
   const filteredAccounts = accounts.filter((account) => account.ID.toString() !== excludeAccountId);
 
   return (
@@ -104,7 +109,9 @@ export function ToAccountSelect({
               className="h-8 sm:h-10 w-full"
               data-testid="transaction-to-account-select"
             >
-              <SelectValue placeholder={isLoading ? 'Loading accounts...' : 'Select to account'} />
+              <SelectValue
+                placeholder={isLoading ? t`Loading accounts...` : t`Select to account`}
+              />
             </SelectTrigger>
             <SelectContent>
               {filteredAccounts.map((account) => (

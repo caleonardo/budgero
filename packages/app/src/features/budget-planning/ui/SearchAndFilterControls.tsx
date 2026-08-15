@@ -120,7 +120,7 @@ export function SearchAndFilterControls({
                 size="sm"
                 onClick={onToggleAllGroups}
                 className="h-8 shrink-0 gap-1.5 whitespace-nowrap rounded-lg border-border/70 bg-card/50 px-2.5 text-xs font-medium text-muted-foreground shadow-none hover:bg-muted/60 hover:text-foreground"
-                title={collapsedGroups.size === 0 ? 'Collapse all groups' : 'Expand all groups'}
+                title={collapsedGroups.size === 0 ? t`Collapse all groups` : t`Expand all groups`}
               >
                 {collapsedGroups.size === 0 ? (
                   <>

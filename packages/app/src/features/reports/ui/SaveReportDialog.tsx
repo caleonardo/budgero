@@ -173,7 +173,7 @@ export function SaveReportDialog({
 
     if (!hasRequiredColumns) {
       toast.error(
-        isStat ? 'Please select a metric column' : 'Please select both X and Y axis columns'
+        isStat ? t`Please select a metric column` : t`Please select both X and Y axis columns`
       );
       return;
     }
@@ -225,7 +225,7 @@ export function SaveReportDialog({
         charts: chartConfigs,
       });
 
-      toast.success(`Report ${mode === 'create' ? 'created' : 'updated'} successfully`);
+      toast.success(t`Report ${mode === 'create' ? 'created' : 'updated'} successfully`);
       if (pinAfterSave && onSaveAndPin) {
         onSaveAndPin(savedReport);
       }
@@ -251,11 +251,11 @@ export function SaveReportDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="w-[95vw] sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Save Report' : 'Edit Report'}</DialogTitle>
+          <DialogTitle>{mode === 'create' ? t`Save Report` : t`Edit Report`}</DialogTitle>
           <DialogDescription>
             {mode === 'create'
-              ? 'Save your SQL query as a reusable report. Optionally add chart visualizations.'
-              : 'Update your report and chart configurations.'}
+              ? t`Save your SQL query as a reusable report. Optionally add chart visualizations.`
+              : t`Update your report and chart configurations.`}
           </DialogDescription>
         </DialogHeader>
 
@@ -365,7 +365,7 @@ export function SaveReportDialog({
                         <Badge variant="secondary">{chart.chartType}</Badge>
                         {chart.chartType !== 'stat' && <span>X: {chart.xAxisColumn}</span>}
                         <span>
-                          {chart.chartType === 'stat' ? 'Metric' : 'Y'}: {chart.aggregateFunction}(
+                          {chart.chartType === 'stat' ? t`Metric` : 'Y'}: {chart.aggregateFunction}(
                           {chart.yAxisColumn})
                         </span>
                         {chart.groupByColumn !== '__none__' && (
@@ -385,7 +385,7 @@ export function SaveReportDialog({
               <Card>
                 <CardHeader>
                   <CardTitle className="text-sm">
-                    {newChart.xAxisColumn ? 'Edit' : 'Add'} Chart Configuration
+                    <Trans>{newChart.xAxisColumn ? t`Edit` : t`Add`}Chart Configuration</Trans>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -559,7 +559,7 @@ export function SaveReportDialog({
                       disabled={!hasRequiredColumns}
                       className="w-full sm:w-auto"
                     >
-                      {hasRequiredColumns ? 'Update' : 'Add'} Chart
+                      <Trans>{hasRequiredColumns ? t`Update` : t`Add`}Chart</Trans>
                     </Button>
                   </div>
                 </CardContent>
@@ -582,7 +582,7 @@ export function SaveReportDialog({
             disabled={!reportName.trim() || isSaving}
             className="w-full sm:w-auto"
           >
-            {isSaving ? 'Saving...' : mode === 'create' ? 'Save Report' : 'Update Report'}
+            {isSaving ? t`Saving...` : mode === 'create' ? t`Save Report` : t`Update Report`}
           </Button>
           <Button
             onClick={() => void handleSave(true)}
@@ -590,7 +590,7 @@ export function SaveReportDialog({
             className="w-full sm:w-auto"
             variant="secondary"
           >
-            {isSaving ? 'Saving...' : mode === 'create' ? 'Save & Pin' : 'Update & Pin'}
+            {isSaving ? t`Saving...` : mode === 'create' ? t`Save & Pin` : t`Update & Pin`}
           </Button>
         </DialogFooter>
       </DialogContent>

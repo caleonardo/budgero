@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useMemo, useState } from 'react';
 import { isFutureDate, groupTransactionsByDateKey, formatShortDate } from '@shared/lib/date-utils';
 import { toast } from 'sonner';
@@ -81,6 +81,8 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
   footerSize = 'default',
   stickyFooter = true,
 }: MobileTransactionListProps) {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const { data: accounts } = useAccounts(selectedBudget?.ID || 0);
   const cellCommit = useTransactionCellCommit();
@@ -88,7 +90,7 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
   const effectiveBudgetId = budgetId || selectedBudget?.ID || 0;
   const isCompactFooter = footerSize === 'compact';
   const containerClasses = cn('space-y-0', stickyFooter && isCompactFooter && 'pb-6');
-  const mobileBottomNavHeight = 'var(--mobile-bottom-nav-height, 96px)';
+  const mobileBottomNavHeight = t`var(--mobile-bottom-nav-height, 96px)`;
 
   const resolveAccountIdForTransaction = (tx: GetTransactionsByAccountRow) => {
     const name = tx.Account;
@@ -158,7 +160,7 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
         {groupedTransactions.map(({ key, date, transactions }) => {
           const displayDate = date
             ? formatShortDate(date, { hideCurrentYear: true, weekday: 'long' })
-            : 'Unknown date';
+            : t`Unknown date`;
 
           return (
             <div key={key} className="space-y-0">
@@ -263,20 +265,24 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
             disabled={!hasPreviousPage}
             className="flex items-center gap-2"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Previous
+            <Trans>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Previous
+            </Trans>
           </Button>
 
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">
-              Page {currentPage + 1} of {totalPages}
+              <Trans>
+                Page {currentPage + 1}of {totalPages}
+              </Trans>
             </span>
             <div className="flex gap-1">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -310,10 +316,17 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
             disabled={!hasNextPage}
             className="flex items-center gap-2"
           >
-            Next
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            <Trans>
+              Next
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </Trans>
           </Button>
         </div>
       )}
@@ -329,8 +342,8 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
               transactionId: Number(activeTransaction.ID),
               accountId,
             });
-            toast.success('Transaction deleted', {
-              description: 'The transaction has been permanently removed.',
+            toast.success(t`Transaction deleted`, {
+              description: t`The transaction has been permanently removed.`,
             });
             setConfirmDeleteOpen(false);
             setActiveTransaction(null);

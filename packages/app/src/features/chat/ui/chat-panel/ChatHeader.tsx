@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { X, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
@@ -11,6 +11,8 @@ interface ContextUsageIndicatorProps {
 }
 
 function ContextUsageIndicator({ used, limit }: ContextUsageIndicatorProps) {
+  const { t } = useLingui();
+
   const flags = computeContextUsageFlags(used, limit);
 
   // If we have a limit, show progress bar
@@ -18,7 +20,7 @@ function ContextUsageIndicator({ used, limit }: ContextUsageIndicatorProps) {
     return (
       <div
         className="flex items-center gap-2 text-xs text-muted-foreground"
-        title={`Context: ${used.toLocaleString()} / ${(limit ?? 0).toLocaleString()} tokens (${flags.percentage.toFixed(0)}%)`}
+        title={t`Context: ${used.toLocaleString()} / ${(limit ?? 0).toLocaleString()} tokens (${flags.percentage.toFixed(0)}%)`}
       >
         <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
           <div
@@ -45,9 +47,9 @@ function ContextUsageIndicator({ used, limit }: ContextUsageIndicatorProps) {
   return (
     <div
       className="text-xs text-muted-foreground"
-      title={`Context used: ${used.toLocaleString()} tokens`}
+      title={t`Context used: ${used.toLocaleString()} tokens`}
     >
-      {formatTokenCount(used)} tokens
+      <Trans>{formatTokenCount(used)}tokens</Trans>
     </div>
   );
 }
@@ -67,6 +69,8 @@ export function ChatHeader({
   tokenUsage,
   contextLength,
 }: ChatHeaderProps) {
+  const { t } = useLingui();
+
   return (
     <div className="flex shrink-0 items-center justify-between border-b px-4 py-3">
       <div className="flex items-center gap-2">
@@ -75,7 +79,7 @@ export function ChatHeader({
           size="icon"
           className="h-8 w-8"
           onClick={onToggleSidebar}
-          title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
+          title={sidebarOpen ? t`Hide sidebar` : t`Show sidebar`}
         >
           {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
         </Button>

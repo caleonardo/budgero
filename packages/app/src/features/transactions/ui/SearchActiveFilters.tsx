@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import {
   X,
@@ -34,6 +34,8 @@ export const SearchActiveFilters = React.memo(function SearchActiveFilters({
   onClearAll,
   currencyFormatter,
 }: SearchActiveFiltersProps) {
+  const { t } = useLingui();
+
   const hasFilters = parsed.matchedTokens.length > 0 || parsed.textQuery.trim().length > 0;
 
   if (!hasFilters) {
@@ -82,7 +84,7 @@ export const SearchActiveFilters = React.memo(function SearchActiveFilters({
             label.toLowerCase().includes(raw.toLowerCase()) ||
             raw.toLowerCase().includes(label.toLowerCase())
         );
-        return matchedLabel ? `Label: ${matchedLabel}` : `Label: ${raw}`;
+        return matchedLabel ? t`Label: ${matchedLabel}` : t`Label: ${raw}`;
       }
       case 'amount':
         // Use the token's own amountFilter data
@@ -132,7 +134,7 @@ export const SearchActiveFilters = React.memo(function SearchActiveFilters({
               type="button"
               onClick={() => onRemoveToken(token)}
               className="ml-0.5 rounded-full p-0.5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
-              aria-label={`Remove ${getTokenLabel(token)} filter`}
+              aria-label={t`Remove ${getTokenLabel(token)} filter`}
             >
               <X className="h-3 w-3" />
             </button>

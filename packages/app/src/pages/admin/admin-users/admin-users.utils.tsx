@@ -40,14 +40,14 @@ export function getSubscriptionInfo(user: User) {
   if (user.has_beta_access && user.beta_expires_at) {
     return (
       <span className="text-xs text-indigo-600">
-        Free access until {formatShortDate(user.beta_expires_at)}
+        <Trans>Free access until {formatShortDate(user.beta_expires_at)}</Trans>
       </span>
     );
   }
   if (user.subscription_status === 'active' && user.current_period_end) {
     return (
       <span className="text-xs text-green-600">
-        Renews {formatShortDate(user.current_period_end)}
+        <Trans>Renews {formatShortDate(user.current_period_end)}</Trans>
       </span>
     );
   }
@@ -57,14 +57,14 @@ export function getSubscriptionInfo(user: User) {
   ) {
     return (
       <span className="text-xs text-blue-600">
-        Trial until {formatShortDate(user.trial_ends_at)}
+        <Trans>Trial until {formatShortDate(user.trial_ends_at)}</Trans>
       </span>
     );
   }
   if (user.subscription_status === 'cancelled' && user.subscription_ends_at) {
     return (
       <span className="text-xs text-red-600">
-        Cancelled, ends {formatShortDate(user.subscription_ends_at)}
+        <Trans>Cancelled, ends {formatShortDate(user.subscription_ends_at)}</Trans>
       </span>
     );
   }

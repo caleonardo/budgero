@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 /**
  * Import Feature Types
  *
@@ -108,19 +109,19 @@ export interface RawTableData {
 }
 
 export const SUPPORTED_NUMBER_FORMATS = [
-  { value: '1,234.56', label: 'US/UK (1,234.56)' },
-  { value: '1.234,56', label: 'European (1.234,56)' },
-  { value: '1 234.56', label: 'French (1 234.56)' },
-  { value: '1 234,56', label: 'French Alt (1 234,56)' },
-  { value: "1'234.56", label: "Swiss (1'234.56)" },
+  { value: '1,234.56', label: msg`US/UK (1,234.56)` },
+  { value: '1.234,56', label: msg`European (1.234,56)` },
+  { value: '1 234.56', label: msg`French (1 234.56)` },
+  { value: '1 234,56', label: msg`French Alt (1 234,56)` },
+  { value: "1'234.56", label: msg`Swiss (1'234.56)` },
 ] as const;
 
 export const SUPPORTED_DATE_FORMATS = [
-  { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD (2024-01-31)' },
-  { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY (01/31/2024)' },
-  { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY (31/01/2024)' },
-  { value: 'DD.MM.YYYY', label: 'DD.MM.YYYY (31.01.2024)' },
-  { value: 'YYYY/MM/DD', label: 'YYYY/MM/DD (2024/01/31)' },
+  { value: 'YYYY-MM-DD', label: msg`YYYY-MM-DD (2024-01-31)` },
+  { value: 'MM/DD/YYYY', label: msg`MM/DD/YYYY (01/31/2024)` },
+  { value: 'DD/MM/YYYY', label: msg`DD/MM/YYYY (31/01/2024)` },
+  { value: 'DD.MM.YYYY', label: msg`DD.MM.YYYY (31.01.2024)` },
+  { value: 'YYYY/MM/DD', label: msg`YYYY/MM/DD (2024/01/31)` },
 ] as const;
 
 export const DEFAULT_IMPORT_CONFIG: ImportConfig = {

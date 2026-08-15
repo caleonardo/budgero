@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 // Surfaces invite links the user generated during onboarding once they
 // land on the dashboard. The onboarding apply pipeline persists results
 // to sessionStorage under PENDING_ONBOARDING_INVITES_KEY; this dialog
@@ -63,6 +63,8 @@ function clearPending() {
 }
 
 function InviteRow({ invite }: { invite: PendingInvite }) {
+  const { t } = useLingui();
+
   const [copied, setCopied] = useState<'link' | 'code' | null>(null);
   const url = invite.url || buildJoinUrl(invite.secret);
   const mailto = buildInviteMailto({ to: invite.email, secret: invite.secret, url });
@@ -91,7 +93,7 @@ function InviteRow({ invite }: { invite: PendingInvite }) {
       <div className="mt-2 flex flex-wrap gap-2">
         <Button type="button" size="sm" onClick={() => void copy(url, 'link')}>
           <Copy className="mr-2 h-3.5 w-3.5" />
-          {copied === 'link' ? 'Copied!' : 'Copy link'}
+          {copied === 'link' ? t`Copied!` : t`Copy link`}
         </Button>
         <Button type="button" size="sm" variant="outline" asChild>
           <a href={mailto}>
@@ -107,7 +109,7 @@ function InviteRow({ invite }: { invite: PendingInvite }) {
           variant="ghost"
           onClick={() => void copy(invite.secret, 'code')}
         >
-          {copied === 'code' ? 'Code copied!' : 'Copy code only'}
+          {copied === 'code' ? t`Code copied!` : t`Copy code only`}
         </Button>
       </div>
     </div>
@@ -156,13 +158,15 @@ export default function OnboardingInviteShareDialog() {
             <Trans>Share these invite links</Trans>
           </DialogTitle>
           <DialogDescription>
-            Each link contains a one-time secret that unlocks your shared workspace.{' '}
-            <span className="font-medium text-foreground">
-              <Trans>Budgero never sees it</Trans>
-            </span>{' '}
-            — but whatever channel you use to share will. For the strongest privacy, hand the link
-            off in person or through an end-to-end encrypted app (Signal, iMessage, WhatsApp). Plain
-            email works too — just remember your email provider can read what you send.
+            <Trans>
+              Each link contains a one-time secret that unlocks your shared workspace.{' '}
+              <span className="font-medium text-foreground">
+                <Trans>Budgero never sees it</Trans>
+              </span>{' '}
+              — but whatever channel you use to share will. For the strongest privacy, hand the link
+              off in person or through an end-to-end encrypted app (Signal, iMessage, WhatsApp).
+              Plain email works too — just remember your email provider can read what you send.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-3">
@@ -171,12 +175,14 @@ export default function OnboardingInviteShareDialog() {
           ))}
         </div>
         <p className="text-xs text-muted-foreground">
-          Once you close this dialog the secrets are gone from Budgero. You can regenerate fresh
-          invites any time from{' '}
-          <span className="font-medium text-foreground">
-            <Trans>Settings → Workspaces</Trans>
-          </span>
-          .
+          <Trans>
+            Once you close this dialog the secrets are gone from Budgero. You can regenerate fresh
+            invites any time from{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Settings → Workspaces</Trans>
+            </span>
+            .
+          </Trans>
         </p>
         <DialogFooter>
           <Button onClick={() => handleOpenChange(false)}>

@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 /**
  * useAddTransactionForm Hook
  *
@@ -53,6 +54,8 @@ export function useAddTransactionForm({
   onAddTransaction,
   onCancel,
 }: UseAddTransactionFormOptions) {
+  const { t } = useLingui();
+
   const upsertSplits = useUpsertSplits();
   const form = useTransactionForm({ selectedAccountId });
 
@@ -332,7 +335,7 @@ export function useAddTransactionForm({
       }
 
       const { inflow, outflow } = convertAmountToFlow(form.amount, form.transactionType);
-      const finalCategory = isSplit ? 'Uncategorized' : form.selectedCategory;
+      const finalCategory = isSplit ? t`Uncategorized` : form.selectedCategory;
 
       if (form.transactionType === 'transfer') {
         const fromAccount = accounts.find((acc) => acc.ID.toString() === form.selectedFromAccount);
@@ -378,8 +381,8 @@ export function useAddTransactionForm({
             // For off-budget transfers, use the selected category for the source side
             // This allows users to categorize off-budget transfers as spending
             const sourceCategory = isOffBudgetTransfer
-              ? form.selectedCategory || 'Transfers'
-              : 'Transfers';
+              ? form.selectedCategory || t`Transfers`
+              : t`Transfers`;
 
             await onAddTransaction(
               form.transactionDate,
@@ -416,7 +419,7 @@ export function useAddTransactionForm({
             if (addAnother) {
               resetFormFields();
             }
-            toast.success('Transfer added', { description: 'Transfer created successfully.' });
+            toast.success(t`Transfer added`, { description: t`Transfer created successfully.` });
           } finally {
             form.setCalculatingTransfer(false);
           }
@@ -480,7 +483,7 @@ export function useAddTransactionForm({
         if (addAnother) {
           resetFormFields();
         }
-        toast.success('Transaction added', { description: 'Transaction saved successfully.' });
+        toast.success(t`Transaction added`, { description: t`Transaction saved successfully.` });
         return;
       }
 
@@ -514,8 +517,8 @@ export function useAddTransactionForm({
         (l) => (!l.categoryId && !l.transferAccountId) || (l.categoryId && l.transferAccountId)
       );
       if (missingAssignment && !uncategorizedId) {
-        toast.error('Split requires category', {
-          description: 'Each split line needs a category. Please assign a category to every split.',
+        toast.error(t`Split requires category`, {
+          description: t`Each split line needs a category. Please assign a category to every split.`,
         });
         return;
       }
@@ -548,14 +551,15 @@ export function useAddTransactionForm({
         if (addAnother) {
           resetFormFields();
         }
-        toast.success('Transaction with splits added', {
-          description: 'Transaction saved successfully.',
+        toast.success(t`Transaction with splits added`, {
+          description: t`Transaction saved successfully.`,
         });
       } catch (e) {
         console.error('Failed to save splits', e);
       }
     },
     [
+      t,
       form,
       isSplit,
       splitLines,

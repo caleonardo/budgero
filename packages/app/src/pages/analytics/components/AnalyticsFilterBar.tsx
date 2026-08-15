@@ -27,12 +27,12 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
     const budget = data.accounts.filter((account) => account.onBudget);
     const tracking = data.accounts.filter((account) => !account.onBudget);
     return [
-      { key: 'budget', heading: 'Budget accounts', items: budget },
+      { key: 'budget', heading: t`Budget accounts`, items: budget },
       ...(tracking.length
-        ? [{ key: 'tracking', heading: 'Tracking accounts', items: tracking }]
+        ? [{ key: 'tracking', heading: t`Tracking accounts`, items: tracking }]
         : []),
     ];
-  }, [data.accounts]);
+  }, [data.accounts, t]);
 
   const categoryGroupsList = useMemo(
     () =>
@@ -90,7 +90,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
               <CalendarRange className="h-4 w-4" />
               {customRange?.from && customRange?.to
                 ? `${formatShortDate(customRange.from)} – ${formatShortDate(customRange.to)}`
-                : 'Pick range'}
+                : t`Pick range`}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
@@ -153,7 +153,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             allOptionValue="all-categories"
           />
           <MultiSelectFilterControl
-            groups={[{ key: 'payees', heading: 'Payees', items: payeeItems }]}
+            groups={[{ key: 'payees', heading: t`Payees`, items: payeeItems }]}
             selectedIds={selectedPayeeIds}
             onChange={(ids) => update({ payees: ids.map((index) => data.payees[index]) })}
             getId={(payee) => payee.id}
@@ -174,7 +174,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             allOptionValue="all-payees"
           />
           <MultiSelectFilterControl
-            groups={[{ key: 'labels', heading: 'Labels', items: data.labels }]}
+            groups={[{ key: 'labels', heading: t`Labels`, items: data.labels }]}
             selectedIds={selections.labelIds}
             onChange={(ids) => update({ labelIds: ids })}
             getId={(label) => label.id}
