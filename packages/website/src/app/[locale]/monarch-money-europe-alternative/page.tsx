@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Globe, Shield, Euro, DollarSign, Ban } from 'lucide-react';
@@ -229,7 +230,21 @@ function renderCellValue(val: unknown, note?: string | null, isHighlight?: boole
 
 const MONARCH_YEARLY_USD = 99.99;
 
-export default function MonarchMoneyEuropeAlternativePage() {
+export default async function MonarchMoneyEuropeAlternativePage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('monarch_money_europe_alternative');
   const budgeroYearly = parseFloat(pricing.yearly.replace(/[^0-9.]/g, ''));
   const yearlySavings = Math.max(0, Math.round(MONARCH_YEARLY_USD - budgeroYearly));
   const percentCheaper = Math.max(
@@ -324,23 +339,12 @@ export default function MonarchMoneyEuropeAlternativePage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-red-500/30 text-red-700 dark:text-red-400 bg-red-500/10"
                 >
-                  <Ban className="w-3.5 h-3.5 mr-2" />
-                  Monarch Money isn&apos;t available in Europe
-                </Badge>
+                  <Ban className="w-3.5 h-3.5 mr-2" /> {t('monarch_money_isn_t_available_in')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  The Monarch Money Alternative for Europe
-                  <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium">
-                    Because Monarch literally doesn&apos;t work here.
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('the_monarch_money_alternative_for_europe')} <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium"> {t('because_monarch_literally_doesn_t_work')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Monarch Money is a US and Canada product. No European bank integrations. No
-                  non-USD currencies. No EU App Store listing. Budgero is the privacy-first
-                  alternative built for EUR, GBP, CHF, and the other 165 currencies — plus
-                  GDPR-compliant zero-knowledge encryption.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('monarch_money_is_a_us_and')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -348,9 +352,7 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-money-europe-alternative&utm_content=hero">
-                      Start 35-Day Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-money-europe-alternative&utm_content=hero"> {t('start_35_day_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -359,13 +361,11 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="#why-not-monarch">Why Monarch doesn&apos;t work in Europe</a>
+                    <a href="#why-not-monarch">{t('why_monarch_doesn_t_work_in')}</a>
                   </Button>
                 </div>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  35 days free, no card needed. Works in every European country, in your currency.
-                </p>
+                <p className="mt-4 text-sm text-foreground/60"> {t('35_days_free_no_card_needed')} </p>
               </div>
             </section>
 
@@ -373,53 +373,24 @@ export default function MonarchMoneyEuropeAlternativePage() {
 
             {/* Why Monarch doesn't work */}
             <section id="why-not-monarch" className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why Monarch Money Doesn&apos;t Work in Europe
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('why_monarch_money_doesn_t_work')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Monarch Money is a genuinely good product. It just isn&apos;t built for anyone
-                  outside North America, and the gap is wider than most people expect.
-                </p>
+                <p> {t('monarch_money_is_a_genuinely_good')} </p>
 
                 <div className="space-y-4">
                   <p>
-                    <strong className="text-foreground">No European banks.</strong> Monarch&apos;s
-                    bank sync is powered by Plaid, MX, and Finicity — US-centric aggregators. No
-                    N26, no Revolut EU, no Monzo, no ING, no Santander, no BNP Paribas, no HSBC UK.
-                    You cannot connect a single European bank to Monarch.
-                  </p>
+                    <strong className="text-foreground">{t('no_european_banks')}</strong> {t('monarch_s_bank_sync_is_powered')} </p>
                   <p>
-                    <strong className="text-foreground">No non-USD currencies.</strong> Monarch
-                    displays every transaction with a &ldquo;$&rdquo; symbol regardless of the
-                    underlying currency. A €1,000 grocery bill shows as &ldquo;$1,000&rdquo;. A
-                    £50 coffee shows as &ldquo;$50&rdquo;. There is no conversion, no multi-currency
-                    awareness, and no way to set EUR, GBP, or CHF as your home currency.
-                  </p>
+                    <strong className="text-foreground">{t('no_non_usd_currencies')}</strong> {t('monarch_displays_every_transaction_with_a')} </p>
                   <p>
-                    <strong className="text-foreground">USD billing only.</strong> Monarch charges
-                    in USD through the US App Store. European users pay FX fees on every renewal.
-                    No VAT invoice is issued, which is a problem if you want to expense it as a
-                    freelancer.
-                  </p>
+                    <strong className="text-foreground">{t('usd_billing_only')}</strong> {t('monarch_charges_in_usd_through_the')} </p>
                   <p>
-                    <strong className="text-foreground">iOS app not in European stores.</strong>{' '}
-                    The Monarch iOS app is listed in the US App Store. European users have to use
-                    the web app or maintain a US Apple ID.
-                  </p>
+                    <strong className="text-foreground">{t('ios_app_not_in_european_stores')}</strong>{' '} {t('the_monarch_ios_app_is_listed')} </p>
                   <p>
-                    <strong className="text-foreground">Data stored under US law.</strong>{' '}
-                    Monarch&apos;s servers are in the US. Your financial data is subject to US data
-                    legislation, which for many European users is a meaningful privacy concern
-                    compared to an EU-hosted or zero-knowledge alternative.
-                  </p>
+                    <strong className="text-foreground">{t('data_stored_under_us_law')}</strong>{' '} {t('monarch_s_servers_are_in_the')} </p>
                 </div>
 
-                <p className="pt-4">
-                  The short version: Monarch is a US-first product that has not meaningfully
-                  invested in internationalisation. If you live in Europe, you are not the customer
-                  Monarch was built for.
-                </p>
+                <p className="pt-4"> {t('the_short_version_monarch_is_a')} </p>
               </div>
             </section>
 
@@ -428,14 +399,8 @@ export default function MonarchMoneyEuropeAlternativePage() {
             {/* EU Banking Examples */}
             <section className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Not a Single European Bank Connects to Monarch
-                </h2>
-                <p className="text-lg text-foreground/70 max-w-3xl mx-auto">
-                  Here are the common banks across major European countries. Monarch supports none
-                  of them. Budgero works the same way with all of them — CSV import or manual
-                  entry, every bank, every currency.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('not_a_single_european_bank_connects')} </h2>
+                <p className="text-lg text-foreground/70 max-w-3xl mx-auto"> {t('here_are_the_common_banks_across')} </p>
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -459,9 +424,7 @@ export default function MonarchMoneyEuropeAlternativePage() {
             {/* Key Advantages */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Why European Households Choose Budgero
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('why_european_households_choose_budgero')} </h2>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -469,39 +432,24 @@ export default function MonarchMoneyEuropeAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#dfe4ec] flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-[#314258]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Actually Works in Europe
-                  </h3>
-                  <p className="text-foreground/70">
-                    Every EU country, the UK, Switzerland, Norway. CSV imports from any bank, every
-                    currency, any account type.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('actually_works_in_europe')} </h3>
+                  <p className="text-foreground/70"> {t('every_eu_country_the_uk_switzerland')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#dde9df] flex items-center justify-center mb-4">
                     <Euro className="w-6 h-6 text-[#2f6246]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Billed in Your Currency
-                  </h3>
-                  <p className="text-foreground/70">
-                    Pay in EUR, GBP, or whichever currency you use. No USD FX fees. Proper
-                    VAT-compliant invoice on every payment.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('billed_in_your_currency')} </h3>
+                  <p className="text-foreground/70"> {t('pay_in_eur_gbp_or_whichever')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#e4dff0] flex items-center justify-center mb-4">
                     <Shield className="w-6 h-6 text-[#564176]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    GDPR by Design
-                  </h3>
-                  <p className="text-foreground/70">
-                    Zero-knowledge encryption means we cannot see your data. Even a server breach
-                    yields encrypted blobs, not your financial history.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('gdpr_by_design')} </h3>
+                  <p className="text-foreground/70"> {t('zero_knowledge_encryption_means_we_cannot')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
@@ -509,16 +457,9 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     <DollarSign className="w-6 h-6 text-[#8a5730]" />
                   </div>
                   <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    {percentCheaper}% Cheaper
-                  </h3>
-                  <p className="text-foreground/70">
-                    Monarch costs $99.99/year. Budgero Cloud is {pricing.yearly}/year — save
-                    ~${yearlySavings}/year. Or{' '}
-                    <Link href="/self-hostable" className="underline hover:text-foreground">
-                      self-host
-                    </Link>{' '}
-                    on your own EU server for free.
-                  </p>
+                    {percentCheaper}{t('cheaper')} </h3>
+                  <p className="text-foreground/70"> {t('monarch_costs_99_99_year_budgero')} {pricing.yearly}{t('year_save')}{yearlySavings}{t('year_or')}{' '}
+                    <Link href="/self-hostable" className="underline hover:text-foreground"> {t('self_host')} </Link>{' '} {t('on_your_own_eu_server_for')} </p>
                 </div>
               </div>
             </section>
@@ -528,24 +469,16 @@ export default function MonarchMoneyEuropeAlternativePage() {
             {/* Comparison Table */}
             <section className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero vs. Monarch Money — The European View
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_vs_monarch_money_the_european')} </h2>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[640px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Monarch Money
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('monarch_money')} </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -575,14 +508,10 @@ export default function MonarchMoneyEuropeAlternativePage() {
                   size="lg"
                   className="h-12 px-7 text-base bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-money-europe-alternative&utm_content=mid-table">
-                    Start 35-Day Free Trial
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-money-europe-alternative&utm_content=mid-table"> {t('start_35_day_free_trial')} <ArrowRight className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-                <span className="text-sm text-foreground/60">
-                  No card · EUR/GBP billing · 168 currencies
-                </span>
+                <span className="text-sm text-foreground/60"> {t('no_card_eur_gbp_billing_168')} </span>
               </div>
             </section>
 
@@ -590,77 +519,62 @@ export default function MonarchMoneyEuropeAlternativePage() {
 
             {/* Who This Is For */}
             <section className="py-16 max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Who This Is For
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('who_this_is_for')} </h2>
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-[#e8f0e8] rounded-2xl p-8 border border-[#bfd7c2]">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <Check className="w-6 h-6 text-green-600" />
-                    You&apos;re a great fit if you:
-                  </h3>
+                    <Check className="w-6 h-6 text-green-600" /> {t('you_re_a_great_fit_if')} </h3>
                   <ul className="space-y-3 text-foreground/80">
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Live in the EU, UK, Switzerland, or the Nordics</span>
+                      <span>{t('live_in_the_eu_uk_switzerland')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Tried Monarch and discovered it doesn&apos;t work here</span>
+                      <span>{t('tried_monarch_and_discovered_it_doesn')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Earn or spend in more than one European currency</span>
+                      <span>{t('earn_or_spend_in_more_than')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Want GDPR-grade privacy with zero-knowledge encryption</span>
+                      <span>{t('want_gdpr_grade_privacy_with_zero')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>
-                        Are a freelancer or small business needing VAT-compliant invoicing
-                      </span>
+                      <span> {t('are_a_freelancer_or_small_business')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Want the option to self-host on your own EU infrastructure</span>
+                      <span>{t('want_the_option_to_self_host')}</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <X className="w-6 h-6 text-foreground/35" />
-                    Stick with Monarch if you:
-                  </h3>
+                    <X className="w-6 h-6 text-foreground/35" /> {t('stick_with_monarch_if_you')} </h3>
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>Are based in the US or Canada and bank there</span>
+                      <span>{t('are_based_in_the_us_or')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Need automatic investment sync from a US broker (Fidelity, Schwab, etc.)
-                      </span>
+                      <span> {t('need_automatic_investment_sync_from_a')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>Only budget in USD and never touch a foreign currency</span>
+                      <span>{t('only_budget_in_usd_and_never')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Prefer fully hands-off bank sync and are willing to share bank credentials
-                        with Plaid
-                      </span>
+                      <span> {t('prefer_fully_hands_off_bank_sync')} </span>
                     </li>
                   </ul>
-                  <p className="mt-6 text-sm text-foreground/55">
-                    Monarch is a solid app for US households. We are honest about that.
-                  </p>
+                  <p className="mt-6 text-sm text-foreground/55"> {t('monarch_is_a_solid_app_for')} </p>
                 </div>
               </div>
             </section>
@@ -669,9 +583,7 @@ export default function MonarchMoneyEuropeAlternativePage() {
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -691,23 +603,15 @@ export default function MonarchMoneyEuropeAlternativePage() {
             {/* Final CTA */}
             <section className="py-20 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  A budgeting app that actually works in Europe.
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Start your 35-day Budgero trial. Billed in EUR or GBP. Works with every European
-                  bank via CSV. Zero-knowledge encryption, GDPR by design, and about a third of the price
-                  of Monarch.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('a_budgeting_app_that_actually_works')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('start_your_35_day_budgero_trial')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-money-europe-alternative&utm_content=final">
-                      Start Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-money-europe-alternative&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -716,24 +620,18 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <Link href="/self-hosted-ynab-alternative">Self-host for free</Link>
+                    <Link href="/self-hosted-ynab-alternative">{t('self_host_for_free')}</Link>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Also see:{' '}
+                <p className="mt-6 text-sm text-foreground/60"> {t('also_see')}{' '}
                   <Link
                     href="/monarch-money-alternative"
                     className="underline hover:text-foreground"
-                  >
-                    Full Budgero vs Monarch
-                  </Link>{' '}
-                  ·{' '}
+                  > {t('full_budgero_vs_monarch')} </Link>{' '}·{' '}
                   <Link
                     href="/ynab-alternative-europe"
                     className="underline hover:text-foreground"
-                  >
-                    YNAB alternative for Europe
-                  </Link>
+                  > {t('ynab_alternative_for_europe')} </Link>
                 </p>
               </div>
             </section>

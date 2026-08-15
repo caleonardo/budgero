@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -47,6 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 }
 
 export default async function PostPage({ params }: { params: Promise<Params> }) {
+  const t = await getTranslations('blog_slug_');
   const { slug } = await params;
   const slugStr = slug.join('/');
   const post = allPosts.find((p) => p.slugAsParams === slugStr);
@@ -99,9 +101,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
       <header className="mb-8 space-y-3">
-        <Link href="/blog" className="text-sm text-muted-foreground hover:underline">
-          ← Back to blog
-        </Link>
+        <Link href="/blog" className="text-sm text-muted-foreground hover:underline"> {t('back_to_blog')} </Link>
         <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
           {post.title}
         </h1>
@@ -142,7 +142,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
 
       <div className="mt-10">
         <Button asChild variant="outline">
-          <Link href="/blog">← Back to Blog</Link>
+          <Link href="/blog">{t('back_to_blog_2')}</Link>
         </Button>
       </div>
     </article>

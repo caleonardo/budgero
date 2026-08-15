@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Download, PoundSterling } from 'lucide-react';
@@ -187,7 +188,21 @@ function renderCellValue(val: unknown, note?: string | null, isHighlight?: boole
   );
 }
 
-export default function YnabAlternativeUkPage() {
+export default async function YnabAlternativeUkPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('ynab_alternative_uk');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -279,21 +294,13 @@ export default function YnabAlternativeUkPage() {
                   className="mb-6 max-w-full whitespace-normal text-center px-3 py-1.5 text-xs sm:text-sm font-medium border-blue-500/30 text-blue-700 dark:text-blue-400 bg-blue-500/10"
                 >
                   <PoundSterling className="w-3.5 h-3.5 mr-2 shrink-0" />
-                  <span>Built for the UK — billed in GBP</span>
+                  <span>{t('built_for_the_uk_billed_in')}</span>
                 </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  The YNAB Alternative for the UK
-                  <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium">
-                    GBP budgeting that works with every UK bank — not just the ones Plaid covers.
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('the_ynab_alternative_for_the_uk')} <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium"> {t('gbp_budgeting_that_works_with_every')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  YNAB left the UK in 2022 and came back half-way: select banks, USD billing, no
-                  multi-currency. Budgero is zero-based budgeting built to work properly here —
-                  GBP-first, end-to-end encrypted, at a third of the price.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('ynab_left_the_uk_in_2022')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -301,9 +308,7 @@ export default function YnabAlternativeUkPage() {
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-uk&utm_content=hero">
-                      Start 35-Day Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-uk&utm_content=hero"> {t('start_35_day_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -312,13 +317,11 @@ export default function YnabAlternativeUkPage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="#comparison">See the UK Comparison</a>
+                    <a href="#comparison">{t('see_the_uk_comparison')}</a>
                   </Button>
                 </div>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  35 days free, no card needed. Works with Monzo, Starling, and every other UK bank.
-                </p>
+                <p className="mt-4 text-sm text-foreground/60"> {t('35_days_free_no_card_needed')} </p>
               </div>
             </section>
 
@@ -326,41 +329,19 @@ export default function YnabAlternativeUkPage() {
 
             {/* Why UK YNAB users are leaving */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why UK YNAB Users Are Switching
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('why_uk_ynab_users_are_switching')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  YNAB&apos;s relationship with the UK has been complicated. It pulled out in 2022,
-                  citing the cost of UK-specific features. It returned in 2024–25 through
-                  Plaid&apos;s Open Banking integration — but for many UK households, the product
-                  still doesn&apos;t fit.
-                </p>
+                <p> {t('ynab_s_relationship_with_the_uk')} </p>
 
                 <div className="space-y-4">
                   <p>
-                    <strong className="text-foreground">Bank coverage is selective.</strong> Monzo,
-                    Revolut, Nationwide, NatWest, HSBC and Amex sync; plenty of other UK banks and
-                    building societies don&apos;t. If your bank isn&apos;t on Plaid&apos;s list,
-                    you&apos;re doing CSV imports anyway — in an app priced as if sync works.
-                  </p>
+                    <strong className="text-foreground">{t('bank_coverage_is_selective')}</strong> {t('monzo_revolut_nationwide_natwest_hsbc_and')} </p>
                   <p>
-                    <strong className="text-foreground">You pay in dollars.</strong> $109/year
-                    lands as roughly £85 on your card, plus whatever foreign-transaction fee your
-                    bank adds. There is no GBP billing and no VAT invoice.
-                  </p>
+                    <strong className="text-foreground">{t('you_pay_in_dollars')}</strong> {t('109_year_lands_as_roughly_85')} </p>
                   <p>
-                    <strong className="text-foreground">No multi-currency.</strong> If you hold
-                    EUR for work, travel, or family across the Channel, YNAB gives you one currency
-                    per budget and manual exchange-rate maths.
-                  </p>
+                    <strong className="text-foreground">{t('no_multi_currency')}</strong> {t('if_you_hold_eur_for_work')} </p>
                   <p>
-                    <strong className="text-foreground">Your data crosses the Atlantic.</strong>{' '}
-                    YNAB stores budgets in plaintext on US servers under US data law, and bank
-                    connections route through Plaid. Budgero&apos;s data lives encrypted in
-                    Finland, under EU jurisdiction, and the app sends no telemetry unless you
-                    explicitly allow it.
-                  </p>
+                    <strong className="text-foreground">{t('your_data_crosses_the_atlantic')}</strong>{' '} {t('ynab_stores_budgets_in_plaintext_on')} </p>
                 </div>
               </div>
             </section>
@@ -370,24 +351,16 @@ export default function YnabAlternativeUkPage() {
             {/* Comparison Table */}
             <section id="comparison" className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero vs. YNAB — The UK View
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Where it actually matters for UK households and freelancers.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_vs_ynab_the_uk_view')} </h2>
+                <p className="text-lg text-foreground/70"> {t('where_it_actually_matters_for_uk')} </p>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[640px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero')} </th>
                       <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
                         YNAB
                       </th>
@@ -420,14 +393,10 @@ export default function YnabAlternativeUkPage() {
                   size="lg"
                   className="h-12 px-7 text-base bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-uk&utm_content=mid-table">
-                    Start 35-Day Free Trial
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-uk&utm_content=mid-table"> {t('start_35_day_free_trial')} <ArrowRight className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-                <span className="text-sm text-foreground/60">
-                  No card · GBP billing · Works with every UK bank
-                </span>
+                <span className="text-sm text-foreground/60"> {t('no_card_gbp_billing_works_with')} </span>
               </div>
             </section>
 
@@ -435,32 +404,15 @@ export default function YnabAlternativeUkPage() {
 
             {/* UK banking reality */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Works With Monzo, Starling, and the Bank Plaid Forgot
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('works_with_monzo_starling_and_the')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Budgero skips the bank-aggregator middleman entirely. Instead of hoping your bank
-                  is on a sync provider&apos;s coverage list, you export a CSV — something every UK
-                  bank offers, and which app-first banks like Monzo and Starling make excellent —
-                  and import it in seconds. Or enter transactions as you spend, which is the habit
-                  that made YNAB work in the first place.
-                </p>
-                <p>
-                  The upside of doing it this way: no broken sync connections to babysit, no
-                  re-authentication every 90 days, and your banking credentials are never shared
-                  with anyone — not with us, not with Plaid, not with anyone else.
-                </p>
-                <p>
-                  And if you earn or spend in euros too, Budgero budgets{' '}
+                <p> {t('budgero_skips_the_bank_aggregator_middleman')} </p>
+                <p> {t('the_upside_of_doing_it_this')} </p>
+                <p> {t('and_if_you_earn_or_spend')}{' '}
                   <Link
                     href="/multi-currency-budgeting"
                     className="underline hover:text-foreground"
-                  >
-                    GBP and EUR side by side
-                  </Link>{' '}
-                  with live exchange rates — something YNAB has never offered.
-                </p>
+                  > {t('gbp_and_eur_side_by_side')} </Link>{' '} {t('with_live_exchange_rates_something_ynab')} </p>
               </div>
             </section>
 
@@ -468,9 +420,7 @@ export default function YnabAlternativeUkPage() {
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -494,25 +444,16 @@ export default function YnabAlternativeUkPage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-green-500/30 text-green-700 dark:text-green-400 bg-green-500/10"
                 >
-                  <Download className="w-3.5 h-3.5 mr-2" />
-                  35 days free, no card
-                </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Budget in pounds. Privately. Without the workarounds.
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Start your 35-day Budgero Cloud trial and import your YNAB budget in minutes. Or
-                  self-host for free on your own server. Your data stays yours either way.
-                </p>
+                  <Download className="w-3.5 h-3.5 mr-2" /> {t('35_days_free_no_card')} </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('budget_in_pounds_privately_without_the')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('start_your_35_day_budgero_cloud')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-uk&utm_content=final">
-                      Start Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-uk&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -521,22 +462,13 @@ export default function YnabAlternativeUkPage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <Link href="/self-hosted-ynab-alternative">Prefer to self-host?</Link>
+                    <Link href="/self-hosted-ynab-alternative">{t('prefer_to_self_host')}</Link>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Also see:{' '}
-                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground">
-                    Best YNAB alternatives in 2026
-                  </Link>{' '}
-                  ·{' '}
-                  <Link href="/ynab-alternative-europe" className="underline hover:text-foreground">
-                    YNAB alternative for Europe
-                  </Link>{' '}
-                  ·{' '}
-                  <Link href="/vs-ynab" className="underline hover:text-foreground">
-                    Full Budgero vs YNAB comparison
-                  </Link>
+                <p className="mt-6 text-sm text-foreground/60"> {t('also_see')}{' '}
+                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground"> {t('best_ynab_alternatives_in_2026')} </Link>{' '}·{' '}
+                  <Link href="/ynab-alternative-europe" className="underline hover:text-foreground"> {t('ynab_alternative_for_europe')} </Link>{' '}·{' '}
+                  <Link href="/vs-ynab" className="underline hover:text-foreground"> {t('full_budgero_vs_ynab_comparison')} </Link>
                 </p>
               </div>
             </section>

@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { allGuides } from 'contentlayer/generated';
@@ -55,7 +56,21 @@ type AugmentedTopic = (typeof docsSections)[number]['topics'][number] & {
 
 type AugmentedSection = (typeof docsSections)[number] & { topics: AugmentedTopic[] };
 
-export default function DocsPage() {
+export default async function DocsPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('docs');
   const publishedGuides = allGuides.filter((guide) => guide.published !== false);
   const guidesByTopic = new Map(publishedGuides.map((guide) => [guide.topicId, guide]));
 
@@ -91,24 +106,12 @@ export default function DocsPage() {
     <main className="bg-background text-foreground">
       <section className="border-b border-border/60 bg-muted/20">
         <div className="container mx-auto px-4 py-16 md:py-24">
-          <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm">
-            Knowledge base
-          </Badge>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Budgero Docs
-          </h1>
-          <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Master Budgero&apos;s zero-based budgeting system. Explore practical guides that explain
-            how ready to assign behaves, how goals accelerate savings, how multi-currency accounts
-            sync, and how to stay secure with zero-knowledge encryption.
-          </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Switching from YNAB? Start with our{' '}
-            <Link href="/vs-ynab" className="underline underline-offset-4">
-              YNAB alternative comparison
-            </Link>
-            .
-          </p>
+          <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm"> {t('knowledge_base')} </Badge>
+          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl"> {t('budgero_docs')} </h1>
+          <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg"> {t('master_budgero_s_zero_based_budgeting')} </p>
+          <p className="mt-3 text-sm text-muted-foreground"> {t('switching_from_ynab_start_with_our')}{' '}
+            <Link href="/vs-ynab" className="underline underline-offset-4"> {t('ynab_alternative_comparison')} </Link>.
+                      </p>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             {heroHighlights.map((item) => (
               <span
@@ -127,9 +130,7 @@ export default function DocsPage() {
         <div className="grid gap-12 lg:grid-cols-[260px_1fr] lg:gap-16">
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-2xl border border-border/60 bg-muted/20 p-6 shadow-sm">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Browse topics
-              </h2>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground"> {t('browse_topics')} </h2>
               <nav className="mt-5 space-y-3 text-sm">
                 {docsSections.map((section) => (
                   <div key={section.id}>
@@ -197,9 +198,7 @@ export default function DocsPage() {
                               <Badge
                                 variant="outline"
                                 className="rounded-full border-dashed text-muted-foreground"
-                              >
-                                Coming soon
-                              </Badge>
+                              > {t('coming_soon')} </Badge>
                             )}
                           </div>
                           <CardDescription className="text-base text-muted-foreground">
@@ -227,24 +226,17 @@ export default function DocsPage() {
                             ))}
                           </ul>
                           {isAvailable ? (
-                            <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                              Read the guide
-                              <ArrowRight
+                            <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary"> {t('read_the_guide')} <ArrowRight
                                 className="size-4 transition group-hover:translate-x-1"
                                 aria-hidden
                               />
                             </div>
                           ) : (
-                            <p className="mt-6 text-sm text-muted-foreground/80">
-                              We&apos;re polishing this walkthrough. Keep an eye on the{' '}
+                            <p className="mt-6 text-sm text-muted-foreground/80"> {t('we_re_polishing_this_walkthrough_keep')}{' '}
                               <Link
                                 href="/changelog"
                                 className="font-medium text-primary underline-offset-4 hover:underline"
-                              >
-                                changelog
-                              </Link>{' '}
-                              to know when it drops.
-                            </p>
+                              > {t('changelog')} </Link>{' '} {t('to_know_when_it_drops')} </p>
                           )}
                         </CardContent>
                       </Card>
@@ -277,19 +269,14 @@ export default function DocsPage() {
 
       <section className="border-t border-border/60 bg-muted/30">
         <div className="container mx-auto px-4 py-14 text-center sm:py-20">
-          <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
-            Have a question we haven&apos;t covered?
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Email{' '}
+          <h2 className="text-2xl font-semibold text-foreground sm:text-3xl"> {t('have_a_question_we_haven_t')} </h2>
+          <p className="mt-3 text-muted-foreground"> {t('email')}{' '}
             <a
               href="mailto:hello@budgero.app"
               className="font-medium text-primary underline-offset-4 hover:underline"
             >
               hello@budgero.app
-            </a>
-            &nbsp;and we&apos;ll point you to the right guide or create a new one.
-          </p>
+            </a> {t('and_we_ll_point_you_to')} </p>
         </div>
       </section>
     </main>

@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ArrowRight, Globe, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -97,7 +98,21 @@ const tips = [
   },
 ];
 
-export default function BudgetingMultipleCurrenciesPage() {
+export default async function BudgetingMultipleCurrenciesPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('budgeting_multiple_currencies');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -122,22 +137,12 @@ export default function BudgetingMultipleCurrenciesPage() {
             <section className="pt-24 pb-16 md:pt-32 md:pb-24 text-center">
               <div className="max-w-4xl mx-auto">
                 <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm font-medium border-border/50">
-                  <Globe className="w-3.5 h-3.5 mr-2" />
-                  Practical Guide
-                </Badge>
+                  <Globe className="w-3.5 h-3.5 mr-2" /> {t('practical_guide')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  How to Budget with Multiple Currencies
-                  <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium">
-                    A practical guide for expats, nomads, and global earners
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('how_to_budget_with_multiple_currencies')} <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium"> {t('a_practical_guide_for_expats_nomads')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  If you earn in one currency and spend in another, you already know that most
-                  budgeting advice does not apply to you. Standard tools assume one currency. Your
-                  life uses two or three. Here is how to handle it.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('if_you_earn_in_one_currency')} </p>
               </div>
             </section>
 
@@ -145,19 +150,10 @@ export default function BudgetingMultipleCurrenciesPage() {
 
             {/* The Challenge */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">The Challenge</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">{t('the_challenge')}</h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Exchange rates fluctuate. Your budget in EUR might be fine today but 3% short next
-                  month because the rate moved. Different accounts in different currencies make it
-                  hard to see your total financial picture.
-                </p>
-                <p>
-                  Category tracking gets complicated. Did you overspend on groceries, or did the
-                  currency just shift? Most budgeting apps either ignore the problem entirely or
-                  suggest creating separate budgets per currency, which defeats the purpose of
-                  having a budget in the first place.
-                </p>
+                <p> {t('exchange_rates_fluctuate_your_budget_in')} </p>
+                <p> {t('category_tracking_gets_complicated_did_you')} </p>
               </div>
             </section>
 
@@ -166,9 +162,7 @@ export default function BudgetingMultipleCurrenciesPage() {
             {/* Three Approaches */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Three Approaches
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('three_approaches')} </h2>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
@@ -182,10 +176,10 @@ export default function BudgetingMultipleCurrenciesPage() {
                     </h3>
                     <p className="text-foreground/70 text-sm mb-4">{approach.description}</p>
                     <p className="text-xs text-foreground/55 mb-1">
-                      <strong className="text-green-600">Pros:</strong> {approach.pros}
+                      <strong className="text-green-600">{t('pros')}</strong> {approach.pros}
                     </p>
                     <p className="text-xs text-foreground/55">
-                      <strong className="text-red-500">Cons:</strong> {approach.cons}
+                      <strong className="text-red-500">{t('cons')}</strong> {approach.cons}
                     </p>
                   </div>
                 ))}
@@ -196,9 +190,7 @@ export default function BudgetingMultipleCurrenciesPage() {
 
             {/* What to Look For */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                What to Look For in a Multi-Currency Budget App
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('what_to_look_for_in_a')} </h2>
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
                 <ul className="space-y-3">
                   {checklist.map((item) => (
@@ -215,9 +207,7 @@ export default function BudgetingMultipleCurrenciesPage() {
 
             {/* Practical Tips */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Practical Tips
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('practical_tips')} </h2>
               <div className="space-y-6">
                 {tips.map((tip, index) => (
                   <div key={tip.title} className="flex items-start gap-4">
@@ -238,24 +228,16 @@ export default function BudgetingMultipleCurrenciesPage() {
             {/* Soft Budgero Mention */}
             <section className="py-16 max-w-3xl mx-auto">
               <div className="bg-card rounded-2xl p-8 border border-border/70">
-                <p className="text-foreground/75 mb-6">
-                  Budgero supports 100+ currencies with live exchange rates, zero-based budgeting,
-                  and zero-knowledge encryption. Accounts in any currency, one unified budget,
-                  reports in your base currency. Built by an expat who needed exactly this.
-                </p>
+                <p className="text-foreground/75 mb-6"> {t('budgero_supports_100_currencies_with_live')} </p>
                 <Button
                   asChild
                   size="lg"
                   className="bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup">
-                    Try Budgero Free
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup"> {t('try_budgero_free')} <ArrowRight className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-                <p className="mt-4 text-sm text-foreground/55">
-                  35-day trial. {pricing.yearly}/yr. No credit card required.
-                </p>
+                <p className="mt-4 text-sm text-foreground/55"> {t('35_day_trial')} {pricing.yearly}{t('yr_no_credit_card_required')} </p>
               </div>
             </section>
           </div>

@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import {
   Server,
@@ -148,7 +149,21 @@ const faqs = [
   },
 ];
 
-export default function SelfHostablePage() {
+export default async function SelfHostablePage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('self_hostable');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -225,41 +240,28 @@ export default function SelfHostablePage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-[#111c34]/30 text-[#111c34] bg-[#111c34]/10"
                 >
-                  <Server className="w-3.5 h-3.5 mr-2" />
-                  Self-Hostable
-                </Badge>
+                  <Server className="w-3.5 h-3.5 mr-2" /> {t('self_hostable')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  The Self-Hosted Budgeting App
-                  <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium">
-                    Run Budgero on your own server, NAS, or homelab. Free forever. No license,
-                    no feature gating.
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('the_self_hosted_budgeting_app')} <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium"> {t('run_budgero_on_your_own_server')} </span>
                 </h1>
 
                 <p className="text-xl md:text-2xl text-foreground/70 mb-6 max-w-2xl mx-auto leading-relaxed">
-                  <strong>Same engine. Same features. Same sync.</strong>
+                  <strong>{t('same_engine_same_features_same_sync')}</strong>
                 </p>
 
-                <p className="text-base text-foreground/60 mb-10 max-w-xl mx-auto">
-                  No analytics, no tracking. The only outbound call is a daily version check —
-                  one env var disables it.
-                </p>
+                <p className="text-base text-foreground/60 mb-10 max-w-xl mx-auto"> {t('no_analytics_no_tracking_the_only')} </p>
 
                 {/* Install Command */}
                 <SelfHostInstaller />
 
                 {/* Setup Guide Link */}
-                <p className="mt-6 text-sm text-foreground/60">
-                  Need help?{' '}
+                <p className="mt-6 text-sm text-foreground/60"> {t('need_help')}{' '}
                   <TrackedLink
                     href="/docs/self-hosting-guide"
                     event="Self-Host - Setup Guide (Hero)"
                     className="inline-flex items-center gap-1 text-foreground hover:underline font-medium"
                   >
-                    <BookOpen className="w-3.5 h-3.5" />
-                    Read the full setup guide
-                  </TrackedLink>
+                    <BookOpen className="w-3.5 h-3.5" /> {t('read_the_full_setup_guide')} </TrackedLink>
                 </p>
               </div>
             </section>
@@ -269,12 +271,8 @@ export default function SelfHostablePage() {
             {/* Why Self-Host Section */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Why Self-Host?
-                </h2>
-                <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-                  Maximum privacy and control over your financial data.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('why_self_host')} </h2>
+                <p className="text-lg text-foreground/70 max-w-2xl mx-auto"> {t('maximum_privacy_and_control_over_your')} </p>
               </div>
 
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
@@ -295,35 +293,20 @@ export default function SelfHostablePage() {
                     <Key className="w-5 h-5 text-[#3f4756]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground mb-2">
-                      What You Take On
-                    </h3>
-                    <p className="text-sm text-foreground/70 mb-3">
-                      Same product, different responsibilities:
-                    </p>
+                    <h3 className="font-semibold text-foreground mb-2"> {t('what_you_take_on')} </h3>
+                    <p className="text-sm text-foreground/70 mb-3"> {t('same_product_different_responsibilities')} </p>
                     <ul className="text-sm text-foreground/70 space-y-1">
-                      <li>
-                        &#8226; <strong>Authentication:</strong> You manage users locally
-                      </li>
-                      <li>
-                        &#8226; <strong>Infrastructure:</strong> You handle servers, uptime, backups
-                      </li>
-                      <li>
-                        &#8226; <strong>Updates:</strong> You apply security patches and upgrades
-                      </li>
-                      <li>
-                        &#8226; <strong>API keys:</strong> You provide your own for currency
-                        conversion
-                      </li>
+                      <li>• <strong>{t('authentication')}</strong> {t('you_manage_users_locally')} </li>
+                      <li>• <strong>{t('infrastructure')}</strong> {t('you_handle_servers_uptime_backups')} </li>
+                      <li>• <strong>{t('updates')}</strong> {t('you_apply_security_patches_and_upgrades')} </li>
+                      <li>• <strong>{t('api_keys')}</strong> {t('you_provide_your_own_for_currency')} </li>
                     </ul>
                     <TrackedLink
                       href="/docs/self-hosting-guide"
                       event="Self-Host - Setup Guide (What You Take On)"
                       className="inline-flex items-center gap-1.5 mt-4 text-sm text-foreground hover:underline font-medium"
                     >
-                      <BookOpen className="w-4 h-4" />
-                      View the complete setup guide
-                      <ArrowRight className="w-3 h-3" />
+                      <BookOpen className="w-4 h-4" /> {t('view_the_complete_setup_guide')} <ArrowRight className="w-3 h-3" />
                     </TrackedLink>
                   </div>
                 </div>
@@ -335,12 +318,8 @@ export default function SelfHostablePage() {
             {/* Features Grid */}
             <section className="py-16">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Full-Featured Self-Hosting
-                </h2>
-                <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-                  Everything from Budgero Cloud, running on your terms.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('full_featured_self_hosting')} </h2>
+                <p className="text-lg text-foreground/70 max-w-2xl mx-auto"> {t('everything_from_budgero_cloud_running_on')} </p>
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -367,9 +346,7 @@ export default function SelfHostablePage() {
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Self-Hosting FAQ
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('self_hosting_faq')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -387,22 +364,14 @@ export default function SelfHostablePage() {
               <div className="mx-auto mb-4 w-10 h-10 rounded-lg bg-[#d7dbe2] flex items-center justify-center">
                 <Heart className="w-5 h-5 text-[#3f4756]" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-                Free forever — donations welcome
-              </h2>
-              <p className="text-foreground/70 mb-6 leading-relaxed">
-                Self-Host has no license, no feature gates, and never will. If it earns a place
-                in your homelab, you can support development with a one-time, pay-what-you-want
-                donation.
-              </p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3"> {t('free_forever_donations_welcome')} </h2>
+              <p className="text-foreground/70 mb-6 leading-relaxed"> {t('self_host_has_no_license_no')} </p>
               <TrackedLink
                 href="/donate"
                 event="Self-Host - Donate"
                 className="inline-flex items-center gap-2 font-medium text-foreground hover:underline"
               >
-                <Heart className="w-4 h-4" />
-                Support Budgero
-                <ArrowRight className="w-3.5 h-3.5" />
+                <Heart className="w-4 h-4" /> {t('support_budgero')} <ArrowRight className="w-3.5 h-3.5" />
               </TrackedLink>
             </section>
 
@@ -410,53 +379,36 @@ export default function SelfHostablePage() {
 
             {/* Related comparisons — internal linking to consolidate topical authority */}
             <section className="py-16 max-w-4xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-                Related comparisons
-              </h2>
-              <p className="text-foreground/65 mb-8">
-                If you're evaluating self-host because you outgrew another budgeting app, these
-                comparisons might help.
-              </p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3"> {t('related_comparisons')} </h2>
+              <p className="text-foreground/65 mb-8"> {t('if_you_re_evaluating_self_host')} </p>
               <div className="grid sm:grid-cols-2 gap-4">
                 <a
                   href="/self-hosted-ynab-alternative"
                   className="rounded-xl border border-border/70 bg-card p-5 hover:border-foreground/30 transition-colors"
                 >
-                  <h3 className="font-semibold text-foreground mb-1">Self-Hosted YNAB Alternative</h3>
-                  <p className="text-sm text-foreground/65">
-                    YNAB-specific comparison — feature parity, import path, and what you give up
-                    by leaving the YNAB cloud.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-1">{t('self_hosted_ynab_alternative')}</h3>
+                  <p className="text-sm text-foreground/65"> {t('ynab_specific_comparison_feature_parity_import')} </p>
                 </a>
                 <a
                   href="/vs-ynab"
                   className="rounded-xl border border-border/70 bg-card p-5 hover:border-foreground/30 transition-colors"
                 >
-                  <h3 className="font-semibold text-foreground mb-1">Budgero vs YNAB</h3>
-                  <p className="text-sm text-foreground/65">
-                    Side-by-side feature comparison: privacy, multi-currency, offline mode, and
-                    pricing across both products.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-1">{t('budgero_vs_ynab')}</h3>
+                  <p className="text-sm text-foreground/65"> {t('side_by_side_feature_comparison_privacy')} </p>
                 </a>
                 <a
                   href="/monarch-money-alternative"
                   className="rounded-xl border border-border/70 bg-card p-5 hover:border-foreground/30 transition-colors"
                 >
-                  <h3 className="font-semibold text-foreground mb-1">Monarch Money Alternative</h3>
-                  <p className="text-sm text-foreground/65">
-                    For people leaving Monarch — multi-currency, works outside the US, and
-                    zero-knowledge encryption that Monarch doesn&apos;t offer.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-1">{t('monarch_money_alternative')}</h3>
+                  <p className="text-sm text-foreground/65"> {t('for_people_leaving_monarch_multi_currency')} </p>
                 </a>
                 <a
                   href="/best-ynab-alternatives"
                   className="rounded-xl border border-border/70 bg-card p-5 hover:border-foreground/30 transition-colors"
                 >
-                  <h3 className="font-semibold text-foreground mb-1">Best YNAB Alternatives in 2026</h3>
-                  <p className="text-sm text-foreground/65">
-                    Six budgeting apps compared on price, privacy, multi-currency, and
-                    self-hosting (including Actual Budget and Firefly III).
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-1">{t('best_ynab_alternatives_in_2026')}</h3>
+                  <p className="text-sm text-foreground/65"> {t('six_budgeting_apps_compared_on_price')} </p>
                 </a>
               </div>
             </section>
@@ -465,13 +417,8 @@ export default function SelfHostablePage() {
 
             {/* Browser Alternative Section */}
             <section className="py-16 max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                Prefer Managed Cloud?
-              </h2>
-              <p className="text-lg text-foreground/70 mb-8">
-                If you prefer zero setup, start with Budgero Cloud and get encrypted sync right
-                away.
-              </p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4"> {t('prefer_managed_cloud')} </h2>
+              <p className="text-lg text-foreground/70 mb-8"> {t('if_you_prefer_zero_setup_start')} </p>
               <Button
                 asChild
                 size="lg"
@@ -481,9 +428,7 @@ export default function SelfHostablePage() {
                   href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=self-hostable&utm_content=cloud-trial"
                   event="Self-Host - Cloud Trial"
                   external
-                >
-                  Start Cloud Trial
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                > {t('start_cloud_trial')} <ArrowRight className="w-4 h-4 ml-2" />
                 </TrackedLink>
               </Button>
             </section>
@@ -492,28 +437,19 @@ export default function SelfHostablePage() {
 
             {/* Cloud Alternative - calm anchor */}
             <section className="py-12 max-w-2xl mx-auto text-center">
-              <p className="text-foreground/70">
-                Prefer zero setup?{' '}
+              <p className="text-foreground/70"> {t('prefer_zero_setup')}{' '}
                 <TrackedLink
                   href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=self-hostable&utm_content=cloud-inline"
                   event="Self-Host - Cloud CTA"
                   external
                   className="text-foreground hover:underline font-medium"
-                >
-                  Budgero Cloud
-                </TrackedLink>{' '}
-                handles infrastructure, backups, and updates for you.
-              </p>
-              <p className="mt-4 text-sm text-foreground/60">
-                Coming from YNAB?{' '}
+                > {t('budgero_cloud')} </TrackedLink>{' '} {t('handles_infrastructure_backups_and_updates_for')} </p>
+              <p className="mt-4 text-sm text-foreground/60"> {t('coming_from_ynab')}{' '}
                 <a
                   href="/self-hosted-ynab-alternative"
                   className="underline hover:text-foreground"
-                >
-                  See the self-hosted YNAB alternative comparison
-                </a>
-                .
-              </p>
+                > {t('see_the_self_hosted_ynab_alternative')} </a>.
+                              </p>
             </section>
           </div>
         </div>

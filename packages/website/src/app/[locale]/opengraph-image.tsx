@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ImageResponse } from 'next/og';
 
 // Site-wide default OG image. Next 15 file-convention: this auto-emits a 1200x630 PNG
@@ -22,7 +23,21 @@ const COLORS = {
   ctaText: '#fbf7eb',
 };
 
-export default async function OgImage() {
+export default async function OgImage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('home');
   // Embed the real logo asset — packages/website/public/logo_512.png (512×512 logomark)
   const logoData = await fetch(
     new URL('../../../public/logo_512.png', import.meta.url)
@@ -55,9 +70,7 @@ export default async function OgImage() {
               letterSpacing: -0.5,
               color: COLORS.foreground,
             }}
-          >
-            Budgero
-          </div>
+          > {t('budgero')} </div>
         </div>
 
         {/* Center: exact homepage H1 + subhead */}
@@ -71,9 +84,7 @@ export default async function OgImage() {
               color: COLORS.foreground,
               maxWidth: 980,
             }}
-          >
-            Private budgeting without bank connections.
-          </div>
+          > {t('private_budgeting_without_bank_connections')} </div>
           <div
             style={{
               fontSize: 26,
@@ -81,10 +92,7 @@ export default async function OgImage() {
               lineHeight: 1.4,
               maxWidth: 920,
             }}
-          >
-            Zero-knowledge encryption · 168 currencies · 35-day cardless trial — or self-host
-            for free.
-          </div>
+          > {t('zero_knowledge_encryption_168_currencies_35')} </div>
         </div>
 
         {/* Bottom row: meta + CTA pill */}
@@ -98,9 +106,9 @@ export default async function OgImage() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <span style={{ fontWeight: 600 }}>budgero.app</span>
+            <span style={{ fontWeight: 600 }}>{t('budgero_app')}</span>
             <span style={{ color: COLORS.divider }}>·</span>
-            <span>YNAB &amp; Monarch alternative</span>
+            <span>{t('ynab_monarch_alternative')}</span>
           </div>
           <div
             style={{
@@ -114,9 +122,7 @@ export default async function OgImage() {
               fontSize: 18,
               fontWeight: 600,
             }}
-          >
-            Try free for 35 days →
-          </div>
+          > {t('try_free_for_35_days')} </div>
         </div>
       </div>
     ),

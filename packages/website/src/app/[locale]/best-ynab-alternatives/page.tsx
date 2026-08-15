@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, BookOpen } from 'lucide-react';
@@ -328,7 +329,21 @@ const faqs = [
   },
 ];
 
-export default function BestYnabAlternativesPage() {
+export default async function BestYnabAlternativesPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('best_ynab_alternatives');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -397,29 +412,14 @@ export default function BestYnabAlternativesPage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-border/50"
                 >
-                  <BookOpen className="w-3.5 h-3.5 mr-2" />
-                  2026 Comparison Guide — Updated June 2026
-                </Badge>
+                  <BookOpen className="w-3.5 h-3.5 mr-2" /> {t('2026_comparison_guide_updated_june_2026')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  Best YNAB Alternatives in 2026
-                  <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium">
-                    9 budgeting apps compared honestly
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('best_ynab_alternatives_in_2026')} <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium"> {t('9_budgeting_apps_compared_honestly')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  YNAB is a great zero-based budgeting app, but at $109/yr it&apos;s not for
-                  everyone. Some people need multi-currency, better privacy, bank sync that works
-                  in their country, or just a lower price. Here are the 9 best alternatives,
-                  compared honestly.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('ynab_is_a_great_zero_based')} </p>
 
-                <p className="text-sm text-foreground/55 max-w-2xl mx-auto">
-                  Disclosure: Budgero is our app. It&apos;s in this list because it belongs here,
-                  but we tell you exactly when it&apos;s <em>not</em> the right pick — and which
-                  app is.
-                </p>
+                <p className="text-sm text-foreground/55 max-w-2xl mx-auto"> {t('disclosure_budgero_is_our_app_it')} <em>{t('not')}</em> {t('the_right_pick_and_which_app')} </p>
               </div>
             </section>
 
@@ -427,29 +427,11 @@ export default function BestYnabAlternativesPage() {
 
             {/* How we compared */}
             <section className="py-12 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                How We Compared Them
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('how_we_compared_them')} </h2>
               <div className="space-y-4 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  People leave YNAB for three reasons: <strong className="text-foreground">price</strong>{' '}
-                  ($109/yr and climbing), <strong className="text-foreground">geography</strong>{' '}
-                  (bank sync barely works outside North America, and there&apos;s no multi-currency
-                  support), and <strong className="text-foreground">privacy</strong> (your budget
-                  lives on their servers in readable form). So that&apos;s what we scored every app
-                  on — alongside the question that matters most: does it actually keep the
-                  zero-based method that made YNAB work for you, or does it quietly replace it with
-                  passive expense tracking?
-                </p>
-                <p>
-                  Five of the nine apps below are US-only in practice. If you&apos;re in Europe or
-                  budgeting across currencies, your realistic shortlist is Budgero, PocketSmith,
-                  Actual Budget, and Goodbudget — we&apos;ve written a dedicated{' '}
-                  <Link href="/ynab-alternative-europe" className="underline hover:text-foreground">
-                    YNAB alternative for Europe
-                  </Link>{' '}
-                  guide for that case.
-                </p>
+                <p> {t('people_leave_ynab_for_three_reasons')} <strong className="text-foreground">{t('price')}</strong>{' '} {t('109_yr_and_climbing')} <strong className="text-foreground">{t('geography')}</strong>{' '} {t('bank_sync_barely_works_outside_north')} <strong className="text-foreground">{t('privacy')}</strong> {t('your_budget_lives_on_their_servers')} </p>
+                <p> {t('five_of_the_nine_apps_below')}{' '}
+                  <Link href="/ynab-alternative-europe" className="underline hover:text-foreground"> {t('ynab_alternative_for_europe')} </Link>{' '} {t('guide_for_that_case')} </p>
               </div>
             </section>
 
@@ -458,33 +440,19 @@ export default function BestYnabAlternativesPage() {
             {/* Quick Summary Table */}
             <section className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Quick Comparison
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('quick_comparison')} </h2>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[640px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        App
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Price
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Zero-Based
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Multi-Currency
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Encryption
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Bank Sync
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('app')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('price_2')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('zero_based')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('multi_currency')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('encryption')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('bank_sync')} </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -549,7 +517,7 @@ export default function BestYnabAlternativesPage() {
                         <h3 className="text-2xl font-bold text-foreground">
                           {idx + 1}. {app.name}
                         </h3>
-                        <p className="text-foreground/60 mt-1">Best for: {app.bestFor}</p>
+                        <p className="text-foreground/60 mt-1">{t('best_for')} {app.bestFor}</p>
                       </div>
                       <span className="text-lg font-semibold text-foreground/80 md:whitespace-nowrap md:text-right">
                         {app.price}
@@ -558,9 +526,7 @@ export default function BestYnabAlternativesPage() {
 
                     <div className="grid md:grid-cols-2 gap-6 mb-6">
                       <div>
-                        <h4 className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wider">
-                          Pros
-                        </h4>
+                        <h4 className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wider"> {t('pros')} </h4>
                         <ul className="space-y-2">
                           {app.pros.map((pro) => (
                             <li key={pro} className="flex items-start gap-2 text-foreground/75">
@@ -571,9 +537,7 @@ export default function BestYnabAlternativesPage() {
                         </ul>
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wider">
-                          Cons
-                        </h4>
+                        <h4 className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wider"> {t('cons')} </h4>
                         <ul className="space-y-2">
                           {app.cons.map((con) => (
                             <li key={con} className="flex items-start gap-2 text-foreground/75">
@@ -600,10 +564,8 @@ export default function BestYnabAlternativesPage() {
             {/* How to Choose */}
             <section className="py-16 max-w-3xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  How to Choose
-                </h2>
-                <p className="text-lg text-foreground/70">Pick based on your top priority.</p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('how_to_choose')} </h2>
+                <p className="text-lg text-foreground/70">{t('pick_based_on_your_top_priority')}</p>
               </div>
 
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
@@ -630,63 +592,40 @@ export default function BestYnabAlternativesPage() {
 
             {/* Related guides */}
             <section className="py-12 max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-                Dig Deeper by Situation
-              </h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6"> {t('dig_deeper_by_situation')} </h2>
               <ul className="space-y-3 text-lg text-foreground/75">
-                <li>
-                  In Europe?{' '}
-                  <Link href="/ynab-alternative-europe" className="underline hover:text-foreground">
-                    YNAB alternative for Europe
-                  </Link>
+                <li> {t('in_europe')}{' '}
+                  <Link href="/ynab-alternative-europe" className="underline hover:text-foreground"> {t('ynab_alternative_for_europe')} </Link>
                 </li>
-                <li>
-                  In the UK?{' '}
-                  <Link href="/ynab-alternative-uk" className="underline hover:text-foreground">
-                    YNAB alternative for the UK
-                  </Link>
+                <li> {t('in_the_uk')}{' '}
+                  <Link href="/ynab-alternative-uk" className="underline hover:text-foreground"> {t('ynab_alternative_for_the_uk')} </Link>
                 </li>
-                <li>
-                  In Australia?{' '}
+                <li> {t('in_australia')}{' '}
                   <Link
                     href="/ynab-alternative-australia"
                     className="underline hover:text-foreground"
-                  >
-                    YNAB alternative for Australia
-                  </Link>
+                  > {t('ynab_alternative_for_australia')} </Link>
                 </li>
-                <li>
-                  Coming from Firefly III?{' '}
+                <li> {t('coming_from_firefly_iii')}{' '}
                   <Link
                     href="/firefly-iii-alternative"
                     className="underline hover:text-foreground"
-                  >
-                    Firefly III alternative
-                  </Link>
+                  > {t('firefly_iii_alternative')} </Link>
                 </li>
-                <li>
-                  Want it free, on your own server?{' '}
+                <li> {t('want_it_free_on_your_own')}{' '}
                   <Link
                     href="/self-hosted-ynab-alternative"
                     className="underline hover:text-foreground"
-                  >
-                    Self-hosted YNAB alternative
-                  </Link>
+                  > {t('self_hosted_ynab_alternative')} </Link>
                 </li>
-                <li>
-                  Deciding between YNAB and Budgero specifically?{' '}
-                  <Link href="/vs-ynab" className="underline hover:text-foreground">
-                    Budgero vs YNAB, feature by feature
-                  </Link>
+                <li> {t('deciding_between_ynab_and_budgero_specifically')}{' '}
+                  <Link href="/vs-ynab" className="underline hover:text-foreground"> {t('budgero_vs_ynab_feature_by_feature')} </Link>
                 </li>
-                <li>
-                  Leaving Monarch instead?{' '}
+                <li> {t('leaving_monarch_instead')}{' '}
                   <Link
                     href="/monarch-money-alternative"
                     className="underline hover:text-foreground"
-                  >
-                    Monarch Money alternative
-                  </Link>
+                  > {t('monarch_money_alternative')} </Link>
                 </li>
               </ul>
             </section>
@@ -695,9 +634,7 @@ export default function BestYnabAlternativesPage() {
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -717,32 +654,20 @@ export default function BestYnabAlternativesPage() {
             {/* Final CTA */}
             <section className="py-20 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Try Budgero free for 35 days
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Zero-knowledge encryption, 168 currencies, 5 seats included. No credit card
-                  required.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('try_budgero_free_for_35_days')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('zero_knowledge_encryption_168_currencies_5')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=best-ynab-alternatives&utm_content=final">
-                      Start Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=best-ynab-alternatives&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Want all features for free?{' '}
-                  <a href="/self-hostable" className="underline hover:text-foreground">
-                    Self-host Budgero
-                  </a>{' '}
-                  on your own infrastructure.
-                </p>
+                <p className="mt-6 text-sm text-foreground/60"> {t('want_all_features_for_free')}{' '}
+                  <a href="/self-hostable" className="underline hover:text-foreground"> {t('self_host_budgero')} </a>{' '} {t('on_your_own_infrastructure')} </p>
               </div>
             </section>
           </div>

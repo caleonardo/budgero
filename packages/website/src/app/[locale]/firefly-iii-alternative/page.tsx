@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Server } from 'lucide-react';
@@ -163,7 +164,21 @@ function renderCellValue(val: unknown, note?: string | null, isHighlight?: boole
   );
 }
 
-export default function FireflyAlternativePage() {
+export default async function FireflyAlternativePage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('firefly_iii_alternative');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -241,23 +256,12 @@ export default function FireflyAlternativePage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-border/50"
                 >
-                  <Server className="w-3.5 h-3.5 mr-2" />
-                  Self-hosted, free, Docker-based
-                </Badge>
+                  <Server className="w-3.5 h-3.5 mr-2" /> {t('self_hosted_free_docker_based')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  The Firefly III Alternative
-                  <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium">
-                    Same self-hosted freedom — with envelope budgeting your household will
-                    actually use.
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('the_firefly_iii_alternative')} <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium"> {t('same_self_hosted_freedom_with_envelope')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Firefly III is a great ledger. Budgero Self-Host is a budgeting app: zero-based
-                  envelopes, 168 currencies with live FX, end-to-end encryption, and an
-                  offline-first PWA — free on your own server.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('firefly_iii_is_a_great_ledger')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -265,9 +269,7 @@ export default function FireflyAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <Link href="/docs/self-hosting-guide">
-                      Self-Host for Free
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <Link href="/docs/self-hosting-guide"> {t('self_host_for_free')} <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                   </Button>
                   <Button
@@ -276,13 +278,11 @@ export default function FireflyAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="#comparison">Compare with Firefly III</a>
+                    <a href="#comparison">{t('compare_with_firefly_iii')}</a>
                   </Button>
                 </div>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  Or try Budgero Cloud free for 35 days — no card, no server needed.
-                </p>
+                <p className="mt-4 text-sm text-foreground/60"> {t('or_try_budgero_cloud_free_for')} </p>
               </div>
             </section>
 
@@ -290,38 +290,15 @@ export default function FireflyAlternativePage() {
 
             {/* Honest framing */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Firefly III Is a Ledger. Budgero Is a Budget.
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('firefly_iii_is_a_ledger_budgero')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Let&apos;s be fair to Firefly III first: it is free, open source, actively
-                  maintained, and one of the most complete double-entry personal finance systems
-                  you can run yourself. If you think in accounts, journals, and reports, it is
-                  excellent — and if open-source licensing is non-negotiable for you, Firefly III
-                  or Actual Budget is the right call, not Budgero.
-                </p>
-                <p>
-                  The reason people go looking for an alternative is usually not a missing feature
-                  — it&apos;s a mismatch of method. Firefly III records what happened. Zero-based
-                  envelope budgeting decides what happens <em>next</em>: every unit of money gets
-                  a job before you spend it. Firefly has budget features, but they sit on top of
-                  an accounting core; in Budgero, the envelope method <em>is</em> the core, the
-                  same philosophy that made YNAB work — with{' '}
+                <p> {t('let_s_be_fair_to_firefly')} </p>
+                <p> {t('the_reason_people_go_looking_for')} <em>{t('next')}</em>{t('every_unit_of_money_gets_a')} <em>is</em> {t('the_core_the_same_philosophy_that')}{' '}
                   <Link
                     href="/multi-currency-budgeting"
                     className="underline hover:text-foreground"
-                  >
-                    168 currencies
-                  </Link>{' '}
-                  handled natively.
-                </p>
-                <p>
-                  The second reason is the household test: Firefly III makes sense to the person
-                  who set it up. A spouse logging groceries on a phone at the supermarket needs
-                  something else — Budgero&apos;s PWA installs like a native app, works offline,
-                  and syncs when you&apos;re back online.
-                </p>
+                  > {t('168_currencies')} </Link>{' '} {t('handled_natively')} </p>
+                <p> {t('the_second_reason_is_the_household')} </p>
               </div>
             </section>
 
@@ -330,24 +307,16 @@ export default function FireflyAlternativePage() {
             {/* Comparison Table */}
             <section id="comparison" className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero Self-Host vs. Firefly III
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_self_host_vs_firefly_iii')} </h2>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[640px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero Self-Host
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Firefly III
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero_self_host')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('firefly_iii')} </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -372,20 +341,14 @@ export default function FireflyAlternativePage() {
               </div>
 
               <p className="mt-6 text-foreground/60 text-sm max-w-3xl">
-                <strong className="text-foreground">Key takeaway:</strong> pick Firefly III for an
-                open-source double-entry ledger with deep reporting. Pick Budgero for zero-based
-                envelope budgeting your whole household can use, real multi-currency, and
-                end-to-end encryption — still free, still on your server.
-              </p>
+                <strong className="text-foreground">{t('key_takeaway')}</strong> {t('pick_firefly_iii_for_an_open')} </p>
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -405,22 +368,15 @@ export default function FireflyAlternativePage() {
             {/* Final CTA */}
             <section className="py-20 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Your server. Your data. A budget that looks forward.
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Spin up Budgero Self-Host with Docker in about 10 minutes — free forever, full
-                  feature set, no telemetry unless you opt in.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('your_server_your_data_a_budget')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('spin_up_budgero_self_host_with')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <Link href="/docs/self-hosting-guide">
-                      Read the Self-Hosting Guide
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <Link href="/docs/self-hosting-guide"> {t('read_the_self_hosting_guide')} <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                   </Button>
                   <Button
@@ -429,23 +385,15 @@ export default function FireflyAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=firefly-iii-alternative&utm_content=final">
-                      Try Cloud Free Instead
-                    </a>
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=firefly-iii-alternative&utm_content=final"> {t('try_cloud_free_instead')} </a>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Also see:{' '}
+                <p className="mt-6 text-sm text-foreground/60"> {t('also_see')}{' '}
                   <Link
                     href="/self-hosted-ynab-alternative"
                     className="underline hover:text-foreground"
-                  >
-                    Self-hosted YNAB alternative
-                  </Link>{' '}
-                  ·{' '}
-                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground">
-                    Best YNAB alternatives in 2026
-                  </Link>
+                  > {t('self_hosted_ynab_alternative')} </Link>{' '}·{' '}
+                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground"> {t('best_ynab_alternatives_in_2026')} </Link>
                 </p>
               </div>
             </section>

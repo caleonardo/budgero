@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Download, Globe, Shield, Euro } from 'lucide-react';
@@ -237,7 +238,21 @@ function renderCellValue(val: unknown, note?: string | null, isHighlight?: boole
   );
 }
 
-export default function YnabAlternativeEuropePage() {
+export default async function YnabAlternativeEuropePage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('ynab_alternative_europe');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -328,23 +343,13 @@ export default function YnabAlternativeEuropePage() {
                   className="mb-6 max-w-full whitespace-normal text-center px-3 py-1.5 text-xs sm:text-sm font-medium border-blue-500/30 text-blue-700 dark:text-blue-400 bg-blue-500/10"
                 >
                   <Globe className="w-3.5 h-3.5 mr-2 shrink-0" />
-                  <span>Built for Europe — 168 currencies</span>
+                  <span>{t('built_for_europe_168_currencies')}</span>
                 </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  The YNAB Alternative for Europe
-                  <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium">
-                    Multi-currency, data hosted in Finland, and built for how European households
-                    actually earn and spend.
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('the_ynab_alternative_for_europe')} <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium"> {t('multi_currency_data_hosted_in_finland')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  YNAB bills in USD, still doesn&apos;t do multi-currency, and sends your bank
-                  data through Plaid. Budgero is a zero-based budgeting app built with EU-first
-                  currencies, zero-knowledge privacy, and proper VAT invoicing — at roughly a third
-                  the price.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('ynab_bills_in_usd_still_doesn')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -352,9 +357,7 @@ export default function YnabAlternativeEuropePage() {
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-europe&utm_content=hero">
-                      Start 35-Day Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-europe&utm_content=hero"> {t('start_35_day_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -363,13 +366,11 @@ export default function YnabAlternativeEuropePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="#comparison">See the Europe Comparison</a>
+                    <a href="#comparison">{t('see_the_europe_comparison')}</a>
                   </Button>
                 </div>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  No card. VAT-compliant invoicing. 168 currencies from day one.
-                </p>
+                <p className="mt-4 text-sm text-foreground/60"> {t('no_card_vat_compliant_invoicing_168')} </p>
               </div>
             </section>
 
@@ -377,57 +378,23 @@ export default function YnabAlternativeEuropePage() {
 
             {/* Why European YNAB users are leaving */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why European YNAB Users Are Leaving
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('why_european_ynab_users_are_leaving')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  YNAB is a great American app. The operative word is <em>American</em>. The
-                  envelope-budgeting philosophy travels well. The actual product does not.
-                </p>
+                <p> {t('ynab_is_a_great_american_app')} <em>{t('american')}</em>{t('the_envelope_budgeting_philosophy_travels_well')} </p>
 
                 <div className="space-y-4">
                   <p>
-                    <strong className="text-foreground">YNAB&apos;s UK return is via Plaid.</strong>{' '}
-                    YNAB withdrew from the UK in 2022 and returned in 2024–25 through Plaid&apos;s
-                    Open Banking integration. Coverage is real but selective — Revolut, Monzo,
-                    Nationwide, NatWest, HSBC and American Express are in; many smaller UK
-                    institutions still aren&apos;t. And every connection routes your transaction
-                    data through Plaid as a third party.
-                  </p>
+                    <strong className="text-foreground">{t('ynab_s_uk_return_is_via')}</strong>{' '} {t('ynab_withdrew_from_the_uk_in')} </p>
                   <p>
-                    <strong className="text-foreground">EU bank sync is uneven.</strong> YNAB&apos;s
-                    direct import covers select EU banks via Plaid. If you bank with N26, Bunq,
-                    Revolut EU, or any of hundreds of smaller regional banks outside Plaid&apos;s
-                    coverage list, you&apos;re still on CSV exports.
-                  </p>
+                    <strong className="text-foreground">{t('eu_bank_sync_is_uneven')}</strong> {t('ynab_s_direct_import_covers_select')} </p>
                   <p>
-                    <strong className="text-foreground">
-                      Multi-currency is effectively not supported.
-                    </strong>{' '}
-                    YNAB treats each account as a single currency and offers no home-currency
-                    rollup. Expats, cross-border households, freelancers invoicing abroad, and
-                    anyone who lives between EUR and GBP hit the wall immediately.
-                  </p>
+                    <strong className="text-foreground"> {t('multi_currency_is_effectively_not_supported')} </strong>{' '} {t('ynab_treats_each_account_as_a')} </p>
                   <p>
-                    <strong className="text-foreground">
-                      No VAT-compliant invoicing for freelancers.
-                    </strong>{' '}
-                    YNAB does not issue proper VAT invoices. If you are a freelancer in Germany,
-                    France, Italy, or Spain, that matters at tax time.
-                  </p>
+                    <strong className="text-foreground"> {t('no_vat_compliant_invoicing_for_freelancers')} </strong>{' '} {t('ynab_does_not_issue_proper_vat')} </p>
                   <p>
-                    <strong className="text-foreground">Data lives under US law.</strong> YNAB
-                    stores your budget on US servers, subject to US subpoenas and data legislation.
-                    For Europeans who care about GDPR and data sovereignty, that is a real concern —
-                    especially when the data is stored in plaintext.
-                  </p>
+                    <strong className="text-foreground">{t('data_lives_under_us_law')}</strong> {t('ynab_stores_your_budget_on_us')} </p>
                   <p>
-                    <strong className="text-foreground">Billed in USD.</strong> YNAB is
-                    $14.99/month or $109/year — roughly €100/year once you include FX fees. For
-                    an app that still doesn&apos;t natively support your currency or your tax
-                    regime, that&apos;s a hard sell in 2026.
-                  </p>
+                    <strong className="text-foreground">{t('billed_in_usd')}</strong> {t('ynab_is_14_99_month_or')} </p>
                 </div>
               </div>
             </section>
@@ -437,24 +404,16 @@ export default function YnabAlternativeEuropePage() {
             {/* Comparison Table */}
             <section id="comparison" className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero vs. YNAB — The European View
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Where it actually matters for households and freelancers on the continent.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_vs_ynab_the_european_view')} </h2>
+                <p className="text-lg text-foreground/70"> {t('where_it_actually_matters_for_households')} </p>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[640px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero')} </th>
                       <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
                         YNAB
                       </th>
@@ -487,14 +446,10 @@ export default function YnabAlternativeEuropePage() {
                   size="lg"
                   className="h-12 px-7 text-base bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-europe&utm_content=mid-table">
-                    Start 35-Day Free Trial
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-europe&utm_content=mid-table"> {t('start_35_day_free_trial')} <ArrowRight className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-                <span className="text-sm text-foreground/60">
-                  No card · 168 currencies · VAT-compliant
-                </span>
+                <span className="text-sm text-foreground/60"> {t('no_card_168_currencies_vat_compliant')} </span>
               </div>
             </section>
 
@@ -503,13 +458,8 @@ export default function YnabAlternativeEuropePage() {
             {/* EU Banking Landscape */}
             <section className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero Understands the European Banking Landscape
-                </h2>
-                <p className="text-lg text-foreground/70 max-w-3xl mx-auto">
-                  Plaid does not. Budgero skips the bank-aggregator middleman entirely — which means
-                  it works the same everywhere, for every bank, with every currency.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_understands_the_european_banking_landsca')} </h2>
+                <p className="text-lg text-foreground/70 max-w-3xl mx-auto"> {t('plaid_does_not_budgero_skips_the')} </p>
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -523,54 +473,31 @@ export default function YnabAlternativeEuropePage() {
                       <h3 className="font-semibold text-foreground text-lg">{c.country}</h3>
                     </div>
                     <p className="text-sm text-foreground/65 mb-3">
-                      <strong className="text-foreground/85">Common banks:</strong> {c.banks}
+                      <strong className="text-foreground/85">{t('common_banks')}</strong> {c.banks}
                     </p>
                     <p className="text-sm text-foreground/70">
-                      <strong className="text-foreground/85">YNAB problem:</strong> {c.pain}
+                      <strong className="text-foreground/85">{t('ynab_problem')}</strong> {c.pain}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <p className="mt-8 text-center text-foreground/60 max-w-2xl mx-auto">
-                In Budgero, it does not matter which bank you use. You import CSVs or enter
-                transactions yourself, and every currency works the same way — whether it is EUR,
-                GBP, CHF, PLN, SEK, or anything else.
-              </p>
+              <p className="mt-8 text-center text-foreground/60 max-w-2xl mx-auto"> {t('in_budgero_it_does_not_matter')} </p>
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
 
             {/* Multi-currency deep section */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Real Multi-Currency, Not &ldquo;One Currency Per Budget&rdquo;
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('real_multi_currency_not_one_currency')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  A lot of European budgeters have one budget for EUR and another for GBP. That
-                  works for exactly nobody. If rent goes out in GBP, groceries in EUR, and your
-                  salary arrives in whichever of the two your employer decided, you need one unified
-                  picture.
-                </p>
-                <p>
-                  Budgero lets you hold accounts in any of{' '}
+                <p> {t('a_lot_of_european_budgeters_have')} </p>
+                <p> {t('budgero_lets_you_hold_accounts_in')}{' '}
                   <Link
                     href="/multi-currency-budgeting"
                     className="underline hover:text-foreground"
-                  >
-                    168 currencies
-                  </Link>{' '}
-                  inside the same budget. Pick a home currency (say, EUR). Every transaction in GBP,
-                  CHF, PLN, or SEK is automatically converted at the live exchange rate. Your net
-                  worth rolls up in your home currency. Your budget envelopes work across currencies
-                  transparently.
-                </p>
-                <p>
-                  This is the number one reason Europeans switch. YNAB has never offered this
-                  natively, and the community workarounds (multiple budgets, manual FX conversion)
-                  break down within a month.
-                </p>
+                  > {t('168_currencies')} </Link>{' '} {t('inside_the_same_budget_pick_a')} </p>
+                <p> {t('this_is_the_number_one_reason')} </p>
               </div>
             </section>
 
@@ -581,60 +508,34 @@ export default function YnabAlternativeEuropePage() {
               <div className="bg-card rounded-2xl p-8 border border-border/70">
                 <div className="flex items-center gap-3 mb-4">
                   <Shield className="w-8 h-8 text-[#2f6246]" />
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                    Your Data Lives in Finland — and We Can&apos;t Read It
-                  </h2>
+                  <h2 className="text-2xl md:text-3xl font-bold text-foreground"> {t('your_data_lives_in_finland_and')} </h2>
                 </div>
-                <p className="text-lg text-foreground/75 leading-relaxed mb-4">
-                  Budgero Cloud is hosted in Finland, in the EU, under EU jurisdiction — not on US
-                  servers subject to US data law. And before your data even gets there, it is
-                  encrypted on your device with a key that never leaves it. We cannot decrypt your
-                  budget — not for marketing, not for support, not for subpoenas.
-                </p>
-                <p className="text-lg text-foreground/75 leading-relaxed mb-4">
-                  Concretely, that means:
-                </p>
+                <p className="text-lg text-foreground/75 leading-relaxed mb-4"> {t('budgero_cloud_is_hosted_in_finland')} </p>
+                <p className="text-lg text-foreground/75 leading-relaxed mb-4"> {t('concretely_that_means')} </p>
                 <ul className="space-y-3 text-foreground/75">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      No telemetry, no usage tracking, no analytics — unless you explicitly turn
-                      it on. The app does not phone home by default.
-                    </span>
+                    <span> {t('no_telemetry_no_usage_tracking_no')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Your data export request is instant — we hand you your encrypted blob and
-                      that is everything we have.
-                    </span>
+                    <span> {t('your_data_export_request_is_instant')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Right to be forgotten is mechanical — delete your account and your encrypted
-                      blob is gone. There is no shadow copy in an analytics pipeline.
-                    </span>
+                    <span> {t('right_to_be_forgotten_is_mechanical')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Data breach risk is minimized — even a full server compromise yields
-                      encrypted gibberish, not your financial history.
-                    </span>
+                    <span> {t('data_breach_risk_is_minimized_even')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Full data sovereignty is one Docker command away — run{' '}
+                    <span> {t('full_data_sovereignty_is_one_docker')}{' '}
                       <Link
                         href="/self-hostable"
                         className="underline hover:text-foreground"
-                      >
-                        Budgero Self-Host
-                      </Link>{' '}
-                      on your own EU server if you want total control.
-                    </span>
+                      > {t('budgero_self_host')} </Link>{' '} {t('on_your_own_eu_server_if')} </span>
                   </li>
                 </ul>
               </div>
@@ -646,96 +547,69 @@ export default function YnabAlternativeEuropePage() {
             <section className="py-16 max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 mb-4">
                 <Euro className="w-6 h-6 text-foreground/70" />
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                  Priced for Europe
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground"> {t('priced_for_europe')} </h2>
               </div>
-              <p className="text-lg text-foreground/75 leading-relaxed mb-6">
-                Budgero Cloud is {pricing.monthly}/month or {pricing.yearly}/year — roughly €3.50
-                per month, or around €30 per year. That is about a third of what YNAB charges, tax included. Payments
-                are handled by Lemon Squeezy as merchant of record — VAT is included in the
-                price and handled for you, and every payment produces a VAT-compliant invoice
-                that you can hand straight to your accountant.
-              </p>
-              <p className="text-lg text-foreground/75 leading-relaxed">
-                If you would rather not pay at all, Budgero Self-Host is free forever. Full feature
-                parity. Runs on a €5/month VPS in a data center of your choosing — which, for many
-                European users, is itself the point.
-              </p>
+              <p className="text-lg text-foreground/75 leading-relaxed mb-6"> {t('budgero_cloud_is')} {pricing.monthly}{t('month_or')} {pricing.yearly}{t('year_roughly_3_50_per_month')} </p>
+              <p className="text-lg text-foreground/75 leading-relaxed"> {t('if_you_would_rather_not_pay')} </p>
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
 
             {/* Who This Is For */}
             <section className="py-16 max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Who Budgero Is Built For
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('who_budgero_is_built_for')} </h2>
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-[#e8f0e8] rounded-2xl p-8 border border-[#bfd7c2]">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <Check className="w-6 h-6 text-green-600" />
-                    You are a good fit if you:
-                  </h3>
+                    <Check className="w-6 h-6 text-green-600" /> {t('you_are_a_good_fit_if')} </h3>
                   <ul className="space-y-3 text-foreground/80">
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Live in the EU, UK, Switzerland, or the Nordics</span>
+                      <span>{t('live_in_the_eu_uk_switzerland')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Earn or spend in more than one currency</span>
+                      <span>{t('earn_or_spend_in_more_than')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Are a freelancer who needs VAT-compliant invoices</span>
+                      <span>{t('are_a_freelancer_who_needs_vat')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>
-                        Care that your financial data is not stored in plaintext on US servers
-                      </span>
+                      <span> {t('care_that_your_financial_data_is')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Want the option to self-host on EU infrastructure</span>
+                      <span>{t('want_the_option_to_self_host')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Already have a YNAB budget you want to bring across</span>
+                      <span>{t('already_have_a_ynab_budget_you')}</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <X className="w-6 h-6 text-foreground/35" />
-                    You might be better off with YNAB if you:
-                  </h3>
+                    <X className="w-6 h-6 text-foreground/35" /> {t('you_might_be_better_off_with')} </h3>
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Only use USD and are based in the US (Budgero works, but YNAB is optimized
-                        for you)
-                      </span>
+                      <span> {t('only_use_usd_and_are_based')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Need automatic bank sync and refuse to consider CSV imports or manual entry
-                      </span>
+                      <span> {t('need_automatic_bank_sync_and_refuse')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>Prefer native iOS and Android apps over a PWA</span>
+                      <span>{t('prefer_native_ios_and_android_apps')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Are not concerned about data sovereignty or encryption-at-rest guarantees
-                      </span>
+                      <span> {t('are_not_concerned_about_data_sovereignty')} </span>
                     </li>
                   </ul>
                 </div>
@@ -746,9 +620,7 @@ export default function YnabAlternativeEuropePage() {
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -772,25 +644,16 @@ export default function YnabAlternativeEuropePage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-green-500/30 text-green-700 dark:text-green-400 bg-green-500/10"
                 >
-                  <Download className="w-3.5 h-3.5 mr-2" />
-                  35 days free, no card
-                </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Budget in every currency. Privately. From Europe.
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Start your 35-day Budgero Cloud trial. Import your YNAB budget in minutes. Or
-                  self-host for free on your own server. Your data stays yours either way.
-                </p>
+                  <Download className="w-3.5 h-3.5 mr-2" /> {t('35_days_free_no_card')} </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('budget_in_every_currency_privately_from')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('start_your_35_day_budgero_cloud')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-europe&utm_content=final">
-                      Start Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-europe&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -799,29 +662,17 @@ export default function YnabAlternativeEuropePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <Link href="/self-hosted-ynab-alternative">Prefer to self-host?</Link>
+                    <Link href="/self-hosted-ynab-alternative">{t('prefer_to_self_host')}</Link>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Also see:{' '}
-                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground">
-                    Best YNAB alternatives in 2026
-                  </Link>{' '}
-                  ·{' '}
-                  <Link href="/ynab-alternative-uk" className="underline hover:text-foreground">
-                    YNAB alternative for the UK
-                  </Link>{' '}
-                  ·{' '}
-                  <Link href="/vs-ynab" className="underline hover:text-foreground">
-                    Full Budgero vs YNAB comparison
-                  </Link>{' '}
-                  ·{' '}
+                <p className="mt-6 text-sm text-foreground/60"> {t('also_see')}{' '}
+                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground"> {t('best_ynab_alternatives_in_2026')} </Link>{' '}·{' '}
+                  <Link href="/ynab-alternative-uk" className="underline hover:text-foreground"> {t('ynab_alternative_for_the_uk')} </Link>{' '}·{' '}
+                  <Link href="/vs-ynab" className="underline hover:text-foreground"> {t('full_budgero_vs_ynab_comparison')} </Link>{' '}·{' '}
                   <Link
                     href="/multi-currency-budgeting"
                     className="underline hover:text-foreground"
-                  >
-                    Multi-currency budgeting
-                  </Link>
+                  > {t('multi_currency_budgeting')} </Link>
                 </p>
               </div>
             </section>

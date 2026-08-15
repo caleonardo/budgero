@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Globe, Shield, Cpu, DollarSign } from 'lucide-react';
@@ -169,7 +170,21 @@ function priceNumber(displayPrice: string): string {
   return displayPrice.replace(/[^0-9.]/g, '');
 }
 
-export default function MonarchMoneyAlternativePage() {
+export default async function MonarchMoneyAlternativePage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('monarch_money_alternative');
   const budgeroYearly = parseFloat(priceNumber(pricing.yearly));
   const yearlySavings = Math.max(0, Math.round(MONARCH_YEARLY_USD - budgeroYearly));
   const percentCheaper = Math.max(
@@ -267,23 +282,12 @@ export default function MonarchMoneyAlternativePage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-[#111c34]/30 text-[#111c34] bg-[#111c34]/10"
                 >
-                  <Shield className="w-3.5 h-3.5 mr-2" />
-                  Zero-Knowledge Privacy — No Plaid
-                </Badge>
+                  <Shield className="w-3.5 h-3.5 mr-2" /> {t('zero_knowledge_privacy_no_plaid')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  Monarch Money Alternative
-                  <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium">
-                    Private, No Plaid &amp; {percentCheaper}% Cheaper
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('monarch_money_alternative')} <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium"> {t('private_no_plaid')} {percentCheaper}{t('cheaper')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Budgero is the privacy-first Monarch alternative: zero-knowledge encryption, no
-                  Plaid, and no bank credentials ever shared. Zero-based budgeting, multi-currency,
-                  and offline mode for {pricing.yearly}/year — or self-host free. No automatic bank
-                  sync, by design.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('budgero_is_the_privacy_first_monarch')} {pricing.yearly}{t('year_or_self_host_free_no')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -291,9 +295,7 @@ export default function MonarchMoneyAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-alternative&utm_content=hero">
-                      Start 35-Day Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-alternative&utm_content=hero"> {t('start_35_day_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -302,24 +304,15 @@ export default function MonarchMoneyAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="/self-hostable">
-                      Explore Self-Host
-                    </a>
+                    <a href="/self-hostable"> {t('explore_self_host')} </a>
                   </Button>
                 </div>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  No credit card required. Zero-knowledge encryption on all plans.
-                  <br />
-                  Or{' '}
+                <p className="mt-4 text-sm text-foreground/60"> {t('no_credit_card_required_zero_knowledge')} <br />Or{' '}
                   <a
                     href="/self-hostable"
                     className="underline hover:text-foreground"
-                  >
-                    self-host for free
-                  </a>{' '}
-                  with full features.
-                </p>
+                  > {t('self_host_for_free')} </a>{' '} {t('with_full_features')} </p>
               </div>
             </section>
 
@@ -328,13 +321,8 @@ export default function MonarchMoneyAlternativePage() {
             {/* Key Advantages Section */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Why Switch from Monarch Money?
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Monarch is polished — but it can read your data, leans on Plaid, and costs more.
-                  Here&apos;s where Budgero is different.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('why_switch_from_monarch_money')} </h2>
+                <p className="text-lg text-foreground/70"> {t('monarch_is_polished_but_it_can')} </p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -342,13 +330,8 @@ export default function MonarchMoneyAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#dfe4ec] flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-[#314258]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    True Multi-Currency
-                  </h3>
-                  <p className="text-foreground/70">
-                    Monarch shows everything as $ with no conversion. Budgero handles USD, EUR, GBP,
-                    and 168 currencies with live exchange rates and automatic conversion.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('true_multi_currency')} </h3>
+                  <p className="text-foreground/70"> {t('monarch_shows_everything_as_with_no')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
@@ -356,46 +339,28 @@ export default function MonarchMoneyAlternativePage() {
                     <DollarSign className="w-6 h-6 text-[#2f6246]" />
                   </div>
                   <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    {percentCheaper}% Cheaper
-                  </h3>
-                  <p className="text-foreground/70">
-                    Monarch costs $99.99/year. Budgero Cloud is {pricing.yearly}/year — save
-                    ~${yearlySavings}/year with every feature included. You can also{' '}
+                    {percentCheaper}{t('cheaper')} </h3>
+                  <p className="text-foreground/70"> {t('monarch_costs_99_99_year_budgero')} {pricing.yearly}{t('year_save')}{yearlySavings}{t('year_with_every_feature_included_you')}{' '}
                     <a
                       href="/self-hostable"
                       className="underline hover:text-foreground"
-                    >
-                      self-host
-                    </a>{' '}
-                    for free with full features including sync and multi-currency.
-                  </p>
+                    > {t('self_host')} </a>{' '} {t('for_free_with_full_features_including')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#e4dff0] flex items-center justify-center mb-4">
                     <Shield className="w-6 h-6 text-[#564176]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Zero-Knowledge Privacy
-                  </h3>
-                  <p className="text-foreground/70">
-                    Monarch has &quot;bank-level&quot; encryption but can still access your data.
-                    Budgero uses zero-knowledge encryption — we literally cannot see your finances.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('zero_knowledge_privacy')} </h3>
+                  <p className="text-foreground/70"> {t('monarch_has_bank_level_encryption_but')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#efe4d8] flex items-center justify-center mb-4">
                     <Cpu className="w-6 h-6 text-[#8a5730]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Local LLM Integration
-                  </h3>
-                  <p className="text-foreground/70">
-                    Monarch&apos;s AI uses third-party providers, sending transaction data
-                    externally for processing. Budgero integrates with locally-hosted models
-                    (Ollama, LM Studio) — your data stays on your device.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('local_llm_integration')} </h3>
+                  <p className="text-foreground/70"> {t('monarch_s_ai_uses_third_party')} </p>
                 </div>
               </div>
             </section>
@@ -405,27 +370,17 @@ export default function MonarchMoneyAlternativePage() {
             {/* Comparison Table */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero vs Monarch Money
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Feature-by-feature comparison
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_vs_monarch_money')} </h2>
+                <p className="text-lg text-foreground/70"> {t('feature_by_feature_comparison')} </p>
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-border/70 bg-card">
                 <table className="w-full">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero
-                      </th>
-                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground">
-                        Monarch Money
-                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero')} </th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground"> {t('monarch_money')} </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -492,15 +447,11 @@ export default function MonarchMoneyAlternativePage() {
                   </tbody>
                 </table>
               </div>
-              <p className="mt-4 text-sm text-foreground/60">
-                * Push API requires writing your own automation scripts using our encrypted Python
-                SDK. Not a plug-and-play bank sync.{' '}
+              <p className="mt-4 text-sm text-foreground/60"> {t('push_api_requires_writing_your_own')}{' '}
                 <Link
                   href="/docs/push-api"
                   className="underline hover:text-foreground"
-                >
-                  Learn more
-                </Link>
+                > {t('learn_more')} </Link>
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -509,14 +460,10 @@ export default function MonarchMoneyAlternativePage() {
                   size="lg"
                   className="h-12 px-7 text-base bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-alternative&utm_content=mid-table">
-                    Try Budgero Free for 35 Days
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-alternative&utm_content=mid-table"> {t('try_budgero_free_for_35_days')} <ArrowRight className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-                <span className="text-sm text-foreground/60">
-                  No card required · Multi-currency · Works worldwide
-                </span>
+                <span className="text-sm text-foreground/60"> {t('no_card_required_multi_currency_works')} </span>
               </div>
             </section>
 
@@ -527,64 +474,56 @@ export default function MonarchMoneyAlternativePage() {
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-[#e8f0e8] rounded-2xl p-8 border border-[#bfd7c2]">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <Check className="w-6 h-6 text-green-600" />
-                    Switch to Budgero if:
-                  </h3>
+                    <Check className="w-6 h-6 text-green-600" /> {t('switch_to_budgero_if')} </h3>
                   <ul className="space-y-3 text-foreground/80">
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You live outside the US/Canada or travel frequently</span>
+                      <span>{t('you_live_outside_the_us_canada')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You manage money in multiple currencies</span>
+                      <span>{t('you_manage_money_in_multiple_currencies')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You want true privacy with zero-knowledge encryption</span>
+                      <span>{t('you_want_true_privacy_with_zero')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You want to use your own locally-hosted LLM (Ollama, LM Studio)</span>
+                      <span>{t('you_want_to_use_your_own')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>
-                        You want to save ~${yearlySavings}/year (or go free with{' '}
-                        <a href="/self-hostable" className="underline">
-                          Self-Host
-                        </a>
-                        )
-                      </span>
+                      <span> {t('you_want_to_save')}{yearlySavings}{t('year_or_go_free_with')}{' '}
+                        <a href="/self-hostable" className="underline"> {t('self_host_2')} </a>)
+                                              </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You need offline access when traveling</span>
+                      <span>{t('you_need_offline_access_when_traveling')}</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <X className="w-6 h-6 text-foreground/35" />
-                    Stick with Monarch if:
-                  </h3>
+                    <X className="w-6 h-6 text-foreground/35" /> {t('stick_with_monarch_if')} </h3>
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You need automatic US/Canadian bank sync</span>
+                      <span>{t('you_need_automatic_us_canadian_bank')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You want automatic investment/brokerage syncing</span>
+                      <span>{t('you_want_automatic_investment_brokerage_syncing')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You only use USD and live in North America</span>
+                      <span>{t('you_only_use_usd_and_live')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You prefer fully hands-off automation over privacy</span>
+                      <span>{t('you_prefer_fully_hands_off_automation')}</span>
                     </li>
                   </ul>
                 </div>
@@ -596,55 +535,34 @@ export default function MonarchMoneyAlternativePage() {
             {/* Monarch Limitations Section */}
             <section className="py-16 max-w-3xl mx-auto">
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-                  What Monarch Money Gets Wrong
-                </h2>
-                <p className="text-lg text-foreground/75 mb-6">
-                  Monarch Money is a solid app for US-based users, but it has significant
-                  limitations:
-                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6"> {t('what_monarch_money_gets_wrong')} </h2>
+                <p className="text-lg text-foreground/75 mb-6"> {t('monarch_money_is_a_solid_app')} </p>
                 <ul className="space-y-4 text-foreground/75">
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">No multi-currency:</strong>{' '}
-                      Monarch displays all transactions as &quot;$&quot; regardless of actual
-                      currency. A 1,000 JPY transaction shows as &quot;$1,000&quot; — misleading and
-                      unusable for international users.
-                    </span>
+                      <strong className="text-foreground">{t('no_multi_currency')}</strong>{' '} {t('monarch_displays_all_transactions_as_regardless')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">US/Canada only:</strong> You
-                      cannot download the app outside North American app stores or connect
-                      non-US/Canadian banks.
-                    </span>
+                      <strong className="text-foreground">{t('us_canada_only')}</strong> {t('you_cannot_download_the_app_outside')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Cloud-only:</strong> No
-                      offline mode. You need internet to access your budget.
-                    </span>
+                      <strong className="text-foreground">{t('cloud_only')}</strong> {t('no_offline_mode_you_need_internet')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">
-                        AI processes data externally:
-                      </strong>{' '}
-                      Monarch&apos;s AI assistant uses third-party LLM providers, sending
-                      transaction data to external servers for processing (though not stored or used
-                      for training).
-                    </span>
+                      <strong className="text-foreground"> {t('ai_processes_data_externally')} </strong>{' '} {t('monarch_s_ai_assistant_uses_third')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Expensive:</strong> At
-                      $99.99/year, Monarch costs ~${yearlySavings}/year more than Budgero Cloud&apos;s {pricing.yearly}.
-                    </span>
+                      <strong className="text-foreground">{t('expensive')}</strong> {t('at_99_99_year_monarch_costs')}{yearlySavings}{t('year_more_than_budgero_cloud_s')} {pricing.yearly}.
+                                          </span>
                   </li>
                 </ul>
               </div>
@@ -654,9 +572,7 @@ export default function MonarchMoneyAlternativePage() {
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -676,64 +592,40 @@ export default function MonarchMoneyAlternativePage() {
             {/* Final CTA */}
             <section className="py-20 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Ready to switch from Monarch Money?
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Try Budgero free for 35 days. Multi-currency, zero-knowledge encryption, and works
-                  anywhere in the world.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('ready_to_switch_from_monarch_money')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('try_budgero_free_for_35_days_2')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-alternative&utm_content=final">
-                      Start Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-alternative&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Want all features for free?{' '}
+                <p className="mt-6 text-sm text-foreground/60"> {t('want_all_features_for_free')}{' '}
                   <Link
                     href="/self-hosted-ynab-alternative"
                     className="underline hover:text-foreground"
-                  >
-                    Self-host Budgero
-                  </Link>{' '}
-                  with full sync, multi-currency, and collaboration.
-                </p>
-                <p className="mt-3 text-sm text-foreground/60">
-                  Based in Europe?{' '}
+                  > {t('self_host_budgero')} </Link>{' '} {t('with_full_sync_multi_currency_and')} </p>
+                <p className="mt-3 text-sm text-foreground/60"> {t('based_in_europe')}{' '}
                   <Link
                     href="/monarch-money-europe-alternative"
                     className="underline hover:text-foreground"
-                  >
-                    Monarch Money isn&apos;t available here
-                  </Link>{' '}
-                  — see the dedicated comparison.
-                </p>
-                <p className="mt-3 text-sm text-foreground/60">
-                  Wondering about currencies?{' '}
+                  > {t('monarch_money_isn_t_available_here')} </Link>{' '} {t('see_the_dedicated_comparison')} </p>
+                <p className="mt-3 text-sm text-foreground/60"> {t('wondering_about_currencies')}{' '}
                   <Link
                     href="/monarch-money-multi-currency"
                     className="underline hover:text-foreground"
-                  >
-                    Does Monarch Money support multiple currencies?
-                  </Link>
+                  > {t('does_monarch_money_support_multiple_currencies')} </Link>
                 </p>
-                <p className="mt-3 text-sm text-foreground/60">
-                  Still comparing apps? See{' '}
+                <p className="mt-3 text-sm text-foreground/60"> {t('still_comparing_apps_see')}{' '}
                   <Link
                     href="/best-ynab-alternatives"
                     className="underline hover:text-foreground"
-                  >
-                    9 budgeting apps compared
-                  </Link>
-                  .
-                </p>
+                  > {t('9_budgeting_apps_compared')} </Link>.
+                                  </p>
               </div>
             </section>
           </div>

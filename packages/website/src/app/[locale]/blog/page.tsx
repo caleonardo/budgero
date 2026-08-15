@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,7 +13,21 @@ export const metadata: Metadata = {
   description: 'Articles and updates from Budgero.',
 };
 
-export default function BlogPage() {
+export default async function BlogPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('blog');
   const posts = allPosts
     .filter((p) => !p.draft && p.published !== false)
     .sort((a, b) => Number(new Date(b.date)) - Number(new Date(a.date)));
@@ -27,16 +42,9 @@ export default function BlogPage() {
     <main className="bg-background text-foreground">
       <section className="border-b border-border/60 bg-muted/20 pt-24 sm:pt-28">
         <div className="container mx-auto px-4 py-16 md:py-24">
-          <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm">
-            Budgero blog
-          </Badge>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Insights & updates
-          </h1>
-          <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Follow along as we ship new budgeting tools, share privacy-first finance tips, and
-            unpack the thinking behind Budgero&apos;s roadmap.
-          </p>
+          <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm"> {t('budgero_blog')} </Badge>
+          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl"> {t('insights_updates')} </h1>
+          <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg"> {t('follow_along_as_we_ship_new')} </p>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             {heroHighlights.map((item) => (
               <span
@@ -55,14 +63,9 @@ export default function BlogPage() {
         {posts.length === 0 ? (
           <Card className="border-dashed border-border/60 bg-background/50 text-center">
             <CardHeader>
-              <CardTitle className="text-2xl font-semibold text-foreground">
-                No posts just yet
-              </CardTitle>
+              <CardTitle className="text-2xl font-semibold text-foreground"> {t('no_posts_just_yet')} </CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground">
-              We&apos;re drafting the first story. Check back soon or explore the docs to see
-              what&apos;s new in Budgero.
-            </CardContent>
+            <CardContent className="text-muted-foreground"> {t('we_re_drafting_the_first_story')} </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 gap-6">

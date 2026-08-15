@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -52,6 +53,7 @@ export async function generateMetadata({
 }
 
 export default async function GuidePage({ params }: { params: Promise<{ slug: string[] }> }) {
+  const t = await getTranslations('docs_slug_');
   const { slug } = await params;
   const guide = getGuideFromParams(slug);
   if (!guide) {
@@ -69,16 +71,14 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               href="/docs"
               className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-background px-3 py-1 font-medium text-foreground transition hover:border-border hover:bg-background/80"
             >
-              <ArrowLeft className="size-4" aria-hidden /> Back to docs
-            </Link>
+              <ArrowLeft className="size-4" aria-hidden /> {t('back_to_docs')} </Link>
             <Badge className="rounded-full border border-primary/30 bg-primary/15 text-primary">
               {badgeLabel}
             </Badge>
             {guide.readingTimeMinutes ? (
               <span className="inline-flex items-center gap-1 rounded-full border border-border/50 bg-background px-3 py-1 text-foreground/70">
                 <Clock3 className="size-3.5" aria-hidden />
-                {guide.readingTimeMinutes} min read
-              </span>
+                {guide.readingTimeMinutes} {t('min_read')} </span>
             ) : null}
           </div>
           <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">{guide.title}</h1>
@@ -87,9 +87,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           </p>
           {guide.takeaways && guide.takeaways.length > 0 ? (
             <div className="mt-8">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                In this guide
-              </h2>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground"> {t('in_this_guide')} </h2>
               <ul className="mt-3 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
                 {guide.takeaways.map((point) => (
                   <li key={point} className="flex items-start gap-2">
@@ -115,15 +113,11 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           <Link
             href="/docs"
             className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background px-4 py-2 font-semibold text-foreground transition hover:border-border hover:bg-background/80"
-          >
-            Back to docs
-          </Link>
+          > {t('back_to_docs')} </Link>
           <Link
             href="/docs"
             className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 font-semibold text-primary-foreground transition hover:bg-primary/90"
-          >
-            Explore more guides
-            <ArrowRightCircle className="size-4" aria-hidden />
+          > {t('explore_more_guides')} <ArrowRightCircle className="size-4" aria-hidden />
           </Link>
         </div>
       </section>

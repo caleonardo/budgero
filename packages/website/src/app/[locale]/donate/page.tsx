@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { Heart, ArrowRight, Star, MessageCircle, Cloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -54,7 +55,21 @@ const otherWays = [
   },
 ];
 
-export default function DonatePage() {
+export default async function DonatePage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('donate');
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="relative mx-auto max-w-screen-2xl">
@@ -65,32 +80,19 @@ export default function DonatePage() {
               <div className="mx-auto mb-6 w-12 h-12 rounded-xl bg-[#d7dbe2] flex items-center justify-center">
                 <Heart className="w-6 h-6 text-[#3f4756]" />
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-[1.1]">
-                Support Budgero
-              </h1>
-              <p className="text-lg md:text-xl text-foreground/70 mb-4 leading-relaxed">
-                Budgero Self-Host is free — no license keys, no feature gating, no telemetry.
-                That&apos;s a promise, not a trial.
-              </p>
-              <p className="text-base text-foreground/60 mb-10 max-w-xl mx-auto">
-                If Budgero saves you money or just makes budgeting suck less, you can chip in
-                whatever feels right. One-time, pay what you want. It doesn&apos;t unlock
-                anything — you already have everything.
-              </p>
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-[1.1]"> {t('support_budgero')} </h1>
+              <p className="text-lg md:text-xl text-foreground/70 mb-4 leading-relaxed"> {t('budgero_self_host_is_free_no')} </p>
+              <p className="text-base text-foreground/60 mb-10 max-w-xl mx-auto"> {t('if_budgero_saves_you_money_or')} </p>
               <Button
                 asChild
                 size="lg"
                 className="h-12 px-8 bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
               >
                 <TrackedLink href={LEMON_SQUEEZY_DONATE_URL} event="Donate - Checkout" external>
-                  <Heart className="w-4 h-4 mr-2" />
-                  Donate — pay what you want
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <Heart className="w-4 h-4 mr-2" /> {t('donate_pay_what_you_want')} <ArrowRight className="w-4 h-4 ml-2" />
                 </TrackedLink>
               </Button>
-              <p className="mt-4 text-xs text-foreground/50">
-                Secure checkout via Lemon Squeezy. One-time payment, any amount.
-              </p>
+              <p className="mt-4 text-xs text-foreground/50"> {t('secure_checkout_via_lemon_squeezy_one')} </p>
             </div>
           </section>
 
@@ -98,24 +100,15 @@ export default function DonatePage() {
 
           {/* Where it goes */}
           <section className="py-12 max-w-2xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">
-              Where donations go
-            </h2>
-            <p className="text-foreground/70 leading-relaxed text-center">
-              Budgero is built by one person. Donations buy development time: bug fixes, new
-              features, keeping the self-host Docker images current, and making sure the
-              self-host build stays a first-class citizen — the same engine and features as
-              Cloud, forever.
-            </p>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center"> {t('where_donations_go')} </h2>
+            <p className="text-foreground/70 leading-relaxed text-center"> {t('budgero_is_built_by_one_person')} </p>
           </section>
 
           <div className="my-12 border-t border-border" aria-hidden />
 
           {/* Other ways to help */}
           <section className="py-12 pb-24 max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-              Other ways to help
-            </h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center"> {t('other_ways_to_help')} </h2>
             <div className="grid sm:grid-cols-3 gap-4">
               {otherWays.map((way) => (
                 <TrackedLink

@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Globe } from 'lucide-react';
@@ -113,7 +114,21 @@ function renderCell(val: unknown, highlight?: boolean) {
   );
 }
 
-export default function MonarchMultiCurrencyPage() {
+export default async function MonarchMultiCurrencyPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('monarch_money_multi_currency');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -166,23 +181,13 @@ export default function MonarchMultiCurrencyPage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-border/50"
                 >
-                  <Globe className="w-3.5 h-3.5 mr-2" />
-                  Updated June 2026
-                </Badge>
+                  <Globe className="w-3.5 h-3.5 mr-2" /> {t('updated_june_2026')} </Badge>
 
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6 leading-[1.15]">
-                  Does Monarch Money Support Multiple Currencies?
-                </h1>
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6 leading-[1.15]"> {t('does_monarch_money_support_multiple_currencies')} </h1>
 
                 <p className="text-xl md:text-2xl text-foreground/70 mb-4 max-w-2xl mx-auto leading-relaxed">
-                  <strong className="text-foreground">Short answer: no.</strong> Monarch Money is
-                  built for the US and Canada, budgets in a single currency, and has no
-                  multi-currency support as of 2026.
-                </p>
-                <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
-                  Here&apos;s exactly what Monarch does and doesn&apos;t support, the workarounds
-                  people try, and what to use if your money lives in more than one currency.
-                </p>
+                  <strong className="text-foreground">{t('short_answer_no')}</strong> {t('monarch_money_is_built_for_the')} </p>
+                <p className="text-lg text-foreground/60 max-w-2xl mx-auto"> {t('here_s_exactly_what_monarch_does')} </p>
               </div>
             </section>
 
@@ -190,29 +195,11 @@ export default function MonarchMultiCurrencyPage() {
 
             {/* What Monarch supports */}
             <section className="py-12 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                What Monarch Actually Supports in 2026
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('what_monarch_actually_supports_in_2026')} </h2>
               <div className="space-y-4 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Monarch Money operates in <strong className="text-foreground">USD for US
-                  users and CAD for Canadian users</strong> — one currency per budget, chosen by
-                  your country. There is no native way to hold an account in euros, pounds, or yen
-                  alongside your dollar accounts, no automatic exchange-rate conversion, and no
-                  consolidated net worth across currencies.
-                </p>
-                <p>
-                  This is a deliberate product choice, not an oversight. Monarch&apos;s strength is
-                  deep US/Canada bank sync and investment tracking, and its roadmap follows that
-                  market. Multi-currency support has been requested in Monarch&apos;s community
-                  forums for years without a shipped feature or a committed date.
-                </p>
-                <p>
-                  If you only ever touch dollars, none of this matters — Monarch is a genuinely
-                  good app for that life. The problem starts when your life crosses a border:
-                  a salary in EUR and a mortgage in USD, family support in another currency,
-                  freelance clients abroad, or a planned move.
-                </p>
+                <p> {t('monarch_money_operates_in')} <strong className="text-foreground">{t('usd_for_us_users_and_cad')}</strong> {t('one_currency_per_budget_chosen_by')} </p>
+                <p> {t('this_is_a_deliberate_product_choice')} </p>
+                <p> {t('if_you_only_ever_touch_dollars')} </p>
               </div>
             </section>
 
@@ -220,26 +207,14 @@ export default function MonarchMultiCurrencyPage() {
 
             {/* Workarounds */}
             <section className="py-12 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                The Workarounds (and Why They Break)
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('the_workarounds_and_why_they_break')} </h2>
               <div className="space-y-4 text-lg text-foreground/75 leading-relaxed">
                 <p>
-                  <strong className="text-foreground">Manual accounts at a fixed rate.</strong>{' '}
-                  You add your EUR account as a manual USD account, converted by hand at
-                  today&apos;s rate. Within a month the rate has moved and your balances are
-                  fiction. Every reconciliation means redoing the maths.
-                </p>
+                  <strong className="text-foreground">{t('manual_accounts_at_a_fixed_rate')}</strong>{' '} {t('you_add_your_eur_account_as')} </p>
                 <p>
-                  <strong className="text-foreground">The side spreadsheet.</strong> Foreign
-                  accounts live in a spreadsheet; Monarch only sees domestic money. Now you have
-                  two systems, neither of which shows your actual net worth.
-                </p>
+                  <strong className="text-foreground">{t('the_side_spreadsheet')}</strong> {t('foreign_accounts_live_in_a_spreadsheet')} </p>
                 <p>
-                  <strong className="text-foreground">Just ignoring it.</strong> The most common
-                  one. The foreign part of your financial life goes untracked — which defeats the
-                  purpose of a money app.
-                </p>
+                  <strong className="text-foreground">{t('just_ignoring_it')}</strong> {t('the_most_common_one_the_foreign')} </p>
               </div>
             </section>
 
@@ -248,27 +223,17 @@ export default function MonarchMultiCurrencyPage() {
             {/* Comparison */}
             <section className="py-12 max-w-4xl mx-auto">
               <div className="text-center mb-10">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Monarch vs. a Multi-Currency-Native App
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  What &ldquo;native&rdquo; multi-currency actually means, side by side.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('monarch_vs_a_multi_currency_native')} </h2>
+                <p className="text-lg text-foreground/70"> {t('what_native_multi_currency_actually_means')} </p>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[560px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Monarch Money
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('monarch_money')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero')} </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -288,63 +253,36 @@ export default function MonarchMultiCurrencyPage() {
                 </table>
               </div>
 
-              <p className="mt-6 text-foreground/60 text-sm max-w-3xl">
-                Being fair to Monarch: it has automatic US/CA bank sync and investment tracking,
-                which Budgero deliberately doesn&apos;t (Budgero is manual-first for privacy). If
-                you&apos;re US-only and want sync, Monarch is the better fit — see our full{' '}
+              <p className="mt-6 text-foreground/60 text-sm max-w-3xl"> {t('being_fair_to_monarch_it_has')}{' '}
                 <Link
                   href="/monarch-money-alternative"
                   className="underline hover:text-foreground"
-                >
-                  Monarch Money alternative comparison
-                </Link>{' '}
-                for the honest breakdown.
-              </p>
+                > {t('monarch_money_alternative_comparison')} </Link>{' '} {t('for_the_honest_breakdown')} </p>
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
 
             {/* What to use instead */}
             <section className="py-12 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                If You Need Real Multi-Currency Budgeting
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('if_you_need_real_multi_currency')} </h2>
               <div className="space-y-4 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Budgero treats currencies as a first-class feature: hold accounts in any of{' '}
+                <p> {t('budgero_treats_currencies_as_a_first')}{' '}
                   <Link
                     href="/multi-currency-budgeting"
                     className="underline hover:text-foreground"
-                  >
-                    168 currencies
-                  </Link>{' '}
-                  inside one budget, with live exchange rates and everything rolled up in your
-                  home currency. Zero-based envelopes work across currencies transparently, and
-                  the whole thing is end-to-end encrypted.
-                </p>
-                <p>
-                  If zero-based budgeting isn&apos;t your method, PocketSmith (calendar
-                  forecasting, multi-currency) and Lunch Money (expense tracking, multi-currency)
-                  are the other serious options — we compare all of them in our{' '}
+                  > {t('168_currencies')} </Link>{' '} {t('inside_one_budget_with_live_exchange')} </p>
+                <p> {t('if_zero_based_budgeting_isn_t')}{' '}
                   <Link
                     href="/best-ynab-alternatives"
                     className="underline hover:text-foreground"
-                  >
-                    9-app comparison
-                  </Link>
-                  .
-                </p>
-                <p>
-                  Based in Europe? Monarch doesn&apos;t work there at all — that case has its own
-                  guide:{' '}
+                  > {t('9_app_comparison')} </Link>.
+                                  </p>
+                <p> {t('based_in_europe_monarch_doesn_t')}{' '}
                   <Link
                     href="/monarch-money-europe-alternative"
                     className="underline hover:text-foreground"
-                  >
-                    Monarch Money alternative for Europe
-                  </Link>
-                  .
-                </p>
+                  > {t('monarch_money_alternative_for_europe')} </Link>.
+                                  </p>
               </div>
             </section>
 
@@ -352,9 +290,7 @@ export default function MonarchMultiCurrencyPage() {
 
             {/* FAQ */}
             <section className="py-12 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -370,26 +306,18 @@ export default function MonarchMultiCurrencyPage() {
             {/* Final CTA */}
             <section className="py-16 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Budget in every currency you actually use
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  168 currencies, live FX rates, one unified budget — end-to-end encrypted, from{' '}
-                  {pricing.monthly}/mo or free if you self-host.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('budget_in_every_currency_you_actually')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('168_currencies_live_fx_rates_one')}{' '}
+                  {pricing.monthly}{t('mo_or_free_if_you_self')} </p>
                 <Button
                   asChild
                   size="lg"
                   className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-money-multi-currency&utm_content=final">
-                    Start 35-Day Free Trial
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=monarch-money-multi-currency&utm_content=final"> {t('start_35_day_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                   </a>
                 </Button>
-                <p className="mt-6 text-sm text-foreground/60">
-                  No card needed. Import from Monarch via CSV in minutes.
-                </p>
+                <p className="mt-6 text-sm text-foreground/60"> {t('no_card_needed_import_from_monarch')} </p>
               </div>
             </section>
           </div>

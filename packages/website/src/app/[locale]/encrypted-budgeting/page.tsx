@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ArrowRight, Check, X, Lock, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -72,7 +73,21 @@ const privacyComparison = [
   },
 ];
 
-export default function EncryptedBudgetingPage() {
+export default async function EncryptedBudgetingPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('encrypted_budgeting');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -125,37 +140,23 @@ export default function EncryptedBudgetingPage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-green-500/30 text-green-700 dark:text-green-400 bg-green-500/10"
                 >
-                  <Lock className="w-3.5 h-3.5 mr-2" />
-                  Zero-Knowledge Encryption
-                </Badge>
+                  <Lock className="w-3.5 h-3.5 mr-2" /> {t('zero_knowledge_encryption')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  Your Budget is None of Our Business
-                  <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium">
-                    Zero-knowledge encrypted budgeting
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('your_budget_is_none_of_our')} <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium"> {t('zero_knowledge_encrypted_budgeting')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Most encrypted budgeting apps store your data in plaintext on their servers.
-                  Budgero encrypts everything on your device before it ever leaves. We cannot read
-                  your budget, your transactions, or your account names.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('most_encrypted_budgeting_apps_store_your')} </p>
 
                 <Button
                   asChild
                   size="lg"
                   className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=encrypted-budgeting&utm_content=hero">
-                    Start Free Trial
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=encrypted-budgeting&utm_content=hero"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                   </a>
                 </Button>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  35 days free. No credit card. Encrypted from day one.
-                </p>
+                <p className="mt-4 text-sm text-foreground/60"> {t('35_days_free_no_credit_card')} </p>
               </div>
             </section>
 
@@ -164,42 +165,26 @@ export default function EncryptedBudgetingPage() {
             {/* What Zero-Knowledge Means */}
             <section className="py-16 max-w-3xl mx-auto">
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-                  What Zero-Knowledge Means
-                </h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6"> {t('what_zero_knowledge_means')} </h2>
                 <ul className="space-y-4 text-foreground/75">
                   <li className="flex items-start gap-3">
                     <ShieldCheck className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Your data is encrypted with a key derived from your master password. We never
-                      see this password.
-                    </span>
+                    <span> {t('your_data_is_encrypted_with_a')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <ShieldCheck className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Encryption happens in your browser or app before data is sent to our servers.
-                      We receive ciphertext, not your finances.
-                    </span>
+                    <span> {t('encryption_happens_in_your_browser_or')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <ShieldCheck className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      We store encrypted blobs. We cannot decrypt them. We do not have your key. Our
-                      engineers cannot look up your transactions.
-                    </span>
+                    <span> {t('we_store_encrypted_blobs_we_cannot')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <ShieldCheck className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      If you forget your master password, we cannot recover your data. That is the
-                      trade-off, and it is intentional.
-                    </span>
+                    <span> {t('if_you_forget_your_master_password')} </span>
                   </li>
                 </ul>
-                <p className="mt-6 text-sm text-foreground/55">
-                  This is not marketing speak. This is how the system is architected.
-                </p>
+                <p className="mt-6 text-sm text-foreground/55"> {t('this_is_not_marketing_speak_this')} </p>
               </div>
             </section>
 
@@ -208,9 +193,7 @@ export default function EncryptedBudgetingPage() {
             {/* How It Works */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  How It Works
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('how_it_works')} </h2>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
@@ -218,31 +201,22 @@ export default function EncryptedBudgetingPage() {
                   <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
                     <span className="text-xl font-bold text-foreground">1</span>
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2">You Enter Data</h3>
-                  <p className="text-sm text-foreground/70">
-                    Transactions, accounts, budgets. All entered in your browser or app on your
-                    device.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2">{t('you_enter_data')}</h3>
+                  <p className="text-sm text-foreground/70"> {t('transactions_accounts_budgets_all_entered_in')} </p>
                 </div>
                 <div className="bg-card rounded-xl p-6 border border-border/70 text-center">
                   <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
                     <span className="text-xl font-bold text-foreground">2</span>
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2">Your Device Encrypts</h3>
-                  <p className="text-sm text-foreground/70">
-                    AES-256-GCM encryption runs client-side using a key derived from your master
-                    password. Data is encrypted before it touches the network.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2">{t('your_device_encrypts')}</h3>
+                  <p className="text-sm text-foreground/70"> {t('aes_256_gcm_encryption_runs_client')} </p>
                 </div>
                 <div className="bg-card rounded-xl p-6 border border-border/70 text-center">
                   <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
                     <span className="text-xl font-bold text-foreground">3</span>
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2">We Store Ciphertext</h3>
-                  <p className="text-sm text-foreground/70">
-                    Our servers receive and store encrypted blobs. We sync them across your devices.
-                    We cannot read them.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2">{t('we_store_ciphertext')}</h3>
+                  <p className="text-sm text-foreground/70"> {t('our_servers_receive_and_store_encrypted')} </p>
                 </div>
               </div>
             </section>
@@ -251,27 +225,11 @@ export default function EncryptedBudgetingPage() {
 
             {/* Why This Matters */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why This Matters
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('why_this_matters')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Your budget contains some of the most sensitive data about your life. Income,
-                  spending habits, debts, savings goals. It paints a complete picture of your
-                  financial situation, your priorities, and your vulnerabilities.
-                </p>
-                <p>
-                  Most budgeting apps can access this data. They use it for features like AI
-                  categorization and analytics. Some share anonymized data with partners. Even apps
-                  that advertise &quot;bank-level encryption&quot; encrypt data in transit but store
-                  it decrypted on their servers. Their employees can access it. A breach exposes
-                  everything.
-                </p>
-                <p>
-                  Zero-knowledge encryption means there is nothing useful to breach. Even if our
-                  servers were compromised, attackers would get encrypted data they cannot read
-                  without your master password. The encryption key never leaves your device.
-                </p>
+                <p> {t('your_budget_contains_some_of_the')} </p>
+                <p> {t('most_budgeting_apps_can_access_this')} </p>
+                <p> {t('zero_knowledge_encryption_means_there_is')} </p>
               </div>
             </section>
 
@@ -280,30 +238,20 @@ export default function EncryptedBudgetingPage() {
             {/* Privacy Comparison */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Privacy Compared
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  How budgeting apps handle your data
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('privacy_compared')} </h2>
+                <p className="text-lg text-foreground/70"> {t('how_budgeting_apps_handle_your_data')} </p>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[560px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero')} </th>
                       <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
                         YNAB
                       </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Monarch
-                      </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('monarch')} </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -360,52 +308,31 @@ export default function EncryptedBudgetingPage() {
             {/* The Trade-off */}
             <section className="py-16 max-w-3xl mx-auto">
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-                  The Trade-off
-                </h2>
-                <p className="text-lg text-foreground/75 mb-6">
-                  Zero-knowledge encryption is not free. Here&apos;s what you give up.
-                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6"> {t('the_trade_off')} </h2>
+                <p className="text-lg text-foreground/75 mb-6"> {t('zero_knowledge_encryption_is_not_free')} </p>
                 <ul className="space-y-4 text-foreground/75">
                   <li className="flex items-start gap-3">
                     <EyeOff className="w-5 h-5 text-foreground/45 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">No automatic bank sync.</strong> Your bank
-                      would need to send data through us, which would break zero-knowledge.
-                    </span>
+                      <strong className="text-foreground">{t('no_automatic_bank_sync')}</strong> {t('your_bank_would_need_to_send')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <EyeOff className="w-5 h-5 text-foreground/45 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">
-                        No server-side AI categorization.
-                      </strong>{' '}
-                      We cannot read your transactions to categorize them. Budgero uses local
-                      autofill rules and smart payees instead.
-                    </span>
+                      <strong className="text-foreground"> {t('no_server_side_ai_categorization')} </strong>{' '} {t('we_cannot_read_your_transactions_to')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <EyeOff className="w-5 h-5 text-foreground/45 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Password recovery is impossible.</strong>{' '}
-                      We do not have your encryption key. If you lose your master password, your data
-                      is gone.
-                    </span>
+                      <strong className="text-foreground">{t('password_recovery_is_impossible')}</strong>{' '} {t('we_do_not_have_your_encryption')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <EyeOff className="w-5 h-5 text-foreground/45 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Manual entry required.</strong> Budgero has
-                      autofill rules and smart payees to make this fast, but you do enter
-                      transactions yourself.
-                    </span>
+                      <strong className="text-foreground">{t('manual_entry_required')}</strong> {t('budgero_has_autofill_rules_and_smart')} </span>
                   </li>
                 </ul>
-                <p className="mt-6 text-sm text-foreground/55">
-                  These are intentional design decisions, not missing features. Every budgeting app
-                  chooses a point on the convenience-privacy spectrum. Budgero sits at the privacy
-                  end.
-                </p>
+                <p className="mt-6 text-sm text-foreground/55"> {t('these_are_intentional_design_decisions_not')} </p>
               </div>
             </section>
 
@@ -418,30 +345,18 @@ export default function EncryptedBudgetingPage() {
             {/* Final CTA */}
             <section className="py-20 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Try zero-knowledge budgeting free for 35 days
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  No credit card required. Your data is encrypted from the moment you create your
-                  first transaction.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('try_zero_knowledge_budgeting_free_for')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('no_credit_card_required_your_data')} </p>
                 <Button
                   asChild
                   size="lg"
                   className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=encrypted-budgeting&utm_content=final">
-                    Start Free Trial
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=encrypted-budgeting&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                   </a>
                 </Button>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Want full control?{' '}
-                  <a href="/self-hostable" className="underline hover:text-foreground">
-                    Self-host Budgero
-                  </a>{' '}
-                  on your own infrastructure.
-                </p>
+                <p className="mt-6 text-sm text-foreground/60"> {t('want_full_control')}{' '}
+                  <a href="/self-hostable" className="underline hover:text-foreground"> {t('self_host_budgero')} </a>{' '} {t('on_your_own_infrastructure')} </p>
               </div>
             </section>
           </div>

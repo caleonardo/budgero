@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Download, DollarSign } from 'lucide-react';
@@ -173,7 +174,21 @@ function renderCellValue(val: unknown, note?: string | null, isHighlight?: boole
   );
 }
 
-export default function YnabAlternativeAustraliaPage() {
+export default async function YnabAlternativeAustraliaPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('ynab_alternative_australia');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -263,21 +278,13 @@ export default function YnabAlternativeAustraliaPage() {
                   className="mb-6 max-w-full whitespace-normal text-center px-3 py-1.5 text-xs sm:text-sm font-medium border-blue-500/30 text-blue-700 dark:text-blue-400 bg-blue-500/10"
                 >
                   <DollarSign className="w-3.5 h-3.5 mr-2 shrink-0" />
-                  <span>Built for Australia — AUD-first</span>
+                  <span>{t('built_for_australia_aud_first')}</span>
                 </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  The YNAB Alternative for Australia
-                  <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium">
-                    AUD budgeting that works with every Australian bank — no sync workarounds.
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('the_ynab_alternative_for_australia')} <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium"> {t('aud_budgeting_that_works_with_every')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  YNAB&apos;s bank sync doesn&apos;t cover Australian banks, but the USD price tag
-                  arrives in full. Budgero is zero-based budgeting built to work properly here —
-                  AUD-first, end-to-end encrypted, at a third of the price.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('ynab_s_bank_sync_doesn_t')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -285,9 +292,7 @@ export default function YnabAlternativeAustraliaPage() {
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-australia&utm_content=hero">
-                      Start 35-Day Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-australia&utm_content=hero"> {t('start_35_day_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -296,14 +301,11 @@ export default function YnabAlternativeAustraliaPage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="#comparison">See the Australian Comparison</a>
+                    <a href="#comparison">{t('see_the_australian_comparison')}</a>
                   </Button>
                 </div>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  35 days free, no card needed. Works with CommBank, Up, and every other
-                  Australian bank.
-                </p>
+                <p className="mt-4 text-sm text-foreground/60"> {t('35_days_free_no_card_needed')} </p>
               </div>
             </section>
 
@@ -311,42 +313,19 @@ export default function YnabAlternativeAustraliaPage() {
 
             {/* Why AU YNAB users are switching */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why Australian YNAB Users Are Switching
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('why_australian_ynab_users_are_switching')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Australians have always been second-class YNAB citizens. The method works
-                  brilliantly; the product was never built for here.
-                </p>
+                <p> {t('australians_have_always_been_second_class')} </p>
 
                 <div className="space-y-4">
                   <p>
-                    <strong className="text-foreground">No native Australian bank sync.</strong>{' '}
-                    YNAB&apos;s direct import covers the US, Canada, and select UK banks — CommBank,
-                    Westpac, ANZ, NAB, and Up don&apos;t connect. Third-party bridges (Redbark,
-                    Budget Feeder, Bank Sync for YNAB) can pipe transactions in via Open Banking,
-                    but each is another subscription on top of YNAB&apos;s $109 USD — you&apos;re
-                    paying twice to make an American app work here, with your bank data flowing
-                    through yet another intermediary.
-                  </p>
+                    <strong className="text-foreground">{t('no_native_australian_bank_sync')}</strong>{' '} {t('ynab_s_direct_import_covers_the')} </p>
                   <p>
-                    <strong className="text-foreground">You pay in US dollars.</strong> $109
-                    USD/year lands as roughly A$165 on your card, plus your bank&apos;s
-                    foreign-transaction fee. There is no AUD billing.
-                  </p>
+                    <strong className="text-foreground">{t('you_pay_in_us_dollars')}</strong> {t('109_usd_year_lands_as_roughly')} </p>
                   <p>
-                    <strong className="text-foreground">No multi-currency.</strong> Overseas
-                    income, a Wise account, NZD family finances, USD freelance clients — YNAB
-                    gives you one currency per budget and manual exchange-rate maths for
-                    everything else.
-                  </p>
+                    <strong className="text-foreground">{t('no_multi_currency')}</strong> {t('overseas_income_a_wise_account_nzd')} </p>
                   <p>
-                    <strong className="text-foreground">Your data lives on US servers.</strong>{' '}
-                    In plaintext, under US data law. Budgero&apos;s Cloud data is end-to-end
-                    encrypted and hosted in the EU — or self-host it on your own hardware in
-                    Australia and it never leaves the country.
-                  </p>
+                    <strong className="text-foreground">{t('your_data_lives_on_us_servers')}</strong>{' '} {t('in_plaintext_under_us_data_law')} </p>
                 </div>
               </div>
             </section>
@@ -356,24 +335,16 @@ export default function YnabAlternativeAustraliaPage() {
             {/* Comparison Table */}
             <section id="comparison" className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero vs. YNAB — The Australian View
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Where it actually matters for Australian households.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_vs_ynab_the_australian_view')} </h2>
+                <p className="text-lg text-foreground/70"> {t('where_it_actually_matters_for_australian')} </p>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[640px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero')} </th>
                       <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
                         YNAB
                       </th>
@@ -406,14 +377,10 @@ export default function YnabAlternativeAustraliaPage() {
                   size="lg"
                   className="h-12 px-7 text-base bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-australia&utm_content=mid-table">
-                    Start 35-Day Free Trial
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-australia&utm_content=mid-table"> {t('start_35_day_free_trial')} <ArrowRight className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-                <span className="text-sm text-foreground/60">
-                  No card · AUD-first · Works with every Australian bank
-                </span>
+                <span className="text-sm text-foreground/60"> {t('no_card_aud_first_works_with')} </span>
               </div>
             </section>
 
@@ -421,29 +388,14 @@ export default function YnabAlternativeAustraliaPage() {
 
             {/* AU banking reality */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Works With CommBank, Up, and the Bank Sync Forgot
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('works_with_commbank_up_and_the')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Budgero skips the bank-aggregator question entirely. Every Australian bank
-                  exports CSV — the big four make it routine, and app-first banks like Up make it
-                  genuinely pleasant — and Budgero imports it in seconds. Or enter transactions as
-                  you spend, which is the habit that made YNAB&apos;s method work in the first
-                  place.
-                </p>
-                <p>
-                  No sync connections to babysit, no re-authentication, and your banking
-                  credentials are never shared with anyone. And if your money crosses borders,
-                  Budgero budgets{' '}
+                <p> {t('budgero_skips_the_bank_aggregator_question')} </p>
+                <p> {t('no_sync_connections_to_babysit_no')}{' '}
                   <Link
                     href="/multi-currency-budgeting"
                     className="underline hover:text-foreground"
-                  >
-                    AUD alongside 167 other currencies
-                  </Link>{' '}
-                  with live exchange rates — something YNAB has never offered.
-                </p>
+                  > {t('aud_alongside_167_other_currencies')} </Link>{' '} {t('with_live_exchange_rates_something_ynab')} </p>
               </div>
             </section>
 
@@ -451,9 +403,7 @@ export default function YnabAlternativeAustraliaPage() {
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -477,25 +427,16 @@ export default function YnabAlternativeAustraliaPage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-green-500/30 text-green-700 dark:text-green-400 bg-green-500/10"
                 >
-                  <Download className="w-3.5 h-3.5 mr-2" />
-                  35 days free, no card
-                </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Budget in dollars. Privately. Without the workarounds.
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Start your 35-day Budgero Cloud trial and import your YNAB budget in minutes. Or
-                  self-host for free on your own hardware. Your data stays yours either way.
-                </p>
+                  <Download className="w-3.5 h-3.5 mr-2" /> {t('35_days_free_no_card')} </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('budget_in_dollars_privately_without_the')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('start_your_35_day_budgero_cloud')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-australia&utm_content=final">
-                      Start Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=ynab-alternative-australia&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -504,22 +445,13 @@ export default function YnabAlternativeAustraliaPage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <Link href="/self-hosted-ynab-alternative">Prefer to self-host?</Link>
+                    <Link href="/self-hosted-ynab-alternative">{t('prefer_to_self_host')}</Link>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Also see:{' '}
-                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground">
-                    Best YNAB alternatives in 2026
-                  </Link>{' '}
-                  ·{' '}
-                  <Link href="/ynab-alternative-uk" className="underline hover:text-foreground">
-                    YNAB alternative for the UK
-                  </Link>{' '}
-                  ·{' '}
-                  <Link href="/vs-ynab" className="underline hover:text-foreground">
-                    Full Budgero vs YNAB comparison
-                  </Link>
+                <p className="mt-6 text-sm text-foreground/60"> {t('also_see')}{' '}
+                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground"> {t('best_ynab_alternatives_in_2026')} </Link>{' '}·{' '}
+                  <Link href="/ynab-alternative-uk" className="underline hover:text-foreground"> {t('ynab_alternative_for_the_uk')} </Link>{' '}·{' '}
+                  <Link href="/vs-ynab" className="underline hover:text-foreground"> {t('full_budgero_vs_ynab_comparison')} </Link>
                 </p>
               </div>
             </section>

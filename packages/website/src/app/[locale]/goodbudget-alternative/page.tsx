@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ArrowRight, Check, X, Shield, Globe, BarChart3, Paintbrush } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -116,7 +117,21 @@ const comparisonData = [
   },
 ];
 
-export default function GoodbudgetAlternativePage() {
+export default async function GoodbudgetAlternativePage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('goodbudget_alternative');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -160,23 +175,12 @@ export default function GoodbudgetAlternativePage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-green-600/30 text-green-700 bg-green-50"
                 >
-                  <Shield className="w-3.5 h-3.5 mr-2" />
-                  Modern Envelope Budgeting
-                </Badge>
+                  <Shield className="w-3.5 h-3.5 mr-2" /> {t('modern_envelope_budgeting')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  Goodbudget Alternative
-                  <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium">
-                    Envelope budgeting with encryption, multi-currency, and modern design
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('goodbudget_alternative')} <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium"> {t('envelope_budgeting_with_encryption_multi_currenc')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Goodbudget is simple and reliable, but its interface and feature set haven&apos;t
-                  kept up. Budgero takes the same envelope-based, zero-based philosophy and adds
-                  zero-knowledge encryption, 168 currencies, modern reporting, and a polished
-                  interface.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('goodbudget_is_simple_and_reliable_but')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -184,9 +188,7 @@ export default function GoodbudgetAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=goodbudget-alternative&utm_content=hero">
-                      Start 35-Day Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=goodbudget-alternative&utm_content=hero"> {t('start_35_day_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -195,24 +197,15 @@ export default function GoodbudgetAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="/self-hostable">
-                      Explore Self-Host
-                    </a>
+                    <a href="/self-hostable"> {t('explore_self_host')} </a>
                   </Button>
                 </div>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  No credit card required. Zero-knowledge encryption on all plans.
-                  <br />
-                  Or{' '}
+                <p className="mt-4 text-sm text-foreground/60"> {t('no_credit_card_required_zero_knowledge')} <br />Or{' '}
                   <a
                     href="/self-hostable"
                     className="underline hover:text-foreground"
-                  >
-                    self-host for free
-                  </a>{' '}
-                  with full features.
-                </p>
+                  > {t('self_host_for_free')} </a>{' '} {t('with_full_features')} </p>
               </div>
             </section>
 
@@ -221,12 +214,8 @@ export default function GoodbudgetAlternativePage() {
             {/* Key Differences Section */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Why Switch from Goodbudget?
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Goodbudget nails the basics. Here&apos;s where Budgero goes further.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('why_switch_from_goodbudget')} </h2>
+                <p className="text-lg text-foreground/70"> {t('goodbudget_nails_the_basics_here_s')} </p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -234,52 +223,32 @@ export default function GoodbudgetAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#e4dff0] flex items-center justify-center mb-4">
                     <Shield className="w-6 h-6 text-[#564176]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Zero-Knowledge Encryption
-                  </h3>
-                  <p className="text-foreground/70">
-                    Goodbudget uses standard server-side storage. Budgero encrypts everything on your
-                    device before it leaves. We literally cannot see your financial data.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('zero_knowledge_encryption')} </h3>
+                  <p className="text-foreground/70"> {t('goodbudget_uses_standard_server_side_storage')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#dfe4ec] flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-[#314258]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    168 Currencies
-                  </h3>
-                  <p className="text-foreground/70">
-                    Goodbudget is single-currency only. Budgero handles 168 currencies with live
-                    exchange rates and automatic conversion in a single budget.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('168_currencies')} </h3>
+                  <p className="text-foreground/70"> {t('goodbudget_is_single_currency_only_budgero')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#dde9df] flex items-center justify-center mb-4">
                     <BarChart3 className="w-6 h-6 text-[#2f6246]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Modern Reporting
-                  </h3>
-                  <p className="text-foreground/70">
-                    Goodbudget offers basic spending reports. Budgero provides detailed spending
-                    breakdowns, net worth tracking, and trend analysis across all your accounts.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('modern_reporting')} </h3>
+                  <p className="text-foreground/70"> {t('goodbudget_offers_basic_spending_reports_budgero')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#efe4d8] flex items-center justify-center mb-4">
                     <Paintbrush className="w-6 h-6 text-[#8a5730]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Modern Interface
-                  </h3>
-                  <p className="text-foreground/70">
-                    Goodbudget&apos;s UI hasn&apos;t changed much in years. Budgero is built with a
-                    modern, polished design that feels responsive and refined on every screen size.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('modern_interface')} </h3>
+                  <p className="text-foreground/70"> {t('goodbudget_s_ui_hasn_t_changed')} </p>
                 </div>
               </div>
             </section>
@@ -289,27 +258,17 @@ export default function GoodbudgetAlternativePage() {
             {/* Comparison Table */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero vs Goodbudget
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Feature-by-feature comparison
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_vs_goodbudget')} </h2>
+                <p className="text-lg text-foreground/70"> {t('feature_by_feature_comparison')} </p>
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-border/70 bg-card">
                 <table className="w-full">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero
-                      </th>
-                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground">
-                        Goodbudget
-                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero')} </th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground"> {t('goodbudget')} </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -383,48 +342,30 @@ export default function GoodbudgetAlternativePage() {
             {/* Where Goodbudget Wins */}
             <section className="py-16 max-w-3xl mx-auto">
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-                  Where Goodbudget Wins
-                </h2>
-                <p className="text-lg text-foreground/75 mb-6">
-                  Goodbudget has real strengths. Here&apos;s where it still comes out ahead:
-                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6"> {t('where_goodbudget_wins')} </h2>
+                <p className="text-lg text-foreground/75 mb-6"> {t('goodbudget_has_real_strengths_here_s')} </p>
                 <ul className="space-y-4 text-foreground/75">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Simpler learning curve:</strong>{' '}
-                      Goodbudget keeps things minimal. If you just want envelopes without extra
-                      features, it&apos;s easier to pick up.
-                    </span>
+                      <strong className="text-foreground">{t('simpler_learning_curve')}</strong>{' '} {t('goodbudget_keeps_things_minimal_if_you')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Native mobile apps:</strong>{' '}
-                      Goodbudget has dedicated iOS and Android apps. Budgero uses a PWA that works
-                      on all devices but is not listed in app stores.
-                    </span>
+                      <strong className="text-foreground">{t('native_mobile_apps')}</strong>{' '} {t('goodbudget_has_dedicated_ios_and_android')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Free tier:</strong>{' '}
-                      Goodbudget offers a free plan with limited envelopes and accounts. Budgero
-                      Cloud requires a paid subscription (though you can{' '}
-                      <a href="/self-hostable" className="underline hover:text-foreground">
-                        self-host for free
-                      </a>
-                      ).
-                    </span>
+                      <strong className="text-foreground">{t('free_tier')}</strong>{' '} {t('goodbudget_offers_a_free_plan_with')}{' '}
+                      <a href="/self-hostable" className="underline hover:text-foreground"> {t('self_host_for_free')} </a>).
+                                          </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Long track record for couples:</strong>{' '}
-                      Goodbudget has been helping couples budget together for over a decade. It has
-                      a proven, stable workflow for shared household finances.
-                    </span>
+                      <strong className="text-foreground">{t('long_track_record_for_couples')}</strong>{' '} {t('goodbudget_has_been_helping_couples_budget')} </span>
                   </li>
                 </ul>
               </div>
@@ -437,60 +378,51 @@ export default function GoodbudgetAlternativePage() {
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-[#e8f0e8] rounded-2xl p-8 border border-[#bfd7c2]">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <Check className="w-6 h-6 text-green-600" />
-                    Switch to Budgero if:
-                  </h3>
+                    <Check className="w-6 h-6 text-green-600" /> {t('switch_to_budgero_if')} </h3>
                   <ul className="space-y-3 text-foreground/80">
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You want zero-knowledge encryption for your financial data</span>
+                      <span>{t('you_want_zero_knowledge_encryption_for')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You manage money in multiple currencies</span>
+                      <span>{t('you_manage_money_in_multiple_currencies')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You need deeper reporting: spending breakdowns, net worth, trends</span>
+                      <span>{t('you_need_deeper_reporting_spending_breakdowns')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You want a modern, polished interface</span>
+                      <span>{t('you_want_a_modern_polished_interface')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>
-                        You want to{' '}
-                        <a href="/self-hostable" className="underline">
-                          self-host
-                        </a>{' '}
-                        with full features for free
-                      </span>
+                      <span> {t('you_want_to')}{' '}
+                        <a href="/self-hostable" className="underline"> {t('self_host')} </a>{' '} {t('with_full_features_for_free')} </span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <X className="w-6 h-6 text-foreground/35" />
-                    Stick with Goodbudget if:
-                  </h3>
+                    <X className="w-6 h-6 text-foreground/35" /> {t('stick_with_goodbudget_if')} </h3>
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You prefer the simplest possible envelope system</span>
+                      <span>{t('you_prefer_the_simplest_possible_envelope')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You need a native app from the App Store or Google Play</span>
+                      <span>{t('you_need_a_native_app_from')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You want a free plan for basic budgeting</span>
+                      <span>{t('you_want_a_free_plan_for')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You only use one currency and don&apos;t need advanced reports</span>
+                      <span>{t('you_only_use_one_currency_and')}</span>
                     </li>
                   </ul>
                 </div>
@@ -506,45 +438,28 @@ export default function GoodbudgetAlternativePage() {
             {/* Final CTA */}
             <section className="py-20 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Ready to switch from Goodbudget?
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Try Budgero free for 35 days. Envelope budgeting with zero-knowledge encryption,
-                  168 currencies, and modern reporting.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('ready_to_switch_from_goodbudget')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('try_budgero_free_for_35_days')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=goodbudget-alternative&utm_content=final">
-                      Start Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=goodbudget-alternative&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Want all features for free?{' '}
+                <p className="mt-6 text-sm text-foreground/60"> {t('want_all_features_for_free')}{' '}
                   <a
                     href="/self-hostable"
                     className="underline hover:text-foreground"
-                  >
-                    Self-host Budgero
-                  </a>{' '}
-                  with full sync, multi-currency, and collaboration.
-                </p>
-                <p className="mt-3 text-sm text-foreground/60">
-                  Still exploring? Compare the{' '}
+                  > {t('self_host_budgero')} </a>{' '} {t('with_full_sync_multi_currency_and')} </p>
+                <p className="mt-3 text-sm text-foreground/60"> {t('still_exploring_compare_the')}{' '}
                   <a
                     href="/best-ynab-alternatives"
                     className="underline hover:text-foreground"
-                  >
-                    YNAB alternatives
-                  </a>{' '}
-                  worth switching to.
-                </p>
+                  > {t('ynab_alternatives')} </a>{' '} {t('worth_switching_to')} </p>
               </div>
             </section>
           </div>

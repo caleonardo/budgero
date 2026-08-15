@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ArrowRight, Check, X, Globe, Shield, DollarSign, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -146,7 +147,21 @@ const faqs = [
   },
 ];
 
-export default function EveryDollarAlternativePage() {
+export default async function EveryDollarAlternativePage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('everydollar_alternative');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -215,22 +230,12 @@ export default function EveryDollarAlternativePage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-amber-500/30 text-amber-700 bg-amber-500/10"
                 >
-                  <Shield className="w-3.5 h-3.5 mr-2" />
-                  Privacy-First Budgeting
-                </Badge>
+                  <Shield className="w-3.5 h-3.5 mr-2" /> {t('privacy_first_budgeting')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  EveryDollar Alternative
-                  <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium">
-                    Zero-based budgeting without the Ramsey lock-in
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('everydollar_alternative')} <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium"> {t('zero_based_budgeting_without_the_ramsey')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  EveryDollar is a solid zero-based budgeting app if you follow the Ramsey method. But
-                  if you want privacy, multi-currency support, or just a budgeting app that
-                  isn&apos;t tied to one financial philosophy, Budgero is worth a look.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('everydollar_is_a_solid_zero_based')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -238,9 +243,7 @@ export default function EveryDollarAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=everydollar-alternative&utm_content=hero">
-                      Start 35-Day Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=everydollar-alternative&utm_content=hero"> {t('start_35_day_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -249,15 +252,11 @@ export default function EveryDollarAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="#comparison">
-                      Compare Features
-                    </a>
+                    <a href="#comparison"> {t('compare_features')} </a>
                   </Button>
                 </div>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  No credit card required. Zero-knowledge encryption on all plans.
-                </p>
+                <p className="mt-4 text-sm text-foreground/60"> {t('no_credit_card_required_zero_knowledge')} </p>
               </div>
             </section>
 
@@ -266,12 +265,8 @@ export default function EveryDollarAlternativePage() {
             {/* Key Differences Section */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Why Switch from EveryDollar?
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Same zero-based budgeting approach, none of the limitations.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('why_switch_from_everydollar')} </h2>
+                <p className="text-lg text-foreground/70"> {t('same_zero_based_budgeting_approach_none')} </p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -279,51 +274,32 @@ export default function EveryDollarAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#e4dff0] flex items-center justify-center mb-4">
                     <Shield className="w-6 h-6 text-[#564176]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Zero-Knowledge Encryption
-                  </h3>
-                  <p className="text-foreground/70">
-                    EveryDollar stores your data on Ramsey servers. Budgero encrypts everything
-                    client-side. We cannot read your finances.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('zero_knowledge_encryption')} </h3>
+                  <p className="text-foreground/70"> {t('everydollar_stores_your_data_on_ramsey')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#dfe4ec] flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-[#314258]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    168 Currencies
-                  </h3>
-                  <p className="text-foreground/70">
-                    EveryDollar is US only. Budgero handles 168 currencies with live FX rates for
-                    expats, nomads, and multi-currency households.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('168_currencies')} </h3>
+                  <p className="text-foreground/70"> {t('everydollar_is_us_only_budgero_handles')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#dde9df] flex items-center justify-center mb-4">
                     <DollarSign className="w-6 h-6 text-[#2f6246]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    No Philosophy Lock-in
-                  </h3>
-                  <p className="text-foreground/70">
-                    Budgero uses zero-based budgeting without tying you to Baby Steps, debt snowball,
-                    or any specific financial ideology. Your budget, your rules.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('no_philosophy_lock_in')} </h3>
+                  <p className="text-foreground/70"> {t('budgero_uses_zero_based_budgeting_without')} </p>
                 </div>
 
                 <div className="bg-card rounded-xl p-6 border border-border/70">
                   <div className="w-12 h-12 rounded-full bg-[#efe4d8] flex items-center justify-center mb-4">
                     <Users className="w-6 h-6 text-[#8a5730]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    5 Seats Included
-                  </h3>
-                  <p className="text-foreground/70">
-                    Share your budget with up to 5 people. EveryDollar Premium is per-user.
-                  </p>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg"> {t('5_seats_included')} </h3>
+                  <p className="text-foreground/70"> {t('share_your_budget_with_up_to')} </p>
                 </div>
               </div>
             </section>
@@ -333,27 +309,17 @@ export default function EveryDollarAlternativePage() {
             {/* Comparison Table */}
             <section id="comparison" className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero vs EveryDollar
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Feature-by-feature comparison
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_vs_everydollar')} </h2>
+                <p className="text-lg text-foreground/70"> {t('feature_by_feature_comparison')} </p>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero
-                      </th>
-                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground">
-                        EveryDollar
-                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero')} </th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-foreground"> {t('everydollar')} </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -427,38 +393,31 @@ export default function EveryDollarAlternativePage() {
             {/* Where EveryDollar Wins */}
             <section className="py-16 max-w-3xl mx-auto">
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-                  Where EveryDollar Wins
-                </h2>
-                <p className="text-lg text-foreground/75 mb-6">
-                  EveryDollar has genuine strengths. Here&apos;s where it excels:
-                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6"> {t('where_everydollar_wins')} </h2>
+                <p className="text-lg text-foreground/75 mb-6"> {t('everydollar_has_genuine_strengths_here_s')} </p>
                 <ul className="space-y-4 text-foreground/75">
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>Simple, clean interface focused on one thing</span>
+                    <span>{t('simple_clean_interface_focused_on_one')}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>Tight integration with Ramsey&apos;s Financial Peace University</span>
+                    <span>{t('tight_integration_with_ramsey_s_financial')}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>Bank sync in Premium tier (US only)</span>
+                    <span>{t('bank_sync_in_premium_tier_us')}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>Large community of Ramsey followers</span>
+                    <span>{t('large_community_of_ramsey_followers')}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>Free tier available with no time limit</span>
+                    <span>{t('free_tier_available_with_no_time')}</span>
                   </li>
                 </ul>
-                <p className="mt-6 text-foreground/70 italic">
-                  If you follow the Ramsey method and live in the US, EveryDollar is purpose-built
-                  for you.
-                </p>
+                <p className="mt-6 text-foreground/70 italic"> {t('if_you_follow_the_ramsey_method')} </p>
               </div>
             </section>
 
@@ -466,42 +425,17 @@ export default function EveryDollarAlternativePage() {
 
             {/* Baby Steps compatibility */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Keep the Baby Steps. Upgrade the App.
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('keep_the_baby_steps_upgrade_the')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Most people searching for an EveryDollar alternative aren&apos;t abandoning the
-                  Ramsey method — they&apos;ve outgrown the app. The method doesn&apos;t live in
-                  the app: zero-based budgeting, the debt snowball, sinking funds, and the
-                  emergency fund are all just envelopes and discipline, and Budgero does envelopes
-                  and discipline as its core job.
-                </p>
-                <p>
-                  What changes when you switch: your budget gets end-to-end encryption (EveryDollar
-                  stores your data server-side where Ramsey Solutions can access it), it works
-                  offline, it works outside the US, and it handles{' '}
+                <p> {t('most_people_searching_for_an_everydollar')} </p>
+                <p> {t('what_changes_when_you_switch_your')}{' '}
                   <a
                     href="/multi-currency-budgeting"
                     className="underline hover:text-foreground"
-                  >
-                    multiple currencies
-                  </a>{' '}
-                  if your life needs that. What you give up: US bank sync, the Financial Peace
-                  University integration, and the no-time-limit free tier — though{' '}
-                  <a href="/self-hostable" className="underline hover:text-foreground">
-                    Budgero Self-Host
-                  </a>{' '}
-                  is free forever if you&apos;ll run a Docker container.
-                </p>
-                <p>
-                  Debt payoff specifically:{' '}
-                  <a href="/docs/debt-tracking" className="underline hover:text-foreground">
-                    Budgero&apos;s debt tracking
-                  </a>{' '}
-                  handles balances and payoff progress, and the snowball is just an ordering
-                  decision you make once. The whole of Baby Step 2 runs comfortably in Budgero.
-                </p>
+                  > {t('multiple_currencies')} </a>{' '} {t('if_your_life_needs_that_what')}{' '}
+                  <a href="/self-hostable" className="underline hover:text-foreground"> {t('budgero_self_host')} </a>{' '} {t('is_free_forever_if_you_ll')} </p>
+                <p> {t('debt_payoff_specifically')}{' '}
+                  <a href="/docs/debt-tracking" className="underline hover:text-foreground"> {t('budgero_s_debt_tracking')} </a>{' '} {t('handles_balances_and_payoff_progress_and')} </p>
               </div>
             </section>
 
@@ -512,37 +446,32 @@ export default function EveryDollarAlternativePage() {
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-[#e8f0e8] rounded-2xl p-8 border border-[#bfd7c2]">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <Check className="w-6 h-6 text-green-600" />
-                    Switch to Budgero if:
-                  </h3>
+                    <Check className="w-6 h-6 text-green-600" /> {t('switch_to_budgero_if')} </h3>
                   <ul className="space-y-3 text-foreground/80">
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You want zero-knowledge encryption for your finances</span>
+                      <span>{t('you_want_zero_knowledge_encryption_for')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You live outside the US</span>
+                      <span>{t('you_live_outside_the_us')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You budget in multiple currencies</span>
+                      <span>{t('you_budget_in_multiple_currencies')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You want 5 seats included in one plan</span>
+                      <span>{t('you_want_5_seats_included_in')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>You don&apos;t follow the Ramsey method</span>
+                      <span>{t('you_don_t_follow_the_ramsey')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>
-                        You want a{' '}
-                        <a href="/self-hostable" className="underline">
-                          self-host option
-                        </a>
+                      <span> {t('you_want_a')}{' '}
+                        <a href="/self-hostable" className="underline"> {t('self_host_option')} </a>
                       </span>
                     </li>
                   </ul>
@@ -550,25 +479,23 @@ export default function EveryDollarAlternativePage() {
 
                 <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <X className="w-6 h-6 text-foreground/35" />
-                    Stick with EveryDollar if:
-                  </h3>
+                    <X className="w-6 h-6 text-foreground/35" /> {t('stick_with_everydollar_if')} </h3>
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You follow the Ramsey Baby Steps</span>
+                      <span>{t('you_follow_the_ramsey_baby_steps')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You need US bank sync</span>
+                      <span>{t('you_need_us_bank_sync')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You want a free basic tier with no time limit</span>
+                      <span>{t('you_want_a_free_basic_tier')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You prefer the Ramsey ecosystem</span>
+                      <span>{t('you_prefer_the_ramsey_ecosystem')}</span>
                     </li>
                   </ul>
                 </div>
@@ -579,9 +506,7 @@ export default function EveryDollarAlternativePage() {
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -601,45 +526,28 @@ export default function EveryDollarAlternativePage() {
             {/* Final CTA */}
             <section className="py-20 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Ready to try a zero-based budgeting app that works worldwide?
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  35-day free trial, no credit card required. Zero-knowledge encryption on every
-                  plan.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('ready_to_try_a_zero_based')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('35_day_free_trial_no_credit')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=everydollar-alternative&utm_content=final">
-                      Start Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=everydollar-alternative&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Want all features for free?{' '}
+                <p className="mt-6 text-sm text-foreground/60"> {t('want_all_features_for_free')}{' '}
                   <a
                     href="/self-hostable"
                     className="underline hover:text-foreground"
-                  >
-                    Self-host Budgero
-                  </a>{' '}
-                  with full sync, multi-currency, and collaboration.
-                </p>
-                <p className="mt-3 text-sm text-foreground/60">
-                  Comparing more apps? See the{' '}
+                  > {t('self_host_budgero')} </a>{' '} {t('with_full_sync_multi_currency_and')} </p>
+                <p className="mt-3 text-sm text-foreground/60"> {t('comparing_more_apps_see_the')}{' '}
                   <a
                     href="/best-ynab-alternatives"
                     className="underline hover:text-foreground"
-                  >
-                    best YNAB alternatives
-                  </a>{' '}
-                  for 2026.
-                </p>
+                  > {t('best_ynab_alternatives')} </a>{' '} {t('for_2026')} </p>
               </div>
             </section>
           </div>

@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import type { ComponentType } from 'react';
 import {
@@ -66,29 +67,34 @@ const typeMeta: Record<
   },
 };
 
-export default function ChangelogPage() {
+export default async function ChangelogPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('changelog');
   return (
     <main className="bg-background text-foreground">
       <section className="border-b border-border/60 bg-muted/30">
         <div className="container mx-auto px-4 py-16 md:py-24">
-          <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm">
-            What&apos;s new
-          </Badge>
+          <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm"> {t('what_s_new')} </Badge>
           <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <Badge className="rounded-full border border-primary/30 bg-primary/15 text-primary">
-              Current version
-            </Badge>
+            <Badge className="rounded-full border border-primary/30 bg-primary/15 text-primary"> {t('current_version')} </Badge>
             <span className="font-semibold text-foreground">{latestEntry.version}</span>
             <span aria-hidden>•</span>
             <span>{latestEntry.date}</span>
           </div>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Budgero Changelog
-          </h1>
-          <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            We ship improvements weekly so you can budget with confidence. Browse everything
-            we&apos;ve released, polished, and fixed without waiting for the next newsletter.
-          </p>
+          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl"> {t('budgero_changelog')} </h1>
+          <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg"> {t('we_ship_improvements_weekly_so_you')} </p>
         </div>
       </section>
 
@@ -98,7 +104,7 @@ export default function ChangelogPage() {
             className="absolute left-[19px] top-0 h-full w-px bg-border/60 sm:left-6"
             aria-hidden
           >
-            <span className="sr-only">Timeline</span>
+            <span className="sr-only">{t('timeline')}</span>
           </div>
           <div className="space-y-12 sm:space-y-16">
             {changelogEntries.map((entry) => (
@@ -117,9 +123,7 @@ export default function ChangelogPage() {
                       <CalendarDays className="size-4" aria-hidden />
                       <span>{entry.date}</span>
                       {entry.isLatest ? (
-                        <Badge className="rounded-full border border-primary/30 bg-primary/15 text-primary">
-                          Latest
-                        </Badge>
+                        <Badge className="rounded-full border border-primary/30 bg-primary/15 text-primary"> {t('latest')} </Badge>
                       ) : null}
                     </div>
                     <CardTitle className="text-2xl font-bold sm:text-3xl">
@@ -174,19 +178,12 @@ export default function ChangelogPage() {
             className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(120,120,120,0.18),transparent_55%)]"
             aria-hidden
           />
-          <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
-            Get updates the moment we ship
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Use <span className="font-medium text-foreground">my.budgero.app</span> to stay current
-            with new features, performance fixes, and upcoming previews.
-          </p>
+          <h2 className="text-2xl font-semibold text-foreground sm:text-3xl"> {t('get_updates_the_moment_we_ship')} </h2>
+          <p className="mt-3 text-muted-foreground"> {t('use')} <span className="font-medium text-foreground">{t('my_budgero_app')}</span> {t('to_stay_current_with_new_features')} </p>
           <a
             href="https://my.budgero.app"
             className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90"
-          >
-            Head to the app
-            <ArrowRight className="ml-2 size-4" aria-hidden />
+          > {t('head_to_the_app')} <ArrowRight className="ml-2 size-4" aria-hidden />
           </a>
         </div>
       </section>

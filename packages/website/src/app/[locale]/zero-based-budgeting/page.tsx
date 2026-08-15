@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ArrowRight, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -84,7 +85,21 @@ const methods = [
   },
 ];
 
-export default function ZeroBasedBudgetingPage() {
+export default async function ZeroBasedBudgetingPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('zero_based_budgeting');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -109,23 +124,12 @@ export default function ZeroBasedBudgetingPage() {
             <section className="pt-24 pb-16 md:pt-32 md:pb-24 text-center">
               <div className="max-w-4xl mx-auto">
                 <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm font-medium border-border/50">
-                  <BookOpen className="w-3.5 h-3.5 mr-2" />
-                  Budgeting Guide
-                </Badge>
+                  <BookOpen className="w-3.5 h-3.5 mr-2" /> {t('budgeting_guide')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  What is Zero-Based Budgeting?
-                  <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium">
-                    Give every dollar a job
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('what_is_zero_based_budgeting')} <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium"> {t('give_every_dollar_a_job')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Zero-based budgeting is a method where every dollar of income is assigned to a
-                  specific category before you spend it. At the end of the month, your income minus
-                  your budgeted amounts equals zero. Not because you spent everything, but because
-                  every dollar has a purpose.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('zero_based_budgeting_is_a_method')} </p>
               </div>
             </section>
 
@@ -134,10 +138,8 @@ export default function ZeroBasedBudgetingPage() {
             {/* How It Works */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  How It Works
-                </h2>
-                <p className="text-lg text-foreground/70">Four steps, repeated every month.</p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('how_it_works')} </h2>
+                <p className="text-lg text-foreground/70">{t('four_steps_repeated_every_month')}</p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -160,27 +162,12 @@ export default function ZeroBasedBudgetingPage() {
 
             {/* Why It Works */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">Why It Works</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">{t('why_it_works')}</h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Zero-based budgeting forces intentional decisions. Instead of wondering where your
-                  money went, you decide where it goes before you spend it.
-                </p>
-                <p>
-                  The method works because it eliminates the gap between intention and action. When
-                  you assign $400 to groceries, you are not hoping you will spend less than $400. You
-                  are committing to it.
-                </p>
-                <p>
-                  It also surfaces trade-offs. When every dollar is assigned, adding $50 to dining
-                  out means taking $50 from somewhere else. That friction is the point. It makes
-                  spending decisions conscious rather than automatic.
-                </p>
-                <p>
-                  People who use zero-based budgeting consistently report feeling more in control of
-                  their finances, even when their income has not changed. The awareness alone changes
-                  behavior.
-                </p>
+                <p> {t('zero_based_budgeting_forces_intentional_decision')} </p>
+                <p> {t('the_method_works_because_it_eliminates')} </p>
+                <p> {t('it_also_surfaces_trade_offs_when')} </p>
+                <p> {t('people_who_use_zero_based_budgeting')} </p>
               </div>
             </section>
 
@@ -189,9 +176,7 @@ export default function ZeroBasedBudgetingPage() {
             {/* Comparison with Other Methods */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Zero-Based vs Other Methods
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('zero_based_vs_other_methods')} </h2>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
@@ -203,54 +188,37 @@ export default function ZeroBasedBudgetingPage() {
                     <h3 className="font-semibold text-foreground mb-3 text-lg">{method.name}</h3>
                     <p className="text-foreground/70 mb-4 text-sm">{method.description}</p>
                     <p className="text-xs text-foreground/55">
-                      <strong className="text-foreground/70">Best for:</strong> {method.bestFor}
+                      <strong className="text-foreground/70">{t('best_for')}</strong> {method.bestFor}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <p className="mt-8 text-center text-foreground/60">
-                Zero-based budgeting requires the most effort but gives you the most control. If you
-                are reading this page, you probably want that control.
-              </p>
+              <p className="mt-8 text-center text-foreground/60"> {t('zero_based_budgeting_requires_the_most')} </p>
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
 
             {/* Getting Started */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Getting Started
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('getting_started')} </h2>
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
                 <ul className="space-y-4 text-foreground/75">
                   <li className="flex items-start gap-3">
                     <span className="font-bold text-foreground min-w-[24px]">1.</span>
-                    <span>
-                      Start with last month&apos;s bank statement to estimate expenses. You do not
-                      need to guess. Use real numbers.
-                    </span>
+                    <span> {t('start_with_last_month_s_bank')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="font-bold text-foreground min-w-[24px]">2.</span>
-                    <span>
-                      Do not try to be perfect the first month. Your categories will evolve as you
-                      learn where your money actually goes.
-                    </span>
+                    <span> {t('do_not_try_to_be_perfect')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="font-bold text-foreground min-w-[24px]">3.</span>
-                    <span>
-                      Budget for irregular expenses (car maintenance, annual subscriptions, gifts) by
-                      spreading them across months. This prevents surprise budget busters.
-                    </span>
+                    <span> {t('budget_for_irregular_expenses_car_maintenance')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="font-bold text-foreground min-w-[24px]">4.</span>
-                    <span>
-                      Review your budget weekly for the first few months, then monthly once you find
-                      your rhythm.
-                    </span>
+                    <span> {t('review_your_budget_weekly_for_the')} </span>
                   </li>
                 </ul>
               </div>
@@ -261,25 +229,16 @@ export default function ZeroBasedBudgetingPage() {
             {/* Soft Budgero Mention */}
             <section className="py-16 max-w-3xl mx-auto">
               <div className="bg-card rounded-2xl p-8 border border-border/70">
-                <p className="text-foreground/75 mb-6">
-                  If you want a zero-based budgeting app that supports multiple currencies, encrypts
-                  your data client-side, and costs {pricing.yearly}/yr, Budgero might be a good fit. It is built
-                  around the zero-based method with features like multi-month planning, autofill
-                  rules, and YNAB import.
-                </p>
+                <p className="text-foreground/75 mb-6"> {t('if_you_want_a_zero_based')} {pricing.yearly}{t('yr_budgero_might_be_a_good')} </p>
                 <Button
                   asChild
                   size="lg"
                   className="bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=zero-based-budgeting&utm_content=final">
-                    Try Budgero Free
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=zero-based-budgeting&utm_content=final"> {t('try_budgero_free')} <ArrowRight className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-                <p className="mt-4 text-sm text-foreground/55">
-                  35-day trial. No credit card required.
-                </p>
+                <p className="mt-4 text-sm text-foreground/55"> {t('35_day_trial_no_credit_card')} </p>
               </div>
             </section>
           </div>

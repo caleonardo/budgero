@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import {
   ArrowRight,
@@ -94,7 +95,21 @@ const personas = [
   },
 ];
 
-export default function MultiCurrencyBudgetingPage() {
+export default async function MultiCurrencyBudgetingPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('multi_currency_budgeting');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -137,38 +152,23 @@ export default function MultiCurrencyBudgetingPage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-blue-500/30 text-blue-700 dark:text-blue-400 bg-blue-500/10"
                 >
-                  <Globe className="w-3.5 h-3.5 mr-2" />
-                  100+ Currencies
-                </Badge>
+                  <Globe className="w-3.5 h-3.5 mr-2" /> {t('100_currencies')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  One Budget. Every Currency.
-                  <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium">
-                    Multi-currency budgeting built for real life
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('one_budget_every_currency')} <span className="block text-2xl md:text-3xl mt-2 text-foreground/70 font-medium"> {t('multi_currency_budgeting_built_for_real')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Most multi-currency budgeting apps assume you earn and spend in one currency. If
-                  you&apos;re an expat, digital nomad, or someone with accounts in different
-                  countries, you know that&apos;s not how it works. Budgero handles 100+ currencies
-                  with live exchange rates in a single budget.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('most_multi_currency_budgeting_apps_assume')} </p>
 
                 <Button
                   asChild
                   size="lg"
                   className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=multi-currency-budgeting&utm_content=hero">
-                    Start Free Trial
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=multi-currency-budgeting&utm_content=hero"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                   </a>
                 </Button>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  35 days free. No credit card. 100+ currencies from day one.
-                </p>
+                <p className="mt-4 text-sm text-foreground/60"> {t('35_days_free_no_credit_card')} </p>
               </div>
             </section>
 
@@ -176,22 +176,11 @@ export default function MultiCurrencyBudgetingPage() {
 
             {/* The Problem */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">The Problem</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">{t('the_problem')}</h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  You earn in EUR but pay rent in GBP and send money home in your local currency.
-                  Your bank accounts are spread across countries. Your financial life doesn&apos;t
-                  fit in a single-currency box.
-                </p>
-                <p>
-                  Most budgeting apps force one currency per budget. Multi-currency is either
-                  unsupported or treated as an afterthought with manual conversion. YNAB requires
-                  separate budgets per currency with no way to see your total financial picture.
-                  Spreadsheets with manual FX lookups break down within a month.
-                </p>
-                <p>
-                  You end up not budgeting at all because the tools don&apos;t match your life.
-                </p>
+                <p> {t('you_earn_in_eur_but_pay')} </p>
+                <p> {t('most_budgeting_apps_force_one_currency')} </p>
+                <p> {t('you_end_up_not_budgeting_at')} </p>
               </div>
             </section>
 
@@ -200,9 +189,7 @@ export default function MultiCurrencyBudgetingPage() {
             {/* How Budgero Handles It */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  How Budgero Handles It
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('how_budgero_handles_it')} </h2>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
@@ -226,9 +213,7 @@ export default function MultiCurrencyBudgetingPage() {
             {/* Who This Is For */}
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Built for Multi-Currency Lives
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('built_for_multi_currency_lives')} </h2>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -252,38 +237,25 @@ export default function MultiCurrencyBudgetingPage() {
             {/* What Other Apps Do Wrong */}
             <section className="py-16 max-w-3xl mx-auto">
               <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-                  What Other Apps Get Wrong
-                </h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6"> {t('what_other_apps_get_wrong')} </h2>
                 <ul className="space-y-4 text-foreground/75">
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">YNAB:</strong> One currency per budget.
-                      No conversion. You need separate budgets for each currency with no unified
-                      view.
-                    </span>
+                      <strong className="text-foreground">YNAB:</strong> {t('one_currency_per_budget_no_conversion')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Monarch Money:</strong> US and Canada
-                      only. Shows all transactions as $ regardless of actual currency. A 1,000 JPY
-                      transaction displays as $1,000.
-                    </span>
+                      <strong className="text-foreground">{t('monarch_money')}</strong> {t('us_and_canada_only_shows_all')} </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Lunch Money:</strong> Has multi-currency
-                      but uses a tracking approach, not zero-based budgeting. Different philosophy.
-                    </span>
+                      <strong className="text-foreground">{t('lunch_money')}</strong> {t('has_multi_currency_but_uses_a')} </span>
                   </li>
                 </ul>
-                <p className="mt-6 text-sm text-foreground/55">
-                  Most budgeting apps were built for people who earn and spend in dollars. If
-                  that&apos;s you, they work fine. If it&apos;s not, you need something different.
-                </p>
+                <p className="mt-6 text-sm text-foreground/55"> {t('most_budgeting_apps_were_built_for')} </p>
               </div>
             </section>
 
@@ -296,30 +268,18 @@ export default function MultiCurrencyBudgetingPage() {
             {/* Final CTA */}
             <section className="py-20 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Start budgeting in every currency you touch
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  35-day free trial. No credit card required. 100+ currencies from the moment you
-                  sign up.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('start_budgeting_in_every_currency_you')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('35_day_free_trial_no_credit')} </p>
                 <Button
                   asChild
                   size="lg"
                   className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=multi-currency-budgeting&utm_content=final">
-                    Start Free Trial
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=multi-currency-budgeting&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                   </a>
                 </Button>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Or{' '}
-                  <a href="/self-hostable" className="underline hover:text-foreground">
-                    self-host for free
-                  </a>{' '}
-                  with full multi-currency support.
-                </p>
+                <p className="mt-6 text-sm text-foreground/60">Or{' '}
+                  <a href="/self-hostable" className="underline hover:text-foreground"> {t('self_host_for_free')} </a>{' '} {t('with_full_multi_currency_support')} </p>
               </div>
             </section>
           </div>

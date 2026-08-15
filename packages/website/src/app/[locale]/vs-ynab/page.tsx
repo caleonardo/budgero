@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Download, Import } from 'lucide-react';
@@ -127,7 +128,21 @@ function renderCellValue(val: unknown, note?: string, isHighlight?: boolean) {
   );
 }
 
-export default function VsYnabPage() {
+export default async function VsYnabPage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('vs_ynab');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -203,19 +218,11 @@ export default function VsYnabPage() {
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-green-500/30 text-green-700 dark:text-green-400 bg-green-500/10"
                 >
-                  <Download className="w-3.5 h-3.5 mr-2" />
-                  35-Day Free Trial, No Card Required
-                </Badge>
+                  <Download className="w-3.5 h-3.5 mr-2" /> {t('35_day_free_trial_no_card')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  Budgero vs YNAB: The Free YNAB Alternative
-                </h1>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('budgero_vs_ynab_the_free_ynab')} </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Everything YNAB does well — free if you self-host, half the price on Cloud.
-                  Zero-based budgeting in 168 currencies, with end-to-end encryption and offline
-                  mode. Import your YNAB budget in 5 minutes.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('everything_ynab_does_well_free_if')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -223,9 +230,7 @@ export default function VsYnabPage() {
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=vs-ynab&utm_content=hero">
-                      Start 35-Day Free Trial
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=vs-ynab&utm_content=hero"> {t('start_35_day_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -234,7 +239,7 @@ export default function VsYnabPage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="#comparison">See How Budgero Compares</a>
+                    <a href="#comparison">{t('see_how_budgero_compares')}</a>
                   </Button>
                 </div>
               </div>
@@ -244,58 +249,23 @@ export default function VsYnabPage() {
 
             {/* Why People Switch */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why European & International YNAB Users Are Switching
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('why_european_international_ynab_users_are')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  YNAB pioneered zero-based budgeting and it changed the way a generation thinks
-                  about money. But YNAB was built for the US market, and it shows. If you live in
-                  Europe, the UK, Australia, Asia, or anywhere else outside North America — or if
-                  you earn or spend in multiple currencies — YNAB leaves you with workarounds instead
-                  of a product built for you.
-                </p>
+                <p> {t('ynab_pioneered_zero_based_budgeting_and')} </p>
 
                 <div className="space-y-4">
                   <p>
-                    <strong className="text-foreground">
-                      No native multi-currency support.
-                    </strong>{' '}
-                    YNAB has no concept of currencies beyond the account level — you cannot hold
-                    accounts in EUR and GBP and see a unified picture in a single home currency.
-                    Expats, freelancers invoicing abroad, and cross-border households all hit the
-                    same wall.
-                  </p>
+                    <strong className="text-foreground"> {t('no_native_multi_currency_support')} </strong>{' '} {t('ynab_has_no_concept_of_currencies')} </p>
                   <p>
-                    <strong className="text-foreground">Bank sync is US-first.</strong> YNAB&apos;s
-                    bank sync works well in the US and Canada, thinly in parts of Europe via Plaid,
-                    and not at all in most of the world. Outside those regions you are paying full
-                    US price for a feature you cannot use.
-                  </p>
+                    <strong className="text-foreground">{t('bank_sync_is_us_first')}</strong> {t('ynab_s_bank_sync_works_well')} </p>
                   <p>
-                    <strong className="text-foreground">Price keeps climbing.</strong> YNAB costs
-                    $14.99/month or $109/year — roughly €100/year at current rates. For an app that
-                    does not track investments, does not support multi-currency budgeting natively,
-                    and stores all your financial data on their servers, that is a hard sell in
-                    2026.
-                  </p>
+                    <strong className="text-foreground">{t('price_keeps_climbing')}</strong> {t('ynab_costs_14_99_month_or')} </p>
                   <p>
-                    <strong className="text-foreground">Privacy concerns.</strong> YNAB stores your
-                    budget data on their servers in plaintext. If you connect your bank, your
-                    credentials flow through Plaid, a third-party data aggregator. You are trusting
-                    two companies with your complete financial picture.
-                  </p>
+                    <strong className="text-foreground">{t('privacy_concerns')}</strong> {t('ynab_stores_your_budget_data_on')} </p>
                   <p>
-                    <strong className="text-foreground">No offline mode.</strong> YNAB is a web-first
-                    app. If you are on a plane, in a rural area, or just prefer to budget without an
-                    internet connection, you are out of luck.
-                  </p>
+                    <strong className="text-foreground">{t('no_offline_mode')}</strong> {t('ynab_is_a_web_first_app')} </p>
                   <p>
-                    <strong className="text-foreground">Vendor lock-in.</strong> Cancel your YNAB
-                    subscription and you lose access to your data. Your budget history, your
-                    categories, your years of careful tracking, gone unless you export before your
-                    subscription lapses.
-                  </p>
+                    <strong className="text-foreground">{t('vendor_lock_in')}</strong> {t('cancel_your_ynab_subscription_and_you')} </p>
                 </div>
               </div>
             </section>
@@ -305,24 +275,16 @@ export default function VsYnabPage() {
             {/* Comparison Table */}
             <section id="comparison" className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero vs. YNAB — Feature-by-Feature Comparison
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_vs_ynab_feature_by_feature')} </h2>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[640px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero Cloud
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero Self-Host
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero_cloud')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero_self_host')} </th>
                       <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
                         YNAB
                       </th>
@@ -353,12 +315,7 @@ export default function VsYnabPage() {
               </div>
 
               <p className="mt-6 text-foreground/60 text-sm max-w-3xl">
-                <strong className="text-foreground">Key takeaway:</strong> Budgero Cloud gives you
-                everything YNAB does for zero-based budgeting, plus encryption, offline mode,
-                multi-currency, and AI features, at a lower price. The trade-off is no automatic bank
-                sync: Budgero is manual-first by design, because that is how you keep your data truly
-                private.
-              </p>
+                <strong className="text-foreground">{t('key_takeaway')}</strong> {t('budgero_cloud_gives_you_everything_ynab')} </p>
 
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button
@@ -366,14 +323,10 @@ export default function VsYnabPage() {
                   size="lg"
                   className="h-12 px-7 text-base bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=vs-ynab&utm_content=mid-table">
-                    Start 35-Day Free Trial
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=vs-ynab&utm_content=mid-table"> {t('start_35_day_free_trial')} <ArrowRight className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-                <span className="text-sm text-foreground/60">
-                  No card · 168 currencies · Import your YNAB budget
-                </span>
+                <span className="text-sm text-foreground/60"> {t('no_card_168_currencies_import_your')} </span>
               </div>
             </section>
 
@@ -383,16 +336,9 @@ export default function VsYnabPage() {
             <section className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
                 <Badge className="mb-4 bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30">
-                  <Import className="w-3.5 h-3.5 mr-2" />
-                  Seamless Migration
-                </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  How to Switch from YNAB to Budgero in 5 Minutes
-                </h2>
-                <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-                  Switching does not mean starting over. Budgero imports your entire YNAB budget so
-                  you can pick up exactly where you left off.
-                </p>
+                  <Import className="w-3.5 h-3.5 mr-2" /> {t('seamless_migration')} </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('how_to_switch_from_ynab_to')} </h2>
+                <p className="text-lg text-foreground/70 max-w-2xl mx-auto"> {t('switching_does_not_mean_starting_over')} </p>
               </div>
 
               <div className="space-y-6 max-w-3xl mx-auto">
@@ -432,95 +378,48 @@ export default function VsYnabPage() {
                       <h3 className="font-semibold text-foreground mb-1 text-lg">{item.title}</h3>
                       <p className="text-foreground/70">{item.text}</p>
                       {item.tip && (
-                        <p className="mt-2 text-sm text-foreground/55 italic">Tip: {item.tip}</p>
+                        <p className="mt-2 text-sm text-foreground/55 italic">{t('tip')} {item.tip}</p>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
 
-              <p className="mt-8 text-center text-foreground/60">
-                The whole process takes about 5 minutes. No re-entering transactions. No rebuilding
-                categories from scratch. No lost history.
-              </p>
+              <p className="mt-8 text-center text-foreground/60"> {t('the_whole_process_takes_about_5')} </p>
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
 
             {/* What Makes Budgero Different */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                What You Get with Budgero That YNAB Does Not Offer
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('what_you_get_with_budgero_that')} </h2>
 
               <div className="space-y-10">
                 <div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">
-                    True Zero-Knowledge Privacy
-                  </h3>
-                  <p className="text-lg text-foreground/75 leading-relaxed">
-                    Budgero encrypts your financial data on your device before it ever reaches our
-                    servers. We use AES-256-GCM encryption with PBKDF2-HMAC-SHA256 key derivation, the same
-                    cryptographic standards banks and security-critical applications rely on. The
-                    difference: even Budgero&apos;s own team cannot read your budget. With YNAB, your
-                    data sits on their servers in readable form.
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground mb-3"> {t('true_zero_knowledge_privacy')} </h3>
+                  <p className="text-lg text-foreground/75 leading-relaxed"> {t('budgero_encrypts_your_financial_data_on')} </p>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">
-                    Works Everywhere, in Every Currency
-                  </h3>
-                  <p className="text-lg text-foreground/75 leading-relaxed">
-                    YNAB was built for the US market. Budgero was built for the world. Track spending
-                    in{' '}
-                    <Link href="/multi-currency-budgeting" className="underline hover:text-foreground">
-                      168 currencies
-                    </Link>{' '}
-                    with automatic conversion rates and a unified dashboard in your home currency.
-                    Whether you are an expat in Singapore, a freelancer invoicing in euros, or a
-                    family splitting time between two countries, Budgero handles it natively. No
-                    workarounds, no manual exchange rate math.
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground mb-3"> {t('works_everywhere_in_every_currency')} </h3>
+                  <p className="text-lg text-foreground/75 leading-relaxed"> {t('ynab_was_built_for_the_us')}{' '}
+                    <Link href="/multi-currency-budgeting" className="underline hover:text-foreground"> {t('168_currencies')} </Link>{' '} {t('with_automatic_conversion_rates_and_a')} </p>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">
-                    Offline-First Architecture
-                  </h3>
-                  <p className="text-lg text-foreground/75 leading-relaxed">
-                    Budgero&apos;s Progressive Web App works fully offline. Add transactions on a
-                    flight, review your budget at a cabin with no signal, or simply keep your
-                    financial data off the network entirely. Everything syncs automatically when you
-                    reconnect.
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground mb-3"> {t('offline_first_architecture')} </h3>
+                  <p className="text-lg text-foreground/75 leading-relaxed"> {t('budgero_s_progressive_web_app_works')} </p>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">
-                    AI That Respects Your Privacy
-                  </h3>
-                  <p className="text-lg text-foreground/75 leading-relaxed">
-                    Budgero integrates with local LLMs to offer intelligent features without sending
-                    your data to external AI services. Auto-categorize transactions based on your
-                    patterns. Scan receipts and extract merchant, amount, and date. All processed
-                    locally.
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground mb-3"> {t('ai_that_respects_your_privacy')} </h3>
+                  <p className="text-lg text-foreground/75 leading-relaxed"> {t('budgero_integrates_with_local_llms_to')} </p>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">
-                    You Own Your Data. Period.
-                  </h3>
-                  <p className="text-lg text-foreground/75 leading-relaxed">
-                    Cancel Budgero Cloud and your data does not disappear. Export it anytime in
-                    standard formats. Or go further: run{' '}
-                    <Link href="/self-hostable" className="underline hover:text-foreground">
-                      Budgero Self-Host
-                    </Link>{' '}
-                    on your own server with Docker, and your data never touches a third-party server
-                    at all.
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground mb-3"> {t('you_own_your_data_period')} </h3>
+                  <p className="text-lg text-foreground/75 leading-relaxed"> {t('cancel_budgero_cloud_and_your_data')}{' '}
+                    <Link href="/self-hostable" className="underline hover:text-foreground"> {t('budgero_self_host')} </Link>{' '} {t('on_your_own_server_with_docker')} </p>
                 </div>
               </div>
             </section>
@@ -529,96 +428,70 @@ export default function VsYnabPage() {
 
             {/* Who This Is For */}
             <section className="py-16 max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Is Budgero the Right YNAB Alternative for You?
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('is_budgero_the_right_ynab_alternative')} </h2>
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-[#e8f0e8] rounded-2xl p-8 border border-[#bfd7c2]">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <Check className="w-6 h-6 text-green-600" />
-                    Budgero is a great fit if you:
-                  </h3>
+                    <Check className="w-6 h-6 text-green-600" /> {t('budgero_is_a_great_fit_if')} </h3>
                   <ul className="space-y-3 text-foreground/80">
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Want zero-based budgeting without paying $109/year</span>
+                      <span>{t('want_zero_based_budgeting_without_paying')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>
-                        Care about financial data privacy and do not want your budget stored in
-                        plaintext
-                      </span>
+                      <span> {t('care_about_financial_data_privacy_and')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>
-                        Live outside the US/Canada/EU where YNAB&apos;s bank sync does not work
-                      </span>
+                      <span> {t('live_outside_the_us_canada_eu')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Budget in multiple currencies regularly</span>
+                      <span>{t('budget_in_multiple_currencies_regularly')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Prefer manual transaction entry that keeps you aware of every dollar</span>
+                      <span>{t('prefer_manual_transaction_entry_that_keeps')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Want an app that works offline</span>
+                      <span>{t('want_an_app_that_works_offline')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Have years of YNAB data you do not want to lose</span>
+                      <span>{t('have_years_of_ynab_data_you')}</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <X className="w-6 h-6 text-foreground/35" />
-                    Budgero might not be the right fit if you:
-                  </h3>
+                    <X className="w-6 h-6 text-foreground/35" /> {t('budgero_might_not_be_the_right')} </h3>
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Need automatic bank sync and will not consider manual entry
-                      </span>
+                      <span> {t('need_automatic_bank_sync_and_will')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Want native iOS/Android apps (Budgero uses a PWA, works great but is not in
-                        the App Store)
-                      </span>
+                      <span> {t('want_native_ios_android_apps_budgero')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Are happy with YNAB&apos;s pricing and privacy approach
-                      </span>
+                      <span> {t('are_happy_with_ynab_s_pricing')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Need investment tracking in the same app (consider{' '}
+                      <span> {t('need_investment_tracking_in_the_same')}{' '}
                         <Link
                           href="/monarch-money-alternative"
                           className="underline hover:text-foreground"
-                        >
-                          Monarch Money
-                        </Link>{' '}
-                        for that)
-                      </span>
+                        > {t('monarch_money')} </Link>{' '} {t('for_that')} </span>
                     </li>
                   </ul>
-                  <p className="mt-6 text-sm text-foreground/55">
-                    We would rather be honest about fit than over-promise. If bank sync is a
-                    dealbreaker, Budgero is not for you, and that is OK.
-                  </p>
+                  <p className="mt-6 text-sm text-foreground/55"> {t('we_would_rather_be_honest_about')} </p>
                 </div>
               </div>
             </section>
@@ -627,9 +500,7 @@ export default function VsYnabPage() {
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -649,44 +520,25 @@ export default function VsYnabPage() {
             {/* Final CTA */}
             <section className="py-20 text-center">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Ready for a YNAB Alternative That Works Outside the US?
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Start your 35-day free trial of Budgero Cloud. Import your YNAB data in minutes,
-                  budget in 168 currencies with end-to-end encryption, and see why international
-                  users are making the switch.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('ready_for_a_ynab_alternative_that')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('start_your_35_day_free_trial')} </p>
                 <Button
                   asChild
                   size="lg"
                   className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=vs-ynab&utm_content=final">
-                    Start Free Trial
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                  <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=vs-ynab&utm_content=final"> {t('start_free_trial')} <ArrowRight className="w-5 h-5 ml-2" />
                   </a>
                 </Button>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Prefer to self-host?{' '}
-                  <Link href="/self-hosted-ynab-alternative" className="underline hover:text-foreground">
-                    Run Budgero on your own server for free
-                  </Link>
+                <p className="mt-6 text-sm text-foreground/60"> {t('prefer_to_self_host')}{' '}
+                  <Link href="/self-hosted-ynab-alternative" className="underline hover:text-foreground"> {t('run_budgero_on_your_own_server')} </Link>
                 </p>
-                <p className="mt-3 text-sm text-foreground/60">
-                  Based in Europe? See the{' '}
-                  <Link href="/ynab-alternative-europe" className="underline hover:text-foreground">
-                    YNAB alternative for Europe
-                  </Link>
-                  .
-                </p>
-                <p className="mt-3 text-sm text-foreground/60">
-                  Comparing more apps? See the{' '}
-                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground">
-                    best YNAB alternatives in 2026
-                  </Link>
-                  .
-                </p>
+                <p className="mt-3 text-sm text-foreground/60"> {t('based_in_europe_see_the')}{' '}
+                  <Link href="/ynab-alternative-europe" className="underline hover:text-foreground"> {t('ynab_alternative_for_europe')} </Link>.
+                                  </p>
+                <p className="mt-3 text-sm text-foreground/60"> {t('comparing_more_apps_see_the')}{' '}
+                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground"> {t('best_ynab_alternatives_in_2026')} </Link>.
+                                  </p>
               </div>
             </section>
           </div>

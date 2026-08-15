@@ -1,3 +1,4 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Server, Shield, Terminal, Download, Package } from 'lucide-react';
@@ -201,7 +202,21 @@ function renderCellValue(val: unknown, note?: string | null, isHighlight?: boole
   );
 }
 
-export default function SelfHostedYnabAlternativePage() {
+export default async function SelfHostedYnabAlternativePage(
+  {
+    params
+  }: {
+    params: Promise<{
+      locale: string;
+    }>;
+  }
+) {
+  const {
+    locale
+  } = await params;
+
+  setRequestLocale(locale);
+  const t = await getTranslations('self_hosted_ynab_alternative');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -308,23 +323,12 @@ volumes:
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-[#564176]/30 text-[#564176] dark:text-purple-300 bg-[#564176]/10"
                 >
-                  <Server className="w-3.5 h-3.5 mr-2" />
-                  Self-Hosted · Docker · Free Forever
-                </Badge>
+                  <Server className="w-3.5 h-3.5 mr-2" /> {t('self_hosted_docker_free_forever')} </Badge>
 
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                  The Self-Hosted YNAB Alternative
-                  <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium">
-                    Your server. Your data. Zero subscription.
-                  </span>
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]"> {t('the_self_hosted_ynab_alternative')} <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium"> {t('your_server_your_data_zero_subscription')} </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Budgero is a zero-based budgeting app with multi-currency support and end-to-end
-                  encryption — available as a single Docker container you run on your own hardware.
-                  No subscription. No vendor lock-in. Your financial data never touches a
-                  third-party server.
-                </p>
+                <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed"> {t('budgero_is_a_zero_based_budgeting')} </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -332,9 +336,7 @@ volumes:
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <a href="#deploy">
-                      Deploy in 5 Minutes
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <a href="#deploy"> {t('deploy_in_5_minutes')} <ArrowRight className="w-5 h-5 ml-2" />
                     </a>
                   </Button>
                   <Button
@@ -343,15 +345,11 @@ volumes:
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=self-hosted-ynab-alternative&utm_content=hero-cloud">
-                      Try Cloud First
-                    </a>
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=self-hosted-ynab-alternative&utm_content=hero-cloud"> {t('try_cloud_first')} </a>
                   </Button>
                 </div>
 
-                <p className="mt-4 text-sm text-foreground/60">
-                  Free, forever · Docker · Single container · Import your YNAB budget
-                </p>
+                <p className="mt-4 text-sm text-foreground/60"> {t('free_forever_docker_single_container_import')} </p>
               </div>
             </section>
 
@@ -359,49 +357,21 @@ volumes:
 
             {/* Why self-host */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why Self-Host a Budgeting App in 2026?
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('why_self_host_a_budgeting_app')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  Your budget is one of the most sensitive datasets you have. Every salary, every
-                  expense, every debt — a near-complete picture of your life in numbers. Handing
-                  that to a SaaS vendor is a decision. Self-hosting is the option to not make it.
-                </p>
+                <p> {t('your_budget_is_one_of_the')} </p>
 
                 <div className="space-y-4">
                   <p>
-                    <strong className="text-foreground">No vendor can raise your price.</strong>{' '}
-                    YNAB has raised prices multiple times. Mint shut down entirely. Self-hosting is
-                    immune to both.
-                  </p>
+                    <strong className="text-foreground">{t('no_vendor_can_raise_your_price')}</strong>{' '} {t('ynab_has_raised_prices_multiple_times')} </p>
                   <p>
-                    <strong className="text-foreground">
-                      No vendor can lose access to your budget.
-                    </strong>{' '}
-                    Cancel YNAB and you lose your data. Mint users got migrated to Credit Karma.
-                    Self-hosted Budgero works identically whether we exist or not.
-                  </p>
+                    <strong className="text-foreground"> {t('no_vendor_can_lose_access_to')} </strong>{' '} {t('cancel_ynab_and_you_lose_your')} </p>
                   <p>
-                    <strong className="text-foreground">
-                      No vendor can be breached with your data.
-                    </strong>{' '}
-                    If your budget lives on your own server, a SaaS breach somewhere else does not
-                    affect you. (And because Budgero encrypts data client-side, even a breach of
-                    your own server yields encrypted blobs.)
-                  </p>
+                    <strong className="text-foreground"> {t('no_vendor_can_be_breached_with')} </strong>{' '} {t('if_your_budget_lives_on_your')} </p>
                   <p>
-                    <strong className="text-foreground">
-                      No vendor decides your feature roadmap.
-                    </strong>{' '}
-                    You update when you want to. You skip features you do not want. You can even
-                    fork the code if something really matters to you.
-                  </p>
+                    <strong className="text-foreground"> {t('no_vendor_decides_your_feature_roadmap')} </strong>{' '} {t('you_update_when_you_want_to')} </p>
                   <p>
-                    <strong className="text-foreground">No ongoing subscription.</strong> You pay
-                    for the VPS or hardware. That is it. For many households, self-hosted Budgero
-                    costs less than a single month of YNAB — and keeps running forever.
-                  </p>
+                    <strong className="text-foreground">{t('no_ongoing_subscription')}</strong> {t('you_pay_for_the_vps_or')} </p>
                 </div>
               </div>
             </section>
@@ -412,16 +382,9 @@ volumes:
             <section id="deploy" className="py-16 max-w-4xl mx-auto">
               <div className="text-center mb-12">
                 <Badge className="mb-4 bg-[#111c34]/10 text-[#111c34] dark:text-slate-200 border-[#111c34]/30">
-                  <Terminal className="w-3.5 h-3.5 mr-2" />
-                  5-Minute Deploy
-                </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Deploy Budgero in 5 Minutes
-                </h2>
-                <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-                  If you can run a Docker container, you can self-host Budgero. Here is the whole
-                  process.
-                </p>
+                  <Terminal className="w-3.5 h-3.5 mr-2" /> {t('5_minute_deploy')} </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('deploy_budgero_in_5_minutes')} </h2>
+                <p className="text-lg text-foreground/70 max-w-2xl mx-auto"> {t('if_you_can_run_a_docker')} </p>
               </div>
 
               <div className="space-y-6">
@@ -430,13 +393,8 @@ volumes:
                     <span className="text-lg font-bold text-foreground">1</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground mb-1 text-lg">
-                      Spin up a server
-                    </h3>
-                    <p className="text-foreground/70">
-                      Any Linux VPS with Docker installed works. A €5/month droplet at Hetzner,
-                      DigitalOcean, OVH, or an old Raspberry Pi is plenty.
-                    </p>
+                    <h3 className="font-semibold text-foreground mb-1 text-lg"> {t('spin_up_a_server')} </h3>
+                    <p className="text-foreground/70"> {t('any_linux_vps_with_docker_installed')} </p>
                   </div>
                 </div>
 
@@ -445,12 +403,8 @@ volumes:
                     <span className="text-lg font-bold text-foreground">2</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground mb-1 text-lg">
-                      Drop in docker-compose.yml
-                    </h3>
-                    <p className="text-foreground/70 mb-3">
-                      A minimal compose file looks like this:
-                    </p>
+                    <h3 className="font-semibold text-foreground mb-1 text-lg"> {t('drop_in_docker_compose_yml')} </h3>
+                    <p className="text-foreground/70 mb-3"> {t('a_minimal_compose_file_looks_like')} </p>
                     <pre className="bg-[#0f172a] text-[#e2e8f0] rounded-lg p-4 overflow-x-auto text-sm leading-relaxed">
                       <code>{composeSnippet}</code>
                     </pre>
@@ -462,12 +416,8 @@ volumes:
                     <span className="text-lg font-bold text-foreground">3</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground mb-1 text-lg">
-                      Bring it up
-                    </h3>
-                    <p className="text-foreground/70 mb-3">
-                      Run one command:
-                    </p>
+                    <h3 className="font-semibold text-foreground mb-1 text-lg"> {t('bring_it_up')} </h3>
+                    <p className="text-foreground/70 mb-3"> {t('run_one_command')} </p>
                     <pre className="bg-[#0f172a] text-[#e2e8f0] rounded-lg p-4 overflow-x-auto text-sm leading-relaxed">
                       <code>docker compose up -d</code>
                     </pre>
@@ -479,13 +429,8 @@ volumes:
                     <span className="text-lg font-bold text-foreground">4</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground mb-1 text-lg">
-                      Point a domain, add TLS
-                    </h3>
-                    <p className="text-foreground/70">
-                      Put Caddy or Traefik in front for automatic HTTPS. The self-host docs include
-                      reference configs. This takes two or three minutes.
-                    </p>
+                    <h3 className="font-semibold text-foreground mb-1 text-lg"> {t('point_a_domain_add_tls')} </h3>
+                    <p className="text-foreground/70"> {t('put_caddy_or_traefik_in_front')} </p>
                   </div>
                 </div>
 
@@ -494,14 +439,8 @@ volumes:
                     <span className="text-lg font-bold text-foreground">5</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground mb-1 text-lg">
-                      Import your YNAB data
-                    </h3>
-                    <p className="text-foreground/70">
-                      Export your YNAB budget as a ZIP, drop it into the Budgero import dialog, and
-                      your full history is now living on your own server. Categories, groups,
-                      transactions, and account balances all come across intact.
-                    </p>
+                    <h3 className="font-semibold text-foreground mb-1 text-lg"> {t('import_your_ynab_data')} </h3>
+                    <p className="text-foreground/70"> {t('export_your_ynab_budget_as_a')} </p>
                   </div>
                 </div>
               </div>
@@ -513,9 +452,7 @@ volumes:
                   size="lg"
                   className="h-12 px-7 text-base border-border/80"
                 >
-                  <Link href="/self-hostable">
-                    Read the Full Self-Host Guide
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <Link href="/self-hostable"> {t('read_the_full_self_host_guide')} <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                 </Button>
               </div>
@@ -526,24 +463,16 @@ volumes:
             {/* Comparison Table */}
             <section className="py-16 max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero Self-Host vs. YNAB
-                </h2>
-                <p className="text-lg text-foreground/70">
-                  Feature-by-feature. The tradeoffs of self-hosting, honestly.
-                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4"> {t('budgero_self_host_vs_ynab')} </h2>
+                <p className="text-lg text-foreground/70"> {t('feature_by_feature_the_tradeoffs_of')} </p>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
                 <table className="w-full min-w-[640px]">
                   <thead className="bg-muted/35">
                     <tr>
-                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground">
-                        Feature
-                      </th>
-                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
-                        Budgero Self-Host
-                      </th>
+                      <th className="px-4 py-4 text-left text-sm font-semibold text-foreground"> {t('feature')} </th>
+                      <th className="px-4 py-4 text-center text-sm font-semibold text-foreground"> {t('budgero_self_host')} </th>
                       <th className="px-4 py-4 text-center text-sm font-semibold text-foreground">
                         YNAB
                       </th>
@@ -576,9 +505,7 @@ volumes:
                   size="lg"
                   className="h-12 px-7 text-base bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                 >
-                  <Link href="/self-hostable">
-                    Get the Self-Host Guide
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <Link href="/self-hostable"> {t('get_the_self_host_guide')} <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                 </Button>
                 <span className="text-sm text-foreground/60">
@@ -586,9 +513,7 @@ volumes:
                   <a
                     href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=self-hosted-ynab-alternative&utm_content=mid-table"
                     className="underline hover:text-foreground"
-                  >
-                    try Cloud free for 35 days
-                  </a>
+                  > {t('try_cloud_free_for_35_days')} </a>
                 </span>
               </div>
             </section>
@@ -597,71 +522,40 @@ volumes:
 
             {/* Why Budgero specifically */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why Budgero Over Other Self-Hosted Budgeting Apps
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('why_budgero_over_other_self_hosted')} </h2>
               <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
-                <p>
-                  If you have been researching self-hosted YNAB alternatives, you have probably
-                  found Actual Budget, Firefly III, and a handful of smaller projects. They are
-                  good in their own ways. Here is what makes Budgero different.
-                </p>
+                <p> {t('if_you_have_been_researching_self')} </p>
 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <Package className="w-6 h-6 text-[#2f6246] flex-shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1 text-lg">
-                        Multi-currency done right
-                      </h3>
-                      <p className="text-foreground/75">
-                        Most self-hosted budgeting apps are single-currency. Budgero handles 168
-                        currencies with live FX rates and a unified home-currency rollup. For
-                        expats and multi-country households this is the feature that matters.
-                      </p>
+                      <h3 className="font-semibold text-foreground mb-1 text-lg"> {t('multi_currency_done_right')} </h3>
+                      <p className="text-foreground/75"> {t('most_self_hosted_budgeting_apps_are')} </p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-4">
                     <Shield className="w-6 h-6 text-[#2f6246] flex-shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1 text-lg">
-                        End-to-end encryption even on your own box
-                      </h3>
-                      <p className="text-foreground/75">
-                        Budgero encrypts data client-side with AES-256-GCM regardless of where
-                        the server runs. On your own VPS this means that server compromise or
-                        backup leakage yields encrypted blobs, not your financial history.
-                      </p>
+                      <h3 className="font-semibold text-foreground mb-1 text-lg"> {t('end_to_end_encryption_even_on')} </h3>
+                      <p className="text-foreground/75"> {t('budgero_encrypts_data_client_side_with')} </p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-4">
                     <Server className="w-6 h-6 text-[#2f6246] flex-shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1 text-lg">
-                        Cloud fallback if you ever stop wanting to sysadmin
-                      </h3>
-                      <p className="text-foreground/75">
-                        With Actual or Firefly, if you get tired of running a server, your options
-                        are limited. With Budgero, export your data and import it into Budgero
-                        Cloud for {pricing.monthly}/month. Same app, same features, fully managed.
-                        No lock-in in either direction.
-                      </p>
+                      <h3 className="font-semibold text-foreground mb-1 text-lg"> {t('cloud_fallback_if_you_ever_stop')} </h3>
+                      <p className="text-foreground/75"> {t('with_actual_or_firefly_if_you')} {pricing.monthly}{t('month_same_app_same_features_fully')} </p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-4">
                     <Terminal className="w-6 h-6 text-[#2f6246] flex-shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1 text-lg">
-                        Genuinely simple deploy
-                      </h3>
-                      <p className="text-foreground/75">
-                        Single Docker image. SQLite by default (no external Postgres required). One
-                        volume. One port. The minimal docker-compose.yml is about 15 lines. You do
-                        not need to understand anything about the app internals to run it.
-                      </p>
+                      <h3 className="font-semibold text-foreground mb-1 text-lg"> {t('genuinely_simple_deploy')} </h3>
+                      <p className="text-foreground/75"> {t('single_docker_image_sqlite_by_default')} </p>
                     </div>
                   </div>
                 </div>
@@ -672,78 +566,62 @@ volumes:
 
             {/* Who This Is For */}
             <section className="py-16 max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Should You Self-Host Budgero?
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8"> {t('should_you_self_host_budgero')} </h2>
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-[#e8f0e8] rounded-2xl p-8 border border-[#bfd7c2]">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <Check className="w-6 h-6 text-green-600" />
-                    Self-host if you:
-                  </h3>
+                    <Check className="w-6 h-6 text-green-600" /> {t('self_host_if_you')} </h3>
                   <ul className="space-y-3 text-foreground/80">
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Already run a homelab or personal VPS</span>
+                      <span>{t('already_run_a_homelab_or_personal')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Want full control over where your budget data lives</span>
+                      <span>{t('want_full_control_over_where_your')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Prefer running your own server to paying for SaaS at all</span>
+                      <span>{t('prefer_running_your_own_server_to')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Want the app to outlive any company</span>
+                      <span>{t('want_the_app_to_outlive_any')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Are comfortable running Docker and setting up a reverse proxy</span>
+                      <span>{t('are_comfortable_running_docker_and_setting')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Want to be responsible for your own backups</span>
+                      <span>{t('want_to_be_responsible_for_your')}</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-muted/25 rounded-2xl p-8 border border-border/70">
                   <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <X className="w-6 h-6 text-foreground/35" />
-                    Try Cloud instead if you:
-                  </h3>
+                    <X className="w-6 h-6 text-foreground/35" /> {t('try_cloud_instead_if_you')} </h3>
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>Do not want to run servers, period</span>
+                      <span>{t('do_not_want_to_run_servers')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Want automated backups, updates, and uptime to be someone else&apos;s job
-                      </span>
+                      <span> {t('want_automated_backups_updates_and_uptime')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Want to try Budgero for 35 days free before committing to anything
-                      </span>
+                      <span> {t('want_to_try_budgero_for_35')} </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Care less about ownership and more about just not having to think about
-                        infrastructure
-                      </span>
+                      <span> {t('care_less_about_ownership_and_more')} </span>
                     </li>
                   </ul>
-                  <p className="mt-6 text-sm text-foreground/55">
-                    Good news: the app is identical. You can switch between Cloud and Self-Host at
-                    any point with a single export/import.
-                  </p>
+                  <p className="mt-6 text-sm text-foreground/55"> {t('good_news_the_app_is_identical')} </p>
                 </div>
               </div>
             </section>
@@ -752,9 +630,7 @@ volumes:
 
             {/* FAQ */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10">
-                Frequently Asked Questions
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-10"> {t('frequently_asked_questions')} </h2>
               <div className="space-y-8">
                 {faqs.map((faq) => (
                   <div key={faq.q}>
@@ -778,25 +654,16 @@ volumes:
                   variant="outline"
                   className="mb-6 px-4 py-1.5 text-sm font-medium border-green-500/30 text-green-700 dark:text-green-400 bg-green-500/10"
                 >
-                  <Download className="w-3.5 h-3.5 mr-2" />
-                  Free forever, on your own server
-                </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                  Budget on your own box.
-                </h2>
-                <p className="text-lg text-foreground/70 mb-8">
-                  Pull the image, start the container, import your YNAB budget. The whole process
-                  is under 10 minutes. Your data stays on your server, under your control, forever.
-                </p>
+                  <Download className="w-3.5 h-3.5 mr-2" /> {t('free_forever_on_your_own_server')} </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6"> {t('budget_on_your_own_box')} </h2>
+                <p className="text-lg text-foreground/70 mb-8"> {t('pull_the_image_start_the_container')} </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     asChild
                     size="lg"
                     className="h-14 px-8 text-lg bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                   >
-                    <Link href="/self-hostable">
-                      Read the Self-Host Guide
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                    <Link href="/self-hostable"> {t('read_the_self_host_guide')} <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                   </Button>
                   <Button
@@ -805,37 +672,23 @@ volumes:
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=self-hosted-ynab-alternative&utm_content=final-cloud">
-                      Prefer Cloud? Try Free
-                    </a>
+                    <a href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=self-hosted-ynab-alternative&utm_content=final-cloud"> {t('prefer_cloud_try_free')} </a>
                   </Button>
                 </div>
-                <p className="mt-6 text-sm text-foreground/60">
-                  Also see:{' '}
-                  <Link href="/vs-ynab" className="underline hover:text-foreground">
-                    Full Budgero vs YNAB comparison
-                  </Link>{' '}
-                  ·{' '}
+                <p className="mt-6 text-sm text-foreground/60"> {t('also_see')}{' '}
+                  <Link href="/vs-ynab" className="underline hover:text-foreground"> {t('full_budgero_vs_ynab_comparison')} </Link>{' '}·{' '}
                   <Link
                     href="/ynab-alternative-europe"
                     className="underline hover:text-foreground"
-                  >
-                    YNAB alternative for Europe
-                  </Link>{' '}
-                  ·{' '}
+                  > {t('ynab_alternative_for_europe')} </Link>{' '}·{' '}
                   <Link
                     href="/best-ynab-alternatives"
                     className="underline hover:text-foreground"
-                  >
-                    Best YNAB alternatives in 2026
-                  </Link>{' '}
-                  ·{' '}
+                  > {t('best_ynab_alternatives_in_2026')} </Link>{' '}·{' '}
                   <Link
                     href="/firefly-iii-alternative"
                     className="underline hover:text-foreground"
-                  >
-                    Firefly III alternative
-                  </Link>
+                  > {t('firefly_iii_alternative')} </Link>
                 </p>
               </div>
             </section>
