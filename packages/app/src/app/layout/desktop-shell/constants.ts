@@ -6,6 +6,7 @@ import type { MessageDescriptor } from '@lingui/core';
 export const BREADCRUMB_LABEL_MAP: Record<string, MessageDescriptor> = {
   dashboard: msg`Dashboard`,
   budget: msg`Budget`,
+  budgeting: msg`Budgeting`,
   accounts: msg`Accounts`,
   all: msg`All Transactions`,
   warranties: msg`Warranties`,

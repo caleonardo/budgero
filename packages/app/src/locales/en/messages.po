@@ -3651,6 +3651,7 @@ msgstr "Budget switched"
 msgid "Budget updated successfully"
 msgstr "Budget updated successfully"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/features/budget-management/model/icon-options.ts
 #: src/widgets/navigation/MobileBottomNav.tsx
 msgid "Budgeting"

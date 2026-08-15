@@ -60,7 +60,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   }, [isCalculatingTransfer, isTransfer, isInflow, t]);
 
   return (
-    <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between gap-2 sm:gap-3">
+    <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:flex-wrap justify-between gap-2 sm:gap-3">
       <div className="flex w-full min-w-0 gap-2 order-2 sm:order-1 items-center sm:w-auto">
         <Button
           variant="outline"
