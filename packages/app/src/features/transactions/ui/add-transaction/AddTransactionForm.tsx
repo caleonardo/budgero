@@ -279,7 +279,6 @@ export function AddTransactionForm({
       />
 
       <TransactionFormActions
-        onCancel={onCancel}
         onQuickAdd={onQuickAdd}
         isCalculatingTransfer={form.isCalculatingTransfer}
         isTransfer={form.isTransfer}

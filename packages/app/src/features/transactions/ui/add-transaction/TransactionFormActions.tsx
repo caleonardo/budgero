@@ -15,7 +15,6 @@ import { DialogFooter } from '@shared/ui/dialog';
 import { Button } from '@shared/ui/button';
 
 interface TransactionFormActionsProps {
-  onCancel: () => void;
   onQuickAdd: () => void;
   isCalculatingTransfer: boolean;
   isTransfer: boolean;
@@ -24,7 +23,6 @@ interface TransactionFormActionsProps {
 }
 
 export const TransactionFormActions = React.memo(function TransactionFormActions({
-  onCancel,
   onQuickAdd,
   isCalculatingTransfer,
   isTransfer,
@@ -34,7 +32,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   const { t } = useLingui();
 
   const submitButtonClassName = React.useMemo(() => {
-    const base = 'h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial transition-colors';
+    const base = 'h-9 px-4 transition-colors sm:w-auto';
     if (isInflow) {
       return `${base} bg-success hover:bg-success/90 text-white`;
     }
@@ -59,29 +57,16 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
     return isInflow ? t`Add Income` : t`Add Expense`;
   }, [isCalculatingTransfer, isTransfer, isInflow, t]);
 
+  // Two actions only — the dialog's X and Esc already cover cancel.
   return (
-    <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:flex-wrap justify-between gap-2 sm:gap-3">
-      <div className="flex w-full min-w-0 gap-2 order-2 sm:order-1 items-center sm:w-auto">
-        <Button
-          variant="outline"
-          type="button"
-          onClick={onCancel}
-          className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
-        >
-          <Trans>Cancel</Trans>
-        </Button>
-      </div>
-      {/* Own full-width row so long translations never squeeze the buttons. */}
-      <span className="order-3 hidden w-full text-right text-[10px] text-muted-foreground sm:block">
-        <Trans>Press Cmd+Enter to save</Trans>
-      </span>
-      <div className="flex w-full min-w-0 flex-wrap gap-2 order-1 sm:order-2 sm:w-auto sm:flex-nowrap">
+    <DialogFooter className="mt-4 flex-col gap-2 sm:mt-6 sm:flex-col">
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
         <Button
           onClick={onQuickAdd}
           disabled={isCalculatingTransfer}
           variant="outline"
           type="button"
-          className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
+          className="h-9 px-4 sm:w-auto"
         >
           <Trans>Quick Add</Trans>
         </Button>
@@ -94,6 +79,9 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
           {submitButtonLabel}
         </Button>
       </div>
+      <span className="hidden text-right text-[10px] text-muted-foreground sm:block">
+        <Trans>Press Cmd+Enter to save</Trans>
+      </span>
     </DialogFooter>
   );
 });
