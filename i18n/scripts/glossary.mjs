@@ -8,6 +8,7 @@
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -29,7 +30,18 @@ const HEADERS = [
 ];
 
 const load = () => JSON.parse(readFileSync(GLOSSARY, 'utf8'));
-const save = (g) => writeFileSync(GLOSSARY, `${JSON.stringify(g, null, 2)}\n`);
+
+function save(g) {
+  writeFileSync(GLOSSARY, `${JSON.stringify(g, null, 2)}\n`);
+  try {
+    execFileSync('pnpm', ['exec', 'prettier', '--write', GLOSSARY], {
+      cwd: join(ROOT, '..'),
+      stdio: 'ignore',
+    });
+  } catch {
+    console.warn('warn: prettier unavailable, formatting may differ from the committed file');
+  }
+}
 
 const csvCell = (v) => {
   const s = String(v ?? '');
