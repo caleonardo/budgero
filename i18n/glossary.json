@@ -1,0 +1,1397 @@
+{
+  "$schema": "./glossary.schema.json",
+  "version": 1,
+  "sourceLocale": "en",
+  "targetLocales": ["de", "fr", "es", "nl"],
+  "statusLegend": {
+    "proposed": "LLM-proposed, NOT verified by a native speaker. Do not ship.",
+    "reviewed": "A native speaker has read and corrected it.",
+    "locked": "Final. Translation pipeline must use this exact value."
+  },
+  "uiConstraintLegend": {
+    "tight": "Table header, button, or badge. Length is critical — prefer short over precise.",
+    "normal": "Menu item, field label, dialog title. Moderate length tolerance.",
+    "prose": "Body copy, docs, marketing. Length is not a constraint."
+  },
+  "reviewNotes": [
+    "Every translation below is status:proposed. Nothing here is native-verified yet.",
+    "German runs ~30% longer than English. For uiConstraint:tight, a shorter approximate term beats a precise long one.",
+    "Reviewers: correct the value, then flip status to 'reviewed'. Flag anything that reads as translated-from-English rather than native."
+  ],
+  "entries": [
+    {
+      "id": "budgero",
+      "term": "Budgero",
+      "partOfSpeech": "proper noun",
+      "definition": "The product name.",
+      "context": "Everywhere.",
+      "uiConstraint": "tight",
+      "doNotTranslate": true,
+      "translations": {}
+    },
+    {
+      "id": "ready_to_assign",
+      "term": "Ready to Assign",
+      "partOfSpeech": "noun",
+      "definition": "Money that has arrived but has not yet been given a job. The single most prominent number in the app.",
+      "context": "Budget header. Also a docs page title.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zu budgetieren",
+          "status": "proposed",
+          "note": "Alternatives: 'Verfügbar zum Zuweisen' (precise but long), 'Nicht zugewiesen'. Chose the short idiomatic one because this sits in a header. HIGH PRIORITY REVIEW — this is the flagship term."
+        },
+        "fr": {
+          "value": "À affecter",
+          "status": "proposed",
+          "note": "'Reste à affecter' is the more idiomatic accounting phrasing but longer. Confirm which reads better in a header."
+        },
+        "es": {
+          "value": "Por asignar",
+          "status": "proposed",
+          "note": "'Listo para asignar' is the literal read; 'Por asignar' is shorter and more natural."
+        },
+        "nl": {
+          "value": "Te verdelen",
+          "status": "proposed",
+          "note": "'Klaar om toe te wijzen' is literal but far too long. Confirm 'Te verdelen' vs 'Nog toe te wijzen'."
+        }
+      }
+    },
+    {
+      "id": "assign",
+      "term": "Assign",
+      "partOfSpeech": "verb",
+      "definition": "To give money a job by moving it into a category.",
+      "context": "Primary action verb throughout the budget screen.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zuweisen",
+          "status": "proposed",
+          "note": "Must stay consistent with ready_to_assign choice."
+        },
+        "fr": {
+          "value": "Affecter",
+          "status": "proposed",
+          "note": "'Assigner' is also possible; 'affecter' is the budgeting convention."
+        },
+        "es": {
+          "value": "Asignar",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Toewijzen",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "assigned",
+      "term": "Assigned",
+      "partOfSpeech": "noun",
+      "definition": "Budget grid column: how much money was put into this category this month.",
+      "context": "Budget table column header. One of the core three (Assigned / Activity / Available).",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zugewiesen",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Affecté",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Asignado",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Toegewezen",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "activity",
+      "term": "Activity",
+      "partOfSpeech": "noun",
+      "definition": "Budget grid column: money that moved in or out of this category this month.",
+      "context": "Budget table column header.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Aktivität",
+          "status": "proposed",
+          "note": "'Umsatz' is the German banking term for turnover and may read more naturally to a finance audience. Reviewer decision."
+        },
+        "fr": {
+          "value": "Activité",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Actividad",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Activiteit",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "available",
+      "term": "Available",
+      "partOfSpeech": "noun",
+      "definition": "Budget grid column: what is actually left to spend in this category right now.",
+      "context": "Budget table column header. The number users check most.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Verfügbar",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Disponible",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Disponible",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Beschikbaar",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "category",
+      "term": "Category",
+      "partOfSpeech": "noun",
+      "definition": "An envelope that holds money for a purpose (Groceries, Rent).",
+      "context": "Core object. Docs page title.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Kategorie",
+          "status": "proposed",
+          "note": "Plural: Kategorien"
+        },
+        "fr": {
+          "value": "Catégorie",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Categoría",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Categorie",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "category_group",
+      "term": "Category Group",
+      "partOfSpeech": "noun",
+      "definition": "A collapsible heading that groups related categories.",
+      "context": "Budget screen structure. Docs page title.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Kategoriengruppe",
+          "status": "proposed",
+          "note": "Confirm 'Kategoriengruppe' vs 'Kategoriegruppe' — both appear in German usage."
+        },
+        "fr": {
+          "value": "Groupe de catégories",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Grupo de categorías",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Categoriegroep",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "budget",
+      "term": "Budget",
+      "partOfSpeech": "noun",
+      "definition": "The plan for a month, and also the top-level container users can have several of.",
+      "context": "Everywhere.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Budget",
+          "status": "proposed",
+          "note": "'Haushaltsplan' is more native but 'Budget' is widely understood and shorter. Note the German market term for this app category is 'Haushaltsbuch' — relevant for marketing copy, probably not for in-app labels."
+        },
+        "fr": {
+          "value": "Budget",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Presupuesto",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Budget",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "zero_based_budgeting",
+      "term": "Zero-Based Budgeting",
+      "partOfSpeech": "noun",
+      "definition": "The method: every unit of currency gets a job until nothing is unassigned.",
+      "context": "Docs page title, marketing copy.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zero-Based-Budgeting",
+          "status": "proposed",
+          "note": "German finance media uses the English term (observed as 'Zero-Based-Budget-Ansatz'). 'Nullbasiertes Budgetieren' exists but reads academic."
+        },
+        "fr": {
+          "value": "Budget base zéro",
+          "status": "proposed",
+          "note": "Established French term (BBZ)."
+        },
+        "es": {
+          "value": "Presupuesto base cero",
+          "status": "proposed",
+          "note": "Established Spanish term."
+        },
+        "nl": {
+          "value": "Zero-based budgetteren",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "envelope_method",
+      "term": "Envelope Method",
+      "partOfSpeech": "noun",
+      "definition": "The cash-in-envelopes metaphor Budgero digitizes.",
+      "context": "Marketing and docs. High SEO value in German.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Umschlagmethode",
+          "status": "proposed",
+          "note": "VERIFIED as the established German term via market research — has its own content ecosystem and search demand. Highest-confidence entry in this file. Adjacent trend term: 'Cashstuffing'."
+        },
+        "fr": {
+          "value": "Méthode des enveloppes",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Método de sobres",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Enveloppemethode",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "overspent",
+      "term": "Overspent",
+      "partOfSpeech": "adjective",
+      "definition": "A category whose Available has gone negative.",
+      "context": "Budget grid warning state, badges.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Überzogen",
+          "status": "proposed",
+          "note": "'Überschritten' (exceeded) is the alternative. 'Überzogen' carries the overdrawn connotation which fits better."
+        },
+        "fr": {
+          "value": "Dépassé",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Excedido",
+          "status": "proposed",
+          "note": "'Sobregastado' is more literal but less common."
+        },
+        "nl": {
+          "value": "Overschreden",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "account",
+      "term": "Account",
+      "partOfSpeech": "noun",
+      "definition": "A real-world place money sits (checking, savings, credit card).",
+      "context": "Sidebar, docs page title. NOTE: distinct from a user login account — check context before translating.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Konto",
+          "status": "proposed",
+          "note": "Login account is 'Benutzerkonto' — keep distinct."
+        },
+        "fr": {
+          "value": "Compte",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Cuenta",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Rekening",
+          "status": "proposed",
+          "note": "Login account is 'Account' in Dutch — keep distinct."
+        }
+      }
+    },
+    {
+      "id": "on_budget",
+      "term": "On-budget",
+      "partOfSpeech": "adjective",
+      "definition": "An account whose balance feeds Ready to Assign.",
+      "context": "Account settings, account type badges.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Im Budget",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Dans le budget",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "En el presupuesto",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "In budget",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "off_budget",
+      "term": "Off-budget",
+      "partOfSpeech": "adjective",
+      "definition": "An account tracked for net worth but excluded from budgeting.",
+      "context": "Account settings. Inbound transfers from these credit Ready to Assign.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Außerhalb des Budgets",
+          "status": "proposed",
+          "note": "Long. If it appears in a badge, consider 'Extern' or 'Nicht im Budget'."
+        },
+        "fr": {
+          "value": "Hors budget",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Fuera del presupuesto",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Buiten budget",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "transaction",
+      "term": "Transaction",
+      "partOfSpeech": "noun",
+      "definition": "A single movement of money.",
+      "context": "Core object, everywhere.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Transaktion",
+          "status": "proposed",
+          "note": "'Buchung' or 'Umsatz' are the native banking terms and may read better to German users. Reviewer decision — this term appears constantly."
+        },
+        "fr": {
+          "value": "Transaction",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Transacción",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Transactie",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "payee",
+      "term": "Payee",
+      "partOfSpeech": "noun",
+      "definition": "Who money went to, or came from.",
+      "context": "Transaction table column, transaction form field.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Empfänger",
+          "status": "proposed",
+          "note": "'Zahlungsempfänger' is precise but 19 chars vs 5 — will break the table column. 'Empfänger' matches German online banking. Note it reads oddly for inflows; consider whether a neutral term works better."
+        },
+        "fr": {
+          "value": "Bénéficiaire",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Beneficiario",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Begunstigde",
+          "status": "proposed",
+          "note": "'Tegenpartij' is the alternative and may be more neutral for both directions."
+        }
+      }
+    },
+    {
+      "id": "inflow",
+      "term": "Inflow",
+      "partOfSpeech": "noun",
+      "definition": "Money coming in.",
+      "context": "Transaction amount column, transaction form.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Einnahme",
+          "status": "proposed",
+          "note": "'Zufluss' is more literal; 'Einnahme' is the everyday term."
+        },
+        "fr": {
+          "value": "Entrée",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Ingreso",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Inkomsten",
+          "status": "proposed",
+          "note": "Dutch banking uses 'Bij' for credits — much shorter and highly idiomatic if this is a narrow column."
+        }
+      }
+    },
+    {
+      "id": "outflow",
+      "term": "Outflow",
+      "partOfSpeech": "noun",
+      "definition": "Money going out.",
+      "context": "Transaction amount column, transaction form.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Ausgabe",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Sortie",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Gasto",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Uitgaven",
+          "status": "proposed",
+          "note": "Dutch banking uses 'Af' for debits — see inflow note."
+        }
+      }
+    },
+    {
+      "id": "cleared",
+      "term": "Cleared",
+      "partOfSpeech": "adjective",
+      "definition": "A transaction confirmed against the real account.",
+      "context": "Transaction status badge.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Gebucht",
+          "status": "proposed",
+          "note": "'Gebucht' is the German banking term for posted. 'Bestätigt' is the generic alternative."
+        },
+        "fr": {
+          "value": "Pointé",
+          "status": "proposed",
+          "note": "Standard French accounting term for reconciled-against-statement."
+        },
+        "es": {
+          "value": "Confirmado",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Bevestigd",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "uncleared",
+      "term": "Uncleared",
+      "partOfSpeech": "adjective",
+      "definition": "A transaction entered but not yet confirmed against the real account.",
+      "context": "Transaction status badge.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Nicht gebucht",
+          "status": "proposed",
+          "note": "Must mirror the 'cleared' choice."
+        },
+        "fr": {
+          "value": "Non pointé",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Sin confirmar",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Niet bevestigd",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "reconcile",
+      "term": "Reconcile",
+      "partOfSpeech": "verb",
+      "definition": "To confirm the app balance matches the real account balance.",
+      "context": "Account action, dialog title.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Abgleichen",
+          "status": "proposed",
+          "note": "Noun form: 'Kontenabgleich'."
+        },
+        "fr": {
+          "value": "Rapprocher",
+          "status": "proposed",
+          "note": "Noun: 'rapprochement bancaire' — the standard term."
+        },
+        "es": {
+          "value": "Conciliar",
+          "status": "proposed",
+          "note": "Noun: 'conciliación bancaria' — the standard term."
+        },
+        "nl": {
+          "value": "Afstemmen",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "transfer",
+      "term": "Transfer",
+      "partOfSpeech": "noun",
+      "definition": "Movement of money between two of the user's own accounts.",
+      "context": "Transaction type.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Umbuchung",
+          "status": "proposed",
+          "note": "'Überweisung' means a bank transfer to a third party — wrong sense here. 'Umbuchung' is the internal-move sense. Worth a careful review."
+        },
+        "fr": {
+          "value": "Virement",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Transferencia",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Overboeking",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "split_transaction",
+      "term": "Split transaction",
+      "partOfSpeech": "noun",
+      "definition": "One transaction divided across multiple categories.",
+      "context": "Transaction editor.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Geteilte Transaktion",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Transaction ventilée",
+          "status": "proposed",
+          "note": "'Ventilée' is the accounting term for split-across-accounts."
+        },
+        "es": {
+          "value": "Transacción dividida",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Gesplitste transactie",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "goal",
+      "term": "Goal",
+      "partOfSpeech": "noun",
+      "definition": "A funding plan attached to a category. Four types across spending and savings flavors.",
+      "context": "Docs page title, category detail. NOTE: distinct from 'target' — a goal HAS a target.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Ziel",
+          "status": "proposed",
+          "note": "Must stay distinct from target_amount / target_date below."
+        },
+        "fr": {
+          "value": "Objectif",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Objetivo",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Doel",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "target_amount",
+      "term": "Target amount",
+      "partOfSpeech": "noun",
+      "definition": "The number a goal is aiming at. A parameter OF a goal, not a synonym for goal.",
+      "context": "Goal editor field.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zielbetrag",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Montant cible",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Importe objetivo",
+          "status": "proposed",
+          "note": "Confirm 'importe' vs 'cantidad' vs 'monto' for the Spain market specifically."
+        },
+        "nl": {
+          "value": "Doelbedrag",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "target_date",
+      "term": "Target date",
+      "partOfSpeech": "noun",
+      "definition": "The date a savings goal should be reached by.",
+      "context": "Goal editor field.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zieldatum",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Date cible",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Fecha objetivo",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Streefdatum",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "needed_this_month",
+      "term": "Needed this month",
+      "partOfSpeech": "noun",
+      "definition": "What a goal requires to stay on track this month.",
+      "context": "Goal progress display.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Diesen Monat nötig",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Nécessaire ce mois-ci",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Necesario este mes",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Deze maand nodig",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "rule",
+      "term": "Rule",
+      "partOfSpeech": "noun",
+      "definition": "An automation that acts on matching transactions.",
+      "context": "Rules feature.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Regel",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Règle",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Regla",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Regel",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "rules_engine",
+      "term": "Rules Engine",
+      "partOfSpeech": "noun",
+      "definition": "The subsystem that evaluates and applies rules.",
+      "context": "Docs page title, settings section.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Regelwerk",
+          "status": "proposed",
+          "note": "'Regel-Engine' is the anglicized alternative and common in German software UIs."
+        },
+        "fr": {
+          "value": "Moteur de règles",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Motor de reglas",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Regel-engine",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "recurring_transaction",
+      "term": "Recurring transaction",
+      "partOfSpeech": "noun",
+      "definition": "A transaction scheduled to repeat.",
+      "context": "Docs page title, settings section.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Wiederkehrende Transaktion",
+          "status": "proposed",
+          "note": "Do NOT use 'Dauerauftrag' — that specifically means a bank standing order."
+        },
+        "fr": {
+          "value": "Transaction récurrente",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Transacción recurrente",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Terugkerende transactie",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "net_worth",
+      "term": "Net worth",
+      "partOfSpeech": "noun",
+      "definition": "Total assets minus total liabilities.",
+      "context": "Reports, dashboard.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Nettovermögen",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Patrimoine net",
+          "status": "proposed",
+          "note": "'Valeur nette' is the literal calque; 'patrimoine net' is the native financial term."
+        },
+        "es": {
+          "value": "Patrimonio neto",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Nettovermogen",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "debt_tracking",
+      "term": "Debt tracking",
+      "partOfSpeech": "noun",
+      "definition": "Following loan and credit-card balances down to zero.",
+      "context": "Docs page title, feature name.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Schuldenverfolgung",
+          "status": "proposed",
+          "note": "Long compound. 'Schuldenübersicht' (debt overview) may read better."
+        },
+        "fr": {
+          "value": "Suivi des dettes",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Seguimiento de deudas",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Schuldenoverzicht",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "workspace",
+      "term": "Workspace",
+      "partOfSpeech": "noun",
+      "definition": "A container holding budgets, shareable with other users.",
+      "context": "Settings, workspace switcher.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Arbeitsbereich",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Espace de travail",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Espacio de trabajo",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Werkruimte",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "master_password",
+      "term": "Master Password",
+      "partOfSpeech": "noun",
+      "definition": "The password that derives the encryption key. Cannot be recovered — distinct from the login password.",
+      "context": "Docs page title, onboarding, security settings.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Master-Passwort",
+          "status": "proposed",
+          "note": "Keep clearly distinct from 'Anmeldepasswort' (login password) — users conflating these is a support burden."
+        },
+        "fr": {
+          "value": "Mot de passe principal",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Contraseña maestra",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Hoofdwachtwoord",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "zero_knowledge",
+      "term": "Zero-knowledge",
+      "partOfSpeech": "adjective",
+      "definition": "The server cannot read user data. Core product claim.",
+      "context": "Marketing, security docs. High value in the German market.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zero-Knowledge",
+          "status": "proposed",
+          "note": "Keep English — it's the established technical term in German security writing. Pair with a plain-language gloss on first use."
+        },
+        "fr": {
+          "value": "Zero-knowledge",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Zero-knowledge",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Zero-knowledge",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "end_to_end_encryption",
+      "term": "End-to-end encryption",
+      "partOfSpeech": "noun",
+      "definition": "Data encrypted on device, never readable server-side.",
+      "context": "Marketing, security docs.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Ende-zu-Ende-Verschlüsselung",
+          "status": "proposed",
+          "note": "Established German term, widely understood. Strong marketing keyword for the DE privacy segment."
+        },
+        "fr": {
+          "value": "Chiffrement de bout en bout",
+          "status": "proposed",
+          "note": "Use 'chiffrement', never 'encryption' or 'cryptage'."
+        },
+        "es": {
+          "value": "Cifrado de extremo a extremo",
+          "status": "proposed",
+          "note": "Use 'cifrado', not 'encriptación'."
+        },
+        "nl": {
+          "value": "End-to-end-versleuteling",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "self_hosting",
+      "term": "Self-hosting",
+      "partOfSpeech": "noun",
+      "definition": "Running Budgero on your own infrastructure.",
+      "context": "Docs page title, marketing.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Selbst hosten",
+          "status": "proposed",
+          "note": "The English 'Self-Hosting' is also common in German technical writing and may be better for SEO."
+        },
+        "fr": {
+          "value": "Auto-hébergement",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Autoalojamiento",
+          "status": "proposed",
+          "note": "The English term is common in Spanish technical writing too — reviewer decision."
+        },
+        "nl": {
+          "value": "Zelf hosten",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "offline_mode",
+      "term": "Offline mode",
+      "partOfSpeech": "noun",
+      "definition": "Full functionality without a network connection.",
+      "context": "Docs page title, marketing.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Offline-Modus",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Mode hors ligne",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Modo sin conexión",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Offlinemodus",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "csv_import",
+      "term": "CSV Import",
+      "partOfSpeech": "noun",
+      "definition": "Bringing transactions in from a CSV file.",
+      "context": "Docs page title, data management.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "CSV-Import",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Import CSV",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Importación CSV",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "CSV-import",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "report",
+      "term": "Report",
+      "partOfSpeech": "noun",
+      "definition": "A saved analytical view over transactions.",
+      "context": "Nav item, reports feature.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Bericht",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Rapport",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Informe",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Rapport",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "scenario",
+      "term": "Scenario",
+      "partOfSpeech": "noun",
+      "definition": "A what-if projection over the budget.",
+      "context": "Scenarios feature.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Szenario",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Scénario",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Escenario",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Scenario",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "warranty",
+      "term": "Warranty",
+      "partOfSpeech": "noun",
+      "definition": "A tracked product warranty with an expiry.",
+      "context": "Warranties feature.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Garantie",
+          "status": "proposed",
+          "note": "German distinguishes 'Garantie' (voluntary manufacturer warranty) from 'Gewährleistung' (statutory). Confirm which the feature actually tracks — this is a legally loaded distinction in DE."
+        },
+        "fr": {
+          "value": "Garantie",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Garantía",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Garantie",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "sharing",
+      "term": "Sharing",
+      "partOfSpeech": "noun",
+      "definition": "Giving another user access to a budget.",
+      "context": "Docs page title, workspace settings.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Freigabe",
+          "status": "proposed",
+          "note": ""
+        },
+        "fr": {
+          "value": "Partage",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Compartir",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Delen",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "multi_currency",
+      "term": "Multi-currency",
+      "partOfSpeech": "adjective",
+      "definition": "Support for accounts and budgets in different currencies.",
+      "context": "Docs page title, marketing. Key differentiator for the EU market.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Multi-Währung",
+          "status": "proposed",
+          "note": "'Mehrwährungsfähig' is the more native adjective. Reviewer decision."
+        },
+        "fr": {
+          "value": "Multidevise",
+          "status": "proposed",
+          "note": ""
+        },
+        "es": {
+          "value": "Multidivisa",
+          "status": "proposed",
+          "note": ""
+        },
+        "nl": {
+          "value": "Multivaluta",
+          "status": "proposed",
+          "note": ""
+        }
+      }
+    }
+  ]
+}
