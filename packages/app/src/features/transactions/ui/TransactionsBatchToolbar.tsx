@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { useState } from 'react';
@@ -94,9 +95,15 @@ export function TransactionsBatchToolbar({
       applyOpInvalidations(queryClient, 'transactions.delete');
 
       const count = selectedRowIds.length;
-      toast.success(`${count} transaction${count === 1 ? '' : 's'} deleted`, {
-        description: 'The selected transaction(s) have been permanently removed.',
-      });
+      toast.success(
+        plural(count, {
+          one: `# transaction deleted`,
+          other: `# transactions deleted`,
+        }),
+        {
+          description: 'The selected transaction(s) have been permanently removed.',
+        }
+      );
 
       clearSelection();
     } catch (error) {
@@ -180,7 +187,12 @@ export function TransactionsBatchToolbar({
       if (didUpdatePayee) applyOpInvalidations(queryClient, 'transactions.updateColumn');
 
       const count = selectedRowIds.length;
-      toast.success(`${count} transaction${count === 1 ? '' : 's'} updated`);
+      toast.success(
+        plural(count, {
+          one: `# transaction updated`,
+          other: `# transactions updated`,
+        })
+      );
 
       clearSelection();
       setNewPayee('');

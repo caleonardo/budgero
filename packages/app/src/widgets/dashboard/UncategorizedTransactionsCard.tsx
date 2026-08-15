@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -272,7 +273,10 @@ export function UncategorizedTransactionsCard({
         <CardFooter className="pt-0 text-xs text-muted-foreground">
           <span>
             {totalCount > 0
-              ? `${totalCount} transaction${totalCount === 1 ? '' : 's'} waiting`
+              ? plural(totalCount, {
+                  one: `# transaction waiting`,
+                  other: `# transactions waiting`,
+                })
               : 'All caught up'}
           </span>
         </CardFooter>

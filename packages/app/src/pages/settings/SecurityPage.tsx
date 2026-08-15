@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Shield, AlertTriangle, Lock, Eye, EyeOff, ShieldAlert } from 'lucide-react';
@@ -128,7 +129,10 @@ export default function SecurityPage() {
         master_password_storage_days: normalized,
       });
       toast.success(
-        `Master password will be remembered on this device for ${normalized} day${normalized === 1 ? '' : 's'}.`
+        plural(normalized, {
+          one: `Master password will be remembered on this device for # day.`,
+          other: `Master password will be remembered on this device for # days.`,
+        })
       );
       if (storageDays !== normalized) {
         setStorageDays(normalized);

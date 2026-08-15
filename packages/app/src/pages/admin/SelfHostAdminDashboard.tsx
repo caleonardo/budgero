@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -58,7 +59,10 @@ export default function SelfHostAdminDashboard() {
       {
         label: 'Total Users',
         value: stats?.totalUsers ?? 0,
-        helper: `${stats?.adminUsers ?? 0} admin${(stats?.adminUsers ?? 0) === 1 ? '' : 's'}`,
+        helper: plural(stats?.adminUsers ?? 0, {
+          one: `${stats?.adminUsers ?? 0} admin`,
+          other: `${stats?.adminUsers ?? 0} admins`,
+        }),
         icon: Users,
       },
       {

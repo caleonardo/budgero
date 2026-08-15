@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -332,7 +333,10 @@ export default function SelfHostAdminUsers() {
           <CardDescription>
             {loading
               ? 'Loading users...'
-              : `${filteredUsers.length} matching user${filteredUsers.length === 1 ? '' : 's'}`}
+              : plural(filteredUsers.length, {
+                  one: `# matching user`,
+                  other: `# matching users`,
+                })}
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -28,7 +29,12 @@ export const UsersTable = React.memo(function UsersTable({
           <Trans>All Users</Trans>
         </CardTitle>
         <CardDescription>
-          {loading ? 'Loading...' : `${users.length} user${users.length !== 1 ? 's' : ''} found`}
+          {loading
+            ? 'Loading...'
+            : plural(users.length, {
+                one: `# user found`,
+                other: `# users found`,
+              })}
         </CardDescription>
       </CardHeader>
       <CardContent>

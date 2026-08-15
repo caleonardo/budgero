@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
   Dialog,
@@ -157,12 +158,18 @@ export function RuleRunOverlay({
     if (mode === 'undo') {
       if (phase === 'running') return 'Restoring transactions to their previous values...';
       if (phase === 'refreshing') return 'Updating cached data...';
-      return `Restored ${restoredCount} transaction${restoredCount === 1 ? '' : 's'}.`;
+      return plural(restoredCount, {
+        one: `Restored # transaction.`,
+        other: `Restored # transactions.`,
+      });
     }
 
     if (phase === 'running') return 'Evaluating matching transactions...';
     if (phase === 'refreshing') return 'Updating cached data...';
-    return `${matchedCount} transaction${matchedCount === 1 ? '' : 's'} updated.`;
+    return plural(matchedCount, {
+      one: `# transaction updated.`,
+      other: `# transactions updated.`,
+    });
   })();
 
   const handleOpenChange = (next: boolean) => {
@@ -206,8 +213,14 @@ export function RuleRunOverlay({
             <div className="rounded-md border border-green-500/30 bg-green-500/5 p-3 text-sm text-foreground">
               <p>
                 {mode === 'undo'
-                  ? `Restored ${restoredCount} transaction${restoredCount === 1 ? '' : 's'} across this budget.`
-                  : `Updated ${matchedCount} transaction${matchedCount === 1 ? '' : 's'} across this budget.`}
+                  ? plural(restoredCount, {
+                      one: `Restored # transaction across this budget.`,
+                      other: `Restored # transactions across this budget.`,
+                    })
+                  : plural(matchedCount, {
+                      one: `Updated # transaction across this budget.`,
+                      other: `Updated # transactions across this budget.`,
+                    })}
               </p>
             </div>
           ) : null}

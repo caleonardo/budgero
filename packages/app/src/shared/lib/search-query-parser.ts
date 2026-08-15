@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import {
   startOfDay,
   endOfDay,
@@ -117,7 +118,10 @@ const DATE_PATTERNS: {
     },
     getLabel: (match) => {
       const days = parseInt(match[1], 10);
-      return `Last ${days} day${days === 1 ? '' : 's'}`;
+      return plural(days, {
+        one: `Last # day`,
+        other: `Last # days`,
+      });
     },
   },
 ];

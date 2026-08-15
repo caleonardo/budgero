@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
@@ -128,7 +129,10 @@ function RunAccordionItem({
     const relative = completedDate
       ? formatDistanceToNow(completedDate, { addSuffix: true })
       : 'in progress';
-    return `${run.status.toUpperCase()} • ${run.transactionCount} transaction${run.transactionCount === 1 ? '' : 's'} • ${relative}`;
+    return plural(run.transactionCount, {
+      one: `${run.status.toUpperCase()} • # transaction • ${relative}`,
+      other: `${run.status.toUpperCase()} • # transactions • ${relative}`,
+    });
   }, [run.completedAt, run.status, run.transactionCount]);
 
   const canUndo =

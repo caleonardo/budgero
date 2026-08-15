@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Dices, Undo2 } from 'lucide-react';
@@ -57,7 +58,10 @@ export function DevSimulateRateMoveButton() {
       const revalued = await services.currency.restoreOfficialRates(budgetId);
       await invalidateAll();
       toast.success(t`Official rates restored`, {
-        description: `Today's cache refetched; ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
+        description: plural(revalued, {
+          one: `Today's cache refetched; # account revalued.`,
+          other: `Today's cache refetched; # accounts revalued.`,
+        }),
       });
     } catch (err) {
       toast.error(`Restore failed: ${getErrorMessage(err, 'unknown error')}`);
@@ -111,7 +115,10 @@ export function DevSimulateRateMoveButton() {
       await invalidateAll();
 
       toast.success(`Simulated a market move`, {
-        description: `${moved} rate${moved !== 1 ? 's' : ''} shifted, ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
+        description: plural(moved, {
+          one: `# rate shifted, ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
+          other: `# rates shifted, ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
+        }),
       });
     } catch (err) {
       toast.error(`Rate simulation failed: ${getErrorMessage(err, 'unknown error')}`);

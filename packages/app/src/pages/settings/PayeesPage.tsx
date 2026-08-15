@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import {
   useAddPayee,
   useDeletePayee,
@@ -54,10 +55,17 @@ const payeeDirectoryConfig: DirectoryManagerConfig<PayeeListItem, string, PayeeD
   ),
   bulkDelete: {
     selectRowLabel: (item) => `Select ${item.Name}`,
-    deleteSelectedLabel: (count) => `Delete ${count} ${count === 1 ? 'payee' : 'payees'}`,
+    deleteSelectedLabel: (count) =>
+      plural(count, {
+        one: `Delete # payee`,
+        other: `Delete # payees`,
+      }),
     selectUnusedLabel: (count) => `Select unused (${count})`,
     deleteDialogTitle: (items) =>
-      `Remove ${items.length} ${items.length === 1 ? 'payee' : 'payees'}?`,
+      plural(items.length, {
+        one: `Remove # payee?`,
+        other: `Remove # payees?`,
+      }),
     deleteDialogDescription: (items) => {
       const inUse = items.filter((item) => item.UsageCount > 0);
       const affected = inUse.reduce((sum, item) => sum + item.UsageCount, 0);
@@ -94,7 +102,10 @@ const payeeDirectoryConfig: DirectoryManagerConfig<PayeeListItem, string, PayeeD
     }),
     deleteErrorTitle: 'Could not remove payee',
     deleteManySuccess: (items) => ({
-      title: `${items.length} ${items.length === 1 ? 'payee' : 'payees'} removed`,
+      title: plural(items.length, {
+        one: `# payee removed`,
+        other: `# payees removed`,
+      }),
       description: 'They have been cleared from existing transactions.',
     }),
     deleteManyErrorTitle: 'Could not remove payees',

@@ -1,5 +1,7 @@
 'use client';
 
+import { plural } from '@lingui/core/macro';
+
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import React from 'react';
@@ -53,13 +55,17 @@ export default function ImportsPage() {
           toast.success(t`Import undone`, {
             description: `Removed ${result.transactionsRemoved} transactions${
               result.accountsRemoved
-                ? `, ${result.accountsRemoved} account${result.accountsRemoved === 1 ? '' : 's'}`
+                ? plural(result.accountsRemoved, {
+                    one: `, # account`,
+                    other: `, # accounts`,
+                  })
                 : ''
             }${
               result.categoriesRemoved
-                ? `, ${result.categoriesRemoved} categor${
-                    result.categoriesRemoved === 1 ? 'y' : 'ies'
-                  }`
+                ? plural(result.categoriesRemoved, {
+                    one: `, # category`,
+                    other: `, # categories`,
+                  })
                 : ''
             }`,
           });

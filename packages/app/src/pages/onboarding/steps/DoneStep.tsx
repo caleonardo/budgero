@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { THEMES_AVAILABLE } from '../onboarding-data';
@@ -26,7 +27,10 @@ export const DoneStep: React.FC<Omit<StepProps, 'set'> & DoneStepExtraProps> = (
           [
             'Shared with',
             state.invites.length > 0
-              ? `${state.invites.length} ${state.invites.length === 1 ? 'person' : 'people'}`
+              ? plural(state.invites.length, {
+                  one: `# person`,
+                  other: `# people`,
+                })
               : '— (just you for now)',
           ] as const,
           ['Security', state.password ? '✓ Master password set' : '— not set'] as const,
@@ -39,7 +43,10 @@ export const DoneStep: React.FC<Omit<StepProps, 'set'> & DoneStepExtraProps> = (
           [
             'Shared with',
             state.invites.length > 0
-              ? `${state.invites.length} ${state.invites.length === 1 ? 'person' : 'people'}`
+              ? plural(state.invites.length, {
+                  one: `# person`,
+                  other: `# people`,
+                })
               : '— (just you for now)',
           ] as const,
           ['Security', state.password ? '✓ Master password set' : '— not set'] as const,

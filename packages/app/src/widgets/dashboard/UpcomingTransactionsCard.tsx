@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -245,7 +246,10 @@ export function UpcomingTransactionsCard({
               <span className="text-[11px] text-muted-foreground">
                 {daysUntil <= 0
                   ? 'Due today'
-                  : `Due in ${daysUntil} day${daysUntil === 1 ? '' : 's'}`}
+                  : plural(daysUntil, {
+                      one: `Due in # day`,
+                      other: `Due in # days`,
+                    })}
               </span>
             </div>
           </div>

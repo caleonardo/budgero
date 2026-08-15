@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 /**
  * Category Operations Hook
  *
@@ -124,7 +125,10 @@ export function useCategoryOperations({
 
       if (associatedCategories.length > 0) {
         toast.error('Cannot delete non-empty category group', {
-          description: `This group contains ${associatedCategories.length} ${associatedCategories.length === 1 ? 'category' : 'categories'}. Please move or delete them first.`,
+          description: plural(associatedCategories.length, {
+            one: `This group contains # category. Please move or delete them first.`,
+            other: `This group contains # categories. Please move or delete them first.`,
+          }),
         });
         return;
       }

@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -54,7 +55,10 @@ export function usePushApiState() {
     onSuccess: (data) => {
       void queryClient.invalidateQueries({ queryKey: ['push-queue-stats'] });
       toast.success(
-        `Cleared ${data.deleted} pending item${data.deleted === 1 ? '' : 's'} from queue`
+        plural(data.deleted, {
+          one: `Cleared # pending item from queue`,
+          other: `Cleared # pending items from queue`,
+        })
       );
     },
     onError: (error: Error) => {
@@ -213,7 +217,10 @@ export function usePushApiState() {
           });
         } else {
           toast.success(
-            `Processed ${result.processed} mutation${result.processed === 1 ? '' : 's'}`
+            plural(result.processed, {
+              one: `Processed # mutation`,
+              other: `Processed # mutations`,
+            })
           );
         }
       } else {

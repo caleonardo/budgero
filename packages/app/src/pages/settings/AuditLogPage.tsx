@@ -1,5 +1,7 @@
 'use client';
 
+import { plural } from '@lingui/core/macro';
+
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import React from 'react';
@@ -193,7 +195,10 @@ export default function AuditLogPage() {
               </CardTitle>
               <CardDescription>
                 {totalCount > 0
-                  ? `${totalCount} recorded action${totalCount !== 1 ? 's' : ''} (showing ${Math.min(PAGE_SIZE, history.length)} per page)`
+                  ? plural(totalCount, {
+                      one: `# recorded action (showing ${Math.min(PAGE_SIZE, history.length)} per page)`,
+                      other: `# recorded actions (showing ${Math.min(PAGE_SIZE, history.length)} per page)`,
+                    })
                   : 'No actions recorded yet'}
               </CardDescription>
             </div>

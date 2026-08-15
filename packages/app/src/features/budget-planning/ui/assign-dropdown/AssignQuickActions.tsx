@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { DropdownMenuItem, DropdownMenuSeparator } from '@shared/ui/dropdown-menu';
 import { Target, AlertTriangle, TrendingDown, RotateCcw, RefreshCw } from 'lucide-react';
@@ -72,7 +73,10 @@ export function AssignQuickActions({
           <div className="text-xs text-muted-foreground">
             {underfundedGoals.length === 0
               ? 'All goals funded'
-              : `${underfundedGoals.length} goal${underfundedGoals.length === 1 ? '' : 's'} need ${formatMilli(globalLocalizer, asMilli(Math.min(totalUnderfunded, readyToAssign)))}`}
+              : plural(underfundedGoals.length, {
+                  one: `# goal needs ${formatMilli(globalLocalizer, asMilli(Math.min(totalUnderfunded, readyToAssign)))}`,
+                  other: `# goals need ${formatMilli(globalLocalizer, asMilli(Math.min(totalUnderfunded, readyToAssign)))}`,
+                })}
           </div>
         </div>
       </DropdownMenuItem>
@@ -94,7 +98,10 @@ export function AssignQuickActions({
           <div className="text-xs text-muted-foreground">
             {overspentCategories.length === 0
               ? 'No overspending'
-              : `${overspentCategories.length} categor${overspentCategories.length === 1 ? 'y' : 'ies'} need ${formatMilli(globalLocalizer, asMilli(Math.min(totalOverspent, readyToAssign)))}`}
+              : plural(overspentCategories.length, {
+                  one: `# category needs ${formatMilli(globalLocalizer, asMilli(Math.min(totalOverspent, readyToAssign)))}`,
+                  other: `# categories need ${formatMilli(globalLocalizer, asMilli(Math.min(totalOverspent, readyToAssign)))}`,
+                })}
           </div>
         </div>
       </DropdownMenuItem>
@@ -114,7 +121,10 @@ export function AssignQuickActions({
           <div className="text-xs text-muted-foreground">
             {overfundedCategories.length === 0
               ? 'No overfunding'
-              : `Free up ${formatMilli(globalLocalizer, totalSafeReduction)} from ${overfundedCategories.length} categor${overfundedCategories.length === 1 ? 'y' : 'ies'}`}
+              : plural(overfundedCategories.length, {
+                  one: `Free up ${formatMilli(globalLocalizer, totalSafeReduction)} from # category`,
+                  other: `Free up ${formatMilli(globalLocalizer, totalSafeReduction)} from # categories`,
+                })}
           </div>
         </div>
       </DropdownMenuItem>
@@ -139,7 +149,10 @@ export function AssignQuickActions({
               const parts = [];
               if (overspentCount > 0) parts.push(`${overspentCount} overspent`);
               if (overfundedCount > 0) parts.push(`${overfundedCount} with surplus`);
-              return `Adjust ${nonZeroCount} categor${nonZeroCount === 1 ? 'y' : 'ies'} (${parts.join(', ')})`;
+              return plural(nonZeroCount, {
+                one: `Adjust # category (${parts.join(', ')})`,
+                other: `Adjust # categories (${parts.join(', ')})`,
+              });
             })()}
           </div>
         </div>
@@ -158,7 +171,10 @@ export function AssignQuickActions({
           <div className="text-xs text-muted-foreground">
             {resetAssignedCount === 0
               ? 'All assignments already zero'
-              : `Reset ${formatMilli(globalLocalizer, resetAssignedTotal)} across ${resetAssignedCount} categor${resetAssignedCount === 1 ? 'y' : 'ies'}`}
+              : plural(resetAssignedCount, {
+                  one: `Reset ${formatMilli(globalLocalizer, resetAssignedTotal)} across # category`,
+                  other: `Reset ${formatMilli(globalLocalizer, resetAssignedTotal)} across # categories`,
+                })}
           </div>
         </div>
       </DropdownMenuItem>

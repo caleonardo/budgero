@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
 import { parseISO } from 'date-fns';
@@ -70,7 +71,10 @@ function RateCacheSettingsCard() {
       const pruned = services.currency.pruneRateCache(selectedBudget.ID);
       if (pruned > 0) {
         toast.success(t`Rate cache pruned`, {
-          description: `${pruned} cached rate${pruned !== 1 ? 's' : ''} older than ${days} days removed.`,
+          description: plural(pruned, {
+            one: `# cached rate older than ${days} days removed.`,
+            other: `# cached rates older than ${days} days removed.`,
+          }),
         });
       }
     }
@@ -485,7 +489,10 @@ export default function CurrencySettingsPage() {
         toast.success(t`Rate updated`, {
           description:
             count > 0
-              ? `${count} transaction${count !== 1 ? 's' : ''} recalculated.`
+              ? plural(count, {
+                  one: `# transaction recalculated.`,
+                  other: `# transactions recalculated.`,
+                })
               : 'No transactions were affected.',
         });
       } else {
@@ -502,7 +509,10 @@ export default function CurrencySettingsPage() {
         toast.success(t`Rate added`, {
           description:
             count > 0
-              ? `${count} transaction${count !== 1 ? 's' : ''} recalculated.`
+              ? plural(count, {
+                  one: `# transaction recalculated.`,
+                  other: `# transactions recalculated.`,
+                })
               : 'Rate saved. New transactions will use this rate.',
         });
       }
@@ -524,7 +534,10 @@ export default function CurrencySettingsPage() {
       toast.success(t`Rate deleted`, {
         description:
           count > 0
-            ? `${count} transaction${count !== 1 ? 's' : ''} recalculated using fallback rates.`
+            ? plural(count, {
+                one: `# transaction recalculated using fallback rates.`,
+                other: `# transactions recalculated using fallback rates.`,
+              })
             : 'No transactions were affected.',
       });
     } catch (err) {

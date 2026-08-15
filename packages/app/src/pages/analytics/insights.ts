@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 /**
  * Insight sentences: plain-language findings computed from the report
  * models. Each builder returns at most three short sentences, best first;
@@ -98,7 +99,10 @@ export function inOutInsights(
     const worst = negativeMonths.reduce((a, b) => (a.net < b.net ? a : b));
     insights.push({
       tone: 'warn',
-      text: `${negativeMonths.length} negative ${negativeMonths.length === 1 ? 'month' : 'months'}; the deepest was ${fmt.monthLabel(worst.monthKey)} (${fmt.money(worst.net)}).`,
+      text: plural(negativeMonths.length, {
+        one: `# negative month; the deepest was ${fmt.monthLabel(worst.monthKey)} (${fmt.money(worst.net)}).`,
+        other: `# negative months; the deepest was ${fmt.monthLabel(worst.monthKey)} (${fmt.money(worst.net)}).`,
+      }),
     });
   }
   return insights.slice(0, 3);

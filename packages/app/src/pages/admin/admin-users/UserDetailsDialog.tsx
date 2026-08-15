@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import {
@@ -123,7 +124,10 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
               icon={Activity}
               label="Total Mutations"
               value={details?.mutations.totalMutations?.toLocaleString() ?? (loading ? '...' : '0')}
-              helper={`${details?.mutations.activeDays ?? 0} active day${(details?.mutations.activeDays ?? 0) === 1 ? '' : 's'} in window`}
+              helper={plural(details?.mutations.activeDays ?? 0, {
+                one: `${details?.mutations.activeDays ?? 0} active day in window`,
+                other: `${details?.mutations.activeDays ?? 0} active days in window`,
+              })}
             />
             <MetricCard
               icon={Users}
