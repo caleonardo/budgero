@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -66,6 +66,8 @@ const CLOSED_CREATE_DIALOG: {
 } = { open: false, email: '', name: '', password: '', isAdmin: false, submitting: false };
 
 export default function SelfHostAdminUsers() {
+  const { t } = useLingui();
+
   const adminApi = useAdminApi();
   const [users, setUsers] = useState<SelfHostAdminUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,11 +83,11 @@ export default function SelfHostAdminUsers() {
       setUsers(data ?? []);
     } catch (error) {
       console.error('Failed to load self-host users', error);
-      toast.error('Unable to load users');
+      toast.error(t`Unable to load users`);
     } finally {
       setLoading(false);
     }
-  }, [adminApi]);
+  }, [adminApi, t]);
 
   useEffect(() => {
     void loadUsers();
@@ -113,24 +115,24 @@ export default function SelfHostAdminUsers() {
   const handleResetPassword = async () => {
     if (!resetDialog.user) return;
     if (resetDialog.password.length < 8) {
-      toast.error('Password too short', {
+      toast.error(t`Password too short`, {
         description: 'Use at least 8 characters.',
       });
       return;
     }
     if (resetDialog.password !== resetDialog.confirm) {
-      toast.error('Passwords do not match');
+      toast.error(t`Passwords do not match`);
       return;
     }
 
     try {
       setResetDialog((prev) => ({ ...prev, submitting: true }));
       await adminApi.resetSelfHostPassword(resetDialog.user.id, resetDialog.password);
-      toast.success('Password updated', { description: resetDialog.user.email });
+      toast.success(t`Password updated`, { description: resetDialog.user.email });
       setResetDialog(CLOSED_RESET_DIALOG);
     } catch (error) {
       console.error('Failed to reset password', error);
-      toast.error('Reset failed');
+      toast.error(t`Reset failed`);
       setResetDialog((prev) => ({ ...prev, submitting: false }));
     }
   };
@@ -140,12 +142,12 @@ export default function SelfHostAdminUsers() {
     try {
       setDeleteDialog((prev) => ({ ...prev, submitting: true }));
       await adminApi.deleteSelfHostUser(deleteDialog.user.id);
-      toast.success('User deleted', { description: deleteDialog.user.email });
+      toast.success(t`User deleted`, { description: deleteDialog.user.email });
       setDeleteDialog(CLOSED_DELETE_DIALOG);
       await loadUsers();
     } catch (error) {
       console.error('Failed to delete user', error);
-      toast.error('Delete failed');
+      toast.error(t`Delete failed`);
       setDeleteDialog((prev) => ({ ...prev, submitting: false }));
     }
   };
@@ -154,15 +156,15 @@ export default function SelfHostAdminUsers() {
     try {
       if (block) {
         await adminApi.blockUser(user.id);
-        toast.success('Blocked', { description: `${user.email} cannot log in` });
+        toast.success(t`Blocked`, { description: `${user.email} cannot log in` });
       } else {
         await adminApi.unblockUser(user.id);
-        toast.success('Unblocked', { description: `${user.email} can log in again` });
+        toast.success(t`Unblocked`, { description: `${user.email} can log in again` });
       }
       await loadUsers();
     } catch (error) {
       console.error('Failed to update block flag', error);
-      toast.error('Update failed');
+      toast.error(t`Update failed`);
     }
   };
 
@@ -172,10 +174,10 @@ export default function SelfHostAdminUsers() {
     if (!confirmed) return;
     try {
       await adminApi.resetUserData(user.id);
-      toast.success('User data reset', { description: user.email });
+      toast.success(t`User data reset`, { description: user.email });
     } catch (error) {
       console.error('Failed to reset data', error);
-      toast.error('Reset failed');
+      toast.error(t`Reset failed`);
     }
   };
 
@@ -189,11 +191,11 @@ export default function SelfHostAdminUsers() {
 
   const handleCreateUser = async () => {
     if (!createDialog.email.trim()) {
-      toast.error('Username required');
+      toast.error(t`Username required`);
       return;
     }
     if (createDialog.password.length < 8) {
-      toast.error('Password too short', {
+      toast.error(t`Password too short`, {
         description: 'Use at least 8 characters.',
       });
       return;
@@ -207,12 +209,12 @@ export default function SelfHostAdminUsers() {
         createDialog.password,
         createDialog.isAdmin
       );
-      toast.success('User created', { description: createDialog.email });
+      toast.success(t`User created`, { description: createDialog.email });
       setCreateDialog(CLOSED_CREATE_DIALOG);
       await loadUsers();
     } catch (error) {
       console.error('Failed to create user', error);
-      toast.error('Create failed');
+      toast.error(t`Create failed`);
       setCreateDialog((prev) => ({ ...prev, submitting: false }));
     }
   };
@@ -313,7 +315,7 @@ export default function SelfHostAdminUsers() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              placeholder="Search by username, name, or ID..."
+              placeholder={t`Search by username, name, or ID...`}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               className="pl-10"
@@ -489,7 +491,7 @@ export default function SelfHostAdminUsers() {
                 onChange={(event) =>
                   setResetDialog((prev) => ({ ...prev, password: event.target.value }))
                 }
-                placeholder="At least 8 characters"
+                placeholder={t`At least 8 characters`}
               />
             </div>
             <div className="space-y-2">
@@ -575,7 +577,7 @@ export default function SelfHostAdminUsers() {
                 onChange={(event) =>
                   setCreateDialog((prev) => ({ ...prev, email: event.target.value }))
                 }
-                placeholder="johndoe"
+                placeholder={t`johndoe`}
               />
             </div>
             <div className="space-y-2">
@@ -589,7 +591,7 @@ export default function SelfHostAdminUsers() {
                 onChange={(event) =>
                   setCreateDialog((prev) => ({ ...prev, name: event.target.value }))
                 }
-                placeholder="John Doe"
+                placeholder={t`John Doe`}
               />
             </div>
             <div className="space-y-2">
@@ -604,14 +606,14 @@ export default function SelfHostAdminUsers() {
                   onChange={(event) =>
                     setCreateDialog((prev) => ({ ...prev, password: event.target.value }))
                   }
-                  placeholder="At least 8 characters"
+                  placeholder={t`At least 8 characters`}
                   className="flex-1"
                 />
                 <Button
                   type="button"
                   variant="outline"
                   onClick={generatePassword}
-                  title="Generate random password"
+                  title={t`Generate random password`}
                 >
                   <Dices className="w-4 h-4" />
                 </Button>

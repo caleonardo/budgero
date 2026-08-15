@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { DialogTrigger } from '@shared/ui/dialog';
@@ -105,6 +105,8 @@ export function TransactionsToolbar({
   showOnlyUncategorized,
   setShowOnlyUncategorized,
 }: TransactionsToolbarProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-4 mb-4">
       <div className="flex justify-between items-center gap-4">
@@ -124,7 +126,7 @@ export function TransactionsToolbar({
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search: groceries, last 30 days, outflows..."
+            placeholder={t`Search: groceries, last 30 days, outflows...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
@@ -274,7 +276,7 @@ export function TransactionsToolbar({
             <Trans>Rows:</Trans>
           </span>
           <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-            <SelectTrigger size="sm" className="h-8 w-[84px] text-xs" aria-label="Rows per page">
+            <SelectTrigger size="sm" className="h-8 w-[84px] text-xs" aria-label={t`Rows per page`}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

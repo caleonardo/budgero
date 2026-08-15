@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, useMemo, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useBatchUpsertAssignments } from '@entities/budget/api/useMonthlyBudget';
@@ -61,6 +61,8 @@ export function useAssignDropdownState({
   globalLocalizer,
   allowOverAssignment = false,
 }: UseAssignDropdownStateProps): UseAssignDropdownStateReturn {
+  const { t } = useLingui();
+
   const batchUpsertAssignments = useBatchUpsertAssignments();
   const [isAssigning, setIsAssigning] = useState(false);
 
@@ -92,7 +94,7 @@ export function useAssignDropdownState({
 
   const handleAutoAssignUnderfunded = useCallback(async () => {
     if (underfundedGoals.length === 0) {
-      toast.success('No underfunded goals', {
+      toast.success(t`No underfunded goals`, {
         description: 'All goals are fully funded!',
       });
       return;
@@ -119,7 +121,7 @@ export function useAssignDropdownState({
 
       const { details, moreText } = formatAssignmentDetails(assignments, globalLocalizer);
 
-      toast.success('Auto-assigned to goals', {
+      toast.success(t`Auto-assigned to goals`, {
         description: (
           <div className="mt-2 space-y-1">
             <div className="text-sm font-medium">
@@ -133,13 +135,14 @@ export function useAssignDropdownState({
         ),
       });
     } catch {
-      toast.error('Assignment failed', {
+      toast.error(t`Assignment failed`, {
         description: 'Failed to auto-assign to goals. Please try again.',
       });
     } finally {
       setIsAssigning(false);
     }
   }, [
+    t,
     underfundedGoals,
     readyToAssign,
     budgetData,
@@ -151,7 +154,7 @@ export function useAssignDropdownState({
 
   const handleCoverOverspending = useCallback(async () => {
     if (overspentCategories.length === 0) {
-      toast.success('No overspending', {
+      toast.success(t`No overspending`, {
         description: 'No categories are overspent!',
       });
       return;
@@ -178,7 +181,7 @@ export function useAssignDropdownState({
 
       const { details, moreText } = formatAssignmentDetails(assignments, globalLocalizer);
 
-      toast.success('Covered overspending', {
+      toast.success(t`Covered overspending`, {
         description: (
           <div className="mt-2 space-y-1">
             <div className="text-sm font-medium">
@@ -192,13 +195,14 @@ export function useAssignDropdownState({
         ),
       });
     } catch {
-      toast.error('Assignment failed', {
+      toast.error(t`Assignment failed`, {
         description: 'Failed to cover overspending. Please try again.',
       });
     } finally {
       setIsAssigning(false);
     }
   }, [
+    t,
     overspentCategories,
     readyToAssign,
     budgetData,
@@ -210,7 +214,7 @@ export function useAssignDropdownState({
 
   const handleReduceOverfunding = useCallback(async () => {
     if (overfundedCategories.length === 0) {
-      toast.success('No overfunding', {
+      toast.success(t`No overfunding`, {
         description: 'No categories are overfunded!',
       });
       return;
@@ -232,7 +236,7 @@ export function useAssignDropdownState({
 
       const { details, moreText } = formatReductionDetails(reductions, globalLocalizer);
 
-      toast.success('Reduced overfunding', {
+      toast.success(t`Reduced overfunding`, {
         description: (
           <div className="mt-2 space-y-1">
             <div className="text-sm font-medium">
@@ -246,19 +250,19 @@ export function useAssignDropdownState({
         ),
       });
     } catch {
-      toast.error('Reduction failed', {
+      toast.error(t`Reduction failed`, {
         description: 'Failed to reduce overfunding. Please try again.',
       });
     } finally {
       setIsAssigning(false);
     }
-  }, [overfundedCategories, currentMonth, budgetId, globalLocalizer, batchUpsertAssignments]);
+  }, [overfundedCategories, currentMonth, budgetId, globalLocalizer, batchUpsertAssignments, t]);
 
   const handleResetAvailable = useCallback(async () => {
     const categoriesToReset = budgetData.filter((row) => row.CategoryID > 0);
 
     if (categoriesToReset.length === 0) {
-      toast.success('No categories to reset', {
+      toast.success(t`No categories to reset`, {
         description: 'No categories found!',
       });
       return;
@@ -270,7 +274,7 @@ export function useAssignDropdownState({
       const { resets, batchAssignments } = prepareResetAvailableAssignments(budgetData);
 
       if (batchAssignments.length === 0) {
-        toast.success('No changes needed', {
+        toast.success(t`No changes needed`, {
           description: 'All categories already have available amounts at zero!',
         });
         setIsAssigning(false);
@@ -288,7 +292,7 @@ export function useAssignDropdownState({
       const { details, moreText, totalChange } = formatResetDetails(resets, globalLocalizer);
       const changedCount = resets.filter((r) => r.amount !== 0).length;
 
-      toast.success('Reset available amounts to zero', {
+      toast.success(t`Reset available amounts to zero`, {
         description: (
           <div className="mt-2 space-y-1">
             <div className="text-sm font-medium">
@@ -306,19 +310,19 @@ export function useAssignDropdownState({
         ),
       });
     } catch {
-      toast.error('Reset failed', {
+      toast.error(t`Reset failed`, {
         description: 'Failed to reset available amounts. Please try again.',
       });
     } finally {
       setIsAssigning(false);
     }
-  }, [budgetData, currentMonth, budgetId, globalLocalizer, batchUpsertAssignments]);
+  }, [budgetData, currentMonth, budgetId, globalLocalizer, batchUpsertAssignments, t]);
 
   const handleResetAssigned = useCallback(async () => {
     const categoriesToProcess = budgetData.filter((row) => row.CategoryID > 0);
 
     if (categoriesToProcess.length === 0) {
-      toast.success('No categories to reset', {
+      toast.success(t`No categories to reset`, {
         description: 'No categories found for this month.',
       });
       return;
@@ -339,7 +343,7 @@ export function useAssignDropdownState({
 
       const { details, moreText, netChange } = formatChangeDetails(changes, globalLocalizer);
 
-      toast.success('Reset assigned amounts', {
+      toast.success(t`Reset assigned amounts`, {
         description: (
           <div className="mt-2 space-y-1">
             <div className="text-sm text-muted-foreground">
@@ -356,13 +360,13 @@ export function useAssignDropdownState({
         ),
       });
     } catch {
-      toast.error('Reset failed', {
+      toast.error(t`Reset failed`, {
         description: 'Failed to reset assigned amounts. Please try again.',
       });
     } finally {
       setIsAssigning(false);
     }
-  }, [budgetData, currentMonth, budgetId, globalLocalizer, batchUpsertAssignments]);
+  }, [budgetData, currentMonth, budgetId, globalLocalizer, batchUpsertAssignments, t]);
 
   return {
     isAssigning,

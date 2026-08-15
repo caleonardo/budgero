@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState, useEffect, useId } from 'react';
 import { toast } from 'sonner';
 import { Input } from '@shared/ui/input';
@@ -30,6 +30,8 @@ export const EditBudgetForm: React.FC<EditBudgetFormProps> = ({
   onError,
   onClose,
 }) => {
+  const { t } = useLingui();
+
   const { setSelectedBudget, setGlobalLocalizer } = useUiStore();
   const nameInputId = useId();
 
@@ -109,7 +111,7 @@ export const EditBudgetForm: React.FC<EditBudgetFormProps> = ({
         if (onUpdated) onUpdated();
       }
 
-      toast.success('Budget updated successfully');
+      toast.success(t`Budget updated successfully`);
       onClose();
     } catch (err: unknown) {
       const errorMessage = getErrorMessage(err, 'Failed to update budget');
@@ -129,23 +131,23 @@ export const EditBudgetForm: React.FC<EditBudgetFormProps> = ({
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Enter budget name"
+          placeholder={t`Enter budget name`}
           required
         />
       </div>
       <CurrencySelector
         value={displayCurrency}
         onValueChange={setDisplayCurrency}
-        label="Display Currency"
+        label={t`Display Currency`}
       />
       <div>
-        <IconPicker value={badgeIcon} onValueChange={setBadgeIcon} label="Badge Icon" />
+        <IconPicker value={badgeIcon} onValueChange={setBadgeIcon} label={t`Badge Icon`} />
       </div>
       <FormatSelector
         value={selectedFormat}
         currency={displayCurrency}
         onValueChange={setSelectedFormat}
-        label="Number Format"
+        label={t`Number Format`}
       />
       {isLoading && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">

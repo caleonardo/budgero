@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Fragment, useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Plus, Save, Trash2 } from 'lucide-react';
@@ -67,6 +67,8 @@ function nextOneOffId(): string {
  * where the balance goes — including the month it would break.
  */
 export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps) {
+  const { t } = useLingui();
+
   const palette = usePalette();
   const money = useMoneyFormatters();
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
@@ -469,7 +471,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
 
   return (
     <ReportShell
-      title="Scenario Planner"
+      title={t`Scenario Planner`}
       hero={money.amount(chartedEnd)}
       heroClassName={trendTextClass(chartedEnd)}
       subtitle={
@@ -652,7 +654,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                       }
                       localizer={globalLocalizer}
                       formatter={(value) => globalLocalizer.format(value)}
-                      placeholder="Amount"
+                      placeholder={t`Amount`}
                       inputAlign="right"
                       zeroAsEmpty
                       className="w-[170px] shrink-0 overflow-hidden"
@@ -660,7 +662,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                     />
                     <Input
                       value={row.label}
-                      placeholder="Label (optional)"
+                      placeholder={t`Label (optional)`}
                       onChange={(event) => updateOneOff(row.id, { label: event.target.value })}
                       className="h-8 min-w-[120px] flex-1"
                     />
@@ -669,7 +671,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                       size="icon"
                       className="h-8 w-8 text-muted-foreground"
                       onClick={() => removeOneOff(row.id)}
-                      aria-label="Remove one-off"
+                      aria-label={t`Remove one-off`}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -682,23 +684,23 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
       }
       isLoading={data.isLoading}
       isEmpty={isEmpty}
-      emptyText="Pick a period with some history to project from."
+      emptyText={t`Pick a period with some history to project from.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
             <StatTile
-              label="End balance"
+              label={t`End balance`}
               value={money.tile(chartedEnd)}
               valueClassName={trendTextClass(chartedEnd)}
             />
             <StatTile
-              label="Lowest point"
+              label={t`Lowest point`}
               value={money.tile(chartedMin.balance)}
               valueClassName={trendTextClass(chartedMin.balance)}
               detail={chartedMin.monthKey ? shortMonthLabel(chartedMin.monthKey) : undefined}
             />
             <StatTile
-              label="Breaks"
+              label={t`Breaks`}
               value={scenario.breakMonthKey ? shortMonthLabel(scenario.breakMonthKey) : 'Never'}
               valueClassName={
                 scenario.breakMonthKey ? 'text-red-600 dark:text-red-300' : 'text-green-600'
@@ -711,7 +713,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                     : 'net stays positive for 50 years'
               }
             />
-            <StatTile label="Starting funds" value={money.tile(startBalance)} />
+            <StatTile label={t`Starting funds`} value={money.tile(startBalance)} />
           </div>
 
           <PanelSectionTitle>
@@ -721,7 +723,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             <Input
               value={scenarioName}
               onChange={(event) => setScenarioName(event.target.value)}
-              placeholder="Scenario name"
+              placeholder={t`Scenario name`}
               className="h-8"
             />
             <Button

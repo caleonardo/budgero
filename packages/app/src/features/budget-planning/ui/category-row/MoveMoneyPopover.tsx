@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { CalculatorCell } from '@shared/ui/calculator-cell';
@@ -46,6 +46,8 @@ export function MoveMoneyPopover({
   align = 'end',
   triggerClassName,
 }: MoveMoneyPopoverProps) {
+  const { t } = useLingui();
+
   const formatAmount = useFormatMaskedMilli(globalLocalizer);
 
   const handleOpenChange = (open: boolean) => {
@@ -65,7 +67,7 @@ export function MoveMoneyPopover({
             availableAmountClass(available),
             triggerClassName
           )}
-          title="Move money"
+          title={t`Move money`}
           onClick={(e) => {
             e.stopPropagation();
             setMoveOpen(true);
@@ -108,7 +110,7 @@ export function MoveMoneyPopover({
               budgetId={selectedBudgetId}
               selectedCategoryId={moveTarget}
               onCategorySelect={(id) => setMoveTarget(id)}
-              placeholder="Select target"
+              placeholder={t`Select target`}
               triggerClassName="h-8 w-full justify-start"
               popoverContentClassName="w-72"
               includeReadyToAssign

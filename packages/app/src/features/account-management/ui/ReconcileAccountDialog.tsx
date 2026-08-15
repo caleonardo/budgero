@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, useRef } from 'react';
 import { Button } from '@shared/ui/button';
 import {
@@ -31,6 +31,8 @@ interface ReconcileAccountDialogProps {
 }
 
 export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDialogProps) {
+  const { t } = useLingui();
+
   const [isOpen, setIsOpen] = useState(false);
   const [actualBalance, setActualBalance] = useState<MilliUnits | null>(null);
   // Live value as the user types (before commit) so the difference updates immediately.
@@ -65,7 +67,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
     }
 
     if (actualBalance === null) {
-      toast.error('Please enter a valid balance amount');
+      toast.error(t`Please enter a valid balance amount`);
       return;
     }
 
@@ -75,7 +77,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
 
     // Validate income category before starting submission
     if (needsAdjustment && !incomeCategory) {
-      toast.error('Income category not found. Please ensure your budget has an Income category.');
+      toast.error(t`Income category not found. Please ensure your budget has an Income category.`);
       return;
     }
 
@@ -118,7 +120,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
           `Account reconciled successfully. ${isInflow ? 'Added' : 'Removed'} ${formatMilli(accountLocalizer, amount)}`
         );
       } else {
-        toast.success('Account reconciled successfully. Balance matches - no adjustment needed.');
+        toast.success(t`Account reconciled successfully. Balance matches - no adjustment needed.`);
       }
       setIsOpen(false);
       setActualBalance(null);
@@ -126,7 +128,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
       setIsEditingBalance(false);
     } catch (error) {
       console.error('Error reconciling account:', error);
-      toast.error('Failed to reconcile account. Please try again.');
+      toast.error(t`Failed to reconcile account. Please try again.`);
     } finally {
       isSubmittingRef.current = false;
       setIsSubmitting(false);
@@ -208,7 +210,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
           </div>
 
           <Field
-            label="Actual Balance"
+            label={t`Actual Balance`}
             htmlFor="actual-balance"
             className="order-3 space-y-2 md:order-2"
           >

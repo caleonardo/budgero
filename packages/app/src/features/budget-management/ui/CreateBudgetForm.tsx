@@ -1,6 +1,6 @@
 'use client';
 
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import React, { useEffect, useState, useRef, ChangeEvent } from 'react';
 import { useSwipeable } from 'react-swipeable';
@@ -33,6 +33,8 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   onModeChange,
   defaultTab,
 }) => {
+  const { t } = useLingui();
+
   // Common state
   const { setIsBudgetImporting } = useUiStore();
   const queryClient = useQueryClient();
@@ -111,7 +113,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
 
   const handleImport = async () => {
     if (!file || !budgetName.trim()) {
-      toast.error('Please provide a budget name and select a file');
+      toast.error(t`Please provide a budget name and select a file`);
       return;
     }
 
@@ -121,7 +123,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       const dbAdapter = runtime.getDatabase();
 
       if (!dbAdapter) {
-        toast.error('Database not initialized');
+        toast.error(t`Database not initialized`);
         return;
       }
 
@@ -212,7 +214,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
 
   const handleCoreImport = async () => {
     if (!coreFile) {
-      toast.error('Select the Budgero backup file you want to restore.');
+      toast.error(t`Select the Budgero backup file you want to restore.`);
       return;
     }
 
@@ -261,7 +263,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       }
 
       setCoreStatus('Import complete. Loading your budgets…');
-      toast.success('Budgero backup imported successfully.');
+      toast.success(t`Budgero backup imported successfully.`);
       setCoreFile(null);
       if (coreFileInputRef.current) {
         coreFileInputRef.current.value = '';

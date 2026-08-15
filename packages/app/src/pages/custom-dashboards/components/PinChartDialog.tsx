@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { CustomDashboard, UnifiedReport } from '@budgero/core/browser';
 import {
@@ -46,6 +46,8 @@ export function PinChartDialog({
   description = 'Choose a report chart and target dashboard.',
   confirmLabel = 'Pin Chart',
 }: PinChartDialogProps) {
+  const { t } = useLingui();
+
   const [selectedDashboardId, setSelectedDashboardId] = useState('');
   const {
     selectableReports,
@@ -77,7 +79,7 @@ export function PinChartDialog({
 
   const handleSubmit = async () => {
     if (!selectedDashboardId || !selectedReportId || !selectedChartId) {
-      toast.error('Please select dashboard, report, and chart.');
+      toast.error(t`Please select dashboard, report, and chart.`);
       return;
     }
 
@@ -139,7 +141,7 @@ export function PinChartDialog({
               </Label>
               <Select value={selectedDashboardId} onValueChange={setSelectedDashboardId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select dashboard" />
+                  <SelectValue placeholder={t`Select dashboard`} />
                 </SelectTrigger>
                 <SelectContent>
                   {dashboards.map((dashboard) => (

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { CalendarRange, ChartPie, BarChartHorizontal, LayoutGrid } from 'lucide-react';
@@ -50,6 +50,8 @@ interface SpendingReportProps {
  * dimension. The side panel always carries the full ranked list.
  */
 export function SpendingReport({ data, months }: SpendingReportProps) {
+  const { t } = useLingui();
+
   const [view, setView] = useState<SpendingView>('time');
   const [shareStyle, setShareStyle] = useState<ShareStyle>('donut');
   const [dim, setDim] = useState<SpendingDimension>('category');
@@ -252,7 +254,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
 
   return (
     <ReportShell
-      title="Spending"
+      title={t`Spending`}
       hero={
         <AnimatedNumber
           value={total}
@@ -313,8 +315,8 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
-            <StatTile label="Total" value={money.tile(total)} />
-            <StatTile label="Avg / month" value={money.tile(Math.round(total / monthCount))} />
+            <StatTile label={t`Total`} value={money.tile(total)} />
+            <StatTile label={t`Avg / month`} value={money.tile(Math.round(total / monthCount))} />
             <StatTile
               label={`Top ${DIM_LABELS[dim].replace(/s$/, '').toLowerCase()}`}
               value={top?.name ?? '—'}

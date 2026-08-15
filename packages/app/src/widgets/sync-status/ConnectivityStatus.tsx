@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Real-time connectivity indicator showing online/offline and WebSocket sync status
  */
@@ -17,6 +17,8 @@ interface ConnectivityStatusProps {
  * Compact version for header/toolbar
  */
 export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
+  const { t } = useLingui();
+
   const [snapshot, setSnapshot] = useState(() => ({
     clerkToken: false,
     apiReachable: false,
@@ -80,7 +82,7 @@ export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
             'flex items-center gap-1 rounded-md px-1.5 py-1 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             className
           )}
-          aria-label="Connectivity status"
+          aria-label={t`Connectivity status`}
         >
           <div className={cn('w-1.5 h-1.5 rounded-full', statusColor)} />
           {snapshot.wsConnected && <span className="text-xs text-muted-foreground">⚡</span>}

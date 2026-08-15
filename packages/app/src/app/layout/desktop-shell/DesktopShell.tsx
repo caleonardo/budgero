@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import {
@@ -18,6 +18,8 @@ import { HeaderBar } from './HeaderBar';
 import type { DesktopShellProps } from './types';
 
 export function DesktopShell({ children }: DesktopShellProps) {
+  const { t } = useLingui();
+
   const { breadcrumbs, logout } = useDesktopShellState();
 
   return (
@@ -26,7 +28,7 @@ export function DesktopShell({ children }: DesktopShellProps) {
         <SidebarHeader className="p-2">
           <div className="flex items-center justify-between gap-2 px-2">
             <Link to="/dashboard" className="flex items-center gap-2">
-              <img src={logoImg} alt="Budgero" className="h-8 w-8 rounded-lg shadow-sm" />
+              <img src={logoImg} alt={t`Budgero`} className="h-8 w-8 rounded-lg shadow-sm" />
               <span className="font-semibold">
                 <Trans>Budgero</Trans>
               </span>

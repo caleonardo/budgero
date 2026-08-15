@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Plus, Trash2, MessageSquare, MoreHorizontal } from 'lucide-react';
 import {
@@ -27,6 +27,8 @@ export function ChatConversationList({
   onDelete,
   onNew,
 }: ChatConversationListProps) {
+  const { t } = useLingui();
+
   const sorted = sortConversationsByRecent(conversations);
 
   return (
@@ -35,7 +37,7 @@ export function ChatConversationList({
         <span className="text-sm font-medium">
           <Trans>Chats</Trans>
         </span>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onNew} title="New chat">
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onNew} title={t`New chat`}>
           <Plus className="h-4 w-4" />
         </Button>
       </div>

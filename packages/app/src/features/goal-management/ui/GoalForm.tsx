@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toDecimal, ZERO_MILLI } from '@budgero/core/browser';
 import { Button } from '@shared/ui/button';
@@ -126,6 +126,8 @@ export function GoalForm({
   isDeleting = false,
   asCard = true,
 }: GoalFormProps) {
+  const { t } = useLingui();
+
   const isEditing = !!goal;
 
   const [selectedPreset, setSelectedPreset] = useState<GoalPreset>(
@@ -275,7 +277,7 @@ export function GoalForm({
               formatter={formatter.format}
               localizer={formatter}
               inputAlign="center"
-              placeholder="Enter amount"
+              placeholder={t`Enter amount`}
               zeroAsEmpty
               useFormatterForDisplay
               displayClassName="text-sm font-medium border-2 rounded-md px-3 py-2 h-10 flex items-center justify-center bg-background hover:border-primary/40 transition-colors"

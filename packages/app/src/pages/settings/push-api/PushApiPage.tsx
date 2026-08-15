@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -19,6 +19,8 @@ import { RevokeDialog } from './RevokeDialog';
 import { RegenerateDialog } from './RegenerateDialog';
 
 export default function PushApiPage() {
+  const { t } = useLingui();
+
   const state = usePushApiState();
   const { isLoadingStatus, statusError, tokenStatus, handleCopyEndpoint } = state;
 
@@ -46,8 +48,8 @@ export default function PushApiPage() {
   return (
     <div className="container max-w-3xl mx-auto p-4 sm:p-6 space-y-6 pb-24 sm:pb-6">
       <SettingsPageHeader
-        title="Push API"
-        description="Send transactions to Budgero from external services using the Push API."
+        title={t`Push API`}
+        description={t`Send transactions to Budgero from external services using the Push API.`}
       />
 
       {/* Token Management Card */}

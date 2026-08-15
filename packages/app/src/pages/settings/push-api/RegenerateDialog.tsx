@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog';
 import { AlertTriangle } from 'lucide-react';
 import type { PushApiState } from './usePushApiState';
@@ -8,6 +8,8 @@ interface RegenerateDialogProps {
 }
 
 export function RegenerateDialog({ state }: RegenerateDialogProps) {
+  const { t } = useLingui();
+
   const {
     showRegenerateDialog,
     setShowRegenerateDialog,
@@ -23,9 +25,9 @@ export function RegenerateDialog({ state }: RegenerateDialogProps) {
       <ConfirmDialog
         open={showRegenerateDialog}
         onOpenChange={setShowRegenerateDialog}
-        title="Regenerate API Token?"
-        description="This will create a new token and invalidate your current one. Any external services using the old token will need to be updated with the new token."
-        confirmText="Regenerate Token"
+        title={t`Regenerate API Token?`}
+        description={t`This will create a new token and invalidate your current one. Any external services using the old token will need to be updated with the new token.`}
+        confirmText={t`Regenerate Token`}
         onConfirm={confirmRegenerate}
       />
 
@@ -34,7 +36,7 @@ export function RegenerateDialog({ state }: RegenerateDialogProps) {
         open={showKeyWarningDialog}
         onOpenChange={setShowKeyWarningDialog}
         icon={<AlertTriangle className="h-5 w-5 text-yellow-500" />}
-        title="Security Warning"
+        title={t`Security Warning`}
         description={
           <span className="block space-y-3">
             <p>
@@ -65,7 +67,7 @@ export function RegenerateDialog({ state }: RegenerateDialogProps) {
             </p>
           </span>
         }
-        confirmText="Reveal Key"
+        confirmText={t`Reveal Key`}
         onConfirm={confirmRevealKey}
       />
     </>

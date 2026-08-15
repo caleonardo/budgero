@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -43,6 +43,8 @@ export function TransactionsBatchToolbar({
   clearSelection,
   onCreateRecurring,
 }: TransactionsBatchToolbarProps) {
+  const { t } = useLingui();
+
   const numSelected = selectedRowIds.length;
   const [newCategoryID, setNewCategoryID] = useState<number>(-1);
   const [newAccountID, setNewAccountID] = useState<string>('-1');
@@ -225,7 +227,7 @@ export function TransactionsBatchToolbar({
             variant="outline"
             size="sm"
             className="h-8 px-2"
-            aria-label="Create recurring transaction"
+            aria-label={t`Create recurring transaction`}
             onClick={() => {
               onCreateRecurring?.(singleSelectedTransaction);
               clearSelection();
@@ -265,7 +267,7 @@ export function TransactionsBatchToolbar({
                 <div className="px-2 pb-2">
                   <Select onValueChange={setNewAccountID}>
                     <SelectTrigger className="w-full text-xs h-8">
-                      <SelectValue placeholder="Select account" />
+                      <SelectValue placeholder={t`Select account`} />
                     </SelectTrigger>
                     <SelectContent className="text-xs">
                       {accountsData
@@ -293,7 +295,7 @@ export function TransactionsBatchToolbar({
                     onChange={setNewPayee}
                     triggerClassName="w-full text-xs h-8"
                     popoverContentClassName="w-64 max-w-[calc(100vw-2rem)]"
-                    placeholder="Select payee"
+                    placeholder={t`Select payee`}
                   />
                 </div>
               </>

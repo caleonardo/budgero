@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Split Editor Component
  *
@@ -44,6 +44,8 @@ export function SplitEditor({
   parentAmount,
   formatter,
 }: SplitEditorProps) {
+  const { t } = useLingui();
+
   const updateLine = (id: string, updates: Partial<SplitLine>) => {
     onSplitLinesChange(splitLines.map((l) => (l.id === id ? { ...l, ...updates } : l)));
   };
@@ -115,7 +117,7 @@ export function SplitEditor({
                   onCategorySelect={(categoryId) => {
                     updateLine(line.id, { categoryId, transferAccountId: undefined });
                   }}
-                  placeholder="Category"
+                  placeholder={t`Category`}
                   triggerClassName="w-full h-8 sm:h-9"
                   popoverContentClassName="w-[320px] max-w-[90vw]"
                 />
@@ -124,7 +126,7 @@ export function SplitEditor({
                 <Input
                   value={line.memo || ''}
                   onChange={(e) => updateLine(line.id, { memo: e.target.value })}
-                  placeholder="Memo"
+                  placeholder={t`Memo`}
                   className="h-8 sm:h-9"
                 />
               </div>

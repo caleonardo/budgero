@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import type React from 'react';
 import { useId } from 'react';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -101,6 +101,8 @@ export function WarrantyFormDialog({
   recentTransactions,
   formatTxLabel,
 }: WarrantyFormDialogProps) {
+  const { t } = useLingui();
+
   const fieldIdBase = useId();
   const nameId = `${fieldIdBase}-name`;
   const expiryId = `${fieldIdBase}-expiry`;
@@ -122,7 +124,7 @@ export function WarrantyFormDialog({
               id={nameId}
               value={form.name}
               onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-              placeholder="e.g. Laptop Warranty"
+              placeholder={t`e.g. Laptop Warranty`}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -232,7 +234,7 @@ export function WarrantyFormDialog({
               </PopoverTrigger>
               <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                 <Command loop>
-                  <CommandInput placeholder="Search transactions..." />
+                  <CommandInput placeholder={t`Search transactions...`} />
                   <CommandList>
                     <CommandEmpty>
                       <Trans>No transactions found.</Trans>
@@ -297,7 +299,7 @@ export function WarrantyFormDialog({
               id={notesId}
               value={form.notes}
               onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))}
-              placeholder="Optional notes about the warranty..."
+              placeholder={t`Optional notes about the warranty...`}
               rows={3}
             />
           </div>

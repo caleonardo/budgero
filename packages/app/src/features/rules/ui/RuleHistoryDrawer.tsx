@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
 import { ScrollArea } from '@shared/ui/scroll-area';
@@ -118,6 +118,8 @@ function RunAccordionItem({
   onUndoRun: (params: { runId: number; ruleId: number; budgetId: number }) => Promise<void>;
   undoingRunId: number | null;
 }) {
+  const { t } = useLingui();
+
   const statusVariant = getStatusVariant(run.status);
   const { data: changes = [], isLoading } = useRuleRunChanges(run.id, true);
 
@@ -188,8 +190,8 @@ function RunAccordionItem({
                   Undo changes
                 </Button>
               }
-              title="Undo this rule run?"
-              description="Budgero will revert every transaction touched by this run back to its original values. You can re-run the rule afterward if needed."
+              title={t`Undo this rule run?`}
+              description={t`Budgero will revert every transaction touched by this run back to its original values. You can re-run the rule afterward if needed.`}
               confirmText={
                 <>
                   <RotateCcw className="mr-2 h-4 w-4" />

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { trendTextClass } from '@shared/lib/amount-color';
@@ -22,6 +22,8 @@ interface FlowReportProps {
 }
 
 export function FlowReport({ data }: FlowReportProps) {
+  const { t } = useLingui();
+
   const palette = usePalette();
   const money = useMoneyFormatters();
 
@@ -143,7 +145,7 @@ export function FlowReport({ data }: FlowReportProps) {
 
   return (
     <ReportShell
-      title="Money Map"
+      title={t`Money Map`}
       hero={
         <AnimatedNumber
           value={graph.totalIncome}
@@ -159,13 +161,13 @@ export function FlowReport({ data }: FlowReportProps) {
       chart={<EChart option={option} ariaLabel="Income to spending flow" className="h-[440px]" />}
       isLoading={data.isLoading}
       isEmpty={isEmpty}
-      emptyText="No income or spending to map in this period."
+      emptyText={t`No income or spending to map in this period.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
-            <StatTile label="Income" value={money.tile(graph.totalIncome)} />
+            <StatTile label={t`Income`} value={money.tile(graph.totalIncome)} />
             <StatTile
-              label="Spending"
+              label={t`Spending`}
               value={money.tile(graph.totalSpending)}
               valueClassName={
                 graph.totalSpending > 0 ? 'text-red-600 dark:text-red-300' : undefined
@@ -177,7 +179,7 @@ export function FlowReport({ data }: FlowReportProps) {
               valueClassName={trendTextClass(net)}
             />
             <StatTile
-              label="Savings rate"
+              label={t`Savings rate`}
               value={savingsRate === null ? '—' : `${savingsRate.toFixed(0)}%`}
               valueClassName={savingsRate !== null ? trendTextClass(savingsRate) : undefined}
             />

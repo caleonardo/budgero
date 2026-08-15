@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { CurrencySelector } from '@features/currencies/ui/CurrencySelector';
 import { currencies as ALL_CURRENCIES } from '@features/currencies/model/currency-data';
 import React from 'react';
@@ -8,6 +8,8 @@ import { OnboardingOptionTile, Title, type StepProps } from './shared';
 const GLOBE_SRC = '/onboarding-globe-currencies.png';
 
 export const CurrencyStep: React.FC<StepProps> = ({ cur, state, set }) => {
+  const { t } = useLingui();
+
   const popularCodes = new Set(CURRENCIES.map((c) => c.code));
   // True when the user picked a currency from the long-tail dropdown rather
   // than one of the 8 quick-pick tiles. Lets us highlight the dropdown row
@@ -26,7 +28,7 @@ export const CurrencyStep: React.FC<StepProps> = ({ cur, state, set }) => {
       >
         <img
           src={GLOBE_SRC}
-          alt="Globe with currencies orbiting around it"
+          alt={t`Globe with currencies orbiting around it`}
           style={{
             width: '100%',
             maxWidth: 440,

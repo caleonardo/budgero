@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -37,6 +37,8 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
   isLoading = false,
   formatAmount = (value) => toDecimal(value).toLocaleString(),
 }) => {
+  const { t } = useLingui();
+
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
   const handleDelete = async () => {
@@ -78,7 +80,7 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
           </p>
           <Select onValueChange={(value) => setSelectedCategoryId(parseInt(value, 10))}>
             <SelectTrigger>
-              <SelectValue placeholder="Select category" />
+              <SelectValue placeholder={t`Select category`} />
             </SelectTrigger>
             <SelectContent>
               {categories

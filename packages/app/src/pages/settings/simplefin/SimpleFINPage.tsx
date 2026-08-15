@@ -1,6 +1,6 @@
 'use client';
 
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -46,6 +46,8 @@ function formatDate(date: Date): string {
 }
 
 export default function SimpleFINPage() {
+  const { t } = useLingui();
+
   const {
     isConnected,
     credentials,
@@ -67,14 +69,14 @@ export default function SimpleFINPage() {
 
   const handleConnect = async () => {
     if (!setupToken.trim()) {
-      toast.error('Please enter a setup token');
+      toast.error(t`Please enter a setup token`);
       return;
     }
 
     try {
       claim(setupToken.trim());
       setSetupToken('');
-      toast.success('Successfully connected to SimpleFIN');
+      toast.success(t`Successfully connected to SimpleFIN`);
     } catch (error) {
       toast.error(getErrorMessage(error, 'Failed to connect'));
     }
@@ -83,7 +85,7 @@ export default function SimpleFINPage() {
   const handleDisconnect = () => {
     disconnect();
     setShowDisconnectDialog(false);
-    toast.success('Disconnected from SimpleFIN');
+    toast.success(t`Disconnected from SimpleFIN`);
   };
 
   const parsedCredentials = credentials?.accessUrl ? parseAccessUrl(credentials.accessUrl) : null;
@@ -92,8 +94,8 @@ export default function SimpleFINPage() {
   return (
     <div className="container max-w-5xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="SimpleFIN"
-        description="Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync."
+        title={t`SimpleFIN`}
+        description={t`Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync.`}
       >
         <Badge variant="outline" className="text-amber-600 border-amber-600">
           <Trans>
@@ -190,7 +192,7 @@ export default function SimpleFINPage() {
                 </p>
                 <Input
                   type="text"
-                  placeholder="Paste your setup token here..."
+                  placeholder={t`Paste your setup token here...`}
                   value={setupToken}
                   onChange={(e) => setSetupToken(e.target.value)}
                   className="font-mono text-sm"
@@ -261,7 +263,7 @@ export default function SimpleFINPage() {
           </CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
-              <InlineLoadingRow label="Loading accounts..." />
+              <InlineLoadingRow label={t`Loading accounts...`} />
             ) : accounts.length === 0 ? (
               <div className="p-6 text-sm text-muted-foreground">
                 <Trans>
@@ -410,9 +412,9 @@ export default function SimpleFINPage() {
       <ConfirmDialog
         open={showDisconnectDialog}
         onOpenChange={setShowDisconnectDialog}
-        title="Disconnect SimpleFIN?"
-        description="This will remove your SimpleFIN credentials from this browser. You can reconnect at any time with a new setup token."
-        confirmText="Disconnect"
+        title={t`Disconnect SimpleFIN?`}
+        description={t`This will remove your SimpleFIN credentials from this browser. You can reconnect at any time with a new setup token.`}
+        confirmText={t`Disconnect`}
         onConfirm={handleDisconnect}
       />
     </div>

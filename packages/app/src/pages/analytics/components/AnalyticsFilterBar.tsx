@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { CalendarRange } from 'lucide-react';
@@ -18,6 +19,8 @@ interface AnalyticsFilterBarProps {
 }
 
 export function AnalyticsFilterBar({ state, data, showCategoryFilters }: AnalyticsFilterBarProps) {
+  const { t } = useLingui();
+
   const { selections, update } = state;
 
   const accountGroups = useMemo(() => {
@@ -121,7 +124,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
         contentClassName="w-[240px]"
         listClassName="max-h-[280px]"
         searchPlaceholder="Search accounts…"
-        emptyText="No accounts found."
+        emptyText={t`No accounts found.`}
         allOptionLabel="All accounts"
         allOptionValue="all-accounts"
       />
@@ -145,7 +148,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             contentClassName="w-[260px]"
             listClassName="max-h-[280px]"
             searchPlaceholder="Search categories…"
-            emptyText="No categories found."
+            emptyText={t`No categories found.`}
             allOptionLabel="All categories"
             allOptionValue="all-categories"
           />
@@ -166,7 +169,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             contentClassName="w-[240px]"
             listClassName="max-h-[280px]"
             searchPlaceholder="Search payees…"
-            emptyText="No payees found."
+            emptyText={t`No payees found.`}
             allOptionLabel="All payees"
             allOptionValue="all-payees"
           />
@@ -187,7 +190,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             contentClassName="w-[220px]"
             listClassName="max-h-[280px]"
             searchPlaceholder="Search labels…"
-            emptyText="No labels found."
+            emptyText={t`No labels found.`}
             allOptionLabel="All labels"
             allOptionValue="all-labels"
           />

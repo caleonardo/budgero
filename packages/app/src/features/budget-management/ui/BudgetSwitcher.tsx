@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -17,6 +17,8 @@ import {
 import { useActiveSpace } from '@shared/runtime/runtime-provider';
 
 export function BudgetSwitcher() {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const activeSpace = useActiveSpace();
   const canManageBudgets = activeSpace?.role === 'owner';
@@ -55,14 +57,14 @@ export function BudgetSwitcher() {
     (_budgetId: number) => {
       const createdBudget = useUiStore.getState().selectedBudget;
       setCreateDialogOpen(false);
-      toast.success('Budget created', {
+      toast.success(t`Budget created`, {
         description: createdBudget
           ? `Switched to "${createdBudget.Name}".`
           : 'Switched to your new budget.',
       });
       void navigate('/', { replace: true });
     },
-    [navigate]
+    [navigate, t]
   );
 
   return (

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { CustomDashboard } from '@budgero/core/browser';
 import { Button } from '@shared/ui/button';
@@ -27,6 +27,8 @@ export function DashboardSwitcher({
   onRenameDashboard,
   onDeleteDashboard,
 }: DashboardSwitcherProps) {
+  const { t } = useLingui();
+
   const activeDashboard =
     dashboards.find((dashboard) => dashboard.id === activeDashboardId) ?? null;
   const [createOpen, setCreateOpen] = useState(false);
@@ -49,7 +51,7 @@ export function DashboardSwitcher({
   const handleCreate = async () => {
     const name = createName.trim();
     if (!name) {
-      toast.error('Dashboard name cannot be empty');
+      toast.error(t`Dashboard name cannot be empty`);
       return;
     }
     setPendingAction('create');
@@ -67,7 +69,7 @@ export function DashboardSwitcher({
     if (!activeDashboard) return;
     const nextName = renameName.trim();
     if (!nextName) {
-      toast.error('Dashboard name cannot be empty');
+      toast.error(t`Dashboard name cannot be empty`);
       return;
     }
     if (nextName === activeDashboard.name) {
@@ -106,7 +108,7 @@ export function DashboardSwitcher({
         disabled={dashboards.length === 0}
       >
         <SelectTrigger className="w-[240px]">
-          <SelectValue placeholder="Select dashboard" />
+          <SelectValue placeholder={t`Select dashboard`} />
         </SelectTrigger>
         <SelectContent>
           {dashboards.map((dashboard) => (
@@ -143,7 +145,7 @@ export function DashboardSwitcher({
               id="new-dashboard-name"
               value={createName}
               onChange={(event) => setCreateName(event.target.value)}
-              placeholder="My Dashboard"
+              placeholder={t`My Dashboard`}
             />
           </div>
           <div className="flex justify-end gap-2">
@@ -192,7 +194,7 @@ export function DashboardSwitcher({
               id="rename-dashboard-name"
               value={renameName}
               onChange={(event) => setRenameName(event.target.value)}
-              placeholder="Dashboard name"
+              placeholder={t`Dashboard name`}
             />
           </div>
           <div className="flex justify-end gap-2">

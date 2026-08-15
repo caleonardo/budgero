@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import type { EChartsCoreOption } from 'echarts/core';
@@ -118,6 +118,8 @@ export function BudgetContextPanel({
   transformedRows,
   monthsBack = 6,
 }: BudgetContextPanelProps) {
+  const { t } = useLingui();
+
   const batchUpsertAssignments = useBatchUpsertAssignments();
   // Every amount in this panel (budget rows, goals, analytics totals) is
   // stored milliunits; this formatter converts to decimal at display time.
@@ -461,7 +463,7 @@ export function BudgetContextPanel({
     message: string
   ) => {
     if (!assignments.length) {
-      toast.error('Select at least one category.');
+      toast.error(t`Select at least one category.`);
       return;
     }
     batchUpsertAssignments.mutate(
@@ -512,7 +514,7 @@ export function BudgetContextPanel({
     // Falling through would hit the misleading "Select at least one
     // category" guard.
     if (effectiveCategoryIds.length > 0 && assignments.length === 0) {
-      toast.info('Nothing to apply — no assignments last month.');
+      toast.info(t`Nothing to apply — no assignments last month.`);
       return;
     }
     handleApplyAssignments(assignments, 'Applied last month totals');
@@ -623,7 +625,7 @@ export function BudgetContextPanel({
         {goalQuickActions?.underfunded && (
           <QuickActionButton
             icon={Target}
-            label="Fund goal"
+            label={t`Fund goal`}
             onClick={handleFundGoal}
             pending={batchUpsertAssignments.isPending}
             suffix={`+${formatAmount(goalQuickActions.underfunded.needed)}`}
@@ -632,7 +634,7 @@ export function BudgetContextPanel({
         {goalQuickActions?.overfunded && (
           <QuickActionButton
             icon={TrendingDown}
-            label="Reduce overfunding"
+            label={t`Reduce overfunding`}
             onClick={handleReduceOverfunding}
             pending={batchUpsertAssignments.isPending}
             suffix={`-${formatAmount(goalQuickActions.overfunded.safeReduction)}`}
@@ -640,25 +642,25 @@ export function BudgetContextPanel({
         )}
         <QuickActionButton
           icon={RotateCcw}
-          label="Reset allocations"
+          label={t`Reset allocations`}
           onClick={handleResetAllocations}
           pending={batchUpsertAssignments.isPending}
         />
         <QuickActionButton
           icon={RefreshCcw}
-          label="Reset available"
+          label={t`Reset available`}
           onClick={handleResetAvailable}
           pending={batchUpsertAssignments.isPending}
         />
         <QuickActionButton
           icon={TrendingUp}
-          label="Apply average assigned"
+          label={t`Apply average assigned`}
           onClick={handleApplyAverage}
           pending={batchUpsertAssignments.isPending || helpersQuery.isLoading}
         />
         <QuickActionButton
           icon={CalendarRange}
-          label="Apply last month assigned"
+          label={t`Apply last month assigned`}
           onClick={handleApplyLastMonth}
           pending={batchUpsertAssignments.isPending || helpersQuery.isLoading}
         />

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   Dialog,
   DialogContent,
@@ -187,6 +187,8 @@ interface AccountSelectorProps {
 }
 
 function AccountSelector({ accounts, selectedAccountId, onAccountChange }: AccountSelectorProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-2">
       <Label htmlFor="account">
@@ -194,7 +196,7 @@ function AccountSelector({ accounts, selectedAccountId, onAccountChange }: Accou
       </Label>
       <Select value={String(selectedAccountId)} onValueChange={(v) => onAccountChange(Number(v))}>
         <SelectTrigger id="account">
-          <SelectValue placeholder="Select account" />
+          <SelectValue placeholder={t`Select account`} />
         </SelectTrigger>
         <SelectContent>
           {accounts.map((account) => (

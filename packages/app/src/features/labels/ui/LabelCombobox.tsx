@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { Check, ChevronsUpDown, Tag, X } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -36,6 +36,8 @@ export function LabelCombobox({
   disabled = false,
   allowClear = true,
 }: LabelComboboxProps) {
+  const { t } = useLingui();
+
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const { labels = [], isFetching } = useLabels(budgetId);
@@ -113,7 +115,7 @@ export function LabelCombobox({
       <PopoverContent className={cn('w-[300px] p-0', popoverContentClassName)} align="start">
         <Command loop>
           <CommandInput
-            placeholder="Search labels..."
+            placeholder={t`Search labels...`}
             value={search}
             onValueChange={setSearch}
             disabled={disabled || isFetching}

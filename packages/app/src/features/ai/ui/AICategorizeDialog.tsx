@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { applyOpInvalidations } from '@shared/lib/query-utils';
@@ -56,6 +56,8 @@ type CategorizedTransaction = {
 };
 
 export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategorizeDialogProps) {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const currencyCode = selectedBudget?.DisplayCurrency || 'USD';
   const { data: transactions = [] } = useAllTransactions(budgetId);
@@ -100,14 +102,14 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
 
   const handleAnalyze = async () => {
     if (!llmSettings?.Enabled) {
-      toast.error('AI not enabled', {
+      toast.error(t`AI not enabled`, {
         description: 'Please configure AI settings first',
       });
       return;
     }
 
     if (uncategorizedTransactions.length === 0) {
-      toast.info('No transactions to categorize');
+      toast.info(t`No transactions to categorize`);
       return;
     }
 
@@ -191,7 +193,7 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
       console.error('AI categorization failed:', err);
       const errMessage = getErrorMessage(err, 'Failed to analyze transactions');
       setStep('ready');
-      toast.error('Analysis failed', {
+      toast.error(t`Analysis failed`, {
         description: errMessage,
       });
     }
@@ -219,7 +221,7 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
     );
 
     if (toApply.length === 0) {
-      toast.info('No categories to apply');
+      toast.info(t`No categories to apply`);
       return;
     }
 
@@ -249,7 +251,7 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
       console.error('Failed to apply categories:', err);
       const errMessage = getErrorMessage(err, 'Failed to apply categories');
       setStep('review');
-      toast.error('Failed to apply categories', {
+      toast.error(t`Failed to apply categories`, {
         description: errMessage,
       });
     }

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import type { Budget } from '@budgero/core/browser';
@@ -17,6 +17,8 @@ export const DeleteBudgetButton: React.FC<DeleteBudgetButtonProps> = ({
   onDeleted,
   onError,
 }) => {
+  const { t } = useLingui();
+
   const deleteBudgetMutation = useDeleteBudget();
 
   const handleDelete = async () => {
@@ -36,14 +38,14 @@ export const DeleteBudgetButton: React.FC<DeleteBudgetButtonProps> = ({
           <Trans>Delete Budget</Trans>
         </Button>
       }
-      title="Are you absolutely sure?"
+      title={t`Are you absolutely sure?`}
       description={
         <>
           This action cannot be undone. This will permanently delete the budget "{budget.Name}" and
           all its associated data.
         </>
       }
-      confirmText="Delete Budget"
+      confirmText={t`Delete Budget`}
       loadingText="Deleting..."
       isLoading={deleteBudgetMutation.isPending}
       onConfirm={handleDelete}

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Label } from '@shared/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import type { LLMProvider } from '@budgero/core/browser';
@@ -10,6 +10,8 @@ interface ProviderSectionProps {
 }
 
 export function ProviderSection({ provider, onProviderChange }: ProviderSectionProps) {
+  const { t } = useLingui();
+
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="space-y-0.5">
@@ -22,7 +24,7 @@ export function ProviderSection({ provider, onProviderChange }: ProviderSectionP
       </div>
       <Select value={provider} onValueChange={onProviderChange}>
         <SelectTrigger id="provider" className="w-full sm:w-56">
-          <SelectValue placeholder="Select provider" />
+          <SelectValue placeholder={t`Select provider`} />
         </SelectTrigger>
         <SelectContent>
           {PROVIDER_OPTIONS.map((option) => (

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { THEMES_AVAILABLE } from '../onboarding-data';
 import { StepHeroImage, Title, formatDateLabel, getCurrencySym, type StepProps } from './shared';
@@ -14,6 +14,8 @@ export const DoneStep: React.FC<Omit<StepProps, 'set'> & DoneStepExtraProps> = (
   applyState,
   applyError,
 }) => {
+  const { t } = useLingui();
+
   const sym = getCurrencySym(state.currency);
   const rows =
     state.startMode === 'ynab'
@@ -97,7 +99,7 @@ export const DoneStep: React.FC<Omit<StepProps, 'set'> & DoneStepExtraProps> = (
     <div>
       <StepHeroImage
         src="/onboarding-final.png"
-        alt="Coin character holding a Your Budget Is Ready clipboard"
+        alt={t`Coin character holding a Your Budget Is Ready clipboard`}
       />
       {state.joinSecret ? (
         <Title

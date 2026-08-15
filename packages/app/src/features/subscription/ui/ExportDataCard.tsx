@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Card } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -90,6 +90,8 @@ interface ExportDataCardProps {
 }
 
 export default function ExportDataCard({ spaceId, embedded = false }: ExportDataCardProps) {
+  const { t } = useLingui();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [masterPassword, setMasterPassword] = useState('');
   const [isExporting, setIsExporting] = useState(false);
@@ -155,7 +157,7 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
 
       if (exportType === 'sqlite') {
         downloadBlob(decryptedData, `budgero-backup-${timestamp}.db`, 'application/x-sqlite3');
-        toast.success('Database exported successfully');
+        toast.success(t`Database exported successfully`);
       } else {
         const SQL = await loadSqlJs();
         const db = new SQL.Database(decryptedData);
@@ -194,7 +196,7 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
 
           const zipBlob = await zip.generateAsync({ type: 'blob' });
           downloadBlob(zipBlob, `budgero-csv-export-${timestamp}.zip`, 'application/zip');
-          toast.success('CSV files exported successfully');
+          toast.success(t`CSV files exported successfully`);
         } finally {
           db.close();
         }
@@ -295,7 +297,7 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
                 type="password"
                 value={masterPassword}
                 onChange={(e) => setMasterPassword(e.target.value)}
-                placeholder="Enter your master password"
+                placeholder={t`Enter your master password`}
                 disabled={isExporting}
                 autoFocus
               />

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { asMilli, fromDecimal, toDecimal, ZERO_MILLI } from '@budgero/core/browser';
 import { parseISO } from 'date-fns';
@@ -66,6 +66,8 @@ const emptyForm: FormState = {
 };
 
 export default function WarrantiesPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const budgetId = selectedBudget?.ID ?? 0;
   const currencyCode = selectedBudget?.DisplayCurrency || 'USD';
@@ -166,12 +168,12 @@ export default function WarrantiesPage() {
       e.preventDefault();
       const file = e.dataTransfer.files?.[0];
       if (!file || !isValidImageFile(file)) {
-        toast.error('Please drop an image file');
+        toast.error(t`Please drop an image file`);
         return;
       }
       await setReceiptFromFile(file);
     },
-    [setReceiptFromFile]
+    [setReceiptFromFile, t]
   );
 
   const handleReceiptDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -194,7 +196,7 @@ export default function WarrantiesPage() {
 
   const handleSubmit = useCallback(async () => {
     if (!form.name.trim() || !form.expiresAt) {
-      toast.error('Name and expiry date are required');
+      toast.error(t`Name and expiry date are required`);
       return;
     }
     setSubmitting(true);
@@ -222,7 +224,7 @@ export default function WarrantiesPage() {
           notes: form.notes,
           ...(receiptImage !== undefined ? { receiptImage } : {}),
         });
-        toast.success('Warranty updated');
+        toast.success(t`Warranty updated`);
       } else {
         await createWarranty.mutateAsync({
           budgetId,
@@ -233,27 +235,27 @@ export default function WarrantiesPage() {
           notes: form.notes,
           receiptImage: receiptImage ?? null,
         });
-        toast.success('Warranty created');
+        toast.success(t`Warranty created`);
       }
       setDialogOpen(false);
     } catch (err) {
-      toast.error('Failed to save warranty');
+      toast.error(t`Failed to save warranty`);
       console.error(err);
     } finally {
       setSubmitting(false);
     }
-  }, [form, editingWarranty, budgetId, createWarranty, updateWarranty]);
+  }, [form, editingWarranty, budgetId, createWarranty, updateWarranty, t]);
 
   const handleDelete = useCallback(async () => {
     if (!deleteTarget) return;
     try {
       await deleteWarranty.mutateAsync({ id: deleteTarget.ID, budgetId });
-      toast.success('Warranty deleted');
+      toast.success(t`Warranty deleted`);
     } catch {
-      toast.error('Failed to delete warranty');
+      toast.error(t`Failed to delete warranty`);
     }
     setDeleteTarget(null);
-  }, [deleteTarget, budgetId, deleteWarranty]);
+  }, [deleteTarget, budgetId, deleteWarranty, t]);
 
   const transactionLabel = useCallback(
     (transactionId: number | null) => {
@@ -423,7 +425,7 @@ export default function WarrantiesPage() {
               <Trans>Receipt</Trans>
             </DialogTitle>
           </DialogHeader>
-          {viewerUrl && <img src={viewerUrl} alt="Receipt" className="w-full rounded" />}
+          {viewerUrl && <img src={viewerUrl} alt={t`Receipt`} className="w-full rounded" />}
         </DialogContent>
       </Dialog>
 
@@ -431,11 +433,11 @@ export default function WarrantiesPage() {
       <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Delete Warranty"
+        title={t`Delete Warranty`}
         description={
           <>Are you sure you want to delete "{deleteTarget?.Name}"? This action cannot be undone.</>
         }
-        confirmText="Delete"
+        confirmText={t`Delete`}
         onConfirm={handleDelete}
       />
     </div>

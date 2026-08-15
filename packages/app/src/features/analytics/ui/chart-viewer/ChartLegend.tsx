@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useId, useMemo, useState } from 'react';
 import { ListFilter } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -26,6 +26,8 @@ export function ChartLegend({
   compact = false,
   showSummary = true,
 }: ChartLegendProps) {
+  const { t } = useLingui();
+
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const palette = useChartPalette();
   const [searchTerm, setSearchTerm] = useState('');
@@ -111,7 +113,7 @@ export function ChartLegend({
             <Input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Filter series..."
+              placeholder={t`Filter series...`}
               className="h-8 text-xs"
             />
 

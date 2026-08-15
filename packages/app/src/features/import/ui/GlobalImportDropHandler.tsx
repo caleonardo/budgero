@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -13,6 +13,8 @@ function hasFilePayload(event: DragEvent): boolean {
 }
 
 export function GlobalImportDropHandler() {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const location = useLocation();
   const setPendingImportFile = useUiStore((state) => state.setPendingImportFile);
@@ -59,7 +61,7 @@ export function GlobalImportDropHandler() {
       const files = Array.from(event.dataTransfer?.files ?? []);
       const supportedFile = files.find((file) => isSupportedImportFile(file));
       if (!supportedFile) {
-        toast.error('Unsupported file', {
+        toast.error(t`Unsupported file`, {
           description: `Drop a ${SUPPORTED_IMPORT_FORMATS_LABEL} file to import transactions.`,
         });
         return;
@@ -83,7 +85,7 @@ export function GlobalImportDropHandler() {
       window.removeEventListener('dragend', handleDragEnd);
       window.removeEventListener('drop', handleDrop);
     };
-  }, [location.pathname, navigate, setPendingImportFile]);
+  }, [location.pathname, navigate, setPendingImportFile, t]);
 
   if (!isDraggingFile) {
     return null;

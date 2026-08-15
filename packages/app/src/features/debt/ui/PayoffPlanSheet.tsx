@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import {
   Drawer,
@@ -59,6 +59,8 @@ export function PayoffPlanSheet({
   suggestedMin,
   maxPayment,
 }: PayoffPlanSheetProps) {
+  const { t } = useLingui();
+
   const [open, setOpen] = React.useState(false);
   const originalTriggerOnClick = trigger.props.onClick;
   const handleTriggerClick: React.MouseEventHandler<HTMLElement> = (event) => {
@@ -225,7 +227,7 @@ export function PayoffPlanSheet({
             </Trans>
           </DrawerDescription>
           <DrawerClose
-            aria-label="Close payment plan"
+            aria-label={t`Close payment plan`}
             className="absolute right-4 top-4 inline-flex h-6 w-6 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <X className="h-4 w-4" />
@@ -295,14 +297,14 @@ export function PayoffPlanSheet({
                   <div className="flex items-center justify-between gap-2">
                     <Label
                       className="flex-1 min-w-0 block text-xs text-muted-foreground leading-tight whitespace-normal break-words sm:truncate sm:whitespace-nowrap sm:overflow-hidden sm:h-5"
-                      title="Extra monthly"
+                      title={t`Extra monthly`}
                     >
                       <Trans>Extra monthly</Trans>
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <button
-                          aria-label="About extra monthly"
+                          aria-label={t`About extra monthly`}
                           className="shrink-0 text-muted-foreground hover:text-foreground"
                         >
                           <Info className="h-3.5 w-3.5" />
@@ -328,14 +330,14 @@ export function PayoffPlanSheet({
                   <div className="flex items-center justify-between gap-2">
                     <Label
                       className="flex-1 min-w-0 block text-xs text-muted-foreground leading-tight whitespace-normal break-words sm:truncate sm:whitespace-nowrap sm:overflow-hidden sm:h-5"
-                      title="One-time extra (this month)"
+                      title={t`One-time extra (this month)`}
                     >
                       <Trans>One-time extra (this month)</Trans>
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <button
-                          aria-label="About one-time extra"
+                          aria-label={t`About one-time extra`}
                           className="shrink-0 text-muted-foreground hover:text-foreground"
                         >
                           <Info className="h-3.5 w-3.5" />

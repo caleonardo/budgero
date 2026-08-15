@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
@@ -25,6 +25,8 @@ function readPersistedDismiss(trialEndsAtIso: string): boolean {
  * across trials). Shows the time left + a checkout CTA.
  */
 export function TrialEndingBanner() {
+  const { t } = useLingui();
+
   const [now] = useState(() => Date.now());
   const [explicitlyDismissed, setExplicitlyDismissed] = useState(false);
   const { data: user } = useProfile();
@@ -82,7 +84,7 @@ export function TrialEndingBanner() {
           <button
             onClick={handleDismiss}
             className="p-1 hover:bg-white/20 rounded transition-colors"
-            aria-label="Dismiss banner"
+            aria-label={t`Dismiss banner`}
           >
             <X className="h-4 w-4" />
           </button>

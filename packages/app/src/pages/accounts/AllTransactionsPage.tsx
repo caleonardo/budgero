@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useUiStore } from '@shared/store/useUiStore';
 
@@ -22,6 +22,8 @@ import { useRecurringEditorFromTransaction } from './hooks/useRecurringEditorFro
 import { useTransactionStatsCallbacks } from './hooks/useTransactionStatsCallbacks';
 
 export default function AllTransactionsPage() {
+  const { t } = useLingui();
+
   const { isProcessingTransfer } = useLoading();
 
   const { mobilePageStats, filteredStats, handleMobilePageChange, handleFilteredStatsChange } =
@@ -99,7 +101,7 @@ export default function AllTransactionsPage() {
   useJumpToTransaction(transactionsData.length);
 
   if (isTransactionsLoading) {
-    return <CenteredLoader className="flex-1 p-4" label="Loading transactions..." />;
+    return <CenteredLoader className="flex-1 p-4" label={t`Loading transactions...`} />;
   }
 
   return (
@@ -137,14 +139,14 @@ export default function AllTransactionsPage() {
           <div className="flex items-center gap-4 mb-2">
             <FlowStat
               icon={ArrowUpRight}
-              label="Inflow"
+              label={t`Inflow`}
               value={formatAmount(transactionStats.totalInflow)}
               color="success"
               size="sm"
             />
             <FlowStat
               icon={ArrowDownRight}
-              label="Outflow"
+              label={t`Outflow`}
               value={formatAmount(transactionStats.totalOutflow)}
               color="destructive"
               size="sm"
@@ -183,7 +185,7 @@ export default function AllTransactionsPage() {
           <div className="flex items-center gap-6 mb-4">
             <FlowStat
               icon={ArrowUpRight}
-              label="Inflow"
+              label={t`Inflow`}
               value={formatAmount(transactionStats.totalInflow)}
               color="success"
               tooltip={`Total inflow from ${transactionStats.recentCount} transactions`}
@@ -191,7 +193,7 @@ export default function AllTransactionsPage() {
 
             <FlowStat
               icon={ArrowDownRight}
-              label="Outflow"
+              label={t`Outflow`}
               value={formatAmount(transactionStats.totalOutflow)}
               color="destructive"
               tooltip={`Total outflow from ${transactionStats.recentCount} transactions`}
@@ -202,7 +204,7 @@ export default function AllTransactionsPage() {
         {/* Transactions Section */}
         <div className="flex-1 sm:px-6 space-y-6">
           {isProcessingTransfer ? (
-            <CenteredLoader className="py-12" label="Processing transfer..." />
+            <CenteredLoader className="py-12" label={t`Processing transfer...`} />
           ) : (
             <TransactionsTable
               initialData={transactionsData}

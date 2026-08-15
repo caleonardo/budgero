@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useState, useEffect } from 'react';
 import {
   Dialog,
@@ -132,6 +132,8 @@ export function SaveReportDialog({
   initialData,
   mode,
 }: SaveReportDialogProps) {
+  const { t } = useLingui();
+
   const [reportName, setReportName] = useState(initialData?.name || '');
   const [reportDescription, setReportDescription] = useState(initialData?.description || '');
   const [charts, setCharts] = useState<ChartFormData[]>(
@@ -165,7 +167,7 @@ export function SaveReportDialog({
 
   const handleAddChart = () => {
     if (!queryResult || queryResult.columns.length === 0) {
-      toast.error('No query results available to create chart');
+      toast.error(t`No query results available to create chart`);
       return;
     }
 
@@ -185,22 +187,22 @@ export function SaveReportDialog({
     ]);
     setNewChart(defaultChartForm);
     setIsAddingChart(false);
-    toast.success('Chart added to report');
+    toast.success(t`Chart added to report`);
   };
 
   const handleRemoveChart = (index: number) => {
     setCharts((prev) => prev.filter((_, i) => i !== index));
-    toast.success('Chart removed from report');
+    toast.success(t`Chart removed from report`);
   };
 
   const handleSave = async (pinAfterSave = false) => {
     if (!reportName.trim()) {
-      toast.error('Please enter a report name');
+      toast.error(t`Please enter a report name`);
       return;
     }
 
     if (!sqlQuery.trim()) {
-      toast.error('No SQL query to save');
+      toast.error(t`No SQL query to save`);
       return;
     }
 
@@ -260,22 +262,22 @@ export function SaveReportDialog({
         <div className="space-y-6">
           {/* Report Details */}
           <div className="space-y-4">
-            <Field label="Report Name *" htmlFor="name" className="space-y-2">
+            <Field label={t`Report Name *`} htmlFor="name" className="space-y-2">
               <Input
                 id="name"
                 value={reportName}
                 onChange={(e) => setReportName(e.target.value)}
-                placeholder="Enter report name..."
+                placeholder={t`Enter report name...`}
                 disabled={isSaving}
               />
             </Field>
 
-            <Field label="Description" htmlFor="description" className="space-y-2">
+            <Field label={t`Description`} htmlFor="description" className="space-y-2">
               <Textarea
                 id="description"
                 value={reportDescription}
                 onChange={(e) => setReportDescription(e.target.value)}
-                placeholder="Optional description..."
+                placeholder={t`Optional description...`}
                 rows={2}
                 disabled={isSaving}
               />
@@ -388,7 +390,7 @@ export function SaveReportDialog({
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Field label="Chart Type" className="space-y-2">
+                    <Field label={t`Chart Type`} className="space-y-2">
                       <Select
                         value={newChart.chartType}
                         onValueChange={(value) =>
@@ -433,13 +435,13 @@ export function SaveReportDialog({
                       </Select>
                     </Field>
 
-                    <Field label="Title (Optional)" className="space-y-2">
+                    <Field label={t`Title (Optional)`} className="space-y-2">
                       <Input
                         value={newChart.title}
                         onChange={(e) =>
                           setNewChart((prev) => ({ ...prev, title: e.target.value }))
                         }
-                        placeholder="Chart title..."
+                        placeholder={t`Chart title...`}
                       />
                     </Field>
                   </div>
@@ -456,7 +458,7 @@ export function SaveReportDialog({
                           onChange={(value) =>
                             setNewChart((prev) => ({ ...prev, xAxisColumn: value }))
                           }
-                          placeholder="Select column"
+                          placeholder={t`Select column`}
                         />
                       </Field>
                     )}
@@ -479,14 +481,14 @@ export function SaveReportDialog({
                         onChange={(value) =>
                           setNewChart((prev) => ({ ...prev, yAxisColumn: value }))
                         }
-                        placeholder="Select column"
+                        placeholder={t`Select column`}
                       />
                     </Field>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {!['pie', 'stat'].includes(newChart.chartType) && (
-                      <Field label="Group By" className="space-y-2">
+                      <Field label={t`Group By`} className="space-y-2">
                         <ColumnSelect
                           value={newChart.groupByColumn}
                           columns={queryResult?.columns}
@@ -499,7 +501,7 @@ export function SaveReportDialog({
                     )}
 
                     <Field
-                      label="Aggregate Function"
+                      label={t`Aggregate Function`}
                       className={
                         ['pie', 'stat'].includes(newChart.chartType)
                           ? 'sm:col-span-2 space-y-2'

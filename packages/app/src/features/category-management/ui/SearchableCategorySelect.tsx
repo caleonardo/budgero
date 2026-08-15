@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 
@@ -56,6 +56,8 @@ export function SearchableCategorySelect({
   month,
   onlyPositiveAvailable = false,
 }: SearchableCategorySelectProps) {
+  const { t } = useLingui();
+
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
@@ -382,7 +384,7 @@ export function SearchableCategorySelect({
         >
           <Command className="h-full" filter={commandFilter}>
             <CommandInput
-              placeholder="Search category..."
+              placeholder={t`Search category...`}
               value={searchTerm}
               onValueChange={setSearchTerm}
               onKeyDown={(event) => {

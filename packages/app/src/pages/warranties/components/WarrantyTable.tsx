@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { Button } from '@shared/ui/button';
 import { Card } from '@shared/ui/card';
@@ -31,6 +31,8 @@ export function WarrantyTable({
   onDelete,
   onViewReceipt,
 }: WarrantyTableProps) {
+  const { t } = useLingui();
+
   return (
     <Card className="hidden md:block">
       <Table>
@@ -74,7 +76,7 @@ export function WarrantyTable({
                         <button
                           onClick={() => onToggleNotes(w.ID)}
                           className="text-muted-foreground hover:text-foreground transition-colors"
-                          title="Toggle notes"
+                          title={t`Toggle notes`}
                         >
                           <StickyNote className="h-3.5 w-3.5" />
                         </button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import { useMemo } from 'react';
 import { Trash2 } from 'lucide-react';
@@ -37,6 +37,8 @@ export function CCPaymentActivityDialog({
   budgetId,
   currentMonth,
 }: CCPaymentActivityDialogProps) {
+  const { t } = useLingui();
+
   const { data: accounts } = useAccounts(budgetId);
   const ccAccount = useMemo(
     () => findCCAccountForCategory(accounts, ccCategoryId),
@@ -104,7 +106,7 @@ export function CCPaymentActivityDialog({
                     size="icon"
                     variant="ghost"
                     className="h-7 w-7 shrink-0"
-                    title="Delete payment"
+                    title={t`Delete payment`}
                     disabled={deleteTransaction.isPending}
                     onClick={() =>
                       deleteTransaction.mutate({

@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { memo } from 'react';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog';
 import { SpendingDrawerMobile } from '@features/budget-planning/ui/spending-drawer-mobile';
@@ -102,6 +103,8 @@ export function BudgetModals({
   onOverspendingConfirm,
   onOverspendingCancel,
 }: BudgetModalsProps) {
+  const { t } = useLingui();
+
   const formatMonth = (month: string) => {
     const [year, m] = month.split('-');
     const date = new Date(Number(year), Number(m) - 1);
@@ -163,10 +166,10 @@ export function BudgetModals({
       <ConfirmDialog
         open={modalState.confirmDeleteOpen}
         onOpenChange={(open) => !open && onConfirmDeleteClose()}
-        title="Delete Category"
+        title={t`Delete Category`}
         description={`Are you sure you want to delete the category "${modalState.pendingDelete?.name}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        confirmText={t`Delete`}
+        cancelText={t`Cancel`}
         variant="destructive"
         onConfirm={onConfirmDelete}
         isLoading={isDeletingCategory}

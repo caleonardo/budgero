@@ -1,6 +1,6 @@
 'use client';
 
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -29,6 +29,8 @@ type PendingAction =
   | null;
 
 export default function ImportsPage() {
+  const { t } = useLingui();
+
   const { selectedBudget } = useUiStore();
   const budgetId = selectedBudget?.ID ?? 0;
   const { data: history = [], isLoading } = useImportHistory(budgetId);
@@ -46,9 +48,9 @@ export default function ImportsPage() {
       if (pendingAction.type === 'undo') {
         const result = await undoMutation.mutateAsync({ id: pendingAction.id, budgetId });
         if (result.alreadyUndone) {
-          toast.info('Import already undone');
+          toast.info(t`Import already undone`);
         } else {
-          toast.success('Import undone', {
+          toast.success(t`Import undone`, {
             description: `Removed ${result.transactionsRemoved} transactions${
               result.accountsRemoved
                 ? `, ${result.accountsRemoved} account${result.accountsRemoved === 1 ? '' : 's'}`
@@ -64,7 +66,7 @@ export default function ImportsPage() {
         }
       } else if (pendingAction.type === 'delete') {
         await deleteMutation.mutateAsync({ id: pendingAction.id, budgetId });
-        toast.success('Import entry removed');
+        toast.success(t`Import entry removed`);
       }
     } catch (error: unknown) {
       const message = getErrorMessage(error, 'Action failed');
@@ -79,7 +81,7 @@ export default function ImportsPage() {
   return (
     <div className="container max-w-5xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Imports"
+        title={t`Imports`}
         description={`Import transactions from ${SUPPORTED_IMPORT_FORMATS_LABEL} files and manage previous imports.`}
       />
 
@@ -123,7 +125,7 @@ export default function ImportsPage() {
               </Trans>
             </div>
           ) : isLoading ? (
-            <InlineLoadingRow label="Loading import history..." />
+            <InlineLoadingRow label={t`Loading import history...`} />
           ) : history.length === 0 ? (
             <div className="p-6 text-sm text-muted-foreground">
               <Trans>

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -53,6 +53,8 @@ export function ReadyToAssignHelpPopover({
   budgetId,
   month,
 }: ReadyToAssignHelpPopoverProps) {
+  const { t } = useLingui();
+
   const { data: breakdown } = useReadyToAssignBreakdown(budgetId ?? 0, month);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
   const mask = useUiStore((s) => s.privacyMaskNumbers);
@@ -68,7 +70,7 @@ export function ReadyToAssignHelpPopover({
             'inline-flex items-center justify-center rounded-full transition hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             triggerClassName
           )}
-          aria-label="What does Ready to Assign mean?"
+          aria-label={t`What does Ready to Assign mean?`}
         >
           <HelpCircle className="h-3 w-3" />
         </button>
@@ -96,13 +98,13 @@ export function ReadyToAssignHelpPopover({
             </p>
             <div className="space-y-1">
               <MathRow
-                label="Income"
+                label={t`Income`}
                 value={breakdown.income}
                 localizer={globalLocalizer}
                 mask={mask}
               />
               <MathRow
-                label="Assigned to categories"
+                label={t`Assigned to categories`}
                 value={breakdown.assignments}
                 localizer={globalLocalizer}
                 mask={mask}
@@ -110,7 +112,7 @@ export function ReadyToAssignHelpPopover({
               />
               {breakdown.offBudgetTransfers !== 0 && (
                 <MathRow
-                  label="Transfers off budget"
+                  label={t`Transfers off budget`}
                   value={breakdown.offBudgetTransfers}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -119,7 +121,7 @@ export function ReadyToAssignHelpPopover({
               )}
               {breakdown.inBudgetTransfers !== 0 && (
                 <MathRow
-                  label="Transfers onto budget"
+                  label={t`Transfers onto budget`}
                   value={breakdown.inBudgetTransfers}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -128,7 +130,7 @@ export function ReadyToAssignHelpPopover({
               )}
               {breakdown.revaluations !== 0 && (
                 <MathRow
-                  label="Currency rate changes"
+                  label={t`Currency rate changes`}
                   value={breakdown.revaluations}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -137,7 +139,7 @@ export function ReadyToAssignHelpPopover({
               )}
               {isMonthly && breakdown.priorCashOverspend !== 0 && (
                 <MathRow
-                  label="Last month's overspending"
+                  label={t`Last month's overspending`}
                   value={breakdown.priorCashOverspend}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -146,7 +148,7 @@ export function ReadyToAssignHelpPopover({
               )}
               <div className="mt-1 border-t border-border pt-1">
                 <MathRow
-                  label="Ready to Assign"
+                  label={t`Ready to Assign`}
                   value={breakdown.readyToAssign}
                   localizer={globalLocalizer}
                   mask={mask}

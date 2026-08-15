@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Configure Step Component
  *
@@ -117,6 +117,8 @@ export function ConfigureStep({
   onBack,
   onNext,
 }: ConfigureStepProps) {
+  const { t } = useLingui();
+
   const canProceed =
     columnMapping.date &&
     (columnMapping.amount || columnMapping.inflow || columnMapping.outflow) &&
@@ -218,7 +220,7 @@ export function ConfigureStep({
               accounts={accounts}
               importConfig={importConfig}
               onImportConfigChange={onImportConfigChange}
-              placeholder="Select account"
+              placeholder={t`Select account`}
             />
           </div>
         )}
@@ -243,7 +245,7 @@ export function ConfigureStep({
                 accounts={accounts}
                 importConfig={importConfig}
                 onImportConfigChange={onImportConfigChange}
-                placeholder="Select fallback account"
+                placeholder={t`Select fallback account`}
                 triggerClassName="mt-1 w-full min-w-0"
               />
             </div>

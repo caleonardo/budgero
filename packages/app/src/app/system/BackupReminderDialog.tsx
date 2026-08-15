@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import {
   AlertDialog,
@@ -38,6 +38,8 @@ function downloadFile(data: Uint8Array | string | Blob, filename: string, mimeTy
 }
 
 export default function BackupReminderDialog(props: BackupReminderDialogProps) {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const recordBackup = useRecordBackup();
   const queryClient = useQueryClient();
@@ -76,13 +78,13 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
         console.warn('Failed to record backup timestamp', recordError);
         // Surface it: a silently failing record means this reminder returns
         // on every launch even though the user diligently backs up.
-        toast.warning('Backup saved, but recording it on the server failed', {
+        toast.warning(t`Backup saved, but recording it on the server failed`, {
           description: getErrorMessage(recordError, 'The reminder may reappear until this works.'),
         });
       }
 
       downloadFile(dbData, filename, 'application/x-sqlite3');
-      toast.success('Database backup downloaded');
+      toast.success(t`Database backup downloaded`);
       if (!recordedOnServer) {
         queryClient.setQueryData<User | undefined>(['profile'], (prev) => {
           if (!prev) return prev;

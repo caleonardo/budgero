@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
@@ -35,6 +35,8 @@ export function CategoryGroupRow({
   layoutVariant = 'default',
   mobileLayout = 'cards',
 }: CategoryGroupRowProps) {
+  const { t } = useLingui();
+
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const hasGroupId = item.categoryGroupId !== undefined && item.categoryGroupId !== null;
@@ -151,7 +153,7 @@ export function CategoryGroupRow({
                   onAddCategory={onAddCategory}
                   className="h-7 w-7 text-primary hover:bg-primary/10 dark:text-white dark:hover:bg-white/15"
                   highlightClassName="border border-primary ring-2 ring-primary/60 bg-primary/10 animate-pulse"
-                  title="Add category"
+                  title={t`Add category`}
                 />
               )}
             </div>

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -42,6 +42,8 @@ import { AccessLevel, canCreateWorkspace, getUserAccessStatus } from '@shared/mo
 import { WorkspaceRow } from './components';
 
 export default function WorkspaceSettingsPage() {
+  const { t } = useLingui();
+
   // All hooks must be called before any early returns
   const runtime = useRuntime();
   const queryClient = useQueryClient();
@@ -129,12 +131,12 @@ export default function WorkspaceSettingsPage() {
         queryClient,
         spaceId,
       });
-      toast.success('Workspace switched', {
+      toast.success(t`Workspace switched`, {
         description: 'You are now viewing this workspace.',
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Unable to switch workspace. Please try again.');
-      toast.error('Unable to switch workspace', {
+      toast.error(t`Unable to switch workspace`, {
         description: message,
       });
     } finally {
@@ -151,12 +153,12 @@ export default function WorkspaceSettingsPage() {
         await queryClient.invalidateQueries({ queryKey: ['space-invites', activeSpaceId] });
         await queryClient.invalidateQueries({ queryKey: ['space-members', activeSpaceId] });
       }
-      toast.success('Workspace list refreshed', {
+      toast.success(t`Workspace list refreshed`, {
         description: 'Latest workspace information has been loaded.',
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to refresh workspaces. Please try again.');
-      toast.error('Refresh failed', {
+      toast.error(t`Refresh failed`, {
         description: message,
       });
     } finally {
@@ -167,7 +169,7 @@ export default function WorkspaceSettingsPage() {
   const handleCreateSpace = async () => {
     const trimmed = newSpaceName.trim();
     if (!trimmed) {
-      toast.error('Name required', {
+      toast.error(t`Name required`, {
         description: 'Enter a name before creating the workspace.',
       });
       return;
@@ -177,7 +179,7 @@ export default function WorkspaceSettingsPage() {
       const summary = await spaceApi.createSpace(trimmed);
       await runtime.refreshSpaces();
       await spacesQuery.refetch();
-      toast.success('Workspace created', {
+      toast.success(t`Workspace created`, {
         description: 'We switched you to the new workspace automatically.',
       });
       setCreateDialogOpen(false);
@@ -191,7 +193,7 @@ export default function WorkspaceSettingsPage() {
       }
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to create workspace. Please try again.');
-      toast.error('Creation failed', {
+      toast.error(t`Creation failed`, {
         description: message,
       });
     } finally {
@@ -205,11 +207,11 @@ export default function WorkspaceSettingsPage() {
     setDefaultSpaceId(nextId);
     setStoredDefaultSpaceId(nextId);
     if (nextId) {
-      toast.success('Default workspace set', {
+      toast.success(t`Default workspace set`, {
         description: 'We will open this workspace first next time.',
       });
     } else {
-      toast.success('Default workspace cleared', {
+      toast.success(t`Default workspace cleared`, {
         description: 'We will follow your workspace list order.',
       });
     }
@@ -263,7 +265,7 @@ export default function WorkspaceSettingsPage() {
         }
       }
 
-      toast.success('Workspace deleted', {
+      toast.success(t`Workspace deleted`, {
         description: deletingActive
           ? 'The workspace was deleted and your session was updated.'
           : 'The workspace and its data were deleted permanently.',
@@ -271,7 +273,7 @@ export default function WorkspaceSettingsPage() {
       setDeletingSpace(null);
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to delete workspace. Please try again.');
-      toast.error('Delete failed', {
+      toast.error(t`Delete failed`, {
         description: message,
       });
     } finally {
@@ -301,14 +303,14 @@ export default function WorkspaceSettingsPage() {
       await spaceApi.updateSpace(space.space_id, { display_name: trimmed });
       await runtime.refreshSpaces();
       await spacesQuery.refetch();
-      toast.success('Workspace renamed', {
+      toast.success(t`Workspace renamed`, {
         description: 'The workspace name was updated successfully.',
       });
       setEditingSpace(null);
       setEditingName('');
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to rename workspace. Please try again.');
-      toast.error('Rename failed', {
+      toast.error(t`Rename failed`, {
         description: message,
       });
     } finally {
@@ -438,7 +440,7 @@ export default function WorkspaceSettingsPage() {
                         id="workspace-name"
                         value={newSpaceName}
                         onChange={(event) => setNewSpaceName(event.target.value)}
-                        placeholder="Family budget"
+                        placeholder={t`Family budget`}
                         autoFocus
                       />
                     </div>
@@ -534,7 +536,7 @@ export default function WorkspaceSettingsPage() {
             setDeletingSpace(null);
           }
         }}
-        title="Delete workspace"
+        title={t`Delete workspace`}
         description={
           deletingSpace ? (
             <>
@@ -545,7 +547,7 @@ export default function WorkspaceSettingsPage() {
             </>
           ) : null
         }
-        confirmText="Delete workspace"
+        confirmText={t`Delete workspace`}
         loadingText="Deleting..."
         variant="destructive"
         isLoading={isDeletingSpace}

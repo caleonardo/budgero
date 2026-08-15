@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { ChartConfiguration } from '@budgero/core/browser';
 import { toast } from 'sonner';
@@ -53,6 +53,8 @@ export function EditWidgetChartDialog({
   reportName,
   onSave,
 }: EditWidgetChartDialogProps) {
+  const { t } = useLingui();
+
   const [form, setForm] = useState<ChartFormData>(DEFAULT_FORM);
   const { isRunning: isSaving, run: runSave } = useAsyncDialogAction({
     errorMessage: 'Failed to update chart',
@@ -81,7 +83,7 @@ export function EditWidgetChartDialog({
   const handleSave = async () => {
     if (!initialChart) return;
     if (!queryResult || queryResult.columns.length === 0) {
-      toast.error('Run the report query first, then edit this chart.');
+      toast.error(t`Run the report query first, then edit this chart.`);
       return;
     }
     if (!requiredColumnsSelected) {
@@ -175,7 +177,7 @@ export function EditWidgetChartDialog({
               <Input
                 value={form.title}
                 onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
-                placeholder="Chart title..."
+                placeholder={t`Chart title...`}
               />
             </div>
           </div>
@@ -189,7 +191,7 @@ export function EditWidgetChartDialog({
                   onValueChange={(value) => setForm((prev) => ({ ...prev, xAxisColumn: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select column" />
+                    <SelectValue placeholder={t`Select column`} />
                   </SelectTrigger>
                   <SelectContent>
                     {columns.map((column) => (
@@ -216,7 +218,7 @@ export function EditWidgetChartDialog({
                 onValueChange={(value) => setForm((prev) => ({ ...prev, yAxisColumn: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select column" />
+                  <SelectValue placeholder={t`Select column`} />
                 </SelectTrigger>
                 <SelectContent>
                   {columns.map((column) => (

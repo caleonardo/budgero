@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
@@ -25,6 +25,8 @@ interface RedeemInviteDialogProps {
 }
 
 export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogProps) {
+  const { t } = useLingui();
+
   const [inviteSecret, setInviteSecret] = useState('');
   const [masterPassword, setMasterPassword] = useState('');
   const [inspectionSummary, setInspectionSummary] = useState<string | null>(null);
@@ -101,7 +103,7 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
         inviteSecret: inviteSecret.trim(),
         masterPassword: passwordToUse,
       });
-      toast.success('Workspace joined', {
+      toast.success(t`Workspace joined`, {
         description: `Joined workspace "${summary.display_name || summary.space_id}"`,
       });
       onOpenChange(false);
@@ -137,7 +139,7 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
               id="invite-secret"
               value={inviteSecret}
               onChange={(event) => setInviteSecret(event.target.value)}
-              placeholder="paste secret here"
+              placeholder={t`paste secret here`}
               autoComplete="off"
             />
             <Button

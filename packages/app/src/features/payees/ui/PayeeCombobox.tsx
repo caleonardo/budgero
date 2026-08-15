@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { Check, ChevronsUpDown, PlusCircle, X } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -39,6 +39,8 @@ export function PayeeCombobox({
   disabled = false,
   allowClear = true,
 }: PayeeComboboxProps) {
+  const { t } = useLingui();
+
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const { data: payees = [], isFetching } = usePayees(budgetId);
@@ -106,7 +108,7 @@ export function PayeeCombobox({
       >
         <Command className="h-full" loop>
           <CommandInput
-            placeholder="Search payees…"
+            placeholder={t`Search payees…`}
             value={search}
             onValueChange={setSearch}
             disabled={isFetching}

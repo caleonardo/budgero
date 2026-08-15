@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Slider } from '@shared/ui/slider';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -35,6 +35,8 @@ export function PayoffSimulator({
   initial,
   maxBound,
 }: PayoffSimulatorProps) {
+  const { t } = useLingui();
+
   const rMonthly = apr ? apr / 100 / 12 : 0;
   const suggestedMin = (() => {
     const interestOnly = rMonthly > 0 ? outstanding * rMonthly : 0;
@@ -117,7 +119,10 @@ export function PayoffSimulator({
           >
             <Popover>
               <PopoverTrigger asChild>
-                <button aria-label="Info" className="text-muted-foreground hover:text-foreground">
+                <button
+                  aria-label={t`Info`}
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <Info className="h-4 w-4" />
                 </button>
               </PopoverTrigger>

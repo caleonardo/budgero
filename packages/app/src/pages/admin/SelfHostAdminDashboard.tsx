@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -25,6 +25,8 @@ import { useAdminApi } from '@features/admin/api/useAdminApi';
 import type { SelfHostAdminStats } from '@features/admin/model/admin-self-host';
 
 export default function SelfHostAdminDashboard() {
+  const { t } = useLingui();
+
   const adminApi = useAdminApi();
   const [stats, setStats] = useState<SelfHostAdminStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,14 +40,14 @@ export default function SelfHostAdminDashboard() {
       setStats(data);
     } catch (error) {
       console.error('Failed to load self-host stats', error);
-      toast.error('Unable to load stats', {
+      toast.error(t`Unable to load stats`, {
         description: 'Check that the server is reachable and you have admin access.',
       });
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [adminApi]);
+  }, [adminApi, t]);
 
   useEffect(() => {
     void loadStats();
@@ -101,7 +103,7 @@ export default function SelfHostAdminDashboard() {
       downloadBlob(data, `budgero-${new Date().toISOString()}.db`, 'application/octet-stream');
     } catch (error) {
       console.error('Failed to download database', error);
-      toast.error('Download failed');
+      toast.error(t`Download failed`);
     } finally {
       setDownloadingDb(false);
     }
@@ -182,7 +184,7 @@ export default function SelfHostAdminDashboard() {
                 onClick={() => {
                   if (stats?.databasePath) {
                     void navigator.clipboard.writeText(stats.databasePath);
-                    toast.success('Copied path', { description: stats.databasePath });
+                    toast.success(t`Copied path`, { description: stats.databasePath });
                   }
                 }}
               >

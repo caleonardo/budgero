@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Label } from '@shared/ui/label';
 import { Input } from '@shared/ui/input';
 import { Button } from '@shared/ui/button';
@@ -29,6 +29,8 @@ export function ConnectionTestPanel({
   onApiKeyChange,
   onTestConnection,
 }: ConnectionTestPanelProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -80,7 +82,7 @@ export function ConnectionTestPanel({
             type="password"
             value={apiKey}
             onChange={(e) => onApiKeyChange(e.target.value)}
-            placeholder="Optional — required by most cloud providers"
+            placeholder={t`Optional — required by most cloud providers`}
             className="pl-10"
             autoComplete="off"
           />

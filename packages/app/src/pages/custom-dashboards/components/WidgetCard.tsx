@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
@@ -181,6 +181,8 @@ export function WidgetCard({
   onEditChart,
   onOpenReportInExplorer,
 }: WidgetCardProps) {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const queryClient = useQueryClient();
   const reportUpdatedAt = report?.updatedAt ?? 'missing';
@@ -218,7 +220,7 @@ export function WidgetCard({
     return (
       <WidgetErrorCard
         title={title}
-        description="Source report is missing. Choose another chart or remove this widget."
+        description={t`Source report is missing. Choose another chart or remove this widget.`}
         onSelectNewChart={() => onSelectNewChart(widget.id)}
         onRemove={() => onRemove(widget.id)}
       />
@@ -229,7 +231,7 @@ export function WidgetCard({
     return (
       <WidgetErrorCard
         title={title}
-        description="Source chart is missing in this report."
+        description={t`Source chart is missing in this report.`}
         onSelectNewChart={() => onSelectNewChart(widget.id)}
         onRemove={() => onRemove(widget.id)}
       />
@@ -275,8 +277,8 @@ export function WidgetCard({
               <Button
                 variant="ghost"
                 size="icon"
-                title="Open source report in Explorer"
-                aria-label="Open source report in Explorer"
+                title={t`Open source report in Explorer`}
+                aria-label={t`Open source report in Explorer`}
                 onClick={() => onOpenReportInExplorer(report.id)}
               >
                 <SquareArrowOutUpRight className="h-4 w-4" />
@@ -286,8 +288,8 @@ export function WidgetCard({
               <Button
                 variant="ghost"
                 size="icon"
-                title="Edit source visualization"
-                aria-label="Edit source visualization"
+                title={t`Edit source visualization`}
+                aria-label={t`Edit source visualization`}
                 onClick={() =>
                   onEditChart({
                     reportId: report.id,

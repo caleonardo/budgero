@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState, useMemo } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import {
@@ -60,6 +60,8 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
   kind = 'fiat',
   'data-testid': testId,
 }) => {
+  const { t } = useLingui();
+
   const [open, setOpen] = useState(false);
   const { clerkToken, apiReachable } = useConnectivity();
 
@@ -156,7 +158,7 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
           collisionPadding={12}
         >
           <Command className="h-full">
-            <CommandInput placeholder="Search currencies..." />
+            <CommandInput placeholder={t`Search currencies...`} />
             <CommandList className="max-h-[44dvh] overflow-y-auto overscroll-contain touch-pan-y">
               <CommandEmpty>
                 <Trans>No currency found.</Trans>

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -28,6 +28,8 @@ import { useActiveSpace } from '@shared/runtime/runtime-provider';
 import logoImg from '/logo_144.png';
 
 export function MobileTopBar() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const togglePrivacyMaskNumbers = useUiStore((state) => state.togglePrivacyMaskNumbers);
@@ -85,14 +87,14 @@ export function MobileTopBar() {
       const createdBudget = useUiStore.getState().selectedBudget;
       setCreateDialogOpen(false);
       setBudgetDropdownOpen(false);
-      toast.success('Budget created', {
+      toast.success(t`Budget created`, {
         description: createdBudget
           ? `Switched to "${createdBudget.Name}".`
           : 'Switched to your new budget.',
       });
       void navigate('/', { replace: true });
     },
-    [navigate]
+    [navigate, t]
   );
 
   // Expose top bar height via CSS variable for layout sizing
@@ -170,9 +172,9 @@ export function MobileTopBar() {
             type="button"
             onClick={() => setCommandPaletteOpen(true)}
             className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            aria-label="Open command menu"
+            aria-label={t`Open command menu`}
           >
-            <img src={logoImg} alt="Logo" className="h-10 w-10 rounded-full shadow-sm" />
+            <img src={logoImg} alt={t`Logo`} className="h-10 w-10 rounded-full shadow-sm" />
           </button>
         </div>
 
@@ -207,8 +209,8 @@ export function MobileTopBar() {
                   size="icon"
                   className="h-8 w-6 mr-1"
                   onClick={openQuackback}
-                  title="Send feedback"
-                  aria-label="Send feedback"
+                  title={t`Send feedback`}
+                  aria-label={t`Send feedback`}
                 >
                   <FeedbackIcon className="h-4 w-4" />
                 </Button>

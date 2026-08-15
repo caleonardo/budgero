@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Group Name Edit Popover
  *
@@ -40,6 +40,8 @@ export function GroupNameEditPopover({
   align,
   children,
 }: GroupNameEditPopoverProps) {
+  const { t } = useLingui();
+
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -49,7 +51,7 @@ export function GroupNameEditPopover({
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
             className="w-full"
-            placeholder="Group name"
+            placeholder={t`Group name`}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 onSave();

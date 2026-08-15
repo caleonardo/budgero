@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Copy } from 'lucide-react';
 
 import { Button } from '@shared/ui/button';
@@ -30,6 +30,8 @@ export function OverviewTab({
   onRetry: () => void;
   onCopyId: (userId: string) => void;
 }) {
+  const { t } = useLingui();
+
   return (
     <TabSection loading={loading} error={error} onRetry={onRetry}>
       <Card>
@@ -43,7 +45,7 @@ export function OverviewTab({
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           <KeyValue
-            label="User ID"
+            label={t`User ID`}
             value={
               <div className="flex items-center gap-2">
                 <code className="rounded bg-muted px-2 py-1 text-xs">{resolvedUser.id}</code>
@@ -54,17 +56,17 @@ export function OverviewTab({
             }
           />
           <KeyValue
-            label="Subscription Status"
+            label={t`Subscription Status`}
             value={resolvedUser.subscription_status || 'inactive'}
           />
-          <KeyValue label="Customer ID" value={resolvedUser.customer_id || 'None'} />
-          <KeyValue label="Subscription ID" value={resolvedUser.subscription_id || 'None'} />
+          <KeyValue label={t`Customer ID`} value={resolvedUser.customer_id || 'None'} />
+          <KeyValue label={t`Subscription ID`} value={resolvedUser.subscription_id || 'None'} />
           <KeyValue
-            label="Trial Ends"
+            label={t`Trial Ends`}
             value={formatOptionalDate(resolvedUser.trial_ends_at, 'MMM d, yyyy')}
           />
           <KeyValue
-            label="Current Period End"
+            label={t`Current Period End`}
             value={formatOptionalDate(resolvedUser.current_period_end, 'MMM d, yyyy')}
           />
         </CardContent>
@@ -107,9 +109,12 @@ export function OverviewTab({
           <CardContent className="space-y-4">
             <SectionError message={details?.sectionErrors?.mutations} />
             <div className="grid gap-3 sm:grid-cols-2">
-              <CompactMetric label="Active Days" value={`${details?.mutations.activeDays ?? 0}`} />
               <CompactMetric
-                label="Avg / Active Day"
+                label={t`Active Days`}
+                value={`${details?.mutations.activeDays ?? 0}`}
+              />
+              <CompactMetric
+                label={t`Avg / Active Day`}
                 value={(details?.mutations.avgPerActiveDay ?? 0).toFixed(1)}
               />
             </div>

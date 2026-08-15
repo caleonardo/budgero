@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { parseISO } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -28,6 +28,8 @@ export function MutationsTab({
   error: string | null;
   onRetry: () => void;
 }) {
+  const { t } = useLingui();
+
   const palette = useChartPalette();
   const days = details?.mutations.days;
 
@@ -95,12 +97,12 @@ export function MutationsTab({
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-3">
           <CompactMetric
-            label="All-Time Mutations"
+            label={t`All-Time Mutations`}
             value={`${details?.mutations.totalMutations ?? 0}`}
           />
-          <CompactMetric label="Active Days" value={`${details?.mutations.activeDays ?? 0}`} />
+          <CompactMetric label={t`Active Days`} value={`${details?.mutations.activeDays ?? 0}`} />
           <CompactMetric
-            label="Avg / Active Day"
+            label={t`Avg / Active Day`}
             value={(details?.mutations.avgPerActiveDay ?? 0).toFixed(1)}
           />
         </CardContent>

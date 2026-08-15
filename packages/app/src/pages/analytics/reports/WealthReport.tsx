@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
@@ -61,6 +61,8 @@ interface WealthReportProps {
  * runway your spendable funds buy at the current burn.
  */
 export function WealthReport({ data, months, accountIds }: WealthReportProps) {
+  const { t } = useLingui();
+
   const [mode, setMode] = useState<WealthMode>('assets-debt');
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const { data: assetHistory = [] } = useMonthlyAssetHistory(
@@ -338,7 +340,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
 
   return (
     <ReportShell
-      title="Wealth"
+      title={t`Wealth`}
       hero={
         current ? (
           <AnimatedNumber
@@ -429,20 +431,20 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
       }
       isLoading={data.isLoading}
       isEmpty={isEmpty}
-      emptyText="No account activity in this period."
+      emptyText={t`No account activity in this period.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
-            <StatTile label="Net worth" value={current ? money.tile(current.netWorth) : '—'} />
+            <StatTile label={t`Net worth`} value={current ? money.tile(current.netWorth) : '—'} />
             <StatTile
-              label="Change"
+              label={t`Change`}
               value={money.tile(change)}
               valueClassName={trendTextClass(change)}
               detail={first ? `vs ${shortMonthLabel(first.monthKey)}` : undefined}
             />
-            <StatTile label="Assets" value={current ? money.tile(current.assets) : '—'} />
+            <StatTile label={t`Assets`} value={current ? money.tile(current.assets) : '—'} />
             <StatTile
-              label="Debt"
+              label={t`Debt`}
               value={current ? money.tile(current.debt) : '—'}
               valueClassName={
                 current && current.debt > 0 ? 'text-red-600 dark:text-red-300' : undefined

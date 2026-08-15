@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useId, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@shared/ui/button';
@@ -51,6 +51,8 @@ export function CoverOverspendingPopover({
   triggerClassName,
   tone = 'red',
 }: CoverOverspendingPopoverProps) {
+  const { t } = useLingui();
+
   const amountInputId = useId();
   const [open, setOpen] = useState(false);
   const [sourceCategoryId, setSourceCategoryId] = useState<number | null>(null);
@@ -118,7 +120,7 @@ export function CoverOverspendingPopover({
           await batchUpsertAssignments.mutateAsync([
             { categoryId, amount: targetAssigned + cover, month, budgetId },
           ]);
-          toast.success('Overspending covered', {
+          toast.success(t`Overspending covered`, {
             description: `Assigned ${formatAmount(cover)} from Ready to Assign.`,
           });
         } catch (error) {
@@ -173,7 +175,7 @@ export function CoverOverspendingPopover({
             budgetId={budgetId}
             selectedCategoryId={sourceCategoryId}
             onCategorySelect={handleSourceSelect}
-            placeholder="Select source category"
+            placeholder={t`Select source category`}
             triggerClassName="justify-start h-8 w-full"
             includeReadyToAssign
             excludeCategoryId={categoryId}

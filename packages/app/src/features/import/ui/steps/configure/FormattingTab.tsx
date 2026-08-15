@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Formatting Tab
  *
@@ -21,6 +21,8 @@ interface FormattingTabProps {
 }
 
 export function FormattingTab({ importConfig, onImportConfigChange }: FormattingTabProps) {
+  const { t } = useLingui();
+
   const handleNumberFormatChange = (format: string) => {
     const { thousandSeparator, decimalSeparator } = getSeparatorsFromFormat(format);
     onImportConfigChange({
@@ -97,7 +99,7 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
           </Label>
           <Select value={importConfig.numberFormat} onValueChange={handleNumberFormatChange}>
             <SelectTrigger className="w-full min-w-0">
-              <SelectValue placeholder="Select preset" />
+              <SelectValue placeholder={t`Select preset`} />
             </SelectTrigger>
             <SelectContent>
               {SUPPORTED_NUMBER_FORMATS.map((format) => (

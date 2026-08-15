@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { ACCOUNT_TYPES, type AccountInput } from '../onboarding-data';
 import {
@@ -10,6 +10,8 @@ import {
 } from './shared';
 
 export const AccountsStep: React.FC<StepProps> = ({ cur, state, set }) => {
+  const { t } = useLingui();
+
   const addAccount = () =>
     set({
       accounts: [...state.accounts, { id: Date.now(), type: 'checking', name: '', balance: '' }],
@@ -21,7 +23,7 @@ export const AccountsStep: React.FC<StepProps> = ({ cur, state, set }) => {
     <div>
       <StepHeroImage
         src="/onboarding-accounts.png"
-        alt="Coin character with checking register, savings jar, and credit card"
+        alt={t`Coin character with checking register, savings jar, and credit card`}
       />
       <Title h={cur.title} sub={cur.subtitle} />
       <div style={{ display: 'grid', gap: 10 }}>

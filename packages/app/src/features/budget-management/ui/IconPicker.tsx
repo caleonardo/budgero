@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { Label } from '@shared/ui/label';
@@ -10,6 +11,8 @@ interface IconPickerProps {
 }
 
 export const IconPicker: React.FC<IconPickerProps> = ({ value, onValueChange, label }) => {
+  const { t } = useLingui();
+
   // Let React Compiler handle this optimization automatically
   const selectedIcon = iconOptions.find((icon) => icon.value === value);
 
@@ -22,7 +25,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onValueChange, la
       )}
       <Select value={value} onValueChange={onValueChange}>
         <SelectTrigger size="sm" className="w-full" data-testid="select-icon-trigger">
-          <SelectValue placeholder="Select icon">
+          <SelectValue placeholder={t`Select icon`}>
             {selectedIcon && (
               <div className="flex items-center">
                 <selectedIcon.component className="w-4 h-4" />

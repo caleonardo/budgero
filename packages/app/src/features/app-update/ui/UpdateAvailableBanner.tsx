@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -26,6 +26,8 @@ function readPersistedDismiss(version: string): boolean {
  * the query still runs so the server can count active clients.
  */
 export function UpdateAvailableBanner() {
+  const { t } = useLingui();
+
   const [explicitlyDismissed, setExplicitlyDismissed] = useState(false);
   const { data } = useQuery({
     queryKey: ['version', 'latest'],
@@ -75,7 +77,7 @@ export function UpdateAvailableBanner() {
           <button
             onClick={handleDismiss}
             className="p-1 hover:bg-white/20 rounded transition-colors"
-            aria-label="Dismiss banner"
+            aria-label={t`Dismiss banner`}
           >
             <X className="h-4 w-4" />
           </button>

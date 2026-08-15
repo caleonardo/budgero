@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import {
@@ -54,6 +54,8 @@ export function SplitDetailsDialog({
   getPrimaryOutflow,
   budgetId,
 }: SplitDetailsDialogProps) {
+  const { t } = useLingui();
+
   const open = Boolean(transaction);
   const transactionId = transaction ? transaction.ID : null;
   // Edit surfaces must show real cents even under a zero-decimal display format.
@@ -391,7 +393,7 @@ export function SplitDetailsDialog({
                                     category_id: categoryId,
                                   })
                                 }
-                                placeholder="Choose category"
+                                placeholder={t`Choose category`}
                                 triggerClassName="h-8 w-full text-left"
                                 popoverContentClassName="w-[320px]"
                                 includeReadyToAssign
@@ -416,7 +418,7 @@ export function SplitDetailsDialog({
                               <Input
                                 value={(editable as EditableSplit)?.memo ?? ''}
                                 className="h-8"
-                                placeholder="Memo"
+                                placeholder={t`Memo`}
                                 onChange={(e) =>
                                   handleUpdateSplit((editable as EditableSplit).id, {
                                     memo: e.target.value,

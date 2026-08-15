@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import type { AdminUserDetails } from '@features/admin/model/admin-users';
 import { TabSection } from './TabSection';
@@ -16,6 +16,8 @@ export function ActivityTab({
   error: string | null;
   onRetry: () => void;
 }) {
+  const { t } = useLingui();
+
   return (
     <TabSection loading={loading} error={error} onRetry={onRetry}>
       <Card>
@@ -32,12 +34,15 @@ export function ActivityTab({
           <SectionError message={details?.sectionErrors?.appActivity} />
           <div className="grid gap-3 sm:grid-cols-3">
             <CompactMetric
-              label="Heartbeats In Window"
+              label={t`Heartbeats In Window`}
               value={`${details?.appActivity?.totalHeartbeats ?? 0}`}
             />
-            <CompactMetric label="Active Days" value={`${details?.appActivity?.activeDays ?? 0}`} />
             <CompactMetric
-              label="Last Seen"
+              label={t`Active Days`}
+              value={`${details?.appActivity?.activeDays ?? 0}`}
+            />
+            <CompactMetric
+              label={t`Last Seen`}
               value={formatOptionalDate(details?.appActivity?.lastSeenAt, 'MMM d, yyyy HH:mm')}
             />
           </div>
@@ -67,12 +72,12 @@ export function ActivityTab({
           <SectionError message={details?.sectionErrors?.activity} />
           <div className="grid gap-3 sm:grid-cols-3">
             <CompactMetric
-              label="Sessions In Window"
+              label={t`Sessions In Window`}
               value={`${details?.activity?.totalSessions ?? 0}`}
             />
-            <CompactMetric label="Active Days" value={`${details?.activity?.activeDays ?? 0}`} />
+            <CompactMetric label={t`Active Days`} value={`${details?.activity?.activeDays ?? 0}`} />
             <CompactMetric
-              label="Last Active"
+              label={t`Last Active`}
               value={formatOptionalDate(details?.activity?.lastActiveAt, 'MMM d, yyyy HH:mm')}
             />
           </div>

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 // Post-signup onboarding — collects every setup choice, then fires the whole
 // setup pipeline on the final click. The pipeline has to run in order:
 // master password → workspace → runtime init → budget (or YNAB import) →
@@ -62,6 +62,8 @@ function formatFileSize(bytes: number): string {
 }
 
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -174,10 +176,10 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         });
       } catch (err) {
         console.error('[Onboarding] Failed to read YNAB file', err);
-        toast.error('Could not read that file — try the raw YNAB export .zip.');
+        toast.error(t`Could not read that file — try the raw YNAB export .zip.`);
       }
     },
-    [set, state.budgetName]
+    [set, state.budgetName, t]
   );
 
   const applyOnboarding = useCallback(async () => {
@@ -248,7 +250,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <img
             src="/logo_48.png"
-            alt="Budgero logo"
+            alt={t`Budgero logo`}
             width={28}
             height={28}
             style={{ display: 'block' }}

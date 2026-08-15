@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { AlertTriangle } from 'lucide-react';
 import type { BudgetRow } from '@features/budget-planning/lib/budget-transforms';
 import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMaskedMilli';
@@ -42,6 +42,8 @@ function formatMonth(month: string): string {
  * this the debt is invisible in the budget.
  */
 export function CCUnderfundedBadge({ item, globalLocalizer, className }: CCUnderfundedBadgeProps) {
+  const { t } = useLingui();
+
   const formatAmount = useFormatMaskedMilli(globalLocalizer);
   const isCCPayment = item.fundingBreakdown !== undefined;
   const owed = item.cardBalance !== undefined ? Math.max(0, 0 - item.cardBalance) : 0;
@@ -68,7 +70,7 @@ export function CCUnderfundedBadge({ item, globalLocalizer, className }: CCUnder
   if (events.length === 0) {
     return (
       <span
-        title="This card owes more than you've set aside to pay it. Assign money here to cover it."
+        title={t`This card owes more than you've set aside to pay it. Assign money here to cover it.`}
         className="inline-flex"
       >
         {badge}
@@ -83,7 +85,7 @@ export function CCUnderfundedBadge({ item, globalLocalizer, className }: CCUnder
           type="button"
           className="inline-flex"
           onClick={(e) => e.stopPropagation()}
-          aria-label="Show where this credit-card debt came from"
+          aria-label={t`Show where this credit-card debt came from`}
         >
           {badge}
         </button>

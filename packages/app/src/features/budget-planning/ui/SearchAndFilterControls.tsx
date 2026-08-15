@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import { Search, ChevronUp, ChevronDown, Filter, RotateCcw } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -41,6 +41,8 @@ export function SearchAndFilterControls({
   extraButtons,
   inlineFilterOnDesktop = false,
 }: SearchAndFilterControlsProps) {
+  const { t } = useLingui();
+
   if (hideSearch && hideCollapseButton && hideFilter) {
     return null;
   }
@@ -59,7 +61,7 @@ export function SearchAndFilterControls({
         >
           <div className="flex min-w-0 items-center gap-1.5">
             <Filter className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            <SelectValue placeholder="Filter" />
+            <SelectValue placeholder={t`Filter`} />
           </div>
         </SelectTrigger>
         <SelectContent>
@@ -103,7 +105,7 @@ export function SearchAndFilterControls({
               <div className="group relative min-w-[160px] flex-1">
                 <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-foreground" />
                 <Input
-                  placeholder="Search categories..."
+                  placeholder={t`Search categories...`}
                   value={searchTerm}
                   onChange={(e) => onSearchChange(e.target.value)}
                   className="h-8 rounded-lg border-transparent bg-muted/50 pl-8 pr-3 text-sm shadow-none transition-colors focus-visible:border-ring focus-visible:bg-background"
@@ -145,7 +147,7 @@ export function SearchAndFilterControls({
                 size="sm"
                 onClick={onResetOrder}
                 className="h-8 w-8 shrink-0 rounded-lg border-border/70 bg-card/50 p-0 text-muted-foreground shadow-none hover:bg-muted/60 hover:text-foreground"
-                title="Reset to default order"
+                title={t`Reset to default order`}
               >
                 <RotateCcw className="h-3.5 w-3.5" />
               </Button>

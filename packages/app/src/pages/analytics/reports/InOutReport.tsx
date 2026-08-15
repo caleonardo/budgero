@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Layers, Percent } from 'lucide-react';
@@ -56,6 +56,8 @@ interface InOutReportProps {
  * target line.
  */
 export function InOutReport({ data, months }: InOutReportProps) {
+  const { t } = useLingui();
+
   const [mode, setMode] = useState<InOutMode>('flow');
   const [target, setTarget] = useState<number | null>(() => loadTarget(data.budgetId));
   const palette = usePalette();
@@ -235,7 +237,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
 
   return (
     <ReportShell
-      title="In vs Out"
+      title={t`In vs Out`}
       hero={
         <AnimatedNumber
           value={totalNet}
@@ -296,24 +298,24 @@ export function InOutReport({ data, months }: InOutReportProps) {
       chart={<EChart option={option} ariaLabel="Monthly money in versus money out" />}
       isLoading={data.isLoading}
       isEmpty={isEmpty}
-      emptyText="No income or spending in this period."
+      emptyText={t`No income or spending in this period.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
             <StatTile
-              label="Net"
+              label={t`Net`}
               value={`${totalNet >= 0 ? '+' : ''}${money.tile(totalNet)}`}
               valueClassName={trendTextClass(totalNet)}
             />
             <StatTile
-              label="Savings rate"
+              label={t`Savings rate`}
               value={savingsRate === null ? '—' : `${savingsRate.toFixed(0)}%`}
               valueClassName={savingsRate !== null ? trendTextClass(savingsRate) : undefined}
               detail={target !== null ? `target ${target}%` : undefined}
             />
-            <StatTile label="Money in" value={money.tile(totalIncome)} />
+            <StatTile label={t`Money in`} value={money.tile(totalIncome)} />
             <StatTile
-              label="Money out"
+              label={t`Money out`}
               value={money.tile(totalSpending)}
               valueClassName={totalSpending > 0 ? 'text-red-600 dark:text-red-300' : undefined}
               detail={`avg ${money.tile(Math.round(totalSpending / monthCount))}/mo`}

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 // Landing page for workspace-invite URLs shaped like `/join#code=budg-xxxx`.
 // The secret lives in the fragment, which browsers never send to servers —
 // so the URL can travel through whatever channel the owner chose (mailto,
@@ -58,6 +58,8 @@ function scrubFragment() {
 }
 
 export default function JoinWorkspacePage() {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const { data: profile, isLoading: profileLoading } = useProfile();
   // Auth-loaded gate: useProfile is disabled until the user is signed in,
@@ -136,7 +138,7 @@ export default function JoinWorkspacePage() {
         inviteSecret: secret,
         masterPassword: masterPasswordInput.trim() || undefined,
       });
-      toast.success('Workspace joined', {
+      toast.success(t`Workspace joined`, {
         description: 'You now have access to the shared budget space.',
       });
       await clearPendingSpaceInvite();
@@ -241,7 +243,7 @@ export default function JoinWorkspacePage() {
                 type="password"
                 value={masterPasswordInput}
                 onChange={(event) => setMasterPasswordInput(event.target.value)}
-                placeholder="Your Budgero master password"
+                placeholder={t`Your Budgero master password`}
                 autoComplete="current-password"
               />
               <p className="text-xs text-muted-foreground">

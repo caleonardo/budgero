@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Templates Tab
  *
@@ -37,6 +37,8 @@ export function TemplatesTab({
   onTemplateNameChange,
   onDeleteTemplate,
 }: TemplatesTabProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -46,7 +48,7 @@ export function TemplatesTab({
         <div className="flex flex-col gap-2 sm:flex-row">
           <Select value={selectedTemplate} onValueChange={onTemplateSelect}>
             <SelectTrigger className="w-full min-w-0 sm:flex-1">
-              <SelectValue placeholder="Select a saved template" />
+              <SelectValue placeholder={t`Select a saved template`} />
             </SelectTrigger>
             <SelectContent>
               {templates.map((template) => (
@@ -83,7 +85,7 @@ export function TemplatesTab({
         </div>
         {saveAsTemplate && (
           <Input
-            placeholder="Template name"
+            placeholder={t`Template name`}
             value={templateName}
             onChange={(e) => onTemplateNameChange(e.target.value)}
           />

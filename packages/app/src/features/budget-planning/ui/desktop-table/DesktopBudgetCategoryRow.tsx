@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Desktop Budget Category Row Component
  *
@@ -47,6 +47,8 @@ export function DesktopBudgetCategoryRow({
   dragHandleProps,
   selectable,
 }: DesktopBudgetCategoryRowProps) {
+  const { t } = useLingui();
+
   const moveAmountInputId = useId();
   const [movePopoverOpen, setMovePopoverOpen] = useState(false);
   const [moveAmount, setMoveAmount] = useState<string>('');
@@ -359,7 +361,7 @@ export function DesktopBudgetCategoryRow({
                     budgetId={selectedBudgetId}
                     selectedCategoryId={moveTarget}
                     onCategorySelect={(id) => setMoveTarget(id)}
-                    placeholder="Select target"
+                    placeholder={t`Select target`}
                     triggerClassName="justify-start h-8"
                     includeReadyToAssign
                     excludeCategoryId={row.categoryId}

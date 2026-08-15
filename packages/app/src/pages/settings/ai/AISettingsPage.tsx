@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Label } from '@shared/ui/label';
 import { Input } from '@shared/ui/input';
@@ -25,6 +25,8 @@ import { ModelSelectionSection } from './ModelSelectionSection';
 import { RecommendedModelsPanel } from './RecommendedModelsPanel';
 
 export default function AISettingsPage() {
+  const { t } = useLingui();
+
   const state = useAISettingsState();
   const isCloud = isCloudEndpoint(state.endpointURL, state.apiKey);
 
@@ -48,7 +50,7 @@ export default function AISettingsPage() {
             </span>
           </>
         }
-        description="Connect to a local LLM for privacy, or any OpenAI-compatible provider with an API key"
+        description={t`Connect to a local LLM for privacy, or any OpenAI-compatible provider with an API key`}
       />
 
       {/* AI Configuration Card */}
@@ -64,7 +66,7 @@ export default function AISettingsPage() {
             <Switch
               checked={state.enabled}
               onCheckedChange={state.setEnabled}
-              aria-label="Enable AI features"
+              aria-label={t`Enable AI features`}
             />
           </div>
           <CardDescription>
@@ -296,7 +298,7 @@ export default function AISettingsPage() {
                 onValueChange={(value: ExecutionMode) => state.setChatExecutionMode(value)}
               >
                 <SelectTrigger id="executionMode" className="w-full sm:w-48">
-                  <SelectValue placeholder="Select mode" />
+                  <SelectValue placeholder={t`Select mode`} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="confirm">
@@ -362,7 +364,7 @@ export default function AISettingsPage() {
                   onValueChange={(v) => state.setChatSpeechModel(v as SpeechModel)}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select model" />
+                    <SelectValue placeholder={t`Select model`} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="tiny">
@@ -439,7 +441,7 @@ export default function AISettingsPage() {
                 onValueChange={(value) => state.setChatContextMonths(Number(value))}
               >
                 <SelectTrigger id="contextMonths" className="w-full sm:w-32">
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder={t`Select`} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1">

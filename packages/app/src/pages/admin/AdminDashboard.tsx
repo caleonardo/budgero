@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -33,6 +33,8 @@ import type {
 } from '@features/admin/model/admin-dashboard';
 
 export default function AdminDashboard() {
+  const { t } = useLingui();
+
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -61,20 +63,20 @@ export default function AdminDashboard() {
       setSyncingClerk(true);
       const result: ClerkSyncResult = await adminApi.syncClerkUsers();
       setClerkSyncResult(result);
-      toast.success('Clerk sync complete', {
+      toast.success(t`Clerk sync complete`, {
         description: `Synced ${result.Synced ?? 0} users (${result.Created ?? 0} created, ${
           result.Migrated ?? 0
         } migrated, ${result.Updated ?? 0} updated).`,
       });
     } catch (error) {
       console.error('Failed to sync Clerk users:', error);
-      toast.error('Clerk sync failed', {
+      toast.error(t`Clerk sync failed`, {
         description: 'Unable to sync Clerk users. Check server logs for details.',
       });
     } finally {
       setSyncingClerk(false);
     }
-  }, [adminApi]);
+  }, [adminApi, t]);
 
   const loadFeedbackStatus = useCallback(async () => {
     try {
@@ -97,7 +99,7 @@ export default function AdminDashboard() {
       setSendingFeedback(true);
       const result = await adminApi.sendFeedbackBroadcast();
       setFeedbackResult(result);
-      toast.success('Feedback broadcast complete', {
+      toast.success(t`Feedback broadcast complete`, {
         description: `Sent ${result.sent ?? 0} of ${result.eligible ?? 0}, failed ${
           result.failed ?? 0
         }${result.dryRun ? ' (dry run)' : ''}.`,
@@ -105,13 +107,13 @@ export default function AdminDashboard() {
       void loadFeedbackStatus();
     } catch (error) {
       console.error('Failed to send feedback broadcast:', error);
-      toast.error('Feedback broadcast failed', {
+      toast.error(t`Feedback broadcast failed`, {
         description: 'Check server logs. Re-sending is safe — delivered users are skipped.',
       });
     } finally {
       setSendingFeedback(false);
     }
-  }, [adminApi, feedbackStatus, loadFeedbackStatus]);
+  }, [adminApi, feedbackStatus, loadFeedbackStatus, t]);
 
   useEffect(() => {
     if (!IS_SELF_HOSTABLE_BUILD) {
@@ -164,7 +166,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={Users}
-          label="Total Users"
+          label={t`Total Users`}
           value={stats?.totalUsers || 0}
           helper={
             <>
@@ -175,7 +177,7 @@ export default function AdminDashboard() {
 
         <StatCard
           icon={CreditCard}
-          label="Paid Users"
+          label={t`Paid Users`}
           value={stats?.paidUsers || 0}
           helper={
             <>
@@ -193,7 +195,7 @@ export default function AdminDashboard() {
 
         <StatCard
           icon={Gift}
-          label="Special Access"
+          label={t`Special Access`}
           value={(stats?.foundingMembers || 0) + (stats?.betaUsers || 0)}
           helper={
             <>

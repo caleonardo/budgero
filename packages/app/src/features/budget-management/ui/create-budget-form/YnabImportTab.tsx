@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * "YNAB" tab of CreateBudgetForm: import a YNAB ZIP export as a new budget.
  */
@@ -47,6 +47,8 @@ export function YnabImportTab({
   onReset,
   onImport,
 }: YnabImportTabProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-3 sm:space-y-4">
       <Field
@@ -61,7 +63,7 @@ export function YnabImportTab({
           id="importName"
           value={budgetName}
           onChange={(e) => onBudgetNameChange(e.target.value)}
-          placeholder="Enter a name for your imported budget"
+          placeholder={t`Enter a name for your imported budget`}
           disabled={isImporting}
           className="h-8 sm:h-9"
         />
@@ -69,7 +71,7 @@ export function YnabImportTab({
 
       <div className="space-y-3 sm:space-y-4">
         <div className="space-y-1.5">
-          <CurrencySelector value={currency} onValueChange={onCurrencyChange} label="Currency" />
+          <CurrencySelector value={currency} onValueChange={onCurrencyChange} label={t`Currency`} />
           <p className="text-xs text-muted-foreground">
             <Trans>
               The currency shown on amounts. This is for display only and can be changed anytime.
@@ -82,7 +84,7 @@ export function YnabImportTab({
             value={numberFormat}
             currency={currency}
             onValueChange={onNumberFormatChange}
-            label="Number Format"
+            label={t`Number Format`}
           />
           <p className="text-xs text-muted-foreground">
             <Trans>How numbers and decimals are displayed throughout the app.</Trans>
@@ -93,7 +95,7 @@ export function YnabImportTab({
           <IconPicker
             value={importBadgeIcon}
             onValueChange={onImportBadgeIconChange}
-            label="Budget Icon"
+            label={t`Budget Icon`}
           />
           <p className="text-xs text-muted-foreground">
             <Trans>

@@ -1,8 +1,10 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { FieldLabel, InputRow, StepHeroImage, Title, type StepProps } from './shared';
 
 export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
+  const { t } = useLingui();
+
   const pw = state.password;
   const strength = (() => {
     let s = 0;
@@ -22,7 +24,7 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
     <div>
       <StepHeroImage
         src="/onboarding-password.png"
-        alt="Coin character with a key approaching a Budgero padlock"
+        alt={t`Coin character with a key approaching a Budgero padlock`}
       />
       <Title
         h="Lock your ledger."
@@ -38,7 +40,7 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
             type="password"
             value={pw}
             onChange={(v) => set({ password: v })}
-            placeholder="at least 8 characters"
+            placeholder={t`at least 8 characters`}
           />
           {pw.length > 0 && (
             <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -75,7 +77,7 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
             type="password"
             value={state.passwordConfirm}
             onChange={(v) => set({ passwordConfirm: v })}
-            placeholder="type it once more"
+            placeholder={t`type it once more`}
           />
           {state.passwordConfirm.length > 0 && (
             <div

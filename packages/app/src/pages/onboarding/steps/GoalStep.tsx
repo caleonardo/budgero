@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { MonthYearCalendar } from '@shared/ui/MonthYearCalendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
@@ -21,6 +21,8 @@ import {
 } from './shared';
 
 export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
+  const { t } = useLingui();
+
   const sym = getCurrencySym(state.currency);
   const isCustom = state.goal.id === 'custom';
   const mode: GoalMode = state.goal.mode;
@@ -60,7 +62,7 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
     <div>
       <StepHeroImage
         src="/onboarding-goals.png"
-        alt="Coin character feeding a coin into a piggy bank"
+        alt={t`Coin character feeding a coin into a piggy bank`}
       />
       <Title h={cur.title} sub={cur.subtitle} />
 
@@ -105,7 +107,7 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
           <InputRow
             value={state.goal.label === 'Something else' ? '' : state.goal.label}
             onChange={(v) => set({ goal: { ...state.goal, label: v } })}
-            placeholder="e.g. Wedding fund"
+            placeholder={t`e.g. Wedding fund`}
           />
         </div>
       )}

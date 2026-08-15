@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@shared/ui/card';
@@ -21,6 +21,8 @@ import { SQLEditor, SchemaSidebar, ResultsTable, ReportsPanel, ChartsPanel } fro
 import { COMMON_QUERIES } from './sql-utils';
 
 export default function ExplorerPage() {
+  const { t } = useLingui();
+
   const budgetId = useUiStore((state) => state.selectedBudget?.ID || 0);
   const location = useLocation();
   const navigate = useNavigate();
@@ -114,7 +116,7 @@ export default function ExplorerPage() {
     chartId: string;
   }) => {
     await addWidgetMutation.mutateAsync({ dashboardId, reportId, chartId });
-    toast.success('Chart pinned to dashboard');
+    toast.success(t`Chart pinned to dashboard`);
   };
 
   return (

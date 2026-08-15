@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Label } from '@shared/ui/label';
 import { ThemeSwitch } from '@shared/ui/theme-switch';
@@ -23,6 +23,8 @@ import { AccountOrderCard } from '@features/account-management/ui/AccountOrderCa
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
 
 export default function AppearancePage() {
+  const { t } = useLingui();
+
   const { installApp, installSupport, installInstructions, canInstall } = usePWA();
   const homePage = useUiStore((state) => state.homePage);
   const setHomePage = useUiStore((state) => state.setHomePage);
@@ -98,8 +100,8 @@ export default function AppearancePage() {
   return (
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Appearance"
-        description="Customize how Budgero looks on your device"
+        title={t`Appearance`}
+        description={t`Customize how Budgero looks on your device`}
       />
 
       <Card>
@@ -174,7 +176,7 @@ export default function AppearancePage() {
                   onValueChange={(value) => setClassicFont(value as ClassicFontId)}
                 >
                   <SelectTrigger id="classic-font" className="w-full sm:w-56">
-                    <SelectValue placeholder="Choose a font" />
+                    <SelectValue placeholder={t`Choose a font`} />
                   </SelectTrigger>
                   <SelectContent>
                     {classicFontOptions.map((option) => (

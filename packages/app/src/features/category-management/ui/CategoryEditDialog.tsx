@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -31,6 +31,8 @@ export const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
   onSave,
   isSaving = false,
 }) => {
+  const { t } = useLingui();
+
   const [name, setName] = useState(categoryName);
   const [exclude, setExclude] = useState(excludeFromBudgetPace);
 
@@ -45,7 +47,7 @@ export const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
 
   const handleSave = () => {
     if (!name.trim()) {
-      toast.error('Category name cannot be empty');
+      toast.error(t`Category name cannot be empty`);
       return;
     }
 
@@ -79,7 +81,7 @@ export const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
               id="category-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter category name"
+              placeholder={t`Enter category name`}
               onKeyDown={handleKeyDown}
               autoFocus
             />

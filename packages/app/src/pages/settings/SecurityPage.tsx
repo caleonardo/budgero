@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Shield, AlertTriangle, Lock, Eye, EyeOff, ShieldAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -80,6 +80,8 @@ function PasswordField({
 }
 
 export default function SecurityPage() {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const { data: profile } = useProfile();
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -134,7 +136,7 @@ export default function SecurityPage() {
     } else {
       MasterPasswordManager.setPersistenceSetting({ mode: 'memory' });
       persistUserPreferencesPatch({ master_password_storage_mode: 'memory' });
-      toast.info('Master password will now stay in memory only.');
+      toast.info(t`Master password will now stay in memory only.`);
     }
   };
 
@@ -183,7 +185,7 @@ export default function SecurityPage() {
     try {
       // Step 1: Verify current password (best-effort in-memory check)
       if (MasterPasswordManager.canVerifyLocally()) {
-        toast.info('Verifying current password...');
+        toast.info(t`Verifying current password...`);
         const isValid = await MasterPasswordManager.verify(currentPassword);
         if (!isValid) {
           setError('Current password is incorrect');
@@ -193,7 +195,7 @@ export default function SecurityPage() {
       }
 
       // Step 2: Resolve workspace keys (ensures current password unlocks all spaces)
-      toast.info('Preparing workspace keys...');
+      toast.info(t`Preparing workspace keys...`);
       const spaces = runtime.listSpaces();
       if (!spaces.length) {
         throw new Error('No accepted workspaces found for this account');
@@ -223,7 +225,7 @@ export default function SecurityPage() {
       // Step 3: Re-wrap every workspace key locally, then commit the complete
       // set atomically. A sequential update can strand an account with some
       // spaces under the old password and others under the new one.
-      toast.info('Updating workspace access credentials...');
+      toast.info(t`Updating workspace access credentials...`);
       const apis = await import('@shared/api/api-client');
       const wrappedKeys: Record<string, string> = {};
       for (const entry of workspaceKeys) {
@@ -246,19 +248,19 @@ export default function SecurityPage() {
 
       // Step 6: Tell THIS USER's other devices (and only them — space
       // members keep their own passwords) so they reload and re-prompt.
-      toast.info('Notifying your other devices...');
+      toast.info(t`Notifying your other devices...`);
       runtime.notifyMasterPasswordChanged();
 
       // Step 7: Reload. In-place runtime re-init after a cipher swap proved
       // fragile (stuck loading, stale OPFS handles); a clean reload is what
       // remote devices do anyway, and the stored password unlocks silently.
-      toast.success('Master password changed successfully! Reloading…');
+      toast.success(t`Master password changed successfully! Reloading…`);
       setShowReinitOverlay(true);
       window.location.reload();
     } catch (error: unknown) {
       console.error('[ChangePassword] ERROR:', error);
       setError(getErrorMessage(error) || 'Failed to change password. Please try again.');
-      toast.error('Failed to change password');
+      toast.error(t`Failed to change password`);
     } finally {
       setIsChanging(false);
     }
@@ -276,8 +278,8 @@ export default function SecurityPage() {
   return (
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Security & Privacy"
-        description="Manage your security settings and privacy preferences"
+        title={t`Security & Privacy`}
+        description={t`Manage your security settings and privacy preferences`}
       />
 
       <Card>
@@ -389,7 +391,7 @@ export default function SecurityPage() {
                     disabled={storageMode !== 'session'}
                   >
                     <SelectTrigger id="storage-days" size="sm" className="w-[140px]">
-                      <SelectValue placeholder="Select days" />
+                      <SelectValue placeholder={t`Select days`} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1">
@@ -456,35 +458,35 @@ export default function SecurityPage() {
 
             <PasswordField
               id="current-password"
-              label="Current Password"
+              label={t`Current Password`}
               value={currentPassword}
               onChange={setCurrentPassword}
               show={showCurrentPassword}
               onToggleShow={() => setShowCurrentPassword(!showCurrentPassword)}
               disabled={isChanging}
-              placeholder="Enter current password"
+              placeholder={t`Enter current password`}
             />
 
             <PasswordField
               id="new-password"
-              label="New Password"
+              label={t`New Password`}
               value={newPassword}
               onChange={setNewPassword}
               show={showNewPassword}
               onToggleShow={() => setShowNewPassword(!showNewPassword)}
               disabled={isChanging}
-              placeholder="Enter new password (min 8 characters)"
+              placeholder={t`Enter new password (min 8 characters)`}
             />
 
             <PasswordField
               id="confirm-password"
-              label="Confirm New Password"
+              label={t`Confirm New Password`}
               value={confirmPassword}
               onChange={setConfirmPassword}
               show={showConfirmPassword}
               onToggleShow={() => setShowConfirmPassword(!showConfirmPassword)}
               disabled={isChanging}
-              placeholder="Confirm new password"
+              placeholder={t`Confirm new password`}
             />
           </div>
 
@@ -512,8 +514,8 @@ export default function SecurityPage() {
       {/* Reinitialization Overlay */}
       {showReinitOverlay && (
         <FullScreenLoadingOverlay
-          title="Applying New Password"
-          description="Please wait while we reinitialize with your new password..."
+          title={t`Applying New Password`}
+          description={t`Please wait while we reinitialize with your new password...`}
           footnote="This may take a few moments"
         />
       )}

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { formatDate as format } from '@shared/lib/date-format';
 import {
@@ -172,6 +172,8 @@ export function RecurringTransactionEditor({
   onSubmit,
   isSubmitting = false,
 }: RecurringTransactionEditorProps) {
+  const { t } = useLingui();
+
   const isMobile = useIsMobile();
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
   const plainNumberFormatter = usePlainNumberFormatter(globalLocalizer);
@@ -309,16 +311,16 @@ export function RecurringTransactionEditor({
     <div className="flex-1 overflow-y-auto px-6 py-4" data-testid="recurring-transaction-form">
       <div className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Name" htmlFor="rt-name" className="space-y-2">
+          <Field label={t`Name`} htmlFor="rt-name" className="space-y-2">
             <Input
               id="rt-name"
               value={formValues.name}
               onChange={(event) => setFormValues((prev) => ({ ...prev, name: event.target.value }))}
-              placeholder="e.g. Paycheck"
+              placeholder={t`e.g. Paycheck`}
               data-testid="recurring-name-input"
             />
           </Field>
-          <Field label="Amount" htmlFor="rt-amount" className="space-y-2">
+          <Field label={t`Amount`} htmlFor="rt-amount" className="space-y-2">
             <CalculatorCell
               value={fromDecimal(formValues.amount ? Number(formValues.amount) : 0)}
               onCommit={(val) =>
@@ -335,7 +337,7 @@ export function RecurringTransactionEditor({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Type" className="space-y-2">
+          <Field label={t`Type`} className="space-y-2">
             <Select
               value={formValues.type}
               onValueChange={(value: RecurringEditorType) =>
@@ -343,7 +345,7 @@ export function RecurringTransactionEditor({
               }
             >
               <SelectTrigger data-testid="recurring-type-select">
-                <SelectValue placeholder="Select type" />
+                <SelectValue placeholder={t`Select type`} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="inflow">
@@ -370,7 +372,7 @@ export function RecurringTransactionEditor({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Choose account" />
+                <SelectValue placeholder={t`Choose account`} />
               </SelectTrigger>
               <SelectContent>
                 {accounts.map((account) => (
@@ -386,7 +388,7 @@ export function RecurringTransactionEditor({
         {isTransfer ? (
           <>
             <Field
-              label="To account"
+              label={t`To account`}
               className="space-y-2"
               hint={
                 allowTransferCategory
@@ -401,7 +403,7 @@ export function RecurringTransactionEditor({
                 }
               >
                 <SelectTrigger data-testid="recurring-to-account-select">
-                  <SelectValue placeholder="Choose destination account" />
+                  <SelectValue placeholder={t`Choose destination account`} />
                 </SelectTrigger>
                 <SelectContent>
                   {accounts
@@ -416,7 +418,7 @@ export function RecurringTransactionEditor({
             </Field>
             {allowTransferCategory ? (
               <Field
-                label="Spending category (optional)"
+                label={t`Spending category (optional)`}
                 className="space-y-2"
                 hint="Leave empty to reduce Ready to Assign instead of a category."
               >
@@ -430,7 +432,7 @@ export function RecurringTransactionEditor({
                   }
                 >
                   <SelectTrigger data-testid="recurring-transfer-category-select">
-                    <SelectValue placeholder="None — reduce Ready to Assign" />
+                    <SelectValue placeholder={t`None — reduce Ready to Assign`} />
                   </SelectTrigger>
                   <SelectContent className="max-h-72">
                     <SelectItem value="transfers-default">
@@ -447,13 +449,13 @@ export function RecurringTransactionEditor({
             ) : null}
           </>
         ) : (
-          <Field label="Category" className="space-y-2">
+          <Field label={t`Category`} className="space-y-2">
             <Select
               value={formValues.categoryId}
               onValueChange={(value) => setFormValues((prev) => ({ ...prev, categoryId: value }))}
             >
               <SelectTrigger data-testid="recurring-category-select">
-                <SelectValue placeholder="Choose category" />
+                <SelectValue placeholder={t`Choose category`} />
               </SelectTrigger>
               <SelectContent className="max-h-72">
                 {categories.map((category) => (
@@ -467,13 +469,13 @@ export function RecurringTransactionEditor({
         )}
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Cadence" className="space-y-2">
+          <Field label={t`Cadence`} className="space-y-2">
             <Select
               value={formValues.frequency}
               onValueChange={(value) => setFormValues((prev) => ({ ...prev, frequency: value }))}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select cadence" />
+                <SelectValue placeholder={t`Select cadence`} />
               </SelectTrigger>
               <SelectContent>
                 {frequencyOptions.map((option) => (
@@ -484,7 +486,7 @@ export function RecurringTransactionEditor({
               </SelectContent>
             </Select>
           </Field>
-          <Field label="First occurrence" htmlFor="rt-start" className="space-y-2">
+          <Field label={t`First occurrence`} htmlFor="rt-start" className="space-y-2">
             <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -511,7 +513,7 @@ export function RecurringTransactionEditor({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
-            label="Notify me"
+            label={t`Notify me`}
             htmlFor="rt-notify"
             className="space-y-2"
             hint="Days before due date (0 for same-day reminder)."
@@ -546,13 +548,13 @@ export function RecurringTransactionEditor({
           </div>
         </div>
 
-        <Field label="Memo (optional)" htmlFor="rt-memo" className="space-y-2">
+        <Field label={t`Memo (optional)`} htmlFor="rt-memo" className="space-y-2">
           <Textarea
             id="rt-memo"
             rows={3}
             value={formValues.memo}
             onChange={(event) => setFormValues((prev) => ({ ...prev, memo: event.target.value }))}
-            placeholder="This note will be copied into the transaction memo."
+            placeholder={t`This note will be copied into the transaction memo.`}
           />
         </Field>
       </div>

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
@@ -36,6 +36,8 @@ interface PlanRealityReportProps {
  * plan leaks per category, and how well goal categories are being funded.
  */
 export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
+  const { t } = useLingui();
+
   const palette = usePalette();
   const money = useMoneyFormatters();
   const { data: planInputs, isLoading: planLoading } = usePlanData(months, data.budgetId);
@@ -150,7 +152,7 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
 
   return (
     <ReportShell
-      title="Plan vs Reality"
+      title={t`Plan vs Reality`}
       hero={
         <AnimatedNumber
           value={slack}
@@ -175,13 +177,13 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
       chart={<EChart option={option} ariaLabel="Assigned versus spent per month" />}
       isLoading={data.isLoading || planLoading}
       isEmpty={isEmpty}
-      emptyText="No assignments in this period — assign money on the Planning page first."
+      emptyText={t`No assignments in this period — assign money on the Planning page first.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
-            <StatTile label="Assigned" value={money.tile(plan.totalAssigned)} />
+            <StatTile label={t`Assigned`} value={money.tile(plan.totalAssigned)} />
             <StatTile
-              label="Spent"
+              label={t`Spent`}
               value={money.tile(plan.totalSpent)}
               detail={
                 plan.totalAssigned > 0
@@ -190,7 +192,7 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
               }
             />
             <StatTile
-              label="Months on plan"
+              label={t`Months on plan`}
               value={`${Math.round(plan.monthsOnPlan * 100)}%`}
               valueClassName={
                 plan.monthsOnPlan >= 0.5 ? 'text-green-600' : 'text-red-600 dark:text-red-300'

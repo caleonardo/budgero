@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Dices, Undo2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -34,6 +35,8 @@ const INVALIDATED_KEYS = [
 ];
 
 export function DevSimulateRateMoveButton() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const queryClient = useQueryClient();
   const [running, setRunning] = useState(false);
@@ -46,14 +49,14 @@ export function DevSimulateRateMoveButton() {
     const services = getRuntime()?.services();
     const budgetId = selectedBudget?.ID;
     if (!services || !budgetId) {
-      toast.error('No budget selected');
+      toast.error(t`No budget selected`);
       return;
     }
     setRestoring(true);
     try {
       const revalued = await services.currency.restoreOfficialRates(budgetId);
       await invalidateAll();
-      toast.success('Official rates restored', {
+      toast.success(t`Official rates restored`, {
         description: `Today's cache refetched; ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
       });
     } catch (err) {
@@ -68,7 +71,7 @@ export function DevSimulateRateMoveButton() {
     const budgetId = selectedBudget?.ID;
     const displayCurrency = selectedBudget?.DisplayCurrency;
     if (!services || !budgetId || !displayCurrency) {
-      toast.error('No budget selected');
+      toast.error(t`No budget selected`);
       return;
     }
 
@@ -82,7 +85,7 @@ export function DevSimulateRateMoveButton() {
           .filter((currency) => currency && currency !== displayCurrency)
       );
       if (foreignCurrencies.size === 0) {
-        toast.info('No foreign-currency accounts', {
+        toast.info(t`No foreign-currency accounts`, {
           description: 'Add an account in another currency (or crypto) first.',
         });
         return;

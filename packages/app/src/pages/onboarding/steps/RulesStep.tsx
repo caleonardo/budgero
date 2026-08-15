@@ -1,8 +1,10 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { StepProps } from './shared';
 
 export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
+  const { t } = useLingui();
+
   const acknowledgeId = React.useId();
   const rules = [
     {
@@ -84,7 +86,7 @@ export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
         </div>
         <img
           src="/onboarding-rules-hero.png"
-          alt="Coin character pointing at a House Rules board"
+          alt={t`Coin character pointing at a House Rules board`}
           style={{
             width: '100%',
             height: 'auto',

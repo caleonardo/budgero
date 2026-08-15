@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, type ReactNode } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -43,6 +43,8 @@ function IdGroupSection({
 }
 
 export function IdReferencePanel({ state }: IdReferencePanelProps) {
+  const { t } = useLingui();
+
   const {
     budgets,
     accounts,
@@ -126,7 +128,7 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
                       {expandedBudgetId === budget.ID && (
                         <>
                           {/* Accounts for this budget */}
-                          <IdGroupSection label="Accounts" count={accounts?.length ?? 0}>
+                          <IdGroupSection label={t`Accounts`} count={accounts?.length ?? 0}>
                             {accounts?.map((account) => (
                               <div
                                 key={account.ID}
@@ -154,7 +156,7 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
                           </IdGroupSection>
 
                           {/* Categories for this budget */}
-                          <IdGroupSection label="Categories" count={categories?.length ?? 0}>
+                          <IdGroupSection label={t`Categories`} count={categories?.length ?? 0}>
                             {categoryGroups?.map((group) => {
                               const groupCategories = categories?.filter(
                                 (c) => c.CategoryGroupID === group.ID
@@ -194,7 +196,7 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
                           </IdGroupSection>
 
                           {/* Payees for this budget — name-keyed, copy the name */}
-                          <IdGroupSection label="Payees" count={payees?.length ?? 0}>
+                          <IdGroupSection label={t`Payees`} count={payees?.length ?? 0}>
                             {payees?.map((payee) => (
                               <div
                                 key={payee.Name}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -112,6 +112,8 @@ function PayloadPreview({ payload }: { payload: Record<string, unknown> }) {
 const PAGE_SIZE = 25;
 
 export default function AuditLogPage() {
+  const { t } = useLingui();
+
   const queryClient = useQueryClient();
   const spaceId = useActiveSpaceId();
   const selectedBudget = useUiStore((state) => state.selectedBudget);
@@ -154,12 +156,12 @@ export default function AuditLogPage() {
     try {
       if (pendingAction.type === 'undo') {
         await undoMutation.mutateAsync({ entry: pendingAction.entry });
-        toast.success('Action undone', {
+        toast.success(t`Action undone`, {
           description: `Reverted: ${formatOpCode(pendingAction.entry.op)}`,
         });
       } else if (pendingAction.type === 'clear') {
         await clearMutation.mutateAsync({ spaceId });
-        toast.success('Audit log cleared');
+        toast.success(t`Audit log cleared`);
         setPage(0);
       }
     } catch (error: unknown) {
@@ -175,8 +177,8 @@ export default function AuditLogPage() {
   return (
     <div className="container max-w-6xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Audit Log"
-        description="View all changes made to your budget with the ability to undo recent actions."
+        title={t`Audit Log`}
+        description={t`View all changes made to your budget with the ability to undo recent actions.`}
       />
 
       <Card>
@@ -233,7 +235,7 @@ export default function AuditLogPage() {
               </Trans>
             </div>
           ) : isLoading ? (
-            <InlineLoadingRow label="Loading audit log..." />
+            <InlineLoadingRow label={t`Loading audit log...`} />
           ) : history.length === 0 ? (
             <div className="p-6 text-sm text-muted-foreground">
               <Trans>

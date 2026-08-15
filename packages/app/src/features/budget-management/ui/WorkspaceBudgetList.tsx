@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -50,6 +50,8 @@ export function WorkspaceBudgetList({
   onEditBudget,
   onCreateBudget,
 }: WorkspaceBudgetListProps) {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const runtime = useRuntime();
   const queryClient = useQueryClient();
@@ -104,7 +106,7 @@ export function WorkspaceBudgetList({
   const handleChangeBudget = (budget: Budget) => {
     if (selectedBudget?.ID !== budget.ID) {
       setSelectedBudget(budget);
-      toast.success('Budget switched', { description: `Switched to "${budget.Name}".` });
+      toast.success(t`Budget switched`, { description: `Switched to "${budget.Name}".` });
       void navigate('/', { replace: true });
     }
     onItemSelected?.();
@@ -115,11 +117,11 @@ export function WorkspaceBudgetList({
     setDefaultBudgetId(nextId);
     setStoredDefaultBudgetId(nextId);
     if (nextId) {
-      toast.success('Default budget set', {
+      toast.success(t`Default budget set`, {
         description: `${budget.Name} will open automatically next time.`,
       });
     } else {
-      toast.success('Default budget cleared', {
+      toast.success(t`Default budget cleared`, {
         description: 'Budgets will open in list order.',
       });
     }
@@ -134,13 +136,13 @@ export function WorkspaceBudgetList({
         queryClient,
         spaceId: space.space_id,
       });
-      toast.success('Workspace switched', {
+      toast.success(t`Workspace switched`, {
         description: `You are now in "${space.display_name}".`,
       });
       void navigate('/', { replace: true });
     } catch (error) {
       const message = getErrorMessage(error, 'Unable to switch workspace. Please try again.');
-      toast.error('Unable to switch workspace', { description: message });
+      toast.error(t`Unable to switch workspace`, { description: message });
     } finally {
       setSwitchingSpaceId(null);
     }
@@ -223,7 +225,7 @@ export function WorkspaceBudgetList({
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label="Manage budget"
+                        aria-label={t`Manage budget`}
                         data-testid="manage-budget-button"
                         className="h-6 w-6"
                         onClick={(e) => {
@@ -326,7 +328,7 @@ export function WorkspaceBudgetList({
                     'cursor-not-allowed text-muted-foreground opacity-60'
                   )}
                   aria-disabled
-                  title="This workspace is currently inaccessible"
+                  title={t`This workspace is currently inaccessible`}
                 >
                   <div className="flex min-w-0 items-center gap-2">
                     <Lock className="h-4 w-4 shrink-0" />
@@ -351,7 +353,7 @@ export function WorkspaceBudgetList({
                 key={space.space_id}
                 className={cn(rowBaseClass, rowHoverClass)}
                 {...buttonizeProps(handleOpenWorkspaceSettings)}
-                title="Open workspace settings to complete the invitation"
+                title={t`Open workspace settings to complete the invitation`}
               >
                 <div className="flex min-w-0 items-center gap-2">
                   <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />

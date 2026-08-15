@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { parse } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -41,6 +41,8 @@ export default function MonthPickerPopover({
   align = 'center',
   labelFormat = 'MMMM yyyy',
 }: MonthPickerPopoverProps) {
+  const { t } = useLingui();
+
   const [open, setOpen] = useState(false);
 
   const selectedDate = useMemo(() => parse(`${value}-01`, 'yyyy-MM-dd', new Date()), [value]);
@@ -92,7 +94,7 @@ export default function MonthPickerPopover({
             variant="ghost"
             size="icon"
             className="h-7 w-7"
-            aria-label="Previous year"
+            aria-label={t`Previous year`}
             onClick={() => setViewYear((y) => y - 1)}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -102,7 +104,7 @@ export default function MonthPickerPopover({
             variant="ghost"
             size="icon"
             className="h-7 w-7"
-            aria-label="Next year"
+            aria-label={t`Next year`}
             onClick={() => setViewYear((y) => y + 1)}
           >
             <ChevronRight className="h-4 w-4" />

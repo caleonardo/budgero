@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent } from '@shared/ui/dialog';
@@ -45,6 +46,8 @@ export function GoalSection({
   compact = false,
   className,
 }: GoalSectionProps) {
+  const { t } = useLingui();
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const highlightGoalCategoryId = useUiStore((state) => state.highlightGoalCategoryId);
   const setHighlightGoalCategoryId = useUiStore((state) => state.setHighlightGoalCategoryId);
@@ -117,11 +120,11 @@ export function GoalSection({
       });
 
       setIsFormOpen(false);
-      toast.success('Goal deleted', {
+      toast.success(t`Goal deleted`, {
         description: 'The goal has been permanently removed.',
       });
     } catch {
-      toast.error('Failed to delete goal', {
+      toast.error(t`Failed to delete goal`, {
         description: 'Please try again.',
       });
     }

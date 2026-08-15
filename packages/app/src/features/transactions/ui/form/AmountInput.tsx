@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Amount Input Component
  *
@@ -39,6 +39,8 @@ export function AmountInput({
   onTouched,
   onEditingChange,
 }: AmountInputProps) {
+  const { t } = useLingui();
+
   const plainNumberFormatter = usePlainNumberFormatter(globalLocalizer);
 
   const handleCommit = (val: MilliUnits) => {
@@ -73,7 +75,7 @@ export function AmountInput({
             formatter={(val) => (val === 0 && !touched ? '' : plainNumberFormatter.format(val))}
             localizer={plainNumberFormatter}
             inputAlign="center"
-            placeholder="100 + 25 or 150 / 2"
+            placeholder={t`100 + 25 or 150 / 2`}
             className={`h-8 sm:h-10 text-sm sm:text-base font-medium ${
               transactionType === 'inflow'
                 ? 'text-success'

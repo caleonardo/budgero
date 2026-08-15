@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
@@ -24,6 +24,8 @@ interface ValueChangeStatProps {
 /** Signed daily deltas as bars around a zero baseline. Direction carries
  * polarity (up = gain, down = loss) so color is never the only encoding. */
 function RevaluationBars({ rows }: { rows: { Date: string; DeltaConverted: number }[] }) {
+  const { t } = useLingui();
+
   const bars = rows.slice(-30);
   const width = 248;
   const height = 72;
@@ -37,7 +39,7 @@ function RevaluationBars({ rows }: { rows: { Date: string; DeltaConverted: numbe
       viewBox={`0 0 ${width} ${height}`}
       className="w-full"
       role="img"
-      aria-label="Daily value changes from exchange-rate moves"
+      aria-label={t`Daily value changes from exchange-rate moves`}
     >
       <line
         x1={0}
@@ -83,6 +85,8 @@ export function ValueChangeStat({
   budgetCurrency,
   size = 'sm',
 }: ValueChangeStatProps) {
+  const { t } = useLingui();
+
   const { data: history = [] } = useRevaluationHistory(accountId);
   const positive30 = summary.last30Days >= 0;
   const Icon = positive30 ? ArrowUpRight : ArrowDownRight;
@@ -95,7 +99,7 @@ export function ValueChangeStat({
         <button
           type="button"
           className="text-left cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          aria-label="Value change details"
+          aria-label={t`Value change details`}
         >
           <span
             className={cn(

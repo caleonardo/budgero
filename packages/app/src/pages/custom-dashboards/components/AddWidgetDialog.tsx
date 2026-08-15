@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { UnifiedReport } from '@budgero/core/browser';
 import {
@@ -34,6 +34,8 @@ export function AddWidgetDialog({
   reports,
   onAddWidget,
 }: AddWidgetDialogProps) {
+  const { t } = useLingui();
+
   const [titleOverride, setTitleOverride] = useState('');
   const {
     selectableReports,
@@ -58,7 +60,7 @@ export function AddWidgetDialog({
 
   const handleSubmit = async () => {
     if (!selectedReportId || !selectedChartId) {
-      toast.error('Please select a report and chart.');
+      toast.error(t`Please select a report and chart.`);
       return;
     }
 
@@ -105,7 +107,7 @@ export function AddWidgetDialog({
                 id="titleOverride"
                 value={titleOverride}
                 onChange={(event) => setTitleOverride(event.target.value)}
-                placeholder="Leave blank to use chart title"
+                placeholder={t`Leave blank to use chart title`}
               />
             </div>
           </div>

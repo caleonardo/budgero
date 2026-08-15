@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { EditAccountDialog } from '@features/account-management/ui/EditAccountDialog';
 import { ReconcileAccountDialog } from '@features/account-management/ui/ReconcileAccountDialog';
@@ -52,6 +52,8 @@ import { AccountTransactionsSection } from './components/AccountTransactionsSect
 import { RecurringTransactionsPanel } from './components/RecurringTransactionsPanel';
 
 export default function AccountPage() {
+  const { t } = useLingui();
+
   const { accountId } = useParams<{ accountId: string }>();
   const numericId = Number(accountId);
   const { isProcessingTransfer } = useLoading();
@@ -264,18 +266,18 @@ export default function AccountPage() {
         // Post dated on the due date, matching the recurring settings page.
         const result = await markRecurringReady.mutateAsync({ occurrenceId });
         const { template } = result.occurrence;
-        toast.success('Transaction posted', {
+        toast.success(t`Transaction posted`, {
           description: `${template.name} was added to your register.`,
         });
       } else {
         await skipRecurring.mutateAsync({ id: occurrenceId });
-        toast.success('Occurrence skipped', {
+        toast.success(t`Occurrence skipped`, {
           description: 'We will remind you again next time.',
         });
       }
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
-      toast.error('Action failed', { description: message });
+      toast.error(t`Action failed`, { description: message });
     } finally {
       setProcessingOccurrenceId(null);
     }
@@ -303,7 +305,7 @@ export default function AccountPage() {
   useJumpToTransaction(transactionsData.length);
 
   if (isAccountsLoading) {
-    return <CenteredLoader className="flex-1 p-4" label="Loading account information..." />;
+    return <CenteredLoader className="flex-1 p-4" label={t`Loading account information...`} />;
   }
 
   if (!selectedAccount && !isAccountsLoading) {
@@ -398,14 +400,14 @@ export default function AccountPage() {
             <div className="w-px h-6 bg-border" />
             <FlowStat
               icon={ArrowUpRight}
-              label="Inflow"
+              label={t`Inflow`}
               value={formatMilliAmount(transactionStats.totalInflow)}
               color="success"
               size="sm"
             />
             <FlowStat
               icon={ArrowDownRight}
-              label="Outflow"
+              label={t`Outflow`}
               value={formatMilliAmount(transactionStats.totalOutflow)}
               color="destructive"
               size="sm"

@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -49,6 +50,8 @@ function markStartup(name: string) {
 }
 
 export default function StartupController() {
+  const { t } = useLingui();
+
   const location = useLocation();
   const queryClient = useQueryClient();
   const runtime = useRuntime();
@@ -325,12 +328,12 @@ export default function StartupController() {
         queryClient,
         spaceId,
       });
-      toast.success('Workspace switched', {
+      toast.success(t`Workspace switched`, {
         description: 'You are now viewing this workspace.',
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Unable to switch workspace. Please try again.');
-      toast.error('Unable to switch workspace', {
+      toast.error(t`Unable to switch workspace`, {
         description: message,
       });
     } finally {

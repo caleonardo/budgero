@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Separator } from '@shared/ui/separator';
@@ -24,6 +24,8 @@ const communityBadgeClass =
   'inline-flex h-6 w-6 items-center justify-center rounded-full text-[0.625rem] font-semibold text-white';
 
 export default function AboutPage() {
+  const { t } = useLingui();
+
   const buildChannel = 'Web';
   const repoLink = useMemo(() => {
     if (!pkg.repository) return undefined;
@@ -34,11 +36,11 @@ export default function AboutPage() {
   const swUpdates = useServiceWorkerUpdate();
   const handleUpdateServiceWorker = useCallback(async () => {
     if (!swUpdates.isSupported) {
-      toast.error('Service worker updates are not available in this build.');
+      toast.error(t`Service worker updates are not available in this build.`);
       return;
     }
     await swUpdates.checkForUpdates();
-  }, [swUpdates]);
+  }, [swUpdates, t]);
 
   const rows: { label: string; value: string }[] = [
     { label: 'Version', value: pkg.version ?? 'Unknown' },
@@ -54,8 +56,8 @@ export default function AboutPage() {
   return (
     <div className="container max-w-3xl mx-auto p-4 sm:p-6 space-y-6 pb-24 sm:pb-6">
       <SettingsPageHeader
-        title="About Budgero"
-        description="A quick overview of this Budgero installation, including version and useful links."
+        title={t`About Budgero`}
+        description={t`A quick overview of this Budgero installation, including version and useful links.`}
       />
 
       <Card>

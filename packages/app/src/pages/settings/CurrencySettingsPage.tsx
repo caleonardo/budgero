@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
 import { parseISO } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -43,6 +43,8 @@ const RETENTION_OPTIONS = [30, 60, 90, 180, 365] as const;
 
 /** Daily-rate cache retention + reconnect-resync settings (user_meta backed). */
 function RateCacheSettingsCard() {
+  const { t } = useLingui();
+
   const [retentionDays, setRetentionDays] = useState<number>(() => {
     try {
       return getRuntime()?.services()?.userMeta.getRateCacheRetentionDays() ?? 30;
@@ -67,7 +69,7 @@ function RateCacheSettingsCard() {
     if (selectedBudget) {
       const pruned = services.currency.pruneRateCache(selectedBudget.ID);
       if (pruned > 0) {
-        toast.success('Rate cache pruned', {
+        toast.success(t`Rate cache pruned`, {
           description: `${pruned} cached rate${pruned !== 1 ? 's' : ''} older than ${days} days removed.`,
         });
       }
@@ -104,7 +106,7 @@ function RateCacheSettingsCard() {
             </p>
           </div>
           <Select value={String(retentionDays)} onValueChange={(v) => commitRetention(Number(v))}>
-            <SelectTrigger className="w-32" aria-label="Keep cached rates for">
+            <SelectTrigger className="w-32" aria-label={t`Keep cached rates for`}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -132,7 +134,7 @@ function RateCacheSettingsCard() {
           <Switch
             checked={resyncOnReconnect}
             onCheckedChange={commitResync}
-            aria-label="Update offline rates when back online"
+            aria-label={t`Update offline rates when back online`}
           />
         </div>
       </CardContent>
@@ -248,6 +250,8 @@ function RateFormDialog({
   onSave: () => void;
   isSaving: boolean;
 }) {
+  const { t } = useLingui();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[90dvh] overflow-y-auto">
@@ -378,7 +382,7 @@ function RateFormDialog({
             </legend>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <DateField
-                label="Start Date"
+                label={t`Start Date`}
                 value={formData.startDate}
                 emptyLabel="Select date"
                 onChange={(date) => setFormData((f) => ({ ...f, startDate: date }))}
@@ -414,6 +418,8 @@ function RateFormDialog({
 }
 
 export default function CurrencySettingsPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const budgetId = selectedBudget?.ID || 0;
 
@@ -449,17 +455,17 @@ export default function CurrencySettingsPage() {
   const handleSave = async () => {
     const rateNum = parseFloat(formData.rate);
     if (!formData.fromCurrency || !formData.toCurrency || isNaN(rateNum) || rateNum <= 0) {
-      toast.error('Invalid input', {
+      toast.error(t`Invalid input`, {
         description: 'Please fill in all required fields with valid values.',
       });
       return;
     }
     if (formData.fromCurrency === formData.toCurrency) {
-      toast.error('Same currency', { description: 'From and To currencies must be different.' });
+      toast.error(t`Same currency`, { description: 'From and To currencies must be different.' });
       return;
     }
     if (!formData.startDate) {
-      toast.error('Missing start date', { description: 'Please specify a start date.' });
+      toast.error(t`Missing start date`, { description: 'Please specify a start date.' });
       return;
     }
 
@@ -476,7 +482,7 @@ export default function CurrencySettingsPage() {
           budgetId,
         });
         const count = (result as { recalculatedCount?: number })?.recalculatedCount ?? 0;
-        toast.success('Rate updated', {
+        toast.success(t`Rate updated`, {
           description:
             count > 0
               ? `${count} transaction${count !== 1 ? 's' : ''} recalculated.`
@@ -493,7 +499,7 @@ export default function CurrencySettingsPage() {
           alsoReverse: formData.alsoReverse,
         });
         const count = (result as { recalculatedCount?: number })?.recalculatedCount ?? 0;
-        toast.success('Rate added', {
+        toast.success(t`Rate added`, {
           description:
             count > 0
               ? `${count} transaction${count !== 1 ? 's' : ''} recalculated.`
@@ -503,7 +509,7 @@ export default function CurrencySettingsPage() {
       setDialogOpen(false);
     } catch (err) {
       console.error('Failed to save rate:', err);
-      toast.error('Failed to save', { description: 'An error occurred while saving the rate.' });
+      toast.error(t`Failed to save`, { description: 'An error occurred while saving the rate.' });
     }
   };
 
@@ -515,7 +521,7 @@ export default function CurrencySettingsPage() {
         budgetId,
       });
       const count = (result as { recalculatedCount?: number })?.recalculatedCount ?? 0;
-      toast.success('Rate deleted', {
+      toast.success(t`Rate deleted`, {
         description:
           count > 0
             ? `${count} transaction${count !== 1 ? 's' : ''} recalculated using fallback rates.`
@@ -523,7 +529,7 @@ export default function CurrencySettingsPage() {
       });
     } catch (err) {
       console.error('Failed to delete rate:', err);
-      toast.error('Failed to delete', {
+      toast.error(t`Failed to delete`, {
         description: 'An error occurred while deleting the rate.',
       });
     } finally {
@@ -536,8 +542,8 @@ export default function CurrencySettingsPage() {
   return (
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Currencies"
-        description="Manage custom exchange rates for your budget. Custom rates take priority over automatically fetched rates for transactions and account balances within the specified date range."
+        title={t`Currencies`}
+        description={t`Manage custom exchange rates for your budget. Custom rates take priority over automatically fetched rates for transactions and account balances within the specified date range.`}
       />
 
       <Card>
@@ -713,7 +719,7 @@ export default function CurrencySettingsPage() {
       <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Delete custom rate?"
+        title={t`Delete custom rate?`}
         description={
           <>
             This will delete the {deleteTarget?.FromCurrency} → {deleteTarget?.ToCurrency} rate (
@@ -721,7 +727,7 @@ export default function CurrencySettingsPage() {
             will be recalculated using fallback rates.
           </>
         }
-        confirmText="Delete"
+        confirmText={t`Delete`}
         loadingText="Deleting..."
         variant="destructive"
         isLoading={deleteMutation.isPending}

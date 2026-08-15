@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -60,9 +60,11 @@ interface StartupSplashScreenProps {
 }
 
 export function StartupSplashScreen({ message, detail }: StartupSplashScreenProps) {
+  const { t } = useLingui();
+
   return (
     <div className="budgero-route-loader">
-      <img className="budgero-route-loader__logo" src="/logo_128.png" alt="Budgero logo" />
+      <img className="budgero-route-loader__logo" src="/logo_128.png" alt={t`Budgero logo`} />
       <p className="budgero-route-loader__text">{message ?? 'Preparing Budgero…'}</p>
       <div className="budgero-route-loader__progress" aria-hidden="true" />
       {detail ? <p className="text-xs text-muted-foreground">{detail}</p> : null}
@@ -106,6 +108,8 @@ function PasswordRequirement({ met, label }: { met: boolean; label: string }) {
 }
 
 function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnapshot }) {
+  const { t } = useLingui();
+
   const showSetup = !snapshot.isOffline && snapshot.isFirstTimeSetup;
   const password = snapshot.inputPassword;
   const allRulesMet = showSetup && PASSWORD_RULES.every((r) => r.test(password));
@@ -128,7 +132,7 @@ function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnaps
           type="password"
           value={snapshot.inputPassword}
           onChange={(event) => snapshot.setInputPassword(event.target.value)}
-          placeholder="Enter your master password"
+          placeholder={t`Enter your master password`}
           autoFocus
         />
       </div>
@@ -148,7 +152,7 @@ function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnaps
               type="password"
               value={snapshot.confirmPassword}
               onChange={(event) => snapshot.setConfirmPassword(event.target.value)}
-              placeholder="Confirm your master password"
+              placeholder={t`Confirm your master password`}
             />
             {snapshot.confirmPassword.length > 0 ? (
               <div className="flex items-center gap-2 text-xs">
@@ -396,6 +400,8 @@ export function WorkspaceRequiredScreen({
   profile: User | undefined;
   accessStatus: AccessStatus | null;
 }) {
+  const { t } = useLingui();
+
   const logout = useLogout();
   const queryClient = useQueryClient();
   const isSelfHost = IS_SELF_HOSTABLE_BUILD;
@@ -418,7 +424,7 @@ export function WorkspaceRequiredScreen({
     mutationFn: (displayName: string) => spaceApi.createSpace(displayName),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: BUDGET_SPACES_QUERY_KEY });
-      toast.success('Workspace created');
+      toast.success(t`Workspace created`);
     },
     onError: (error: Error) => {
       setFormError(error.message || 'Unable to create workspace.');
@@ -449,7 +455,7 @@ export function WorkspaceRequiredScreen({
         inviteSecret: trimmedSecret,
         masterPassword: masterPassword || undefined,
       });
-      toast.success('Workspace joined');
+      toast.success(t`Workspace joined`);
       setInviteDialogOpen(false);
       setInviteSecret('');
       setMasterPassword('');
@@ -536,7 +542,7 @@ export function WorkspaceRequiredScreen({
                       type="password"
                       value={masterPassword}
                       onChange={(event) => setMasterPassword(event.target.value)}
-                      placeholder="Your Budgero master password"
+                      placeholder={t`Your Budgero master password`}
                     />
                   </div>
                   {redeemError ? <p className="text-sm text-destructive">{redeemError}</p> : null}
@@ -603,7 +609,7 @@ export function WorkspaceRequiredScreen({
               id="workspace-name"
               value={workspaceName}
               onChange={(event) => setUserEditedName(event.target.value)}
-              placeholder="Personal Budget Space"
+              placeholder={t`Personal Budget Space`}
             />
           </div>
           {formError ? (
@@ -704,6 +710,8 @@ export function BudgetRequiredScreen({
   switchingWorkspaceId: string | null;
   onSwitchWorkspace: (spaceId: string) => void;
 }) {
+  const { t } = useLingui();
+
   const { status: onboardingStatus } = useOnboardingState();
   const { mutateAsync: updateOnboardingAsync } = useUpdateOnboarding();
   const isBudgetImporting = useUiStore((state) => state.isBudgetImporting);
@@ -730,8 +738,8 @@ export function BudgetRequiredScreen({
   );
 
   const handleBudgetCreated = React.useCallback(() => {
-    toast.success('Budget created');
-  }, []);
+    toast.success(t`Budget created`);
+  }, [t]);
 
   if (!selectedSource) {
     return (

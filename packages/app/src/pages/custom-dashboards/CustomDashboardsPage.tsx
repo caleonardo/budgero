@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -29,6 +29,8 @@ import { EditWidgetChartDialog } from './components/EditWidgetChartDialog';
 const DEFAULT_DASHBOARD_NAME = 'My Dashboard';
 
 export default function CustomDashboardsPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const budgetId = selectedBudget?.ID ?? 0;
   const isMobile = useIsMobile();
@@ -343,8 +345,8 @@ export default function CustomDashboardsPage() {
         defaultReportId={pinWidget?.reportId}
         defaultChartId={pinWidget?.chartId}
         confirmLabel="Update Widget"
-        title="Select New Chart"
-        description="Choose a different source chart for this widget."
+        title={t`Select New Chart`}
+        description={t`Choose a different source chart for this widget.`}
         onPin={handlePinSelectionForWidget}
       />
 

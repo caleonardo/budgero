@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle,
@@ -38,6 +38,8 @@ interface WorkspaceSharingPanelProps {
 }
 
 export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingPanelProps) {
+  const { t } = useLingui();
+
   const spaceId = activeSpace?.space_id ?? null;
   const isOwner = activeSpace?.role === 'owner';
 
@@ -74,7 +76,7 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
       const invite = await createInvite.mutateAsync({ expiresAt });
       setLatestInvite(invite);
       trackSharedBudget();
-      toast.success('Invite ready', {
+      toast.success(t`Invite ready`, {
         description: 'Copy the link or open it in your email client to share.',
       });
     } catch (error) {
@@ -101,7 +103,7 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
   const handleCancelInvite = async (inviteId: string) => {
     try {
       await cancelInvite.mutateAsync(inviteId);
-      toast.success('Invite cancelled', {
+      toast.success(t`Invite cancelled`, {
         description: 'The invite has been revoked.',
       });
     } catch (error) {
@@ -112,7 +114,7 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
   const handleRemoveMember = async (memberId: string) => {
     try {
       await removeMember.mutateAsync(memberId);
-      toast.success('Member removed', {
+      toast.success(t`Member removed`, {
         description: 'The member no longer has access to this workspace.',
       });
     } catch (error) {

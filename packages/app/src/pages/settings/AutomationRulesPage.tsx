@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -46,6 +46,8 @@ import { cn } from '@shared/lib/utils';
 import { getErrorMessage, toastError } from '@shared/lib/errors';
 
 export default function AutomationRulesPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const budgetId = selectedBudget?.ID ?? 0;
 
@@ -121,7 +123,7 @@ export default function AutomationRulesPage() {
           enabled: values.enabled,
           runOrder: values.runOrder,
         });
-        toast.success('Rule created', { description: 'Your automation rule is ready to run.' });
+        toast.success(t`Rule created`, { description: 'Your automation rule is ready to run.' });
       } else if (editingRule) {
         await updateRule.mutateAsync({
           id: editingRule.id,
@@ -136,7 +138,7 @@ export default function AutomationRulesPage() {
             runOrder: values.runOrder,
           },
         });
-        toast.success('Rule updated', { description: 'Changes saved successfully.' });
+        toast.success(t`Rule updated`, { description: 'Changes saved successfully.' });
       }
 
       setEditorOpen(false);
@@ -193,7 +195,7 @@ export default function AutomationRulesPage() {
     } catch (error) {
       const message = getErrorMessage(error, 'Unable to run the rule.');
       setRunOverlay((prev) => ({ ...prev, phase: 'error', error: message }));
-      toast.error('Execution failed', {
+      toast.error(t`Execution failed`, {
         description: message,
       });
     } finally {
@@ -205,7 +207,7 @@ export default function AutomationRulesPage() {
     if (!budgetId) return;
     try {
       await deleteRule.mutateAsync({ id: rule.id, budgetId });
-      toast.success('Rule deleted', { description: 'Automation removed successfully.' });
+      toast.success(t`Rule deleted`, { description: 'Automation removed successfully.' });
     } catch (error) {
       toastError('Unable to delete rule', error, 'Please try again.');
     }
@@ -264,13 +266,13 @@ export default function AutomationRulesPage() {
         console.warn('[AutomationRules] Failed to refresh queries after undoing run', refreshError);
       }
       setRunOverlay((prev) => ({ ...prev, phase: 'done', undoResult: result }));
-      toast.success('Run undone', {
+      toast.success(t`Run undone`, {
         description: 'Transactions were restored to their previous values.',
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Unable to undo run.');
       setRunOverlay((prev) => ({ ...prev, phase: 'error', error: message }));
-      toast.error('Unable to undo run', {
+      toast.error(t`Unable to undo run`, {
         description: message,
       });
     } finally {
@@ -457,9 +459,9 @@ export default function AutomationRulesPage() {
                           Retro run
                         </Button>
                       }
-                      title="Run this rule on past transactions?"
-                      description="Budgero will evaluate every transaction in this budget and apply any matching actions. This may take a moment for larger budgets."
-                      confirmText="Confirm retro run"
+                      title={t`Run this rule on past transactions?`}
+                      description={t`Budgero will evaluate every transaction in this budget and apply any matching actions. This may take a moment for larger budgets.`}
+                      confirmText={t`Confirm retro run`}
                       confirmDisabled={!!executingCurrent && executingCurrent !== rule.id}
                       onConfirm={() => {
                         void handleExecute(rule, 'retroactive');
@@ -541,6 +543,8 @@ function DeleteRuleButton({
   onDelete: () => void;
   disabled: boolean;
 }) {
+  const { t } = useLingui();
+
   return (
     <ConfirmDialog
       trigger={
@@ -556,8 +560,8 @@ function DeleteRuleButton({
         </Button>
       }
       title={<>Delete “{rule.name}”?</>}
-      description="This rule and its history will be removed. Recent runs can still be undone from the global undo menu."
-      confirmText="Delete rule"
+      description={t`This rule and its history will be removed. Recent runs can still be undone from the global undo menu.`}
+      confirmText={t`Delete rule`}
       variant="destructive"
       confirmDisabled={disabled}
       onConfirm={onDelete}

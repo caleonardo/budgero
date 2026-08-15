@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import type { AdminUserDetails } from '@features/admin/model/admin-users';
@@ -17,6 +17,8 @@ export function WorkspacesTab({
   error: string | null;
   onRetry: () => void;
 }) {
+  const { t } = useLingui();
+
   return (
     <TabSection loading={loading} error={error} onRetry={onRetry}>
       <Card>
@@ -30,15 +32,15 @@ export function WorkspacesTab({
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-3">
           <CompactMetric
-            label="Owned Workspaces"
+            label={t`Owned Workspaces`}
             value={`${details?.workspaces.ownedWorkspaceCount ?? 0}`}
           />
           <CompactMetric
-            label="Collaborator Workspaces"
+            label={t`Collaborator Workspaces`}
             value={`${details?.workspaces.collaboratorWorkspaceCount ?? 0}`}
           />
           <CompactMetric
-            label="Shares Used"
+            label={t`Shares Used`}
             value={`${details?.workspaces.ownedShareSeatsUsed ?? 0}/${details?.workspaces.ownedShareSeatsLimit ?? 5}`}
           />
         </CardContent>

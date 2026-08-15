@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -83,6 +83,8 @@ function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
 }
 
 export function AccountOrderCard() {
+  const { t } = useLingui();
+
   const budgetId = useUiStore((state) => state.selectedBudget?.ID || 0);
   const { data: accounts } = useActiveAccounts(budgetId);
   const reorder = useReorderAccounts();
@@ -126,13 +128,13 @@ export function AccountOrderCard() {
         ) : (
           <>
             <ReorderList
-              title="On budget"
+              title={t`On budget`}
               accounts={onBudget}
               onMove={handleReorder}
               busy={reorder.isPending}
             />
             <ReorderList
-              title="Off budget"
+              title={t`Off budget`}
               accounts={offBudget}
               onMove={handleReorder}
               busy={reorder.isPending}

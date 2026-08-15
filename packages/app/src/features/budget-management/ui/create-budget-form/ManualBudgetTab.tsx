@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * "New" tab of CreateBudgetForm: create a brand-new empty budget.
  */
@@ -42,6 +42,8 @@ export function ManualBudgetTab({
   isPending,
   onSubmit,
 }: ManualBudgetTabProps) {
+  const { t } = useLingui();
+
   return (
     <form onSubmit={onSubmit} className="space-y-3 sm:space-y-4" data-testid="create-budget-form">
       <Field
@@ -58,7 +60,7 @@ export function ManualBudgetTab({
           type="text"
           value={name}
           onChange={(e) => onNameChange(e.target.value)}
-          placeholder='e.g. "Personal Budget" or "Household"'
+          placeholder={t`e.g. "Personal Budget" or "Household"`}
           required
           disabled={isPending}
           className="h-8 sm:h-9"
@@ -69,7 +71,7 @@ export function ManualBudgetTab({
         <CurrencySelector
           value={displayCurrency}
           onValueChange={onDisplayCurrencyChange}
-          label="Display Currency"
+          label={t`Display Currency`}
         />
         <p className="text-xs text-muted-foreground">
           <Trans>
@@ -79,7 +81,7 @@ export function ManualBudgetTab({
       </div>
 
       <div className="space-y-1.5">
-        <IconPicker value={badgeIcon} onValueChange={onBadgeIconChange} label="Badge Icon" />
+        <IconPicker value={badgeIcon} onValueChange={onBadgeIconChange} label={t`Badge Icon`} />
         <p className="text-xs text-muted-foreground">
           <Trans>
             A small icon shown next to your budget name. Handy when you have multiple budgets.
@@ -92,7 +94,7 @@ export function ManualBudgetTab({
           value={selectedFormat}
           currency={displayCurrency}
           onValueChange={onSelectedFormatChange}
-          label="Number Format"
+          label={t`Number Format`}
         />
         <p className="text-xs text-muted-foreground">
           <Trans>How numbers and decimals are displayed throughout the app.</Trans>

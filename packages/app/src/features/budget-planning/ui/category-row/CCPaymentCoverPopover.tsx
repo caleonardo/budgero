@@ -1,6 +1,6 @@
 'use client';
 
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import { useId, useMemo, useState, useCallback } from 'react';
 import { toast } from 'sonner';
@@ -47,6 +47,8 @@ export function CCPaymentCoverPopover({
   align = 'end',
   triggerClassName,
 }: CCPaymentCoverPopoverProps) {
+  const { t } = useLingui();
+
   const sourceAccountTriggerId = useId();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState<MilliUnits>(ZERO_MILLI);
@@ -105,7 +107,7 @@ export function CCPaymentCoverPopover({
             selectedBudget.ID
           );
           if (!localOrManual) {
-            toast.error('No exchange rate available', {
+            toast.error(t`No exchange rate available`, {
               description:
                 'Please add a manual exchange rate in Settings → Currencies, or create this transfer from the transaction form.',
             });
@@ -180,7 +182,7 @@ export function CCPaymentCoverPopover({
         transferId,
       });
 
-      toast.success('Card payment recorded', {
+      toast.success(t`Card payment recorded`, {
         description: `${formatAmount(sourceOutflow)} ${sourceAccount.Currency} transferred to ${ccAccount.Name}.`,
       });
       setOpen(false);
@@ -190,6 +192,7 @@ export function CCPaymentCoverPopover({
       setIsConfirming(false);
     }
   }, [
+    t,
     amount,
     ccAccount,
     sourceAccount,
@@ -210,7 +213,7 @@ export function CCPaymentCoverPopover({
             availableAmountClass(available),
             triggerClassName
           )}
-          title="Cover this card"
+          title={t`Cover this card`}
           onClick={(e) => {
             e.stopPropagation();
             handleOpenChange(true);
@@ -262,7 +265,7 @@ export function CCPaymentCoverPopover({
                   onValueChange={(v) => setSourceAccountId(Number(v))}
                 >
                   <SelectTrigger id={sourceAccountTriggerId} className="h-8 w-full">
-                    <SelectValue placeholder="Select account" />
+                    <SelectValue placeholder={t`Select account`} />
                   </SelectTrigger>
                   <SelectContent>
                     {sourceAccounts.map((a) => (

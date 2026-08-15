@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useAccounts } from '@entities/account/api/useAccounts';
 import { useNetWorthHistory } from '@entities/account/api/useNetWorthHistory';
@@ -43,6 +43,8 @@ const CHART_COLORS = {
 } as const;
 
 export default function AccountsPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
   const privacyMaskNumbers = useUiStore((s) => s.privacyMaskNumbers);
@@ -319,16 +321,16 @@ export default function AccountsPage() {
             <Input
               value={accountQuery}
               onChange={(e) => setAccountQuery(e.target.value)}
-              placeholder="Search accounts…"
+              placeholder={t`Search accounts…`}
               className="pl-9"
-              aria-label="Search accounts"
+              aria-label={t`Search accounts`}
             />
           </div>
 
           {/* Account Groups */}
           <div className="space-y-4">
             <AccountGroupSection
-              title="Cash"
+              title={t`Cash`}
               accounts={filteredGroups.cash}
               isOpen={isSearching || openSections.cash}
               onToggle={() => toggleSection('cash')}
@@ -340,7 +342,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Credit Cards"
+              title={t`Credit Cards`}
               accounts={filteredGroups.credit}
               isOpen={isSearching || openSections.credit}
               onToggle={() => toggleSection('credit')}
@@ -353,7 +355,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Investments"
+              title={t`Investments`}
               accounts={filteredGroups.investments}
               isOpen={isSearching || openSections.investments}
               onToggle={() => toggleSection('investments')}
@@ -365,7 +367,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Crypto"
+              title={t`Crypto`}
               accounts={filteredGroups.crypto}
               isOpen={isSearching || openSections.crypto}
               onToggle={() => toggleSection('crypto')}
@@ -377,7 +379,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Retirement"
+              title={t`Retirement`}
               accounts={filteredGroups.retirement}
               isOpen={isSearching || openSections.retirement}
               onToggle={() => toggleSection('retirement')}
@@ -389,7 +391,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Loans & Mortgages"
+              title={t`Loans & Mortgages`}
               accounts={filteredGroups.loans}
               isOpen={isSearching || openSections.loans}
               onToggle={() => toggleSection('loans')}
@@ -402,7 +404,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Real Estate"
+              title={t`Real Estate`}
               accounts={filteredGroups.realEstate}
               isOpen={isSearching || openSections.realEstate}
               onToggle={() => toggleSection('realEstate')}
@@ -414,7 +416,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Other Assets"
+              title={t`Other Assets`}
               accounts={filteredGroups.otherAssets}
               isOpen={isSearching || openSections.otherAssets}
               onToggle={() => toggleSection('otherAssets')}
@@ -427,7 +429,7 @@ export default function AccountsPage() {
 
             {showArchived && visibleArchived.length > 0 && (
               <AccountGroupSection
-                title="Archived"
+                title={t`Archived`}
                 accounts={visibleArchived}
                 isOpen={isSearching || (openSections.archived ?? true)}
                 onToggle={() => toggleSection('archived')}

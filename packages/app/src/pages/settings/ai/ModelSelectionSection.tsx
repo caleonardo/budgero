@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Label } from '@shared/ui/label';
 import { Input } from '@shared/ui/input';
 import { Button } from '@shared/ui/button';
@@ -37,6 +37,8 @@ export function ModelSelectionSection({
   onTextModelOpenChange,
   onVisionModelOpenChange,
 }: ModelSelectionSectionProps) {
+  const { t } = useLingui();
+
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-2">
@@ -64,7 +66,7 @@ export function ModelSelectionSection({
             </PopoverTrigger>
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
               <Command>
-                <CommandInput placeholder="Search models..." />
+                <CommandInput placeholder={t`Search models...`} />
                 <CommandList>
                   <CommandEmpty>
                     <Trans>No model found.</Trans>
@@ -128,7 +130,7 @@ export function ModelSelectionSection({
             </PopoverTrigger>
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
               <Command>
-                <CommandInput placeholder="Search models..." />
+                <CommandInput placeholder={t`Search models...`} />
                 <CommandList>
                   <CommandEmpty>
                     <Trans>No model found.</Trans>
@@ -162,7 +164,7 @@ export function ModelSelectionSection({
             id="visionModel"
             value={visionModel}
             onChange={(e) => onVisionModelChange(e.target.value)}
-            placeholder="llava"
+            placeholder={t`llava`}
           />
         )}
       </div>

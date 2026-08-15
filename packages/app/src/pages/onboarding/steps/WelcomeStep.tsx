@@ -1,10 +1,12 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Title, type StepProps } from './shared';
 
 const WELCOME_SRC = '/onboarding-welcome.png';
 
 export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
+  const { t } = useLingui();
+
   // Invitee shortcut: the user landed here via /join#code=…, so they're
   // joining someone else's workspace, not building their own. Drop the
   // 6-step journey illustration (misleading — they only see two screens
@@ -91,7 +93,7 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
             drop the prior numbered text list since the visual covers it. */}
         <img
           src={WELCOME_SRC}
-          alt="Your journey in six steps: rules, currency, ZBB, name your budget, accounts, password"
+          alt={t`Your journey in six steps: rules, currency, ZBB, name your budget, accounts, password`}
           style={{
             width: '100%',
             maxWidth: 720,

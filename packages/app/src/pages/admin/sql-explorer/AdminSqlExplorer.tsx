@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import {
@@ -17,6 +17,8 @@ import { QueryCard } from './QueryCard';
 import { ResultsTable } from './ResultsTable';
 
 export function AdminSqlExplorer() {
+  const { t } = useLingui();
+
   const {
     sqlQuery,
     setSqlQuery,
@@ -84,7 +86,7 @@ export function AdminSqlExplorer() {
             size="icon"
             className="lg:hidden"
             onClick={() => setSidebarOpen(true)}
-            aria-label="Open schema sidebar"
+            aria-label={t`Open schema sidebar`}
           >
             <Menu className="h-4 w-4" />
           </Button>

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import {
@@ -43,6 +43,8 @@ export function AddAccountDialog({
   onOpenChange,
   onSuccess,
 }: AddAccountDialogProps = {}) {
+  const { t } = useLingui();
+
   const { selectedBudget, globalLocalizer } = useUiStore();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlOpen ?? internalOpen;
@@ -185,7 +187,7 @@ export function AddAccountDialog({
         on_budget: onBudget,
       });
 
-      toast.success('Account created', {
+      toast.success(t`Account created`, {
         description: `${name} has been added successfully.`,
       });
 
@@ -258,12 +260,12 @@ export function AddAccountDialog({
           >
             <div className="grid gap-3 sm:gap-4">
               {/* Account Name */}
-              <Field label="Account Name" htmlFor="accountName" className="space-y-1">
+              <Field label={t`Account Name`} htmlFor="accountName" className="space-y-1">
                 <Input
                   className="h-8 sm:h-9"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter account name"
+                  placeholder={t`Enter account name`}
                   required
                   data-testid="account-name-input"
                 />
@@ -280,7 +282,7 @@ export function AddAccountDialog({
 
               {/* Account Type */}
               <Field
-                label="Account Type"
+                label={t`Account Type`}
                 htmlFor="accountType"
                 className="space-y-1"
                 hint={
@@ -314,7 +316,7 @@ export function AddAccountDialog({
                   }}
                 >
                   <SelectTrigger size="sm" className="w-full" data-testid="account-type-select">
-                    <SelectValue placeholder="Select account type" />
+                    <SelectValue placeholder={t`Select account type`} />
                   </SelectTrigger>
                   <SelectContent>
                     {getAccountTypesByBudgetType(onBudget ? 'on' : 'off').map((type) => (
@@ -334,7 +336,7 @@ export function AddAccountDialog({
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                     <Field
-                      label="Original Debt"
+                      label={t`Original Debt`}
                       htmlFor="debtTotal"
                       className="space-y-1"
                       help={
@@ -351,7 +353,7 @@ export function AddAccountDialog({
                       />
                     </Field>
                     <Field
-                      label="Interest % (APR)"
+                      label={t`Interest % (APR)`}
                       htmlFor="interestRate"
                       className="space-y-1"
                       help={
@@ -371,7 +373,7 @@ export function AddAccountDialog({
                   {accType === 'Credit' ? (
                     <div className="grid grid-cols-1 gap-2 sm:gap-3">
                       <Field
-                        label="Minimum Monthly Payment"
+                        label={t`Minimum Monthly Payment`}
                         htmlFor="minPayment"
                         className="space-y-1"
                         help={
@@ -392,16 +394,16 @@ export function AddAccountDialog({
                     <>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                         {/* Computed Minimum Monthly Payment (read-only) */}
-                        <Field label="Min. Monthly Payment (calculated)" className="space-y-1">
+                        <Field label={t`Min. Monthly Payment (calculated)`} className="space-y-1">
                           <Input
                             className="h-8 sm:h-9"
                             value={computedMinPayment !== null ? computedMinPayment.toFixed(2) : ''}
-                            placeholder="Select target date to calculate"
+                            placeholder={t`Select target date to calculate`}
                             disabled
                           />
                         </Field>
                         <Field
-                          label="Start Date"
+                          label={t`Start Date`}
                           htmlFor="startDate"
                           className="space-y-1"
                           help={
@@ -415,7 +417,7 @@ export function AddAccountDialog({
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                         <Field
-                          label="Original Term (years)"
+                          label={t`Original Term (years)`}
                           htmlFor="termYears"
                           className="space-y-1"
                           help={
@@ -437,7 +439,7 @@ export function AddAccountDialog({
                   )}
                   {accType !== 'Credit' && (
                     <Field
-                      label="Target Payoff Date (optional)"
+                      label={t`Target Payoff Date (optional)`}
                       htmlFor="targetDate"
                       className="space-y-1"
                       help={

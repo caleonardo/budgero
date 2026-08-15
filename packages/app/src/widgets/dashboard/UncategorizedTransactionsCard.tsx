@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { AlertTriangle, Tag, Sparkles } from 'lucide-react';
@@ -42,6 +42,8 @@ export function UncategorizedTransactionsCard({
   budgetId,
   globalLocalizer,
 }: UncategorizedTransactionsCardProps) {
+  const { t } = useLingui();
+
   const { data: transactions = [], isLoading } = useAllTransactions(budgetId);
   const { data: accounts = [] } = useAccounts(budgetId);
   const { data: llmSettings } = useLLMSettings(budgetId);
@@ -152,7 +154,7 @@ export function UncategorizedTransactionsCard({
         transactionId: Number(quickViewTx.ID),
         accountId,
       });
-      toast.success('Transaction deleted', {
+      toast.success(t`Transaction deleted`, {
         description: 'The transaction has been permanently removed.',
       });
       setConfirmDeleteOpen(false);

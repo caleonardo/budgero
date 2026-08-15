@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SignIn, SignUp } from '@clerk/clerk-react';
 import { Alert, AlertDescription } from '@shared/ui/alert';
@@ -35,6 +35,8 @@ const CLERK_APPEARANCE = {
 } as const;
 
 export default function AuthPage() {
+  const { t } = useLingui();
+
   // All hooks must be called before any early returns
   const [searchParams] = useSearchParams();
 
@@ -68,7 +70,11 @@ export default function AuthPage() {
             {/* Logo/Title */}
             <div className="text-center">
               <div className="flex justify-center mb-4">
-                <img src="/logo_64.png" alt="Budgero Logo" className="w-16 h-16 object-contain" />
+                <img
+                  src="/logo_64.png"
+                  alt={t`Budgero Logo`}
+                  className="w-16 h-16 object-contain"
+                />
               </div>
               <h1 className="text-3xl font-bold text-foreground">
                 <Trans>Budgero</Trans>
@@ -108,6 +114,8 @@ export default function AuthPage() {
 }
 
 function SelfHostAuthPage() {
+  const { t } = useLingui();
+
   const [searchParams] = useSearchParams();
   const initialMode = (searchParams.get('mode') as LocalAuthMode) || 'signin';
   const [mode, setMode] = useState<LocalAuthMode>(initialMode);
@@ -150,7 +158,7 @@ function SelfHostAuthPage() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <img src="/logo_64.png" alt="Budgero" className="w-16 h-16 object-contain" />
+            <img src="/logo_64.png" alt={t`Budgero`} className="w-16 h-16 object-contain" />
           </div>
           <h1 className="text-2xl font-semibold text-foreground">
             <Trans>Budgero</Trans>
@@ -167,7 +175,7 @@ function SelfHostAuthPage() {
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
+                placeholder={t`Your name`}
                 required
               />
             </div>
@@ -182,7 +190,7 @@ function SelfHostAuthPage() {
               value={username}
               autoComplete="username"
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="admin"
+              placeholder={t`admin`}
               required
             />
           </div>

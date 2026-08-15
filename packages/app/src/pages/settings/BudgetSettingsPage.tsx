@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Switch } from '@shared/ui/switch';
 import { Label } from '@shared/ui/label';
@@ -29,6 +29,8 @@ const RTA_OPTIONS: { value: RtaMode; title: string; blurb: string }[] = [
 ];
 
 function RtaModeCard() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const { data: budgets = [] } = useBudgets();
   const updateRtaMode = useUpdateBudgetRtaMode();
@@ -49,7 +51,7 @@ function RtaModeCard() {
               ? 'Ready to Assign is now calculated monthly'
               : 'Ready to Assign is now calculated cumulatively'
           ),
-        onError: () => toast.error('Could not change the Ready to Assign calculation'),
+        onError: () => toast.error(t`Could not change the Ready to Assign calculation`),
       }
     );
   };
@@ -134,6 +136,8 @@ function RtaModeCard() {
 }
 
 export default function BudgetSettingsPage() {
+  const { t } = useLingui();
+
   const { allowOverAssignment, isLoading, updateAllowOverAssignment, isUpdating } =
     useAllowOverAssignmentPreference();
 
@@ -144,8 +148,8 @@ export default function BudgetSettingsPage() {
   return (
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Budget Settings"
-        description="Configure how Budgero handles your budget assignments and constraints."
+        title={t`Budget Settings`}
+        description={t`Configure how Budgero handles your budget assignments and constraints.`}
       />
 
       <RtaModeCard />

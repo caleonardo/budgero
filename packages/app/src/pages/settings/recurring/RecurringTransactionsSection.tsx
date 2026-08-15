@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -27,6 +27,8 @@ import {
 import { RecurringTemplateCard, RecurringOccurrenceCard } from './components';
 
 export function RecurringTransactionsSection() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const budgetId = selectedBudget?.ID ?? 0;
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
@@ -128,20 +130,20 @@ export function RecurringTransactionsSection() {
   const handleEditorSubmit = async (values: RecurringTransactionEditorSubmit) => {
     if (!budgetId) return;
     if (!values.accountId) {
-      toast.error('Select an account');
+      toast.error(t`Select an account`);
       return;
     }
     if (values.toAccountId != null) {
       if (values.toAccountId === values.accountId) {
-        toast.error('Pick two different accounts for a transfer');
+        toast.error(t`Pick two different accounts for a transfer`);
         return;
       }
     } else if (!values.categoryId) {
-      toast.error('Select a category');
+      toast.error(t`Select a category`);
       return;
     }
     if (!values.amount || Number.isNaN(values.amount)) {
-      toast.error('Enter a valid amount');
+      toast.error(t`Enter a valid amount`);
       return;
     }
 
@@ -160,7 +162,7 @@ export function RecurringTransactionsSection() {
           notifyDaysBefore: values.notifyDaysBefore,
           active: values.active,
         });
-        toast.success('Recurring transaction created', {
+        toast.success(t`Recurring transaction created`, {
           description: 'We will remind you when it is almost due.',
         });
       } else if (editingTemplate) {
@@ -181,7 +183,7 @@ export function RecurringTransactionsSection() {
             active: values.active,
           },
         });
-        toast.success('Recurring transaction updated', {
+        toast.success(t`Recurring transaction updated`, {
           description: 'Your schedule has been refreshed.',
         });
       }
@@ -189,7 +191,7 @@ export function RecurringTransactionsSection() {
       handleEditorOpenChange(false);
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
-      toast.error('Unable to save recurring transaction', {
+      toast.error(t`Unable to save recurring transaction`, {
         description: message,
       });
     } finally {
@@ -201,12 +203,12 @@ export function RecurringTransactionsSection() {
     try {
       setProcessingTemplateId(template.id);
       await deleteRecurring.mutateAsync({ id: template.id, budgetId: template.budgetId });
-      toast.success('Recurring transaction removed', {
+      toast.success(t`Recurring transaction removed`, {
         description: 'Future reminders for this item were cleared.',
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
-      toast.error('Unable to delete recurring transaction', {
+      toast.error(t`Unable to delete recurring transaction`, {
         description: message,
       });
     } finally {
@@ -229,7 +231,7 @@ export function RecurringTransactionsSection() {
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
-      toast.error('Unable to update recurring transaction', {
+      toast.error(t`Unable to update recurring transaction`, {
         description: message,
       });
     } finally {
@@ -242,14 +244,14 @@ export function RecurringTransactionsSection() {
       setProcessingOccurrenceId(occurrence.id);
       const result = await markReady.mutateAsync({ occurrenceId: occurrence.id });
       const accountName = accountsById.get(result.occurrence.template.accountId);
-      toast.success('Transaction posted', {
+      toast.success(t`Transaction posted`, {
         description: accountName
           ? `Recorded in ${accountName}. You can review it in the Transactions view.`
           : 'Recorded successfully. Review it in the Transactions view.',
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
-      toast.error('Unable to mark ready', { description: message });
+      toast.error(t`Unable to mark ready`, { description: message });
     } finally {
       setProcessingOccurrenceId(null);
     }
@@ -259,12 +261,12 @@ export function RecurringTransactionsSection() {
     try {
       setProcessingOccurrenceId(occurrence.id);
       await skipOccurrence.mutateAsync({ id: occurrence.id });
-      toast.success('Occurrence skipped', {
+      toast.success(t`Occurrence skipped`, {
         description: 'We will remind you again next time.',
       });
     } catch (error) {
       const message = getErrorMessage(error, 'Something went wrong.');
-      toast.error('Unable to skip occurrence', { description: message });
+      toast.error(t`Unable to skip occurrence`, { description: message });
     } finally {
       setProcessingOccurrenceId(null);
     }
@@ -275,17 +277,17 @@ export function RecurringTransactionsSection() {
       setRequestingPermission(true);
       const result = await requestPermission();
       if (result === 'granted') {
-        toast.success('Notifications enabled', {
+        toast.success(t`Notifications enabled`, {
           description: 'We will send reminders before recurring items are due.',
         });
       } else if (result === 'denied') {
-        toast.error('Notifications blocked', {
+        toast.error(t`Notifications blocked`, {
           description: 'You can enable notifications later from your browser or system settings.',
         });
       }
     } catch (error) {
       const message = getErrorMessage(error, 'Unable to request notifications.');
-      toast.error('Notification request failed', { description: message });
+      toast.error(t`Notification request failed`, { description: message });
     } finally {
       setRequestingPermission(false);
     }

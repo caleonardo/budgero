@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { formatDate as format } from '@shared/lib/date-format';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Calendar, WifiOff } from 'lucide-react';
@@ -12,6 +12,8 @@ import { PlanChangeDialog } from '@pages/settings/subscription/PlanChangeDialog'
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
 
 export default function SubscriptionPage() {
+  const { t } = useLingui();
+
   const vm = useSubscriptionViewModel();
 
   const { user, userLoading, requiresOnline } = vm;
@@ -52,8 +54,8 @@ export default function SubscriptionPage() {
   return (
     <div className="container max-w-4xl mx-auto p-6 pb-24 md:pb-6 space-y-8">
       <SettingsPageHeader
-        title="Subscription"
-        description="Manage your Budgero subscription and billing preferences"
+        title={t`Subscription`}
+        description={t`Manage your Budgero subscription and billing preferences`}
       />
 
       {/* Current Status Card */}

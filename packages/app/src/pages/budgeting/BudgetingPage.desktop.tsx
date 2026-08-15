@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState, useCallback } from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { ScrollArea } from '@shared/ui/scroll-area';
@@ -26,6 +26,8 @@ import { useClearCategorySelectionOnMount } from '@shared/hooks/useClearCategory
 import { useNavigateMonth } from '@shared/hooks/useNavigateMonth';
 
 export function BudgetingPageDesktop() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
   const currentMonth = useUiStore((state) => state.currentMonth);
@@ -146,7 +148,7 @@ export function BudgetingPageDesktop() {
         size="icon"
         className="h-8 w-7 rounded-l-lg rounded-r-none text-muted-foreground hover:bg-muted/60 hover:text-foreground"
         onClick={() => navigateMonth('prev')}
-        aria-label="Previous month"
+        aria-label={t`Previous month`}
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
@@ -162,7 +164,7 @@ export function BudgetingPageDesktop() {
         size="icon"
         className="h-8 w-7 rounded-r-lg rounded-l-none text-muted-foreground hover:bg-muted/60 hover:text-foreground"
         onClick={() => navigateMonth('next')}
-        aria-label="Next month"
+        aria-label={t`Next month`}
       >
         <ChevronRight className="h-4 w-4" />
       </Button>
@@ -363,7 +365,7 @@ export function BudgetingPageDesktop() {
                 <div className="relative w-full max-w-md">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search categories across all months..."
+                    placeholder={t`Search categories across all months...`}
                     value={multiMonthSearchTerm}
                     onChange={(event) => setMultiMonthSearchTerm(event.target.value)}
                     className="w-full pl-8"

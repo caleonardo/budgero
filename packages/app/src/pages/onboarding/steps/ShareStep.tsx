@@ -1,9 +1,11 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { InviteInput } from '../onboarding-data';
 import { OnboardingGhostButton, StepHeroImage, Title, type StepProps } from './shared';
 
 export const ShareStep: React.FC<StepProps> = ({ cur, state, set }) => {
+  const { t } = useLingui();
+
   const maxSeats = 5;
   const { invites } = state;
   const updateInvite = (i: number, patch: Partial<InviteInput>) => {
@@ -22,7 +24,7 @@ export const ShareStep: React.FC<StepProps> = ({ cur, state, set }) => {
     <div>
       <StepHeroImage
         src="/onboarding-share.png"
-        alt="Five characters tethered to a shared ledger"
+        alt={t`Five characters tethered to a shared ledger`}
       />
       <Title h={cur.title} sub={cur.subtitle} />
 

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -151,6 +151,8 @@ function GoalControls({
   onExpand,
   className = '',
 }: GoalControlsProps) {
+  const { t } = useLingui();
+
   return (
     <div className={cn('flex items-center gap-1 text-muted-foreground', className)}>
       <Popover>
@@ -191,7 +193,7 @@ function GoalControls({
         size="icon"
         className="h-7 w-7"
         onClick={onExpand}
-        title="Show detailed view"
+        title={t`Show detailed view`}
       >
         <ChevronDown className="h-3 w-3" />
       </Button>
@@ -235,6 +237,8 @@ export function GoalCard({
   className,
   highlightCreate = false,
 }: GoalCardProps) {
+  const { t } = useLingui();
+
   const [localExpanded, setLocalExpanded] = useState(false);
 
   // Use GoalCalculations for pure calculations without database access
@@ -377,7 +381,7 @@ export function GoalCard({
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => setLocalExpanded(false)}
-                title="Show compact view"
+                title={t`Show compact view`}
               >
                 <ChevronUp className="h-4 w-4" />
               </Button>

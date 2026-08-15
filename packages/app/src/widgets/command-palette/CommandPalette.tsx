@@ -1,6 +1,6 @@
 'use client';
 
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -67,6 +67,8 @@ interface SelectedTransactionData extends GetTransactionsByAccountRow {
 }
 
 export function CommandPalette() {
+  const { t } = useLingui();
+
   const [showTransactionDialog, setShowTransactionDialog] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
   const [selectedTransaction, setSelectedTransaction] =
@@ -401,7 +403,7 @@ export function CommandPalette() {
         }}
       >
         <CommandInput
-          placeholder="Type a command or search..."
+          placeholder={t`Type a command or search...`}
           value={searchValue}
           onValueChange={setSearchValue}
         />

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { parseISO } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
@@ -91,6 +91,8 @@ function getLabel(grouping: Grouping, start: Date, end: Date) {
 }
 
 export function IncomeExpenseByGroupChart() {
+  const { t } = useLingui();
+
   const [grouping, setGrouping] = useState<Grouping>('month');
   const [selectedAccountIds, setSelectedAccountIds] = useState<number[]>([]);
   const dateRange = useUiStore((state) => state.dateRange);
@@ -362,7 +364,7 @@ export function IncomeExpenseByGroupChart() {
               </PopoverTrigger>
               <PopoverContent className="w-[280px] p-0" align="end">
                 <Command>
-                  <CommandInput placeholder="Search accounts..." />
+                  <CommandInput placeholder={t`Search accounts...`} />
                   <CommandList className="max-h-64 overflow-y-auto">
                     <CommandEmpty>
                       <Trans>No accounts found.</Trans>
