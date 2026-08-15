@@ -20,7 +20,9 @@
     "test:coverage": "vitest run --coverage",
     "type-check": "tsc -b --pretty false",
     "type-check:watch": "tsc -b --watch",
-    "type-check:solution": "tsc --noEmit --pretty false"
+    "type-check:solution": "tsc --noEmit --pretty false",
+    "i18n:extract": "lingui extract",
+    "i18n:compile": "lingui compile"
   },
   "devDependencies": {
     "@ai-sdk/openai": "^3.0.26",
@@ -50,6 +52,10 @@
     "@fontsource/poppins": "^5.2.7",
     "@fontsource/roboto": "^5.2.10",
     "@huggingface/transformers": "^3.8.1",
+    "@lingui/babel-plugin-lingui-macro": "^6.6.0",
+    "@lingui/cli": "^6.6.0",
+    "@lingui/format-po": "^6.6.0",
+    "@lingui/vite-plugin": "^6.6.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -130,5 +136,9 @@
     "workbox-window": "^7.3.0",
     "zod": "^4.2.1",
     "zustand": "^5.0.3"
+  },
+  "dependencies": {
+    "@lingui/core": "^6.6.0",
+    "@lingui/react": "^6.6.0"
   }
 }

@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv, type ProxyOptions } from 'vite';
 import react from '@vitejs/plugin-react';
+import { lingui } from '@lingui/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -51,9 +52,14 @@ export default defineConfig(({ mode }) => {
   const plugins = [
     react({
       babel: {
-        plugins: [['babel-plugin-react-compiler', ReactCompilerConfig]],
+        // Lingui macros must expand before React Compiler sees the tree.
+        plugins: [
+          '@lingui/babel-plugin-lingui-macro',
+          ['babel-plugin-react-compiler', ReactCompilerConfig],
+        ],
       },
     }),
+    lingui(),
     tailwindcss(),
   ];
 
