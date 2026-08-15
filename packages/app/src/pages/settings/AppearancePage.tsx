@@ -1,8 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Label } from '@shared/ui/label';
 import { ThemeSwitch } from '@shared/ui/theme-switch';
+import { LanguageSwitch } from '@shared/ui/language-switch';
 import { Separator } from '@shared/ui/separator';
-import { Palette, Download, Home, Smartphone } from 'lucide-react';
+import { Palette, Download, Home, Smartphone, Languages } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { usePWA } from '@shared/hooks/usePWA';
 import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group';
@@ -99,6 +100,27 @@ export default function AppearancePage() {
         title="Appearance"
         description="Customize how Budgero looks on your device"
       />
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Languages className="h-5 w-5" />
+            Language
+          </CardTitle>
+          <CardDescription>Choose the language Budgero uses on this device</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="language">Display language</Label>
+              <p className="text-sm text-muted-foreground">
+                Currency and number formatting stay controlled by your budget settings.
+              </p>
+            </div>
+            <LanguageSwitch id="language" />
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
