@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv, type ProxyOptions } from 'vite';
 import react from '@vitejs/plugin-react';
-import { lingui } from '@lingui/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -59,7 +58,6 @@ export default defineConfig(({ mode }) => {
         ],
       },
     }),
-    lingui(),
     tailwindcss(),
   ];
 
