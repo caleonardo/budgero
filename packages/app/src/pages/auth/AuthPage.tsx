@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SignIn, SignUp } from '@clerk/clerk-react';
 import { Alert, AlertDescription } from '@shared/ui/alert';
@@ -69,7 +70,9 @@ export default function AuthPage() {
               <div className="flex justify-center mb-4">
                 <img src="/logo_64.png" alt="Budgero Logo" className="w-16 h-16 object-contain" />
               </div>
-              <h1 className="text-3xl font-bold text-foreground">Budgero</h1>
+              <h1 className="text-3xl font-bold text-foreground">
+                <Trans>Budgero</Trans>
+              </h1>
             </div>
 
             {/* Clerk Auth with reserved space to prevent layout jumping */}
@@ -149,13 +152,17 @@ function SelfHostAuthPage() {
           <div className="flex justify-center mb-4">
             <img src="/logo_64.png" alt="Budgero" className="w-16 h-16 object-contain" />
           </div>
-          <h1 className="text-2xl font-semibold text-foreground">Budgero</h1>
+          <h1 className="text-2xl font-semibold text-foreground">
+            <Trans>Budgero</Trans>
+          </h1>
         </div>
 
         <form className="space-y-4" onSubmit={submit}>
           {mode === 'signup' && (
             <div className="space-y-1.5">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">
+                <Trans>Name</Trans>
+              </Label>
               <Input
                 id="name"
                 value={name}
@@ -166,7 +173,9 @@ function SelfHostAuthPage() {
             </div>
           )}
           <div className="space-y-1.5">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">
+              <Trans>Username</Trans>
+            </Label>
             <Input
               id="username"
               type="text"
@@ -178,7 +187,9 @@ function SelfHostAuthPage() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">
+              <Trans>Password</Trans>
+            </Label>
             <Input
               id="password"
               type="password"
@@ -218,7 +229,12 @@ function SelfHostAuthPage() {
               onClick={() => setMode('signup')}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
-              Need an account? <span className="text-primary">Sign up</span>
+              <Trans>
+                Need an account?{' '}
+                <span className="text-primary">
+                  <Trans>Sign up</Trans>
+                </span>
+              </Trans>
             </button>
           ) : (
             <button
@@ -226,7 +242,12 @@ function SelfHostAuthPage() {
               onClick={() => setMode('signin')}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
-              Already have an account? <span className="text-primary">Sign in</span>
+              <Trans>
+                Already have an account?{' '}
+                <span className="text-primary">
+                  <Trans>Sign in</Trans>
+                </span>
+              </Trans>
             </button>
           )}
         </div>

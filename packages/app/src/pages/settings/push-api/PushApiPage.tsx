@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -35,7 +36,7 @@ export default function PushApiPage() {
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Failed to load Push API settings. Please try again later.
+            <Trans>Failed to load Push API settings. Please try again later.</Trans>
           </AlertDescription>
         </Alert>
       </div>
@@ -73,12 +74,18 @@ export default function PushApiPage() {
       {/* API Documentation Card */}
       <Card>
         <CardHeader>
-          <CardTitle>API Documentation</CardTitle>
-          <CardDescription>How to send transactions to Budgero via the Push API.</CardDescription>
+          <CardTitle>
+            <Trans>API Documentation</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>How to send transactions to Budgero via the Push API.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Endpoint</Label>
+            <Label>
+              <Trans>Endpoint</Trans>
+            </Label>
             <div className="flex gap-2">
               <Input
                 value={`${window.location.origin}/api/v1/push`}
@@ -95,9 +102,11 @@ export default function PushApiPage() {
 
           <div className="space-y-3 text-sm">
             <div>
-              <p className="font-medium">Authentication</p>
+              <p className="font-medium">
+                <Trans>Authentication</Trans>
+              </p>
               <p className="text-muted-foreground">
-                Include your API token in the Authorization header:
+                <Trans>Include your API token in the Authorization header:</Trans>
               </p>
               <code className="block mt-1 p-2 bg-muted rounded text-xs">
                 Authorization: Bearer YOUR_API_TOKEN
@@ -105,8 +114,12 @@ export default function PushApiPage() {
             </div>
 
             <div>
-              <p className="font-medium">Request Body</p>
-              <p className="text-muted-foreground">Send a JSON object with an encrypted payload:</p>
+              <p className="font-medium">
+                <Trans>Request Body</Trans>
+              </p>
+              <p className="text-muted-foreground">
+                <Trans>Send a JSON object with an encrypted payload:</Trans>
+              </p>
               <pre className="mt-1 p-2 bg-muted rounded text-xs overflow-x-auto">
                 {`{
   "encrypted_payload": "base64_encoded_encrypted_data",
@@ -116,7 +129,9 @@ export default function PushApiPage() {
             </div>
 
             <div>
-              <p className="font-medium">Payload Format v2 (before encryption)</p>
+              <p className="font-medium">
+                <Trans>Payload Format v2 (before encryption)</Trans>
+              </p>
               <p className="text-muted-foreground">
                 The decrypted payload should follow this structure. Monetary values are integer
                 milliunits — 1/1000 of a currency unit, so 25.50 is sent as{' '}
@@ -149,11 +164,15 @@ export default function PushApiPage() {
             </div>
 
             <div>
-              <p className="font-medium">Encryption</p>
+              <p className="font-medium">
+                <Trans>Encryption</Trans>
+              </p>
               <p className="text-muted-foreground">
-                Use AES-256-GCM encryption with the same key used by the Budgero app. The encrypted
-                data format is: IV (12 bytes) + Ciphertext + Auth Tag (16 bytes), then Base64
-                encoded.
+                <Trans>
+                  Use AES-256-GCM encryption with the same key used by the Budgero app. The
+                  encrypted data format is: IV (12 bytes) + Ciphertext + Auth Tag (16 bytes), then
+                  Base64 encoded.
+                </Trans>
               </p>
             </div>
           </div>
@@ -167,8 +186,10 @@ export default function PushApiPage() {
                 target="_blank"
                 rel="noreferrer"
               >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                View Full API Spec
+                <Trans>
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  View Full API Spec
+                </Trans>
               </a>
             </Button>
           </div>

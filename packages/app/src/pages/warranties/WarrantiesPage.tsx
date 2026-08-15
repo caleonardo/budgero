@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { asMilli, fromDecimal, toDecimal, ZERO_MILLI } from '@budgero/core/browser';
 import { format, parseISO } from 'date-fns';
@@ -286,7 +287,9 @@ export default function WarrantiesPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Loading warranties...</p>
+        <p className="text-muted-foreground">
+          <Trans>Loading warranties...</Trans>
+        </p>
       </div>
     );
   }
@@ -297,11 +300,15 @@ export default function WarrantiesPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-6 w-6" />
-          <h1 className="text-2xl font-bold">Warranties</h1>
+          <h1 className="text-2xl font-bold">
+            <Trans>Warranties</Trans>
+          </h1>
         </div>
         <Button onClick={openCreate} size="sm">
-          <Plus className="h-4 w-4 mr-1" />
-          Add Warranty
+          <Trans>
+            <Plus className="h-4 w-4 mr-1" />
+            Add Warranty
+          </Trans>
         </Button>
       </div>
 
@@ -310,19 +317,25 @@ export default function WarrantiesPage() {
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <p className="text-2xl font-bold">{statusCounts.active}</p>
-            <p className="text-sm text-muted-foreground">Active</p>
+            <p className="text-sm text-muted-foreground">
+              <Trans>Active</Trans>
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <p className="text-2xl font-bold text-amber-500">{statusCounts.expiring}</p>
-            <p className="text-sm text-muted-foreground">Expiring Soon</p>
+            <p className="text-sm text-muted-foreground">
+              <Trans>Expiring Soon</Trans>
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <p className="text-2xl font-bold text-destructive">{statusCounts.expired}</p>
-            <p className="text-sm text-muted-foreground">Expired</p>
+            <p className="text-sm text-muted-foreground">
+              <Trans>Expired</Trans>
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -332,7 +345,9 @@ export default function WarrantiesPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <ShieldCheck className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-            <p className="text-muted-foreground">No warranties yet. Add one to get started.</p>
+            <p className="text-muted-foreground">
+              <Trans>No warranties yet. Add one to get started.</Trans>
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -403,7 +418,9 @@ export default function WarrantiesPage() {
       <Dialog open={!!viewingReceipt} onOpenChange={(open) => !open && setViewingReceipt(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Receipt</DialogTitle>
+            <DialogTitle>
+              <Trans>Receipt</Trans>
+            </DialogTitle>
           </DialogHeader>
           {viewerUrl && <img src={viewerUrl} alt="Receipt" className="w-full rounded" />}
         </DialogContent>

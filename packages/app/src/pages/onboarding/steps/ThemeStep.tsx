@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { THEMES_AVAILABLE } from '../onboarding-data';
 import { OnboardingOptionTile, PAPER, Title, type StepProps } from './shared';
@@ -34,7 +35,7 @@ export const ThemeStep: React.FC<StepProps> = ({ cur, state, set }) => (
                   fontWeight: 700,
                 }}
               >
-                PICKED FOR YOU
+                <Trans>PICKED FOR YOU</Trans>
               </div>
             )}
             <div

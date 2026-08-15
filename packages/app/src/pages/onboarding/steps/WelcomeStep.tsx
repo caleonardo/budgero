@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Title, type StepProps } from './shared';
 
@@ -62,7 +63,9 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
             lineHeight: 1.55,
           }}
         >
-          <span style={{ fontWeight: 700, color: '#141414', letterSpacing: 0.5 }}>HEADS UP:</span>{' '}
+          <span style={{ fontWeight: 700, color: '#141414', letterSpacing: 0.5 }}>
+            <Trans>HEADS UP:</Trans>
+          </span>{' '}
           Your master password encrypts the shared workspace key on this device. Pick something
           memorable — Budgero never sees it and we can’t reset it for you.
         </div>

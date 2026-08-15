@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -144,12 +145,18 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Monitor and manage your Budgero platform</p>
+          <h1 className="text-3xl font-bold">
+            <Trans>Admin Dashboard</Trans>
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            <Trans>Monitor and manage your Budgero platform</Trans>
+          </p>
         </div>
         <Button onClick={loadStats} disabled={refreshing} size="sm">
-          <RefreshCw className={cn('w-4 h-4 mr-2', refreshing && 'animate-spin')} />
-          Refresh
+          <Trans>
+            <RefreshCw className={cn('w-4 h-4 mr-2', refreshing && 'animate-spin')} />
+            Refresh
+          </Trans>
         </Button>
       </div>
 
@@ -200,8 +207,12 @@ export default function AdminDashboard() {
       {/* Sync Utilities */}
       <Card>
         <CardHeader>
-          <CardTitle>Sync Utilities</CardTitle>
-          <CardDescription>Keep Clerk users aligned with Budgero.</CardDescription>
+          <CardTitle>
+            <Trans>Sync Utilities</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Keep Clerk users aligned with Budgero.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
@@ -209,9 +220,11 @@ export default function AdminDashboard() {
               <div className="flex items-start gap-3">
                 <Users className="h-5 w-5 text-muted-foreground" />
                 <div className="space-y-1">
-                  <p className="font-medium">Sync Clerk -&gt; Budgero</p>
+                  <p className="font-medium">
+                    <Trans>Sync Clerk -&gt; Budgero</Trans>
+                  </p>
                   <p className="text-sm text-muted-foreground">
-                    Create or migrate Budgero users from the latest Clerk directory.
+                    <Trans>Create or migrate Budgero users from the latest Clerk directory.</Trans>
                   </p>
                 </div>
               </div>
@@ -233,10 +246,14 @@ export default function AdminDashboard() {
               <div className="flex items-start gap-3">
                 <MailQuestion className="h-5 w-5 text-muted-foreground" />
                 <div className="space-y-1">
-                  <p className="font-medium">Quarterly Feedback Email</p>
+                  <p className="font-medium">
+                    <Trans>Quarterly Feedback Email</Trans>
+                  </p>
                   <p className="text-sm text-muted-foreground">
-                    Ask everyone active in the last 30 days what's working and what isn't. Replies
-                    go to hello@.
+                    <Trans>
+                      Ask everyone active in the last 30 days what's working and what isn't. Replies
+                      go to hello@.
+                    </Trans>
                   </p>
                 </div>
               </div>
@@ -276,43 +293,57 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>User Distribution</CardTitle>
-            <CardDescription>Breakdown of user types</CardDescription>
+            <CardTitle>
+              <Trans>User Distribution</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Breakdown of user types</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <UserCheck className="w-4 h-4 text-green-600" />
-                  <span className="text-sm">Active Subscribers</span>
+                  <span className="text-sm">
+                    <Trans>Active Subscribers</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">{stats?.paidUsers || 0}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm">Trial Users</span>
+                  <span className="text-sm">
+                    <Trans>Trial Users</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">{stats?.trialUsers || 0}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Gift className="w-4 h-4 text-indigo-600" />
-                  <span className="text-sm">Beta Testers</span>
+                  <span className="text-sm">
+                    <Trans>Beta Testers</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">{stats?.betaUsers || 0}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-orange-600" />
-                  <span className="text-sm">Founding Members</span>
+                  <span className="text-sm">
+                    <Trans>Founding Members</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">{stats?.foundingMembers || 0}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <UserX className="w-4 h-4 text-gray-600" />
-                  <span className="text-sm">Inactive</span>
+                  <span className="text-sm">
+                    <Trans>Inactive</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">
                   {(stats?.totalUsers || 0) - (stats?.activeUsers || 0)}
@@ -325,8 +356,12 @@ export default function AdminDashboard() {
         {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest user actions</CardDescription>
+            <CardTitle>
+              <Trans>Recent Activity</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Latest user actions</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -351,7 +386,11 @@ export default function AdminDashboard() {
                     <p className="text-xs text-muted-foreground">{activity.details}</p>
                   </div>
                 </div>
-              )) || <p className="text-sm text-muted-foreground">No recent activity</p>}
+              )) || (
+                <p className="text-sm text-muted-foreground">
+                  <Trans>No recent activity</Trans>
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -363,15 +402,21 @@ export default function AdminDashboard() {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Common administrative tasks</CardDescription>
+          <CardTitle>
+            <Trans>Quick Actions</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Common administrative tasks</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
             <Button size="sm" variant="outline" asChild>
               <Link to="/admin/users">
-                <Users className="w-4 h-4 mr-2" />
-                Manage Users
+                <Trans>
+                  <Users className="w-4 h-4 mr-2" />
+                  Manage Users
+                </Trans>
               </Link>
             </Button>
           </div>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Net Worth Card Component
  *
@@ -107,7 +108,9 @@ export function NetWorthCard({
       <CardContent className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4 sm:gap-0">
           <div>
-            <div className="text-sm text-muted-foreground mb-1">NET WORTH</div>
+            <div className="text-sm text-muted-foreground mb-1">
+              <Trans>NET WORTH</Trans>
+            </div>
             <div className="text-2xl sm:text-3xl font-bold">{formatCurrency(netWorth)}</div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mt-2">
               <div
@@ -123,11 +126,15 @@ export function NetWorthCard({
                 )}
                 {formatCurrency(Math.abs(netWorthChange))} ({changePercent.toFixed(1)}%)
               </div>
-              <span className="text-sm text-muted-foreground">{periodLabel} change</span>
+              <span className="text-sm text-muted-foreground">
+                <Trans>{periodLabel} change</Trans>
+              </span>
             </div>
           </div>
           <div className="text-left sm:text-right">
-            <div className="text-sm text-muted-foreground">Net worth performance</div>
+            <div className="text-sm text-muted-foreground">
+              <Trans>Net worth performance</Trans>
+            </div>
             <div className="text-xs text-muted-foreground mt-1">{periodLabel}</div>
           </div>
         </div>

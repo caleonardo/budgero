@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@shared/ui/card';
@@ -134,8 +135,10 @@ export default function ExplorerPage() {
         <SheetContent side="left" className="flex h-full w-80 min-h-0 flex-col p-0">
           <SheetHeader className="p-4 border-b">
             <SheetTitle className="text-sm flex items-center gap-2">
-              <Database className="h-4 w-4" />
-              Database Schema
+              <Trans>
+                <Database className="h-4 w-4" />
+                Database Schema
+              </Trans>
             </SheetTitle>
           </SheetHeader>
           <div className="min-h-0 flex-1 overflow-hidden">
@@ -168,11 +171,15 @@ export default function ExplorerPage() {
 
             <div className="flex-1">
               <h1 className="text-xl font-bold flex items-center gap-2">
-                <Database className="h-5 w-5" />
-                SQL Query Editor
+                <Trans>
+                  <Database className="h-5 w-5" />
+                  SQL Query Editor
+                </Trans>
               </h1>
               <p className="text-sm text-muted-foreground hidden sm:block">
-                Click on tables and columns in the sidebar to insert them into your query
+                <Trans>
+                  Click on tables and columns in the sidebar to insert them into your query
+                </Trans>
               </p>
             </div>
           </div>
@@ -200,7 +207,9 @@ export default function ExplorerPage() {
             <div className="space-y-2">
               <div className="flex flex-col gap-2">
                 {/* Caption, not a <label>: the CodeMirror editor is not a labelable control. */}
-                <span className="text-sm font-medium">SQL Query</span>
+                <span className="text-sm font-medium">
+                  <Trans>SQL Query</Trans>
+                </span>
                 <div className="flex flex-wrap gap-1 sm:gap-2">
                   <Button
                     variant="outline"
@@ -209,7 +218,9 @@ export default function ExplorerPage() {
                     className="text-xs"
                   >
                     <BookOpen className="h-3 w-3" />
-                    <span className="hidden sm:inline ml-1">Reports</span>
+                    <span className="hidden sm:inline ml-1">
+                      <Trans>Reports</Trans>
+                    </span>
                   </Button>
                   {editingReport && (
                     <Button
@@ -220,7 +231,9 @@ export default function ExplorerPage() {
                       className="text-xs"
                     >
                       <Plus className="h-3 w-3" />
-                      <span className="hidden sm:inline ml-1">New</span>
+                      <span className="hidden sm:inline ml-1">
+                        <Trans>New</Trans>
+                      </span>
                     </Button>
                   )}
                   <Button
@@ -262,7 +275,7 @@ export default function ExplorerPage() {
 
               <div className="space-y-2">
                 <Button variant="outline" size="sm" onClick={formatSQL} className="text-xs">
-                  Format SQL
+                  <Trans>Format SQL</Trans>
                 </Button>
                 <div className="border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden">
                   <SQLEditor
@@ -284,7 +297,9 @@ export default function ExplorerPage() {
               {error && (
                 <Card className="border-destructive">
                   <CardContent className="p-4">
-                    <h3 className="font-semibold text-destructive mb-2">Query Error</h3>
+                    <h3 className="font-semibold text-destructive mb-2">
+                      <Trans>Query Error</Trans>
+                    </h3>
                     <pre className="text-xs text-destructive bg-destructive/10 p-3 rounded overflow-auto">
                       {error}
                     </pre>

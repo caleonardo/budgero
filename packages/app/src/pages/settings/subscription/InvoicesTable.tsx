@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -21,10 +22,14 @@ export const InvoicesTable = React.memo(function InvoicesTable({ vm }: InvoicesT
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Receipt className="w-5 h-5" />
-          Invoice History
+          <Trans>
+            <Receipt className="w-5 h-5" />
+            Invoice History
+          </Trans>
         </CardTitle>
-        <CardDescription>View and download your past invoices</CardDescription>
+        <CardDescription>
+          <Trans>View and download your past invoices</Trans>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {invoicesLoading ? (
@@ -35,10 +40,18 @@ export const InvoicesTable = React.memo(function InvoicesTable({ vm }: InvoicesT
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>
+                  <Trans>Date</Trans>
+                </TableHead>
+                <TableHead>
+                  <Trans>Status</Trans>
+                </TableHead>
+                <TableHead>
+                  <Trans>Amount</Trans>
+                </TableHead>
+                <TableHead className="text-right">
+                  <Trans>Actions</Trans>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -66,7 +79,7 @@ export const InvoicesTable = React.memo(function InvoicesTable({ vm }: InvoicesT
           </Table>
         ) : (
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
-            No invoices yet. Invoices will appear here after your first payment.
+            <Trans>No invoices yet. Invoices will appear here after your first payment.</Trans>
           </p>
         )}
       </CardContent>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Real-time connectivity indicator showing online/offline and WebSocket sync status
  */
@@ -87,7 +88,9 @@ export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="w-56 space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-foreground">Connectivity</span>
+          <span className="text-sm font-medium text-foreground">
+            <Trans>Connectivity</Trans>
+          </span>
           <Badge
             variant={
               snapshot.overall ? 'default' : snapshot.wsConnected ? 'secondary' : 'destructive'
@@ -105,7 +108,9 @@ export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
             </div>
           ))}
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Last checked</span>
+            <span className="text-muted-foreground">
+              <Trans>Last checked</Trans>
+            </span>
             <span className="font-medium text-foreground">{lastChecked}</span>
           </div>
         </div>

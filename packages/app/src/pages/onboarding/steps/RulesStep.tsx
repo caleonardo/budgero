@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import type { StepProps } from './shared';
 
@@ -50,9 +51,11 @@ export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
               color: '#141414',
             }}
           >
-            Three
-            <br />
-            house rules.
+            <Trans>
+              Three
+              <br />
+              house rules.
+            </Trans>
           </h1>
           {/* Orange marker-style accent under the title. */}
           <div
@@ -73,8 +76,10 @@ export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
               lineHeight: 1.65,
             }}
           >
-            Budgero is opinionated on purpose. These three rules shape everything — read them once,
-            and the rest of the app will make sense.
+            <Trans>
+              Budgero is opinionated on purpose. These three rules shape everything — read them
+              once, and the rest of the app will make sense.
+            </Trans>
           </p>
         </div>
         <img
@@ -170,8 +175,10 @@ export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
           style={{ marginTop: 2, accentColor: '#141414', width: 16, height: 16 }}
         />
         <span style={{ fontSize: 12, color: '#141414', lineHeight: 1.55 }}>
-          I understand. I will budget only the money I have, assign every coin, and enter
-          transactions myself.
+          <Trans>
+            I understand. I will budget only the money I have, assign every coin, and enter
+            transactions myself.
+          </Trans>
         </span>
       </label>
     </div>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
 import {
@@ -171,7 +172,9 @@ export function SpendingOverviewContent() {
   if (isLoadingSpending) {
     return (
       <div className="flex items-center justify-center h-[300px]">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="text-muted-foreground">
+          <Trans>Loading...</Trans>
+        </div>
       </div>
     );
   }

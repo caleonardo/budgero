@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { RefreshCcw } from 'lucide-react';
 import type { PointerEvent, MouseEvent } from 'react';
 import { cn } from '@shared/lib/utils';
@@ -247,7 +248,9 @@ export function CategoryRowCardLayout({
             <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-border/40">
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <RefreshCcw className="h-3.5 w-3.5" />
-                <span className="uppercase tracking-wide text-[9px]">Activity</span>
+                <span className="uppercase tracking-wide text-[9px]">
+                  <Trans>Activity</Trans>
+                </span>
               </div>
               <ActivityButton
                 item={item}

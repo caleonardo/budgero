@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -91,10 +92,14 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Crown className="w-5 h-5 text-yellow-500" />
-              Current Plan
+              <Trans>
+                <Crown className="w-5 h-5 text-yellow-500" />
+                Current Plan
+              </Trans>
             </CardTitle>
-            <CardDescription>Your current subscription status</CardDescription>
+            <CardDescription>
+              <Trans>Your current subscription status</Trans>
+            </CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <Badge
@@ -113,30 +118,46 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
       <CardContent className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Plan Details</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+              <Trans>Plan Details</Trans>
+            </h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-300">Plan:</span>
+                <span className="text-gray-600 dark:text-gray-300">
+                  <Trans>Plan:</Trans>
+                </span>
                 <span className="font-medium">{planName || 'Plan not set'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-300">Billing cadence:</span>
+                <span className="text-gray-600 dark:text-gray-300">
+                  <Trans>Billing cadence:</Trans>
+                </span>
                 <span className="font-medium">{planIntervalLabel ?? 'Not set'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-300">Status:</span>
+                <span className="text-gray-600 dark:text-gray-300">
+                  <Trans>Status:</Trans>
+                </span>
                 <span className="font-medium">{getStatusText(effectiveSubscriptionStatus)}</span>
               </div>
               {isFoundingMember && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Access Type:</span>
-                  <span className="font-medium text-purple-600">Lifetime Access</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    <Trans>Access Type:</Trans>
+                  </span>
+                  <span className="font-medium text-purple-600">
+                    <Trans>Lifetime Access</Trans>
+                  </span>
                 </div>
               )}
               {hasBetaAccess && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Access Type:</span>
-                  <span className="font-medium text-indigo-600">Free Access</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    <Trans>Access Type:</Trans>
+                  </span>
+                  <span className="font-medium text-indigo-600">
+                    <Trans>Free Access</Trans>
+                  </span>
                 </div>
               )}
             </div>
@@ -144,12 +165,14 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
 
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Billing Information
+              <Trans>Billing Information</Trans>
             </h3>
             <div className="space-y-2 text-sm">
               {subscriptionDetails?.card_brand && (
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-300">Payment method:</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    <Trans>Payment method:</Trans>
+                  </span>
                   <div className="flex items-center gap-2">
                     <CardBrandIcon brand={subscriptionDetails.card_brand} className="h-5 w-8" />
                     {subscriptionDetails.card_last_four && (
@@ -163,35 +186,53 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
               {isFoundingMember && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Payment:</span>
-                    <span className="font-medium">Founding Member</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Payment:</Trans>
+                    </span>
+                    <span className="font-medium">
+                      <Trans>Founding Member</Trans>
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Expires:</span>
-                    <span className="font-medium text-purple-600">Never</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Expires:</Trans>
+                    </span>
+                    <span className="font-medium text-purple-600">
+                      <Trans>Never</Trans>
+                    </span>
                   </div>
                 </>
               )}
               {hasBetaAccess && betaExpiresAt && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Free access ends:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Free access ends:</Trans>
+                    </span>
                     <span className="font-medium">{format(betaExpiresAt, 'MMM dd, yyyy')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Days left:</span>
-                    <span className="font-medium text-indigo-600">{daysLeftInBeta} days</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Days left:</Trans>
+                    </span>
+                    <span className="font-medium text-indigo-600">
+                      <Trans>{daysLeftInBeta} days</Trans>
+                    </span>
                   </div>
                 </>
               )}
               {isTrialing && trialEndsAt && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Trial ends:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Trial ends:</Trans>
+                    </span>
                     <span className="font-medium">{format(trialEndsAt, 'MMM dd, yyyy')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Time left:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Time left:</Trans>
+                    </span>
                     <span className="font-medium text-blue-600">{trialTimeLeftLabel}</span>
                   </div>
                 </>
@@ -202,7 +243,9 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
                 trialEndsAt &&
                 user.subscription_status !== 'expired' && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Trial ended:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Trial ended:</Trans>
+                    </span>
                     <span className="font-medium">{format(trialEndsAt, 'MMM dd, yyyy')}</span>
                   </div>
                 )}
@@ -210,11 +253,15 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
               {isActive && !isTrialing && trialEndsAt && !currentPeriodEnd && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Trial ends:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Trial ends:</Trans>
+                    </span>
                     <span className="font-medium">{format(trialEndsAt, 'MMM dd, yyyy')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Time left:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Time left:</Trans>
+                    </span>
                     <span className="font-medium text-blue-600">{trialTimeLeftLabel}</span>
                   </div>
                 </>
@@ -223,11 +270,15 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
               {isActive && nextBillingDate && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Next billing:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Next billing:</Trans>
+                    </span>
                     <span className="font-medium">{format(nextBillingDate, 'MMM dd, yyyy')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Renews in:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Renews in:</Trans>
+                    </span>
                     <span className="font-medium">{formatDistanceToNow(nextBillingDate)}</span>
                   </div>
                 </>
@@ -236,11 +287,15 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
               {userIsCancelled && cancelledEndDate && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Access until:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Access until:</Trans>
+                    </span>
                     <span className="font-medium">{format(cancelledEndDate, 'MMM dd, yyyy')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Days remaining:</span>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      <Trans>Days remaining:</Trans>
+                    </span>
                     <span className="font-medium text-orange-600">
                       {daysLeftCancelled} {daysLeftCancelled === 1 ? 'day' : 'days'}
                     </span>
@@ -258,11 +313,13 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
               <Crown className="w-5 h-5 text-purple-600 mt-0.5" />
               <div className="flex-1">
                 <h4 className="font-medium text-purple-900 dark:text-purple-100">
-                  Founding Member
+                  <Trans>Founding Member</Trans>
                 </h4>
                 <p className="text-sm text-purple-700 dark:text-purple-200 mt-1">
-                  You have lifetime access to Budgero. Thank you for being a founding member! Enjoy
-                  all features without any recurring payments.
+                  <Trans>
+                    You have lifetime access to Budgero. Thank you for being a founding member!
+                    Enjoy all features without any recurring payments.
+                  </Trans>
                 </p>
               </div>
             </div>
@@ -275,13 +332,17 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-indigo-600 mt-0.5" />
               <div className="flex-1">
-                <h4 className="font-medium text-indigo-900 dark:text-indigo-100">Free Access</h4>
+                <h4 className="font-medium text-indigo-900 dark:text-indigo-100">
+                  <Trans>Free Access</Trans>
+                </h4>
                 <p className="text-sm text-indigo-700 dark:text-indigo-200 mt-1">
                   You have full, unlimited access to every Budgero feature—on us—until{' '}
                   <span className="font-semibold">{format(betaExpiresAt, 'MMMM dd, yyyy')}</span>.
                   Thanks for being part of Budgero.
                   {daysLeftInBeta <= 7 && (
-                    <span className="font-semibold"> Only {daysLeftInBeta} days remaining!</span>
+                    <span className="font-semibold">
+                      <Trans>Only {daysLeftInBeta} days remaining!</Trans>
+                    </span>
                   )}
                 </p>
               </div>
@@ -348,7 +409,7 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
               <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
               <div>
                 <h4 className="font-medium text-yellow-900 dark:text-yellow-100">
-                  Subscription Cancelled
+                  <Trans>Subscription Cancelled</Trans>
                 </h4>
                 <p className="text-sm text-yellow-700 dark:text-yellow-200 mt-1">
                   You'll continue to have access until {format(cancelledEndDate, 'MMM dd, yyyy')}.
@@ -365,10 +426,14 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5" />
               <div>
-                <h4 className="font-medium text-red-900 dark:text-red-100">Payment Failed</h4>
+                <h4 className="font-medium text-red-900 dark:text-red-100">
+                  <Trans>Payment Failed</Trans>
+                </h4>
                 <p className="text-sm text-red-700 dark:text-red-200 mt-1">
-                  Your payment failed. Please update your payment method to continue your
-                  subscription.
+                  <Trans>
+                    Your payment failed. Please update your payment method to continue your
+                    subscription.
+                  </Trans>
                 </p>
               </div>
             </div>
@@ -381,10 +446,14 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5" />
               <div>
-                <h4 className="font-medium text-red-900 dark:text-red-100">Payment Required</h4>
+                <h4 className="font-medium text-red-900 dark:text-red-100">
+                  <Trans>Payment Required</Trans>
+                </h4>
                 <p className="text-sm text-red-700 dark:text-red-200 mt-1">
-                  We were unable to collect your subscription payment. Update your billing details
-                  in the Lemon Squeezy portal below to restore access.
+                  <Trans>
+                    We were unable to collect your subscription payment. Update your billing details
+                    in the Lemon Squeezy portal below to restore access.
+                  </Trans>
                 </p>
               </div>
             </div>
@@ -401,8 +470,10 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
                   onClick={() => setShowPlanChangeDialog(true)}
                   disabled={updatePlanMutation.isPending}
                 >
-                  <ArrowUpDown className="w-4 h-4 mr-2" />
-                  Change Plan
+                  <Trans>
+                    <ArrowUpDown className="w-4 h-4 mr-2" />
+                    Change Plan
+                  </Trans>
                 </Button>
               )}
               <Button
@@ -411,8 +482,10 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
                 disabled={cancelMutation.isPending}
                 className="text-red-600 hover:text-red-700"
               >
-                <XCircle className="w-4 h-4 mr-2" />
-                Cancel Subscription
+                <Trans>
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Cancel Subscription
+                </Trans>
               </Button>
             </>
           )}
@@ -423,8 +496,10 @@ export const SubscriptionStatusCard = React.memo(function SubscriptionStatusCard
               disabled={resumeMutation.isPending}
               loading={resumeMutation.isPending}
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Resume Subscription
+              <Trans>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Resume Subscription
+              </Trans>
             </Button>
           )}
         </div>

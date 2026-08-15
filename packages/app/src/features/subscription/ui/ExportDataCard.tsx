@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Card } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -219,10 +220,14 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
       <Download className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
       <div className="flex-1 space-y-3">
         <div>
-          <h3 className="font-semibold">Export Your Data</h3>
+          <h3 className="font-semibold">
+            <Trans>Export Your Data</Trans>
+          </h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Download your budget data before your subscription ends. You&apos;ll need your master
-            password to decrypt the export.
+            <Trans>
+              Download your budget data before your subscription ends. You'll need your master
+              password to decrypt the export.
+            </Trans>
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
@@ -232,8 +237,10 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
             onClick={() => handleExportClick('sqlite')}
             disabled={isExporting}
           >
-            <Database className="h-4 w-4 mr-2" />
-            Download SQLite
+            <Trans>
+              <Database className="h-4 w-4 mr-2" />
+              Download SQLite
+            </Trans>
           </Button>
           <Button
             variant="outline"
@@ -241,8 +248,10 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
             onClick={() => handleExportClick('csv')}
             disabled={isExporting}
           >
-            <FileText className="h-4 w-4 mr-2" />
-            Download CSV
+            <Trans>
+              <FileText className="h-4 w-4 mr-2" />
+              Download CSV
+            </Trans>
           </Button>
         </div>
       </div>
@@ -267,14 +276,20 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Enter Master Password</DialogTitle>
+            <DialogTitle>
+              <Trans>Enter Master Password</Trans>
+            </DialogTitle>
             <DialogDescription>
-              Your data is encrypted. Enter your master password to decrypt and export it.
+              <Trans>
+                Your data is encrypted. Enter your master password to decrypt and export it.
+              </Trans>
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleExport} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="export-master-password">Master Password</Label>
+              <Label htmlFor="export-master-password">
+                <Trans>Master Password</Trans>
+              </Label>
               <Input
                 id="export-master-password"
                 type="password"
@@ -298,7 +313,7 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
                 onClick={() => setDialogOpen(false)}
                 disabled={isExporting}
               >
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
               <Button type="submit" disabled={isExporting || !masterPassword.trim()}>
                 {isExporting ? (

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useId, useMemo, useState } from 'react';
 import { ListFilter } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -94,8 +95,10 @@ export function ChartLegend({
             size="sm"
             className={compact ? 'shrink-0' : 'h-7 px-2 text-xs shrink-0'}
           >
-            <ListFilter className="h-3.5 w-3.5 mr-1.5" />
-            Series
+            <Trans>
+              <ListFilter className="h-3.5 w-3.5 mr-1.5" />
+              Series
+            </Trans>
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -121,7 +124,7 @@ export function ChartLegend({
                 onClick={showAll}
                 disabled={hiddenInLegendCount === 0}
               >
-                Show all
+                <Trans>Show all</Trans>
               </Button>
               <Button
                 type="button"
@@ -131,7 +134,7 @@ export function ChartLegend({
                 onClick={hideAll}
                 disabled={visibleCount <= 1}
               >
-                Hide all
+                <Trans>Hide all</Trans>
               </Button>
             </div>
 
@@ -170,7 +173,9 @@ export function ChartLegend({
                   );
                 })}
                 {filteredItems.length === 0 && (
-                  <p className="text-xs text-muted-foreground px-2 py-1">No matching series.</p>
+                  <p className="text-xs text-muted-foreground px-2 py-1">
+                    <Trans>No matching series.</Trans>
+                  </p>
                 )}
               </div>
             </div>

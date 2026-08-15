@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -182,8 +184,10 @@ export default function AuditLogPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <History size={20} />
-                Mutation History
+                <Trans>
+                  <History size={20} />
+                  Mutation History
+                </Trans>
               </CardTitle>
               <CardDescription>
                 {totalCount > 0
@@ -198,8 +202,10 @@ export default function AuditLogPage() {
                 onClick={handleRefresh}
                 disabled={isRefreshing || isLoading}
               >
-                <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
-                Refresh
+                <Trans>
+                  <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Trans>
               </Button>
               {totalCount > 0 && (
                 <Button
@@ -209,8 +215,10 @@ export default function AuditLogPage() {
                   disabled={disableActions}
                   className="text-destructive hover:text-destructive"
                 >
-                  <Trash2 className="h-4 w-4 mr-1" />
-                  Clear History
+                  <Trans>
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Clear History
+                  </Trans>
                 </Button>
               )}
             </div>
@@ -219,14 +227,18 @@ export default function AuditLogPage() {
         <CardContent className="p-0">
           {!spaceId ? (
             <div className="p-6 text-sm text-muted-foreground flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              No workspace selected.
+              <Trans>
+                <AlertTriangle className="h-4 w-4" />
+                No workspace selected.
+              </Trans>
             </div>
           ) : isLoading ? (
             <InlineLoadingRow label="Loading audit log..." />
           ) : history.length === 0 ? (
             <div className="p-6 text-sm text-muted-foreground">
-              No actions recorded yet. Changes you make will appear here for review and undo.
+              <Trans>
+                No actions recorded yet. Changes you make will appear here for review and undo.
+              </Trans>
             </div>
           ) : (
             <>
@@ -234,13 +246,27 @@ export default function AuditLogPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[140px]">Time</TableHead>
-                      <TableHead className="w-[120px]">Budget</TableHead>
-                      <TableHead className="w-[180px]">Action</TableHead>
-                      <TableHead>Details</TableHead>
-                      <TableHead className="w-[80px] text-center">Origin</TableHead>
-                      <TableHead className="w-[100px]">Status</TableHead>
-                      <TableHead className="w-[100px] text-right">Actions</TableHead>
+                      <TableHead className="w-[140px]">
+                        <Trans>Time</Trans>
+                      </TableHead>
+                      <TableHead className="w-[120px]">
+                        <Trans>Budget</Trans>
+                      </TableHead>
+                      <TableHead className="w-[180px]">
+                        <Trans>Action</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Details</Trans>
+                      </TableHead>
+                      <TableHead className="w-[80px] text-center">
+                        <Trans>Origin</Trans>
+                      </TableHead>
+                      <TableHead className="w-[100px]">
+                        <Trans>Status</Trans>
+                      </TableHead>
+                      <TableHead className="w-[100px] text-right">
+                        <Trans>Actions</Trans>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -308,8 +334,10 @@ export default function AuditLogPage() {
                                       variant="destructive"
                                       className="cursor-help flex items-center gap-1"
                                     >
-                                      <AlertCircle className="h-3 w-3" />
-                                      Failed
+                                      <Trans>
+                                        <AlertCircle className="h-3 w-3" />
+                                        Failed
+                                      </Trans>
                                     </Badge>
                                   </TooltipTrigger>
                                   <TooltipContent side="left" className="max-w-xs">
@@ -328,13 +356,15 @@ export default function AuditLogPage() {
                               </TooltipProvider>
                             ) : entry.undoneAt ? (
                               <Badge variant="outline" className="text-muted-foreground">
-                                Undone
+                                <Trans>Undone</Trans>
                               </Badge>
                             ) : canUndo ? (
-                              <Badge variant="secondary">Active</Badge>
+                              <Badge variant="secondary">
+                                <Trans>Active</Trans>
+                              </Badge>
                             ) : (
                               <Badge variant="outline" className="text-muted-foreground">
-                                No Undo
+                                <Trans>No Undo</Trans>
                               </Badge>
                             )}
                           </TableCell>
@@ -345,7 +375,10 @@ export default function AuditLogPage() {
                               disabled={!canUndo || disableActions}
                               onClick={() => setPendingAction({ type: 'undo', entry })}
                             >
-                              <Undo2 className="h-4 w-4 mr-1" /> Undo
+                              <Trans>
+                                <Undo2 className="h-4 w-4 mr-1" />
+                                Undo
+                              </Trans>
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -368,8 +401,10 @@ export default function AuditLogPage() {
                       onClick={() => setPage((p) => Math.max(0, p - 1))}
                       disabled={page === 0}
                     >
-                      <ChevronLeft className="h-4 w-4" />
-                      Previous
+                      <Trans>
+                        <ChevronLeft className="h-4 w-4" />
+                        Previous
+                      </Trans>
                     </Button>
                     <Button
                       variant="outline"
@@ -377,8 +412,10 @@ export default function AuditLogPage() {
                       onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                       disabled={page >= totalPages - 1}
                     >
-                      Next
-                      <ChevronRight className="h-4 w-4" />
+                      <Trans>
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                      </Trans>
                     </Button>
                   </div>
                 </div>

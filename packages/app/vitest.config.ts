@@ -3,12 +3,12 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react({ babel: { plugins: ['@lingui/babel-plugin-lingui-macro'] } })],
   test: {
     globals: true,
     environment: 'jsdom',
     css: true,
-    setupFiles: ['./vitest.setup.ts'],
+    setupFiles: ['./vitest.setup.ts', './vitest.i18n-setup.tsx'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',

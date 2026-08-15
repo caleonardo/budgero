@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -55,7 +56,9 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Category</DialogTitle>
+          <DialogTitle>
+            <Trans>Delete Category</Trans>
+          </DialogTitle>
           <DialogDescription>
             Before you can delete the category, you need to reassign all
             {currentCategoryTotalTransactions > 0 && currentCategoryAssigned > 0
@@ -68,8 +71,10 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm">
-            Select a category to reassign transactions, assigned amounts, and any remaining
-            available amounts.
+            <Trans>
+              Select a category to reassign transactions, assigned amounts, and any remaining
+              available amounts.
+            </Trans>
           </p>
           <Select onValueChange={(value) => setSelectedCategoryId(parseInt(value, 10))}>
             <SelectTrigger>
@@ -89,21 +94,27 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
             </SelectContent>
           </Select>
           <div className="text-sm mt-4">
-            <p>Here's what will be reassigned to the new category:</p>
+            <p>
+              <Trans>Here's what will be reassigned to the new category:</Trans>
+            </p>
             <ul className="list-disc pl-6 space-y-1">
               {currentCategoryTotalTransactions > 0 && (
-                <li>All transactions ({currentCategoryTotalTransactions})</li>
+                <li>
+                  <Trans>All transactions ({currentCategoryTotalTransactions})</Trans>
+                </li>
               )}
               {currentCategoryAssigned > 0 && (
                 <li>Assigned amount ({formatAmount(currentCategoryAssigned)})</li>
               )}
-              <li>Any remaining available amount</li>
+              <li>
+                <Trans>Any remaining available amount</Trans>
+              </li>
             </ul>
           </div>
         </div>
         <DialogFooter>
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             variant="destructive"

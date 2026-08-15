@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import * as React from 'react';
 import { Check, ChevronsUpDown, Tag, X } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -134,7 +135,9 @@ export function LabelCombobox({
                   className="flex items-center gap-2 text-foreground data-[selected=true]:bg-muted/80 data-[selected=true]:text-foreground"
                 >
                   <X className="h-4 w-4" />
-                  <span>Clear label</span>
+                  <span>
+                    <Trans>Clear label</Trans>
+                  </span>
                   <Check
                     className={cn(
                       'ml-auto h-4 w-4',

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Group Name Edit Popover
  *
@@ -69,7 +70,7 @@ export function GroupNameEditPopover({
 
             <div className="flex gap-2">
               <Button variant="secondary" size="sm" onClick={() => onOpenChange(false)}>
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
               <Button onClick={onSave} size="sm" disabled={isUpdating}>
                 {isUpdating ? 'Saving...' : 'Save'}

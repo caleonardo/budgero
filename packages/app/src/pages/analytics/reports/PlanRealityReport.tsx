@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
@@ -204,7 +205,9 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
 
           {overspenders.length > 0 ? (
             <>
-              <PanelSectionTitle>Where the plan leaks</PanelSectionTitle>
+              <PanelSectionTitle>
+                <Trans>Where the plan leaks</Trans>
+              </PanelSectionTitle>
               <div className="divide-y divide-border/50">
                 {overspenders.map((row) => (
                   <div
@@ -216,7 +219,7 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
                         <span className="truncate text-sm font-medium">{row.name}</span>
                         {row.chronic ? (
                           <span className="shrink-0 rounded-full border border-red-300 px-1.5 text-[10px] font-medium uppercase tracking-wide text-red-600 dark:border-red-800 dark:text-red-300">
-                            chronic
+                            <Trans>chronic</Trans>
                           </span>
                         ) : null}
                       </div>
@@ -238,7 +241,9 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
 
           {goalRows.length > 0 ? (
             <>
-              <PanelSectionTitle>Goal funding (this period)</PanelSectionTitle>
+              <PanelSectionTitle>
+                <Trans>Goal funding (this period)</Trans>
+              </PanelSectionTitle>
               <div className="space-y-2">
                 {goalRows.map((goal) => {
                   const pct = Math.min(1, goal.coverage);

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 import type { EChartsCoreOption } from 'echarts/core';
@@ -84,9 +85,11 @@ export function MutationsTab({
     <TabSection loading={loading} error={error} onRetry={onRetry}>
       <Card>
         <CardHeader>
-          <CardTitle>Mutation KPIs</CardTitle>
+          <CardTitle>
+            <Trans>Mutation KPIs</Trans>
+          </CardTitle>
           <CardDescription>
-            All-time totals with a daily activity view for the current window.
+            <Trans>All-time totals with a daily activity view for the current window.</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-3">
@@ -104,7 +107,9 @@ export function MutationsTab({
 
       <Card>
         <CardHeader>
-          <CardTitle>Mutations Per Day</CardTitle>
+          <CardTitle>
+            <Trans>Mutations Per Day</Trans>
+          </CardTitle>
           <CardDescription>
             Daily mutation counts over the same{' '}
             {details?.activity?.windowDays ?? details?.mutations.days?.length ?? 365}-day window.

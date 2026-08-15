@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { CustomDashboard, UnifiedReport } from '@budgero/core/browser';
 import {
@@ -107,8 +108,16 @@ export function PinChartDialog({
 
         {(noDashboards || noReports) && (
           <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground space-y-2">
-            {noDashboards && <p>Create a dashboard first to pin charts.</p>}
-            {noReports && <p>No saved report with chart configuration is available yet.</p>}
+            {noDashboards && (
+              <p>
+                <Trans>Create a dashboard first to pin charts.</Trans>
+              </p>
+            )}
+            {noReports && (
+              <p>
+                <Trans>No saved report with chart configuration is available yet.</Trans>
+              </p>
+            )}
             {noDashboards && onCreateDashboard && (
               <Button
                 variant="outline"
@@ -125,7 +134,9 @@ export function PinChartDialog({
         {!noDashboards && !noReports && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Dashboard</Label>
+              <Label>
+                <Trans>Dashboard</Trans>
+              </Label>
               <Select value={selectedDashboardId} onValueChange={setSelectedDashboardId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select dashboard" />
@@ -153,7 +164,7 @@ export function PinChartDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             onClick={handleSubmit}

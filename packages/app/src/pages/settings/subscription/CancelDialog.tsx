@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import {
   Dialog,
@@ -38,15 +39,19 @@ export const CancelDialog = React.memo(function CancelDialog({ vm }: CancelDialo
     <Dialog open={showCancelDialog} onOpenChange={handleCancelDialogOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Cancel Subscription</DialogTitle>
+          <DialogTitle>
+            <Trans>Cancel Subscription</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Are you sure you want to cancel your subscription? You'll continue to have access until
-            the end of your current billing period.
+            <Trans>
+              Are you sure you want to cancel your subscription? You'll continue to have access
+              until the end of your current billing period.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            Let us know why you are canceling so we can make Budgero better.
+            <Trans>Let us know why you are canceling so we can make Budgero better.</Trans>
           </p>
           <RadioGroup
             value={cancelReason ?? undefined}
@@ -107,7 +112,7 @@ export const CancelDialog = React.memo(function CancelDialog({ vm }: CancelDialo
             onClick={() => handleCancelDialogOpenChange(false)}
             disabled={cancelMutation.isPending}
           >
-            Keep Subscription
+            <Trans>Keep Subscription</Trans>
           </Button>
           <Button
             variant="destructive"
@@ -115,7 +120,7 @@ export const CancelDialog = React.memo(function CancelDialog({ vm }: CancelDialo
             disabled={isCancelConfirmDisabled}
             loading={cancelMutation.isPending}
           >
-            Cancel Subscription
+            <Trans>Cancel Subscription</Trans>
           </Button>
         </DialogFooter>
       </DialogContent>

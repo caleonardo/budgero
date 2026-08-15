@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 /**
  * Transaction Form Actions
  *
@@ -64,10 +66,10 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
           onClick={onCancel}
           className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
         >
-          Cancel
+          <Trans>Cancel</Trans>
         </Button>
         <span className="hidden sm:inline-block text-[10px] text-muted-foreground ml-2">
-          Press Cmd+Enter to save
+          <Trans>Press Cmd+Enter to save</Trans>
         </span>
       </div>
       <div className="flex gap-2 order-1 sm:order-2">
@@ -78,7 +80,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
           type="button"
           className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
         >
-          Quick Add
+          <Trans>Quick Add</Trans>
         </Button>
         <Button
           disabled={isCalculatingTransfer}

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * "New" tab of CreateBudgetForm: create a brand-new empty budget.
  */
@@ -44,7 +45,11 @@ export function ManualBudgetTab({
   return (
     <form onSubmit={onSubmit} className="space-y-3 sm:space-y-4" data-testid="create-budget-form">
       <Field
-        label={<span className="text-xs sm:text-sm">Budget Name</span>}
+        label={
+          <span className="text-xs sm:text-sm">
+            <Trans>Budget Name</Trans>
+          </span>
+        }
         htmlFor="manualName"
         hint="A short name to identify this budget. You can rename it later."
       >
@@ -67,14 +72,18 @@ export function ManualBudgetTab({
           label="Display Currency"
         />
         <p className="text-xs text-muted-foreground">
-          The currency shown on amounts. This is for display only and can be changed anytime.
+          <Trans>
+            The currency shown on amounts. This is for display only and can be changed anytime.
+          </Trans>
         </p>
       </div>
 
       <div className="space-y-1.5">
         <IconPicker value={badgeIcon} onValueChange={onBadgeIconChange} label="Badge Icon" />
         <p className="text-xs text-muted-foreground">
-          A small icon shown next to your budget name. Handy when you have multiple budgets.
+          <Trans>
+            A small icon shown next to your budget name. Handy when you have multiple budgets.
+          </Trans>
         </p>
       </div>
 
@@ -86,18 +95,20 @@ export function ManualBudgetTab({
           label="Number Format"
         />
         <p className="text-xs text-muted-foreground">
-          How numbers and decimals are displayed throughout the app.
+          <Trans>How numbers and decimals are displayed throughout the app.</Trans>
         </p>
       </div>
 
       <div className="flex items-center justify-between space-x-2 py-2">
         <div className="space-y-1">
           <Label htmlFor="createDefaultCategories" className="text-xs sm:text-sm font-medium">
-            Create Default Categories
+            <Trans>Create Default Categories</Trans>
           </Label>
           <p className="text-xs text-muted-foreground">
-            Start with common categories like Rent, Groceries, and Savings. Recommended for new
-            users.
+            <Trans>
+              Start with common categories like Rent, Groceries, and Savings. Recommended for new
+              users.
+            </Trans>
           </p>
         </div>
         <Switch

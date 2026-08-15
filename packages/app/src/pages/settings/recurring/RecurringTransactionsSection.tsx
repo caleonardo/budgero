@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -315,18 +316,24 @@ export function RecurringTransactionsSection() {
         <Card className="border-dashed">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Sparkles className="h-5 w-5 text-muted-foreground" />
-              Plan ahead with recurring items
+              <Trans>
+                <Sparkles className="h-5 w-5 text-muted-foreground" />
+                Plan ahead with recurring items
+              </Trans>
             </CardTitle>
             <CardDescription>
-              Set up recurring paycheques, bills, or transfers and Budgero will remind you when they
-              are due.
+              <Trans>
+                Set up recurring paycheques, bills, or transfers and Budgero will remind you when
+                they are due.
+              </Trans>
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={openCreateDialog} variant="outline">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Recurring Transaction
+              <Trans>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Recurring Transaction
+              </Trans>
             </Button>
           </CardContent>
         </Card>
@@ -364,8 +371,12 @@ export function RecurringTransactionsSection() {
       return (
         <Card className="border-dashed">
           <CardHeader>
-            <CardTitle className="text-lg">Upcoming transactions</CardTitle>
-            <CardDescription>We are loading your upcoming recurring occurrences.</CardDescription>
+            <CardTitle className="text-lg">
+              <Trans>Upcoming transactions</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>We are loading your upcoming recurring occurrences.</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -385,9 +396,13 @@ export function RecurringTransactionsSection() {
       return (
         <Card className="border-dashed">
           <CardHeader>
-            <CardTitle className="text-lg">No upcoming occurrences</CardTitle>
+            <CardTitle className="text-lg">
+              <Trans>No upcoming occurrences</Trans>
+            </CardTitle>
             <CardDescription>
-              When a recurring item is almost due, it will appear here so you can mark it ready.
+              <Trans>
+                When a recurring item is almost due, it will appear here so you can mark it ready.
+              </Trans>
             </CardDescription>
           </CardHeader>
         </Card>
@@ -430,23 +445,34 @@ export function RecurringTransactionsSection() {
       <section className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-semibold">Recurring transactions</h2>
+            <h2 className="text-lg font-semibold">
+              <Trans>Recurring transactions</Trans>
+            </h2>
             <p className="text-sm text-muted-foreground">
-              Keep an eye on regular paycheques, bills, and transfers. Budgero will remind you
-              before they run.
+              <Trans>
+                Keep an eye on regular paycheques, bills, and transfers. Budgero will remind you
+                before they run.
+              </Trans>
             </p>
           </div>
           <Button onClick={openCreateDialog} className="w-full sm:w-auto">
-            <Plus className="mr-2 h-4 w-4" /> New recurring transaction
+            <Trans>
+              <Plus className="mr-2 h-4 w-4" />
+              New recurring transaction
+            </Trans>
           </Button>
         </div>
         {permission !== 'granted' && permission !== 'unsupported' ? (
           <div className="flex flex-col gap-3 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-medium text-foreground">Enable notifications</p>
+              <p className="text-sm font-medium text-foreground">
+                <Trans>Enable notifications</Trans>
+              </p>
               <p className="text-sm text-muted-foreground">
-                Get reminders before recurring transactions are due. We will only notify you for
-                items you configure.
+                <Trans>
+                  Get reminders before recurring transactions are due. We will only notify you for
+                  items you configure.
+                </Trans>
               </p>
             </div>
             <Button
@@ -464,9 +490,13 @@ export function RecurringTransactionsSection() {
 
       <section className="space-y-4">
         <div className="space-y-1">
-          <h2 className="text-lg font-semibold">Upcoming occurrences</h2>
+          <h2 className="text-lg font-semibold">
+            <Trans>Upcoming occurrences</Trans>
+          </h2>
           <p className="text-sm text-muted-foreground">
-            Mark items as ready when they land to create the matching transaction automatically.
+            <Trans>
+              Mark items as ready when they land to create the matching transaction automatically.
+            </Trans>
           </p>
         </div>
         {renderOccurrences()}

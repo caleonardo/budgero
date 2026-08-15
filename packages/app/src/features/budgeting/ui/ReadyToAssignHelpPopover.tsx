@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -73,10 +74,14 @@ export function ReadyToAssignHelpPopover({
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-72 text-xs" side={side} align={align}>
-        <p className="font-medium text-sm">Ready to Assign</p>
+        <p className="font-medium text-sm">
+          <Trans>Ready to Assign</Trans>
+        </p>
         <p className="mt-1 text-muted-foreground">
-          Money you can still assign to categories. Positive means funds to allocate; negative means
-          you&apos;ve over-budgeted.
+          <Trans>
+            Money you can still assign to categories. Positive means funds to allocate; negative
+            means you've over-budgeted.
+          </Trans>
         </p>
 
         {breakdown && (
@@ -161,7 +166,7 @@ export function ReadyToAssignHelpPopover({
                 to="/settings/budget"
                 className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
               >
-                Settings → Budget Settings
+                <Trans>Settings → Budget Settings</Trans>
               </Link>
               .
             </p>

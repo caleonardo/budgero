@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Desktop Budget Category Row Component
  *
@@ -199,7 +200,7 @@ export function DesktopBudgetCategoryRow({
                   className="w-full justify-start text-xs"
                   onClick={() => onEditCategory(row)}
                 >
-                  Edit
+                  <Trans>Edit</Trans>
                 </Button>
                 {onHideCategory && (
                   <Button
@@ -211,8 +212,10 @@ export function DesktopBudgetCategoryRow({
                       onHideCategory(row);
                     }}
                   >
-                    <EyeOff className="mr-2 h-3 w-3" />
-                    Hide
+                    <Trans>
+                      <EyeOff className="mr-2 h-3 w-3" />
+                      Hide
+                    </Trans>
                   </Button>
                 )}
                 <Button
@@ -221,7 +224,7 @@ export function DesktopBudgetCategoryRow({
                   className="w-full justify-start text-xs text-destructive hover:text-destructive"
                   onClick={() => onDeleteCategory(row)}
                 >
-                  Delete
+                  <Trans>Delete</Trans>
                 </Button>
               </div>
             </PopoverContent>
@@ -324,13 +327,15 @@ export function DesktopBudgetCategoryRow({
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-72 space-y-3" align="end">
-                <div className="text-sm font-medium">Move Money</div>
+                <div className="text-sm font-medium">
+                  <Trans>Move Money</Trans>
+                </div>
                 <div className="space-y-1">
                   <Label
                     htmlFor={moveAmountInputId}
                     className="font-normal text-xs text-muted-foreground"
                   >
-                    Amount
+                    <Trans>Amount</Trans>
                   </Label>
                   <Input
                     id={moveAmountInputId}
@@ -347,7 +352,9 @@ export function DesktopBudgetCategoryRow({
                 </div>
                 <div className="space-y-1">
                   {/* Caption, not a <label>: SearchableCategorySelect exposes no labelable control. */}
-                  <span className="text-xs text-muted-foreground">Move to</span>
+                  <span className="text-xs text-muted-foreground">
+                    <Trans>Move to</Trans>
+                  </span>
                   <SearchableCategorySelect
                     budgetId={selectedBudgetId}
                     selectedCategoryId={moveTarget}
@@ -362,10 +369,10 @@ export function DesktopBudgetCategoryRow({
                 </div>
                 <div className="flex items-center justify-end gap-2 pt-1">
                   <Button variant="ghost" size="sm" onClick={() => setMovePopoverOpen(false)}>
-                    Cancel
+                    <Trans>Cancel</Trans>
                   </Button>
                   <Button size="sm" onClick={handleMove} disabled={moveTarget === null}>
-                    Move
+                    <Trans>Move</Trans>
                   </Button>
                 </div>
               </PopoverContent>

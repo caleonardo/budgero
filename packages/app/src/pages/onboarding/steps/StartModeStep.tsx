@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { OnboardingOptionTile, Title, type StepProps } from './shared';
 
@@ -100,7 +101,7 @@ export const StartModeStep: React.FC<StepProps> = ({ state, set }) => {
       </div>
       {!state.startMode && (
         <div style={{ marginTop: 14, fontSize: 11, color: '#393939', textAlign: 'center' }}>
-          Pick a path to continue.
+          <Trans>Pick a path to continue.</Trans>
         </div>
       )}
     </div>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { RefreshCw } from 'lucide-react';
@@ -16,21 +17,31 @@ export const AdminUsersHeader = React.memo(function AdminUsersHeader({
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-3xl font-bold">Users</h1>
-        <p className="text-muted-foreground mt-1">Manage user accounts and access levels</p>
+        <h1 className="text-3xl font-bold">
+          <Trans>Users</Trans>
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          <Trans>Manage user accounts and access levels</Trans>
+        </p>
       </div>
       <div className="flex gap-2">
         <Button onClick={onSyncClerk} size="sm" variant="outline">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Sync Clerk Users
+          <Trans>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Sync Clerk Users
+          </Trans>
         </Button>
         <Button onClick={onSyncLemonSqueezy} size="sm" variant="outline">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Sync Subscriptions
+          <Trans>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Sync Subscriptions
+          </Trans>
         </Button>
         <Button onClick={onRefresh} size="sm" variant="outline">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
+          <Trans>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Trans>
         </Button>
       </div>
     </div>

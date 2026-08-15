@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { MonthYearCalendar } from '@shared/ui/MonthYearCalendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
@@ -97,7 +98,9 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
 
       {isCustom && (
         <div style={{ marginTop: 18 }}>
-          <FieldLabel>GOAL NAME</FieldLabel>
+          <FieldLabel>
+            <Trans>GOAL NAME</Trans>
+          </FieldLabel>
           <InputRow
             value={state.goal.label === 'Something else' ? '' : state.goal.label}
             onChange={(v) => set({ goal: { ...state.goal, label: v } })}
@@ -108,16 +111,22 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
 
       {/* Mode toggle — maps to Budgero's two savings goal shapes. */}
       <div style={{ marginTop: 20 }}>
-        <FieldLabel marginBottom={8}>HOW DO YOU WANT TO SAVE?</FieldLabel>
+        <FieldLabel marginBottom={8}>
+          <Trans>HOW DO YOU WANT TO SAVE?</Trans>
+        </FieldLabel>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
           <OnboardingOptionTile
             active={mode === 'monthly'}
             onClick={() => set({ goal: { ...state.goal, mode: 'monthly' } })}
             style={{ padding: '12px 14px' }}
           >
-            <div style={{ fontSize: 13, fontWeight: 600 }}>Set aside each month</div>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>
+              <Trans>Set aside each month</Trans>
+            </div>
             <div style={{ fontSize: 10, color: '#393939', marginTop: 2, lineHeight: 1.45 }}>
-              Assign the same amount every month. Best for emergency funds and ongoing buckets.
+              <Trans>
+                Assign the same amount every month. Best for emergency funds and ongoing buckets.
+              </Trans>
             </div>
           </OnboardingOptionTile>
           <OnboardingOptionTile
@@ -125,9 +134,13 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
             onClick={() => set({ goal: { ...state.goal, mode: 'target' } })}
             style={{ padding: '12px 14px' }}
           >
-            <div style={{ fontSize: 13, fontWeight: 600 }}>Reach a total by a date</div>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>
+              <Trans>Reach a total by a date</Trans>
+            </div>
             <div style={{ fontSize: 10, color: '#393939', marginTop: 2, lineHeight: 1.45 }}>
-              Pick a target amount and deadline. Best for trips, down payments, big purchases.
+              <Trans>
+                Pick a target amount and deadline. Best for trips, down payments, big purchases.
+              </Trans>
             </div>
           </OnboardingOptionTile>
         </div>
@@ -147,7 +160,9 @@ export const GoalStep: React.FC<StepProps> = ({ cur, state, set }) => {
         </div>
         {mode === 'target' && (
           <div>
-            <FieldLabel>TARGET DATE</FieldLabel>
+            <FieldLabel>
+              <Trans>TARGET DATE</Trans>
+            </FieldLabel>
             {/* Reuses the same Popover + MonthYearCalendar pattern the
                 main GoalForm uses, so the calendar UX matches what the user
                 will see when they edit goals later. Trigger button keeps the

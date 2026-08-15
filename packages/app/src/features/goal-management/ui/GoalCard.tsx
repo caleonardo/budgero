@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -171,7 +172,9 @@ function GoalControls({
               </div>
 
               <div className="text-muted-foreground">
-                <div className="mb-2 font-medium">How it works:</div>
+                <div className="mb-2 font-medium">
+                  <Trans>How it works:</Trans>
+                </div>
                 <ul className="space-y-1 text-xs">
                   {progress.breakdown.explanation.map((item, idx) => (
                     <li key={idx}>• {item}</li>
@@ -249,11 +252,13 @@ export function GoalCard({
       >
         <div className="flex items-center gap-1.5 text-muted-foreground">
           <Target className="h-3.5 w-3.5" />
-          <span>No goal set for {categoryName}</span>
+          <span>
+            <Trans>No goal set for {categoryName}</Trans>
+          </span>
         </div>
         {onCreate && (
           <Button onClick={onCreate} variant="ghost" size="sm" className="h-6 px-2 text-xs">
-            Create Goal
+            <Trans>Create Goal</Trans>
           </Button>
         )}
       </div>
@@ -308,7 +313,7 @@ export function GoalCard({
                 variant="outline"
                 className="hidden text-[9px] uppercase tracking-wide md:inline-flex"
               >
-                Recurring
+                <Trans>Recurring</Trans>
               </Badge>
             )}
           </div>
@@ -359,7 +364,7 @@ export function GoalCard({
               {getGoalTypeLabel()}
               {!!goal.Recurring && (
                 <Badge variant="outline" className="text-[9px] uppercase tracking-wide">
-                  Recurring
+                  <Trans>Recurring</Trans>
                 </Badge>
               )}
             </CardTitle>
@@ -390,7 +395,9 @@ export function GoalCard({
         {/* Main Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Progress</span>
+            <span className="text-muted-foreground">
+              <Trans>Progress</Trans>
+            </span>
             <AnimatedNumber
               value={progress.percentage}
               formatter={(v) => `${Math.round(v)}%`}
@@ -448,27 +455,37 @@ export function GoalCard({
           {progress.timeMetrics && (
             <div className="space-y-2 pt-2 border-t">
               <h4 className="text-sm font-medium flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                Timeline
+                <Trans>
+                  <Calendar className="h-4 w-4" />
+                  Timeline
+                </Trans>
               </h4>
               <div className="space-y-1 text-sm">
                 {progress.timeMetrics.targetDate && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Target Date:</span>
+                    <span className="text-muted-foreground">
+                      <Trans>Target Date:</Trans>
+                    </span>
                     <span>{progress.timeMetrics.targetDate.toLocaleDateString()}</span>
                   </div>
                 )}
                 {progress.timeMetrics.monthsRemaining !== undefined && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Months Remaining:</span>
+                    <span className="text-muted-foreground">
+                      <Trans>Months Remaining:</Trans>
+                    </span>
                     <span>{progress.timeMetrics.monthsRemaining}</span>
                   </div>
                 )}
                 {progress.timeMetrics.currentStreak !== undefined &&
                   progress.timeMetrics.currentStreak > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Current Streak:</span>
-                      <span>{progress.timeMetrics.currentStreak} months</span>
+                      <span className="text-muted-foreground">
+                        <Trans>Current Streak:</Trans>
+                      </span>
+                      <span>
+                        <Trans>{progress.timeMetrics.currentStreak} months</Trans>
+                      </span>
                     </div>
                   )}
               </div>
@@ -477,7 +494,9 @@ export function GoalCard({
 
           {/* Explanation */}
           <div className="space-y-2 pt-2 border-t">
-            <h4 className="text-sm font-medium">How it works</h4>
+            <h4 className="text-sm font-medium">
+              <Trans>How it works</Trans>
+            </h4>
             <ul className="space-y-1 text-xs text-muted-foreground">
               {progress.breakdown.explanation.map((item, idx) => (
                 <li key={idx}>• {item}</li>
@@ -491,8 +510,10 @@ export function GoalCard({
           <div className="flex justify-end gap-2 pt-2 border-t">
             {onDelete && (
               <Button variant="outline" size="sm" onClick={onDelete}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
+                <Trans>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Trans>
               </Button>
             )}
           </div>

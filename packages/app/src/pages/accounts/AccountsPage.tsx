@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useAccounts } from '@entities/account/api/useAccounts';
 import { useNetWorthHistory } from '@entities/account/api/useNetWorthHistory';
@@ -269,7 +270,9 @@ export default function AccountsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <h1 className="text-xl sm:text-2xl font-bold">Accounts</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">
+            <Trans>Accounts</Trans>
+          </h1>
           <PeriodTabs value={dateRange} onChange={setDateRange} defaultPeriod="1M" />
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -277,7 +280,7 @@ export default function AccountsPage() {
             <div className="flex shrink-0 items-center gap-2 rounded-md bg-destructive/10 px-3 py-1.5 text-destructive">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span className="whitespace-nowrap text-sm font-medium">
-                {uncategorizedData.total} uncategorized
+                <Trans>{uncategorizedData.total} uncategorized</Trans>
               </span>
             </div>
           )}
@@ -600,7 +603,9 @@ function SidebarContent({
       {showNetWorth && (
         <div>
           <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <span className="text-xs sm:text-sm font-medium">Net Worth</span>
+            <span className="text-xs sm:text-sm font-medium">
+              <Trans>Net Worth</Trans>
+            </span>
             <span className="text-sm sm:text-xl font-bold tabular-nums">
               {formatCurrency(netWorth)}
             </span>

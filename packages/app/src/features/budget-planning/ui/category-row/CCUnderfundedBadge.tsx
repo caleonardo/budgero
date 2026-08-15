@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { AlertTriangle } from 'lucide-react';
 import type { BudgetRow } from '@features/budget-planning/lib/budget-transforms';
 import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMaskedMilli';
@@ -88,16 +89,26 @@ export function CCUnderfundedBadge({ item, globalLocalizer, className }: CCUnder
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-72 text-xs" align="end" side="top">
-        <p className="font-medium text-sm">Where this debt came from</p>
+        <p className="font-medium text-sm">
+          <Trans>Where this debt came from</Trans>
+        </p>
         <p className="mt-1 text-muted-foreground">
-          Credit overspending that wasn&apos;t covered when it happened. Assign money to this
-          payment category to pay it off.
+          <Trans>
+            Credit overspending that wasn't covered when it happened. Assign money to this payment
+            category to pay it off.
+          </Trans>
         </p>
         <div className="mt-3 border-t border-border pt-2">
           <div className="grid grid-cols-[1fr_auto_auto] gap-x-3 gap-y-1">
-            <span className="text-muted-foreground">Category</span>
-            <span className="text-muted-foreground">Month</span>
-            <span className="text-right text-muted-foreground">Amount</span>
+            <span className="text-muted-foreground">
+              <Trans>Category</Trans>
+            </span>
+            <span className="text-muted-foreground">
+              <Trans>Month</Trans>
+            </span>
+            <span className="text-right text-muted-foreground">
+              <Trans>Amount</Trans>
+            </span>
             {events.map((e) => (
               <div key={`${e.categoryId}|${e.month}`} className="contents">
                 <span className="truncate">{e.categoryName || `#${e.categoryId}`}</span>
@@ -112,17 +123,23 @@ export function CCUnderfundedBadge({ item, globalLocalizer, className }: CCUnder
             {covered > 0 && (
               <>
                 <div className="flex items-baseline justify-between text-muted-foreground">
-                  <span>Debt created</span>
+                  <span>
+                    <Trans>Debt created</Trans>
+                  </span>
                   <span className="tabular-nums">{formatAmount(created)}</span>
                 </div>
                 <div className="flex items-baseline justify-between text-muted-foreground">
-                  <span>− Already set aside</span>
+                  <span>
+                    <Trans>− Already set aside</Trans>
+                  </span>
                   <span className="tabular-nums">{formatAmount(covered)}</span>
                 </div>
               </>
             )}
             <div className="flex items-baseline justify-between font-semibold">
-              <span>Still underfunded</span>
+              <span>
+                <Trans>Still underfunded</Trans>
+              </span>
               <span className="tabular-nums">{formatAmount(underfunded)}</span>
             </div>
           </div>

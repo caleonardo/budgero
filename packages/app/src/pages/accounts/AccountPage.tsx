@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { EditAccountDialog } from '@features/account-management/ui/EditAccountDialog';
 import { ReconcileAccountDialog } from '@features/account-management/ui/ReconcileAccountDialog';
@@ -312,9 +313,11 @@ export default function AccountPage() {
           <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center mb-4 mx-auto">
             <Wallet className="w-8 h-8 text-muted-foreground" />
           </div>
-          <p className="text-lg font-medium text-muted-foreground mb-2">Account not found</p>
+          <p className="text-lg font-medium text-muted-foreground mb-2">
+            <Trans>Account not found</Trans>
+          </p>
           <p className="text-sm text-muted-foreground/70">
-            The account you're looking for doesn't exist or has been deleted.
+            <Trans>The account you're looking for doesn't exist or has been deleted.</Trans>
           </p>
         </div>
       </div>
@@ -385,7 +388,9 @@ export default function AccountPage() {
 
           <div className="flex items-center gap-4 flex-wrap">
             <div>
-              <span className="text-[10px] text-muted-foreground">Balance</span>
+              <span className="text-[10px] text-muted-foreground">
+                <Trans>Balance</Trans>
+              </span>
               <p className="text-sm font-bold tabular-nums text-foreground">
                 {formatMilliAmount(displayBalanceToday)}
               </p>
@@ -433,9 +438,11 @@ export default function AccountPage() {
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-xs font-medium text-success">Paid off!</div>
+                    <div className="text-xs font-medium text-success">
+                      <Trans>Paid off!</Trans>
+                    </div>
                     <div className="text-[10px] text-muted-foreground">
-                      This liability has a positive balance.
+                      <Trans>This liability has a positive balance.</Trans>
                     </div>
                   </div>
                 </div>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Label } from '@shared/ui/label';
 import { ThemeSwitch } from '@shared/ui/theme-switch';
@@ -104,17 +105,25 @@ export default function AppearancePage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Languages className="h-5 w-5" />
-            Language
+            <Trans>
+              <Languages className="h-5 w-5" />
+              Language
+            </Trans>
           </CardTitle>
-          <CardDescription>Choose the language Budgero uses on this device</CardDescription>
+          <CardDescription>
+            <Trans>Choose the language Budgero uses on this device</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="language">Display language</Label>
+              <Label htmlFor="language">
+                <Trans>Display language</Trans>
+              </Label>
               <p className="text-sm text-muted-foreground">
-                Currency and number formatting stay controlled by your budget settings.
+                <Trans>
+                  Currency and number formatting stay controlled by your budget settings.
+                </Trans>
               </p>
             </div>
             <LanguageSwitch id="language" />
@@ -125,17 +134,23 @@ export default function AppearancePage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Palette className="h-5 w-5" />
-            Theme Settings
+            <Trans>
+              <Palette className="h-5 w-5" />
+              Theme Settings
+            </Trans>
           </CardTitle>
-          <CardDescription>Choose your preferred color scheme</CardDescription>
+          <CardDescription>
+            <Trans>Choose your preferred color scheme</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="theme">Color Theme</Label>
+              <Label htmlFor="theme">
+                <Trans>Color Theme</Trans>
+              </Label>
               <p className="text-sm text-muted-foreground">
-                Select your preferred theme for the interface
+                <Trans>Select your preferred theme for the interface</Trans>
               </p>
             </div>
             <ThemeSwitch />
@@ -147,9 +162,11 @@ export default function AppearancePage() {
             <div className="space-y-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-0.5">
-                  <Label htmlFor="classic-font">Budgero Classic font</Label>
+                  <Label htmlFor="classic-font">
+                    <Trans>Budgero Classic font</Trans>
+                  </Label>
                   <p className="text-sm text-muted-foreground">
-                    Choose the typeface Budgero Classic should use across the app.
+                    <Trans>Choose the typeface Budgero Classic should use across the app.</Trans>
                   </p>
                 </div>
                 <Select
@@ -170,19 +187,22 @@ export default function AppearancePage() {
               </div>
               <div className="rounded-md border border-dashed border-border/60 bg-muted/30 p-4">
                 <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
-                  Preview
+                  <Trans>Preview</Trans>
                 </p>
                 <p
                   className="text-base sm:text-lg font-medium"
                   style={fontPreviewFamily ? { fontFamily: fontPreviewFamily } : undefined}
                 >
-                  Budgero helps budgets breathe easier.
+                  <Trans>Budgero helps budgets breathe easier.</Trans>
                 </p>
               </div>
             </div>
           ) : (
             <div className="rounded-md border border-dashed border-border/60 bg-muted/30 p-4 text-sm text-muted-foreground">
-              Switch to the <span className="font-medium text-foreground">Budgero Classic</span>{' '}
+              Switch to the{' '}
+              <span className="font-medium text-foreground">
+                <Trans>Budgero Classic</Trans>
+              </span>{' '}
               theme to choose a custom font.
             </div>
           )}
@@ -194,10 +214,14 @@ export default function AppearancePage() {
       <Card className="hidden md:block">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Home className="h-5 w-5" />
-            Budget Table
+            <Trans>
+              <Home className="h-5 w-5" />
+              Budget Table
+            </Trans>
           </CardTitle>
-          <CardDescription>Desktop-only layout preferences for budgeting.</CardDescription>
+          <CardDescription>
+            <Trans>Desktop-only layout preferences for budgeting.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <RadioGroup
@@ -248,17 +272,23 @@ export default function AppearancePage() {
       <Card className="md:hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Smartphone className="h-5 w-5" />
-            Mobile Budget View
+            <Trans>
+              <Smartphone className="h-5 w-5" />
+              Mobile Budget View
+            </Trans>
           </CardTitle>
-          <CardDescription>Mobile-only layout preferences for budgeting.</CardDescription>
+          <CardDescription>
+            <Trans>Mobile-only layout preferences for budgeting.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div className="space-y-0.5">
-              <Label htmlFor="compact-mobile-layout">Compact header</Label>
+              <Label htmlFor="compact-mobile-layout">
+                <Trans>Compact header</Trans>
+              </Label>
               <p className="text-sm text-muted-foreground">
-                Show only month selector and ready to assign in the budget header.
+                <Trans>Show only month selector and ready to assign in the budget header.</Trans>
               </p>
             </div>
             <Switch
@@ -270,8 +300,12 @@ export default function AppearancePage() {
           <Separator />
           <div className="space-y-3">
             <div className="space-y-0.5">
-              <Label>Budget layout</Label>
-              <p className="text-sm text-muted-foreground">Choose how categories are displayed.</p>
+              <Label>
+                <Trans>Budget layout</Trans>
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                <Trans>Choose how categories are displayed.</Trans>
+              </p>
             </div>
             <RadioGroup
               value={mobileBudgetLayout}
@@ -321,10 +355,14 @@ export default function AppearancePage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Home className="h-5 w-5" />
-            Default Home
+            <Trans>
+              <Home className="h-5 w-5" />
+              Default Home
+            </Trans>
           </CardTitle>
-          <CardDescription>Select which page Budgero opens to by default.</CardDescription>
+          <CardDescription>
+            <Trans>Select which page Budgero opens to by default.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <RadioGroup value={homePage} onValueChange={handleHomePageChange} className="grid gap-3">
@@ -373,18 +411,22 @@ export default function AppearancePage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Download className="h-5 w-5" />
-            Install App
+            <Trans>
+              <Download className="h-5 w-5" />
+              Install App
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Install Budgero for an app-like experience and quick access from your home screen.
+            <Trans>
+              Install Budgero for an app-like experience and quick access from your home screen.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {installSupport === 'native' ? (
             <div className="flex justify-end">
               <Button onClick={installApp} disabled={!canInstall}>
-                Install Budgero
+                <Trans>Install Budgero</Trans>
               </Button>
             </div>
           ) : (

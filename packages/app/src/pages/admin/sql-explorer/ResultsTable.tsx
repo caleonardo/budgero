@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Badge } from '@shared/ui/badge';
@@ -19,8 +20,10 @@ export const ResultsTable = memo(
                 Results
                 {result.isDryRun && (
                   <Badge variant="outline" className="text-green-600 border-green-600">
-                    <Shield className="h-3 w-3 mr-1" />
-                    Dry Run
+                    <Trans>
+                      <Shield className="h-3 w-3 mr-1" />
+                      Dry Run
+                    </Trans>
                   </Badge>
                 )}
               </CardTitle>

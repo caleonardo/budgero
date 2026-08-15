@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { cloneElement, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@shared/lib/utils';
@@ -57,8 +58,12 @@ export default function AdminSidebar() {
               <Shield className="text-purple-600 w-6 h-6" />
               {!collapsed && (
                 <div>
-                  <h2 className="font-bold text-lg">Admin Panel</h2>
-                  <p className="text-xs text-muted-foreground">Budgero Management</p>
+                  <h2 className="font-bold text-lg">
+                    <Trans>Admin Panel</Trans>
+                  </h2>
+                  <p className="text-xs text-muted-foreground">
+                    <Trans>Budgero Management</Trans>
+                  </p>
                 </div>
               )}
             </div>
@@ -133,11 +138,19 @@ export default function AdminSidebar() {
                 >
                   <Home className={cn('w-4 h-4', !collapsed && 'mr-2')} />
                   {!collapsed && 'Back to App'}
-                  {collapsed && <span className="sr-only">Back to App</span>}
+                  {collapsed && (
+                    <span className="sr-only">
+                      <Trans>Back to App</Trans>
+                    </span>
+                  )}
                 </Button>
               </Link>
             </TooltipTrigger>
-            {collapsed && <TooltipContent side="right">Back to App</TooltipContent>}
+            {collapsed && (
+              <TooltipContent side="right">
+                <Trans>Back to App</Trans>
+              </TooltipContent>
+            )}
           </Tooltip>
           <Tooltip delayDuration={200}>
             <TooltipTrigger asChild>
@@ -152,10 +165,18 @@ export default function AdminSidebar() {
               >
                 <LogOut className={cn('w-4 h-4', !collapsed && 'mr-2')} />
                 {!collapsed && 'Logout'}
-                {collapsed && <span className="sr-only">Logout</span>}
+                {collapsed && (
+                  <span className="sr-only">
+                    <Trans>Logout</Trans>
+                  </span>
+                )}
               </Button>
             </TooltipTrigger>
-            {collapsed && <TooltipContent side="right">Logout</TooltipContent>}
+            {collapsed && (
+              <TooltipContent side="right">
+                <Trans>Logout</Trans>
+              </TooltipContent>
+            )}
           </Tooltip>
         </div>
       </div>

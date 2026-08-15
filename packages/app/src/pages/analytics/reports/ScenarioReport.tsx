@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Fragment, useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Plus, Save, Trash2 } from 'lucide-react';
@@ -495,10 +496,18 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="average">Flat average</SelectItem>
-              <SelectItem value="linear">Linear trend (OLS)</SelectItem>
-              <SelectItem value="robust">Robust trend (Theil–Sen)</SelectItem>
-              <SelectItem value="holt">Damped trend (Holt)</SelectItem>
+              <SelectItem value="average">
+                <Trans>Flat average</Trans>
+              </SelectItem>
+              <SelectItem value="linear">
+                <Trans>Linear trend (OLS)</Trans>
+              </SelectItem>
+              <SelectItem value="robust">
+                <Trans>Robust trend (Theil–Sen)</Trans>
+              </SelectItem>
+              <SelectItem value="holt">
+                <Trans>Damped trend (Holt)</Trans>
+              </SelectItem>
               <SelectItem value="seasonal" disabled={!seasonalReady}>
                 Seasonal average{seasonalReady ? '' : ' (needs 12+ mo)'}
               </SelectItem>
@@ -514,7 +523,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             <SelectContent>
               {[12, 24, 36, 60].map((horizon) => (
                 <SelectItem key={horizon} value={String(horizon)}>
-                  {horizon} months
+                  <Trans>{horizon} months</Trans>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -546,7 +555,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             <div>
               <div className="flex items-baseline justify-between">
                 <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Monthly income
+                  <Trans>Monthly income</Trans>
                 </span>
                 <span className="text-sm font-semibold tabular-nums">
                   {payload.incomePct}% ·{' '}
@@ -565,7 +574,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             <div>
               <div className="flex items-baseline justify-between">
                 <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Monthly spending
+                  <Trans>Monthly spending</Trans>
                 </span>
                 <span className="text-sm font-semibold tabular-nums">
                   {payload.spendingPct}% ·{' '}
@@ -588,16 +597,20 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
           <div className="mt-4 border-t border-dashed border-border/60 pt-4">
             <div className="mb-2 flex items-center justify-between">
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                One-off inflows / outflows
+                <Trans>One-off inflows / outflows</Trans>
               </span>
               <Button variant="outline" size="sm" onClick={addOneOff}>
-                <Plus className="mr-1 h-3.5 w-3.5" />
-                Add
+                <Trans>
+                  <Plus className="mr-1 h-3.5 w-3.5" />
+                  Add
+                </Trans>
               </Button>
             </div>
             {payload.oneOffs.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                Nothing yet — add a car repair, a bonus, a tax bill… and watch the line react.
+                <Trans>
+                  Nothing yet — add a car repair, a bonus, a tax bill… and watch the line react.
+                </Trans>
               </p>
             ) : (
               <div className="space-y-2">
@@ -624,8 +637,12 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="outflow">Outflow</SelectItem>
-                        <SelectItem value="inflow">Inflow</SelectItem>
+                        <SelectItem value="outflow">
+                          <Trans>Outflow</Trans>
+                        </SelectItem>
+                        <SelectItem value="inflow">
+                          <Trans>Inflow</Trans>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <CalculatorCell
@@ -697,7 +714,9 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             <StatTile label="Starting funds" value={money.tile(startBalance)} />
           </div>
 
-          <PanelSectionTitle>Save scenario</PanelSectionTitle>
+          <PanelSectionTitle>
+            <Trans>Save scenario</Trans>
+          </PanelSectionTitle>
           <div className="flex gap-2">
             <Input
               value={scenarioName}
@@ -723,7 +742,9 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
 
           {saved.length > 0 ? (
             <>
-              <PanelSectionTitle>Saved scenarios</PanelSectionTitle>
+              <PanelSectionTitle>
+                <Trans>Saved scenarios</Trans>
+              </PanelSectionTitle>
               <div className="divide-y divide-border/50">
                 {saved.map((record) => (
                   <div key={record.ID} className="flex items-center gap-1 py-1">
@@ -753,20 +774,22 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             </>
           ) : null}
 
-          <PanelSectionTitle>Projection</PanelSectionTitle>
+          <PanelSectionTitle>
+            <Trans>Projection</Trans>
+          </PanelSectionTitle>
           <div className="max-h-[360px] overflow-y-auto pr-1">
             <div className="grid grid-cols-[auto_1fr_1fr_1.2fr] gap-x-3 text-[11px]">
               <span className="sticky top-0 z-10 bg-card pb-1 font-medium uppercase tracking-wide text-muted-foreground">
-                Month
+                <Trans>Month</Trans>
               </span>
               <span className="sticky top-0 z-10 bg-card pb-1 text-right font-medium uppercase tracking-wide text-muted-foreground">
                 In
               </span>
               <span className="sticky top-0 z-10 bg-card pb-1 text-right font-medium uppercase tracking-wide text-muted-foreground">
-                Out
+                <Trans>Out</Trans>
               </span>
               <span className="sticky top-0 z-10 bg-card pb-1 text-right font-medium uppercase tracking-wide text-muted-foreground">
-                Balance
+                <Trans>Balance</Trans>
               </span>
               {chartedPoints.map((point) => {
                 const gross = oneOffGrossByMonth.get(point.monthKey);

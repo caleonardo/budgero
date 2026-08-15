@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import {
   Ban,
@@ -64,7 +65,9 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
             <div className="space-y-2">
               <SheetTitle className="text-2xl">{resolvedUser.name}</SheetTitle>
               <SheetDescription className="max-w-2xl">
-                Live SaaS account details across activity, mutations, workspaces, and billing.
+                <Trans>
+                  Live SaaS account details across activity, mutations, workspaces, and billing.
+                </Trans>
               </SheetDescription>
               <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <span>{resolvedUser.email}</span>
@@ -76,23 +79,33 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
               {getStatusBadge(resolvedUser)}
               {resolvedUser.is_admin && (
                 <Badge variant="outline">
-                  <Shield className="mr-1 h-3 w-3" />
-                  Admin
+                  <Trans>
+                    <Shield className="mr-1 h-3 w-3" />
+                    Admin
+                  </Trans>
                 </Badge>
               )}
               {resolvedUser.is_founding_member && (
                 <Badge variant="outline">
-                  <Gift className="mr-1 h-3 w-3" />
-                  Founding
+                  <Trans>
+                    <Gift className="mr-1 h-3 w-3" />
+                    Founding
+                  </Trans>
                 </Badge>
               )}
               {resolvedUser.has_collaboration_access && (
                 <Badge variant="outline">
-                  <Users className="mr-1 h-3 w-3" />
-                  Collaboration
+                  <Trans>
+                    <Users className="mr-1 h-3 w-3" />
+                    Collaboration
+                  </Trans>
                 </Badge>
               )}
-              {resolvedUser.is_blocked && <Badge variant="destructive">Blocked</Badge>}
+              {resolvedUser.is_blocked && (
+                <Badge variant="destructive">
+                  <Trans>Blocked</Trans>
+                </Badge>
+              )}
             </div>
           </div>
           <div className="grid gap-3 pt-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -130,11 +143,21 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
         <div className="flex-1 px-6 pt-5 pb-6">
           <Tabs defaultValue="overview" className="gap-4">
             <TabsList className="bg-muted/60">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="activity">Activity</TabsTrigger>
-              <TabsTrigger value="mutations">Mutations</TabsTrigger>
-              <TabsTrigger value="workspaces">Workspaces</TabsTrigger>
-              <TabsTrigger value="billing">Billing</TabsTrigger>
+              <TabsTrigger value="overview">
+                <Trans>Overview</Trans>
+              </TabsTrigger>
+              <TabsTrigger value="activity">
+                <Trans>Activity</Trans>
+              </TabsTrigger>
+              <TabsTrigger value="mutations">
+                <Trans>Mutations</Trans>
+              </TabsTrigger>
+              <TabsTrigger value="workspaces">
+                <Trans>Workspaces</Trans>
+              </TabsTrigger>
+              <TabsTrigger value="billing">
+                <Trans>Billing</Trans>
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="pb-6">
@@ -176,23 +199,31 @@ export const UserDetailsDialog = React.memo(function UserDetailsDialog({
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             {!resolvedUser.is_founding_member && (
               <Button variant="outline" onClick={() => handleAction('grant_founding')}>
-                <Gift className="mr-2 h-4 w-4" />
-                Grant Founding Member
+                <Trans>
+                  <Gift className="mr-2 h-4 w-4" />
+                  Grant Founding Member
+                </Trans>
               </Button>
             )}
             {!resolvedUser.has_beta_access && (
               <Button variant="outline" onClick={() => handleAction('grant_beta')}>
-                <Clock className="mr-2 h-4 w-4" />
-                Grant Free Access
+                <Trans>
+                  <Clock className="mr-2 h-4 w-4" />
+                  Grant Free Access
+                </Trans>
               </Button>
             )}
             <Button variant="destructive" onClick={() => handleAction('reset_data')}>
-              <RotateCcw className="mr-2 h-4 w-4" />
-              Reset User Data
+              <Trans>
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reset User Data
+              </Trans>
             </Button>
             <Button variant="destructive" onClick={() => handleAction('revoke_access')}>
-              <Ban className="mr-2 h-4 w-4" />
-              Revoke Access
+              <Trans>
+                <Ban className="mr-2 h-4 w-4" />
+                Revoke Access
+              </Trans>
             </Button>
           </div>
         </div>

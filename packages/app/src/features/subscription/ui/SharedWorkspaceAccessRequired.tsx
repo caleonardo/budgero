@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, CreditCard, LifeBuoy, LockKeyhole } from 'lucide-react';
@@ -41,21 +42,21 @@ export default function SharedWorkspaceAccessRequired({
         <>
           Open{' '}
           <Link to="/settings/workspaces" className="underline underline-offset-2">
-            workspace settings
+            <Trans>workspace settings</Trans>
           </Link>{' '}
           to see which shared workspaces are locked.
         </>,
         <>
           Manage your{' '}
           <Link to="/settings/subscription" className="underline underline-offset-2">
-            subscription
+            <Trans>subscription</Trans>
           </Link>{' '}
           and resubscribe at any time.
         </>,
         <>
           Open{' '}
           <Link to="/settings/account" className="underline underline-offset-2">
-            account settings
+            <Trans>account settings</Trans>
           </Link>{' '}
           and sign out normally.
         </>,
@@ -64,25 +65,25 @@ export default function SharedWorkspaceAccessRequired({
         <>
           Manage your{' '}
           <Link to="/settings/subscription" className="underline underline-offset-2">
-            subscription
+            <Trans>subscription</Trans>
           </Link>{' '}
           and resubscribe at any time.
         </>,
         <>
           Open{' '}
           <Link to="/settings/workspaces" className="underline underline-offset-2">
-            workspace settings
+            <Trans>workspace settings</Trans>
           </Link>{' '}
           to review locked workspaces and any shared access you still have.
         </>,
         <>
           Open{' '}
           <Link to="/settings/account" className="underline underline-offset-2">
-            account settings
+            <Trans>account settings</Trans>
           </Link>{' '}
           and download your exports from{' '}
           <Link to="/settings/data" className="underline underline-offset-2">
-            data management
+            <Trans>data management</Trans>
           </Link>
           .
         </>,
@@ -123,7 +124,7 @@ export default function SharedWorkspaceAccessRequired({
                     If you subscribe, you can immediately regain access to your own workspaces and
                     create new ones from{' '}
                     <Link to="/settings/subscription" className="underline underline-offset-2">
-                      subscription settings
+                      <Trans>subscription settings</Trans>
                     </Link>
                     .
                   </>
@@ -131,7 +132,7 @@ export default function SharedWorkspaceAccessRequired({
                   <>
                     Open{' '}
                     <Link to="/settings/workspaces" className="underline underline-offset-2">
-                      workspace settings
+                      <Trans>workspace settings</Trans>
                     </Link>{' '}
                     to review locked workspaces and any shared access that is still available to
                     you.
@@ -152,10 +153,14 @@ export default function SharedWorkspaceAccessRequired({
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button asChild className="sm:flex-1">
-              <Link to="/settings/subscription">Subscribe now</Link>
+              <Link to="/settings/subscription">
+                <Trans>Subscribe now</Trans>
+              </Link>
             </Button>
             <Button asChild variant="outline" className="sm:flex-1">
-              <Link to="/settings/workspaces">View workspace status</Link>
+              <Link to="/settings/workspaces">
+                <Trans>View workspace status</Trans>
+              </Link>
             </Button>
           </div>
 
@@ -165,7 +170,7 @@ export default function SharedWorkspaceAccessRequired({
             className="w-full text-muted-foreground"
             onClick={() => logout.mutate()}
           >
-            Sign out
+            <Trans>Sign out</Trans>
           </Button>
         </CardContent>
       </Card>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState, useCallback } from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { ScrollArea } from '@shared/ui/scroll-area';
@@ -175,8 +176,10 @@ export function BudgetingPageDesktop() {
         onClick={() => setMultiMonthOpen(true)}
         className="hidden h-8 items-center gap-1.5 rounded-lg border-border/70 bg-card/50 px-2.5 text-xs font-medium text-muted-foreground shadow-none hover:bg-muted/60 hover:text-foreground min-[1440px]:inline-flex"
       >
-        <Calendar className="h-3.5 w-3.5" />
-        Multi-Month
+        <Trans>
+          <Calendar className="h-3.5 w-3.5" />
+          Multi-Month
+        </Trans>
       </Button>
       {monthSwitcher}
     </div>
@@ -215,7 +218,7 @@ export function BudgetingPageDesktop() {
       <div className="p-6">
         <Card>
           <CardContent className="py-10 text-center text-muted-foreground">
-            Select a budget to manage allocations.
+            <Trans>Select a budget to manage allocations.</Trans>
           </CardContent>
         </Card>
       </div>
@@ -284,11 +287,15 @@ export function BudgetingPageDesktop() {
           <div className="h-full overflow-y-auto p-6">
             <div className="mb-6 space-y-4">
               <div className="text-center">
-                <h2 className="text-xl font-semibold">Multi-Month Budget View</h2>
+                <h2 className="text-xl font-semibold">
+                  <Trans>Multi-Month Budget View</Trans>
+                </h2>
               </div>
               <div className="flex flex-col items-center justify-center gap-4 lg:flex-row">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Show:</span>
+                  <span className="text-sm text-muted-foreground">
+                    <Trans>Show:</Trans>
+                  </span>
                   <Select
                     value={monthCount.toString()}
                     onValueChange={(value) => setMonthCount(parseInt(value, 10))}
@@ -304,7 +311,9 @@ export function BudgetingPageDesktop() {
                       <SelectItem value="6">6</SelectItem>
                     </SelectContent>
                   </Select>
-                  <span className="text-sm text-muted-foreground">months starting from:</span>
+                  <span className="text-sm text-muted-foreground">
+                    <Trans>months starting from:</Trans>
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Button
@@ -332,7 +341,9 @@ export function BudgetingPageDesktop() {
               <div className="flex flex-col items-center justify-center gap-4 lg:flex-row">
                 <div className="rounded-lg border border-primary/20 bg-primary/10 px-4 py-2">
                   <div className="flex items-center gap-1">
-                    <p className="text-xs text-muted-foreground">Ready to Assign</p>
+                    <p className="text-xs text-muted-foreground">
+                      <Trans>Ready to Assign</Trans>
+                    </p>
                     <ReadyToAssignHelpPopover
                       budgetId={budgetId}
                       month={currentMonth}

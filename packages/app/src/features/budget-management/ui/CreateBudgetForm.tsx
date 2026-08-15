@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 import React, { useEffect, useState, useRef, ChangeEvent } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { toast } from 'sonner';
@@ -342,14 +344,18 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
             className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-1 px-2 sm:px-3 text-[11px] sm:text-xs"
           >
             <Plus className="h-3 w-3" />
-            <span className="text-[11px] sm:text-xs">New</span>
+            <span className="text-[11px] sm:text-xs">
+              <Trans>New</Trans>
+            </span>
           </TabsTrigger>
           <TabsTrigger
             value="core"
             className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-1 px-2 sm:px-3 text-[11px] sm:text-xs"
           >
             <HardDrive className="h-3 w-3" />
-            <span className="text-[11px] sm:text-xs">Backup</span>
+            <span className="text-[11px] sm:text-xs">
+              <Trans>Backup</Trans>
+            </span>
           </TabsTrigger>
           <TabsTrigger
             value="import"

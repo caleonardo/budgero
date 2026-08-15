@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import {
@@ -345,9 +346,15 @@ export function RecurringTransactionEditor({
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="inflow">Income / deposit</SelectItem>
-                <SelectItem value="outflow">Bill / payment</SelectItem>
-                <SelectItem value="transfer">Transfer</SelectItem>
+                <SelectItem value="inflow">
+                  <Trans>Income / deposit</Trans>
+                </SelectItem>
+                <SelectItem value="outflow">
+                  <Trans>Bill / payment</Trans>
+                </SelectItem>
+                <SelectItem value="transfer">
+                  <Trans>Transfer</Trans>
+                </SelectItem>
               </SelectContent>
             </Select>
           </Field>
@@ -426,7 +433,9 @@ export function RecurringTransactionEditor({
                     <SelectValue placeholder="None — reduce Ready to Assign" />
                   </SelectTrigger>
                   <SelectContent className="max-h-72">
-                    <SelectItem value="transfers-default">None — reduce Ready to Assign</SelectItem>
+                    <SelectItem value="transfers-default">
+                      <Trans>None — reduce Ready to Assign</Trans>
+                    </SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.ID} value={String(category.ID)}>
                         {category.Name}
@@ -519,7 +528,9 @@ export function RecurringTransactionEditor({
             />
           </Field>
           <div className="space-y-2">
-            <Label htmlFor="rt-active">Status</Label>
+            <Label htmlFor="rt-active">
+              <Trans>Status</Trans>
+            </Label>
             <div className="flex items-center gap-2 rounded-md border border-input px-3 py-2">
               <Switch
                 id="rt-active"
@@ -556,7 +567,7 @@ export function RecurringTransactionEditor({
         disabled={isSubmitting}
         className="w-full sm:w-auto"
       >
-        Cancel
+        <Trans>Cancel</Trans>
       </Button>
       <Button
         onClick={handleSubmit}
@@ -585,8 +596,10 @@ export function RecurringTransactionEditor({
               {mode === 'create' ? 'New recurring transaction' : 'Edit recurring transaction'}
             </SheetTitle>
             <SheetDescription>
-              Describe how often this happens and which account & category it should use. Budgero
-              will remind you at the right time.
+              <Trans>
+                Describe how often this happens and which account & category it should use. Budgero
+                will remind you at the right time.
+              </Trans>
             </SheetDescription>
           </SheetHeader>
           {content}
@@ -604,8 +617,10 @@ export function RecurringTransactionEditor({
             {mode === 'create' ? 'New recurring transaction' : 'Edit recurring transaction'}
           </DialogTitle>
           <DialogDescription>
-            Describe how often this happens and which account & category it should use. Budgero will
-            remind you at the right time.
+            <Trans>
+              Describe how often this happens and which account & category it should use. Budgero
+              will remind you at the right time.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto px-1 sm:px-0">{content}</div>

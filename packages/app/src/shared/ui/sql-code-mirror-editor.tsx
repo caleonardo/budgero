@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo, useState, useEffect, useCallback, useRef } from 'react';
 import type { Extension } from '@codemirror/state';
 import type { SqlEditorModules } from '@shared/hooks/useSqlEditorModules';
@@ -78,7 +79,7 @@ export const SqlCodeMirrorEditor = memo(
         <div
           className={`flex ${minHeightClassName} items-center justify-center rounded border border-dashed border-muted-foreground/50 bg-muted/30 text-xs text-muted-foreground`}
         >
-          Loading SQL editor...
+          <Trans>Loading SQL editor...</Trans>
         </div>
       );
     }

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo, useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 import type { EChartsCoreOption } from 'echarts/core';
@@ -121,12 +122,14 @@ export const SpendingChart = memo(function SpendingChart({
   return (
     <Card>
       <CardContent className="p-3">
-        <h3 className="text-sm font-medium text-muted-foreground mb-3">Spending Pattern</h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-3">
+          <Trans>Spending Pattern</Trans>
+        </h3>
         {cumulativeData.length > 0 ? (
           <EChart option={option} ariaLabel="Spending pattern chart" className="h-32 w-full" />
         ) : (
           <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
-            No spending data
+            <Trans>No spending data</Trans>
           </div>
         )}
       </CardContent>

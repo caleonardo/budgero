@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import type React from 'react';
 import { Button } from '@shared/ui/button';
 import { useLogout } from '@entities/user/api/useAuth';
@@ -17,7 +18,7 @@ export function StartupLayout({ currentStep, children }: StartupLayoutProps) {
         <div className="flex flex-col items-center gap-1">
           <img className="h-10 w-10" src="/logo_128.png" alt="Budgero logo" />
           <p className="text-xs font-medium tracking-wide text-muted-foreground">
-            Zero-based budgeting. Zero-knowledge privacy.
+            <Trans>Zero-based budgeting. Zero-knowledge privacy.</Trans>
           </p>
         </div>
 
@@ -31,7 +32,7 @@ export function StartupLayout({ currentStep, children }: StartupLayoutProps) {
           className="text-muted-foreground"
           onClick={() => logout.mutate()}
         >
-          Sign Out
+          <Trans>Sign Out</Trans>
         </Button>
       </div>
     </div>

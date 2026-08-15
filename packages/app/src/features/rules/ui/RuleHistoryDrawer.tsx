@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
 import { ScrollArea } from '@shared/ui/scroll-area';
@@ -51,7 +52,9 @@ export function RuleHistoryDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-3xl">
         <SheetHeader className="space-y-2 text-left">
-          <SheetTitle>Run history</SheetTitle>
+          <SheetTitle>
+            <Trans>Run history</Trans>
+          </SheetTitle>
           <SheetDescription>
             {rule ? (
               <span className="text-sm text-muted-foreground">
@@ -75,7 +78,7 @@ export function RuleHistoryDrawer({
             </div>
           ) : runs.length === 0 ? (
             <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-              No runs recorded yet. Trigger this rule to see execution details.
+              <Trans>No runs recorded yet. Trigger this rule to see execution details.</Trans>
             </div>
           ) : (
             <ScrollArea className="h-[calc(100vh-200px)] pr-4">
@@ -163,7 +166,9 @@ function RunAccordionItem({
         {run.notes ? <p className="mb-3 text-sm text-muted-foreground">{run.notes}</p> : null}
         {run.status === 'undone' ? (
           <div className="mb-3 rounded-md border border-dashed bg-muted/40 p-3 text-xs text-muted-foreground">
-            This run has been undone. Transactions were restored to their prior values.
+            <Trans>
+              This run has been undone. Transactions were restored to their prior values.
+            </Trans>
           </div>
         ) : null}
         {canUndo ? (
@@ -205,7 +210,9 @@ function RunAccordionItem({
             ))}
           </div>
         ) : changes.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No recorded changes for this run.</p>
+          <p className="text-sm text-muted-foreground">
+            <Trans>No recorded changes for this run.</Trans>
+          </p>
         ) : (
           <div className="space-y-3">
             {changes.map((change) => (
@@ -223,7 +230,9 @@ function RuleChangeRow({ change }: { change: TransactionRuleRunChange }) {
   return (
     <div className="rounded-lg border bg-muted/40 p-3 text-sm">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="secondary">tx #{change.transactionId}</Badge>
+        <Badge variant="secondary">
+          <Trans>tx #{change.transactionId}</Trans>
+        </Badge>
         <Badge variant="outline" className="capitalize">
           {change.field || change.actionType}
         </Badge>
@@ -233,7 +242,9 @@ function RuleChangeRow({ change }: { change: TransactionRuleRunChange }) {
       <div className="space-y-1 text-xs text-muted-foreground">
         {change.field === 'memo' ? (
           <div>
-            <span className="font-medium text-foreground">Memo:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Memo:</Trans>
+            </span>{' '}
             <DiffText
               before={metadata.oldMemo ?? change.oldValue}
               after={metadata.newMemo ?? change.newValue}
@@ -242,21 +253,27 @@ function RuleChangeRow({ change }: { change: TransactionRuleRunChange }) {
         ) : null}
         {change.field === 'categoryId' ? (
           <div>
-            <span className="font-medium text-foreground">Category:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Category:</Trans>
+            </span>{' '}
             {String(metadata.previousCategoryId ?? change.oldValue ?? '')} →{' '}
             {String(metadata.nextCategoryId ?? change.newValue ?? '')}
           </div>
         ) : null}
         {change.field === 'accountId' ? (
           <div>
-            <span className="font-medium text-foreground">Account:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Account:</Trans>
+            </span>{' '}
             {String(metadata.previousAccountId ?? change.oldValue ?? '')} →{' '}
             {String(metadata.nextAccountId ?? change.newValue ?? '')}
           </div>
         ) : null}
         {change.field === 'payee' ? (
           <div>
-            <span className="font-medium text-foreground">Payee:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Payee:</Trans>
+            </span>{' '}
             <DiffText
               before={metadata.previousPayee ?? change.oldValue}
               after={metadata.nextPayee ?? change.newValue}
@@ -265,12 +282,18 @@ function RuleChangeRow({ change }: { change: TransactionRuleRunChange }) {
         ) : null}
         {change.field === 'amount' ? (
           <div>
-            <span className="font-medium text-foreground">Amount:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Amount:</Trans>
+            </span>{' '}
             {displayAmount(metadata.oldAmount ?? change.oldValue)} →{' '}
             {displayAmount(metadata.newAmount ?? change.newValue)}
           </div>
         ) : null}
-        {!change.field ? <div className="text-muted-foreground">Action completed.</div> : null}
+        {!change.field ? (
+          <div className="text-muted-foreground">
+            <Trans>Action completed.</Trans>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -281,7 +304,11 @@ function DiffText({ before, after }: { before?: unknown; after?: unknown }) {
   const afterText = (after ?? '').toString();
 
   if (!beforeText && !afterText) {
-    return <span className="text-muted-foreground">(cleared)</span>;
+    return (
+      <span className="text-muted-foreground">
+        <Trans>(cleared)</Trans>
+      </span>
+    );
   }
 
   if (beforeText === afterText) {

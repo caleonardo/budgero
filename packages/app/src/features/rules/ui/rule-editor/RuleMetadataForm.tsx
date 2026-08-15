@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Input } from '@shared/ui/input';
 import { Textarea } from '@shared/ui/textarea';
@@ -64,9 +65,11 @@ export const RuleMetadataForm = React.memo(function RuleMetadataForm({
       <div className="space-y-4 rounded-lg border bg-muted/30 p-4 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <Label>Activation</Label>
+            <Label>
+              <Trans>Activation</Trans>
+            </Label>
             <p className="text-sm text-muted-foreground">
-              Toggle to pause the rule without deleting it.
+              <Trans>Toggle to pause the rule without deleting it.</Trans>
             </p>
           </div>
           <Switch checked={enabled} onCheckedChange={onEnabledChange} />
@@ -79,9 +82,15 @@ export const RuleMetadataForm = React.memo(function RuleMetadataForm({
                 <SelectValue placeholder="Select mode" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="continuous">Continuous</SelectItem>
-                <SelectItem value="one_time">One time</SelectItem>
-                <SelectItem value="autofill">Autofill</SelectItem>
+                <SelectItem value="continuous">
+                  <Trans>Continuous</Trans>
+                </SelectItem>
+                <SelectItem value="one_time">
+                  <Trans>One time</Trans>
+                </SelectItem>
+                <SelectItem value="autofill">
+                  <Trans>Autofill</Trans>
+                </SelectItem>
               </SelectContent>
             </Select>
           </Field>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import {
   Drawer,
@@ -214,10 +215,14 @@ export function PayoffPlanSheet({
         }}
       >
         <DrawerHeader className="relative pr-10">
-          <DrawerTitle>Payment Plan</DrawerTitle>
+          <DrawerTitle>
+            <Trans>Payment Plan</Trans>
+          </DrawerTitle>
           <DrawerDescription>
-            Explore detailed payoff projections. Adjust APR, monthly payment, and extras to see how
-            they affect timeline and interest.
+            <Trans>
+              Explore detailed payoff projections. Adjust APR, monthly payment, and extras to see
+              how they affect timeline and interest.
+            </Trans>
           </DrawerDescription>
           <DrawerClose
             aria-label="Close payment plan"
@@ -231,7 +236,9 @@ export function PayoffPlanSheet({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-3">
               <div>
-                <Label className="text-xs text-muted-foreground">APR (%)</Label>
+                <Label className="text-xs text-muted-foreground">
+                  <Trans>APR (%)</Trans>
+                </Label>
                 {/* APR is a dimensionless percent; bridge CalculatorCell's MilliUnits contract */}
                 <CalculatorCell
                   value={fromDecimal(isFinite(localApr) ? localApr : 0)}
@@ -249,7 +256,9 @@ export function PayoffPlanSheet({
               </div>
               <div>
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs text-muted-foreground">Monthly payment</Label>
+                  <Label className="text-xs text-muted-foreground">
+                    <Trans>Monthly payment</Trans>
+                  </Label>
                   <span className="text-xs font-mono">
                     {formatMilli(formatter, roundMilli(payment || 0))}
                   </span>
@@ -288,7 +297,7 @@ export function PayoffPlanSheet({
                       className="flex-1 min-w-0 block text-xs text-muted-foreground leading-tight whitespace-normal break-words sm:truncate sm:whitespace-nowrap sm:overflow-hidden sm:h-5"
                       title="Extra monthly"
                     >
-                      Extra monthly
+                      <Trans>Extra monthly</Trans>
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -300,7 +309,7 @@ export function PayoffPlanSheet({
                         </button>
                       </PopoverTrigger>
                       <PopoverContent className="w-64 text-xs">
-                        Added to every monthly payment throughout the plan.
+                        <Trans>Added to every monthly payment throughout the plan.</Trans>
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -321,7 +330,7 @@ export function PayoffPlanSheet({
                       className="flex-1 min-w-0 block text-xs text-muted-foreground leading-tight whitespace-normal break-words sm:truncate sm:whitespace-nowrap sm:overflow-hidden sm:h-5"
                       title="One-time extra (this month)"
                     >
-                      One-time extra (this month)
+                      <Trans>One-time extra (this month)</Trans>
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -333,7 +342,7 @@ export function PayoffPlanSheet({
                         </button>
                       </PopoverTrigger>
                       <PopoverContent className="w-64 text-xs">
-                        Applied only in the first month of the schedule.
+                        <Trans>Applied only in the first month of the schedule.</Trans>
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -360,7 +369,9 @@ export function PayoffPlanSheet({
                 leading={
                   <>
                     <div>
-                      <div className="text-xs text-muted-foreground">Outstanding</div>
+                      <div className="text-xs text-muted-foreground">
+                        <Trans>Outstanding</Trans>
+                      </div>
                       <div className="font-mono">
                         {formatMilli(formatter, roundMilli(outstanding))}
                       </div>
@@ -414,17 +425,29 @@ export function PayoffPlanSheet({
           </div>
 
           <div>
-            <div className="text-sm font-medium mb-2">Amortization Table</div>
+            <div className="text-sm font-medium mb-2">
+              <Trans>Amortization Table</Trans>
+            </div>
             <div className="border rounded-lg max-h-72 overflow-auto">
               <table className="w-full text-xs">
                 <thead className="sticky top-0 bg-background/90 backdrop-blur">
                   <tr className="border-b">
                     <th className="text-left p-2">#</th>
-                    <th className="text-left p-2">Date</th>
-                    <th className="text-right p-2">Payment</th>
-                    <th className="text-right p-2">Interest</th>
-                    <th className="text-right p-2">Principal</th>
-                    <th className="text-right p-2">Remaining</th>
+                    <th className="text-left p-2">
+                      <Trans>Date</Trans>
+                    </th>
+                    <th className="text-right p-2">
+                      <Trans>Payment</Trans>
+                    </th>
+                    <th className="text-right p-2">
+                      <Trans>Interest</Trans>
+                    </th>
+                    <th className="text-right p-2">
+                      <Trans>Principal</Trans>
+                    </th>
+                    <th className="text-right p-2">
+                      <Trans>Remaining</Trans>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

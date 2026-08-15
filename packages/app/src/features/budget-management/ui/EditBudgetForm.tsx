@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useState, useEffect, useId } from 'react';
 import { toast } from 'sonner';
 import { Input } from '@shared/ui/input';
@@ -121,7 +122,7 @@ export const EditBudgetForm: React.FC<EditBudgetFormProps> = ({
     <form id="budget-form" onSubmit={handleUpdate} className="space-y-4 mt-4">
       <div>
         <Label htmlFor={nameInputId} className="block text-sm font-medium">
-          Budget Name
+          <Trans>Budget Name</Trans>
         </Label>
         <Input
           id={nameInputId}
@@ -148,8 +149,10 @@ export const EditBudgetForm: React.FC<EditBudgetFormProps> = ({
       />
       {isLoading && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Spinner />
-          Updating...
+          <Trans>
+            <Spinner />
+            Updating...
+          </Trans>
         </div>
       )}
     </form>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -256,7 +257,7 @@ export default function CustomDashboardsPage() {
     return (
       <div className="px-6 py-6">
         <p className="text-sm text-muted-foreground">
-          Select a budget to manage custom dashboards.
+          <Trans>Select a budget to manage custom dashboards.</Trans>
         </p>
       </div>
     );
@@ -266,10 +267,14 @@ export default function CustomDashboardsPage() {
     <div className="space-y-4 px-4 py-6 pb-[calc(var(--mobile-bottom-nav-height,96px)+1.5rem)] sm:pb-8 md:px-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Custom Dashboards</h1>
+          <h1 className="text-2xl font-semibold">
+            <Trans>Custom Dashboards</Trans>
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Build dashboard layouts from Explorer charts. Drag to reorder, resize on desktop, and
-            use size presets on mobile.
+            <Trans>
+              Build dashboard layouts from Explorer charts. Drag to reorder, resize on desktop, and
+              use size presets on mobile.
+            </Trans>
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -281,7 +286,7 @@ export default function CustomDashboardsPage() {
             {isEditMode ? 'Done Editing' : 'Edit Layout'}
           </Button>
           <Button onClick={() => setAddWidgetDialogOpen(true)} disabled={!activeDashboard}>
-            Add Widget
+            <Trans>Add Widget</Trans>
           </Button>
         </div>
       </div>
@@ -297,7 +302,7 @@ export default function CustomDashboardsPage() {
 
       {!activeDashboard && (dashboardsQuery.isLoading || activeDashboardQuery.isLoading) && (
         <div className="rounded-md border p-6 text-sm text-muted-foreground">
-          Loading dashboards...
+          <Trans>Loading dashboards...</Trans>
         </div>
       )}
 

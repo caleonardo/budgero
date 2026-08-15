@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Label } from '@shared/ui/label';
 import { Input } from '@shared/ui/input';
@@ -42,7 +43,9 @@ export default function AISettingsPage() {
         title={
           <>
             AI Assistant{' '}
-            <span className="text-base font-normal text-muted-foreground">(Experimental)</span>
+            <span className="text-base font-normal text-muted-foreground">
+              <Trans>(Experimental)</Trans>
+            </span>
           </>
         }
         description="Connect to a local LLM for privacy, or any OpenAI-compatible provider with an API key"
@@ -54,7 +57,9 @@ export default function AISettingsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Bot className="h-5 w-5" />
-              <CardTitle>AI Assistant</CardTitle>
+              <CardTitle>
+                <Trans>AI Assistant</Trans>
+              </CardTitle>
             </div>
             <Switch
               checked={state.enabled}
@@ -63,8 +68,10 @@ export default function AISettingsPage() {
             />
           </div>
           <CardDescription>
-            Connect to a local LLM (Ollama, LM Studio) for maximum privacy, or point at a remote
-            OpenAI-compatible API. Local servers keep your data on-device; remote ones do not.
+            <Trans>
+              Connect to a local LLM (Ollama, LM Studio) for maximum privacy, or point at a remote
+              OpenAI-compatible API. Local servers keep your data on-device; remote ones do not.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -107,7 +114,9 @@ export default function AISettingsPage() {
             <Separator />
 
             <div className="space-y-2">
-              <Label htmlFor="contextLength">Context Window</Label>
+              <Label htmlFor="contextLength">
+                <Trans>Context Window</Trans>
+              </Label>
               <Input
                 id="contextLength"
                 type="number"
@@ -119,9 +128,11 @@ export default function AISettingsPage() {
                 className="w-full sm:w-48"
               />
               <p className="text-xs text-muted-foreground">
-                Max tokens the model accepts, used for the chat usage meter. Auto-detected for
-                Ollama and LM Studio; set it manually for cloud models (e.g. 256000 for Kimi K2.6).
-                Leave empty if unknown.
+                <Trans>
+                  Max tokens the model accepts, used for the chat usage meter. Auto-detected for
+                  Ollama and LM Studio; set it manually for cloud models (e.g. 256000 for Kimi
+                  K2.6). Leave empty if unknown.
+                </Trans>
               </p>
             </div>
           </div>
@@ -132,7 +143,7 @@ export default function AISettingsPage() {
               disabled={!state.hasChanges || state.isSaving}
               loading={state.isSaving}
             >
-              Save Settings
+              <Trans>Save Settings</Trans>
             </Button>
           </div>
         </CardContent>
@@ -142,11 +153,13 @@ export default function AISettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5" />
-            AI Features
+            <Trans>
+              <Sparkles className="h-5 w-5" />
+              AI Features
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Available AI-powered features when connected to a local LLM
+            <Trans>Available AI-powered features when connected to a local LLM</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -157,20 +170,24 @@ export default function AISettingsPage() {
                 <div className="rounded-full bg-primary/10 p-2">
                   <Sparkles className="h-4 w-4 text-primary" />
                 </div>
-                <h3 className="font-medium">Auto-Categorize</h3>
+                <h3 className="font-medium">
+                  <Trans>Auto-Categorize</Trans>
+                </h3>
                 {state.enabled && state.textModel ? (
                   <Badge variant="default" className="ml-auto">
-                    Ready
+                    <Trans>Ready</Trans>
                   </Badge>
                 ) : (
                   <Badge variant="secondary" className="ml-auto">
-                    Disabled
+                    <Trans>Disabled</Trans>
                   </Badge>
                 )}
               </div>
               <p className="text-sm text-muted-foreground">
-                Automatically categorize uncategorized transactions using AI analysis of payee names
-                and memos.
+                <Trans>
+                  Automatically categorize uncategorized transactions using AI analysis of payee
+                  names and memos.
+                </Trans>
               </p>
               {state.uncategorizedCount > 0 && (
                 <p className="text-xs text-muted-foreground">
@@ -185,8 +202,10 @@ export default function AISettingsPage() {
                 disabled={!state.enabled || !state.textModel || state.uncategorizedCount === 0}
                 className="w-full"
               >
-                <Sparkles className="h-4 w-4 mr-2" />
-                Categorize Now
+                <Trans>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Categorize Now
+                </Trans>
               </Button>
             </div>
 
@@ -196,19 +215,23 @@ export default function AISettingsPage() {
                 <div className="rounded-full bg-primary/10 p-2">
                   <ImagePlus className="h-4 w-4 text-primary" />
                 </div>
-                <h3 className="font-medium">Receipt Scanner</h3>
+                <h3 className="font-medium">
+                  <Trans>Receipt Scanner</Trans>
+                </h3>
                 {state.enabled && state.visionModel ? (
                   <Badge variant="default" className="ml-auto">
-                    Ready
+                    <Trans>Ready</Trans>
                   </Badge>
                 ) : (
                   <Badge variant="secondary" className="ml-auto">
-                    Disabled
+                    <Trans>Disabled</Trans>
                   </Badge>
                 )}
               </div>
               <p className="text-sm text-muted-foreground">
-                Extract transactions from receipts and bank statement images using vision AI.
+                <Trans>
+                  Extract transactions from receipts and bank statement images using vision AI.
+                </Trans>
               </p>
               <Button
                 variant="outline"
@@ -217,8 +240,10 @@ export default function AISettingsPage() {
                 disabled={!state.enabled || !state.visionModel}
                 className="w-full"
               >
-                <ImagePlus className="h-4 w-4 mr-2" />
-                Scan Receipt
+                <Trans>
+                  <ImagePlus className="h-4 w-4 mr-2" />
+                  Scan Receipt
+                </Trans>
               </Button>
             </div>
           </div>
@@ -243,9 +268,13 @@ export default function AISettingsPage() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
-            <CardTitle>Chat Assistant</CardTitle>
+            <CardTitle>
+              <Trans>Chat Assistant</Trans>
+            </CardTitle>
           </div>
-          <CardDescription>Configure the AI chat assistant behavior and appearance</CardDescription>
+          <CardDescription>
+            <Trans>Configure the AI chat assistant behavior and appearance</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
@@ -253,11 +282,13 @@ export default function AISettingsPage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="executionMode" className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4" />
-                  Tool Execution Mode
+                  <Trans>
+                    <ShieldCheck className="h-4 w-4" />
+                    Tool Execution Mode
+                  </Trans>
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  How should the assistant handle actions like adding transactions?
+                  <Trans>How should the assistant handle actions like adding transactions?</Trans>
                 </p>
               </div>
               <Select
@@ -270,14 +301,18 @@ export default function AISettingsPage() {
                 <SelectContent>
                   <SelectItem value="confirm">
                     <div className="flex items-center gap-2">
-                      <ShieldCheck className="h-4 w-4" />
-                      Confirm First
+                      <Trans>
+                        <ShieldCheck className="h-4 w-4" />
+                        Confirm First
+                      </Trans>
                     </div>
                   </SelectItem>
                   <SelectItem value="auto">
                     <div className="flex items-center gap-2">
-                      <Zap className="h-4 w-4" />
-                      Auto-Execute
+                      <Trans>
+                        <Zap className="h-4 w-4" />
+                        Auto-Execute
+                      </Trans>
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -295,11 +330,13 @@ export default function AISettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="voiceEnabled" className="flex items-center gap-2">
-                  <Mic className="h-4 w-4" />
-                  Voice Input
+                  <Trans>
+                    <Mic className="h-4 w-4" />
+                    Voice Input
+                  </Trans>
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  Enable speech-to-text for voice messages
+                  <Trans>Enable speech-to-text for voice messages</Trans>
                 </p>
               </div>
               <Switch
@@ -313,9 +350,11 @@ export default function AISettingsPage() {
             {state.chatVoiceEnabled && (
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pl-6 border-l-2 border-muted">
                 <div className="space-y-0.5">
-                  <Label htmlFor="speechModel">Speech Model</Label>
+                  <Label htmlFor="speechModel">
+                    <Trans>Speech Model</Trans>
+                  </Label>
                   <p className="text-sm text-muted-foreground">
-                    Whisper model for on-device transcription
+                    <Trans>Whisper model for on-device transcription</Trans>
                   </p>
                 </div>
                 <Select
@@ -328,20 +367,32 @@ export default function AISettingsPage() {
                   <SelectContent>
                     <SelectItem value="tiny">
                       <div className="flex flex-col">
-                        <span>Tiny</span>
-                        <span className="text-xs text-muted-foreground">~75MB, fastest</span>
+                        <span>
+                          <Trans>Tiny</Trans>
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          <Trans>~75MB, fastest</Trans>
+                        </span>
                       </div>
                     </SelectItem>
                     <SelectItem value="base">
                       <div className="flex flex-col">
-                        <span>Base</span>
-                        <span className="text-xs text-muted-foreground">~150MB, balanced</span>
+                        <span>
+                          <Trans>Base</Trans>
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          <Trans>~150MB, balanced</Trans>
+                        </span>
                       </div>
                     </SelectItem>
                     <SelectItem value="small">
                       <div className="flex flex-col">
-                        <span>Small</span>
-                        <span className="text-xs text-muted-foreground">~500MB, accurate</span>
+                        <span>
+                          <Trans>Small</Trans>
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          <Trans>~500MB, accurate</Trans>
+                        </span>
                       </div>
                     </SelectItem>
                   </SelectContent>
@@ -355,10 +406,14 @@ export default function AISettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="showBubble" className="flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4" />
-                  Show Chat Bubble
+                  <Trans>
+                    <MessageCircle className="h-4 w-4" />
+                    Show Chat Bubble
+                  </Trans>
                 </Label>
-                <p className="text-sm text-muted-foreground">Display the floating chat button</p>
+                <p className="text-sm text-muted-foreground">
+                  <Trans>Display the floating chat button</Trans>
+                </p>
               </div>
               <Switch
                 id="showBubble"
@@ -372,9 +427,11 @@ export default function AISettingsPage() {
             {/* Context Window */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="contextMonths">Context Window</Label>
+                <Label htmlFor="contextMonths">
+                  <Trans>Context Window</Trans>
+                </Label>
                 <p className="text-sm text-muted-foreground">
-                  How many months of budget data to include for context
+                  <Trans>How many months of budget data to include for context</Trans>
                 </p>
               </div>
               <Select
@@ -385,10 +442,18 @@ export default function AISettingsPage() {
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">1 month</SelectItem>
-                  <SelectItem value="3">3 months</SelectItem>
-                  <SelectItem value="6">6 months</SelectItem>
-                  <SelectItem value="12">12 months</SelectItem>
+                  <SelectItem value="1">
+                    <Trans>1 month</Trans>
+                  </SelectItem>
+                  <SelectItem value="3">
+                    <Trans>3 months</Trans>
+                  </SelectItem>
+                  <SelectItem value="6">
+                    <Trans>6 months</Trans>
+                  </SelectItem>
+                  <SelectItem value="12">
+                    <Trans>12 months</Trans>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -398,10 +463,14 @@ export default function AISettingsPage() {
             {/* Enabled Tools */}
             <div className="space-y-3">
               <div className="space-y-0.5">
-                <Label>Assistant Tools</Label>
+                <Label>
+                  <Trans>Assistant Tools</Trans>
+                </Label>
                 <p className="text-sm text-muted-foreground">
-                  Choose what the assistant is allowed to do. Disable tools your model handles
-                  poorly, or turn on raw SQL for a capable model.
+                  <Trans>
+                    Choose what the assistant is allowed to do. Disable tools your model handles
+                    poorly, or turn on raw SQL for a capable model.
+                  </Trans>
                 </p>
               </div>
               <div className="space-y-3">
@@ -424,7 +493,7 @@ export default function AISettingsPage() {
                         <span className="text-sm font-medium">{toolDef.label}</span>
                         {toolDef.mutating && (
                           <Badge variant="secondary" className="text-[10px]">
-                            writes data
+                            <Trans>writes data</Trans>
                           </Badge>
                         )}
                       </div>
@@ -442,7 +511,7 @@ export default function AISettingsPage() {
               disabled={!state.chatHasChanges || state.isSavingChat}
               loading={state.isSavingChat}
             >
-              Save Chat Settings
+              <Trans>Save Chat Settings</Trans>
             </Button>
           </div>
         </CardContent>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -70,7 +71,9 @@ export function ManualRatePrompt({
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Enter Exchange Rate</CardTitle>
+          <CardTitle>
+            <Trans>Enter Exchange Rate</Trans>
+          </CardTitle>
           <CardDescription>
             {prefilled
               ? 'No fresh rate available. Prefilled with the closest cached rate — adjust if needed.'
@@ -89,7 +92,7 @@ export function ManualRatePrompt({
               onChange={(e) => setRateText(e.target.value)}
             />
             <Button variant="outline" onClick={swap}>
-              Swap
+              <Trans>Swap</Trans>
             </Button>
           </div>
           <div className="flex items-center gap-2">
@@ -99,15 +102,17 @@ export function ManualRatePrompt({
               onCheckedChange={(v) => setResync(v === true)}
             />
             <Label htmlFor="rate-resync-optin" className="text-sm font-normal cursor-pointer">
-              Update to the official rate when back online
+              <Trans>Update to the official rate when back online</Trans>
             </Label>
           </div>
         </div>
         <CardFooter className="flex gap-2 justify-end">
           <Button variant="outline" onClick={onCancel}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
-          <Button onClick={submit}>Save</Button>
+          <Button onClick={submit}>
+            <Trans>Save</Trans>
+          </Button>
         </CardFooter>
       </Card>
     </div>

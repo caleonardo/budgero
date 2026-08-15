@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Delete } from 'lucide-react';
 import { Drawer, DrawerContent } from '@shared/ui/drawer';
 import { Button } from '@shared/ui/button';
@@ -144,7 +145,9 @@ export function CalculatorSheet({
               {mobileError ? (
                 <div className="text-xs text-destructive">{mobileError}</div>
               ) : hasError && mobileText ? (
-                <div className="text-xs text-destructive">Error</div>
+                <div className="text-xs text-destructive">
+                  <Trans>Error</Trans>
+                </div>
               ) : evaluatedValue !== null && mobileText ? (
                 <div className="text-sm text-foreground/65 font-mono">
                   = {formatter(evaluatedValue)}

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { MoreVertical, Edit3, Trash, ChevronDown, ChevronRight, EyeOff } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import { Button } from '@shared/ui/button';
@@ -79,8 +80,10 @@ export function CategoryRowHeader({
               className="w-full justify-start text-xs"
               onClick={() => onEditCategory(item)}
             >
-              <Edit3 className="mr-2 h-3 w-3" />
-              Edit
+              <Trans>
+                <Edit3 className="mr-2 h-3 w-3" />
+                Edit
+              </Trans>
             </Button>
             {onHideCategory && (
               <Button
@@ -92,8 +95,10 @@ export function CategoryRowHeader({
                   onHideCategory(item);
                 }}
               >
-                <EyeOff className="mr-2 h-3 w-3" />
-                Hide
+                <Trans>
+                  <EyeOff className="mr-2 h-3 w-3" />
+                  Hide
+                </Trans>
               </Button>
             )}
             <Button
@@ -102,8 +107,10 @@ export function CategoryRowHeader({
               className="w-full justify-start text-xs text-destructive hover:text-destructive"
               onClick={() => onDeleteCategory(item)}
             >
-              <Trash className="mr-2 h-3 w-3" />
-              Delete
+              <Trans>
+                <Trash className="mr-2 h-3 w-3" />
+                Delete
+              </Trans>
             </Button>
           </div>
         </PopoverContent>
@@ -162,8 +169,10 @@ export function DesktopCompactHeader({
               className="w-full justify-start text-xs"
               onClick={() => onEditCategory(item)}
             >
-              <Edit3 className="mr-2 h-3 w-3" />
-              Edit
+              <Trans>
+                <Edit3 className="mr-2 h-3 w-3" />
+                Edit
+              </Trans>
             </Button>
             {onHideCategory && (
               <Button
@@ -175,8 +184,10 @@ export function DesktopCompactHeader({
                   onHideCategory(item);
                 }}
               >
-                <EyeOff className="mr-2 h-3 w-3" />
-                Hide
+                <Trans>
+                  <EyeOff className="mr-2 h-3 w-3" />
+                  Hide
+                </Trans>
               </Button>
             )}
             <Button
@@ -185,8 +196,10 @@ export function DesktopCompactHeader({
               className="w-full justify-start text-xs text-destructive hover:text-destructive"
               onClick={() => onDeleteCategory(item)}
             >
-              <Trash className="mr-2 h-3 w-3" />
-              Delete
+              <Trans>
+                <Trash className="mr-2 h-3 w-3" />
+                Delete
+              </Trans>
             </Button>
           </div>
         </PopoverContent>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Shield, AlertTriangle, Lock, Eye, EyeOff, ShieldAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -282,44 +283,58 @@ export default function SecurityPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Security Settings
+            <Trans>
+              <Shield className="h-5 w-5" />
+              Security Settings
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Change your master password (used to encrypt your local database).
+            <Trans>Change your master password (used to encrypt your local database).</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <h3 className="text-sm font-medium">Change Master Password</h3>
+            <h3 className="text-sm font-medium">
+              <Trans>Change Master Password</Trans>
+            </h3>
             <p className="text-sm text-muted-foreground">
-              Update your master password to keep your data secure. This will re-encrypt all your
-              data with the new password. Sign-in password, email and 2FA are managed in your Clerk
-              profile.
+              <Trans>
+                Update your master password to keep your data secure. This will re-encrypt all your
+                data with the new password. Sign-in password, email and 2FA are managed in your
+                Clerk profile.
+              </Trans>
             </p>
             <Button
               onClick={() => setShowChangePassword(true)}
               variant="outline"
               className="w-full sm:w-auto"
             >
-              <Lock className="h-4 w-4 mr-2" />
-              Change Master Password
+              <Trans>
+                <Lock className="h-4 w-4 mr-2" />
+                Change Master Password
+              </Trans>
             </Button>
           </div>
 
           <div className="pt-6 border-t border-border/60 space-y-4">
             <div className="space-y-1">
-              <h3 className="text-sm font-medium">Master Password Storage</h3>
+              <h3 className="text-sm font-medium">
+                <Trans>Master Password Storage</Trans>
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Choose how long Budgero keeps your master password after you unlock the app on this
-                device.
+                <Trans>
+                  Choose how long Budgero keeps your master password after you unlock the app on
+                  this device.
+                </Trans>
               </p>
             </div>
             <Alert>
               <ShieldAlert className="h-4 w-4" />
               <AlertDescription>
-                Storing your master password outside memory lowers security. Anyone with access to
-                this browser profile could decrypt your data until it expires.
+                <Trans>
+                  Storing your master password outside memory lowers security. Anyone with access to
+                  this browser profile could decrypt your data until it expires.
+                </Trans>
               </AlertDescription>
             </Alert>
             <RadioGroup
@@ -333,11 +348,13 @@ export default function SecurityPage() {
                 <RadioGroupItem value="memory" id="storage-memory" className="mt-1" />
                 <div className="space-y-1">
                   <Label htmlFor="storage-memory" className="text-sm font-medium">
-                    Keep in memory only (recommended)
+                    <Trans>Keep in memory only (recommended)</Trans>
                   </Label>
                   <p className="text-sm text-muted-foreground">
-                    We keep your master password in volatile memory only. Refreshing or closing the
-                    tab will require it again.
+                    <Trans>
+                      We keep your master password in volatile memory only. Refreshing or closing
+                      the tab will require it again.
+                    </Trans>
                   </p>
                 </div>
               </div>
@@ -349,11 +366,13 @@ export default function SecurityPage() {
                   <RadioGroupItem value="session" id="storage-session" className="mt-1" />
                   <div className="space-y-1">
                     <Label htmlFor="storage-session" className="text-sm font-medium">
-                      Remember on this device (IndexedDB)
+                      <Trans>Remember on this device (IndexedDB)</Trans>
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Budgero stores your master password in this browser&apos;s IndexedDB until it
-                      expires.
+                      <Trans>
+                        Budgero stores your master password in this browser's IndexedDB until it
+                        expires.
+                      </Trans>
                     </p>
                   </div>
                 </div>
@@ -362,7 +381,7 @@ export default function SecurityPage() {
                     htmlFor="storage-days"
                     className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
                   >
-                    Duration
+                    <Trans>Duration</Trans>
                   </Label>
                   <Select
                     value={String(storageDays)}
@@ -373,16 +392,28 @@ export default function SecurityPage() {
                       <SelectValue placeholder="Select days" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">1 day</SelectItem>
-                      <SelectItem value="3">3 days</SelectItem>
-                      <SelectItem value="7">7 days</SelectItem>
-                      <SelectItem value="14">14 days</SelectItem>
-                      <SelectItem value="30">30 days</SelectItem>
+                      <SelectItem value="1">
+                        <Trans>1 day</Trans>
+                      </SelectItem>
+                      <SelectItem value="3">
+                        <Trans>3 days</Trans>
+                      </SelectItem>
+                      <SelectItem value="7">
+                        <Trans>7 days</Trans>
+                      </SelectItem>
+                      <SelectItem value="14">
+                        <Trans>14 days</Trans>
+                      </SelectItem>
+                      <SelectItem value="30">
+                        <Trans>30 days</Trans>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    This cache survives app restarts and is cleared when the timer expires, you log
-                    out, or you reset local data.
+                    <Trans>
+                      This cache survives app restarts and is cleared when the timer expires, you
+                      log out, or you reset local data.
+                    </Trans>
                   </p>
                 </div>
               </div>
@@ -404,10 +435,14 @@ export default function SecurityPage() {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Change Master Password</DialogTitle>
+            <DialogTitle>
+              <Trans>Change Master Password</Trans>
+            </DialogTitle>
             <DialogDescription>
-              Enter your current password and choose a new one. Your data will be re-encrypted with
-              the new password.
+              <Trans>
+                Enter your current password and choose a new one. Your data will be re-encrypted
+                with the new password.
+              </Trans>
             </DialogDescription>
           </DialogHeader>
 
@@ -462,7 +497,7 @@ export default function SecurityPage() {
               }}
               disabled={isChanging}
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               onClick={handleChangePassword}

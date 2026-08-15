@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -54,27 +55,53 @@ export const RuleActionRow = React.memo(function RuleActionRow({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>Memo</SelectLabel>
-              <SelectItem value="memo.set">Set memo</SelectItem>
-              <SelectItem value="memo.remove_regex">Remove pattern from memo</SelectItem>
+              <SelectLabel>
+                <Trans>Memo</Trans>
+              </SelectLabel>
+              <SelectItem value="memo.set">
+                <Trans>Set memo</Trans>
+              </SelectItem>
+              <SelectItem value="memo.remove_regex">
+                <Trans>Remove pattern from memo</Trans>
+              </SelectItem>
             </SelectGroup>
             <SelectGroup>
-              <SelectLabel>Category</SelectLabel>
-              <SelectItem value="category.set">Set category</SelectItem>
+              <SelectLabel>
+                <Trans>Category</Trans>
+              </SelectLabel>
+              <SelectItem value="category.set">
+                <Trans>Set category</Trans>
+              </SelectItem>
             </SelectGroup>
             <SelectGroup>
-              <SelectLabel>Payee</SelectLabel>
-              <SelectItem value="payee.set">Set payee</SelectItem>
+              <SelectLabel>
+                <Trans>Payee</Trans>
+              </SelectLabel>
+              <SelectItem value="payee.set">
+                <Trans>Set payee</Trans>
+              </SelectItem>
             </SelectGroup>
             <SelectGroup>
-              <SelectLabel>Amount</SelectLabel>
-              <SelectItem value="amount.set">Set amount</SelectItem>
-              <SelectItem value="amount.adjust_value">Adjust by value</SelectItem>
-              <SelectItem value="amount.adjust_percent">Adjust by %</SelectItem>
+              <SelectLabel>
+                <Trans>Amount</Trans>
+              </SelectLabel>
+              <SelectItem value="amount.set">
+                <Trans>Set amount</Trans>
+              </SelectItem>
+              <SelectItem value="amount.adjust_value">
+                <Trans>Adjust by value</Trans>
+              </SelectItem>
+              <SelectItem value="amount.adjust_percent">
+                <Trans>Adjust by %</Trans>
+              </SelectItem>
             </SelectGroup>
             <SelectGroup>
-              <SelectLabel>Account</SelectLabel>
-              <SelectItem value="account.set">Set account</SelectItem>
+              <SelectLabel>
+                <Trans>Account</Trans>
+              </SelectLabel>
+              <SelectItem value="account.set">
+                <Trans>Set account</Trans>
+              </SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -121,7 +148,9 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
       return (
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <div className="space-y-1">
-            <Label>Pattern</Label>
+            <Label>
+              <Trans>Pattern</Trans>
+            </Label>
             <Input
               placeholder="e.g. (#\d{4})"
               value={action.payload.pattern ?? ''}
@@ -157,14 +186,16 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
     case 'memo.set': {
       return (
         <div className="mt-4 space-y-1">
-          <Label>Memo</Label>
+          <Label>
+            <Trans>Memo</Trans>
+          </Label>
           <Input
             placeholder="e.g. Groceries at Walmart"
             value={action.payload.memo ?? ''}
             onChange={(event) => onChange({ memo: event.target.value })}
           />
           <p className="text-xs text-muted-foreground">
-            The memo text to set for matching transactions.
+            <Trans>The memo text to set for matching transactions.</Trans>
           </p>
         </div>
       );
@@ -172,7 +203,9 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
     case 'category.set': {
       return (
         <div className="mt-4 space-y-1">
-          <Label>Category</Label>
+          <Label>
+            <Trans>Category</Trans>
+          </Label>
           <Select
             value={(action.payload.categoryId ?? '').toString()}
             onValueChange={(value) => onChange({ categoryId: Number(value) })}
@@ -182,7 +215,9 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
             </SelectTrigger>
             <SelectContent>
               {categories.length === 0 ? (
-                <SelectItem value="">No categories</SelectItem>
+                <SelectItem value="">
+                  <Trans>No categories</Trans>
+                </SelectItem>
               ) : (
                 categories.map((category) => (
                   <SelectItem key={category.ID} value={category.ID.toString()}>
@@ -198,7 +233,9 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
     case 'payee.set': {
       return (
         <div className="mt-4 space-y-1">
-          <Label>Payee</Label>
+          <Label>
+            <Trans>Payee</Trans>
+          </Label>
           <PayeeCombobox
             budgetId={budgetId}
             value={String(action.payload.payee ?? '')}
@@ -206,7 +243,7 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
             allowClear
           />
           <p className="text-xs text-muted-foreground">
-            Choose an existing payee or create a new one. Leave blank to clear it.
+            <Trans>Choose an existing payee or create a new one. Leave blank to clear it.</Trans>
           </p>
         </div>
       );
@@ -214,7 +251,9 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
     case 'account.set': {
       return (
         <div className="mt-4 space-y-1">
-          <Label>Account</Label>
+          <Label>
+            <Trans>Account</Trans>
+          </Label>
           <Select
             value={(action.payload.accountId ?? '').toString()}
             onValueChange={(value) => onChange({ accountId: Number(value) })}
@@ -224,7 +263,9 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
             </SelectTrigger>
             <SelectContent>
               {accounts.length === 0 ? (
-                <SelectItem value="">No accounts</SelectItem>
+                <SelectItem value="">
+                  <Trans>No accounts</Trans>
+                </SelectItem>
               ) : (
                 accounts.map((account) => (
                   <SelectItem key={account.ID} value={account.ID.toString()}>
@@ -240,7 +281,9 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
     case 'amount.set': {
       return (
         <div className="mt-4 space-y-1">
-          <Label>New amount</Label>
+          <Label>
+            <Trans>New amount</Trans>
+          </Label>
           <Input
             type="number"
             placeholder="0.00"
@@ -253,7 +296,9 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
     case 'amount.adjust_value': {
       return (
         <div className="mt-4 space-y-1">
-          <Label>Difference</Label>
+          <Label>
+            <Trans>Difference</Trans>
+          </Label>
           <Input
             type="number"
             placeholder="e.g. -12.50"
@@ -261,7 +306,7 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
             onChange={(event) => onChange({ delta: event.target.value })}
           />
           <p className="text-xs text-muted-foreground">
-            Positive numbers increase, negatives decrease the amount.
+            <Trans>Positive numbers increase, negatives decrease the amount.</Trans>
           </p>
         </div>
       );
@@ -269,7 +314,9 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
     case 'amount.adjust_percent': {
       return (
         <div className="mt-4 space-y-1">
-          <Label>Percent</Label>
+          <Label>
+            <Trans>Percent</Trans>
+          </Label>
           <Input
             type="number"
             placeholder="e.g. -10"
@@ -277,7 +324,7 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
             onChange={(event) => onChange({ percent: event.target.value })}
           />
           <p className="text-xs text-muted-foreground">
-            Use positive/negative percentages to scale the amount.
+            <Trans>Use positive/negative percentages to scale the amount.</Trans>
           </p>
         </div>
       );

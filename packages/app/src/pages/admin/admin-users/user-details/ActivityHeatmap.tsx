@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { format, parseISO, startOfWeek, endOfWeek, addDays } from 'date-fns';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui/tooltip';
@@ -91,14 +92,18 @@ export function ActivityHeatmap({
       <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
         <span>{format(firstDate, 'MMM d')}</span>
         <div className="flex items-center gap-2">
-          <span>Less</span>
+          <span>
+            <Trans>Less</Trans>
+          </span>
           {[0, 1, 2, 3, 4].map((level) => (
             <div
               key={level}
               className={`h-3 w-3 rounded-[3px] border ${heatmapLegendClass(level)}`}
             />
           ))}
-          <span>More</span>
+          <span>
+            <Trans>More</Trans>
+          </span>
         </div>
         <span>{format(lastDate, 'MMM d')}</span>
       </div>

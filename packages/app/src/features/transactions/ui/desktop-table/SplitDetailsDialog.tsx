@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import {
@@ -248,7 +249,9 @@ export function SplitDetailsDialog({
     >
       <DialogContent style={{ width: '800px', maxWidth: '90vw' }}>
         <DialogHeader>
-          <DialogTitle>Split details</DialogTitle>
+          <DialogTitle>
+            <Trans>Split details</Trans>
+          </DialogTitle>
           <DialogDescription className="truncate max-w-full" title={transaction?.Memo || ''}>
             {transaction ? transaction.Memo || `Transaction #${transaction.ID}` : ''}
           </DialogDescription>
@@ -257,7 +260,9 @@ export function SplitDetailsDialog({
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-3 rounded-lg border border-border/70 bg-muted/20 px-3 py-2 text-sm">
               <div>
-                <div className="text-muted-foreground">Original amount</div>
+                <div className="text-muted-foreground">
+                  <Trans>Original amount</Trans>
+                </div>
                 {editSplits ? (
                   <div
                     className={cn(
@@ -299,7 +304,7 @@ export function SplitDetailsDialog({
                       }}
                       disabled={upsertSplits.isPending}
                     >
-                      Cancel
+                      <Trans>Cancel</Trans>
                     </Button>
                     <Button size="sm" onClick={handleSave} disabled={!canSave}>
                       {isClearing ? 'Remove splits' : 'Save'}
@@ -307,7 +312,7 @@ export function SplitDetailsDialog({
                   </>
                 ) : (
                   <Button size="sm" onClick={startEditing}>
-                    Edit splits
+                    <Trans>Edit splits</Trans>
                   </Button>
                 )}
               </div>
@@ -330,7 +335,7 @@ export function SplitDetailsDialog({
             )}
             {isLoading ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                Loading splits...
+                <Trans>Loading splits...</Trans>
               </div>
             ) : displayedSplits.length === 0 ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
@@ -343,9 +348,15 @@ export function SplitDetailsDialog({
                 <Table className="text-sm table-fixed w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[200px]">Category / Transfer</TableHead>
-                      <TableHead>Memo</TableHead>
-                      <TableHead className="text-right w-[120px]">Amount</TableHead>
+                      <TableHead className="w-[200px]">
+                        <Trans>Category / Transfer</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Memo</Trans>
+                      </TableHead>
+                      <TableHead className="text-right w-[120px]">
+                        <Trans>Amount</Trans>
+                      </TableHead>
                       {editSplits && <TableHead className="w-[50px]" />}
                     </TableRow>
                   </TableHeader>
@@ -396,7 +407,7 @@ export function SplitDetailsDialog({
                             )}
                             {isTransferLine && editSplits && (
                               <p className="text-[11px] text-muted-foreground">
-                                Editing transfer splits is not supported.
+                                <Trans>Editing transfer splits is not supported.</Trans>
                               </p>
                             )}
                           </TableCell>
@@ -477,8 +488,10 @@ export function SplitDetailsDialog({
                   onClick={handleAddSplit}
                   className="flex items-center gap-2"
                 >
-                  <Plus className="h-4 w-4" />
-                  Add split line
+                  <Trans>
+                    <Plus className="h-4 w-4" />
+                    Add split line
+                  </Trans>
                 </Button>
                 <span className="text-xs text-muted-foreground">
                   Splits must total {formatMilli(editGlobalLocalizer, asMilli(targetTotal))}.

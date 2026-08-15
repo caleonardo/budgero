@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useState, useEffect } from 'react';
 import {
   Dialog,
@@ -106,7 +107,11 @@ function ColumnSelect({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {includeNone && <SelectItem value="__none__">None</SelectItem>}
+        {includeNone && (
+          <SelectItem value="__none__">
+            <Trans>None</Trans>
+          </SelectItem>
+        )}
         {columns?.map((column) => (
           <SelectItem key={column} value={column}>
             {column}
@@ -283,9 +288,11 @@ export function SaveReportDialog({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium">Chart Visualizations</h3>
+                <h3 className="font-medium">
+                  <Trans>Chart Visualizations</Trans>
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Add charts to visualize your query results
+                  <Trans>Add charts to visualize your query results</Trans>
                 </p>
               </div>
               {canAddChart && !isAddingChart && (
@@ -295,8 +302,10 @@ export function SaveReportDialog({
                   onClick={() => setIsAddingChart(true)}
                   disabled={isSaving}
                 >
-                  <Plus className="h-3 w-3 mr-1" />
-                  Add Chart
+                  <Trans>
+                    <Plus className="h-3 w-3 mr-1" />
+                    Add Chart
+                  </Trans>
                 </Button>
               )}
             </div>
@@ -306,7 +315,9 @@ export function SaveReportDialog({
                 <CardContent className="flex items-center justify-center py-6">
                   <div className="text-center text-muted-foreground">
                     <BarChart3 className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Run a query first to add charts</p>
+                    <p className="text-sm">
+                      <Trans>Run a query first to add charts</Trans>
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -356,7 +367,9 @@ export function SaveReportDialog({
                           {chart.yAxisColumn})
                         </span>
                         {chart.groupByColumn !== '__none__' && (
-                          <span>Group: {chart.groupByColumn}</span>
+                          <span>
+                            <Trans>Group: {chart.groupByColumn}</Trans>
+                          </span>
                         )}
                       </div>
                     </CardContent>
@@ -395,13 +408,27 @@ export function SaveReportDialog({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="bar">Bar Chart</SelectItem>
-                          <SelectItem value="line">Line Chart</SelectItem>
-                          <SelectItem value="area">Area Chart</SelectItem>
-                          <SelectItem value="pie">Pie Chart</SelectItem>
-                          <SelectItem value="scatter">Scatter Plot</SelectItem>
-                          <SelectItem value="table">Table</SelectItem>
-                          <SelectItem value="stat">Stat</SelectItem>
+                          <SelectItem value="bar">
+                            <Trans>Bar Chart</Trans>
+                          </SelectItem>
+                          <SelectItem value="line">
+                            <Trans>Line Chart</Trans>
+                          </SelectItem>
+                          <SelectItem value="area">
+                            <Trans>Area Chart</Trans>
+                          </SelectItem>
+                          <SelectItem value="pie">
+                            <Trans>Pie Chart</Trans>
+                          </SelectItem>
+                          <SelectItem value="scatter">
+                            <Trans>Scatter Plot</Trans>
+                          </SelectItem>
+                          <SelectItem value="table">
+                            <Trans>Table</Trans>
+                          </SelectItem>
+                          <SelectItem value="stat">
+                            <Trans>Stat</Trans>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </Field>
@@ -492,11 +519,21 @@ export function SaveReportDialog({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="SUM">Sum</SelectItem>
-                          <SelectItem value="COUNT">Count</SelectItem>
-                          <SelectItem value="AVG">Average</SelectItem>
-                          <SelectItem value="MAX">Maximum</SelectItem>
-                          <SelectItem value="MIN">Minimum</SelectItem>
+                          <SelectItem value="SUM">
+                            <Trans>Sum</Trans>
+                          </SelectItem>
+                          <SelectItem value="COUNT">
+                            <Trans>Count</Trans>
+                          </SelectItem>
+                          <SelectItem value="AVG">
+                            <Trans>Average</Trans>
+                          </SelectItem>
+                          <SelectItem value="MAX">
+                            <Trans>Maximum</Trans>
+                          </SelectItem>
+                          <SelectItem value="MIN">
+                            <Trans>Minimum</Trans>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </Field>
@@ -512,7 +549,7 @@ export function SaveReportDialog({
                       }}
                       className="w-full sm:w-auto"
                     >
-                      Cancel
+                      <Trans>Cancel</Trans>
                     </Button>
                     <Button
                       size="sm"
@@ -536,7 +573,7 @@ export function SaveReportDialog({
             disabled={isSaving}
             className="w-full sm:w-auto"
           >
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             onClick={() => void handleSave(false)}

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useCallback, useMemo, useState } from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { Table } from '@shared/ui/table';
@@ -135,9 +136,11 @@ export function DesktopTransactionTable({
   if (paginatedTransactions.length === 0) {
     return (
       <div className="hidden sm:flex flex-col items-center justify-center py-16 border rounded-md border-dashed text-muted-foreground">
-        <p className="text-lg font-medium mb-2">No transactions found</p>
+        <p className="text-lg font-medium mb-2">
+          <Trans>No transactions found</Trans>
+        </p>
         <p className="text-sm text-muted-foreground/80">
-          Adjust your filters or add a new transaction to get started.
+          <Trans>Adjust your filters or add a new transaction to get started.</Trans>
         </p>
       </div>
     );

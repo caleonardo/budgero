@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo, useMemo, useState } from 'react';
 import { Badge } from '@shared/ui/badge';
 import { Input } from '@shared/ui/input';
@@ -64,8 +65,10 @@ export const SchemaSidebar = memo(
       <div className="flex h-full min-h-0 flex-col">
         <div className="p-4 border-b space-y-3">
           <h2 className="font-semibold text-sm flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            Database Schema
+            <Trans>
+              <Database className="h-4 w-4" />
+              Database Schema
+            </Trans>
           </h2>
           <div className="relative">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -112,11 +115,11 @@ export const SchemaSidebar = memo(
                   </span>
                   {table.name.toLowerCase() === 'transactions_analytics' ? (
                     <Badge variant="outline" className="text-[9px] px-1 py-0 uppercase">
-                      Analytics
+                      <Trans>Analytics</Trans>
                     </Badge>
                   ) : table.objectType === 'view' ? (
                     <Badge variant="outline" className="text-[9px] px-1 py-0 uppercase">
-                      View
+                      <Trans>View</Trans>
                     </Badge>
                   ) : null}
                   <Badge variant="secondary" className="ml-auto text-[10px] px-1">
@@ -152,7 +155,7 @@ export const SchemaSidebar = memo(
             ))}
             {filteredSchema.length === 0 && (
               <div className="px-2 py-4 text-xs text-muted-foreground">
-                No matching schema items.
+                <Trans>No matching schema items.</Trans>
               </div>
             )}
           </div>

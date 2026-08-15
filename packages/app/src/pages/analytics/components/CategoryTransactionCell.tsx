@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -91,7 +92,9 @@ export function CategoryTransactionCell({
               <Skeleton className="h-4 w-2/3" />
             </div>
           ) : data.length === 0 ? (
-            <div className="text-xs text-muted-foreground">No transactions for this selection.</div>
+            <div className="text-xs text-muted-foreground">
+              <Trans>No transactions for this selection.</Trans>
+            </div>
           ) : (
             <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
               {data.map((transaction) => {

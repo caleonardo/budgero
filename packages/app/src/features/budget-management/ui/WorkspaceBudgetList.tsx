@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -172,7 +173,9 @@ export function WorkspaceBudgetList({
             <Skeleton className="h-8 w-full" />
           </div>
         ) : budgets.length === 0 ? (
-          <div className="px-2 py-1.5 text-xs text-muted-foreground">No budgets yet</div>
+          <div className="px-2 py-1.5 text-xs text-muted-foreground">
+            <Trans>No budgets yet</Trans>
+          </div>
         ) : (
           <div className="space-y-0.5">
             {budgets.map((budget) => {
@@ -248,8 +251,10 @@ export function WorkspaceBudgetList({
             })}
           >
             <span className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Create New Budget
+              <Trans>
+                <Plus className="h-4 w-4" />
+                Create New Budget
+              </Trans>
             </span>
           </div>
         )}
@@ -259,7 +264,7 @@ export function WorkspaceBudgetList({
       {otherSpaces.length > 0 && (
         <section className="space-y-1 border-t border-border pt-3">
           <div className="px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Other workspaces
+            <Trans>Other workspaces</Trans>
           </div>
           <div className="space-y-0.5">
             {otherSpaces.map((space) => {
@@ -280,7 +285,9 @@ export function WorkspaceBudgetList({
                   {isSwitching ? (
                     <Spinner className="h-3.5 w-3.5 text-muted-foreground" />
                   ) : (
-                    <span className="text-xs text-muted-foreground">Switch</span>
+                    <span className="text-xs text-muted-foreground">
+                      <Trans>Switch</Trans>
+                    </span>
                   )}
                 </div>
               );
@@ -302,8 +309,10 @@ export function WorkspaceBudgetList({
                 )}
               >
                 <span className="flex items-center gap-1.5">
-                  <Lock className="h-3.5 w-3.5" />
-                  Locked ({lockedSpaces.length})
+                  <Trans>
+                    <Lock className="h-3.5 w-3.5" />
+                    Locked ({lockedSpaces.length})
+                  </Trans>
                 </span>
                 <ChevronDown className="h-3.5 w-3.5 transition-transform [[data-state=open]_&]:rotate-180" />
               </div>
@@ -334,7 +343,7 @@ export function WorkspaceBudgetList({
       {pendingSpaces.length > 0 && (
         <section className="space-y-1 border-t border-border pt-3">
           <div className="px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Pending invitations
+            <Trans>Pending invitations</Trans>
           </div>
           <div className="space-y-0.5">
             {pendingSpaces.map((space) => (
@@ -364,8 +373,10 @@ export function WorkspaceBudgetList({
           {...buttonizeProps(handleOpenWorkspaceSettings)}
         >
           <span className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            Manage workspaces
+            <Trans>
+              <Settings className="h-4 w-4" />
+              Manage workspaces
+            </Trans>
           </span>
         </div>
       </div>

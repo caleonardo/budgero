@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Split Editor Component
  *
@@ -99,7 +100,9 @@ export function SplitEditor({
       {isSplit && (
         <div className="space-y-2 sm:space-y-3 border rounded-md p-2 sm:p-3">
           <div className="flex items-center justify-between text-[11px] sm:text-xs text-muted-foreground">
-            <span>Remaining to assign</span>
+            <span>
+              <Trans>Remaining to assign</Trans>
+            </span>
             <span className="font-mono">{formatMilli(formatter, asMilli(remaining))}</span>
           </div>
 
@@ -146,8 +149,12 @@ export function SplitEditor({
                   type="button"
                   onClick={() => deleteLine(line.id)}
                 >
-                  <span className="hidden sm:inline">Delete</span>
-                  <span className="sm:hidden inline">Del</span>
+                  <span className="hidden sm:inline">
+                    <Trans>Delete</Trans>
+                  </span>
+                  <span className="sm:hidden inline">
+                    <Trans>Del</Trans>
+                  </span>
                 </Button>
               </div>
             </div>
@@ -155,7 +162,7 @@ export function SplitEditor({
 
           <div className="flex items-center gap-2 pt-1">
             <Button variant="outline" size="sm" className="h-8" type="button" onClick={addLine}>
-              + Line
+              <Trans>+ Line</Trans>
             </Button>
             <Button
               variant="outline"
@@ -164,7 +171,7 @@ export function SplitEditor({
               type="button"
               onClick={splitRemaining}
             >
-              Split remaining
+              <Trans>Split remaining</Trans>
             </Button>
           </div>
         </div>

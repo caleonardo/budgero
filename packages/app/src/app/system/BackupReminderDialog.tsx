@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import {
   AlertDialog,
@@ -106,8 +107,10 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-destructive" />
-            Back up your data
+            <Trans>
+              <ShieldAlert className="h-5 w-5 text-destructive" />
+              Back up your data
+            </Trans>
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-2">
             <p>
@@ -115,7 +118,7 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
                 'You need a fresh backup to recover quickly if the database ever corrupts or you lose your master password.'}
             </p>
             <p className="font-medium text-foreground">
-              This reminder isn&apos;t skippable—download a backup now to stay protected.
+              <Trans>This reminder isn't skippable—download a backup now to stay protected.</Trans>
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>

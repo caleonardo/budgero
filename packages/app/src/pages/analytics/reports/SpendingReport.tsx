@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { CalendarRange, ChartPie, BarChartHorizontal, LayoutGrid } from 'lucide-react';
@@ -331,7 +332,9 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
           </div>
           {dim === 'label' ? (
             <p className="mt-3 text-xs text-muted-foreground">
-              A transaction with several labels counts in full under each, so labels can overlap.
+              <Trans>
+                A transaction with several labels counts in full under each, so labels can overlap.
+              </Trans>
             </p>
           ) : null}
           <PanelSectionTitle>{DIM_LABELS[dim]}</PanelSectionTitle>

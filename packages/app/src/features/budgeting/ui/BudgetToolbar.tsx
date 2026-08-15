@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react';
 import { AssignDropdown } from '@features/budget-planning/ui/assign-dropdown';
 import { SearchAndFilterControls } from '@features/budget-planning/ui/SearchAndFilterControls';
@@ -198,7 +199,7 @@ export function BudgetToolbar({
                 <div className="flex items-center gap-1">
                   <span className={cn('h-1.5 w-1.5 rounded-full', rtaTone.dot)} />
                   <span className="text-[10px] font-medium uppercase tracking-[0.08em] leading-none text-muted-foreground">
-                    Ready to assign
+                    <Trans>Ready to assign</Trans>
                   </span>
                   <ReadyToAssignHelpPopover
                     budgetId={budgetId}
@@ -269,12 +270,16 @@ export function BudgetToolbar({
                   {showHiddenCategories ? (
                     <>
                       <EyeOff className="h-3.5 w-3.5" />
-                      <span className="hidden xl:inline">Hide hidden</span>
+                      <span className="hidden xl:inline">
+                        <Trans>Hide hidden</Trans>
+                      </span>
                     </>
                   ) : (
                     <>
                       <Eye className="h-3.5 w-3.5" />
-                      <span className="hidden xl:inline">Show hidden</span>
+                      <span className="hidden xl:inline">
+                        <Trans>Show hidden</Trans>
+                      </span>
                     </>
                   )}
                 </Button>

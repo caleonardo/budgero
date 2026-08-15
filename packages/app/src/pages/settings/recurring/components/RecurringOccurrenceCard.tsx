@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -64,11 +65,16 @@ export function RecurringOccurrenceCard({
             <span className="text-sm text-muted-foreground">{template.name}</span>
           </div>
           <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Due:</span> {occurrence.dueDate} (
-            {dueLabel})
+            <span className="font-medium text-foreground">
+              <Trans>Due:</Trans>
+            </span>{' '}
+            {occurrence.dueDate} ({dueLabel})
           </div>
           <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Amount:</span> {amountDisplay}
+            <span className="font-medium text-foreground">
+              <Trans>Amount:</Trans>
+            </span>{' '}
+            {amountDisplay}
           </div>
           <div className="text-sm text-muted-foreground">
             <span className="font-medium text-foreground">
@@ -78,12 +84,17 @@ export function RecurringOccurrenceCard({
           </div>
           {template.toAccountId != null ? (
             <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">To account:</span>{' '}
+              <span className="font-medium text-foreground">
+                <Trans>To account:</Trans>
+              </span>{' '}
               {toAccountName ?? 'Unknown account'}
             </div>
           ) : (
             <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">Category:</span> {categoryName}
+              <span className="font-medium text-foreground">
+                <Trans>Category:</Trans>
+              </span>{' '}
+              {categoryName}
             </div>
           )}
         </div>
@@ -101,15 +112,23 @@ export function RecurringOccurrenceCard({
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Mark “{template.name}” as ready?</AlertDialogTitle>
+                <AlertDialogTitle>
+                  <Trans>Mark “{template.name}” as ready?</Trans>
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  We will create the transaction dated {occurrence.dueDate} and run continuous rules
-                  automatically.
+                  <Trans>
+                    We will create the transaction dated {occurrence.dueDate} and run continuous
+                    rules automatically.
+                  </Trans>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onMarkReady}>Post transaction</AlertDialogAction>
+                <AlertDialogCancel>
+                  <Trans>Cancel</Trans>
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={onMarkReady}>
+                  <Trans>Post transaction</Trans>
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -120,7 +139,7 @@ export function RecurringOccurrenceCard({
             disabled={isProcessing || isSkipPending || isFetching}
             onClick={onSkip}
           >
-            Skip this time
+            <Trans>Skip this time</Trans>
           </Button>
         </div>
         {(isProcessing || isFetching) && (

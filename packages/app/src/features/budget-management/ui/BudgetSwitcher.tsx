@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -78,8 +79,12 @@ export function BudgetSwitcher() {
       {canManageBudgets && (
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
           <DialogContent>
-            <DialogTitle>Create New Budget</DialogTitle>
-            <DialogDescription>Set up a new budget to track your finances</DialogDescription>
+            <DialogTitle>
+              <Trans>Create New Budget</Trans>
+            </DialogTitle>
+            <DialogDescription>
+              <Trans>Set up a new budget to track your finances</Trans>
+            </DialogDescription>
             <BudgetWizard onCreated={handleBudgetCreated} />
           </DialogContent>
         </Dialog>
@@ -94,8 +99,12 @@ export function BudgetSwitcher() {
           }}
         >
           <DialogContent>
-            <DialogTitle>Manage Budget</DialogTitle>
-            <DialogDescription>Edit or delete your budget</DialogDescription>
+            <DialogTitle>
+              <Trans>Manage Budget</Trans>
+            </DialogTitle>
+            <DialogDescription>
+              <Trans>Edit or delete your budget</Trans>
+            </DialogDescription>
 
             {error && (
               <div className="rounded-md bg-destructive-foreground/10 px-4 py-3 text-sm text-destructive">
@@ -123,7 +132,7 @@ export function BudgetSwitcher() {
                 onError={setError}
               />
               <Button type="submit" form="budget-form" variant="default">
-                Update Budget
+                <Trans>Update Budget</Trans>
               </Button>
             </div>
           </DialogContent>

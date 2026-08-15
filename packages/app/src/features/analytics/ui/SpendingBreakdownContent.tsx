@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import {
   useSpendingByDatesByCategories,
   useSpendingByCategoriesInGroup,
@@ -80,7 +81,9 @@ export function SpendingBreakdownContent() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[300px]">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="text-muted-foreground">
+          <Trans>Loading...</Trans>
+        </div>
       </div>
     );
   }
@@ -99,8 +102,10 @@ export function SpendingBreakdownContent() {
             onClick={() => setSelectedCategoryGroup(null)}
             className="h-8 px-2"
           >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Back
+            <Trans>
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back
+            </Trans>
           </Button>
           <span className="text-sm font-medium">{selectedCategoryGroup.name}</span>
         </div>

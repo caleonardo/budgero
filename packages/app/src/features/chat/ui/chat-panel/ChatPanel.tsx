@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Dialog, DialogContent, DialogTitle } from '@shared/ui/dialog';
 import { cn } from '@shared/lib/utils';
 import { useChatPanelState } from './useChatPanelState';
@@ -45,7 +46,9 @@ export function ChatPanel() {
         aria-describedby={undefined}
         className="flex h-[85vh] max-h-[85vh] w-[calc(100%-2rem)] max-w-5xl flex-col gap-0 overflow-hidden p-0 lg:max-w-6xl xl:max-w-7xl"
       >
-        <DialogTitle className="sr-only">Chat Assistant</DialogTitle>
+        <DialogTitle className="sr-only">
+          <Trans>Chat Assistant</Trans>
+        </DialogTitle>
         {/* Header */}
         <ChatHeader
           sidebarOpen={sidebarOpen}

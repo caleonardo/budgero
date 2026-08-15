@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo, useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 import { Card, CardContent } from '@shared/ui/card';
@@ -41,19 +42,27 @@ export const TransactionList = memo(function TransactionList({
   }, [paginatedTransactions]);
 
   if (loading) {
-    return <div className="text-center py-8">Loading transactions...</div>;
+    return (
+      <div className="text-center py-8">
+        <Trans>Loading transactions...</Trans>
+      </div>
+    );
   }
 
   return (
     <div className="max-w-full">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium">Transactions</h3>
-        <div className="text-xs text-muted-foreground">{transactions.length} total</div>
+        <h3 className="text-sm font-medium">
+          <Trans>Transactions</Trans>
+        </h3>
+        <div className="text-xs text-muted-foreground">
+          <Trans>{transactions.length} total</Trans>
+        </div>
       </div>
 
       {transactions.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground text-sm">
-          No transactions found for this category.
+          <Trans>No transactions found for this category.</Trans>
         </div>
       ) : (
         <div className="max-w-full">
@@ -235,8 +244,10 @@ const Pagination = memo(function Pagination({ page, totalPages, onPageChange }: 
         disabled={page === 0}
         className="flex items-center gap-1"
       >
-        <ChevronLeft className="h-3 w-3" />
-        Previous
+        <Trans>
+          <ChevronLeft className="h-3 w-3" />
+          Previous
+        </Trans>
       </Button>
 
       <div className="flex items-center gap-1">
@@ -263,8 +274,10 @@ const Pagination = memo(function Pagination({ page, totalPages, onPageChange }: 
         disabled={page >= totalPages - 1}
         className="flex items-center gap-1"
       >
-        Next
-        <ChevronRight className="h-3 w-3" />
+        <Trans>
+          Next
+          <ChevronRight className="h-3 w-3" />
+        </Trans>
       </Button>
     </div>
   );

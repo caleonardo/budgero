@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useMemo, useState } from 'react';
 import { isFutureDate, groupTransactionsByDateKey, formatShortDate } from '@shared/lib/date-utils';
 import { toast } from 'sonner';
@@ -137,9 +138,11 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
           </svg>
         </div>
         <div className="text-center">
-          <p className="text-lg font-medium text-muted-foreground mb-2">No transactions found</p>
+          <p className="text-lg font-medium text-muted-foreground mb-2">
+            <Trans>No transactions found</Trans>
+          </p>
           <p className="text-sm text-muted-foreground/70">
-            Try adjusting your search filters or add a new transaction
+            <Trans>Try adjusting your search filters or add a new transaction</Trans>
           </p>
         </div>
         {/* Bottom spacer so empty state doesn't hide behind mobile bottom nav */}
@@ -222,8 +225,10 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
         {isLoadingMore && (
           <div className="flex justify-center py-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Loading more transactions...
+              <Trans>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Loading more transactions...
+              </Trans>
             </div>
           </div>
         )}

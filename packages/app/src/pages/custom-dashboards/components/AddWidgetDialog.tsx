@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { UnifiedReport } from '@budgero/core/browser';
 import {
@@ -74,13 +75,17 @@ export function AddWidgetDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[520px]">
         <DialogHeader>
-          <DialogTitle>Add Widget</DialogTitle>
-          <DialogDescription>Select a saved chart to pin to this dashboard.</DialogDescription>
+          <DialogTitle>
+            <Trans>Add Widget</Trans>
+          </DialogTitle>
+          <DialogDescription>
+            <Trans>Select a saved chart to pin to this dashboard.</Trans>
+          </DialogDescription>
         </DialogHeader>
 
         {selectableReports.length === 0 ? (
           <div className="rounded-md border bg-muted/30 p-4 text-sm text-muted-foreground">
-            Save a report with at least one chart in Explorer first.
+            <Trans>Save a report with at least one chart in Explorer first.</Trans>
           </div>
         ) : (
           <div className="space-y-4">
@@ -93,7 +98,9 @@ export function AddWidgetDialog({
               onChartIdChange={setSelectedChartId}
             />
             <div className="space-y-2">
-              <Label htmlFor="titleOverride">Custom widget title (optional)</Label>
+              <Label htmlFor="titleOverride">
+                <Trans>Custom widget title (optional)</Trans>
+              </Label>
               <Input
                 id="titleOverride"
                 value={titleOverride}
@@ -106,7 +113,7 @@ export function AddWidgetDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             onClick={handleSubmit}

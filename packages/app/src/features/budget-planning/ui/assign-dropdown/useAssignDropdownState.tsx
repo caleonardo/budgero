@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState, useMemo, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useBatchUpsertAssignments } from '@entities/budget/api/useMonthlyBudget';
@@ -290,7 +291,9 @@ export function useAssignDropdownState({
       toast.success('Reset available amounts to zero', {
         description: (
           <div className="mt-2 space-y-1">
-            <div className="text-sm font-medium">{changedCount} categories adjusted</div>
+            <div className="text-sm font-medium">
+              <Trans>{changedCount} categories adjusted</Trans>
+            </div>
             <div className="text-xs text-muted-foreground">
               Net change: {totalChange >= 0 ? '+' : ''}
               {formatMilli(globalLocalizer, totalChange)}

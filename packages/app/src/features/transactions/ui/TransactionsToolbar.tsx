@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { DialogTrigger } from '@shared/ui/dialog';
@@ -110,8 +111,10 @@ export function TransactionsToolbar({
         <div className="flex items-center gap-2">{headerActions}</div>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm" disabled={addTransactionPending} className="gap-2">
-            <PlusCircle className="h-4 w-4" />
-            Add Transaction
+            <Trans>
+              <PlusCircle className="h-4 w-4" />
+              Add Transaction
+            </Trans>
           </Button>
         </DialogTrigger>
       </div>
@@ -151,7 +154,7 @@ export function TransactionsToolbar({
           {categorySuggestions.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-popover border border-border rounded-md shadow-md overflow-hidden">
               <div className="px-2 py-1.5 text-xs text-muted-foreground border-b border-border">
-                Categories matching "{parsedQuery.textQuery}"
+                <Trans>Categories matching "{parsedQuery.textQuery}"</Trans>
               </div>
               {categorySuggestions.map((suggestion, index) => (
                 <button
@@ -193,14 +196,18 @@ export function TransactionsToolbar({
                 disabled
                 className="flex items-center gap-1.5 text-xs"
               >
-                <CurrencyFlagLabel currency={selectedBudget?.DisplayCurrency} />
-                Budget Currency
+                <Trans>
+                  <CurrencyFlagLabel currency={selectedBudget?.DisplayCurrency} />
+                  Budget Currency
+                </Trans>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-64 text-sm">
               <p>
-                When viewing transactions from all accounts, amounts are always shown in your budget
-                currency for consistency.
+                <Trans>
+                  When viewing transactions from all accounts, amounts are always shown in your
+                  budget currency for consistency.
+                </Trans>
               </p>
             </PopoverContent>
           </Popover>
@@ -225,7 +232,9 @@ export function TransactionsToolbar({
             {transactionCurrencyDisplay === 'budget' ? 'Budget Currency' : 'Account Currency'}
           </Button>
         )}
-        <span className="text-xs text-muted-foreground">Showing amounts in {currencyLabel}</span>
+        <span className="text-xs text-muted-foreground">
+          <Trans>Showing amounts in {currencyLabel}</Trans>
+        </span>
 
         {/* Balance column toggle - desktop only */}
         {!isMobile && (
@@ -236,8 +245,10 @@ export function TransactionsToolbar({
             className="flex items-center gap-1.5 text-xs"
             title={showBalanceColumn ? 'Hide balance column' : 'Show balance column'}
           >
-            <Columns className="h-4 w-4" />
-            Balance
+            <Trans>
+              <Columns className="h-4 w-4" />
+              Balance
+            </Trans>
           </Button>
         )}
 
@@ -250,14 +261,18 @@ export function TransactionsToolbar({
             className="flex items-center gap-1.5 text-xs"
             title={showLabelColumn ? 'Hide label column' : 'Show label column'}
           >
-            <Tag className="h-4 w-4" />
-            Label
+            <Trans>
+              <Tag className="h-4 w-4" />
+              Label
+            </Trans>
           </Button>
         )}
 
         {/* Page size selector */}
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-muted-foreground">Rows:</span>
+          <span className="text-xs text-muted-foreground">
+            <Trans>Rows:</Trans>
+          </span>
           <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
             <SelectTrigger size="sm" className="h-8 w-[84px] text-xs" aria-label="Rows per page">
               <SelectValue />

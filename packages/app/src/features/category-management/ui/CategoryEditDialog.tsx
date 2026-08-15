@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -61,13 +62,19 @@ export const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle>Edit Category</DialogTitle>
-          <DialogDescription>Update the category name and budget pace settings.</DialogDescription>
+          <DialogTitle>
+            <Trans>Edit Category</Trans>
+          </DialogTitle>
+          <DialogDescription>
+            <Trans>Update the category name and budget pace settings.</Trans>
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="category-name">Category Name</Label>
+            <Label htmlFor="category-name">
+              <Trans>Category Name</Trans>
+            </Label>
             <Input
               id="category-name"
               value={name}
@@ -81,10 +88,12 @@ export const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
           <div className="flex items-center justify-between space-x-2">
             <div className="space-y-0.5">
               <Label htmlFor="exclude-budget-pace" className="text-sm font-medium">
-                Exclude from Budget Pace
+                <Trans>Exclude from Budget Pace</Trans>
               </Label>
               <p className="text-xs text-muted-foreground">
-                When enabled, this category won't show budget pace lines in spending charts
+                <Trans>
+                  When enabled, this category won't show budget pace lines in spending charts
+                </Trans>
               </p>
             </div>
             <Switch id="exclude-budget-pace" checked={exclude} onCheckedChange={setExclude} />
@@ -93,7 +102,7 @@ export const CategoryEditDialog: React.FC<CategoryEditDialogProps> = ({
 
         <DialogFooter className="flex-col sm:flex-row gap-2">
           <Button variant="outline" onClick={onClose} disabled={isSaving}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button onClick={handleSave} disabled={isSaving}>
             {isSaving ? 'Saving...' : 'Save Changes'}

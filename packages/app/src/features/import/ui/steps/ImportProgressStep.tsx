@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Import Progress Step Component
  *
@@ -21,10 +22,14 @@ export function ImportProgressStep({ progress, error }: ImportProgressStepProps)
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Spinner className="h-5 w-5" />
-          Importing Data
+          <Trans>
+            <Spinner className="h-5 w-5" />
+            Importing Data
+          </Trans>
         </CardTitle>
-        <CardDescription>Please wait while we import your transactions</CardDescription>
+        <CardDescription>
+          <Trans>Please wait while we import your transactions</Trans>
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {progress && (

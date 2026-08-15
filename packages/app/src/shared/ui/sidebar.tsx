@@ -1,6 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, VariantProps } from 'class-variance-authority';
@@ -182,8 +184,12 @@ function Sidebar({
           side={side}
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            <SheetTitle>
+              <Trans>Sidebar</Trans>
+            </SheetTitle>
+            <SheetDescription>
+              <Trans>Displays the mobile sidebar.</Trans>
+            </SheetDescription>
           </SheetHeader>
           <div className="flex h-full w-full flex-col">{children}</div>
         </SheetContent>
@@ -257,7 +263,9 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       {...props}
     >
       <PanelLeftIcon />
-      <span className="sr-only">Toggle Sidebar</span>
+      <span className="sr-only">
+        <Trans>Toggle Sidebar</Trans>
+      </span>
     </Button>
   );
 }

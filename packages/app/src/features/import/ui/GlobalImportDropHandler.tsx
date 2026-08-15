@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -91,9 +92,13 @@ export function GlobalImportDropHandler() {
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999] flex items-center justify-center bg-background/80 backdrop-blur-sm">
       <div className="rounded-2xl border border-dashed border-primary/60 bg-background px-6 py-4 text-center shadow-2xl">
-        <p className="text-lg font-semibold text-foreground">Drop file to import</p>
+        <p className="text-lg font-semibold text-foreground">
+          <Trans>Drop file to import</Trans>
+        </p>
         <p className="text-sm text-muted-foreground">
-          {SUPPORTED_IMPORT_FORMATS_LABEL} files will open the Imports workspace automatically.
+          <Trans>
+            {SUPPORTED_IMPORT_FORMATS_LABEL} files will open the Imports workspace automatically.
+          </Trans>
         </p>
       </div>
     </div>

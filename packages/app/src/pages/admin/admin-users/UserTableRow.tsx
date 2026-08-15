@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -49,20 +50,26 @@ export const UserTableRow = React.memo(function UserTableRow({
           <div className="flex gap-1 mt-1">
             {user.is_admin && (
               <Badge variant="outline" className="text-xs">
-                <Shield className="w-3 h-3 mr-1" />
-                Admin
+                <Trans>
+                  <Shield className="w-3 h-3 mr-1" />
+                  Admin
+                </Trans>
               </Badge>
             )}
             {user.is_founding_member && (
               <Badge variant="outline" className="text-xs">
-                <Gift className="w-3 h-3 mr-1" />
-                Founding
+                <Trans>
+                  <Gift className="w-3 h-3 mr-1" />
+                  Founding
+                </Trans>
               </Badge>
             )}
             {user.is_blocked && (
               <Badge variant="destructive" className="text-xs">
-                <Ban className="w-3 h-3 mr-1" />
-                Blocked
+                <Trans>
+                  <Ban className="w-3 h-3 mr-1" />
+                  Blocked
+                </Trans>
               </Badge>
             )}
           </div>
@@ -75,7 +82,7 @@ export const UserTableRow = React.memo(function UserTableRow({
       </TableCell>
       <TableCell>
         <Button size="sm" variant="outline" onClick={() => onViewDetails(user)}>
-          View Details
+          <Trans>View Details</Trans>
         </Button>
       </TableCell>
       <TableCell className="text-right">
@@ -86,34 +93,46 @@ export const UserTableRow = React.memo(function UserTableRow({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              <Trans>Actions</Trans>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => onViewDetails(user)}>
-              <UserCheck className="w-4 h-4 mr-2" />
-              View Details
+              <Trans>
+                <UserCheck className="w-4 h-4 mr-2" />
+                View Details
+              </Trans>
             </DropdownMenuItem>
             {!user.is_founding_member && (
               <DropdownMenuItem onClick={() => onAction('grant_founding', user)}>
-                <Gift className="w-4 h-4 mr-2" />
-                Grant Founding Member
+                <Trans>
+                  <Gift className="w-4 h-4 mr-2" />
+                  Grant Founding Member
+                </Trans>
               </DropdownMenuItem>
             )}
             {!user.has_beta_access && (
               <DropdownMenuItem onClick={() => onAction('grant_beta', user)}>
-                <Clock className="w-4 h-4 mr-2" />
-                Grant Free Access
+                <Trans>
+                  <Clock className="w-4 h-4 mr-2" />
+                  Grant Free Access
+                </Trans>
               </DropdownMenuItem>
             )}
             {!user.is_admin && (
               <DropdownMenuItem onClick={() => onAction('make_admin', user)}>
-                <Shield className="w-4 h-4 mr-2" />
-                Make Admin
+                <Trans>
+                  <Shield className="w-4 h-4 mr-2" />
+                  Make Admin
+                </Trans>
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => onAction('reset_data', user)} className="text-red-600">
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Reset User Data
+              <Trans>
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset User Data
+              </Trans>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onAction(user.is_blocked ? 'unblock' : 'block', user)}
@@ -126,8 +145,10 @@ export const UserTableRow = React.memo(function UserTableRow({
               onClick={() => onAction('revoke_access', user)}
               className="text-red-600"
             >
-              <Ban className="w-4 h-4 mr-2" />
-              Revoke Access
+              <Trans>
+                <Ban className="w-4 h-4 mr-2" />
+                Revoke Access
+              </Trans>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

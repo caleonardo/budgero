@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Checkbox } from '@shared/ui/checkbox';
@@ -79,7 +80,9 @@ export function DirectoryTable<
           <div className="mb-4 flex flex-wrap items-center gap-2">
             {selectedCount > 0 ? (
               <>
-                <span className="text-sm font-medium">{selectedCount} selected</span>
+                <span className="text-sm font-medium">
+                  <Trans>{selectedCount} selected</Trans>
+                </span>
                 <Button
                   size="sm"
                   variant="destructive"
@@ -90,12 +93,12 @@ export function DirectoryTable<
                   <span className="ml-1">{bulk.deleteSelectedLabel(selectedCount)}</span>
                 </Button>
                 <Button size="sm" variant="ghost" onClick={onClearSelection}>
-                  Clear selection
+                  <Trans>Clear selection</Trans>
                 </Button>
               </>
             ) : (
               <span className="text-sm text-muted-foreground">
-                Select rows to remove several at once.
+                <Trans>Select rows to remove several at once.</Trans>
               </span>
             )}
             {bulk.selectUnusedLabel && unusedItems.length > 0 && (
@@ -137,9 +140,15 @@ export function DirectoryTable<
                     {column.header}
                   </TableHead>
                 ))}
-                <TableHead>Name</TableHead>
-                <TableHead className="w-32">Usage</TableHead>
-                <TableHead className="w-32 text-right">Actions</TableHead>
+                <TableHead>
+                  <Trans>Name</Trans>
+                </TableHead>
+                <TableHead className="w-32">
+                  <Trans>Usage</Trans>
+                </TableHead>
+                <TableHead className="w-32 text-right">
+                  <Trans>Actions</Trans>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -193,18 +202,24 @@ export function DirectoryTable<
                         <div className="flex justify-end gap-2">
                           <Button size="sm" variant="outline" onClick={onCancelEdit}>
                             <X className="h-4 w-4" />
-                            <span className="ml-1">Cancel</span>
+                            <span className="ml-1">
+                              <Trans>Cancel</Trans>
+                            </span>
                           </Button>
                           <Button size="sm" onClick={() => onSave(item)} disabled={isSaving}>
                             {isSaving ? <Spinner size="sm" /> : <Save className="h-4 w-4" />}
-                            <span className="ml-1">Save</span>
+                            <span className="ml-1">
+                              <Trans>Save</Trans>
+                            </span>
                           </Button>
                         </div>
                       ) : (
                         <div className="flex justify-end gap-2">
                           <Button size="sm" variant="ghost" onClick={() => onStartEdit(item)}>
                             <Pencil className="h-4 w-4" />
-                            <span className="ml-1">Edit</span>
+                            <span className="ml-1">
+                              <Trans>Edit</Trans>
+                            </span>
                           </Button>
                           <Button
                             size="sm"
@@ -213,7 +228,9 @@ export function DirectoryTable<
                             onClick={() => onRequestDelete(item)}
                           >
                             <Trash2 className="h-4 w-4" />
-                            <span className="ml-1">Delete</span>
+                            <span className="ml-1">
+                              <Trans>Delete</Trans>
+                            </span>
                           </Button>
                         </div>
                       )}

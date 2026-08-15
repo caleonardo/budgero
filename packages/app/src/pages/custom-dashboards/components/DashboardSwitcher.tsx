@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { CustomDashboard } from '@budgero/core/browser';
 import { Button } from '@shared/ui/button';
@@ -119,17 +120,25 @@ export function DashboardSwitcher({
       <Popover open={createOpen} onOpenChange={setCreateOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" disabled={pendingAction !== null}>
-            <Plus className="h-4 w-4 mr-1" />
-            New
+            <Trans>
+              <Plus className="h-4 w-4 mr-1" />
+              New
+            </Trans>
           </Button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-80 space-y-3">
           <div className="space-y-1">
-            <p className="text-sm font-medium">Create dashboard</p>
-            <p className="text-xs text-muted-foreground">Name your new custom dashboard.</p>
+            <p className="text-sm font-medium">
+              <Trans>Create dashboard</Trans>
+            </p>
+            <p className="text-xs text-muted-foreground">
+              <Trans>Name your new custom dashboard.</Trans>
+            </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="new-dashboard-name">Name</Label>
+            <Label htmlFor="new-dashboard-name">
+              <Trans>Name</Trans>
+            </Label>
             <Input
               id="new-dashboard-name"
               value={createName}
@@ -144,7 +153,7 @@ export function DashboardSwitcher({
               onClick={() => setCreateOpen(false)}
               disabled={pendingAction === 'create'}
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               size="sm"
@@ -160,19 +169,25 @@ export function DashboardSwitcher({
       <Popover open={renameOpen} onOpenChange={setRenameOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" disabled={!activeDashboard || pendingAction !== null}>
-            <Pencil className="h-4 w-4 mr-1" />
-            Rename
+            <Trans>
+              <Pencil className="h-4 w-4 mr-1" />
+              Rename
+            </Trans>
           </Button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-80 space-y-3">
           <div className="space-y-1">
-            <p className="text-sm font-medium">Rename dashboard</p>
+            <p className="text-sm font-medium">
+              <Trans>Rename dashboard</Trans>
+            </p>
             <p className="text-xs text-muted-foreground">
               Update the name for <span className="font-medium">{activeDashboard?.name}</span>.
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="rename-dashboard-name">Name</Label>
+            <Label htmlFor="rename-dashboard-name">
+              <Trans>Name</Trans>
+            </Label>
             <Input
               id="rename-dashboard-name"
               value={renameName}
@@ -187,7 +202,7 @@ export function DashboardSwitcher({
               onClick={() => setRenameOpen(false)}
               disabled={pendingAction === 'rename'}
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               size="sm"
@@ -203,13 +218,17 @@ export function DashboardSwitcher({
       <Popover open={deleteOpen} onOpenChange={setDeleteOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" disabled={!activeDashboard || pendingAction !== null}>
-            <Trash2 className="h-4 w-4 mr-1" />
-            Delete
+            <Trans>
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete
+            </Trans>
           </Button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-80 space-y-3">
           <div className="space-y-1">
-            <p className="text-sm font-medium">Delete dashboard</p>
+            <p className="text-sm font-medium">
+              <Trans>Delete dashboard</Trans>
+            </p>
             <p className="text-xs text-muted-foreground">
               Delete <span className="font-medium">{activeDashboard?.name}</span>? This removes all
               widgets on it.
@@ -222,7 +241,7 @@ export function DashboardSwitcher({
               onClick={() => setDeleteOpen(false)}
               disabled={pendingAction === 'delete'}
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               variant="destructive"

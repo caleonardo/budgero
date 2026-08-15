@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
@@ -102,8 +103,10 @@ export function ValueChangeStat({
               size === 'sm' ? 'text-[10px]' : 'text-xs'
             )}
           >
-            <Icon className={cn('h-3 w-3', colorClass)} />
-            Value change (30d)
+            <Trans>
+              <Icon className={cn('h-3 w-3', colorClass)} />
+              Value change (30d)
+            </Trans>
           </span>
           <p
             className={cn(
@@ -118,7 +121,9 @@ export function ValueChangeStat({
       </PopoverTrigger>
       <PopoverContent className="w-72 space-y-3" align="end">
         <div>
-          <p className="text-sm font-medium">Value change</p>
+          <p className="text-sm font-medium">
+            <Trans>Value change</Trans>
+          </p>
           <p className="text-xs text-muted-foreground">
             How much this account's worth in {budgetCurrency} moved with exchange rates. Your{' '}
             {accountCurrency} balance itself is unchanged.
@@ -135,19 +140,25 @@ export function ValueChangeStat({
           </div>
         ) : (
           <p className="text-xs text-muted-foreground">
-            Value changes are journaled once per day — history builds up as rates move.
+            <Trans>
+              Value changes are journaled once per day — history builds up as rates move.
+            </Trans>
           </p>
         )}
 
         <div className="space-y-1 text-xs">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Last 30 days</span>
+            <span className="text-muted-foreground">
+              <Trans>Last 30 days</Trans>
+            </span>
             <span className={cn('font-medium tabular-nums', colorClass)}>
               {formatBudgetMilliAmount(summary.last30Days)}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">All time</span>
+            <span className="text-muted-foreground">
+              <Trans>All time</Trans>
+            </span>
             <span
               className={cn(
                 'font-medium tabular-nums',
@@ -159,7 +170,9 @@ export function ValueChangeStat({
           </div>
           {latest && (
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Latest rate ({latest.Date})</span>
+              <span className="text-muted-foreground">
+                <Trans>Latest rate ({latest.Date})</Trans>
+              </span>
               <span className="font-medium tabular-nums">
                 1 {accountCurrency} = {formatRate(latest.NewRate)} {budgetCurrency}
               </span>

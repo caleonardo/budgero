@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Layers, Percent } from 'lucide-react';
@@ -254,17 +255,19 @@ export function InOutReport({ data, months }: InOutReportProps) {
         <>
           {mode === 'rate' ? (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              Target
-              <Input
-                type="number"
-                min={1}
-                max={100}
-                value={target ?? ''}
-                placeholder="—"
-                onChange={(event) => updateTarget(event.target.value)}
-                className="h-8 w-16 text-right"
-              />
-              %
+              <Trans>
+                Target
+                <Input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={target ?? ''}
+                  placeholder="—"
+                  onChange={(event) => updateTarget(event.target.value)}
+                  className="h-8 w-16 text-right"
+                />
+                %
+              </Trans>
             </div>
           ) : null}
           <ModeToggle
@@ -316,7 +319,9 @@ export function InOutReport({ data, months }: InOutReportProps) {
               detail={`avg ${money.tile(Math.round(totalSpending / monthCount))}/mo`}
             />
           </div>
-          <PanelSectionTitle>Monthly</PanelSectionTitle>
+          <PanelSectionTitle>
+            <Trans>Monthly</Trans>
+          </PanelSectionTitle>
           <div className="divide-y divide-border/50">
             {monthlyRows.map((point) => (
               <MonthRow

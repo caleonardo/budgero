@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import {
   X,
@@ -142,7 +143,9 @@ export const SearchActiveFilters = React.memo(function SearchActiveFilters({
       {parsed.textQuery.trim() && (
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Search className="h-3 w-3" />
-          <span>Searching: "{parsed.textQuery}"</span>
+          <span>
+            <Trans>Searching: "{parsed.textQuery}"</Trans>
+          </span>
         </div>
       )}
 
@@ -154,7 +157,7 @@ export const SearchActiveFilters = React.memo(function SearchActiveFilters({
           onClick={onClearAll}
           className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
         >
-          Clear all
+          <Trans>Clear all</Trans>
         </Button>
       )}
     </div>

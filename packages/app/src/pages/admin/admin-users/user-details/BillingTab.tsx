@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import type { AdminUserDetails, User } from '@features/admin/model/admin-users';
@@ -22,9 +23,11 @@ export function BillingTab({
     <TabSection loading={loading} error={error} onRetry={onRetry}>
       <Card>
         <CardHeader>
-          <CardTitle>Subscription Summary</CardTitle>
+          <CardTitle>
+            <Trans>Subscription Summary</Trans>
+          </CardTitle>
           <CardDescription>
-            Live LemonSqueezy plan details with recent invoice history.
+            <Trans>Live LemonSqueezy plan details with recent invoice history.</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -40,9 +43,11 @@ export function BillingTab({
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
+          <CardTitle>
+            <Trans>Recent Transactions</Trans>
+          </CardTitle>
           <CardDescription>
-            Most recent LemonSqueezy invoices, capped at ten records.
+            <Trans>Most recent LemonSqueezy invoices, capped at ten records.</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -51,11 +56,21 @@ export function BillingTab({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Reason</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead className="text-right">Invoice</TableHead>
+                  <TableHead>
+                    <Trans>Date</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Status</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Reason</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Total</Trans>
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <Trans>Invoice</Trans>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -75,10 +90,12 @@ export function BillingTab({
                           rel="noreferrer"
                           target="_blank"
                         >
-                          Open
+                          <Trans>Open</Trans>
                         </a>
                       ) : (
-                        <span className="text-muted-foreground">Unavailable</span>
+                        <span className="text-muted-foreground">
+                          <Trans>Unavailable</Trans>
+                        </span>
                       )}
                     </TableCell>
                   </TableRow>

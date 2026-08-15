@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog';
 import { AlertTriangle } from 'lucide-react';
 import type { PushApiState } from './usePushApiState';
@@ -37,16 +38,31 @@ export function RegenerateDialog({ state }: RegenerateDialogProps) {
         description={
           <span className="block space-y-3">
             <p>
-              You are about to reveal your <strong>encryption key</strong>. This key can decrypt all
-              your budget data.
+              <Trans>
+                You are about to reveal your{' '}
+                <strong>
+                  <Trans>encryption key</Trans>
+                </strong>
+                . This key can decrypt all your budget data.
+              </Trans>
             </p>
             <ul className="list-disc list-inside space-y-1 text-sm">
-              <li>Never share this key publicly</li>
-              <li>Store it in a secure password manager</li>
-              <li>Anyone with this key can read your budget data</li>
-              <li>The key will auto-hide after 60 seconds</li>
+              <li>
+                <Trans>Never share this key publicly</Trans>
+              </li>
+              <li>
+                <Trans>Store it in a secure password manager</Trans>
+              </li>
+              <li>
+                <Trans>Anyone with this key can read your budget data</Trans>
+              </li>
+              <li>
+                <Trans>The key will auto-hide after 60 seconds</Trans>
+              </li>
             </ul>
-            <p className="font-medium">Are you sure you want to reveal the key?</p>
+            <p className="font-medium">
+              <Trans>Are you sure you want to reveal the key?</Trans>
+            </p>
           </span>
         }
         confirmText="Reveal Key"

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Desktop Budget Table View Component
  *
@@ -62,12 +63,18 @@ export function DesktopBudgetTableView({
     <TableHeader>
       <TableRow>
         <TableHead className={cn(headClass, 'w-[48px]')} />
-        <TableHead className={cn(headClass, 'w-auto')}>Category</TableHead>
-        <TableHead className={cn(headClass, 'w-[140px] text-right')}>Assigned</TableHead>
-        <TableHead className={cn(headClass, 'hidden w-[140px] text-right min-[1250px]:table-cell')}>
-          Activity
+        <TableHead className={cn(headClass, 'w-auto')}>
+          <Trans>Category</Trans>
         </TableHead>
-        <TableHead className={cn(headClass, 'w-[160px] text-right pr-6')}>Available</TableHead>
+        <TableHead className={cn(headClass, 'w-[140px] text-right')}>
+          <Trans>Assigned</Trans>
+        </TableHead>
+        <TableHead className={cn(headClass, 'hidden w-[140px] text-right min-[1250px]:table-cell')}>
+          <Trans>Activity</Trans>
+        </TableHead>
+        <TableHead className={cn(headClass, 'w-[160px] text-right pr-6')}>
+          <Trans>Available</Trans>
+        </TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -102,11 +109,7 @@ export function DesktopBudgetTableView({
                 isDeleting: isDeletingGroup,
               };
               return sortable ? (
-                <SortableDesktopBudgetGroupRow
-                  key={item.id}
-                  {...groupProps}
-                  overId={overId}
-                />
+                <SortableDesktopBudgetGroupRow key={item.id} {...groupProps} overId={overId} />
               ) : (
                 <DesktopBudgetGroupRow key={item.id} {...groupProps} />
               );
@@ -127,11 +130,7 @@ export function DesktopBudgetTableView({
               selectable: !disableSelection,
             };
             return sortable ? (
-              <SortableDesktopBudgetCategoryRow
-                key={item.id}
-                {...categoryProps}
-                overId={overId}
-              />
+              <SortableDesktopBudgetCategoryRow key={item.id} {...categoryProps} overId={overId} />
             ) : (
               <DesktopBudgetCategoryRow key={item.id} {...categoryProps} />
             );

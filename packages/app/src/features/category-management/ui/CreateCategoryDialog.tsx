@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import * as React from 'react';
 
 import { Button } from '@shared/ui/button';
@@ -53,14 +54,18 @@ export function CreateCategoryDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create new category</DialogTitle>
+          <DialogTitle>
+            <Trans>Create new category</Trans>
+          </DialogTitle>
           <DialogDescription>
             Choose where to file “{pendingCategoryName || searchTerm.trim()}”.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="new-category-name">Category name</Label>
+            <Label htmlFor="new-category-name">
+              <Trans>Category name</Trans>
+            </Label>
             <Input
               id="new-category-name"
               value={pendingCategoryName}
@@ -70,7 +75,9 @@ export function CreateCategoryDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="new-category-group">Category group</Label>
+            <Label htmlFor="new-category-group">
+              <Trans>Category group</Trans>
+            </Label>
             <Select
               value={selectedGroupIdForCreate ? String(selectedGroupIdForCreate) : undefined}
               onValueChange={(value) => onSelectedGroupIdForCreateChange(Number(value))}
@@ -93,7 +100,7 @@ export function CreateCategoryDialog({
           {createError && <p className="text-sm text-destructive">{createError}</p>}
           {noGroupsAvailable && (
             <p className="text-sm text-muted-foreground">
-              You’ll need at least one category group before creating categories.
+              <Trans>You’ll need at least one category group before creating categories.</Trans>
             </p>
           )}
         </div>
@@ -104,7 +111,7 @@ export function CreateCategoryDialog({
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             type="button"

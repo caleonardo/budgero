@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Label } from '@shared/ui/label';
 import { Input } from '@shared/ui/input';
 import { Button } from '@shared/ui/button';
@@ -40,10 +41,14 @@ export function ModelSelectionSection({
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-2">
         <Label htmlFor="textModel" className="flex items-center gap-2">
-          <Cpu className="h-4 w-4" />
-          Text Model
+          <Trans>
+            <Cpu className="h-4 w-4" />
+            Text Model
+          </Trans>
         </Label>
-        <p className="text-xs text-muted-foreground">For categorization and analysis</p>
+        <p className="text-xs text-muted-foreground">
+          <Trans>For categorization and analysis</Trans>
+        </p>
         {availableModels.length > 0 ? (
           <Popover open={textModelOpen} onOpenChange={onTextModelOpenChange}>
             <PopoverTrigger asChild>
@@ -61,7 +66,9 @@ export function ModelSelectionSection({
               <Command>
                 <CommandInput placeholder="Search models..." />
                 <CommandList>
-                  <CommandEmpty>No model found.</CommandEmpty>
+                  <CommandEmpty>
+                    <Trans>No model found.</Trans>
+                  </CommandEmpty>
                   <CommandGroup>
                     {availableModels.map((model) => (
                       <CommandItem
@@ -98,10 +105,14 @@ export function ModelSelectionSection({
 
       <div className="space-y-2">
         <Label htmlFor="visionModel" className="flex items-center gap-2">
-          <Eye className="h-4 w-4" />
-          Vision Model
+          <Trans>
+            <Eye className="h-4 w-4" />
+            Vision Model
+          </Trans>
         </Label>
-        <p className="text-xs text-muted-foreground">For receipt/image scanning</p>
+        <p className="text-xs text-muted-foreground">
+          <Trans>For receipt/image scanning</Trans>
+        </p>
         {availableModels.length > 0 ? (
           <Popover open={visionModelOpen} onOpenChange={onVisionModelOpenChange}>
             <PopoverTrigger asChild>
@@ -119,7 +130,9 @@ export function ModelSelectionSection({
               <Command>
                 <CommandInput placeholder="Search models..." />
                 <CommandList>
-                  <CommandEmpty>No model found.</CommandEmpty>
+                  <CommandEmpty>
+                    <Trans>No model found.</Trans>
+                  </CommandEmpty>
                   <CommandGroup>
                     {availableModels.map((model) => (
                       <CommandItem

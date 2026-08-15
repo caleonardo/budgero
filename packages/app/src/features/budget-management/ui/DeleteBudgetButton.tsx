@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import type { Budget } from '@budgero/core/browser';
@@ -32,7 +33,7 @@ export const DeleteBudgetButton: React.FC<DeleteBudgetButtonProps> = ({
     <ConfirmDialog
       trigger={
         <Button variant="destructive" data-testid="delete-budget-trigger">
-          Delete Budget
+          <Trans>Delete Budget</Trans>
         </Button>
       }
       title="Are you absolutely sure?"

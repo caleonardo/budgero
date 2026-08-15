@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -196,7 +197,9 @@ export function MobileTopBar() {
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="bottom">Privacy mode</TooltipContent>
+                <TooltipContent side="bottom">
+                  <Trans>Privacy mode</Trans>
+                </TooltipContent>
               </Tooltip>
               {feedbackEnabled && (
                 <Button
@@ -222,7 +225,9 @@ export function MobileTopBar() {
                     <Undo2 className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="bottom">Undo</TooltipContent>
+                <TooltipContent side="bottom">
+                  <Trans>Undo</Trans>
+                </TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -236,7 +241,9 @@ export function MobileTopBar() {
                     <Redo2 className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="bottom">Redo</TooltipContent>
+                <TooltipContent side="bottom">
+                  <Trans>Redo</Trans>
+                </TooltipContent>
               </Tooltip>
             </div>
           </TooltipProvider>
@@ -253,8 +260,12 @@ export function MobileTopBar() {
           }}
         >
           <DialogContent>
-            <DialogTitle>Manage Budget</DialogTitle>
-            <DialogDescription>Edit or delete your budget</DialogDescription>
+            <DialogTitle>
+              <Trans>Manage Budget</Trans>
+            </DialogTitle>
+            <DialogDescription>
+              <Trans>Edit or delete your budget</Trans>
+            </DialogDescription>
 
             {error && (
               <div className="rounded-md bg-destructive-foreground/10 px-4 py-3 text-sm text-destructive">
@@ -283,7 +294,7 @@ export function MobileTopBar() {
                 onError={setError}
               />
               <Button type="submit" form="budget-form" variant="default">
-                Update Budget
+                <Trans>Update Budget</Trans>
               </Button>
             </div>
           </DialogContent>
@@ -299,8 +310,12 @@ export function MobileTopBar() {
           }}
         >
           <DialogContent>
-            <DialogTitle>Create New Budget</DialogTitle>
-            <DialogDescription>Set up a new budget to track your finances</DialogDescription>
+            <DialogTitle>
+              <Trans>Create New Budget</Trans>
+            </DialogTitle>
+            <DialogDescription>
+              <Trans>Set up a new budget to track your finances</Trans>
+            </DialogDescription>
             <BudgetWizard onCreated={handleBudgetCreated} />
           </DialogContent>
         </Dialog>

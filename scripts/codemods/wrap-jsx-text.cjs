@@ -53,9 +53,20 @@ function simpleExpression(expr) {
   }
 }
 
+// recast reprints JSXText from its decoded value, turning `&lt;` back into a
+// literal `<` and producing invalid JSX. Leave entity-bearing text alone.
+function hasHtmlEntity(node) {
+  const raw = (node.extra && node.extra.raw) || node.raw;
+  return typeof raw === 'string' && /&[a-zA-Z#][a-zA-Z0-9]*;/.test(raw);
+}
+
 function childOk(child, report) {
   switch (child.type) {
     case 'JSXText':
+      if (hasHtmlEntity(child)) {
+        report.htmlEntity++;
+        return false;
+      }
       return true;
     case 'JSXExpressionContainer':
       if (simpleExpression(child.expression)) return true;
@@ -89,7 +100,7 @@ function insideTrans(path) {
 module.exports = function transformer(file, api, options) {
   const j = api.jscodeshift;
   const root = j(file.source);
-  const report = { wrapped: 0, complexExpression: 0, skippedTag: 0, otherNode: 0 };
+  const report = { wrapped: 0, complexExpression: 0, skippedTag: 0, otherNode: 0, htmlEntity: 0 };
   let changed = false;
 
   root.find(j.JSXElement).forEach((path) => {

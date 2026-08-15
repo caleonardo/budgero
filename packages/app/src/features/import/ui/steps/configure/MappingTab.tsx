@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Mapping Tab
  *
@@ -209,10 +210,17 @@ export function MappingTab({
       <Alert className="mb-4">
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription className="break-words">
-          <strong>Required:</strong> Date column + Amount column (or Inflow/Outflow columns)
-          <br />
-          <strong>Optional:</strong> Payee, Account, Category, Memo (will use account selection
-          below if not mapped)
+          <Trans>
+            <strong>
+              <Trans>Required:</Trans>
+            </strong>
+            Date column + Amount column (or Inflow/Outflow columns)
+            <br />
+            <strong>
+              <Trans>Optional:</Trans>
+            </strong>
+            Payee, Account, Category, Memo (will use account selection below if not mapped)
+          </Trans>
         </AlertDescription>
       </Alert>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -235,7 +243,9 @@ export function MappingTab({
                   <SelectValue placeholder={`Select ${field} column`} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="none">
+                    <Trans>None</Trans>
+                  </SelectItem>
                   {parsedData?.headers
                     .filter((header) => header && header.trim())
                     .map((header) => (
@@ -257,7 +267,7 @@ export function MappingTab({
         <div className="mt-4 flex flex-wrap items-end gap-3 rounded-lg border border-amber-300/60 bg-amber-50/60 p-3 dark:border-amber-700/40 dark:bg-amber-950/20">
           <div className="space-y-1">
             <Label htmlFor="configure-default-year" className="text-xs font-medium">
-              Default year
+              <Trans>Default year</Trans>
             </Label>
             <Input
               id="configure-default-year"
@@ -270,8 +280,10 @@ export function MappingTab({
             />
           </div>
           <p className="flex-1 min-w-[12rem] text-xs text-muted-foreground">
-            The selected date column has no year (e.g. "Oct 25"). All transactions will be imported
-            using this year. Change it if the statement covers a different year.
+            <Trans>
+              The selected date column has no year (e.g. "Oct 25"). All transactions will be
+              imported using this year. Change it if the statement covers a different year.
+            </Trans>
           </p>
         </div>
       )}
@@ -283,7 +295,7 @@ export function MappingTab({
         <div className="mt-6 flex flex-wrap items-end gap-3 rounded-lg border bg-muted/30 p-3">
           <div className="space-y-1">
             <Label htmlFor="configure-skip-rows" className="text-xs font-medium">
-              Skip first N rows
+              <Trans>Skip first N rows</Trans>
             </Label>
             <Input
               id="configure-skip-rows"
@@ -295,8 +307,10 @@ export function MappingTab({
             />
           </div>
           <p className="flex-1 min-w-[12rem] text-xs text-muted-foreground">
-            Drop garbage rows from the top of the file (titles, blank lines, page banners). Header
-            detection and the previews below update automatically.
+            <Trans>
+              Drop garbage rows from the top of the file (titles, blank lines, page banners). Header
+              detection and the previews below update automatically.
+            </Trans>
           </p>
         </div>
       )}
@@ -304,7 +318,9 @@ export function MappingTab({
       {/* Manual Header Selection for PDFs */}
       {rawTableData && rawTableData.allRows && Array.isArray(rawTableData.allRows) && (
         <div className="mt-6">
-          <h4 className="font-medium mb-2">Select Header Row:</h4>
+          <h4 className="font-medium mb-2">
+            <Trans>Select Header Row:</Trans>
+          </h4>
           <p className="text-sm text-muted-foreground mb-4">
             Click on the row that contains your table headers.{' '}
             {visibleSuggestedHeaderIndex !== null &&
@@ -397,7 +413,9 @@ export function MappingTab({
 
       {parsedData && parsedData.headers.length > 0 && parsedData.rows.length > 0 && (
         <div className="mt-6">
-          <h4 className="font-medium mb-2">Preview of your data:</h4>
+          <h4 className="font-medium mb-2">
+            <Trans>Preview of your data:</Trans>
+          </h4>
           <p className="text-xs text-muted-foreground mb-2">
             Showing {Math.min(parsedData.rows.length, 500)} of {parsedData.rows.length} rows
             {skipRows > 0 ? ` (first ${skipRows} skipped)` : ''}

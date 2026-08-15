@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { CSVPDFImportDialog } from '@features/import/ui/csv-pdf-dialog';
@@ -84,11 +86,15 @@ export default function ImportsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <UploadIcon size={20} />
-            New Import
+            <Trans>
+              <UploadIcon size={20} />
+              New Import
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Map your file columns, preview the data, and bring transactions into your budget.
+            <Trans>
+              Map your file columns, preview the data, and bring transactions into your budget.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 sm:p-6">
@@ -99,38 +105,58 @@ export default function ImportsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Inbox size={20} />
-            Import History
+            <Trans>
+              <Inbox size={20} />
+              Import History
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Review recent imports and undo or archive them if something looks off.
+            <Trans>Review recent imports and undo or archive them if something looks off.</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           {budgetId === 0 ? (
             <div className="p-6 text-sm text-muted-foreground flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              Select a budget to view its import history.
+              <Trans>
+                <AlertTriangle className="h-4 w-4" />
+                Select a budget to view its import history.
+              </Trans>
             </div>
           ) : isLoading ? (
             <InlineLoadingRow label="Loading import history..." />
           ) : history.length === 0 ? (
             <div className="p-6 text-sm text-muted-foreground">
-              No imports yet. When you import transactions they will appear here for quick undo or
-              cleanup.
+              <Trans>
+                No imports yet. When you import transactions they will appear here for quick undo or
+                cleanup.
+              </Trans>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="min-w-[180px]">Imported</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead className="text-center">Transactions</TableHead>
-                    <TableHead className="text-center">Accounts Created</TableHead>
-                    <TableHead className="text-center">Categories Created</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="min-w-[180px]">
+                      <Trans>Imported</Trans>
+                    </TableHead>
+                    <TableHead>
+                      <Trans>Source</Trans>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Trans>Transactions</Trans>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Trans>Accounts Created</Trans>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Trans>Categories Created</Trans>
+                    </TableHead>
+                    <TableHead>
+                      <Trans>Status</Trans>
+                    </TableHead>
+                    <TableHead className="text-right">
+                      <Trans>Actions</Trans>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -174,7 +200,10 @@ export default function ImportsPage() {
                               })
                             }
                           >
-                            <Undo2 className="h-4 w-4 mr-1" /> Undo
+                            <Trans>
+                              <Undo2 className="h-4 w-4 mr-1" />
+                              Undo
+                            </Trans>
                           </Button>
                           <Button
                             size="sm"
@@ -188,7 +217,10 @@ export default function ImportsPage() {
                               })
                             }
                           >
-                            <Trash2 className="h-4 w-4 mr-1" /> Delete
+                            <Trans>
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Delete
+                            </Trans>
                           </Button>
                         </div>
                       </TableCell>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import type { AdminUserDetails } from '@features/admin/model/admin-users';
 import { TabSection } from './TabSection';
@@ -19,7 +20,9 @@ export function ActivityTab({
     <TabSection loading={loading} error={error} onRetry={onRetry}>
       <Card>
         <CardHeader>
-          <CardTitle>App Activity</CardTitle>
+          <CardTitle>
+            <Trans>App Activity</Trans>
+          </CardTitle>
           <CardDescription>
             Heartbeat-backed app usage across the last {details?.appActivity?.windowDays ?? 365}{' '}
             days.
@@ -52,7 +55,9 @@ export function ActivityTab({
 
       <Card>
         <CardHeader>
-          <CardTitle>Clerk Session Activity</CardTitle>
+          <CardTitle>
+            <Trans>Clerk Session Activity</Trans>
+          </CardTitle>
           <CardDescription>
             Session-derived auth activity estimated from Clerk session ranges across the last{' '}
             {details?.activity?.windowDays ?? 365} days.

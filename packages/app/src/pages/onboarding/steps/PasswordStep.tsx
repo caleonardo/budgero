@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { FieldLabel, InputRow, StepHeroImage, Title, type StepProps } from './shared';
 
@@ -29,7 +30,9 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
       />
       <div style={{ display: 'grid', gap: 14, marginTop: 8 }}>
         <div>
-          <FieldLabel>MASTER PASSWORD</FieldLabel>
+          <FieldLabel>
+            <Trans>MASTER PASSWORD</Trans>
+          </FieldLabel>
           <InputRow
             big
             type="password"
@@ -65,7 +68,9 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
           )}
         </div>
         <div>
-          <FieldLabel>CONFIRM PASSWORD</FieldLabel>
+          <FieldLabel>
+            <Trans>CONFIRM PASSWORD</Trans>
+          </FieldLabel>
           <InputRow
             type="password"
             value={state.passwordConfirm}
@@ -99,10 +104,13 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
         }}
       >
         <div style={{ fontWeight: 700, color: '#c6392c', letterSpacing: 1, marginBottom: 4 }}>
-          ⚠ READ THIS
+          <Trans>⚠ READ THIS</Trans>
         </div>
         Your budget is encrypted with this password on your device. We never see it. If you forget
-        it, <span style={{ fontWeight: 700, color: '#141414' }}>your ledger is unrecoverable</span>{' '}
+        it,{' '}
+        <span style={{ fontWeight: 700, color: '#141414' }}>
+          <Trans>your ledger is unrecoverable</Trans>
+        </span>{' '}
         — there is no reset email, no support line, no backdoor.
       </div>
     </div>

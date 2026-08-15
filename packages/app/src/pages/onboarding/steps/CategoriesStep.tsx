@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { CATEGORY_PRESETS } from '../onboarding-data';
 import { CategoriesIllustration } from '../illustrations';
@@ -63,7 +64,9 @@ export const CategoriesStep: React.FC<StepProps> = ({ cur, state, set }) => {
         ))}
       </div>
       <div style={{ marginTop: 16, fontSize: 11, color: '#393939' }}>
-        {state.selectedCats.length} envelopes selected. You can always add more later.
+        <Trans>
+          {state.selectedCats.length} envelopes selected. You can always add more later.
+        </Trans>
       </div>
     </div>
   );

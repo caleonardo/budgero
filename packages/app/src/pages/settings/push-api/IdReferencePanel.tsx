@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState, type ReactNode } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -60,12 +61,16 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Database className="h-5 w-5" />
-          ID Reference
+          <Trans>
+            <Database className="h-5 w-5" />
+            ID Reference
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Find the IDs you need for API requests. Click any ID to copy it. Payees are referenced by
-          name, not id.
+          <Trans>
+            Find the IDs you need for API requests. Click any ID to copy it. Payees are referenced
+            by name, not id.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -75,14 +80,18 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
               variant="outline"
               className="h-auto min-h-9 w-full justify-between whitespace-normal"
             >
-              <span className="text-left">Show Budget, Account, Category & Payee IDs</span>
+              <span className="text-left">
+                <Trans>Show Budget, Account, Category & Payee IDs</Trans>
+              </span>
               {showIds ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="mt-4 space-y-4">
             {/* Budgets */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Budgets</Label>
+              <Label className="text-sm font-medium">
+                <Trans>Budgets</Trans>
+              </Label>
               <div className="space-y-1">
                 {budgets?.map((budget) => (
                   <Collapsible
@@ -138,7 +147,9 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
                               </div>
                             ))}
                             {(!accounts || accounts.length === 0) && (
-                              <p className="text-xs text-muted-foreground p-2">No accounts found</p>
+                              <p className="text-xs text-muted-foreground p-2">
+                                <Trans>No accounts found</Trans>
+                              </p>
                             )}
                           </IdGroupSection>
 
@@ -177,7 +188,7 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
                             })}
                             {(!categoryGroups || categoryGroups.length === 0) && (
                               <p className="text-xs text-muted-foreground p-2">
-                                No categories found
+                                <Trans>No categories found</Trans>
                               </p>
                             )}
                           </IdGroupSection>
@@ -197,14 +208,16 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
                                   onClick={() => handleCopyText(payee.Name, 'Payee')}
                                 >
                                   <Badge variant="outline" className="font-mono text-xs">
-                                    name
+                                    <Trans>name</Trans>
                                   </Badge>
                                   <Copy className="h-3 w-3 ml-1" />
                                 </Button>
                               </div>
                             ))}
                             {(!payees || payees.length === 0) && (
-                              <p className="text-xs text-muted-foreground p-2">No payees yet</p>
+                              <p className="text-xs text-muted-foreground p-2">
+                                <Trans>No payees yet</Trans>
+                              </p>
                             )}
                           </IdGroupSection>
                         </>
@@ -213,7 +226,9 @@ export function IdReferencePanel({ state }: IdReferencePanelProps) {
                   </Collapsible>
                 ))}
                 {(!budgets || budgets.length === 0) && (
-                  <p className="text-sm text-muted-foreground p-2">No budgets found</p>
+                  <p className="text-sm text-muted-foreground p-2">
+                    <Trans>No budgets found</Trans>
+                  </p>
                 )}
               </div>
             </div>

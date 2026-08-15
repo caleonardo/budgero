@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { DropdownMenuItem, DropdownMenuSeparator } from '@shared/ui/dropdown-menu';
 import { Target, AlertTriangle, TrendingDown, RotateCcw, RefreshCw } from 'lucide-react';
 import type { GetMonthlyBudgetRow } from '@budgero/core/browser';
@@ -65,7 +66,9 @@ export function AssignQuickActions({
       >
         <Target className="h-4 w-4" />
         <div className="flex-1">
-          <div className="font-medium">Fund Goals</div>
+          <div className="font-medium">
+            <Trans>Fund Goals</Trans>
+          </div>
           <div className="text-xs text-muted-foreground">
             {underfundedGoals.length === 0
               ? 'All goals funded'
@@ -85,7 +88,9 @@ export function AssignQuickActions({
       >
         <AlertTriangle className="h-4 w-4" />
         <div className="flex-1">
-          <div className="font-medium">Cover Overspending</div>
+          <div className="font-medium">
+            <Trans>Cover Overspending</Trans>
+          </div>
           <div className="text-xs text-muted-foreground">
             {overspentCategories.length === 0
               ? 'No overspending'
@@ -103,7 +108,9 @@ export function AssignQuickActions({
       >
         <TrendingDown className="h-4 w-4" />
         <div className="flex-1">
-          <div className="font-medium">Reduce Overfunding</div>
+          <div className="font-medium">
+            <Trans>Reduce Overfunding</Trans>
+          </div>
           <div className="text-xs text-muted-foreground">
             {overfundedCategories.length === 0
               ? 'No overfunding'
@@ -121,7 +128,9 @@ export function AssignQuickActions({
       >
         <RotateCcw className="h-4 w-4" />
         <div className="flex-1">
-          <div className="font-medium">Reset Available to Zero</div>
+          <div className="font-medium">
+            <Trans>Reset Available to Zero</Trans>
+          </div>
           <div className="text-xs text-muted-foreground">
             {(() => {
               if (nonZeroCount === 0) {
@@ -143,7 +152,9 @@ export function AssignQuickActions({
       >
         <RefreshCw className="h-4 w-4" />
         <div className="flex-1">
-          <div className="font-medium">Reset Assigned Amounts</div>
+          <div className="font-medium">
+            <Trans>Reset Assigned Amounts</Trans>
+          </div>
           <div className="text-xs text-muted-foreground">
             {resetAssignedCount === 0
               ? 'All assignments already zero'

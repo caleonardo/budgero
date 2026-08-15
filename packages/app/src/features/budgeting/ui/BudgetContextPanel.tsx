@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import type { EChartsCoreOption } from 'echarts/core';
@@ -549,7 +550,7 @@ export function BudgetContextPanel({
     return (
       <Card className="h-full">
         <CardContent className="flex h-full items-center justify-center text-muted-foreground">
-          Add budget categories to view context insights.
+          <Trans>Add budget categories to view context insights.</Trans>
         </CardContent>
       </Card>
     );
@@ -565,37 +566,45 @@ export function BudgetContextPanel({
       <CardContent className={cn(contentClass, 'space-y-1.5 text-sm')}>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-blue-500/10 text-blue-500">
-              <Layers className="h-3.5 w-3.5" />
-            </span>
-            Categories
+            <Trans>
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-blue-500/10 text-blue-500">
+                <Layers className="h-3.5 w-3.5" />
+              </span>
+              Categories
+            </Trans>
           </span>
           <span className="font-medium">{isUsingAllCategories ? 'All' : selectedRows.length}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-500">
-              <Wallet className="h-3.5 w-3.5" />
-            </span>
-            Assigned
+            <Trans>
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-500">
+                <Wallet className="h-3.5 w-3.5" />
+              </span>
+              Assigned
+            </Trans>
           </span>
           <span className="font-medium">{formatAmount(summaryTotals.assigned)}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-rose-500/10 text-rose-500">
-              <ArrowLeftRight className="h-3.5 w-3.5" />
-            </span>
-            Activity
+            <Trans>
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-rose-500/10 text-rose-500">
+                <ArrowLeftRight className="h-3.5 w-3.5" />
+              </span>
+              Activity
+            </Trans>
           </span>
           <span className="font-medium">{formatAmount(summaryTotals.activity)}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-violet-500/10 text-violet-500">
-              <Coins className="h-3.5 w-3.5" />
-            </span>
-            Available
+            <Trans>
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-violet-500/10 text-violet-500">
+                <Coins className="h-3.5 w-3.5" />
+              </span>
+              Available
+            </Trans>
           </span>
           <span className="font-medium">{formatAmount(summaryTotals.available)}</span>
         </div>
@@ -606,7 +615,9 @@ export function BudgetContextPanel({
   const quickActionsCard = (
     <Card className={cardClass}>
       <CardHeader className={headerClass}>
-        <CardTitle className={titleClass}>Quick Actions</CardTitle>
+        <CardTitle className={titleClass}>
+          <Trans>Quick Actions</Trans>
+        </CardTitle>
       </CardHeader>
       <CardContent className={cn(contentClass, 'flex flex-col gap-1.5')}>
         {goalQuickActions?.underfunded && (
@@ -664,7 +675,9 @@ export function BudgetContextPanel({
       {selectedCategory && (
         <Card className={cardClass}>
           <CardHeader className={headerClass}>
-            <CardTitle className={titleClass}>{selectedCategory.name} Goal</CardTitle>
+            <CardTitle className={titleClass}>
+              <Trans>{selectedCategory.name} Goal</Trans>
+            </CardTitle>
           </CardHeader>
           <CardContent className={contentClass}>
             <GoalSection
@@ -687,20 +700,28 @@ export function BudgetContextPanel({
       {budgetPacingData && (
         <Card className={cardClass}>
           <CardHeader className={headerClass}>
-            <CardTitle className={titleClass}>Budget Pacing</CardTitle>
+            <CardTitle className={titleClass}>
+              <Trans>Budget Pacing</Trans>
+            </CardTitle>
           </CardHeader>
           <CardContent className={contentClass}>
             <div className="mb-3 text-sm space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Total Spent:</span>
+                <span className="text-muted-foreground">
+                  <Trans>Total Spent:</Trans>
+                </span>
                 <span className="font-medium">{formatAmount(budgetPacingData.totalSpent)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Monthly Goal:</span>
+                <span className="text-muted-foreground">
+                  <Trans>Monthly Goal:</Trans>
+                </span>
                 <span className="font-medium">{formatAmount(budgetPacingData.goal)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Progress:</span>
+                <span className="text-muted-foreground">
+                  <Trans>Progress:</Trans>
+                </span>
                 <span
                   className={`font-medium ${budgetPacingData.totalSpent > budgetPacingData.goal ? 'text-red-600' : 'text-green-600'}`}
                 >
@@ -721,7 +742,9 @@ export function BudgetContextPanel({
 
       <Card className={cardClass}>
         <CardHeader className={headerClass}>
-          <CardTitle className={titleClass}>Spending & Assignments History</CardTitle>
+          <CardTitle className={titleClass}>
+            <Trans>Spending & Assignments History</Trans>
+          </CardTitle>
         </CardHeader>
         <CardContent className={contentClass}>
           <div className="mb-2 text-sm text-muted-foreground">

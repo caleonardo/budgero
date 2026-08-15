@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { parseISO, format } from 'date-fns';
 import type { EChartsCoreOption } from 'echarts/core';
@@ -337,9 +338,11 @@ export function IncomeExpenseByGroupChart() {
     <Card className="shadow-sm">
       <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <CardTitle className="text-lg font-semibold">Income vs expense trend</CardTitle>
+          <CardTitle className="text-lg font-semibold">
+            <Trans>Income vs expense trend</Trans>
+          </CardTitle>
           <CardDescription>
-            Spot how cash flows in and out across the selected period grouping.
+            <Trans>Spot how cash flows in and out across the selected period grouping.</Trans>
           </CardDescription>
         </div>
         <div className="flex w-full flex-wrap items-stretch gap-2 sm:justify-end">
@@ -360,19 +363,23 @@ export function IncomeExpenseByGroupChart() {
                 <Command>
                   <CommandInput placeholder="Search accounts..." />
                   <CommandList className="max-h-64 overflow-y-auto">
-                    <CommandEmpty>No accounts found.</CommandEmpty>
+                    <CommandEmpty>
+                      <Trans>No accounts found.</Trans>
+                    </CommandEmpty>
                     <CommandItem
                       value="__all__"
                       onSelect={() => setSelectedAccountIds([])}
                       className="cursor-pointer"
                     >
-                      <Check
-                        className={cn(
-                          'mr-2 h-4 w-4',
-                          selectedAccountIds.length === 0 ? 'opacity-100' : 'opacity-0'
-                        )}
-                      />
-                      All on-budget accounts
+                      <Trans>
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            selectedAccountIds.length === 0 ? 'opacity-100' : 'opacity-0'
+                          )}
+                        />
+                        All on-budget accounts
+                      </Trans>
                     </CommandItem>
                     {onBudgetAccounts.length > 0 && (
                       <CommandGroup heading="Accounts">
@@ -431,8 +438,12 @@ export function IncomeExpenseByGroupChart() {
           </div>
         ) : chartData.length === 0 ? (
           <div className="flex h-[260px] flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
-            <p>No income or expense activity for the selected range.</p>
-            <p>Adjust the filters or date range to explore other periods.</p>
+            <p>
+              <Trans>No income or expense activity for the selected range.</Trans>
+            </p>
+            <p>
+              <Trans>Adjust the filters or date range to explore other periods.</Trans>
+            </p>
           </div>
         ) : (
           <div className="h-[320px]">

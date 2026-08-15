@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle,
@@ -149,10 +150,12 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-sm font-medium">
           <ShieldCheck className="h-4 w-4 text-muted-foreground" />
-          <span>Workspace Sharing</span>
+          <span>
+            <Trans>Workspace Sharing</Trans>
+          </span>
         </div>
         <Button variant="secondary" size="sm" onClick={() => setRedeemDialogOpen(true)}>
-          Redeem Invite
+          <Trans>Redeem Invite</Trans>
         </Button>
       </div>
 
@@ -194,8 +197,10 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
 
           {seatUsage.sharingLimitReached ? (
             <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-900 dark:text-amber-200">
-              Your account has reached the 5-person collaborator limit across owned workspaces.
-              Remove a member or cancel a pending invite before creating another one.
+              <Trans>
+                Your account has reached the 5-person collaborator limit across owned workspaces.
+                Remove a member or cancel a pending invite before creating another one.
+              </Trans>
             </div>
           ) : null}
 
@@ -203,7 +208,9 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
             <div className="rounded-md border border-dashed border-primary/40 bg-primary/5 p-3 text-xs">
               <div className="mb-2 flex items-center gap-2 font-medium text-primary">
                 <CheckCircle2 className="h-4 w-4" />
-                <span>Invite ready — share the link below</span>
+                <span>
+                  <Trans>Invite ready — share the link below</Trans>
+                </span>
               </div>
               <div className="rounded-md bg-background px-3 py-2 font-mono text-xs break-all">
                 {buildJoinUrl(latestInvite.invite_secret)}
@@ -215,8 +222,10 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
                   variant="default"
                   onClick={() => handleCopyLink(latestInvite.invite_secret)}
                 >
-                  <Copy className="mr-2 h-3.5 w-3.5" />
-                  Copy link
+                  <Trans>
+                    <Copy className="mr-2 h-3.5 w-3.5" />
+                    Copy link
+                  </Trans>
                 </Button>
                 <Button type="button" size="sm" variant="outline" asChild>
                   <a
@@ -225,8 +234,10 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
                       url: buildJoinUrl(latestInvite.invite_secret),
                     })}
                   >
-                    <MailPlus className="mr-2 h-3.5 w-3.5" />
-                    Open in email
+                    <Trans>
+                      <MailPlus className="mr-2 h-3.5 w-3.5" />
+                      Open in email
+                    </Trans>
                   </a>
                 </Button>
                 <Button
@@ -235,13 +246,15 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
                   variant="ghost"
                   onClick={() => handleCopySecret(latestInvite.invite_secret)}
                 >
-                  Copy code only
+                  <Trans>Copy code only</Trans>
                 </Button>
               </div>
               <p className="mt-2 text-muted-foreground">
-                Budgero never sees this secret — but whatever channel you share through will. For
-                the strongest privacy, hand it over in person or via an end-to-end encrypted app
-                (Signal, iMessage, WhatsApp). We can’t show this code again, so capture it now.
+                <Trans>
+                  Budgero never sees this secret — but whatever channel you share through will. For
+                  the strongest privacy, hand it over in person or via an end-to-end encrypted app
+                  (Signal, iMessage, WhatsApp). We can’t show this code again, so capture it now.
+                </Trans>
               </p>
             </div>
           )}
@@ -250,30 +263,41 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
             <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-900">
               <div className="flex items-center gap-2 font-medium">
                 <AlertTriangle className="h-4 w-4" />
-                <span>Pending invites still need their encrypted bundle.</span>
+                <span>
+                  <Trans>Pending invites still need their encrypted bundle.</Trans>
+                </span>
               </div>
               <p className="mt-1">
-                Try cancelling and re-creating the invite if this warning persists.
+                <Trans>Try cancelling and re-creating the invite if this warning persists.</Trans>
               </p>
             </div>
           )}
         </div>
       ) : (
         <div className="rounded-md border border-dashed border-muted-foreground/40 bg-muted/20 p-3 text-sm text-muted-foreground">
-          Only workspace owners can create new invites. Ask an owner to share access with teammates.
+          <Trans>
+            Only workspace owners can create new invites. Ask an owner to share access with
+            teammates.
+          </Trans>
         </div>
       )}
 
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <MailPlus className="h-4 w-4" />
-          <span>Pending invites</span>
+          <span>
+            <Trans>Pending invites</Trans>
+          </span>
         </div>
         <Separator />
         {invitesLoading ? (
-          <div className="text-xs text-muted-foreground">Loading invites…</div>
+          <div className="text-xs text-muted-foreground">
+            <Trans>Loading invites…</Trans>
+          </div>
         ) : pendingInvites.length === 0 ? (
-          <div className="text-xs text-muted-foreground">No pending invitations.</div>
+          <div className="text-xs text-muted-foreground">
+            <Trans>No pending invitations.</Trans>
+          </div>
         ) : (
           <div className="space-y-2">
             {pendingInvites.map((invite) => (
@@ -312,7 +336,9 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
                     <Clock className="h-3 w-3" />
                     {invite.expires_at ? new Date(invite.expires_at).toLocaleString() : 'No expiry'}
                   </span>
-                  <span>Status: {invite.status}</span>
+                  <span>
+                    <Trans>Status: {invite.status}</Trans>
+                  </span>
                 </div>
               </div>
             ))}
@@ -323,13 +349,19 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <Users className="h-4 w-4" />
-          <span>Members</span>
+          <span>
+            <Trans>Members</Trans>
+          </span>
         </div>
         <Separator />
         {membersLoading ? (
-          <div className="text-xs text-muted-foreground">Loading members…</div>
+          <div className="text-xs text-muted-foreground">
+            <Trans>Loading members…</Trans>
+          </div>
         ) : members.length === 0 ? (
-          <div className="text-xs text-muted-foreground">No members yet.</div>
+          <div className="text-xs text-muted-foreground">
+            <Trans>No members yet.</Trans>
+          </div>
         ) : (
           <div className="space-y-2">
             {members.map((member) => {
@@ -347,7 +379,7 @@ export function WorkspaceSharingPanel({ activeSpace, spaces }: WorkspaceSharingP
                     </div>
                     {member.role !== 'owner' ? (
                       <div className="text-xs text-muted-foreground">
-                        Status: {member.invitation_status}
+                        <Trans>Status: {member.invitation_status}</Trans>
                       </div>
                     ) : null}
                   </div>

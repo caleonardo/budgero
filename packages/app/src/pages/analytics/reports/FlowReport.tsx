@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { trendTextClass } from '@shared/lib/amount-color';
@@ -181,7 +182,9 @@ export function FlowReport({ data }: FlowReportProps) {
               valueClassName={savingsRate !== null ? trendTextClass(savingsRate) : undefined}
             />
           </div>
-          <PanelSectionTitle>Destinations</PanelSectionTitle>
+          <PanelSectionTitle>
+            <Trans>Destinations</Trans>
+          </PanelSectionTitle>
           <div>
             {groupRows.map((row) => (
               <ProportionRow

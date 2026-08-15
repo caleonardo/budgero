@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * "Backup" tab of CreateBudgetForm: restore a Budgero `.db`/`.sqlite` backup,
  * replacing all data in the current workspace.
@@ -34,20 +35,27 @@ export function RestoreBackupTab({
         <div className="flex items-start gap-2">
           <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
           <span>
-            Restoring a Budgero backup replaces all data in this workspace. Use it right after
-            setting up Budgero Cloud or when you&apos;re ready to move your offline database into
-            sync.
+            <Trans>
+              Restoring a Budgero backup replaces all data in this workspace. Use it right after
+              setting up Budgero Cloud or when you're ready to move your offline database into sync.
+            </Trans>
           </span>
         </div>
       </div>
 
       <Field
-        label={<span className="text-xs sm:text-sm">Budgero Backup File (.db or .sqlite)</span>}
+        label={
+          <span className="text-xs sm:text-sm">
+            <Trans>Budgero Backup File (.db or .sqlite)</Trans>
+          </span>
+        }
         htmlFor="coreFile"
         hint={
           <span className="sm:text-sm">
-            Choose the database you exported as a Budgero backup. We&apos;ll import every budget,
-            account, and transaction.
+            <Trans>
+              Choose the database you exported as a Budgero backup. We'll import every budget,
+              account, and transaction.
+            </Trans>
           </span>
         }
       >
@@ -72,7 +80,7 @@ export function RestoreBackupTab({
           disabled={isCoreImporting}
           className="flex-1 h-8 sm:h-9"
         >
-          Reset
+          <Trans>Reset</Trans>
         </Button>
         <Button
           type="button"
@@ -83,12 +91,16 @@ export function RestoreBackupTab({
           {isCoreImporting ? (
             <>
               <Loader2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-              <span className="text-xs sm:text-sm">Importing...</span>
+              <span className="text-xs sm:text-sm">
+                <Trans>Importing...</Trans>
+              </span>
             </>
           ) : (
             <>
               <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="text-xs sm:text-sm">Restore Backup</span>
+              <span className="text-xs sm:text-sm">
+                <Trans>Restore Backup</Trans>
+              </span>
             </>
           )}
         </Button>

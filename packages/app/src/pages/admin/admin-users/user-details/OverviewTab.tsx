@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Copy } from 'lucide-react';
 
 import { Button } from '@shared/ui/button';
@@ -33,8 +34,12 @@ export function OverviewTab({
     <TabSection loading={loading} error={error} onRetry={onRetry}>
       <Card>
         <CardHeader>
-          <CardTitle>Identity</CardTitle>
-          <CardDescription>Core account and entitlement metadata.</CardDescription>
+          <CardTitle>
+            <Trans>Identity</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Core account and entitlement metadata.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           <KeyValue
@@ -68,7 +73,9 @@ export function OverviewTab({
       <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <Card>
           <CardHeader>
-            <CardTitle>Recent App Activity Snapshot</CardTitle>
+            <CardTitle>
+              <Trans>Recent App Activity Snapshot</Trans>
+            </CardTitle>
             <CardDescription>
               Daily app heartbeats captured over the last {details?.appActivity?.windowDays ?? 365}{' '}
               days.
@@ -90,8 +97,12 @@ export function OverviewTab({
 
         <Card>
           <CardHeader>
-            <CardTitle>Mutation Snapshot</CardTitle>
-            <CardDescription>Write activity from the mutation log.</CardDescription>
+            <CardTitle>
+              <Trans>Mutation Snapshot</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Write activity from the mutation log.</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <SectionError message={details?.sectionErrors?.mutations} />
@@ -104,7 +115,7 @@ export function OverviewTab({
             </div>
             <div className="rounded-lg border bg-muted/30 p-4">
               <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Last Mutation
+                <Trans>Last Mutation</Trans>
               </div>
               {details?.mutations.lastMutation ? (
                 <div className="mt-3 space-y-2 text-sm">
@@ -113,7 +124,7 @@ export function OverviewTab({
                     {details.mutations.lastMutation.version}
                   </div>
                   <div className="text-muted-foreground">
-                    Space {details.mutations.lastMutation.spaceId}
+                    <Trans>Space {details.mutations.lastMutation.spaceId}</Trans>
                   </div>
                   <div>
                     {formatDate(details.mutations.lastMutation.timestamp, 'MMM d, yyyy HH:mm')}

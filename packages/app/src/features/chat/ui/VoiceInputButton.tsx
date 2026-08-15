@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Mic, MicOff, Loader2, Download } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui/tooltip';
@@ -115,7 +116,11 @@ export function VoiceInputButton({ disabled = false }: VoiceInputButtonProps) {
             {isModelLoading && modelLoadProgress > 0 && (
               <Progress value={modelLoadProgress} className="h-1.5 w-32" />
             )}
-            {isRecording && <p className="text-xs text-muted-foreground">Click to stop</p>}
+            {isRecording && (
+              <p className="text-xs text-muted-foreground">
+                <Trans>Click to stop</Trans>
+              </p>
+            )}
           </div>
         </TooltipContent>
       </Tooltip>

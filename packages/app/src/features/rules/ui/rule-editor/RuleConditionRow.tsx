@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -51,10 +52,18 @@ export const RuleConditionRow = React.memo(function RuleConditionRow({
             <SelectValue placeholder="Field" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="memo">Memo</SelectItem>
-            <SelectItem value="payee">Payee</SelectItem>
-            <SelectItem value="amount">Amount</SelectItem>
-            <SelectItem value="account">Account</SelectItem>
+            <SelectItem value="memo">
+              <Trans>Memo</Trans>
+            </SelectItem>
+            <SelectItem value="payee">
+              <Trans>Payee</Trans>
+            </SelectItem>
+            <SelectItem value="amount">
+              <Trans>Amount</Trans>
+            </SelectItem>
+            <SelectItem value="account">
+              <Trans>Account</Trans>
+            </SelectItem>
           </SelectContent>
         </Select>
         <Select
@@ -97,7 +106,9 @@ export const RuleConditionRow = React.memo(function RuleConditionRow({
             </SelectTrigger>
             <SelectContent>
               {accounts.length === 0 ? (
-                <SelectItem value="">No accounts available</SelectItem>
+                <SelectItem value="">
+                  <Trans>No accounts available</Trans>
+                </SelectItem>
               ) : (
                 accounts.map((account) => (
                   <SelectItem key={account.ID} value={account.ID.toString()}>
@@ -122,11 +133,13 @@ export const RuleConditionRow = React.memo(function RuleConditionRow({
 
       {condition.field === 'memo' || condition.field === 'payee' ? (
         <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-          <Switch
-            checked={Boolean(condition.caseSensitive)}
-            onCheckedChange={(value) => onUpdate(index, { caseSensitive: value })}
-          />
-          Case sensitive matching
+          <Trans>
+            <Switch
+              checked={Boolean(condition.caseSensitive)}
+              onCheckedChange={(value) => onUpdate(index, { caseSensitive: value })}
+            />
+            Case sensitive matching
+          </Trans>
         </div>
       ) : null}
     </div>

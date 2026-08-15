@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import {
   Dialog,
   DialogClose,
@@ -111,7 +112,7 @@ export function RuleEditorDialog({
         disabled={isSubmitting}
         className="w-full sm:w-auto"
       >
-        Cancel
+        <Trans>Cancel</Trans>
       </Button>
       <Button onClick={state.handleSubmit} disabled={isSubmitting} className="w-full sm:w-auto">
         {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create rule' : 'Save changes'}
@@ -137,7 +138,9 @@ export function RuleEditorDialog({
             <SheetClose asChild>
               <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-full">
                 <X className="h-4 w-4" />
-                <span className="sr-only">Close</span>
+                <span className="sr-only">
+                  <Trans>Close</Trans>
+                </span>
               </Button>
             </SheetClose>
           </div>
@@ -170,7 +173,9 @@ export function RuleEditorDialog({
           <DialogClose asChild>
             <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-full">
               <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">
+                <Trans>Close</Trans>
+              </span>
             </Button>
           </DialogClose>
         </div>

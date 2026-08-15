@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Account Group Section Component
  *
@@ -113,7 +114,9 @@ export function AccountGroupSection({
                       {trend.percentage >= 0 ? '+' : ''}
                       {trend.percentage.toFixed(1)}%
                     </span>
-                    <span className="text-muted-foreground text-xs">{periodLabel} change</span>
+                    <span className="text-muted-foreground text-xs">
+                      <Trans>{periodLabel} change</Trans>
+                    </span>
                   </div>
                 </div>
               </div>

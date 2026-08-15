@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import type React from 'react';
 import { useId } from 'react';
 import { format } from 'date-fns';
@@ -115,7 +116,7 @@ export function WarrantyFormDialog({
         <div className="flex flex-col gap-4 py-2 overflow-y-auto flex-1 min-h-0">
           <div>
             <Label htmlFor={nameId} className="text-sm font-medium mb-1 block">
-              Name *
+              <Trans>Name *</Trans>
             </Label>
             <Input
               id={nameId}
@@ -127,7 +128,7 @@ export function WarrantyFormDialog({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor={expiryId} className="text-sm font-medium mb-1 block">
-                Expiry Date *
+                <Trans>Expiry Date *</Trans>
               </Label>
               <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
                 <PopoverTrigger asChild>
@@ -155,7 +156,7 @@ export function WarrantyFormDialog({
             </div>
             <div>
               <Label htmlFor={amountId} className="text-sm font-medium mb-1 block">
-                Amount
+                <Trans>Amount</Trans>
               </Label>
               <Input
                 id={amountId}
@@ -170,7 +171,9 @@ export function WarrantyFormDialog({
           </div>
           <div>
             {/* Caption, not a <label>: the control below is a dropzone/camera composite. */}
-            <span className="text-sm font-medium mb-1 block">Receipt Image</span>
+            <span className="text-sm font-medium mb-1 block">
+              <Trans>Receipt Image</Trans>
+            </span>
             <canvas ref={canvasRef} className="hidden" />
             <input
               ref={fileInputRef}
@@ -209,7 +212,7 @@ export function WarrantyFormDialog({
           </div>
           <div>
             <Label htmlFor={transactionId} className="text-sm font-medium mb-1 block">
-              Link to Transaction
+              <Trans>Link to Transaction</Trans>
             </Label>
             <Popover open={txComboboxOpen} onOpenChange={setTxComboboxOpen} modal>
               <PopoverTrigger asChild>
@@ -231,7 +234,9 @@ export function WarrantyFormDialog({
                 <Command loop>
                   <CommandInput placeholder="Search transactions..." />
                   <CommandList>
-                    <CommandEmpty>No transactions found.</CommandEmpty>
+                    <CommandEmpty>
+                      <Trans>No transactions found.</Trans>
+                    </CommandEmpty>
                     {form.transactionId && (
                       <CommandGroup heading="Actions">
                         <CommandItem
@@ -241,8 +246,10 @@ export function WarrantyFormDialog({
                             setTxComboboxOpen(false);
                           }}
                         >
-                          <X className="h-4 w-4 mr-2" />
-                          Clear selection
+                          <Trans>
+                            <X className="h-4 w-4 mr-2" />
+                            Clear selection
+                          </Trans>
                         </CommandItem>
                       </CommandGroup>
                     )}
@@ -284,7 +291,7 @@ export function WarrantyFormDialog({
           </div>
           <div>
             <Label htmlFor={notesId} className="text-sm font-medium mb-1 block">
-              Notes
+              <Trans>Notes</Trans>
             </Label>
             <Textarea
               id={notesId}
@@ -297,7 +304,7 @@ export function WarrantyFormDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button onClick={onSubmit} disabled={submitting}>
             {submitting ? 'Saving...' : editingWarranty ? 'Update' : 'Create'}

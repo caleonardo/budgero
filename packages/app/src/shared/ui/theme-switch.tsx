@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Moon, Palette, Sun } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { useTheme } from 'next-themes';
@@ -77,7 +78,9 @@ export function ThemeSwitch() {
           ) : (
             <Moon className="h-4 w-4" />
           )}
-          <span className="sr-only">Toggle color mode</span>
+          <span className="sr-only">
+            <Trans>Toggle color mode</Trans>
+          </span>
         </Button>
       )}
       <DropdownMenu>
@@ -85,11 +88,15 @@ export function ThemeSwitch() {
           <Button variant="outline" size="sm" className="gap-2">
             <Palette className="h-4 w-4" />
             <span className="hidden sm:inline">{selectedPreset?.name ?? 'Theme preset'}</span>
-            <span className="sr-only">Open theme preset menu</span>
+            <span className="sr-only">
+              <Trans>Open theme preset menu</Trans>
+            </span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-64">
-          <DropdownMenuLabel>Theme preset</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            <Trans>Theme preset</Trans>
+          </DropdownMenuLabel>
           <DropdownMenuRadioGroup value={themeId} onValueChange={handlePresetChange}>
             {availableThemes.map((preset) => (
               <DropdownMenuRadioItem key={preset.id} value={preset.id} className="gap-2">
@@ -113,11 +120,19 @@ export function ThemeSwitch() {
           {isDualMode && (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuLabel>Color mode</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                <Trans>Color mode</Trans>
+              </DropdownMenuLabel>
               <DropdownMenuRadioGroup value={selectedMode} onValueChange={handleModeChange}>
-                <DropdownMenuRadioItem value="light">Light</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="dark">Dark</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="system">System</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="light">
+                  <Trans>Light</Trans>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="dark">
+                  <Trans>Dark</Trans>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="system">
+                  <Trans>System</Trans>
+                </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </>
           )}

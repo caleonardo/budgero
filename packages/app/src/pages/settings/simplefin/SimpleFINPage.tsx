@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -93,19 +95,25 @@ export default function SimpleFINPage() {
         description="Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync."
       >
         <Badge variant="outline" className="text-amber-600 border-amber-600">
-          <Beaker className="h-3 w-3 mr-1" />
-          Experimental
+          <Trans>
+            <Beaker className="h-3 w-3 mr-1" />
+            Experimental
+          </Trans>
         </Badge>
       </SettingsPageHeader>
 
       {/* Experimental Warning */}
       <Alert className="border-amber-500 bg-amber-500/10">
         <AlertTriangle className="h-4 w-4 text-amber-500" />
-        <AlertTitle className="text-amber-600">Experimental Feature</AlertTitle>
+        <AlertTitle className="text-amber-600">
+          <Trans>Experimental Feature</Trans>
+        </AlertTitle>
         <AlertDescription className="text-amber-600/90">
-          SimpleFIN integration is currently in development. Features may change, break, or be
-          removed without notice. Your credentials are stored locally in your browser. Use at your
-          own risk.
+          <Trans>
+            SimpleFIN integration is currently in development. Features may change, break, or be
+            removed without notice. Your credentials are stored locally in your browser. Use at your
+            own risk.
+          </Trans>
         </AlertDescription>
       </Alert>
 
@@ -113,8 +121,10 @@ export default function SimpleFINPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 size={20} />
-            Connection Status
+            <Trans>
+              <Building2 size={20} />
+              Connection Status
+            </Trans>
           </CardTitle>
           <CardDescription>
             {isConnected
@@ -127,12 +137,16 @@ export default function SimpleFINPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-green-600">
                 <CheckCircle2 className="h-5 w-5" />
-                <span className="font-medium">Connected</span>
+                <span className="font-medium">
+                  <Trans>Connected</Trans>
+                </span>
               </div>
               {parsedCredentials && (
                 <div className="text-sm text-muted-foreground">
                   <p>
-                    Server: {parsedCredentials.scheme}://{parsedCredentials.host}
+                    <Trans>
+                      Server: {parsedCredentials.scheme}://{parsedCredentials.host}
+                    </Trans>
                   </p>
                   {credentials?.createdAt && (
                     <p>Connected: {formatDate(new Date(credentials.createdAt))}</p>
@@ -149,8 +163,10 @@ export default function SimpleFINPage() {
                   Refresh
                 </Button>
                 <Button variant="destructive" onClick={() => setShowDisconnectDialog(true)}>
-                  <Unplug className="h-4 w-4 mr-2" />
-                  Disconnect
+                  <Trans>
+                    <Unplug className="h-4 w-4 mr-2" />
+                    Disconnect
+                  </Trans>
                 </Button>
               </div>
             </div>
@@ -165,8 +181,10 @@ export default function SimpleFINPage() {
                     rel="noopener noreferrer"
                     className="text-primary hover:underline inline-flex items-center gap-1"
                   >
-                    SimpleFIN Bridge
-                    <ExternalLink className="h-3 w-3" />
+                    <Trans>
+                      SimpleFIN Bridge
+                      <ExternalLink className="h-3 w-3" />
+                    </Trans>
                   </a>
                 </p>
                 <Input
@@ -199,7 +217,9 @@ export default function SimpleFINPage() {
       {accountErrors.length > 0 && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Account Errors</AlertTitle>
+          <AlertTitle>
+            <Trans>Account Errors</Trans>
+          </AlertTitle>
           <AlertDescription>
             <ul className="list-disc list-inside">
               {accountErrors.map((error, index) => (
@@ -214,7 +234,9 @@ export default function SimpleFINPage() {
       {fetchError && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Failed to fetch accounts</AlertTitle>
+          <AlertTitle>
+            <Trans>Failed to fetch accounts</Trans>
+          </AlertTitle>
           <AlertDescription>{getErrorMessage(fetchError, 'Unknown error')}</AlertDescription>
         </Alert>
       )}
@@ -224,12 +246,16 @@ export default function SimpleFINPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Wallet size={20} />
-              Linked Accounts
+              <Trans>
+                <Wallet size={20} />
+                Linked Accounts
+              </Trans>
             </CardTitle>
             <CardDescription>
-              Accounts available through your SimpleFIN connection. Click an account to view recent
-              transactions.
+              <Trans>
+                Accounts available through your SimpleFIN connection. Click an account to view
+                recent transactions.
+              </Trans>
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
@@ -237,18 +263,30 @@ export default function SimpleFINPage() {
               <InlineLoadingRow label="Loading accounts..." />
             ) : accounts.length === 0 ? (
               <div className="p-6 text-sm text-muted-foreground">
-                No accounts found. Make sure your SimpleFIN connection is properly configured.
+                <Trans>
+                  No accounts found. Make sure your SimpleFIN connection is properly configured.
+                </Trans>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Institution</TableHead>
-                      <TableHead>Account</TableHead>
-                      <TableHead className="text-right">Balance</TableHead>
-                      <TableHead className="text-right">Available</TableHead>
-                      <TableHead>Last Updated</TableHead>
+                      <TableHead>
+                        <Trans>Institution</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Account</Trans>
+                      </TableHead>
+                      <TableHead className="text-right">
+                        <Trans>Balance</Trans>
+                      </TableHead>
+                      <TableHead className="text-right">
+                        <Trans>Available</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Last Updated</Trans>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -299,23 +337,35 @@ export default function SimpleFINPage() {
       {selectedAccount && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Transactions - {selectedAccount.name}</CardTitle>
-            <CardDescription>Recent transactions from the last 30 days.</CardDescription>
+            <CardTitle className="text-lg">
+              <Trans>Transactions - {selectedAccount.name}</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Recent transactions from the last 30 days.</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             {!selectedAccount.transactions || selectedAccount.transactions.length === 0 ? (
               <div className="p-6 text-sm text-muted-foreground">
-                No transactions available for this account.
+                <Trans>No transactions available for this account.</Trans>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>
+                        <Trans>Date</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Description</Trans>
+                      </TableHead>
+                      <TableHead className="text-right">
+                        <Trans>Amount</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Status</Trans>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -337,10 +387,12 @@ export default function SimpleFINPage() {
                         <TableCell>
                           {tx.pending ? (
                             <Badge variant="outline" className="text-amber-600">
-                              Pending
+                              <Trans>Pending</Trans>
                             </Badge>
                           ) : (
-                            <Badge variant="secondary">Posted</Badge>
+                            <Badge variant="secondary">
+                              <Trans>Posted</Trans>
+                            </Badge>
                           )}
                         </TableCell>
                       </TableRow>

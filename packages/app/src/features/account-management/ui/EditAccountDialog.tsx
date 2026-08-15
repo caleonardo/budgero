@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Dialog,
@@ -312,9 +313,11 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
 
         <DialogContent className="p-4 sm:p-6 text-sm sm:text-base max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">Edit Account</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">
+              <Trans>Edit Account</Trans>
+            </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm">
-              Fill in the details below to edit this account.
+              <Trans>Fill in the details below to edit this account.</Trans>
             </DialogDescription>
           </DialogHeader>
 
@@ -377,7 +380,9 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
               {/* Liability Details */}
               {isLiability && (
                 <div className="grid gap-2 sm:gap-3 p-2 sm:p-3 rounded-md border border-border/50 bg-muted/20">
-                  <div className="text-xs text-muted-foreground">Liability details</div>
+                  <div className="text-xs text-muted-foreground">
+                    <Trans>Liability details</Trans>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                     <Field label="Original Debt" htmlFor="debtTotal" className="space-y-1">
                       <LiabilityNumberCell
@@ -431,8 +436,10 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
               />
               {isLiability && (
                 <div className="rounded-md bg-muted/20 border border-border/50 p-2 text-[11px] text-muted-foreground">
-                  Paid So Far should be edited via transactions (inflows). Here you can adjust
-                  metadata like Original Debt, APR and dates.
+                  <Trans>
+                    Paid So Far should be edited via transactions (inflows). Here you can adjust
+                    metadata like Original Debt, APR and dates.
+                  </Trans>
                 </div>
               )}
             </div>
@@ -466,7 +473,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                     className="h-8 sm:h-9"
                     onClick={() => setArchiveOpen(true)}
                   >
-                    Archive
+                    <Trans>Archive</Trans>
                   </Button>
                 )}
               </div>
@@ -479,17 +486,19 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                   className="h-8 sm:h-9"
                   onClick={() => setOpen(false)}
                 >
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </Button>
                 {!accType ? (
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button className="h-8 sm:h-9 opacity-50 cursor-not-allowed" type="button">
-                        Apply
+                        <Trans>Apply</Trans>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-3" side="top">
-                      <p className="text-sm">Please select an account type first</p>
+                      <p className="text-sm">
+                        <Trans>Please select an account type first</Trans>
+                      </p>
                     </PopoverContent>
                   </Popover>
                 ) : (

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import * as React from 'react';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -206,11 +207,15 @@ export function TransactionsBatchToolbar({
         />
       )}
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">{numSelected} selected</span>
+        <span className="text-sm font-medium">
+          <Trans>{numSelected} selected</Trans>
+        </span>
         {hasUncategorized && (
           <div className="flex items-center gap-1 text-destructive">
             <AlertCircle className="h-3 w-3" />
-            <span className="text-xs">{uncategorizedCount} uncategorized</span>
+            <span className="text-xs">
+              <Trans>{uncategorizedCount} uncategorized</Trans>
+            </span>
           </div>
         )}
       </div>
@@ -238,7 +243,7 @@ export function TransactionsBatchToolbar({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-64 max-w-[calc(100vw-2rem)]">
             <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-              Change Category
+              <Trans>Change Category</Trans>
             </div>
             <div className="px-2 pb-2">
               <div className="[&>div]:text-xs [&>button]:text-xs [&>div>button]:text-xs [&>button]:h-8">
@@ -255,7 +260,7 @@ export function TransactionsBatchToolbar({
               <>
                 <DropdownMenuSeparator />
                 <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                  Move to Account
+                  <Trans>Move to Account</Trans>
                 </div>
                 <div className="px-2 pb-2">
                   <Select onValueChange={setNewAccountID}>
@@ -279,7 +284,7 @@ export function TransactionsBatchToolbar({
               <>
                 <DropdownMenuSeparator />
                 <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                  Set Payee
+                  <Trans>Set Payee</Trans>
                 </div>
                 <div className="px-2 pb-2">
                   <PayeeCombobox
@@ -338,7 +343,7 @@ export function TransactionsBatchToolbar({
 
         {/* Clear Selection */}
         <Button variant="ghost" size="sm" onClick={clearSelection} className="h-8 px-2 text-xs">
-          Clear
+          <Trans>Clear</Trans>
         </Button>
       </div>
     </div>

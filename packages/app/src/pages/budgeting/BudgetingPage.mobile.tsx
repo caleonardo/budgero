@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -57,7 +58,7 @@ export function BudgetingPageMobile() {
       <div className="p-4">
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            Select a budget to get started.
+            <Trans>Select a budget to get started.</Trans>
           </CardContent>
         </Card>
       </div>
@@ -162,7 +163,9 @@ export function BudgetingPageMobile() {
       <Drawer open={contextOpen} onOpenChange={setContextOpen}>
         <DrawerContent className="h-[85vh] data-[vaul-drawer-direction=bottom]:max-h-[85vh] max-w-full px-0 pb-6">
           <DrawerHeader className="px-6 pt-2">
-            <DrawerTitle>Budget Context</DrawerTitle>
+            <DrawerTitle>
+              <Trans>Budget Context</Trans>
+            </DrawerTitle>
           </DrawerHeader>
           <div className="h-full overflow-y-auto px-6 pt-2">
             <BudgetContextPanel

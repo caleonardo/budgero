@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Download, Database, FileText, AlertTriangle, Inbox, Upload, BellRing } from 'lucide-react';
@@ -280,23 +281,31 @@ export default function DataManagementPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BellRing className="h-5 w-5" />
-            Backup Reminders
+            <Trans>
+              <BellRing className="h-5 w-5" />
+              Backup Reminders
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Stay covered if data ever corrupts or you lose your master password—we&apos;ll remind
-            you to keep a fresh backup on hand.
+            <Trans>
+              Stay covered if data ever corrupts or you lose your master password—we'll remind you
+              to keep a fresh backup on hand.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-3">
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Last backup</p>
+                <p className="text-sm text-muted-foreground">
+                  <Trans>Last backup</Trans>
+                </p>
                 <p className="font-semibold text-foreground">{lastBackupDisplay}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Database size</p>
+                <p className="text-sm text-muted-foreground">
+                  <Trans>Database size</Trans>
+                </p>
                 <p className="font-semibold text-foreground">
                   {dbSizeQuery.isLoading
                     ? 'Calculating…'
@@ -307,7 +316,9 @@ export default function DataManagementPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="backup-frequency">Reminder frequency (days)</Label>
+              <Label htmlFor="backup-frequency">
+                <Trans>Reminder frequency (days)</Trans>
+              </Label>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Input
                   id="backup-frequency"
@@ -328,7 +339,7 @@ export default function DataManagementPage() {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                We&apos;ll prompt you again when a backup is overdue.
+                <Trans>We'll prompt you again when a backup is overdue.</Trans>
               </p>
             </div>
           </div>
@@ -339,20 +350,28 @@ export default function DataManagementPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Inbox className="h-4 w-4" />
-            Import Data
+            <Trans>
+              <Inbox className="h-4 w-4" />
+              Import Data
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Imports now live on their own page so you can manage history and undo runs.
+            <Trans>
+              Imports now live on their own page so you can manage history and undo runs.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 sm:p-6 space-y-3">
           <p className="text-sm text-muted-foreground">
-            Head to the Imports page to upload CSV/PDF files, review past imports, and undo anything
-            that looks off.
+            <Trans>
+              Head to the Imports page to upload CSV/PDF files, review past imports, and undo
+              anything that looks off.
+            </Trans>
           </p>
           <Button asChild variant="outline">
-            <Link to="/settings/imports">Open Imports</Link>
+            <Link to="/settings/imports">
+              <Trans>Open Imports</Trans>
+            </Link>
           </Button>
         </CardContent>
       </Card>
@@ -361,10 +380,14 @@ export default function DataManagementPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Download className="h-5 w-5" />
-            Export Data
+            <Trans>
+              <Download className="h-5 w-5" />
+              Export Data
+            </Trans>
           </CardTitle>
-          <CardDescription>Download your data for backup or analysis</CardDescription>
+          <CardDescription>
+            <Trans>Download your data for backup or analysis</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {lockedOwnerRecoveryMode ? (
@@ -416,8 +439,10 @@ export default function DataManagementPage() {
                       </span>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="text-sm max-w-xs">
-                      Shared collaborators can’t export workspace data. Ask the workspace owner to
-                      download it for you.
+                      <Trans>
+                        Shared collaborators can’t export workspace data. Ask the workspace owner to
+                        download it for you.
+                      </Trans>
                     </PopoverContent>
                   </Popover>
                 );
@@ -441,12 +466,22 @@ export default function DataManagementPage() {
               . Switch workspaces and export again to back up the others.
             </p>
             <p>
-              <strong>SQLite Database:</strong> Downloads the complete database file that can be
-              imported into other SQLite-compatible tools or used as a backup.
+              <Trans>
+                <strong>
+                  <Trans>SQLite Database:</Trans>
+                </strong>
+                Downloads the complete database file that can be imported into other
+                SQLite-compatible tools or used as a backup.
+              </Trans>
             </p>
             <p>
-              <strong>CSV Files:</strong> Downloads individual CSV files for each table (budgets,
-              accounts, transactions, etc.) that can be opened in spreadsheet applications.
+              <Trans>
+                <strong>
+                  <Trans>CSV Files:</Trans>
+                </strong>
+                Downloads individual CSV files for each table (budgets, accounts, transactions,
+                etc.) that can be opened in spreadsheet applications.
+              </Trans>
             </p>
           </div>
         </CardContent>
@@ -456,10 +491,14 @@ export default function DataManagementPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Database className="h-5 w-5" />
-            Restore Database
+            <Trans>
+              <Database className="h-5 w-5" />
+              Restore Database
+            </Trans>
           </CardTitle>
-          <CardDescription>Restore from a database backup file</CardDescription>
+          <CardDescription>
+            <Trans>Restore from a database backup file</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <input
@@ -514,8 +553,10 @@ export default function DataManagementPage() {
             <p className="flex items-start gap-2">
               <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
               <span>
-                <strong>Warning:</strong> Restore replaces the data in the currently active
-                workspace
+                <strong>
+                  <Trans>Warning:</Trans>
+                </strong>{' '}
+                Restore replaces the data in the currently active workspace
                 {activeSpace?.display_name ? (
                   <>
                     {' '}
@@ -555,14 +596,22 @@ export default function DataManagementPage() {
             </p>
             <ul className="list-disc list-inside space-y-1 text-sm">
               <li>
-                Budgets, accounts, transactions, and categories in this workspace will be replaced
+                <Trans>
+                  Budgets, accounts, transactions, and categories in this workspace will be replaced
+                </Trans>
               </li>
-              <li>The change will also be pushed to the server for this workspace</li>
-              <li>Your other workspaces are not affected</li>
-              <li>This action CANNOT be undone</li>
+              <li>
+                <Trans>The change will also be pushed to the server for this workspace</Trans>
+              </li>
+              <li>
+                <Trans>Your other workspaces are not affected</Trans>
+              </li>
+              <li>
+                <Trans>This action CANNOT be undone</Trans>
+              </li>
             </ul>
             <p className="font-semibold text-destructive">
-              Are you absolutely sure you want to continue?
+              <Trans>Are you absolutely sure you want to continue?</Trans>
             </p>
           </span>
         }
@@ -598,11 +647,15 @@ function LockedOwnerExportRecovery({
     <div className="space-y-4">
       <div className="rounded-lg border border-dashed p-4 space-y-3">
         <p className="text-sm text-muted-foreground">
-          Your owned workspaces are locked for edits until you resubscribe, but you can still export
-          their data here for recovery or migration.
+          <Trans>
+            Your owned workspaces are locked for edits until you resubscribe, but you can still
+            export their data here for recovery or migration.
+          </Trans>
         </p>
         <div className="space-y-2 max-w-md">
-          <Label htmlFor="export-workspace">Workspace to export</Label>
+          <Label htmlFor="export-workspace">
+            <Trans>Workspace to export</Trans>
+          </Label>
           <Select value={selectedSpaceId ?? ''} onValueChange={onSelectSpace}>
             <SelectTrigger id="export-workspace" className="w-full">
               <SelectValue placeholder="Choose a workspace" />
@@ -617,8 +670,10 @@ function LockedOwnerExportRecovery({
           </Select>
         </div>
         <p className="text-xs text-muted-foreground">
-          Export stays available. Restore and other workspace changes remain locked until access is
-          active again.
+          <Trans>
+            Export stays available. Restore and other workspace changes remain locked until access
+            is active again.
+          </Trans>
         </p>
       </div>
     </div>

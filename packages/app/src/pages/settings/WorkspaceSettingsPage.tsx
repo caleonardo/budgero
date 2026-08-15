@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -338,10 +339,14 @@ export default function WorkspaceSettingsPage() {
   return (
     <div className="container max-w-5xl mx-auto p-4 sm:p-6 pb-24 sm:pb-12 space-y-6 sm:space-y-8">
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Workspaces & Sharing</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          <Trans>Workspaces & Sharing</Trans>
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Switch between workspaces, review locked spaces, and manage invite access for the ones you
-          can use right now.
+          <Trans>
+            Switch between workspaces, review locked spaces, and manage invite access for the ones
+            you can use right now.
+          </Trans>
         </p>
       </div>
 
@@ -355,16 +360,22 @@ export default function WorkspaceSettingsPage() {
           space.is_accessible === false
       ) ? (
         <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200">
-          Your own workspaces are locked because your Budgero plan is inactive. Subscribe again to
-          regain access.
+          <Trans>
+            Your own workspaces are locked because your Budgero plan is inactive. Subscribe again to
+            regain access.
+          </Trans>
         </div>
       ) : null}
 
       <Card>
         <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <CardTitle>Workspaces</CardTitle>
-            <CardDescription>Switch to a different workspace or create a new one.</CardDescription>
+            <CardTitle>
+              <Trans>Workspaces</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Switch to a different workspace or create a new one.</Trans>
+            </CardDescription>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button
@@ -384,7 +395,10 @@ export default function WorkspaceSettingsPage() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button size="sm" variant="secondary" disabled>
-                    <Plus className="mr-2 h-4 w-4" /> New Workspace
+                    <Trans>
+                      <Plus className="mr-2 h-4 w-4" />
+                      New Workspace
+                    </Trans>
                   </Button>
                 </TooltipTrigger>
                 {createWorkspaceTooltip ? (
@@ -397,20 +411,28 @@ export default function WorkspaceSettingsPage() {
               <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm">
-                    <Plus className="mr-2 h-4 w-4" /> New Workspace
+                    <Trans>
+                      <Plus className="mr-2 h-4 w-4" />
+                      New Workspace
+                    </Trans>
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Create workspace</DialogTitle>
+                    <DialogTitle>
+                      <Trans>Create workspace</Trans>
+                    </DialogTitle>
                     <DialogDescription>
-                      Give your workspace a descriptive name so collaborators know what it includes.
+                      <Trans>
+                        Give your workspace a descriptive name so collaborators know what it
+                        includes.
+                      </Trans>
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="workspace-name" className="text-sm font-medium">
-                        Workspace name
+                        <Trans>Workspace name</Trans>
                       </Label>
                       <Input
                         id="workspace-name"
@@ -427,10 +449,10 @@ export default function WorkspaceSettingsPage() {
                       onClick={() => setCreateDialogOpen(false)}
                       disabled={isCreating}
                     >
-                      Cancel
+                      <Trans>Cancel</Trans>
                     </Button>
                     <Button onClick={handleCreateSpace} disabled={isCreating} loading={isCreating}>
-                      Create workspace
+                      <Trans>Create workspace</Trans>
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -445,7 +467,7 @@ export default function WorkspaceSettingsPage() {
             <div className="space-y-2">
               <Separator />
               <p className="text-xs font-medium uppercase text-muted-foreground">
-                Locked workspaces
+                <Trans>Locked workspaces</Trans>
               </p>
               <div className="space-y-2">
                 {lockedAcceptedSpaces.map((space) => renderSpaceRow(space, false))}
@@ -456,7 +478,7 @@ export default function WorkspaceSettingsPage() {
             <div className="space-y-2">
               <Separator />
               <p className="text-xs font-medium uppercase text-muted-foreground">
-                Pending invitations
+                <Trans>Pending invitations</Trans>
               </p>
               <div className="space-y-2">
                 {pendingSpaces.map((space) => renderSpaceRow(space, false))}
@@ -472,7 +494,9 @@ export default function WorkspaceSettingsPage() {
           )}
           {spacesQuery.isError ? (
             <div className="rounded-md border border-dashed border-amber-500/40 bg-amber-500/5 p-4 text-sm text-amber-800 dark:text-amber-200">
-              Workspace access details may be stale right now. Refresh once you&apos;re back online.
+              <Trans>
+                Workspace access details may be stale right now. Refresh once you're back online.
+              </Trans>
             </div>
           ) : null}
         </CardContent>
@@ -481,10 +505,14 @@ export default function WorkspaceSettingsPage() {
       {activeSpace ? (
         <Card>
           <CardHeader>
-            <CardTitle>Sharing & invitations</CardTitle>
+            <CardTitle>
+              <Trans>Sharing & invitations</Trans>
+            </CardTitle>
             <CardDescription>
-              Invite collaborators, manage pending invites, and control access for the active
-              workspace.
+              <Trans>
+                Invite collaborators, manage pending invites, and control access for the active
+                workspace.
+              </Trans>
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -494,7 +522,7 @@ export default function WorkspaceSettingsPage() {
       ) : (
         <Card>
           <CardContent className="py-8 text-center text-sm text-muted-foreground">
-            Select or create a workspace to manage sharing options.
+            <Trans>Select or create a workspace to manage sharing options.</Trans>
           </CardContent>
         </Card>
       )}

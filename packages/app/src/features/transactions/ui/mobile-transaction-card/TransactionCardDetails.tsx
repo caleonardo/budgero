@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
@@ -303,9 +304,11 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
             <div className="flex-1 min-w-0">
               {isSplit ? (
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary">Split</Badge>
+                  <Badge variant="secondary">
+                    <Trans>Split</Trans>
+                  </Badge>
                   <span className="text-xs text-muted-foreground">
-                    Categories managed per split line
+                    <Trans>Categories managed per split line</Trans>
                   </span>
                 </div>
               ) : readOnlyCategory ? (
@@ -329,10 +332,12 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
           <div className="flex flex-col gap-2 rounded-md border border-dashed border-muted-foreground/40 bg-muted/30 p-3 text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <Split className="h-4 w-4" />
-              <span>Need to split this transaction across categories?</span>
+              <span>
+                <Trans>Need to split this transaction across categories?</Trans>
+              </span>
             </div>
             <Button variant="outline" size="sm" onClick={onStartSplit}>
-              Split transaction
+              <Trans>Split transaction</Trans>
             </Button>
           </div>
         )}
@@ -341,11 +346,13 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
         {showSplitSection && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <div className="text-xs font-medium text-muted-foreground">Split details</div>
+              <div className="text-xs font-medium text-muted-foreground">
+                <Trans>Split details</Trans>
+              </div>
               {editSplits ? (
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" onClick={onCancelEditSplits}>
-                    Cancel
+                    <Trans>Cancel</Trans>
                   </Button>
                   <Button
                     variant="default"
@@ -359,7 +366,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
               ) : (
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" onClick={onInitEditSplitsFromExisting}>
-                    Edit
+                    <Trans>Edit</Trans>
                   </Button>
                 </div>
               )}
@@ -368,9 +375,13 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
             {/* List */}
             <div className="rounded-md border border-border/50 divide-y">
               {splitsLoading ? (
-                <div className="p-2 text-xs text-muted-foreground">Loading splits...</div>
+                <div className="p-2 text-xs text-muted-foreground">
+                  <Trans>Loading splits...</Trans>
+                </div>
               ) : (editSplits || splits).length === 0 ? (
-                <div className="p-2 text-xs text-muted-foreground">No split lines yet.</div>
+                <div className="p-2 text-xs text-muted-foreground">
+                  <Trans>No split lines yet.</Trans>
+                </div>
               ) : (
                 (editSplits || (splits as SplitDisplayItem[])).map(
                   (s: SplitDisplayItem, idx: number) => (
@@ -413,7 +424,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                             className="flex-shrink-0"
                             onClick={() => onRemoveSplitLine(idx)}
                           >
-                            Remove
+                            <Trans>Remove</Trans>
                           </Button>
                         )}
                       </div>
@@ -434,7 +445,9 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                       </div>
 
                       <div className="flex items-center justify-between text-xs text-muted-foreground gap-3">
-                        <span>Amount</span>
+                        <span>
+                          <Trans>Amount</Trans>
+                        </span>
                         {editSplits ? (
                           <CalculatorCell
                             value={asMilli(
@@ -481,7 +494,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
             {editSplits && (
               <div className="pt-2">
                 <Button variant="outline" size="sm" onClick={onAddSplitLine}>
-                  + Line
+                  <Trans>+ Line</Trans>
                 </Button>
               </div>
             )}
@@ -489,7 +502,9 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
             {/* Totals */}
             {editSplits && (
               <div className="flex items-center justify-between text-xs text-muted-foreground px-2">
-                <div>Total amount</div>
+                <div>
+                  <Trans>Total amount</Trans>
+                </div>
                 <CalculatorCell
                   value={asMilli(splitTarget)}
                   onCommit={(val) => onSplitTargetChange(Math.abs(val) || 0)}
@@ -505,7 +520,9 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
             )}
             {(editSplits || splits).length > 0 && (
               <div className="flex items-center justify-between text-xs text-muted-foreground px-2">
-                <div>Remaining</div>
+                <div>
+                  <Trans>Remaining</Trans>
+                </div>
                 <div className="font-mono">{formatAmount(editFormatter, remainingAmount)}</div>
               </div>
             )}
@@ -544,7 +561,9 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                     />
                   </div>
                   {!!transaction.ExchangeRateOverride && (
-                    <span className="text-[11px] text-primary flex-shrink-0">manual</span>
+                    <span className="text-[11px] text-primary flex-shrink-0">
+                      <Trans>manual</Trans>
+                    </span>
                   )}
                 </div>
               </div>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useMemo, useState } from 'react';
 import {
   Dialog,
@@ -121,11 +122,15 @@ export function ArchiveAccountDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="p-4 sm:p-6 text-sm sm:text-base max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg">Archive account</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">
+            <Trans>Archive account</Trans>
+          </DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">
-            Archived accounts are hidden from sidebars and account pickers by default, but their
-            historical transactions remain visible in reports and transaction lists. You can
-            unarchive an account later from the All Accounts page.
+            <Trans>
+              Archived accounts are hidden from sidebars and account pickers by default, but their
+              historical transactions remain visible in reports and transaction lists. You can
+              unarchive an account later from the All Accounts page.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -172,8 +177,10 @@ export function ArchiveAccountDialog({
               className="space-y-1"
               hint={
                 <span className="text-[11px]">
-                  Defaults to Income. Pick a different category if this adjustment represents
-                  something else (e.g. debt forgiveness, write-off).
+                  <Trans>
+                    Defaults to Income. Pick a different category if this adjustment represents
+                    something else (e.g. debt forgiveness, write-off).
+                  </Trans>
                 </span>
               }
             >
@@ -220,8 +227,10 @@ export function ArchiveAccountDialog({
         ) : (
           <div className="rounded-md border border-border/60 bg-muted/30 p-3 text-xs sm:text-sm">
             <p>
-              <strong>{account.Name}</strong> has a zero balance and will be archived without any
-              further changes.
+              <Trans>
+                <strong>{account.Name}</strong>has a zero balance and will be archived without any
+                further changes.
+              </Trans>
             </p>
           </div>
         )}
@@ -234,7 +243,7 @@ export function ArchiveAccountDialog({
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             type="button"

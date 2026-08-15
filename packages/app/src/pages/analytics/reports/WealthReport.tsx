@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
@@ -392,7 +393,10 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             />
             {accountIds.length > 0 && (
               <p className="mt-2 text-[11px] text-muted-foreground">
-                The by-type view always covers all accounts — the account filter doesn't apply here.
+                <Trans>
+                  The by-type view always covers all accounts — the account filter doesn't apply
+                  here.
+                </Trans>
               </p>
             )}
           </>
@@ -401,13 +405,15 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             <EChart option={option} ariaLabel="Wealth over time" />
             <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-dashed border-border/60 pt-3 text-sm">
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Runway
+                <Trans>Runway</Trans>
               </span>
               <span className="font-semibold">{formatRunway(runway.runwayMonths)}</span>
               {runsOut ? (
                 <span className="text-muted-foreground">
-                  funds last until <span className="font-medium text-foreground">{runsOut}</span> if
-                  income stopped
+                  <Trans>
+                    funds last until <span className="font-medium text-foreground">{runsOut}</span>
+                    if income stopped
+                  </Trans>
                 </span>
               ) : null}
               <span className="text-muted-foreground">
@@ -452,7 +458,9 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
               {forecast.rSquared.toFixed(2)}. Shaded band is the 95% prediction interval.
             </p>
           ) : null}
-          <PanelSectionTitle>Monthly</PanelSectionTitle>
+          <PanelSectionTitle>
+            <Trans>Monthly</Trans>
+          </PanelSectionTitle>
           <div className="divide-y divide-border/50">
             {monthlyRows.map(({ point, delta }) => (
               <MonthRow

@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 /**
  * Add Transaction Form
  *
@@ -158,16 +160,16 @@ export function AddTransactionForm({
       <div className="max-w-lg w-full mx-auto space-y-4 p-2 sm:p-4">
         <DialogHeader className="space-y-1.5">
           <DialogTitle className="text-lg sm:text-xl font-semibold">
-            Add an account first
+            <Trans>Add an account first</Trans>
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            Create an account to start recording transactions.
+            <Trans>Create an account to start recording transactions.</Trans>
           </DialogDescription>
         </DialogHeader>
         <Card>
           <CardContent className="space-y-4 pt-6">
             <p className="text-sm text-muted-foreground">
-              You need at least one account before adding transactions.
+              <Trans>You need at least one account before adding transactions.</Trans>
             </p>
             <div className="flex flex-wrap gap-2">
               <AddAccountDialog
@@ -179,12 +181,12 @@ export function AddTransactionForm({
                 }}
                 renderTrigger={(open) => (
                   <Button type="button" onClick={open}>
-                    Create Account
+                    <Trans>Create Account</Trans>
                   </Button>
                 )}
               />
               <Button type="button" variant="outline" onClick={onCancel}>
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
             </div>
           </CardContent>

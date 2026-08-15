@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Currency Conversion Notice Component
  *
@@ -34,11 +35,15 @@ export function CurrencyConversionNotice({
       <div className="flex items-start gap-2">
         <Info className="h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400 mt-0.5 flex-shrink-0" />
         <div className="text-xs sm:text-sm flex-1">
-          <p className="font-medium text-sky-900 dark:text-sky-200">Currency Conversion</p>
+          <p className="font-medium text-sky-900 dark:text-sky-200">
+            <Trans>Currency Conversion</Trans>
+          </p>
           {isLoadingRate ? (
             <div className="mt-2 flex items-center gap-2 text-sky-700 dark:text-sky-300">
               <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-              <span>Fetching exchange rate...</span>
+              <span>
+                <Trans>Fetching exchange rate...</Trans>
+              </span>
             </div>
           ) : convertedAmount !== null ? (
             <div className="mt-2 rounded bg-sky-100 dark:bg-sky-900/40 p-2">
@@ -53,13 +58,19 @@ export function CurrencyConversionNotice({
               )}
             </div>
           ) : amount > 0 ? (
-            <p className="mt-1 text-sky-700 dark:text-sky-300">Exchange rate not available</p>
+            <p className="mt-1 text-sky-700 dark:text-sky-300">
+              <Trans>Exchange rate not available</Trans>
+            </p>
           ) : (
-            <p className="mt-1 text-sky-700 dark:text-sky-300">Enter an amount to see conversion</p>
+            <p className="mt-1 text-sky-700 dark:text-sky-300">
+              <Trans>Enter an amount to see conversion</Trans>
+            </p>
           )}
           {!canUseCurrencyApi && (
             <p className="mt-1 text-xs text-sky-600 dark:text-sky-300">
-              ℹ️ Offline or unauthorized – conversions will use cached or manual rates.
+              <Trans>
+                ℹ️ Offline or unauthorized – conversions will use cached or manual rates.
+              </Trans>
             </p>
           )}
         </div>

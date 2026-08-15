@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { ChangeEvent, RefObject } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Input } from '@shared/ui/input';
@@ -23,11 +24,15 @@ export function UploadStep({
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Upload className="h-5 w-5" />
-          Import Transactions
+          <Trans>
+            <Upload className="h-5 w-5" />
+            Import Transactions
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Upload a {SUPPORTED_IMPORT_FORMATS_LABEL} file to import your transactions into a budget
+          <Trans>
+            Upload a {SUPPORTED_IMPORT_FORMATS_LABEL} file to import your transactions into a budget
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -35,13 +40,15 @@ export function UploadStep({
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Please select a budget from the sidebar before importing transactions.
+              <Trans>Please select a budget from the sidebar before importing transactions.</Trans>
             </AlertDescription>
           </Alert>
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="file-upload">Select File</Label>
+          <Label htmlFor="file-upload">
+            <Trans>Select File</Trans>
+          </Label>
           <Input
             id="file-upload"
             type="file"
@@ -52,7 +59,9 @@ export function UploadStep({
             disabled={!hasBudgetSelected}
           />
           <p className="text-sm text-muted-foreground">
-            Supported formats: CSV, TSV, TXT, PDF (table data), OFX, QFX, QIF, CAMT.053 (XML)
+            <Trans>
+              Supported formats: CSV, TSV, TXT, PDF (table data), OFX, QFX, QIF, CAMT.053 (XML)
+            </Trans>
           </p>
         </div>
 

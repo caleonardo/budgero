@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Check, X, Wrench, Loader2 } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import type { PendingToolExecution } from '@features/ai/lib/tools/types';
@@ -35,8 +36,10 @@ export function ToolConfirmation({
       {isPending && (
         <div className="mt-3 flex gap-2">
           <Button size="sm" onClick={() => onConfirm(tool.id)} disabled={isExecuting}>
-            <Check className="mr-1 h-3 w-3" />
-            Confirm
+            <Trans>
+              <Check className="mr-1 h-3 w-3" />
+              Confirm
+            </Trans>
           </Button>
           <Button
             size="sm"
@@ -44,8 +47,10 @@ export function ToolConfirmation({
             onClick={() => onReject(tool.id)}
             disabled={isExecuting}
           >
-            <X className="mr-1 h-3 w-3" />
-            Cancel
+            <Trans>
+              <X className="mr-1 h-3 w-3" />
+              Cancel
+            </Trans>
           </Button>
         </div>
       )}
@@ -58,7 +63,11 @@ export function ToolConfirmation({
         </p>
       )}
 
-      {isRejected && <p className="mt-2 text-xs text-muted-foreground">Cancelled</p>}
+      {isRejected && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          <Trans>Cancelled</Trans>
+        </p>
+      )}
     </div>
   );
 }

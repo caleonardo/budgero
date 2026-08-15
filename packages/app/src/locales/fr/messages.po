@@ -13,76 +13,5518 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: src/features/transactions/ui/form/DatePickerQuick.tsx
+msgid "-1 day"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "\"Don't Show\""
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "(cleared)"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "(Experimental)"
+msgstr ""
+
+#: src/features/currencies/ui/CurrencySelector.tsx
+msgid "(Offline)"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "(optional)"
+msgstr ""
+
+#. placeholder {0}: previewData.length
+#: src/features/import/ui/steps/PreviewStep.tsx
+msgid "(showing first {0} below)"
+msgstr ""
+
+#. placeholder {0}: rule.actions.length
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "{0} action(s)"
+msgstr ""
+
+#. placeholder {0}: rule.conditions.length
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "{0} condition(s)"
+msgstr ""
+
+#. placeholder {0}: state.selectedCats.length
+#: src/pages/onboarding/steps/CategoriesStep.tsx
+msgid "{0} envelopes selected. You can always add more later."
+msgstr ""
+
+#. placeholder {0}: selectedCategory.name
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "{0} Goal"
+msgstr ""
+
+#. placeholder {0}: progress.timeMetrics.currentStreak
+#: src/features/goal-management/ui/GoalCard.tsx
+msgid "{0} months"
+msgstr ""
+
+#. placeholder {0}: result.rowCount
+#: src/pages/explorer-page/components/ResultsTable.tsx
+msgid "{0} rows"
+msgstr ""
+
+#. placeholder {0}: tableSchema.length
+#: src/pages/admin/sql-explorer/SchemaSidebar.tsx
+msgid "{0} tables - Click to insert"
+msgstr ""
+
+#. placeholder {0}: transactions.length
+#: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
+msgid "{0} total"
+msgstr ""
+
+#. placeholder {0}: transactionStats.recentCount
+#: src/pages/accounts/AllTransactionsPage.tsx
+msgid "{0} transactions across all accounts"
+msgstr ""
+
+#. placeholder {0}: uncategorizedData.total
+#: src/pages/accounts/AccountsPage.tsx
+msgid "{0} uncategorized"
+msgstr ""
+
+#. placeholder {0}: file.size
+#: src/pages/onboarding/steps/YnabImportStep.tsx
+msgid "{0}· ready to import on finish"
+msgstr ""
+
+#. placeholder {0}: goalStatus.percentage
+#: src/features/budget-planning/ui/spending-drawer-mobile/CategoryHeader.tsx
+msgid "{0}% of goal"
+msgstr ""
+
+#: src/features/budget-planning/ui/CCPaymentActivityDialog.tsx
+msgid "{ccCategoryName} payments"
+msgstr ""
+
+#: src/features/budget-planning/ui/assign-dropdown/useAssignDropdownState.tsx
+msgid "{changedCount} categories adjusted"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "{days} days"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "{daysLeftInBeta} days"
+msgstr ""
+
+#: src/features/import/ui/steps/PreviewStep.tsx
+msgid "{errorCount} of the previewed rows have issues"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "{horizon} months"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "{numSelected} selected"
+msgstr ""
+
+#: src/pages/accounts/components/AccountGroupSection.tsx
+#: src/pages/accounts/components/NetWorthCard.tsx
+msgid "{periodLabel} change"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/ScanProgress.tsx
+msgid "{progress}% complete"
+msgstr ""
+
+#. placeholder {0}: categorizedTransactions.length
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "{selectedCount} of {0} selected to apply"
+msgstr ""
+
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+msgid "{selectedCount} selected"
+msgstr ""
+
+#: src/features/import/ui/GlobalImportDropHandler.tsx
+msgid "{SUPPORTED_IMPORT_FORMATS_LABEL} files will open the Imports workspace automatically."
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "{uncategorizedCount} uncategorized"
+msgstr ""
+
+#: src/features/currencies/ui/CurrencyConversionOverlay.tsx
+msgid "• Fetching exchange rates"
+msgstr ""
+
+#: src/features/currencies/ui/CurrencyConversionOverlay.tsx
+msgid "• Recalculating balances"
+msgstr ""
+
+#: src/features/currencies/ui/CurrencyConversionOverlay.tsx
+msgid "• Updating transaction amounts"
+msgstr ""
+
+#: src/pages/onboarding/OnboardingFlow.tsx
+msgid "← Back"
+msgstr ""
+
+#: src/pages/onboarding/steps/AccountsStep.tsx
+msgid "+ ADD ANOTHER ACCOUNT"
+msgstr ""
+
+#: src/features/transactions/ui/form/SplitEditor.tsx
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "+ Line"
+msgstr ""
+
+#: src/features/transactions/ui/form/DatePickerQuick.tsx
+msgid "+1 day"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "<0/>{monthLabel} At a Glance"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionPage.tsx
+msgid "<0/>Account Information"
+msgstr ""
+
+#: src/features/account-management/ui/AccountOrderCard.tsx
+msgid "<0/>Account order"
+msgstr ""
+
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "<0/>Active"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "<0/>Add"
+msgstr ""
+
+#: src/features/budget-planning/ui/BudgetTable.tsx
+msgid "<0/>Add Category Group"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+msgid "<0/>Add Chart"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "<0/>Add Rate"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "<0/>Add Recurring Transaction"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+msgid "<0/>Add split line"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "<0/>Add Transaction"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "<0/>Add User"
+msgstr ""
+
+#: src/pages/warranties/WarrantiesPage.tsx
+msgid "<0/>Add Warranty"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+#: src/pages/admin/admin-users/UserTableRow.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "<0/>Admin"
+msgstr ""
+
+#: src/app/layout/AdminAccessRequiredCard.tsx
+msgid "<0/>Admin Access Required"
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "<0/>AI Auto-Categorize"
+msgstr ""
+
+#: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
+msgid "<0/>AI Categorize"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "<0/>AI Features"
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "<0/>All Accounts"
+msgstr ""
+
+#: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
+msgid "<0/>All on-budget accounts"
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "<0/>All Transactions"
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "<0/>Analyze Transactions"
+msgstr ""
+
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "<0/>API Token"
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "<0/>Assignment Behavior"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "<0/>Auto-Execute"
+msgstr ""
+
+#: src/features/analytics/ui/SpendingBreakdownContent.tsx
+msgid "<0/>Back"
+msgstr ""
+
+#: src/app/system/BackupReminderDialog.tsx
+msgid "<0/>Back up your data"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "<0/>Backup Reminders"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "<0/>Balance"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "<0/>Biggest Transactions"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanSelection.tsx
+msgid "<0/>Billing Management"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserTableRow.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "<0/>Blocked"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "<0/>Budget Currency"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "<0/>Budget Pacing"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "<0/>Budget Table"
+msgstr ""
+
+#: src/features/chat/ui/ToolConfirmation.tsx
+msgid "<0/>Cancel"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "<0/>Cancel Subscription"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/ScanActions.tsx
+msgid "<0/>Capture"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+msgid "<0/>Case sensitive matching"
+msgstr ""
+
+#: src/widgets/dashboard/CashflowTrendCard.tsx
+msgid "<0/>Cashflow trends"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "<0/>Categorize Now"
+msgstr ""
+
+#: src/features/rules/ui/PayeeCategoryMemoryCard.tsx
+msgid "<0/>Category memory"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "<0/>Change Master Password"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "<0/>Change Plan"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanSelection.tsx
+msgid "<0/>Choose a Plan"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
+msgid "<0/>Choose file"
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "<0/>Clear History"
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
+msgid "<0/>Clear selection"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+msgid "<0/>Collaboration"
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "<0/>Configure Import Settings"
+msgstr ""
+
+#: src/features/chat/ui/ToolConfirmation.tsx
+msgid "<0/>Confirm"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "<0/>Confirm First"
+msgstr ""
+
+#: src/pages/settings/ai/ConnectionTestPanel.tsx
+msgid "<0/>Connected - {modelCount} models available"
+msgstr ""
+
+#. placeholder {0}: llmSettings.EndpointURL
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "<0/>Connected to: {0}"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "<0/>Connection Status"
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "<0/>Consumed after retro run"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/QueryCard.tsx
+msgid "<0/>Copy CSV"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "<0/>Copy link"
+msgstr ""
+
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+msgid "<0/>Create New Budget"
+msgstr ""
+
+#: src/features/budget-planning/ui/EmptyStateDisplay.tsx
+msgid "<0/>Create Your First Category Group"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "<0/>Current DAU/MAU"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "<0/>Current Plan"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "<0/>Custom Exchange Rates"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/SchemaSidebar.tsx
+#: src/pages/explorer-page/components/SchemaSidebar.tsx
+#: src/pages/explorer-page/ExplorerPage.tsx
+msgid "<0/>Database Schema"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "<0/>Database size"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "<0/>Default Home"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CategoryRowHeader.tsx
+#: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
+#: src/features/chat/ui/chat-panel/ChatConversationList.tsx
+#: src/features/goal-management/ui/GoalCard.tsx
+#: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
+#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/ImportsPage.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "<0/>Delete"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "<0/>Delete user"
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "<0/>Design a rule"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "<0/>Disconnect"
+msgstr ""
+
+#: src/features/subscription/ui/ExportDataCard.tsx
+msgid "<0/>Download CSV"
+msgstr ""
+
+#: src/features/subscription/ui/ExportDataCard.tsx
+msgid "<0/>Download SQLite"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/ResultsTable.tsx
+msgid "<0/>Dry Run"
+msgstr ""
+
+#. placeholder {0}: occurrence.dueDate
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+msgid "<0/>Due {0}({dueLabel})"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CategoryRowHeader.tsx
+#: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
+#: src/pages/explorer-page/components/ReportsPanel.tsx
+#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "<0/>Edit"
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "<0/>Enabled"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "<0/>Encryption Key"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "<0/>Experimental"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "<0/>Export Data"
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "<0/>Failed"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "<0/>Financial Stats"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+#: src/pages/admin/admin-users/UserTableRow.tsx
+msgid "<0/>Founding"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "<0/>Goals Progress"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+#: src/pages/admin/admin-users/UserTableRow.tsx
+msgid "<0/>Grant Founding Member"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+#: src/pages/admin/admin-users/UserTableRow.tsx
+msgid "<0/>Grant Free Access"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CategoryRowHeader.tsx
+#: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
+msgid "<0/>Hide"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "<0/>Hide Key"
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "<0/>History"
+msgstr ""
+
+#: src/pages/settings/push-api/IdReferencePanel.tsx
+msgid "<0/>ID Reference"
+msgstr ""
+
+#: src/features/import/ui/steps/CompleteStep.tsx
+msgid "<0/>Import Complete!"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "<0/>Import Data"
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "<0/>Import History"
+msgstr ""
+
+#: src/features/import/ui/steps/UploadStep.tsx
+msgid "<0/>Import Transactions"
+msgstr ""
+
+#: src/features/import/ui/steps/ImportProgressStep.tsx
+msgid "<0/>Importing Data"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "<0/>Importing your budget..."
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "<0/>Install App"
+msgstr ""
+
+#: src/pages/settings/subscription/InvoicesTable.tsx
+msgid "<0/>Invoice History"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "<0/>Label"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "<0/>Language"
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "<0/>Last run {lastRunLabel}"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "<0/>Last updated"
+msgstr ""
+
+#: src/shared/pwa/PWAUpdatePrompt.tsx
+msgid "<0/>Later"
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "<0/>Let Budgero handle the busywork"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "<0/>Linked Accounts"
+msgstr ""
+
+#: src/features/transactions/ui/MobileTransactionList.tsx
+msgid "<0/>Loading more transactions..."
+msgstr ""
+
+#. placeholder {0}: lockedSpaces.length
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+msgid "<0/>Locked ({0})"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserTableRow.tsx
+msgid "<0/>Make Admin"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "<0/>Manage Users"
+msgstr ""
+
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+msgid "<0/>Manage workspaces"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "<0/>Mobile Budget View"
+msgstr ""
+
+#: src/pages/budgeting/BudgetingPage.desktop.tsx
+msgid "<0/>Multi-Month"
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "<0/>Mutation History"
+msgstr ""
+
+#: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
+msgid "<0/>Needs categorising"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
+msgid "<0/>New"
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "<0/>New Account"
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "<0/>New Import"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "<0/>New recurring transaction"
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "<0/>New rule"
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "<0/>New Workspace"
+msgstr ""
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "<0/>Next due {dueLabel}"
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "<0/>No workspace selected."
+msgstr ""
+
+#: src/features/budget-sharing/ui/OnboardingInviteShareDialog.tsx
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "<0/>Open in email"
+msgstr ""
+
+#: src/widgets/dashboard/OverspentCategoriesCard.tsx
+msgid "<0/>Overspent categories"
+msgstr ""
+
+#: src/pages/explorer-page/components/ReportsPanel.tsx
+msgid "<0/>Pin chart"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "<0/>Plan ahead with recurring items"
+msgstr ""
+
+#: src/features/import/ui/steps/PreviewStep.tsx
+msgid "<0/>Preview Import"
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
+#: src/pages/settings/AuditLogPage.tsx
+msgid "<0/>Previous"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0/>Privacy Settings"
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "<0/>Ready to Assign calculation"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/AIReceiptScannerDialog.tsx
+msgid "<0/>Receipt Scanner"
+msgstr ""
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "<0/>Reconcile"
+msgstr ""
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "<0/>Reconcile Account"
+msgstr ""
+
+#: src/pages/admin/admin-users/AdminUsersHeader.tsx
+#: src/pages/admin/AdminDashboard.tsx
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+#: src/pages/settings/AuditLogPage.tsx
+msgid "<0/>Refresh"
+msgstr ""
+
+#: src/pages/settings/push-api/TokenActions.tsx
+msgid "<0/>Regenerate Token"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
+msgid "<0/>Rename"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "<0/>Reset data flags"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "<0/>Reset password"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+#: src/pages/admin/admin-users/UserTableRow.tsx
+msgid "<0/>Reset User Data"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "<0/>Restore Database"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "<0/>Resume Subscription"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/TabSection.tsx
+msgid "<0/>Retry"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "<0/>Reveal Encryption Key"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+#: src/pages/admin/admin-users/UserTableRow.tsx
+msgid "<0/>Revoke Access"
+msgstr ""
+
+#: src/pages/settings/push-api/TokenActions.tsx
+msgid "<0/>Revoke Token"
+msgstr ""
+
+#. placeholder {0}: rule.runOrder
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "<0/>Run order {0}"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/QueryCard.tsx
+msgid "<0/>Save"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/ScanActions.tsx
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "<0/>Scan Receipt"
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "<0/>Search all {totalAccountsCount} accounts"
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "<0/>Security & Privacy"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "<0/>Security Settings"
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "<0/>Select a budget to view its import history."
+msgstr ""
+
+#: src/features/analytics/ui/chart-viewer/ChartLegend.tsx
+msgid "<0/>Series"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "<0/>Show Chat Bubble"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/AdminSqlExplorer.tsx
+msgid "<0/>SQL Explorer"
+msgstr ""
+
+#: src/pages/explorer-page/ExplorerPage.tsx
+msgid "<0/>SQL Query Editor"
+msgstr ""
+
+#. placeholder {0}: template.schedule.startDate
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "<0/>Started {0}"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "<0/>Stickiness & retention"
+msgstr ""
+
+#: src/pages/admin/admin-users/AdminUsersHeader.tsx
+msgid "<0/>Sync Clerk Users"
+msgstr ""
+
+#: src/pages/admin/admin-users/AdminUsersHeader.tsx
+msgid "<0/>Sync Subscriptions"
+msgstr ""
+
+#: src/pages/settings/ai/ModelSelectionSection.tsx
+msgid "<0/>Text Model"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "<0/>Theme Settings"
+msgstr ""
+
+#: src/features/chat/ui/chat-panel/ChatMessageList.tsx
+msgid "<0/>Thinking..."
+msgstr ""
+
+#: src/features/goal-management/ui/GoalCard.tsx
+msgid "<0/>Timeline"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "<0/>Tool Execution Mode"
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+#: src/pages/settings/ImportsPage.tsx
+msgid "<0/>Undo"
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "<0/>Unknown category"
+msgstr ""
+
+#: src/widgets/dashboard/UpcomingTransactionsCard.tsx
+msgid "<0/>Upcoming transactions"
+msgstr ""
+
+#: src/shared/pwa/PWAUpdatePrompt.tsx
+msgid "<0/>Update now"
+msgstr ""
+
+#: src/features/budget-management/ui/EditBudgetForm.tsx
+msgid "<0/>Updating..."
+msgstr ""
+
+#: src/pages/accounts/components/ValueChangeStat.tsx
+msgid "<0/>Value change (30d)"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserTableRow.tsx
+msgid "<0/>View Details"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "<0/>View Full API Spec"
+msgstr ""
+
+#: src/pages/settings/ai/ModelSelectionSection.tsx
+msgid "<0/>Vision Model"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "<0/>Voice Input"
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "<0/>Warranties"
+msgstr ""
+
+#. placeholder {0}: account.Name
+#: src/features/account-management/ui/ArchiveAccountDialog.tsx
+msgid "<0>{0}</0>has a zero balance and will be archived without any further changes."
+msgstr ""
+
+#. placeholder {0}: user.spaceMembershipCount
+#. placeholder {1}: user.ownedSpaceCount
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "<0>{0}</0>memberships<1/><2>{1}</2>owned"
+msgstr ""
+
+#: src/shared/pwa/PWAUpdatePrompt.tsx
+msgid "<0>{currentVersion}</0>→ latest build"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "<0><1/></0>Activity"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "<0><1/></0>Assigned"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "<0><1/></0>Available"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "<0><1/></0>Categories"
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "<0>♥</0>Donate to Budgero"
+msgstr ""
+
+#: src/pages/onboarding/steps/ShareStep.tsx
+msgid "<0>✉</0>Flying solo? Skip this step and invite people later.<1>All 5 seats are free, included in your plan.</1>"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Account Added</0>— when you create a new account"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "<0>Activity</0>: Your spending (negative) or income (positive)"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "<0>Assigned</0>: Money you allocated this month"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "<0>Assigned</0>: Money you manually allocated"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Assignment Upserted</0>— when you assign money to a category"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "<0>Available</0>: Ready for your next CC payment"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "<0>Available</0>: What's left to spend"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Budget Created</0>— when you create a new budget"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Category Added / Edited / Deleted</0>— when you manage categories"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Category Group Added / Edited / Deleted</0>— when you manage category groups"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Checkout Started / Purchase</0>— subscription funnel events (plan, price)"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "<0>CSV Files:</0>Downloads individual CSV files for each table (budgets, accounts, transactions, etc.) that can be opened in spreadsheet applications."
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "<0>Cumulative</0>is best if you think of the budget as one continuous pool and don’t mind Ready to Assign staying the same across months."
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "<0>Custom rates take priority</0>over automatically fetched rates when a matching date range exists. Account balances are pinned to the custom rate too — no daily market revaluation while it's active."
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
 msgid "<0>D</0>Join our Discord"
 msgstr ""
 
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "<0>Disabled (default):</0>Budgero prevents you from assigning more than your Ready to Assign amount. You must have cash available before funding categories."
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "<0>Enabled:</0>You can assign any amount to categories regardless of Ready to Assign. This creates negative Ready to Assign, indicating you've assigned more money than you currently have."
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "<0>Funded</0>: Auto-moved from budgeted CC spending"
+msgstr ""
+
+#: src/pages/onboarding/steps/YnabImportStep.tsx
+msgid "<0>Heads up:</0>YNAB’s “Age of Money”, scheduled transactions, goals, and account types don’t carry over — accounts arrive as Checking, so review their types after the import. Everything else does — accounts, categories, assignments, and transaction history."
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Imported from YNAB / Imported CSV/PDF</0>— when you import data into a budget"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "<0>Manual overrides are protected</0>— transactions where you manually set the exchange rate in the table are never automatically changed."
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "<0>Monthly</0>is best if you’re coming from YNAB or want each month to stand on its own — income counts as it arrives, and last month’s overspending reduces this month’s Ready to Assign."
+msgstr ""
+
+#: src/features/account-management/ui/OnBudgetToggle.tsx
+msgid "<0>Off-Budget:</0>Tracked for net worth only (mortgages, loans, investments, crypto)"
+msgstr ""
+
+#: src/features/account-management/ui/OnBudgetToggle.tsx
+msgid "<0>On-Budget:</0>Affects Ready to Assign and spending calculations (checking, savings, credit cards)"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "<0>Open-ended rates</0>— leave the end date empty to apply the rate to all future dates."
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "<0>Payments</0>: Transfers made to pay the card"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "<0>Previous month</0>: Unspent money carried over"
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "<0>R</0>r/budgero"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/MappingTab.tsx
+msgid "<0>Required:</0>Date column + Amount column (or Inflow/Outflow columns)<1/><2>Optional:</2>Payee, Account, Category, Memo (will use account selection below if not mapped)"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "<0>Retroactive recalculation</0>— adding or changing a rate recalculates all affected transactions that don't have a manual override."
+msgstr ""
+
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "<0>Save your token now!</0>It won't be shown again."
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "<0>Security Warning:</0>Your encryption key can decrypt all your budget data. Never share it publicly and store it securely."
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Shared Budget</0>— when you create a workspace invite"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "<0>SQLite Database:</0>Downloads the complete database file that can be imported into other SQLite-compatible tools or used as a backup."
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Subscription Canceled</0>— cancellation reason (so we can improve the product)"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Transaction Logged / Edited / Deleted</0>— when you add, modify, or remove a transaction"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "<0>Trial Started</0>— when your free trial begins"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "<10% — low engagement"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "~150MB, balanced"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "~500MB, accurate"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "~75MB, fastest"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
+msgid "− Already set aside"
+msgstr ""
+
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "⚠ READ THIS"
+msgstr ""
+
+#: src/pages/onboarding/steps/YnabImportStep.tsx
+msgid "✓ READY"
+msgstr ""
+
+#: src/pages/onboarding/steps/ZbbStep.tsx
+msgid "✓ ZERO-BASED. EVERY COIN NOW HAS A JOB."
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "1 day"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "1 month"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "10–20% — typical SaaS"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "12 months"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+#: src/pages/settings/SecurityPage.tsx
+msgid "14 days"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "20–50% — strong"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "3 days"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "3 months"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+#: src/pages/settings/SecurityPage.tsx
+msgid "30 days"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "50%+ — exceptional"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "6 months"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "60 days"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "7 days"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "90 days"
+msgstr ""
+
+#: src/shared/pwa/PWAUpdatePrompt.tsx
+msgid "A new Budgero build is ready to install. Refresh now to load the latest features and fixes."
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RulePreview.tsx
+msgid "A quick reminder of how Budgero applies your automation."
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
+#: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
+msgid "A small icon shown next to your budget name. Handy when you have multiple budgets."
+msgstr ""
+
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "A transaction with several labels counts in full under each, so labels can overlap."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "A workspace keeps your budgets, accounts, and collaborators organized in one place."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "A workspace organizes your budgets and lets you share them with others. Think of it as a shared folder, everything inside is accessible to anyone you invite."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Absolutely. You might keep a personal workspace and a shared household one. Each workspace is independently encrypted and completely separate."
+msgstr ""
+
+#: src/pages/settings/components/WorkspaceRow.tsx
+msgid "Access blocked"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Access Type:"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Access until:"
+msgstr ""
+
+#: src/app/layout/desktop-shell/SidebarNav.tsx
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+#: src/features/import/ui/steps/PreviewStep.tsx
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Account"
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Account Column Mapped"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionPage.tsx
+msgid "Account created:"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Account Errors"
+msgstr ""
+
+#: src/pages/accounts/AccountPage.tsx
+msgid "Account not found"
+msgstr ""
+
+#: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
+msgid "account settings"
+msgstr ""
+
+#: src/pages/settings/AccountSettingsPage.tsx
+msgid "Account settings need a live connection to Clerk. Please reconnect to the internet and try again."
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "Account:"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "Account<0/>"
+msgstr ""
+
+#: src/app/layout/desktop-shell/SidebarNav.tsx
+#: src/pages/accounts/AccountsPage.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Accounts"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Accounts available through your SimpleFIN connection. Click an account to view recent transactions."
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "Accounts Created"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Across this deployment"
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "Action"
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "Action completed."
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.desktop.tsx
+msgid "Action Items"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+#: src/pages/admin/admin-users/UsersTable.tsx
+#: src/pages/admin/admin-users/UserTableRow.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+#: src/pages/settings/AuditLogPage.tsx
+#: src/pages/settings/ImportsPage.tsx
+#: src/pages/settings/subscription/InvoicesTable.tsx
+#: src/pages/warranties/components/WarrantyTable.tsx
+msgid "Actions"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
+msgid "Activation"
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+#: src/pages/settings/components/WorkspaceRow.tsx
+#: src/pages/warranties/components/StatusBadge.tsx
+#: src/pages/warranties/WarrantiesPage.tsx
+msgid "Active"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Active spaces"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Active Subscribers"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CategoryAmountsSection.tsx
+#: src/features/budget-planning/ui/category-row/CategoryRowCardLayout.tsx
+#: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
+#: src/features/budget-planning/ui/CategoryGroupRow.tsx
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
+#: src/features/budget-planning/ui/DraggableBudgetTable.tsx
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+msgid "Activity"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Activity:"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Add a custom rate to override automatically fetched exchange rates for specific date ranges."
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Add a new user to this deployment. Share the password securely."
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "Add Account"
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+msgid "Add an account first"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "Add budget categories to view context insights."
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+msgid "Add charts to visualize your query results"
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "Add New Account"
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/TransactionFormHeader.tsx
+msgid "Add New Transaction"
+msgstr ""
+
+#: src/app/layout/desktop-shell/HeaderBar.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Add Transaction"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/AddWidgetDialog.tsx
+#: src/pages/custom-dashboards/CustomDashboardsPage.tsx
+msgid "Add Widget"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Added to every monthly payment throughout the plan."
+msgstr ""
+
+#: src/pages/accounts/components/AccountDateRangeControls.tsx
+msgid "Adjust"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Adjust by %"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Adjust by value"
+msgstr ""
+
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+msgid "Adjust the date range or filters to explore other results."
+msgstr ""
+
+#: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
+msgid "Adjust the filters or date range to explore other periods."
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/DesktopTransactionTable.tsx
+msgid "Adjust your filters or add a new transaction to get started."
+msgstr ""
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Adjustment Needed:"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Admin Dashboard"
+msgstr ""
+
+#: src/app/layout/AdminSidebar.tsx
+msgid "Admin Panel"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Admins"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Aggregate Function"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "AI Assistant"
+msgstr ""
+
+#: src/features/ai/ui/AINotConfiguredWarning.tsx
+msgid "AI not configured"
+msgstr ""
+
+#. placeholder {0}: t.suggestedCategoryName
+#: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+msgid "AI suggested: <0>{0}</0>"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "Algorithm"
+msgstr ""
+
+#: src/pages/settings/ai/PrivacyWarnings.tsx
+msgid "All AI processing happens on your local network. No financial data is sent to external servers. You need to have Ollama or LM Studio running on your machine or local network."
+msgstr ""
+
+#: src/features/budget-planning/ui/SearchAndFilterControls.tsx
+msgid "All Categories"
+msgstr ""
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+msgid "All set - nothing scheduled for this account right now."
+msgstr ""
+
+#: src/pages/accounts/components/ValueChangeStat.tsx
+msgid "All time"
+msgstr ""
+
+#: src/pages/accounts/AllTransactionsPage.tsx
+msgid "All Transactions"
+msgstr ""
+
+#: src/features/budget-planning/ui/budget-table/DeleteCategoryDialog.tsx
+msgid "All transactions ({currentCategoryTotalTransactions})"
+msgstr ""
+
+#: src/pages/admin/admin-users/UsersTable.tsx
+msgid "All Users"
+msgstr ""
+
+#: src/app/system/ReconnectionOverlay.tsx
+msgid "All your data is now synchronized"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/MutationsTab.tsx
+msgid "All-time totals with a daily activity view for the current window."
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CategoryAmountsSection.tsx
+msgid "Alloc."
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CategoryAmountsSection.tsx
+#: src/features/budget-planning/ui/CategoryGroupRow.tsx
+#: src/features/budget-planning/ui/DraggableBudgetTable.tsx
+msgid "Allocated"
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "Allow over-assignment"
+msgstr ""
+
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "Allow this user to log in again and resume normal access."
+msgstr ""
+
+#: src/pages/auth/AuthPage.tsx
+msgid "Already have an account? <0>Sign in</0>"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Amortization Table"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+#: src/features/budget-planning/ui/category-row/CCPaymentCoverPopover.tsx
+#: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
+#: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
+#: src/features/budget-planning/ui/category-row/MoveMoneyPopover.tsx
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
+#: src/features/import/ui/steps/PreviewStep.tsx
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+#: src/pages/settings/subscription/InvoicesTable.tsx
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
+#: src/pages/warranties/components/WarrantyTable.tsx
+msgid "Amount"
+msgstr ""
+
+#: src/features/transactions/ui/form/AmountInput.tsx
+msgid "Amount ({currencyCode})"
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+msgid "Amount:"
+msgstr ""
+
+#: src/pages/explorer-page/components/SchemaSidebar.tsx
+msgid "Analytics"
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "Annual percentage rate, e.g., 5 for 5%."
+msgstr ""
+
+#: src/features/budget-planning/ui/budget-table/DeleteCategoryDialog.tsx
+msgid "Any remaining available amount"
+msgstr ""
+
+#: src/pages/settings/push-api/RegenerateDialog.tsx
+msgid "Anyone with this key can read your budget data"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "API Documentation"
+msgstr ""
+
+#: src/pages/settings/ai/ConnectionTestPanel.tsx
+msgid "API Key"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Apostrophe (')"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/ActivityTab.tsx
+msgid "App Activity"
+msgstr ""
+
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Appearance"
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Application Details"
 msgstr ""
 
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Applied only in the first month of the schedule."
+msgstr ""
+
+#: src/features/account-management/ui/EditAccountDialog.tsx
+#: src/features/import/ui/steps/configure/TemplatesTab.tsx
+msgid "Apply"
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "Apply {selectedCount} Categories"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "APR (%)"
+msgstr ""
+
+#: src/features/account-management/ui/EditAccountDialog.tsx
+msgid "Archive"
+msgstr ""
+
+#: src/features/account-management/ui/ArchiveAccountDialog.tsx
+msgid "Archive account"
+msgstr ""
+
+#: src/features/account-management/ui/ArchiveAccountDialog.tsx
+msgid "Archived accounts are hidden from sidebars and account pickers by default, but their historical transactions remain visible in reports and transaction lists. You can unarchive an account later from the All Accounts page."
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Are you absolutely sure you want to continue?"
+msgstr ""
+
+#: src/pages/settings/subscription/CancelDialog.tsx
+msgid "Are you sure you want to cancel your subscription? You'll continue to have access until the end of your current billing period."
+msgstr ""
+
+#: src/pages/settings/push-api/RegenerateDialog.tsx
+msgid "Are you sure you want to reveal the key?"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Area Chart"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Ask an owner to create a budget in this workspace, or switch to another workspace you can already access."
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Ask everyone active in the last 30 days what's working and what isn't. Replies go to hello@."
+msgstr ""
+
+#: src/pages/accounts/components/AssetLiabilityHistoryChart.tsx
+msgid "Asset & Liability History (24 months)"
+msgstr ""
+
+#: src/pages/onboarding/steps/GoalStep.tsx
+msgid "Assign the same amount every month. Best for emergency funds and ongoing buckets."
+msgstr ""
+
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
+msgid "Assigned"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Assigned this month:"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Assigned:"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Assistant Tools"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "Authentication"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Auto-Categorize"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
+msgid "Autofill"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Automatically categorize uncategorized transactions using AI analysis of payee names and memos."
+msgstr ""
+
+#: src/app/layout/desktop-shell/SidebarNav.tsx
+msgid "Automation"
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "Automation rules"
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "Automation<0/>"
+msgstr ""
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+msgid "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CategoryAmountsSection.tsx
+msgid "Avail."
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CategoryAmountsSection.tsx
+#: src/features/budget-planning/ui/CategoryGroupRow.tsx
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
+#: src/features/budget-planning/ui/DraggableBudgetTable.tsx
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Available"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Available AI-powered features when connected to a local LLM"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Available for payment:"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Average"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+#: src/features/ai/ui/receipt-scanner/ScanActions.tsx
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Back"
+msgstr ""
+
+#: src/app/layout/AdminSidebar.tsx
+msgid "Back to App"
+msgstr ""
+
+#: src/pages/JoinWorkspacePage.tsx
+msgid "Back to Budgero"
+msgstr ""
+
+#: src/features/import/ui/steps/PreviewStep.tsx
+msgid "Back to Configuration"
+msgstr ""
+
+#: src/features/budget-management/ui/CreateBudgetForm.tsx
+msgid "Backup"
+msgstr ""
+
+#: src/pages/accounts/AccountPage.tsx
+#: src/pages/accounts/components/AccountSummaryCards.tsx
+#: src/pages/analytics/reports/ScenarioReport.tsx
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Balance"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+msgid "Balance<0/>"
+msgstr ""
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Balances match - reconciliation will mark transactions as reconciled"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Bar Chart"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Base"
+msgstr ""
+
+#: src/pages/onboarding/steps/YnabImportStep.tsx
+msgid "Before you export:"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Beta Testers"
+msgstr ""
+
+#: src/features/recurring/ui/RecurringTransactionEditor.tsx
+msgid "Bill / payment"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+msgid "Billing"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Billing cadence:"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Billing Information"
+msgstr ""
+
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "Block User"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+msgid "Blocked"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Blocked users"
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.mobile.tsx
+msgid "Breakdown"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Breakdown of user types"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/ReceiptDropzone.tsx
+msgid "Browse Files"
+msgstr ""
+
+#: src/pages/onboarding/steps/YnabImportStep.tsx
+msgid "BROWSE FILES"
+msgstr ""
+
+#: src/app/layout/desktop-shell/DesktopShell.tsx
+#: src/pages/auth/AuthPage.tsx
+msgid "Budgero"
+msgstr ""
+
+#: src/pages/onboarding/OnboardingFlow.tsx
+msgid "BUDGERO · ONBOARDING v1"
+msgstr ""
+
+#. placeholder {0}: data.build_version
+#: src/features/app-update/ui/UpdateAvailableBanner.tsx
+msgid "Budgero {latest} is available — you're running {0}"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
+msgid "Budgero Backup File (.db or .sqlite)"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Budgero Classic"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Budgero Classic font"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Budgero couldn't finish starting"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RulePreview.tsx
+msgid "Budgero evaluates your rule from top to bottom. If you ever need to rerun it, open the history drawer and trigger a retro run."
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Budgero helps budgets breathe easier."
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Budgero is continually updated. If you experience issues, share the version information above when contacting support so we can help quickly."
+msgstr ""
+
+#: src/pages/onboarding/steps/RulesStep.tsx
+msgid "Budgero is opinionated on purpose. These three rules shape everything — read them once, and the rest of the app will make sense."
+msgstr ""
+
+#: src/app/layout/AdminSidebar.tsx
+msgid "Budgero Management"
+msgstr ""
+
+#: src/features/budget-sharing/ui/OnboardingInviteShareDialog.tsx
+msgid "Budgero never sees it"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Budgero never sees this secret — but whatever channel you share through will. For the strongest privacy, hand it over in person or via an end-to-end encrypted app (Signal, iMessage, WhatsApp). We can’t show this code again, so capture it now."
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Budgero stores your master password in this browser's IndexedDB until it expires."
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "Budgero tries to detect other format settings, but exports made with the settings above are the only ones that import losslessly."
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "Budget"
+msgstr ""
+
+#: src/features/account-management/ui/OnBudgetToggle.tsx
+msgid "Budget Account"
+msgstr ""
+
+#: src/pages/budgeting/BudgetingPage.mobile.tsx
+msgid "Budget Context"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Budget layout"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
+#: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
+#: src/features/budget-management/ui/EditBudgetForm.tsx
+msgid "Budget Name"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "Budget Pacing"
+msgstr ""
+
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Budget Planning"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "Budget spent"
+msgstr ""
+
+#: src/pages/settings/push-api/IdReferencePanel.tsx
+msgid "Budgets"
+msgstr ""
+
+#: src/app/layout/desktop-shell/SidebarNav.tsx
+msgid "Budgets & Data"
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "Budgets & Data<0/>"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Budgets, accounts, transactions, and categories in this workspace will be replaced"
+msgstr ""
+
+#: src/pages/custom-dashboards/CustomDashboardsPage.tsx
+msgid "Build dashboard layouts from Explorer charts. Drag to reorder, resize on desktop, and use size presets on mobile."
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Build metadata for support or troubleshooting."
 msgstr ""
 
+#: src/app/startup/screens.tsx
+msgid "Can I have more than one workspace?"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+#: src/features/account-management/ui/ArchiveAccountDialog.tsx
+#: src/features/account-management/ui/EditAccountDialog.tsx
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+#: src/features/ai/ui/AICategorizeDialog.tsx
+#: src/features/ai/ui/receipt-scanner/ScanActions.tsx
+#: src/features/budget-planning/ui/budget-table/DeleteCategoryDialog.tsx
+#: src/features/budget-planning/ui/category-row/CCPaymentCoverPopover.tsx
+#: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
+#: src/features/budget-planning/ui/category-row/MoveMoneyPopover.tsx
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
+#: src/features/budget-planning/ui/FutureOverspendingWarning.tsx
+#: src/features/budget-planning/ui/GroupNameEditPopover.tsx
+#: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
+#: src/features/category-management/ui/AddNameDialog.tsx
+#: src/features/category-management/ui/CategoryEditDialog.tsx
+#: src/features/category-management/ui/CreateCategoryDialog.tsx
+#: src/features/currencies/ui/ManualRatePrompt.tsx
+#: src/features/recurring/ui/RecurringTransactionEditor.tsx
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/features/rules/ui/rule-editor/RuleEditorDialog.tsx
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+#: src/features/subscription/ui/ExportDataCard.tsx
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+#: src/features/transactions/ui/add-transaction/TransactionFormActions.tsx
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+#: src/pages/admin/admin-users/ActionDialog.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+#: src/pages/custom-dashboards/components/AddWidgetDialog.tsx
+#: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+#: src/pages/custom-dashboards/components/PinChartDialog.tsx
+#: src/pages/JoinWorkspacePage.tsx
+#: src/pages/settings/components/WorkspaceRow.tsx
+#: src/pages/settings/CurrencySettingsPage.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+#: src/pages/settings/SecurityPage.tsx
+#: src/pages/settings/subscription/PlanChangeDialog.tsx
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
+msgid "Cancel"
+msgstr ""
+
+#: src/pages/settings/subscription/CancelDialog.tsx
+msgid "Cancel Subscription"
+msgstr ""
+
+#: src/features/chat/ui/ToolConfirmation.tsx
+msgid "Cancelled"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Cannot log in"
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.desktop.tsx
+#: src/pages/dashboard/DashboardPage.mobile.tsx
+msgid "Cash Balance"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Cash spending:"
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "Categories Applied!"
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "Categories Created"
+msgstr ""
+
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Categories managed per split line"
+msgstr ""
+
+#. placeholder {0}: parsedQuery.textQuery
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "Categories matching \"{0}\""
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+#: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
+#: src/features/budget-planning/ui/DraggableBudgetTable.tsx
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+msgid "Category"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+msgid "Category / Transfer"
+msgstr ""
+
+#: src/features/category-management/ui/CreateCategoryDialog.tsx
+msgid "Category group"
+msgstr ""
+
+#: src/features/category-management/ui/CreateCategoryDialog.tsx
+msgid "Category name"
+msgstr ""
+
+#: src/features/category-management/ui/CategoryEditDialog.tsx
+msgid "Category Name"
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Category:"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+msgid "Category<0/>"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Change Category"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Change Master Password"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanChangeDialog.tsx
+msgid "Change Plan"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanChangeDialog.tsx
+msgid "Change Subscription Plan"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Change your master password (used to encrypt your local database)."
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Changelog"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/ReportChartSelectFields.tsx
+msgid "Chart"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Chart Type"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/explorer-page/components/ChartsPanel.tsx
+msgid "Chart Visualizations"
+msgstr ""
+
+#: src/features/chat/ui/chat-panel/ChatHeader.tsx
+#: src/features/chat/ui/chat-panel/ChatPanel.tsx
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Chat Assistant"
+msgstr ""
+
+#: src/features/chat/ui/chat-panel/ChatConversationList.tsx
+msgid "Chats"
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.desktop.tsx
+#: src/pages/dashboard/DashboardPage.mobile.tsx
+msgid "checking, savings & cash"
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/TransactionFormHeader.tsx
+msgid "Choose a transaction type and fill in the details below."
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Choose an existing payee or create a new one. Leave blank to clear it."
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Choose how categories are displayed."
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Choose how long Budgero keeps your master password after you unlock the app on this device."
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "Choose how this budget computes Ready to Assign. Switching is instant and non-destructive — it only changes the math, never your transactions or assignments."
+msgstr ""
+
+#: src/features/goal-management/ui/GoalForm.tsx
+msgid "Choose how you want to track this category."
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
+msgid "Choose the database you exported as a Budgero backup. We'll import every budget, account, and transaction."
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Choose the language Budgero uses on this device"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Choose the typeface Budgero Classic should use across the app."
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Choose what the assistant is allowed to do. Disable tools your model handles poorly, or turn on raw SQL for a capable model."
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Choose your preferred color scheme"
+msgstr ""
+
+#: src/pages/analytics/reports/PlanRealityReport.tsx
+msgid "chronic"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Clear"
+msgstr ""
+
+#: src/features/transactions/ui/SearchActiveFilters.tsx
+msgid "Clear all"
+msgstr ""
+
+#: src/features/labels/ui/LabelCombobox.tsx
+msgid "Clear label"
+msgstr ""
+
+#: src/features/payees/ui/PayeeCombobox.tsx
+msgid "Clear payee"
+msgstr ""
+
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+msgid "Clear selection"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/ActivityTab.tsx
+msgid "Clerk Session Activity"
+msgstr ""
+
+#: src/pages/explorer-page/ExplorerPage.tsx
+msgid "Click on tables and columns in the sidebar to insert them into your query"
+msgstr ""
+
+#: src/features/chat/ui/VoiceInputButton.tsx
+msgid "Click to stop"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleEditorDialog.tsx
+#: src/features/rules/ui/RuleRunOverlay.tsx
+#: src/pages/admin/sql-explorer/AdminSqlExplorer.tsx
+#: src/pages/explorer-page/components/ReportsPanel.tsx
+#: src/shared/ui/dialog.tsx
+#: src/shared/ui/sheet.tsx
+msgid "Close"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "Cohort"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "Cohort bucket"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "Cohort retention"
+msgstr ""
+
+#: src/pages/onboarding/steps/ShareStep.tsx
+msgid "collaborator"
+msgstr ""
+
+#: src/features/budget-planning/ui/SearchAndFilterControls.tsx
+msgid "Collapse"
+msgstr ""
+
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+msgid "Collapse all"
+msgstr ""
+
+#: src/shared/ui/theme-switch.tsx
+msgid "Color mode"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Color Theme"
+msgstr ""
+
+#. placeholder {0}: widget.desktopLayout.colSpan
+#: src/pages/custom-dashboards/components/WidgetCard.tsx
+msgid "Cols {0}"
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Column Mapping"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Comma (,)"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Common administrative tasks"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Compact header"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Configure the AI chat assistant behavior and appearance"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Confirm Master Password"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Confirm password"
+msgstr ""
+
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "CONFIRM PASSWORD"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Connect to a local LLM (Ollama, LM Studio) for maximum privacy, or point at a remote OpenAI-compatible API. Local servers keep your data on-device; remote ones do not."
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Connected"
+msgstr ""
+
+#: src/widgets/sync-status/ConnectivityStatus.tsx
+msgid "Connectivity"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Context Window"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
+msgid "Continuous"
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "Control whether Budgero enforces the Ready to Assign limit when funding categories."
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Conversions still derive the reverse automatically; unchecking only skips the visible second entry."
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Copy"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Copy code only"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/OverviewTab.tsx
+msgid "Core account and entitlement metadata."
+msgstr ""
+
+#: src/features/budget-planning/ui/CCPaymentActivityDialog.tsx
+msgid "Could not find the credit card account linked to this category."
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Count"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
+msgid "Cover from"
+msgstr ""
+
+#: src/features/budget-planning/ui/assign-dropdown/AssignQuickActions.tsx
+#: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
+msgid "Cover Overspending"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "Coverage<0><1><2><3/></2></1><4>Months your on-budget balance could cover at current spend rate.</4></0>"
+msgstr ""
+
+#: src/features/payees/ui/PayeeCombobox.tsx
+msgid "Create \"{normalizedSearch}\""
+msgstr ""
+
+#: src/pages/custom-dashboards/components/PinChartDialog.tsx
+msgid "Create a dashboard first to pin charts."
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+msgid "Create Account"
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+msgid "Create an account to start recording transactions."
+msgstr ""
+
+#: src/features/budget-planning/ui/EmptyStateDisplay.tsx
+msgid "Create category groups to organize your spending, then add categories within each group."
+msgstr ""
+
+#: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
+msgid "Create dashboard"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
+msgid "Create Default Categories"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalCard.tsx
+msgid "Create Goal"
+msgstr ""
+
+#: src/features/budget-management/ui/BudgetSwitcher.tsx
+#: src/widgets/navigation/MobileTopBar.tsx
+msgid "Create New Budget"
+msgstr ""
+
+#: src/features/category-management/ui/CreateCategoryDialog.tsx
+msgid "Create new category"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Create or migrate Budgero users from the latest Clerk directory."
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "Create powerful rules that categorise, clean up, and reroute transactions the moment they appear."
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Create user"
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Create workspace"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Create Your First Budget"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Create Your Master Password"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Create Your Workspace"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "Created"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
+msgid "Credit overspending that wasn't covered when it happened. Assign money to this payment category to pay it off."
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Credit spending:"
+msgstr ""
+
+#: src/pages/onboarding/steps/CurrencyStep.tsx
+msgid "Currency"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Currency and number formatting stay controlled by your budget settings."
+msgstr ""
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Currency Conversion"
+msgstr ""
+
+#: src/features/currencies/ui/CurrencySelector.tsx
+msgid "Currency conversion requires an internet connection to fetch current exchange rates. You are currently offline."
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Currency Pair"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "Currency Placement"
+msgstr ""
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Current Balance"
+msgstr ""
+
+#: src/pages/accounts/components/AssetLiabilityHistoryChart.tsx
+msgid "Current Net Worth"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanChangeDialog.tsx
+msgid "Current Plan"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalCard.tsx
+msgid "Current Streak:"
+msgstr ""
+
+#: src/pages/custom-dashboards/CustomDashboardsPage.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Custom Dashboards"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/AddWidgetDialog.tsx
+msgid "Custom widget title (optional)"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionPage.tsx
+msgid "Customer ID:"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "Daily"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Damped trend (Holt)"
+msgstr ""
+
+#: src/shared/ui/theme-switch.tsx
+msgid "Dark"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/PinChartDialog.tsx
+#: src/pages/dashboard/DashboardPage.desktop.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Dashboard"
+msgstr ""
+
+#: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
+msgid "data management"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Database Path"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Database size"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+#: src/features/import/ui/steps/PreviewStep.tsx
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+#: src/pages/settings/subscription/InvoicesTable.tsx
+msgid "Date"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Date Format"
+msgstr ""
+
+#: src/pages/accounts/components/AccountDateRangeControls.tsx
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Date Range"
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "Date the loan started or was disbursed."
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+msgid "Date<0/>"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "Day-N window"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Days left:"
+msgstr ""
+
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "Days of Free Access"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Days remaining:"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
+msgid "Debt created"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Decimal Separator"
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+#: src/pages/settings/components/WorkspaceRow.tsx
+msgid "Default"
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Default Account for Import"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/MappingTab.tsx
+msgid "Default year"
+msgstr ""
+
+#: src/features/account-management/ui/ArchiveAccountDialog.tsx
+msgid "Defaults to Income. Pick a different category if this adjustment represents something else (e.g. debt forgiveness, write-off)."
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Define exchange rates with date ranges. Transactions without a manual rate override will be recalculated when you add, edit, or delete a custom rate."
+msgstr ""
+
+#: src/features/transactions/ui/form/SplitEditor.tsx
+msgid "Del"
+msgstr ""
+
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+#: src/features/transactions/ui/form/SplitEditor.tsx
+#: src/pages/explorer-page/components/ReportsPanel.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Delete"
+msgstr ""
+
+#. placeholder {0}: template.name
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Delete “{0}”?"
+msgstr ""
+
+#: src/features/budget-management/ui/DeleteBudgetButton.tsx
+msgid "Delete Budget"
+msgstr ""
+
+#: src/features/budget-planning/ui/budget-table/DeleteCategoryDialog.tsx
+msgid "Delete Category"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
+msgid "Delete dashboard"
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/TransactionDialogs.tsx
+#: src/features/transactions/ui/TransactionQuickViewDialog.tsx
+msgid "Delete transaction"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Delete user"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Deployment details for this binary."
+msgstr ""
+
+#: src/features/recurring/ui/RecurringTransactionEditor.tsx
+msgid "Describe how often this happens and which account & category it should use. Budgero will remind you at the right time."
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Description"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Desktop-only layout preferences for budgeting."
+msgstr ""
+
+#: src/features/import/ui/steps/CompleteStep.tsx
+msgid "Destination account:"
+msgstr ""
+
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "Destinations"
+msgstr ""
+
+#: src/pages/admin/admin-users/UsersTable.tsx
+#: src/pages/settings/AuditLogPage.tsx
+msgid "Details"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Difference"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "Disabled"
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Discord Community"
 msgstr ""
 
+#: src/pages/settings/AppearancePage.tsx
+msgid "Display language"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Display the floating chat button"
+msgstr ""
+
+#: src/shared/ui/sidebar.tsx
+msgid "Displays the mobile sidebar."
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+#: src/features/ai/ui/receipt-scanner/ScanProgress.tsx
+msgid "Done"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Dot (.)"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanSelection.tsx
+msgid "Download invoices and payment history"
+msgstr ""
+
+#: src/features/subscription/ui/ExportDataCard.tsx
+msgid "Download your budget data before your subscription ends. You'll need your master password to decrypt the export."
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Download your data for backup or analysis"
+msgstr ""
+
+#: src/features/debt/ui/PayoffSimulator.tsx
+msgid "Drag the slider to test a monthly payment. We estimate the payoff date and total interest assuming fixed payments and no new charges."
+msgstr ""
+
+#: src/features/import/ui/GlobalImportDropHandler.tsx
+msgid "Drop file to import"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/MappingTab.tsx
+msgid "Drop garbage rows from the top of the file (titles, blank lines, page banners). Header detection and the previews below update automatically."
+msgstr ""
+
+#: src/pages/onboarding/steps/YnabImportStep.tsx
+msgid "Drop your YNAB export here"
+msgstr ""
+
+#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+msgid "Due:"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Duration"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "Each row is a signup cohort. Cells show the % of that cohort active on day N after signup. Look for cliffs (every cohort drops at the same day) and cross-cohort drift (recent cohorts retaining better or worse than older ones). Daily cohorts are noisy at low signup volume — switch to weekly if rows look jagged."
+msgstr ""
+
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Edit"
+msgstr ""
+
+#: src/features/account-management/ui/EditAccountDialog.tsx
+msgid "Edit Account"
+msgstr ""
+
+#: src/features/category-management/ui/CategoryEditDialog.tsx
+msgid "Edit Category"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Edit Chart"
+msgstr ""
+
+#: src/features/budget-management/ui/BudgetSwitcher.tsx
+#: src/widgets/navigation/MobileTopBar.tsx
+msgid "Edit or delete your budget"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+msgid "Edit splits"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+msgid "Editing transfer splits is not supported."
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionPage.tsx
+msgid "Email:"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "Enable notifications"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Enable speech-to-text for voice messages"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "Encoding"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "Encryption"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "Encryption Details"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "End Date"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "Endpoint"
+msgstr ""
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Enter an amount to see conversion"
+msgstr ""
+
+#: src/features/currencies/ui/ManualRatePrompt.tsx
+msgid "Enter Exchange Rate"
+msgstr ""
+
+#: src/features/subscription/ui/ExportDataCard.tsx
+msgid "Enter Master Password"
+msgstr ""
+
+#: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
+msgid "Enter the invite secret shared with you. Budgero will decrypt the space key locally using your master password."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Enter the invite secret you received from the workspace owner."
+msgstr ""
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Enter your actual account balance to reconcile with the current balance in the system."
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "Enter your card’s minimum payment from statements."
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Enter your current password and choose a new one. Your data will be re-encrypted with the new password."
+msgstr ""
+
+#: src/shared/ui/calculator-cell/CalculatorInput.tsx
+#: src/shared/ui/calculator-cell/CalculatorSheet.tsx
+msgid "Error"
+msgstr ""
+
+#: src/features/category-management/ui/SearchableCategorySelect.tsx
+msgid "Error loading data"
+msgstr ""
+
+#: src/features/import/ui/steps/PreviewStep.tsx
+msgid "Errors"
+msgstr ""
+
+#: src/features/debt/ui/PayoffSummaryGrid.tsx
+msgid "Estimated months"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "Events we track"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
+msgid "Every workspace this account belongs to, including invitation status."
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Examples:"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Exchange Rate"
+msgstr ""
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Exchange rate not available"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Exchange rates are fetched daily and cached inside your budget file."
+msgstr ""
+
+#: src/features/category-management/ui/CategoryEditDialog.tsx
+msgid "Exclude from Budget Pace"
+msgstr ""
+
+#: src/features/budget-planning/ui/SearchAndFilterControls.tsx
+msgid "Expand"
+msgstr ""
+
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+msgid "Expand all"
+msgstr ""
+
+#: src/features/transactions/ui/form/TransactionTypeSelector.tsx
+msgid "Expense"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Experimental Feature"
+msgstr ""
+
+#: src/pages/warranties/components/StatusBadge.tsx
+#: src/pages/warranties/WarrantiesPage.tsx
+msgid "Expired"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Expires:"
+msgstr ""
+
+#: src/pages/warranties/components/StatusBadge.tsx
+#: src/pages/warranties/WarrantiesPage.tsx
+msgid "Expiring Soon"
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyTable.tsx
+msgid "Expiry Date"
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
+msgid "Expiry Date *"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Explore detailed payoff projections. Adjust APR, monthly payment, and extras to see how they affect timeline and interest."
+msgstr ""
+
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Explorer"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "Export Budget"
+msgstr ""
+
+#: src/features/analytics/ui/chart-viewer/ChartExportButton.tsx
+msgid "Export CSV"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "Export is only available on the {YNAB_WEB_APP_LINK}(not the mobile app). Please follow these steps — the format settings decide whether your dates and amounts import correctly. See the {FULL_GUIDE_LINK} for details on what is and isn't imported."
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Export stays available. Restore and other workspace changes remain locked until access is active again."
+msgstr ""
+
+#: src/features/subscription/ui/ExportDataCard.tsx
+msgid "Export Your Data"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "Export your encryption key for use with external tools like the Python script."
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Extra monthly"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Extract transactions from receipts and bank statement images using vision AI."
+msgstr ""
+
+#: src/pages/settings/push-api/QueueStatsPanel.tsx
+msgid "Failed"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Failed to fetch accounts"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "Failed to load Push API settings. Please try again later."
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Fallback Account (for unmatched account names)"
+msgstr ""
+
+#: src/pages/explorer-page/components/ReportsPanel.tsx
+msgid "Favorite"
+msgstr ""
+
+#: src/app/layout/desktop-shell/HeaderBar.tsx
+msgid "Feedback"
+msgstr ""
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Fetching exchange rate..."
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "Fill in the details below to create a new account."
+msgstr ""
+
+#: src/features/account-management/ui/EditAccountDialog.tsx
+msgid "Fill in the details below to edit this account."
+msgstr ""
+
+#: src/features/rules/ui/PayeeCategoryMemoryCard.tsx
+msgid "Fill the category from the payee's last transaction"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Filter by name, username, or ID."
+msgstr ""
+
+#: src/pages/settings/push-api/IdReferencePanel.tsx
+msgid "Find the IDs you need for API requests. Click any ID to copy it. Payees are referenced by name, not id."
+msgstr ""
+
+#: src/pages/admin/admin-users/UserSearchCard.tsx
+msgid "Find users by ID, email, or name"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Flat average"
+msgstr ""
+
+#: src/pages/settings/ai/ModelSelectionSection.tsx
+msgid "For categorization and analysis"
+msgstr ""
+
+#: src/pages/onboarding/steps/AccountsStep.tsx
+msgid "For credit cards, enter the amount you currently owe — the card will open with that balance as debt."
+msgstr ""
+
+#: src/features/debt/ui/PayoffSimulator.tsx
+msgid "For credit cards, this approximates a fixed payment schedule. Actual card minimums typically decline as balance drops."
+msgstr ""
+
+#: src/pages/settings/ai/ModelSelectionSection.tsx
+msgid "For receipt/image scanning"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/QueryCard.tsx
+#: src/pages/explorer-page/ExplorerPage.tsx
+msgid "Format SQL"
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Formatting"
+msgstr ""
+
+#. placeholder {0}: uncategorizedTransactions.length
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "Found <0>{0}</0>uncategorized transactions. The AI will analyze each transaction and suggest the best matching category."
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Founding Member"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Founding Members"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Free Access"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Free access ends:"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "From"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CCPaymentCoverPopover.tsx
+msgid "From account"
+msgstr ""
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+msgid "From automations"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "full import guide"
+msgstr ""
+
+#: src/features/budget-planning/ui/assign-dropdown/AssignQuickActions.tsx
+msgid "Fund Goals"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Funded from budgeted spending"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Funded from spending:"
+msgstr ""
+
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "funds last until <0>{runsOut}</0>if income stopped"
+msgstr ""
+
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "Generate an API token to authenticate requests to the Push API."
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "Get reminders before recurring transactions are due. We will only notify you for items you configure."
+msgstr ""
+
+#: src/app/system/ReconnectionOverlay.tsx
+msgid "Getting you back online"
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Give your workspace a descriptive name so collaborators know what it includes."
+msgstr ""
+
+#: src/pages/analytics/reports/PlanRealityReport.tsx
+msgid "Goal funding (this period)"
+msgstr ""
+
+#: src/pages/onboarding/steps/GoalStep.tsx
+msgid "GOAL NAME"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalForm.tsx
+msgid "Goal resets each year after the target date. A new cycle starts automatically."
+msgstr ""
+
+#: src/features/goal-management/ui/GoalForm.tsx
+msgid "Goal Type"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Grant admin privileges"
+msgstr ""
+
+#: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
+msgid "Great job! No uncategorised transactions left."
+msgstr ""
+
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Group By"
+msgstr ""
+
+#. placeholder {0}: chart.groupByColumn
+#: src/features/reports/ui/SaveReportDialog.tsx
+msgid "Group: {0}"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Head to the Imports page to upload CSV/PDF files, review past imports, and undo anything that looks off."
+msgstr ""
+
+#: src/pages/onboarding/steps/WelcomeStep.tsx
+msgid "HEADS UP:"
+msgstr ""
+
+#: src/features/budget-planning/ui/budget-table/DeleteCategoryDialog.tsx
+msgid "Here's what will be reassigned to the new category:"
+msgstr ""
+
+#: src/features/chat/ui/chat-panel/ChatMessageList.tsx
+msgid "Hi! I'm your budget assistant."
+msgstr ""
+
+#: src/features/analytics/ui/chart-viewer/ChartLegend.tsx
+msgid "Hide all"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetToolbar.tsx
+msgid "Hide hidden"
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "High"
+msgstr ""
+
+#: src/app/layout/desktop-shell/HeaderBar.tsx
+msgid "Home"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "How do I invite someone?"
+msgstr ""
+
+#: src/pages/onboarding/steps/GoalStep.tsx
+msgid "HOW DO YOU WANT TO SAVE?"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "How is this different from my login?"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalCard.tsx
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "How it works"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+#: src/features/goal-management/ui/GoalCard.tsx
+msgid "How it works:"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "How many months of budget data to include for context"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
+#: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
+msgid "How numbers and decimals are displayed throughout the app."
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "How should the assistant handle actions like adding transactions?"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "How to export from YNAB"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "How to send transactions to Budgero via the Push API."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "How would you like to get started?"
+msgstr ""
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "ℹ️ Offline or unauthorized – conversions will use cached or manual rates."
+msgstr ""
+
+#: src/pages/onboarding/steps/RulesStep.tsx
+msgid "I understand. I will budget only the money I have, assign every coin, and enter transactions myself."
+msgstr ""
+
+#: src/features/budget-sharing/ui/OnboardingInviteShareDialog.tsx
+msgid "I’ve shared them — done"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/OverviewTab.tsx
+msgid "Identity"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
+msgid "Import"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/ScanActions.tsx
+msgid "Import {selectedCount} Transactions"
+msgstr ""
+
+#: src/features/import/ui/steps/CompleteStep.tsx
+msgid "Import Another File"
+msgstr ""
+
+#: src/pages/onboarding/steps/YnabImportStep.tsx
+msgid "import guide"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "Import limitations"
+msgstr ""
+
+#: src/features/import/ui/steps/CompleteStep.tsx
+msgid "Import Summary"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/AIReceiptScannerDialog.tsx
+msgid "Import to Account"
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "Imported"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
+#: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
+msgid "Importing..."
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Imports now live on their own page so you can manage history and undo runs."
+msgstr ""
+
+#: src/pages/settings/subscription/PlanSelection.tsx
+msgid "In the billing portal, you can:"
+msgstr ""
+
+#: src/pages/onboarding/steps/YnabImportStep.tsx
+msgid "In YNAB: <0>File › Export Budget</0>. Drop the .zip here —<1/>nothing leaves your device until you finish."
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Inactive"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "Include your API token in the Authorization header:"
+msgstr ""
+
+#: src/features/transactions/ui/form/TransactionTypeSelector.tsx
+#: src/widgets/dashboard/CashflowTrendCard.tsx
+msgid "Income"
+msgstr ""
+
+#: src/features/recurring/ui/RecurringTransactionEditor.tsx
+msgid "Income / deposit"
+msgstr ""
+
+#: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
+msgid "Income vs expense trend"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Inflow"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+msgid "Inflow<0/>"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Install Budgero"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Install Budgero for an app-like experience and quick access from your home screen."
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Institution"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Interest"
+msgstr ""
+
+#: src/features/debt/ui/PayoffSummaryGrid.tsx
+msgid "Interest (from now)"
+msgstr ""
+
+#: src/pages/settings/AccountSettingsPage.tsx
+#: src/pages/settings/subscription/SubscriptionPage.tsx
+msgid "Internet connection required"
+msgstr ""
+
+#: src/pages/JoinWorkspacePage.tsx
+msgid "Invite code"
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Invite collaborators, manage pending invites, and control access for the active workspace."
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Invite ready — share the link below"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+#: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
+msgid "Invite secret"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Invite your partner, family, or friends to share a workspace, they get full access without needing their own subscription."
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+msgid "Invoice"
+msgstr ""
+
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "Irreversible Action"
+msgstr ""
+
+#: src/pages/JoinWorkspacePage.tsx
+msgid "Join a shared workspace"
+msgstr ""
+
+#: src/pages/admin/admin-users/UsersTable.tsx
+msgid "Joined"
+msgstr ""
+
+#: src/shared/ui/MonthPickerPopover.tsx
+msgid "Jump to today"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanChangeDialog.tsx
+msgid "Just ${monthlyPrice}/month"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "Keep an eye on regular paycheques, bills, and transfers. Budgero will remind you before they run."
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Keep cached rates for"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Keep Clerk users aligned with Budgero."
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Keep in memory only (recommended)"
+msgstr ""
+
+#: src/pages/settings/subscription/CancelDialog.tsx
+msgid "Keep Subscription"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "Key Source"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+msgid "Label<0/>"
+msgstr ""
+
+#: src/pages/accounts/components/ValueChangeStat.tsx
+msgid "Last 30 days"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Last backup"
+msgstr ""
+
+#: src/widgets/sync-status/ConnectivityStatus.tsx
+msgid "Last checked"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Last login"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/OverviewTab.tsx
+msgid "Last Mutation"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Last Updated"
+msgstr ""
+
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "Last Used"
+msgstr ""
+
+#. placeholder {0}: latest.Date
+#: src/pages/accounts/components/ValueChangeStat.tsx
+msgid "Latest rate ({0})"
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Latest updates"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Latest user actions"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Latest users created on this deployment."
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Learn more about Budgero or get in touch with the team."
 msgstr ""
 
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+msgid "Ledger"
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.desktop.tsx
+msgid "left"
+msgstr ""
+
+#: src/pages/onboarding/steps/ZbbStep.tsx
+msgid "LEFT TO ASSIGN"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/ActivityHeatmap.tsx
+msgid "Less"
+msgstr ""
+
+#: src/pages/settings/subscription/CancelDialog.tsx
+msgid "Let us know why you are canceling so we can make Budgero better."
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+#: src/features/account-management/ui/EditAccountDialog.tsx
+msgid "Liability details"
+msgstr ""
+
+#: src/pages/admin/admin-users/admin-users.utils.tsx
+msgid "Lifetime access"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Lifetime Access"
+msgstr ""
+
+#: src/shared/ui/theme-switch.tsx
+msgid "Light"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Line Chart"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Linear trend (OLS)"
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
+msgid "Link to Transaction"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+msgid "Live LemonSqueezy plan details with recent invoice history."
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+msgid "Live SaaS account details across activity, mutations, workspaces, and billing."
+msgstr ""
+
+#: src/pages/explorer-page/components/ReportsPanel.tsx
+msgid "Load"
+msgstr ""
+
+#: src/pages/explorer-page/components/ReportsPanel.tsx
+msgid "Load a previously saved query or manage your reports."
+msgstr ""
+
+#: src/features/import/ui/steps/configure/TemplatesTab.tsx
+msgid "Load from Template"
+msgstr ""
+
+#: src/app/layout/AdminLayout.tsx
+msgid "Loading admin panel..."
+msgstr ""
+
+#: src/widgets/dashboard/CashflowTrendCard.tsx
+msgid "Loading cashflow data…"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/WidgetCard.tsx
+msgid "Loading chart..."
+msgstr ""
+
+#: src/pages/custom-dashboards/CustomDashboardsPage.tsx
+msgid "Loading dashboards..."
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Loading invites…"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Loading members…"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Loading rates..."
+msgstr ""
+
+#: src/pages/admin/sql-explorer/QueryCard.tsx
+msgid "Loading saved queries..."
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Loading splits..."
+msgstr ""
+
+#: src/shared/ui/sql-code-mirror-editor.tsx
+msgid "Loading SQL editor..."
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
+msgid "Loading transactions..."
+msgstr ""
+
+#: src/pages/warranties/WarrantiesPage.tsx
+msgid "Loading warranties..."
+msgstr ""
+
+#: src/features/analytics/ui/SpendingBreakdownContent.tsx
+#: src/features/analytics/ui/SpendingDonutChart.tsx
+#: src/features/analytics/ui/SpendingOverviewContent.tsx
+msgid "Loading..."
+msgstr ""
+
+#: src/features/budget-planning/ui/CCPaymentActivityDialog.tsx
+msgid "Loading…"
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Locked workspaces"
+msgstr ""
+
+#: src/app/layout/AdminSidebar.tsx
+msgid "Logout"
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "Low"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Manage"
+msgstr ""
+
+#: src/widgets/dashboard/UpcomingTransactionsCard.tsx
+msgid "Manage automations<0/>"
+msgstr ""
+
+#: src/features/budget-management/ui/BudgetSwitcher.tsx
+#: src/widgets/navigation/MobileTopBar.tsx
+msgid "Manage Budget"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "Manage cookies"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Manage local accounts, passwords, and data."
+msgstr ""
+
+#: src/pages/admin/admin-users/AdminUsersHeader.tsx
+msgid "Manage user accounts and access levels"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Manage Users"
+msgstr ""
+
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "manual"
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Map your file columns to transaction fields and set formatting options"
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "Map your file columns, preview the data, and bring transactions into your budget."
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Mapping"
+msgstr ""
+
+#. placeholder {0}: template.name
+#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+msgid "Mark “{0}” as ready?"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "Mark items as ready when they land to create the matching transaction automatically."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+#: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
+#: src/pages/JoinWorkspacePage.tsx
+msgid "Master password"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+#: src/features/subscription/ui/ExportDataCard.tsx
+msgid "Master Password"
+msgstr ""
+
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "MASTER PASSWORD"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Master Password Storage"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Max tokens the model accepts, used for the chat usage meter. Auto-detected for Ollama and LM Studio; set it manually for cloud models (e.g. 256000 for Kimi K2.6). Leave empty if unknown."
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Maximum"
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "Medium"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Members"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
+msgid "Membership footprint and owner-wide collaborator seat usage."
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Membership records"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+#: src/features/import/ui/steps/PreviewStep.tsx
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+msgid "Memo"
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "Memo:"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+msgid "Memo<0/>"
+msgstr ""
+
+#. placeholder {0}: chartConfig.yAxisColumn
+#: src/features/analytics/ui/chart-viewer/ChartCanvas.tsx
+msgid "Metric column \"{0}\" is missing in query results."
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Minimum"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Missing master passwords"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Mobile-only layout preferences for budgeting."
+msgstr ""
+
+#. placeholder {0}: llmSettings.TextModel
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "Model: {0}"
+msgstr ""
+
+#: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
+msgid "Money you can still assign to categories. Positive means funds to allocate; negative means you've over-budgeted."
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Monitor and manage your Budgero platform"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Monitor your private Budgero deployment and act on user accounts."
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Month"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+#: src/pages/analytics/reports/InOutReport.tsx
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "Monthly"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "Monthly Goal:"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Monthly income"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+#: src/features/debt/ui/PayoffSimulator.tsx
+msgid "Monthly payment"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Monthly spending"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalCard.tsx
+msgid "Months Remaining:"
+msgstr ""
+
+#: src/pages/budgeting/BudgetingPage.desktop.tsx
+msgid "months starting from:"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/ActivityHeatmap.tsx
+#: src/shared/ui/breadcrumb.tsx
+msgid "More"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+msgid "Most recent LemonSqueezy invoices, capped at ten records."
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/MoveMoneyPopover.tsx
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
+msgid "Move"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/MoveMoneyPopover.tsx
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
+msgid "Move Money"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/MoveMoneyPopover.tsx
+#: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
+msgid "Move to"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Move to Account"
+msgstr ""
+
+#: src/pages/budgeting/BudgetingPage.desktop.tsx
+msgid "Multi-Month Budget View"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/MutationsTab.tsx
+msgid "Mutation KPIs"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/OverviewTab.tsx
+msgid "Mutation Snapshot"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+msgid "Mutations"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/MutationsTab.tsx
+msgid "Mutations Per Day"
+msgstr ""
+
+#: src/pages/settings/push-api/IdReferencePanel.tsx
+msgid "name"
+msgstr ""
+
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+#: src/pages/auth/AuthPage.tsx
+#: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
+#: src/pages/warranties/components/WarrantyTable.tsx
+msgid "Name"
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
+msgid "Name *"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
+msgid "Name your new custom dashboard."
+msgstr ""
+
+#. placeholder {0}: dialog.user.name
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "Name: {0}"
+msgstr ""
+
+#: src/pages/onboarding/steps/CurrencyStep.tsx
+msgid "NEED A DIFFERENT CURRENCY?"
+msgstr ""
+
+#: src/pages/auth/AuthPage.tsx
+msgid "Need an account? <0>Sign up</0>"
+msgstr ""
+
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Need to split this transaction across categories?"
+msgstr ""
+
+#: src/pages/JoinWorkspacePage.tsx
+msgid "Needed to encrypt the shared space key on this device."
+msgstr ""
+
+#: src/widgets/dashboard/CashflowTrendCard.tsx
+msgid "Net cashflow<0/>"
+msgstr ""
+
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+msgid "Net per category across months — click any amount to see its transactions"
+msgstr ""
+
+#: src/pages/accounts/AccountsPage.tsx
+msgid "Net Worth"
+msgstr ""
+
+#: src/pages/accounts/components/NetWorthCard.tsx
+msgid "NET WORTH"
+msgstr ""
+
+#: src/pages/accounts/components/NetWorthCard.tsx
+msgid "Net worth performance"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Never"
+msgstr ""
+
+#: src/pages/settings/push-api/RegenerateDialog.tsx
+msgid "Never share this key publicly"
+msgstr ""
+
+#: src/features/budget-management/ui/CreateBudgetForm.tsx
+#: src/pages/explorer-page/ExplorerPage.tsx
+msgid "New"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "New amount"
+msgstr ""
+
+#: src/features/import/ui/steps/CompleteStep.tsx
+msgid "New categories created:"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "New password"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Next billing:"
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
+#: src/pages/settings/AuditLogPage.tsx
+msgid "Next<0/>"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "No accounts"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+msgid "No accounts available"
+msgstr ""
+
+#: src/pages/settings/push-api/IdReferencePanel.tsx
+msgid "No accounts found"
+msgstr ""
+
+#: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
+msgid "No accounts found."
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "No accounts found. Make sure your SimpleFIN connection is properly configured."
+msgstr ""
+
+#: src/features/account-management/ui/AccountOrderCard.tsx
+msgid "No accounts to reorder yet."
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "No actions recorded yet. Changes you make will appear here for review and undo."
+msgstr ""
+
+#: src/pages/admin/admin-users/admin-users.utils.tsx
+msgid "No active subscription"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "No activity in the selected window."
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "No budget selected"
+msgstr ""
+
+#: src/pages/settings/push-api/IdReferencePanel.tsx
+msgid "No budgets found"
+msgstr ""
+
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+msgid "No budgets yet"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "No categories"
+msgstr ""
+
+#: src/features/category-management/ui/SearchableCategorySelect.tsx
+msgid "No categories available to select."
+msgstr ""
+
+#: src/pages/settings/push-api/IdReferencePanel.tsx
+msgid "No categories found"
+msgstr ""
+
+#: src/features/budget-planning/ui/EmptyStateDisplay.tsx
+msgid "No categories found matching \"{searchTerm}\""
+msgstr ""
+
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+msgid "No category activity for the selected period."
+msgstr ""
+
+#: src/features/category-management/ui/SearchableCategorySelect.tsx
+msgid "No category found."
+msgstr ""
+
+#: src/pages/explorer-page/components/ChartsPanel.tsx
+msgid "No chart selected. Click a chart button above."
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "No cohorts in the selected window."
+msgstr ""
+
+#: src/pages/admin/sql-explorer/SchemaSidebar.tsx
+msgid "No column metadata"
+msgstr ""
+
+#: src/features/chat/ui/chat-panel/ChatConversationList.tsx
+msgid "No conversations yet"
+msgstr ""
+
+#: src/features/currencies/ui/CurrencySelector.tsx
+msgid "No currency found."
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "No custom rates defined"
+msgstr ""
+
+#: src/features/category-management/ui/SearchableCategorySelect.tsx
+msgid "No data available"
+msgstr ""
+
+#: src/features/analytics/ui/chart-viewer/ChartCanvas.tsx
+msgid "No data available for chart"
+msgstr ""
+
+#: src/features/analytics/ui/chart-viewer/ChartCanvas.tsx
+msgid "No data available for stat"
+msgstr ""
+
+#: src/features/analytics/ui/chart-viewer/ChartCanvas.tsx
+msgid "No data available for table"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalCard.tsx
+msgid "No goal set for {categoryName}"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "No goals yet"
+msgstr ""
+
+#: src/pages/accounts/components/AssetLiabilityHistoryChart.tsx
+msgid "No historical data available"
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "No imports yet. When you import transactions they will appear here for quick undo or cleanup."
+msgstr ""
+
+#: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
+msgid "No income or expense activity for the selected range."
+msgstr ""
+
+#: src/pages/JoinWorkspacePage.tsx
+msgid "No invite code"
+msgstr ""
+
+#: src/pages/settings/subscription/InvoicesTable.tsx
+msgid "No invoices yet. Invoices will appear here after your first payment."
+msgstr ""
+
+#: src/pages/explorer-page/components/SchemaSidebar.tsx
+msgid "No matching schema items."
+msgstr ""
+
+#: src/features/analytics/ui/chart-viewer/ChartLegend.tsx
+msgid "No matching series."
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "No members yet."
+msgstr ""
+
+#: src/pages/settings/ai/ModelSelectionSection.tsx
+msgid "No model found."
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CCPaymentCoverPopover.tsx
+msgid "No on-budget checking/savings accounts available to pay from."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "No other accessible workspaces are available right now."
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "No outflows"
+msgstr ""
+
+#: src/widgets/dashboard/OverspentCategoriesCard.tsx
+msgid "No overspending — nice work!"
+msgstr ""
+
+#: src/pages/settings/push-api/IdReferencePanel.tsx
+msgid "No payees yet"
+msgstr ""
+
+#: src/features/budget-planning/ui/CCPaymentActivityDialog.tsx
+msgid "No payments to this card yet this month."
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "No pending invitations."
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "No recent activity"
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "No recorded changes for this run."
+msgstr ""
+
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "No results found."
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "No rules yet. Create your first automation to categorise subscriptions, split income, or tidy up imported descriptions."
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "No runs recorded yet. Trigger this rule to see execution details."
+msgstr ""
+
+#: src/pages/admin/sql-explorer/QueryCard.tsx
+msgid "No saved queries yet."
+msgstr ""
+
+#: src/pages/custom-dashboards/components/PinChartDialog.tsx
+msgid "No saved report with chart configuration is available yet."
+msgstr ""
+
+#: src/pages/explorer-page/components/ReportsPanel.tsx
+msgid "No saved reports yet. Save a query to get started."
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/SpendingChart.tsx
+msgid "No spending data"
+msgstr ""
+
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "No split lines yet."
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "No transactions available for this account."
+msgstr ""
+
+#: src/pages/analytics/components/CategoryTransactionCell.tsx
+msgid "No transactions for this selection."
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/DesktopTransactionTable.tsx
+#: src/features/transactions/ui/MobileTransactionList.tsx
+msgid "No transactions found"
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
+msgid "No transactions found for this category."
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
+msgid "No transactions found."
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "No Undo"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "No upcoming occurrences"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "No users created yet."
+msgstr ""
+
+#: src/pages/admin/admin-users/UsersTable.tsx
+msgid "No users found"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "No users found."
+msgstr ""
+
+#: src/pages/warranties/WarrantiesPage.tsx
+msgid "No warranties yet. Add one to get started."
+msgstr ""
+
+#: src/pages/custom-dashboards/components/DashboardGrid.tsx
+msgid "No widgets yet. Add your first chart widget."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "No workspace available"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+#: src/features/import/ui/steps/configure/MappingTab.tsx
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "None"
+msgstr ""
+
+#: src/features/recurring/ui/RecurringTransactionEditor.tsx
+msgid "None — reduce Ready to Assign"
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
+msgid "Notes"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Nothing yet — add a car repair, a bonus, a tax bill… and watch the line react."
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "Number Format"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Number Format Preview"
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "Off Budget"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Older rates are pruned and refetched on demand. Longer retention means fewer refetches for historical edits, but a larger budget file — which can slow app load and sync."
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "On Budget"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "One subscription, up to 5 people"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
+msgid "One time"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "One-off inflows / outflows"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "One-time extra (this month)"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Only {daysLeftInBeta} days remaining!"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Only a workspace owner can create the first budget here."
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Only workspace owners can create new invites. Ask an owner to share access with teammates."
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Open"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Open DB Explorer"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Open Imports"
+msgstr ""
+
+#: src/shared/ui/theme-switch.tsx
+msgid "Open theme preset menu"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/ReceiptDropzone.tsx
+msgid "Or drag and drop an image here"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Or open one of your other workspaces instead:"
+msgstr ""
+
+#: src/pages/onboarding/steps/WorkspaceStep.tsx
+msgid "OR PICK ONE:"
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "Origin"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+msgid "Original amount"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Other available workspaces"
+msgstr ""
+
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+msgid "Other workspaces"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Out"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Outflow"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+msgid "Outflow<0/>"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Outstanding"
+msgstr ""
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+msgid "Overdue"
+msgstr ""
+
+#: src/features/budget-planning/ui/SearchAndFilterControls.tsx
+msgid "Overfunded Goals"
+msgstr ""
+
+#: src/features/budget-planning/ui/SearchAndFilterControls.tsx
+msgid "Overspent"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+msgid "Overview"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
+msgid "Owner"
+msgstr ""
+
+#: src/pages/accounts/components/AccountSummaryCards.tsx
+msgid "Paid off - congratulations!"
+msgstr ""
+
+#: src/pages/accounts/AccountPage.tsx
+msgid "Paid off!"
+msgstr ""
+
+#: src/features/account-management/ui/EditAccountDialog.tsx
+msgid "Paid So Far should be edited via transactions (inflows). Here you can adjust metadata like Original Debt, APR and dates."
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+#: src/pages/auth/AuthPage.tsx
+msgid "Password"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Passwords do not match"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Passwords match"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Pattern"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+#: src/features/import/ui/steps/PreviewStep.tsx
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+msgid "Payee"
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "Payee:"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+msgid "Payee<0/>"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "Payload Format v2 (before encryption)"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Payment"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Payment Failed"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Payment method:"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Payment Plan"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Payment Required"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Payment:"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Payments made:"
+msgstr ""
+
+#: src/features/debt/ui/PayoffSummaryGrid.tsx
+msgid "Payoff date"
+msgstr ""
+
+#: src/features/debt/ui/PayoffSimulator.tsx
+msgid "Payoff Simulator"
+msgstr ""
+
+#: src/pages/settings/push-api/QueueStatsPanel.tsx
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Pending"
+msgstr ""
+
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Pending invitations"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Pending invites"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Pending invites still need their encrypted bundle."
+msgstr ""
+
+#: src/pages/settings/push-api/QueueStatsPanel.tsx
+msgid "Pending mutations waiting to be processed when you connect."
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Percent"
+msgstr ""
+
+#: src/pages/onboarding/steps/StartModeStep.tsx
+msgid "Pick a path to continue."
+msgstr ""
+
+#: src/pages/onboarding/steps/GoalStep.tsx
+msgid "Pick a target amount and deadline. Best for trips, down payments, big purchases."
+msgstr ""
+
+#: src/pages/onboarding/steps/ThemeStep.tsx
+msgid "PICKED FOR YOU"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Pie Chart"
+msgstr ""
+
+#: src/features/debt/ui/PayoffSimulator.tsx
+msgid "Plan"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Plan Details"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+#: src/pages/onboarding/steps/YnabImportStep.tsx
+msgid "Plan Settings"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Plan:"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanSelection.tsx
+msgid "Plans are not available right now. Please try again in a moment."
+msgstr ""
+
+#: src/app/layout/AdminAccessRequiredCard.tsx
+msgid "Please contact a system administrator if you believe you should have access."
+msgstr ""
+
+#: src/features/import/ui/steps/UploadStep.tsx
+msgid "Please select a budget from the sidebar before importing transactions."
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+#: src/features/account-management/ui/EditAccountDialog.tsx
+msgid "Please select an account type first"
+msgstr ""
+
+#: src/features/import/ui/steps/ImportProgressStep.tsx
+msgid "Please wait while we import your transactions"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Positive numbers increase, negatives decrease the amount."
+msgstr ""
+
+#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+msgid "Post transaction"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Posted"
+msgstr ""
+
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Prebuilt"
+msgstr ""
+
+#: src/app/layout/desktop-shell/SidebarNav.tsx
+msgid "Preferences"
+msgstr ""
+
+#: src/widgets/navigation/MobileBottomNav.tsx
+msgid "Preferences<0/>"
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/SpendingDrawerMobile.tsx
+msgid "Preparing transactions..."
+msgstr ""
+
+#: src/pages/JoinWorkspacePage.tsx
+msgid "Preparing your invite…"
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/TransactionFormActions.tsx
+msgid "Press Cmd+Enter to save"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Preview"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RulePreview.tsx
+msgid "Preview & Guidance"
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Preview Import<0/>"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/MappingTab.tsx
+msgid "Preview of your data:"
+msgstr ""
+
+#: src/features/budget-planning/ui/AvailableInfoPopover.tsx
+msgid "Previous month:"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+msgid "Principal"
+msgstr ""
+
+#: src/app/layout/desktop-shell/HeaderBar.tsx
+msgid "Privacy"
+msgstr ""
+
+#: src/widgets/navigation/MobileTopBar.tsx
+msgid "Privacy mode"
+msgstr ""
+
+#: src/pages/settings/ai/PrivacyWarnings.tsx
+msgid "Privacy-First AI"
+msgstr ""
+
+#: src/features/budget-planning/ui/FutureOverspendingWarning.tsx
+msgid "Proceed anyway"
+msgstr ""
+
+#: src/pages/settings/push-api/QueueStatsPanel.tsx
+msgid "Processed"
+msgstr ""
+
+#: src/features/currencies/ui/CurrencyConversionOverlay.tsx
+msgid "Processing transactions"
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Product Feedback"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalCard.tsx
+msgid "Progress"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "Progress:"
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Project Resources"
 msgstr ""
 
+#: src/features/transactions/ui/mobile-transaction-card/MobileTransactionCard.tsx
+msgid "Projected"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Projection"
+msgstr ""
+
+#: src/pages/settings/ai/ProviderSection.tsx
+msgid "Provider"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Quarterly Feedback Email"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/AdminSqlExplorer.tsx
+#: src/pages/explorer-page/ExplorerPage.tsx
+msgid "Query Error"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/AdminSqlExplorer.tsx
+msgid "Query Failed"
+msgstr ""
+
+#: src/pages/settings/push-api/QueueStatsPanel.tsx
+msgid "Queue Status"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Quick Actions"
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/TransactionFormActions.tsx
+msgid "Quick Add"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Quick Presets"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/QueryCard.tsx
+msgid "Quick Queries"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Rate"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Rate cache & offline sync"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+msgid "Rate<0/>"
+msgstr ""
+
+#: src/pages/onboarding/steps/GoalStep.tsx
+msgid "Reach a total by a date"
+msgstr ""
+
+#: src/features/budget-sharing/ui/OnboardingInviteShareDialog.tsx
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Ready"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetToolbar.tsx
+msgid "Ready to assign"
+msgstr ""
+
+#: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
+#: src/pages/budgeting/BudgetingPage.desktop.tsx
+msgid "Ready to Assign"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+msgid "Reason"
+msgstr ""
+
+#: src/features/transactions/ui/RecategorizeDialog.tsx
+msgid "Reassign Category"
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyTable.tsx
+#: src/pages/warranties/WarrantiesPage.tsx
+msgid "Receipt"
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
+msgid "Receipt Image"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Receipt Scanner"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Recent Activity"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/OverviewTab.tsx
+msgid "Recent App Activity Snapshot"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Recent Signups"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+msgid "Recent Transactions"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Recent transactions from the last 30 days."
+msgstr ""
+
+#: src/pages/settings/ai/RecommendedModelsPanel.tsx
+msgid "Recommended Models"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalCard.tsx
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Recurring"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalForm.tsx
+msgid "Recurring annually"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "Recurring transactions"
+msgstr ""
+
+#: src/pages/settings/RecurringTransactionsPage.tsx
+msgid "Recurring Transactions"
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Reddit Community"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Redeem a shared invite to regain access instantly."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Redeem invite"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Redeem Invite"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Redeem shared workspace access"
+msgstr ""
+
+#: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
+msgid "Redeem workspace invite"
+msgstr ""
+
+#: src/widgets/navigation/MobileTopBar.tsx
+msgid "Redo"
+msgstr ""
+
+#: src/features/budget-planning/ui/assign-dropdown/AssignQuickActions.tsx
+msgid "Reduce Overfunding"
+msgstr ""
+
+#: src/features/currencies/ui/CurrencyConversionOverlay.tsx
+msgid "Reload Application"
+msgstr ""
+
+#: src/features/debt/ui/PayoffPlanSheet.tsx
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Remaining"
+msgstr ""
+
+#: src/features/transactions/ui/form/SplitEditor.tsx
+msgid "Remaining to assign"
+msgstr ""
+
+#: src/features/rules/ui/PayeeCategoryMemoryCard.tsx
+msgid "Remember how you file each payee, without writing a rule for it."
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/TransactionFormHeader.tsx
+msgid "Remember last category, payee, account"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Remember on this device (IndexedDB)"
+msgstr ""
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Remind me:"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Reminder frequency (days)"
+msgstr ""
+
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Remove"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Remove pattern from memo"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/WidgetCard.tsx
+msgid "Remove widget"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
+msgid "Rename dashboard"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Renews in:"
+msgstr ""
+
+#: src/features/account-management/ui/AccountOrderCard.tsx
+msgid "Reorder how accounts appear in the sidebar and the mobile navigation. On-budget and off-budget accounts are ordered separately."
+msgstr ""
+
+#: src/pages/custom-dashboards/components/ReportChartSelectFields.tsx
+msgid "Report"
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Report a Bug"
 msgstr ""
 
+#: src/app/layout/desktop-shell/SidebarNav.tsx
+#: src/pages/explorer-page/ExplorerPage.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Reports"
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Repository"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "Request Body"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
+#: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
+msgid "Reset"
+msgstr ""
+
+#: src/features/budget-planning/ui/assign-dropdown/AssignQuickActions.tsx
+msgid "Reset Assigned Amounts"
+msgstr ""
+
+#: src/features/budget-planning/ui/assign-dropdown/AssignQuickActions.tsx
+msgid "Reset Available to Zero"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Reset Budgero"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Reset Budgero?"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Reset password"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
+msgid "Restore Backup"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Restore from a database backup file"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
+msgid "Restoring a Budgero backup replaces all data in this workspace. Use it right after setting up Budgero Cloud or when you're ready to move your offline database into sync."
+msgstr ""
+
+#: src/pages/explorer-page/components/ResultsTable.tsx
+msgid "Results"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Retry"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Retry startup"
+msgstr ""
+
+#: src/widgets/dashboard/OverspentCategoriesCard.tsx
+msgid "Review budget<0/>"
+msgstr ""
+
+#: src/features/import/ui/steps/PreviewStep.tsx
+msgid "Review how your data will be imported before proceeding"
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "Review recent imports and undo or archive them if something looks off."
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Robust trend (Theil–Sen)"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
+msgid "Role"
+msgstr ""
+
+#. placeholder {0}: workspace.role
+#: src/app/startup/screens.tsx
+msgid "Role: {0}"
+msgstr ""
+
+#. placeholder {0}: widget.desktopLayout.rowSpan
+#: src/pages/custom-dashboards/components/WidgetCard.tsx
+msgid "Rows {0}"
+msgstr ""
+
+#: src/features/import/ui/steps/CompleteStep.tsx
+msgid "Rows skipped (no/unreadable amount):"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "Rows:"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+msgid "Run a query first to add charts"
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "Run history"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/AdminSqlExplorer.tsx
+msgid "Run read-only analysis or maintenance queries against the primary server database."
+msgstr ""
+
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "Runway"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "Runway<0><1><2><3/></2></1><4>Days your Ready to Assign can fund based on average daily spend.</4></0>"
+msgstr ""
+
+#: src/features/currencies/ui/ManualRatePrompt.tsx
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+#: src/pages/settings/components/WorkspaceRow.tsx
+msgid "Save"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanChangeDialog.tsx
+msgid "Save 17%"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/AddWidgetDialog.tsx
+msgid "Save a report with at least one chart in Explorer first."
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Save Chat Settings"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/TemplatesTab.tsx
+msgid "Save current settings as template"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Save scenario"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Save Settings"
+msgstr ""
+
+#: src/pages/admin/sql-explorer/QueryCard.tsx
+msgid "Saved Queries"
+msgstr ""
+
+#. placeholder {0}: savedReports.length
+#: src/pages/explorer-page/components/ReportsPanel.tsx
+msgid "Saved Reports ({0})"
+msgstr ""
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Saved scenarios"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/TemplatesTab.tsx
+msgid "Saved Templates"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "Savings Rate<0><1><2><3/></2></1><4>Percentage of on-budget income not spent this month: (Income - Outflows)/Income.</4></0>"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Scatter Plot"
+msgstr ""
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+msgid "Scheduled"
+msgstr ""
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+msgid "Scheduled entries"
+msgstr ""
+
+#: src/app/layout/desktop-shell/HeaderBar.tsx
+msgid "Search"
+msgstr ""
+
+#. placeholder {0}: ALL_CURRENCIES.length
+#: src/pages/onboarding/steps/CurrencyStep.tsx
+msgid "Search the full list — Budgero supports {0} currencies."
+msgstr ""
+
+#: src/pages/admin/admin-users/UserSearchCard.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Search Users"
+msgstr ""
+
+#. placeholder {0}: parsed.textQuery
+#: src/features/transactions/ui/SearchActiveFilters.tsx
+msgid "Searching: \"{0}\""
+msgstr ""
+
+#: src/pages/onboarding/steps/ShareStep.tsx
+msgid "SEATS USED"
+msgstr ""
+
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Security & Privacy"
+msgstr ""
+
+#: src/features/app-update/ui/UpdateAvailableBanner.tsx
+msgid "See what's new"
+msgstr ""
+
+#: src/pages/budgeting/BudgetingPage.mobile.tsx
+msgid "Select a budget to get started."
+msgstr ""
+
+#: src/pages/budgeting/BudgetingPage.desktop.tsx
+msgid "Select a budget to manage allocations."
+msgstr ""
+
+#: src/pages/custom-dashboards/CustomDashboardsPage.tsx
+msgid "Select a budget to manage custom dashboards."
+msgstr ""
+
+#: src/features/budget-planning/ui/budget-table/DeleteCategoryDialog.tsx
+msgid "Select a category to reassign transactions, assigned amounts, and any remaining available amounts."
+msgstr ""
+
+#: src/pages/settings/subscription/PlanChangeDialog.tsx
+msgid "Select a new plan. The change will take effect immediately and you'll be charged or credited the difference."
+msgstr ""
+
+#: src/pages/custom-dashboards/components/AddWidgetDialog.tsx
+msgid "Select a saved chart to pin to this dashboard."
+msgstr ""
+
+#: src/features/currencies/ui/CurrencySelector.tsx
+msgid "Select currency..."
+msgstr ""
+
+#: src/features/import/ui/steps/UploadStep.tsx
+msgid "Select File"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/MappingTab.tsx
+msgid "Select Header Row:"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/WidgetCard.tsx
+msgid "Select new chart"
+msgstr ""
+
+#: src/pages/settings/AutomationRulesPage.tsx
+msgid "Select or create a budget to configure automation rules."
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Select or create a workspace to manage sharing options."
+msgstr ""
+
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+msgid "Select rows to remove several at once."
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Select which page Budgero opens to by default."
+msgstr ""
+
+#: src/pages/settings/ai/ProviderSection.tsx
+msgid "Select your local LLM server type"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Select your preferred theme for the interface"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Self-host"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Self-host Control Center"
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Self-Host is free forever. If Budgero is useful to you, you can support its development with a one-time, pay-what-you-want donation."
 msgstr ""
 
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "Send a JSON object with an encrypted payload:"
+msgstr ""
+
+#: src/pages/settings/ai/ConnectionTestPanel.tsx
+msgid "Server URL"
+msgstr ""
+
+#. placeholder {0}: parsedCredentials.scheme
+#. placeholder {1}: parsedCredentials.host
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Server: {0}://{1}"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Set account"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Set amount"
+msgstr ""
+
+#: src/pages/onboarding/steps/GoalStep.tsx
+msgid "Set aside each month"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Set category"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Set memo"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Set payee"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Set Payee"
+msgstr ""
+
+#: src/features/budget-management/ui/BudgetSwitcher.tsx
+#: src/widgets/navigation/MobileTopBar.tsx
+msgid "Set up a new budget to track your finances"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "Set up recurring paycheques, bills, or transfers and Budgero will remind you when they are due."
+msgstr ""
+
+#: src/pages/settings/RecurringTransactionsPage.tsx
+msgid "Set up recurring transactions to automatically create entries on a schedule."
+msgstr ""
+
+#: src/app/layout/desktop-shell/SidebarNav.tsx
+msgid "Settings"
+msgstr ""
+
+#: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
+msgid "Settings → Budget Settings"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+#: src/features/budget-sharing/ui/OnboardingInviteShareDialog.tsx
+msgid "Settings → Workspaces"
+msgstr ""
+
+#: src/pages/onboarding/steps/DoneStep.tsx
+msgid "Setup failed"
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Share feedback"
 msgstr ""
 
+#: src/features/budget-sharing/ui/OnboardingInviteShareDialog.tsx
+msgid "Share these invite links"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Shared collaborators can’t export workspace data. Ask the workspace owner to download it for you."
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Sharing & invitations"
+msgstr ""
+
+#: src/features/analytics/ui/chart-viewer/ChartLegend.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/pages/settings/push-api/IdReferencePanel.tsx
+msgid "Show Budget, Account, Category & Payee IDs"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetToolbar.tsx
+msgid "Show hidden"
+msgstr ""
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Show only month selector and ready to assign in the budget header."
+msgstr ""
+
+#: src/pages/budgeting/BudgetingPage.desktop.tsx
+msgid "Show:"
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "Showing amounts in {currencyLabel}"
+msgstr ""
+
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+msgid "Showing only the most recent {MAX_PIVOT_MONTHS} months. Narrow your date range to see earlier data."
+msgstr ""
+
+#: src/shared/ui/sidebar.tsx
+msgid "Sidebar"
+msgstr ""
+
+#: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
+msgid "Sign out"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+#: src/app/startup/StartupLayout.tsx
+msgid "Sign Out"
+msgstr ""
+
+#: src/pages/onboarding/OnboardingFlow.tsx
+msgid "SIGN OUT"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "SimpleFIN Bridge<0/>"
+msgstr ""
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "SimpleFIN integration is currently in development. Features may change, break, or be removed without notice. Your credentials are stored locally in your browser. Use at your own risk."
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Since no account column is mapped, transactions will be imported into the selected account:"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+#: src/pages/custom-dashboards/components/WidgetCard.tsx
+msgid "Size"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/MappingTab.tsx
+msgid "Skip first N rows"
+msgstr ""
+
+#: src/pages/onboarding/OnboardingFlow.tsx
+msgid "Skip for now"
+msgstr ""
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+msgid "Skip this time"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Small"
+msgstr ""
+
+#: src/pages/JoinWorkspacePage.tsx
+msgid "Someone shared their Budgero workspace with you. Decrypt the space key on this device and add it to your account — the secret never leaves your browser."
+msgstr ""
+
+#: src/pages/settings/ImportsPage.tsx
+msgid "Source"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Space ( )"
+msgstr ""
+
+#. placeholder {0}: details.mutations.lastMutation.spaceId
+#: src/pages/admin/admin-users/user-details/OverviewTab.tsx
+msgid "Space {0}"
+msgstr ""
+
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "Space ID"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Space storage"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Space Utilization"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Spaces"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Speech Model"
+msgstr ""
+
+#: src/widgets/dashboard/CashflowTrendCard.tsx
+msgid "Spending"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "Spending & Assignments History"
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.desktop.tsx
+#: src/pages/dashboard/DashboardPage.mobile.tsx
+msgid "Spending Analysis"
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.desktop.tsx
+msgid "Spending Breakdown"
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.desktop.tsx
+msgid "Spending Overview"
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/SpendingChart.tsx
+msgid "Spending Pattern"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionRow.tsx
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Split"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Split details"
+msgstr ""
+
+#: src/features/transactions/ui/form/SplitEditor.tsx
+msgid "Split remaining"
+msgstr ""
+
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Split transaction"
+msgstr ""
+
+#: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
+msgid "Spot how cash flows in and out across the selected period grouping."
+msgstr ""
+
+#: src/pages/admin/sql-explorer/QueryCard.tsx
+#: src/pages/explorer-page/ExplorerPage.tsx
+msgid "SQL Query"
+msgstr ""
+
+#: src/features/budget-management/ui/BudgetWizard.tsx
+msgid "Start a New Budget"
+msgstr ""
+
+#: src/features/budget-planning/ui/EmptyStateDisplay.tsx
+msgid "Start Building Your Budget"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Start Date"
+msgstr ""
+
+#: src/features/import/ui/steps/PreviewStep.tsx
+msgid "Start Import<0/>"
+msgstr ""
+
+#: src/features/subscription/ui/SubscriptionSuccess.tsx
+msgid "Start Using Budgero"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
+msgid "Start with common categories like Rent, Groceries, and Savings. Recommended for new users."
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Stat"
+msgstr ""
+
+#: src/features/recurring/ui/RecurringTransactionEditor.tsx
+#: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+#: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
+#: src/pages/admin/admin-users/UsersTable.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+#: src/pages/settings/AuditLogPage.tsx
+#: src/pages/settings/ImportsPage.tsx
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+#: src/pages/settings/subscription/InvoicesTable.tsx
+#: src/pages/warranties/components/WarrantyTable.tsx
+msgid "Status"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Status:"
+msgstr ""
+
+#. placeholder {0}: invite.status
+#. placeholder {0}: member.invitation_status
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Status: {0}"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Stay covered if data ever corrupts or you lose your master password—we'll remind you to keep a fresh backup on hand."
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "Stickiness over time"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
+msgid "Still underfunded"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "Storage and activity across budget spaces."
+msgstr ""
+
+#: src/pages/settings/push-api/RegenerateDialog.tsx
+msgid "Store it in a secure password manager"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Storing your master password outside memory lowers security. Anyone with access to this browser profile could decrypt your data until it expires."
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Submit a bug report"
+msgstr ""
+
+#: src/features/subscription/ui/TrialEndingBanner.tsx
+#: src/pages/settings/components/WorkspaceRow.tsx
+msgid "Subscribe"
+msgstr ""
+
+#: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
+msgid "Subscribe now"
+msgstr ""
+
+#: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
+msgid "subscription"
+msgstr ""
+
+#: src/pages/admin/admin-users/UsersTable.tsx
+msgid "Subscription"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Subscription Cancelled"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionPage.tsx
+msgid "Subscription ID:"
+msgstr ""
+
+#: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
+msgid "subscription settings"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionPage.tsx
+msgid "Subscription settings need an active connection to our billing services. Please reconnect to the internet to view or manage your plan."
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+msgid "Subscription Summary"
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "Successfully categorized {selectedCount} transactions."
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/ScanProgress.tsx
+msgid "Successfully imported {selectedCount} transactions from the receipt."
+msgstr ""
+
+#: src/pages/settings/ai/RecommendedModelsPanel.tsx
+msgid "Suggested models for best performance with budget tasks"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Sum"
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
@@ -93,14 +5535,882 @@ msgstr ""
 msgid "Support Development"
 msgstr ""
 
+#: src/features/import/ui/steps/UploadStep.tsx
+msgid "Supported formats: CSV, TSV, TXT, PDF (table data), OFX, QFX, QIF, CAMT.053 (XML)"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "Supported Operations"
+msgstr ""
+
+#: src/features/currencies/ui/ManualRatePrompt.tsx
+msgid "Swap"
+msgstr ""
+
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+msgid "Switch"
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Switch between workspaces, review locked spaces, and manage invite access for the ones you can use right now."
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Switch to a different workspace or create a new one."
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Sync Clerk -> Budgero"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Sync Utilities"
+msgstr ""
+
+#: src/app/system/ReconnectionOverlay.tsx
+msgid "Syncing your data and replaying offline changes..."
+msgstr ""
+
+#: src/shared/ui/theme-switch.tsx
+msgid "System"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminDashboard.tsx
+msgid "System Overview"
+msgstr ""
+
+#: src/features/reports/ui/SaveReportDialog.tsx
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Table"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/ReceiptDropzone.tsx
+msgid "Take Photo"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalForm.tsx
+msgid "Target Amount"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalForm.tsx
+msgid "Target Date"
+msgstr ""
+
+#: src/pages/onboarding/steps/GoalStep.tsx
+msgid "TARGET DATE"
+msgstr ""
+
+#: src/features/goal-management/ui/GoalCard.tsx
+msgid "Target Date:"
+msgstr ""
+
+#: src/pages/analytics/reports/InOutReport.tsx
+msgid "Target<0/>%"
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "Technical details for encrypting your payloads."
+msgstr ""
+
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Templates"
+msgstr ""
+
+#: src/pages/settings/ai/ConnectionTestPanel.tsx
+msgid "Test"
+msgstr ""
+
+#: src/pages/settings/ai/RecommendedModelsPanel.tsx
+msgid "Text Models (for categorization)"
+msgstr ""
+
+#: src/pages/accounts/AccountPage.tsx
+msgid "The account you're looking for doesn't exist or has been deleted."
+msgstr ""
+
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "The by-type view always covers all accounts — the account filter doesn't apply here."
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "The change will also be pushed to the server for this workspace"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
+#: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
+msgid "The currency shown on amounts. This is for display only and can be changed anytime."
+msgstr ""
+
+#: src/pages/settings/push-api/RegenerateDialog.tsx
+msgid "The key will auto-hide after 60 seconds"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "The memo text to set for matching transactions."
+msgstr ""
+
+#: src/features/import/ui/steps/configure/MappingTab.tsx
+msgid "The selected date column has no year (e.g. \"Oct 25\"). All transactions will be imported using this year. Change it if the statement covers a different year."
+msgstr ""
+
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "The user will be forced offline immediately and all API requests will be denied until you unblock them."
+msgstr ""
+
+#: src/shared/ui/theme-switch.tsx
+msgid "Theme preset"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "This action CANNOT be undone"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "This cache survives app restarts and is cleared when the timer expires, you log out, or you reset local data."
+msgstr ""
+
+#: src/features/budget-planning/ui/FutureOverspendingWarning.tsx
+msgid "This change will cause negative Available in future months for this category:"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "This is the encryption key for all your financial data."
+msgstr ""
+
+#: src/pages/JoinWorkspacePage.tsx
+msgid "This join link is missing its invite code. Ask the workspace owner to resend the full link."
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "This key will automatically hide in 60 seconds."
+msgstr ""
+
+#: src/pages/accounts/AccountPage.tsx
+msgid "This liability has a positive balance."
+msgstr ""
+
+#: src/pages/accounts/components/AccountSummaryCards.tsx
+msgid "This liability now has a positive balance. There's nothing to pay off right now."
+msgstr ""
+
+#: src/pages/onboarding/steps/ZbbStep.tsx
+msgid "THIS MONTH'S PAYCHECK"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "This permanently deletes your encrypted budgets and queued sync state. This cannot be undone."
+msgstr ""
+
+#: src/app/system/BackupReminderDialog.tsx
+msgid "This reminder isn't skippable—download a backup now to stay protected."
+msgstr ""
+
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "This run has been undone. Transactions were restored to their prior values."
+msgstr ""
+
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "This user will be signed out immediately and prevented from logging back in until unblocked."
+msgstr ""
+
+#: src/features/budget-planning/ui/FutureOverspendingWarning.tsx
+msgid "This will cause overspending"
+msgstr ""
+
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "This will delete the user's encrypted database file, reset their master password status, and clear all onboarding progress. This action cannot be undone."
+msgstr ""
+
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "This will immediately revoke all access for this user. They will be logged out and unable to access the application."
+msgstr ""
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "This will remove upcoming reminders. Existing transactions are unaffected."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "This workspace has no budgets yet"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "Thousand Separator"
+msgstr ""
+
+#: src/pages/onboarding/steps/RulesStep.tsx
+msgid "Three<0/>house rules."
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "Time"
+msgstr ""
+
+#: src/widgets/dashboard/AtAGlance.tsx
+msgid "Time elapsed"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Time left:"
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.mobile.tsx
+msgid "Time Series"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Tiny"
+msgstr ""
+
+#: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
+msgid "Title (Optional)"
+msgstr ""
+
+#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "To account:"
+msgstr ""
+
+#: src/features/transactions/ui/form/DatePickerQuick.tsx
+msgid "Today"
+msgstr ""
+
+#: src/shared/ui/theme-switch.tsx
+msgid "Toggle color mode"
+msgstr ""
+
+#: src/shared/ui/sidebar.tsx
+msgid "Toggle Sidebar"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
+msgid "Toggle to pause the rule without deleting it."
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+#: src/pages/settings/push-api/QueueStatsPanel.tsx
+msgid "Total"
+msgstr ""
+
+#: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+msgid "Total amount"
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "Total amount borrowed at origination. Required."
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "Total loan duration (e.g., 30 for mortgages, up to 40)."
+msgstr ""
+
+#: src/features/budget-planning/ui/CCPaymentActivityDialog.tsx
+msgid "Total paid this month"
+msgstr ""
+
+#: src/features/debt/ui/PayoffSummaryGrid.tsx
+msgid "Total payments"
+msgstr ""
+
+#: src/pages/dashboard/DashboardPage.desktop.tsx
+#: src/pages/dashboard/DashboardPage.mobile.tsx
+msgid "total spent"
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/CategoryHeader.tsx
+msgid "Total Spent"
+msgstr ""
+
+#: src/features/budgeting/ui/BudgetContextPanel.tsx
+msgid "Total Spent:"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Total users"
+msgstr ""
+
+#: src/pages/analytics/reports/VsExpenseReport.tsx
+msgid "Totals"
+msgstr ""
+
+#: src/pages/warranties/components/WarrantyTable.tsx
+msgid "Transaction"
+msgstr ""
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
+#: src/pages/settings/ImportsPage.tsx
+msgid "Transactions"
+msgstr ""
+
+#. placeholder {0}: selectedAccount.name
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+msgid "Transactions - {0}"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Transactions converted with a manually entered rate while offline are re-converted with the official rate once you reconnect. Rates you pinned on a transaction are never touched."
+msgstr ""
+
+#: src/features/import/ui/steps/CompleteStep.tsx
+msgid "Transactions imported:"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/ScanProgress.tsx
+msgid "Transactions Imported!"
+msgstr ""
+
+#. placeholder {0}: columnMapping.account
+#: src/features/import/ui/steps/ConfigureStep.tsx
+msgid "Transactions will use accounts from the \"{0}\" column. If an account name doesn't match any existing account, you'll need to select a default account below:"
+msgstr ""
+
+#: src/features/recurring/ui/RecurringTransactionEditor.tsx
+#: src/features/transactions/ui/form/TransactionTypeSelector.tsx
+msgid "Transfer"
+msgstr ""
+
+#: src/features/budget-planning/ui/CCPaymentActivityDialog.tsx
+msgid "Transfers covering this card in the selected month."
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Trial ended:"
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Trial ends:"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "Trial Users"
+msgstr ""
+
+#: src/features/budget-planning/ui/EmptyStateDisplay.tsx
+msgid "Try a different search term"
+msgstr ""
+
+#: src/features/transactions/ui/MobileTransactionList.tsx
+msgid "Try adjusting your search filters or add a new transaction"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Try cancelling and re-creating the invite if this warning persists."
+msgstr ""
+
+#: src/features/chat/ui/chat-panel/ChatMessageList.tsx
+msgid "Try saying \"I spent $20 on coffee today\" or \"What's my biggest expense this month?\""
+msgstr ""
+
+#. placeholder {0}: change.transactionId
+#: src/features/rules/ui/RuleHistoryDrawer.tsx
+msgid "tx #{0}"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+msgid "Type"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Type RESET to confirm"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Type RESET to confirm that you want to wipe local and server state."
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/TabSection.tsx
+msgid "Unable to load user details"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Unable to load workspaces"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/BillingTab.tsx
+msgid "Unavailable"
+msgstr ""
+
+#: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
+msgid "Uncategorised"
+msgstr ""
+
+#: src/features/budget-planning/ui/SearchAndFilterControls.tsx
+msgid "Underfunded Goals"
+msgstr ""
+
+#: src/widgets/navigation/MobileTopBar.tsx
+msgid "Undo"
+msgstr ""
+
+#: src/pages/settings/AuditLogPage.tsx
+msgid "Undone"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "Upcoming occurrences"
+msgstr ""
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "Upcoming transactions"
+msgstr ""
+
+#: src/shared/pwa/PWAUpdatePrompt.tsx
+msgid "Update available"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanSelection.tsx
+msgid "Update billing address and tax information"
+msgstr ""
+
+#: src/features/budget-management/ui/BudgetSwitcher.tsx
+#: src/widgets/navigation/MobileTopBar.tsx
+msgid "Update Budget"
+msgstr ""
+
+#: src/shared/pwa/UpdateRequiredDialog.tsx
+msgid "Update now"
+msgstr ""
+
+#: src/pages/settings/CurrencySettingsPage.tsx
+msgid "Update offline rates when back online"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanSelection.tsx
+msgid "Update payment methods and billing information"
+msgstr ""
+
+#: src/pages/settings/subscription/PlanSelection.tsx
+msgid "Update payment methods, download invoices, or manage billing details"
+msgstr ""
+
+#: src/shared/pwa/UpdateRequiredDialog.tsx
+msgid "Update required"
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Update Service Worker"
+msgstr ""
+
+#: src/features/category-management/ui/CategoryEditDialog.tsx
+msgid "Update the category name and budget pace settings."
+msgstr ""
+
+#: src/features/currencies/ui/ManualRatePrompt.tsx
+msgid "Update to the official rate when back online"
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "Update your master password to keep your data secure. This will re-encrypt all your data with the new password. Sign-in password, email and 2FA are managed in your Clerk profile."
+msgstr ""
+
+#: src/features/import/ui/steps/UploadStep.tsx
+msgid "Upload a {SUPPORTED_IMPORT_FORMATS_LABEL} file to import your transactions into a budget"
+msgstr ""
+
+#: src/features/ai/ui/receipt-scanner/AIReceiptScannerDialog.tsx
+msgid "Upload a receipt or bank statement image to extract transactions"
+msgstr ""
+
+#: src/features/settings/directory-manager/DirectoryTable.tsx
+msgid "Usage"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "Usage Analytics"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "Usage analytics is disabled and not included in self-hosted builds. No tracking code is loaded or executed."
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
+msgid "Use 'Transfers' to deduct from Ready to Assign, or select a category to treat as spending"
+msgstr ""
+
+#: src/pages/settings/push-api/PushApiPage.tsx
+msgid "Use AES-256-GCM encryption with the same key used by the Budgero app. The encrypted data format is: IV (12 bytes) + Ciphertext + Auth Tag (16 bytes), then Base64 encoded."
+msgstr ""
+
+#: src/features/ai/ui/AICategorizeDialog.tsx
+msgid "Use AI to automatically suggest categories for uncategorized transactions"
+msgstr ""
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Use positive/negative percentages to scale the amount."
+msgstr ""
+
+#: src/pages/admin/admin-users/UsersTable.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "User"
+msgstr ""
+
+#: src/pages/admin/AdminDashboard.tsx
+msgid "User Distribution"
+msgstr ""
+
+#. placeholder {0}: dialog.user.email
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "User: {0}"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+#: src/pages/auth/AuthPage.tsx
+msgid "Username"
+msgstr ""
+
+#: src/pages/admin/admin-users/AdminUsersHeader.tsx
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Users"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Users who need onboarding"
+msgstr ""
+
+#: src/pages/admin/SelfHostAdminUsers.tsx
+msgid "Users with elevated access"
+msgstr ""
+
+#: src/pages/accounts/components/ValueChangeStat.tsx
+msgid "Value change"
+msgstr ""
+
+#: src/pages/accounts/components/ValueChangeStat.tsx
+msgid "Value changes are journaled once per day — history builds up as rates move."
+msgstr ""
+
+#: src/pages/explorer-page/components/SchemaSidebar.tsx
+msgid "View"
+msgstr ""
+
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "View all accounts..."
+msgstr ""
+
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "View all categories..."
+msgstr ""
+
+#: src/pages/settings/subscription/InvoicesTable.tsx
+msgid "View and download your past invoices"
 msgstr ""
 
 #: src/pages/settings/AboutPage.tsx
 msgid "View Changelog"
 msgstr ""
 
+#: src/pages/admin/admin-users/UserTableRow.tsx
+msgid "View Details"
+msgstr ""
+
+#: src/features/transactions/ui/desktop-table/TransactionRow.tsx
+msgid "View splits"
+msgstr ""
+
+#: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
+msgid "View workspace status"
+msgstr ""
+
+#: src/pages/settings/ai/RecommendedModelsPanel.tsx
+msgid "Vision Models (for receipt scanning)"
+msgstr ""
+
+#: src/pages/admin/admin-users/ActionDialog.tsx
+msgid "Warning"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Warning:"
+msgstr ""
+
+#: src/pages/warranties/WarrantiesPage.tsx
+msgid "Warranties"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "We are loading your upcoming recurring occurrences."
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "We do not collect transaction amounts, payee names, category names, account balances, or any other financial information. Your budget data stays entirely private."
+msgstr ""
+
+#: src/pages/settings/SecurityPage.tsx
+msgid "We keep your master password in volatile memory only. Refreshing or closing the tab will require it again."
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "We were unable to collect your subscription payment. Update your billing details in the Lemon Squeezy portal below to restore access."
+msgstr ""
+
+#. placeholder {0}: occurrence.dueDate
+#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+msgid "We will create the transaction dated {0} and run continuous rules automatically."
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "We'll prompt you again when a backup is overdue."
+msgstr ""
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Website"
+msgstr ""
+
+#: src/pages/admin/StickinessAnalyticsSection.tsx
+msgid "Weekly"
+msgstr ""
+
+#: src/app/system/ReconnectionOverlay.tsx
+msgid "Welcome back online!"
+msgstr ""
+
+#: src/features/subscription/ui/SubscriptionSuccess.tsx
+msgid "Welcome to Budgero!"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "What happens if I forget it?"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "What is a workspace?"
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "What this means"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "What we collect"
+msgstr ""
+
+#: src/pages/settings/recurring/RecurringTransactionsSection.tsx
+msgid "When a recurring item is almost due, it will appear here so you can mark it ready."
+msgstr ""
+
+#: src/features/category-management/ui/CategoryEditDialog.tsx
+msgid "When enabled, this category won't show budget pace lines in spending charts"
+msgstr ""
+
+#: src/pages/settings/components/PrivacySettingsCard.tsx
+msgid "When enabled, we collect <0>only the event name</0>with no personal data, account information, or financial details. All analytics are completely anonymous."
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "When enabled, you can assign more money to categories than you have available in Ready to Assign. This will result in a negative Ready to Assign amount."
+msgstr ""
+
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "When viewing transactions from all accounts, amounts are always shown in your budget currency for consistency."
+msgstr ""
+
+#: src/features/rules/ui/PayeeCategoryMemoryCard.tsx
+msgid "When you add a transaction for a payee you've used before, the category pre-fills with whatever you chose last time, marked with an amber ring. An autofill rule always wins over this, and it never touches imports or a category you've already picked."
+msgstr ""
+
+#: src/pages/analytics/reports/PlanRealityReport.tsx
+msgid "Where the plan leaks"
+msgstr ""
+
+#: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
+msgid "Where this debt came from"
+msgstr ""
+
+#: src/pages/settings/BudgetSettingsPage.tsx
+msgid "Which should I pick?"
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "Whisper model for on-device transcription"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Why do I need a master password?"
+msgstr ""
+
+#: src/features/import/ui/steps/configure/FormattingTab.tsx
+msgid "With your current settings:"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
+msgid "Workspace"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
+msgid "Workspace Access"
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Workspace access details may be stale right now. Refresh once you're back online."
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
+msgid "Workspace Memberships"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Workspace name"
+msgstr ""
+
+#: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
+msgid "workspace settings"
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Workspace Sharing"
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Workspace to export"
+msgstr ""
+
+#: src/pages/admin/admin-users/UserDetailsDialog.tsx
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Workspaces"
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Workspaces & Sharing"
+msgstr ""
+
+#: src/pages/admin/admin-users/user-details/OverviewTab.tsx
+msgid "Write activity from the mutation log."
+msgstr ""
+
+#: src/pages/settings/ai/AISettingsPage.tsx
+msgid "writes data"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
+msgid "YNAB Export File (ZIP)"
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "YNAB exports do not include goals or account types, so every account arrives as an on-budget Checking account. After the import, edit each account to set its real type (savings, credit card, …) and set up goals manually. See the {FULL_GUIDE_LINK} for the complete post-import checklist."
+msgstr ""
+
+#: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
+msgid "YNAB web app"
+msgstr ""
+
+#: src/pages/settings/push-api/RegenerateDialog.tsx
+msgid "You are about to reveal your <0>encryption key</0>. This key can decrypt all your budget data."
+msgstr ""
+
+#: src/features/subscription/ui/SubscriptionSuccess.tsx
+msgid "You can manage your subscription anytime from your account settings."
+msgstr ""
+
+#: src/app/layout/AdminAccessRequiredCard.tsx
+msgid "You don't have permission to access the admin panel."
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "You have lifetime access to Budgero. Thank you for being a founding member! Enjoy all features without any recurring payments."
+msgstr ""
+
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "You haven't generated an API token yet. Generate one to start using the Push API."
+msgstr ""
+
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+msgid "You need at least one account before adding transactions."
+msgstr ""
+
+#: src/features/category-management/ui/CreateCategoryDialog.tsx
+msgid "You’ll need at least one category group before creating categories."
+msgstr ""
+
+#: src/pages/settings/ai/PrivacyWarnings.tsx
+msgid "You've configured a third-party server. Your financial data — transactions, payees, balances, receipt images and chat messages — will be sent to that provider, who can read and retain it. Only continue if you trust them and have reviewed their privacy policy. For full privacy, use a local server (Ollama or LM Studio) instead."
+msgstr ""
+
+#: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
+msgid "Your account has reached the 5-person collaborator limit across owned workspaces. Remove a member or cancel a pending invite before creating another one."
+msgstr ""
+
+#: src/pages/settings/push-api/TokenStatusCard.tsx
+msgid "Your API Token"
+msgstr ""
+
+#: src/pages/onboarding/steps/DoneStep.tsx
+msgid "YOUR BUDGET SUMMARY"
+msgstr ""
+
+#: src/shared/pwa/UpdateRequiredDialog.tsx
+msgid "Your budget was modified by a newer version of Budgero. To keep your data safe, this device has stopped syncing until the app is updated."
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Your current subscription status"
+msgstr ""
+
+#: src/features/import/ui/steps/CompleteStep.tsx
+msgid "Your data has been successfully imported"
+msgstr ""
+
+#: src/features/subscription/ui/ExportDataCard.tsx
+msgid "Your data is encrypted. Enter your master password to decrypt and export it."
+msgstr ""
+
+#: src/pages/settings/ai/PrivacyWarnings.tsx
+msgid "Your data leaves this device"
+msgstr ""
+
+#: src/features/account-management/ui/AddAccountDialog.tsx
+msgid "Your desired payoff date, used for planning."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Your encrypted data is permanently lost. You can reset your master password to start fresh, but all previous budgets and history will be wiped. Choose something strong and store it safely, a password manager is a great option."
+msgstr ""
+
+#: src/pages/settings/push-api/EncryptionInfoPanel.tsx
+msgid "Your Encryption Key (Base64)"
+msgstr ""
+
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "your ledger is unrecoverable"
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Your login credentials verify your identity with our server. Your master password is a separate encryption key that scrambles your data on your device. You can reset your master password, but doing so permanently destroys all existing encrypted data, there is no way to carry it over."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Your master password changed on another device. Enter the new password to continue."
+msgstr ""
+
+#: src/app/startup/screens.tsx
+msgid "Your master password encrypts all your financial data before it ever leaves your device. We never see or store it, only you can unlock your budgets. Even if our servers were compromised, your data stays completely private."
+msgstr ""
+
+#: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
+msgid "Your master password never leaves this device. It wraps the decrypted workspace key before sending it to the server."
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Your other workspaces are not affected"
+msgstr ""
+
+#: src/pages/settings/WorkspaceSettingsPage.tsx
+msgid "Your own workspaces are locked because your Budgero plan is inactive. Subscribe again to regain access."
+msgstr ""
+
+#: src/pages/settings/DataManagementPage.tsx
+msgid "Your owned workspaces are locked for edits until you resubscribe, but you can still export their data here for recovery or migration."
+msgstr ""
+
+#: src/pages/settings/subscription/SubscriptionStatusCard.tsx
+msgid "Your payment failed. Please update your payment method to continue your subscription."
+msgstr ""
+
+#: src/features/subscription/ui/SubscriptionSuccess.tsx
+msgid "Your subscription is now active. You have full access to all features of Budgero. Start managing your finances with confidence!"
+msgstr ""
+
+#: src/app/startup/StartupLayout.tsx
+msgid "Zero-based budgeting. Zero-knowledge privacy."
 msgstr ""

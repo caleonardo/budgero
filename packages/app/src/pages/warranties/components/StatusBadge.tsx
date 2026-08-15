@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /* eslint-disable react-refresh/only-export-components */
 import { parseISO } from 'date-fns';
 import { Badge } from '@shared/ui/badge';
@@ -20,16 +21,20 @@ export function StatusBadge({ status }: { status: WarrantyStatus }) {
     case 'active':
       return (
         <Badge variant="default" className="bg-emerald-600">
-          Active
+          <Trans>Active</Trans>
         </Badge>
       );
     case 'expiring':
       return (
         <Badge variant="default" className="bg-amber-500">
-          Expiring Soon
+          <Trans>Expiring Soon</Trans>
         </Badge>
       );
     case 'expired':
-      return <Badge variant="destructive">Expired</Badge>;
+      return (
+        <Badge variant="destructive">
+          <Trans>Expired</Trans>
+        </Badge>
+      );
   }
 }

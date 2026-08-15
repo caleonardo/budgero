@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import {
   Landmark,
@@ -62,7 +63,9 @@ export default function AnalyticsPage() {
 
   return (
     <div className="w-full space-y-4 p-4 pb-24 sm:p-6 md:pb-6">
-      <h1 className="text-2xl font-bold tracking-tight">Prebuilt</h1>
+      <h1 className="text-2xl font-bold tracking-tight">
+        <Trans>Prebuilt</Trans>
+      </h1>
 
       <div className="grid grid-cols-2 gap-1 rounded-xl border border-dashed border-border/70 bg-card p-1 sm:grid-cols-3 lg:grid-cols-7">
         {REPORTS.map(({ key, label, question, icon: Icon }) => (

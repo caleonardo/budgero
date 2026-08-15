@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
@@ -98,7 +99,9 @@ function WidgetLayoutControls({
   if (isMobile) {
     return (
       <div className="flex items-center gap-2 pt-2">
-        <span className="text-xs text-muted-foreground">Size</span>
+        <span className="text-xs text-muted-foreground">
+          <Trans>Size</Trans>
+        </span>
         {(['s', 'm', 'l'] as const).map((size) => (
           <Button
             key={size}
@@ -115,8 +118,12 @@ function WidgetLayoutControls({
 
   return (
     <div className="flex flex-wrap items-center gap-2 pt-2">
-      <Badge variant="outline">Cols {widget.desktopLayout.colSpan}</Badge>
-      <Badge variant="outline">Rows {widget.desktopLayout.rowSpan}</Badge>
+      <Badge variant="outline">
+        <Trans>Cols {widget.desktopLayout.colSpan}</Trans>
+      </Badge>
+      <Badge variant="outline">
+        <Trans>Rows {widget.desktopLayout.rowSpan}</Trans>
+      </Badge>
       {DESKTOP_LAYOUT_BUTTONS.map(({ label, icon: Icon, patch }) => (
         <Button
           key={label}
@@ -151,10 +158,10 @@ function WidgetErrorCard({
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">
         <Button variant="outline" size="sm" onClick={onSelectNewChart}>
-          Select new chart
+          <Trans>Select new chart</Trans>
         </Button>
         <Button variant="destructive" size="sm" onClick={() => void onRemove()}>
-          Remove widget
+          <Trans>Remove widget</Trans>
         </Button>
       </CardContent>
     </Card>
@@ -317,7 +324,7 @@ export function WidgetCard({
       <CardContent className="flex-1 min-h-0 pt-0">
         {dataQuery.isPending && (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            Loading chart...
+            <Trans>Loading chart...</Trans>
           </div>
         )}
         {!dataQuery.isPending && dataQuery.data && (

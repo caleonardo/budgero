@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { CurrencySelector } from '@features/currencies/ui/CurrencySelector';
 import { currencies as ALL_CURRENCIES } from '@features/currencies/model/currency-data';
 import React from 'react';
@@ -108,15 +109,19 @@ export const CurrencyStep: React.FC<StepProps> = ({ cur, state, set }) => {
             marginBottom: 8,
           }}
         >
-          NEED A DIFFERENT CURRENCY?
+          <Trans>NEED A DIFFERENT CURRENCY?</Trans>
         </div>
         <div style={{ fontSize: 11, color: '#393939', lineHeight: 1.55, marginBottom: 10 }}>
-          Search the full list — Budgero supports {ALL_CURRENCIES.length} currencies.
+          <Trans>Search the full list — Budgero supports {ALL_CURRENCIES.length} currencies.</Trans>
         </div>
         <CurrencySelector
           value={state.currency}
           onValueChange={(value) => set({ currency: value })}
-          label={<span className="sr-only">Currency</span>}
+          label={
+            <span className="sr-only">
+              <Trans>Currency</Trans>
+            </span>
+          }
         />
       </div>
     </div>

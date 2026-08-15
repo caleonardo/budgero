@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { THEMES_AVAILABLE } from '../onboarding-data';
 import { StepHeroImage, Title, formatDateLabel, getCurrencySym, type StepProps } from './shared';
@@ -71,7 +72,7 @@ export const DoneStep: React.FC<Omit<StepProps, 'set'> & DoneStepExtraProps> = (
           marginBottom: 12,
         }}
       >
-        YOUR BUDGET SUMMARY
+        <Trans>YOUR BUDGET SUMMARY</Trans>
       </div>
       <div style={{ display: 'grid', gap: 8, fontSize: 13 }}>
         {rows.map(([k, v], i, arr) => (
@@ -152,7 +153,9 @@ export const DoneStep: React.FC<Omit<StepProps, 'set'> & DoneStepExtraProps> = (
             lineHeight: 1.5,
           }}
         >
-          <div style={{ fontWeight: 700, marginBottom: 4 }}>Setup failed</div>
+          <div style={{ fontWeight: 700, marginBottom: 4 }}>
+            <Trans>Setup failed</Trans>
+          </div>
           {applyError}
         </div>
       )}

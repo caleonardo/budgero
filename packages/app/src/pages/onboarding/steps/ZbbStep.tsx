@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Title, getCurrencySym, type StepProps } from './shared';
 
@@ -41,7 +42,9 @@ export const ZbbStep: React.FC<StepProps> = ({ state, set }) => {
             fontSize: 12,
           }}
         >
-          <span style={{ color: '#393939' }}>THIS MONTH&apos;S PAYCHECK</span>
+          <span style={{ color: '#393939' }}>
+            <Trans>THIS MONTH'S PAYCHECK</Trans>
+          </span>
           <span style={{ fontWeight: 700 }}>
             {sym}
             {total.toLocaleString()}
@@ -112,7 +115,9 @@ export const ZbbStep: React.FC<StepProps> = ({ state, set }) => {
             alignItems: 'center',
           }}
         >
-          <span style={{ fontSize: 12, color: '#393939' }}>LEFT TO ASSIGN</span>
+          <span style={{ fontSize: 12, color: '#393939' }}>
+            <Trans>LEFT TO ASSIGN</Trans>
+          </span>
           <span
             style={{
               fontSize: 20,
@@ -138,7 +143,7 @@ export const ZbbStep: React.FC<StepProps> = ({ state, set }) => {
               textAlign: 'center',
             }}
           >
-            ✓ ZERO-BASED. EVERY COIN NOW HAS A JOB.
+            <Trans>✓ ZERO-BASED. EVERY COIN NOW HAS A JOB.</Trans>
           </div>
         )}
       </div>

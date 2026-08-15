@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { AlertTriangle } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -11,7 +12,9 @@ export function AINotConfiguredWarning({ description }: AINotConfiguredWarningPr
       <div className="flex gap-3">
         <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0" />
         <div className="text-sm">
-          <p className="font-medium text-amber-800 dark:text-amber-200">AI not configured</p>
+          <p className="font-medium text-amber-800 dark:text-amber-200">
+            <Trans>AI not configured</Trans>
+          </p>
           <p className="text-amber-700 dark:text-amber-300 mt-1">
             {description ?? 'Go to Settings → AI Assistant to configure your local LLM connection.'}
           </p>

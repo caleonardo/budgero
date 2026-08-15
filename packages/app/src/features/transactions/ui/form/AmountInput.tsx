@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Amount Input Component
  *
@@ -48,7 +49,7 @@ export function AmountInput({
   return (
     <div className="space-y-1.5 sm:space-y-2">
       <Label htmlFor="amount" className="text-xs sm:text-sm font-medium">
-        Amount ({currencyCode})
+        <Trans>Amount ({currencyCode})</Trans>
       </Label>
       <div className="flex items-center gap-2">
         <div className="h-8 sm:h-10 w-8 flex items-center justify-center text-base sm:text-lg font-semibold">

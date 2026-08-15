@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 
@@ -327,7 +328,7 @@ export function SearchableCategorySelect({
         className={cn('w-[200px] justify-start text-destructive', triggerClassName)}
         disabled
       >
-        Error loading data
+        <Trans>Error loading data</Trans>
       </Button>
     );
   }
@@ -339,7 +340,7 @@ export function SearchableCategorySelect({
         className={cn('w-[200px] justify-start text-muted-foreground', triggerClassName)}
         disabled
       >
-        No data available
+        <Trans>No data available</Trans>
       </Button>
     );
   }
@@ -399,7 +400,9 @@ export function SearchableCategorySelect({
             >
               <CommandEmpty>
                 <div className="space-y-2">
-                  <p>No category found.</p>
+                  <p>
+                    <Trans>No category found.</Trans>
+                  </p>
                   {canOfferCreate && (
                     <Button
                       size="sm"
@@ -477,7 +480,7 @@ export function SearchableCategorySelect({
               ))}
               {groupedCategories.length === 0 && (
                 <div className="p-4 text-center text-sm text-muted-foreground">
-                  No categories available to select.
+                  <Trans>No categories available to select.</Trans>
                 </div>
               )}
             </CommandList>

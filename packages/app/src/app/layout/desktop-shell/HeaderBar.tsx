@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Home, Plus, Search } from 'lucide-react';
@@ -40,7 +41,9 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
                 <BreadcrumbLink asChild>
                   <Link to="/dashboard" className="inline-flex items-center gap-1">
                     <Home className="h-3.5 w-3.5" />
-                    <span>Home</span>
+                    <span>
+                      <Trans>Home</Trans>
+                    </span>
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -70,7 +73,9 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             aria-label="Add transaction"
           >
             <Plus className="h-4 w-4" />
-            <span className="hidden lg:inline">Add Transaction</span>
+            <span className="hidden lg:inline">
+              <Trans>Add Transaction</Trans>
+            </span>
             <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-primary-foreground/30 px-1.5 font-mono text-[10px] font-medium opacity-80 lg:flex">
               <span className="text-xs">&#8997;</span>
               <span className="text-xs">&#8984;</span>T
@@ -85,7 +90,9 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             aria-label={privacyMaskNumbers ? 'Disable privacy mode' : 'Enable privacy mode'}
           >
             {privacyMaskNumbers ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            <span className="hidden lg:inline">Privacy</span>
+            <span className="hidden lg:inline">
+              <Trans>Privacy</Trans>
+            </span>
           </Button>
           {feedbackEnabled && (
             <Button
@@ -97,7 +104,9 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
               aria-label="Send feedback"
             >
               <FeedbackIcon className="h-4 w-4" />
-              <span className="hidden lg:inline">Feedback</span>
+              <span className="hidden lg:inline">
+                <Trans>Feedback</Trans>
+              </span>
             </Button>
           )}
           <Button
@@ -107,7 +116,9 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             onClick={triggerCommandPalette}
           >
             <Search className="h-4 w-4" />
-            <span className="hidden lg:inline">Search</span>
+            <span className="hidden lg:inline">
+              <Trans>Search</Trans>
+            </span>
             <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
               <span className="text-xs">&#8984;</span>K
             </kbd>

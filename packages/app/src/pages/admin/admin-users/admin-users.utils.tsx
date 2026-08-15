@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Badge } from '@shared/ui/badge';
 import { format, parseISO } from 'date-fns';
 import {
@@ -29,7 +30,11 @@ export function getStatusBadge(user: User) {
 
 export function getSubscriptionInfo(user: User) {
   if (user.is_founding_member) {
-    return <span className="text-xs text-orange-600">Lifetime access</span>;
+    return (
+      <span className="text-xs text-orange-600">
+        <Trans>Lifetime access</Trans>
+      </span>
+    );
   }
   if (user.has_beta_access && user.beta_expires_at) {
     return (
@@ -62,7 +67,11 @@ export function getSubscriptionInfo(user: User) {
       </span>
     );
   }
-  return <span className="text-xs text-gray-500">No active subscription</span>;
+  return (
+    <span className="text-xs text-gray-500">
+      <Trans>No active subscription</Trans>
+    </span>
+  );
 }
 
 /** Case-insensitive match of a (trimmed) search term against a user's name, email, or id. */

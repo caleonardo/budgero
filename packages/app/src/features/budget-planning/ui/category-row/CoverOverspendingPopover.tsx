@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useId, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@shared/ui/button';
@@ -153,7 +154,9 @@ export function CoverOverspendingPopover({
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-72 space-y-3" align={align}>
-        <div className="text-sm font-medium">Cover Overspending</div>
+        <div className="text-sm font-medium">
+          <Trans>Cover Overspending</Trans>
+        </div>
         <div className="text-xs text-muted-foreground">
           {tone === 'amber' ? 'Overspent on credit by ' : 'Overspent by '}
           <span className={cn('font-medium', tone === 'amber' ? 'text-amber-600' : 'text-red-600')}>
@@ -163,7 +166,9 @@ export function CoverOverspendingPopover({
         </div>
         <div className="space-y-1">
           {/* Caption, not a <label>: SearchableCategorySelect exposes no labelable control. */}
-          <span className="text-xs text-muted-foreground">Cover from</span>
+          <span className="text-xs text-muted-foreground">
+            <Trans>Cover from</Trans>
+          </span>
           <SearchableCategorySelect
             budgetId={budgetId}
             selectedCategoryId={sourceCategoryId}
@@ -179,7 +184,7 @@ export function CoverOverspendingPopover({
         </div>
         <div className="space-y-1">
           <Label htmlFor={amountInputId} className="font-normal text-xs text-muted-foreground">
-            Amount
+            <Trans>Amount</Trans>
           </Label>
           <Input
             id={amountInputId}
@@ -199,7 +204,7 @@ export function CoverOverspendingPopover({
         </div>
         <div className="flex items-center justify-end gap-2 pt-1">
           <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button size="sm" onClick={handleCover} disabled={!canCover}>
             {isCovering ? 'Covering…' : 'Cover'}

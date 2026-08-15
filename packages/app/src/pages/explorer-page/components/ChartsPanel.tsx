@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo } from 'react';
 import { Card, CardContent, CardHeader } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -20,7 +21,7 @@ const MemoChartViewer = memo(
     if (!config) {
       return (
         <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
-          No chart selected. Click a chart button above.
+          <Trans>No chart selected. Click a chart button above.</Trans>
         </div>
       );
     }
@@ -42,7 +43,9 @@ export const ChartsPanel = memo(
         <CardHeader className="pb-3 sm:pb-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-lg font-semibold">Chart Visualizations</h3>
+              <h3 className="text-base sm:text-lg font-semibold">
+                <Trans>Chart Visualizations</Trans>
+              </h3>
               <Badge variant="secondary" className="text-xs">
                 {charts.length} chart
                 {charts.length > 1 ? 's' : ''}

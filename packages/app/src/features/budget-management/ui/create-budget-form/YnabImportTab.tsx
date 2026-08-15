@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * "YNAB" tab of CreateBudgetForm: import a YNAB ZIP export as a new budget.
  */
@@ -48,7 +49,14 @@ export function YnabImportTab({
 }: YnabImportTabProps) {
   return (
     <div className="space-y-3 sm:space-y-4">
-      <Field label={<span className="text-xs sm:text-sm">Budget Name</span>} htmlFor="importName">
+      <Field
+        label={
+          <span className="text-xs sm:text-sm">
+            <Trans>Budget Name</Trans>
+          </span>
+        }
+        htmlFor="importName"
+      >
         <Input
           id="importName"
           value={budgetName}
@@ -63,7 +71,9 @@ export function YnabImportTab({
         <div className="space-y-1.5">
           <CurrencySelector value={currency} onValueChange={onCurrencyChange} label="Currency" />
           <p className="text-xs text-muted-foreground">
-            The currency shown on amounts. This is for display only and can be changed anytime.
+            <Trans>
+              The currency shown on amounts. This is for display only and can be changed anytime.
+            </Trans>
           </p>
         </div>
 
@@ -75,7 +85,7 @@ export function YnabImportTab({
             label="Number Format"
           />
           <p className="text-xs text-muted-foreground">
-            How numbers and decimals are displayed throughout the app.
+            <Trans>How numbers and decimals are displayed throughout the app.</Trans>
           </p>
         </div>
 
@@ -86,14 +96,16 @@ export function YnabImportTab({
             label="Budget Icon"
           />
           <p className="text-xs text-muted-foreground">
-            A small icon shown next to your budget name. Handy when you have multiple budgets.
+            <Trans>
+              A small icon shown next to your budget name. Handy when you have multiple budgets.
+            </Trans>
           </p>
         </div>
       </div>
 
       <div className="space-y-1.5">
         <Label htmlFor="importFile" className="text-xs sm:text-sm">
-          YNAB Export File (ZIP)
+          <Trans>YNAB Export File (ZIP)</Trans>
         </Label>
         {/* Native file input is visually hidden and driven by the button
             below so we can show an Upload icon and the chosen filename. */}
@@ -114,8 +126,10 @@ export function YnabImportTab({
             onClick={() => fileInputRef.current?.click()}
             className="h-8 sm:h-9 text-xs sm:text-sm"
           >
-            <Upload className="h-4 w-4" />
-            Choose file
+            <Trans>
+              <Upload className="h-4 w-4" />
+              Choose file
+            </Trans>
           </Button>
           <span className="truncate text-xs sm:text-sm text-muted-foreground">
             {file ? file.name : 'No file chosen'}
@@ -133,7 +147,7 @@ export function YnabImportTab({
             disabled={isImporting}
             className="flex-1 h-8 sm:h-9"
           >
-            Reset
+            <Trans>Reset</Trans>
           </Button>
 
           <Button
@@ -145,12 +159,16 @@ export function YnabImportTab({
             {isImporting ? (
               <>
                 <Loader2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                <span className="text-xs sm:text-sm">Importing...</span>
+                <span className="text-xs sm:text-sm">
+                  <Trans>Importing...</Trans>
+                </span>
               </>
             ) : (
               <>
                 <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="text-xs sm:text-sm">Import</span>
+                <span className="text-xs sm:text-sm">
+                  <Trans>Import</Trans>
+                </span>
               </>
             )}
           </Button>

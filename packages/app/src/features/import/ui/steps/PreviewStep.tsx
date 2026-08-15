@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Preview Step Component
  *
@@ -41,10 +42,14 @@ export function PreviewStep({
     <Card className="mx-auto w-full max-w-4xl overflow-x-hidden">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CheckCircle className="h-5 w-5" />
-          Preview Import
+          <Trans>
+            <CheckCircle className="h-5 w-5" />
+            Preview Import
+          </Trans>
         </CardTitle>
-        <CardDescription>Review how your data will be imported before proceeding</CardDescription>
+        <CardDescription>
+          <Trans>Review how your data will be imported before proceeding</Trans>
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 overflow-x-hidden">
         {previewData.length > 0 && (
@@ -61,11 +66,13 @@ export function PreviewStep({
             )}
             {isPreviewCapped && (
               <span className="text-muted-foreground">
-                (showing first {previewData.length} below)
+                <Trans>(showing first {previewData.length} below)</Trans>
               </span>
             )}
             {errorCount > 0 && (
-              <Badge variant="destructive">{errorCount} of the previewed rows have issues</Badge>
+              <Badge variant="destructive">
+                <Trans>{errorCount} of the previewed rows have issues</Trans>
+              </Badge>
             )}
           </div>
         )}
@@ -76,12 +83,24 @@ export function PreviewStep({
               <table className="w-full text-sm">
                 <thead className="bg-muted">
                   <tr>
-                    <th className="px-3 py-2 text-left">Date</th>
-                    <th className="px-3 py-2 text-left">Amount</th>
-                    <th className="px-3 py-2 text-left">Memo</th>
-                    <th className="px-3 py-2 text-left">Payee</th>
-                    <th className="px-3 py-2 text-left">Account</th>
-                    <th className="px-3 py-2 text-left">Errors</th>
+                    <th className="px-3 py-2 text-left">
+                      <Trans>Date</Trans>
+                    </th>
+                    <th className="px-3 py-2 text-left">
+                      <Trans>Amount</Trans>
+                    </th>
+                    <th className="px-3 py-2 text-left">
+                      <Trans>Memo</Trans>
+                    </th>
+                    <th className="px-3 py-2 text-left">
+                      <Trans>Payee</Trans>
+                    </th>
+                    <th className="px-3 py-2 text-left">
+                      <Trans>Account</Trans>
+                    </th>
+                    <th className="px-3 py-2 text-left">
+                      <Trans>Errors</Trans>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -115,11 +134,13 @@ export function PreviewStep({
 
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
           <Button variant="outline" onClick={onBack} className="w-full sm:w-auto">
-            Back to Configuration
+            <Trans>Back to Configuration</Trans>
           </Button>
           <Button onClick={onStartImport} disabled={!canImport} className="w-full sm:w-auto">
-            Start Import
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <Trans>
+              Start Import
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Trans>
           </Button>
         </div>
       </CardContent>

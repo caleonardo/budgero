@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import type { UnifiedReport } from '@budgero/core/browser';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { Label } from '@shared/ui/label';
@@ -24,7 +25,9 @@ export function ReportChartSelectFields({
   return (
     <>
       <div className="space-y-2">
-        <Label>Report</Label>
+        <Label>
+          <Trans>Report</Trans>
+        </Label>
         <Select value={selectedReportId} onValueChange={onReportIdChange}>
           <SelectTrigger>
             <SelectValue placeholder="Select report" />
@@ -39,7 +42,9 @@ export function ReportChartSelectFields({
         </Select>
       </div>
       <div className="space-y-2">
-        <Label>Chart</Label>
+        <Label>
+          <Trans>Chart</Trans>
+        </Label>
         <Select value={selectedChartId} onValueChange={onChartIdChange}>
           <SelectTrigger>
             <SelectValue placeholder="Select chart" />

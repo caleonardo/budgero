@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useUiStore } from '@shared/store/useUiStore';
 
@@ -111,7 +112,9 @@ export default function AllTransactionsPage() {
               <List className="w-3.5 h-3.5" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-sm font-bold text-foreground">All Transactions</h1>
+              <h1 className="text-sm font-bold text-foreground">
+                <Trans>All Transactions</Trans>
+              </h1>
               <p className="text-[10px] text-muted-foreground">
                 {mobilePageStats
                   ? `Page ${mobilePageStats.pageNumber + 1}/${mobilePageStats.totalPages}`
@@ -157,9 +160,11 @@ export default function AllTransactionsPage() {
                 <List className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-lg font-bold text-foreground">All Transactions</h1>
+                <h1 className="text-lg font-bold text-foreground">
+                  <Trans>All Transactions</Trans>
+                </h1>
                 <p className="text-xs text-muted-foreground">
-                  {transactionStats.recentCount} transactions across all accounts
+                  <Trans>{transactionStats.recentCount} transactions across all accounts</Trans>
                 </p>
               </div>
             </div>

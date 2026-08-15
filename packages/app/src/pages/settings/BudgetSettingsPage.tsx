@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Switch } from '@shared/ui/switch';
 import { Label } from '@shared/ui/label';
@@ -57,12 +58,16 @@ function RtaModeCard() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Wallet className="h-5 w-5" />
-          Ready to Assign calculation
+          <Trans>
+            <Wallet className="h-5 w-5" />
+            Ready to Assign calculation
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Choose how this budget computes Ready to Assign. Switching is instant and non-destructive
-          — it only changes the math, never your transactions or assignments.
+          <Trans>
+            Choose how this budget computes Ready to Assign. Switching is instant and
+            non-destructive — it only changes the math, never your transactions or assignments.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -87,7 +92,7 @@ function RtaModeCard() {
                   <span className="font-medium">{opt.title}</span>
                   {opt.value === 'cumulative' && (
                     <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                      Default
+                      <Trans>Default</Trans>
                     </span>
                   )}
                 </div>
@@ -98,17 +103,28 @@ function RtaModeCard() {
         </RadioGroup>
 
         <div className="rounded-lg border bg-muted/50 p-4">
-          <h4 className="mb-2 text-sm font-medium">Which should I pick?</h4>
+          <h4 className="mb-2 text-sm font-medium">
+            <Trans>Which should I pick?</Trans>
+          </h4>
           <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
             <li>
-              <strong className="text-foreground">Cumulative</strong> is best if you think of the
-              budget as one continuous pool and don’t mind Ready to Assign staying the same across
-              months.
+              <Trans>
+                <strong className="text-foreground">
+                  <Trans>Cumulative</Trans>
+                </strong>
+                is best if you think of the budget as one continuous pool and don’t mind Ready to
+                Assign staying the same across months.
+              </Trans>
             </li>
             <li>
-              <strong className="text-foreground">Monthly</strong> is best if you’re coming from
-              YNAB or want each month to stand on its own — income counts as it arrives, and last
-              month’s overspending reduces this month’s Ready to Assign.
+              <Trans>
+                <strong className="text-foreground">
+                  <Trans>Monthly</Trans>
+                </strong>
+                is best if you’re coming from YNAB or want each month to stand on its own — income
+                counts as it arrives, and last month’s overspending reduces this month’s Ready to
+                Assign.
+              </Trans>
             </li>
           </ul>
         </div>
@@ -137,11 +153,15 @@ export default function BudgetSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <SlidersHorizontal className="h-5 w-5" />
-            Assignment Behavior
+            <Trans>
+              <SlidersHorizontal className="h-5 w-5" />
+              Assignment Behavior
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Control whether Budgero enforces the Ready to Assign limit when funding categories.
+            <Trans>
+              Control whether Budgero enforces the Ready to Assign limit when funding categories.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -149,18 +169,22 @@ export default function BudgetSettingsPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Label htmlFor="allow-over-assignment" className="font-medium">
-                  Allow over-assignment
+                  <Trans>Allow over-assignment</Trans>
                 </Label>
                 {allowOverAssignment && (
                   <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                    <AlertTriangle className="mr-1 h-3 w-3" />
-                    Enabled
+                    <Trans>
+                      <AlertTriangle className="mr-1 h-3 w-3" />
+                      Enabled
+                    </Trans>
                   </span>
                 )}
               </div>
               <p className="text-sm text-muted-foreground max-w-md">
-                When enabled, you can assign more money to categories than you have available in
-                Ready to Assign. This will result in a negative Ready to Assign amount.
+                <Trans>
+                  When enabled, you can assign more money to categories than you have available in
+                  Ready to Assign. This will result in a negative Ready to Assign amount.
+                </Trans>
               </p>
             </div>
             <Switch
@@ -176,17 +200,28 @@ export default function BudgetSettingsPage() {
           </div>
 
           <div className="rounded-lg border bg-muted/50 p-4">
-            <h4 className="text-sm font-medium mb-2">What this means</h4>
+            <h4 className="text-sm font-medium mb-2">
+              <Trans>What this means</Trans>
+            </h4>
             <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
               <li>
-                <strong className="text-foreground">Disabled (default):</strong> Budgero prevents
-                you from assigning more than your Ready to Assign amount. You must have cash
-                available before funding categories.
+                <Trans>
+                  <strong className="text-foreground">
+                    <Trans>Disabled (default):</Trans>
+                  </strong>
+                  Budgero prevents you from assigning more than your Ready to Assign amount. You
+                  must have cash available before funding categories.
+                </Trans>
               </li>
               <li>
-                <strong className="text-foreground">Enabled:</strong> You can assign any amount to
-                categories regardless of Ready to Assign. This creates negative Ready to Assign,
-                indicating you&apos;ve assigned more money than you currently have.
+                <Trans>
+                  <strong className="text-foreground">
+                    <Trans>Enabled:</Trans>
+                  </strong>
+                  You can assign any amount to categories regardless of Ready to Assign. This
+                  creates negative Ready to Assign, indicating you've assigned more money than you
+                  currently have.
+                </Trans>
               </li>
             </ul>
           </div>

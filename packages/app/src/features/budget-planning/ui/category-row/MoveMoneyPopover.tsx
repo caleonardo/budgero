@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { CalculatorCell } from '@shared/ui/calculator-cell';
@@ -75,10 +76,14 @@ export function MoveMoneyPopover({
       </PopoverTrigger>
       <PopoverContent className={cn('w-72 p-3', className)} align={align}>
         <div className="space-y-3">
-          <div className="text-sm font-medium">Move Money</div>
+          <div className="text-sm font-medium">
+            <Trans>Move Money</Trans>
+          </div>
           <div className="space-y-1">
             {/* Caption, not a <label>: CalculatorCell exposes no labelable control. */}
-            <span className="text-xs text-muted-foreground">Amount</span>
+            <span className="text-xs text-muted-foreground">
+              <Trans>Amount</Trans>
+            </span>
             <CalculatorCell
               value={moveAmount}
               onCommit={setMoveAmount}
@@ -96,7 +101,9 @@ export function MoveMoneyPopover({
           </div>
           <div className="space-y-1">
             {/* Caption, not a <label>: SearchableCategorySelect exposes no labelable control. */}
-            <span className="text-xs text-muted-foreground">Move to</span>
+            <span className="text-xs text-muted-foreground">
+              <Trans>Move to</Trans>
+            </span>
             <SearchableCategorySelect
               budgetId={selectedBudgetId}
               selectedCategoryId={moveTarget}
@@ -112,14 +119,14 @@ export function MoveMoneyPopover({
           </div>
           <div className="flex items-center justify-end gap-2 pt-1">
             <Button variant="ghost" size="sm" onClick={() => setMoveOpen(false)}>
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               size="sm"
               onClick={onConfirmMove}
               disabled={!isMoveValid(moveAmount, available, moveTarget)}
             >
-              Move
+              <Trans>Move</Trans>
             </Button>
           </div>
         </div>

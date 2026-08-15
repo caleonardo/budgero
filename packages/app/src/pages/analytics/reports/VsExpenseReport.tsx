@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Fragment, useMemo, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Card } from '@shared/ui/card';
@@ -86,7 +87,9 @@ export function VsExpenseReport({
     <Card className="overflow-hidden border-dashed p-0">
       <div className="flex flex-wrap items-start justify-between gap-3 p-5 sm:p-6 sm:pb-4">
         <div>
-          <h2 className="text-base font-semibold text-muted-foreground">Ledger</h2>
+          <h2 className="text-base font-semibold text-muted-foreground">
+            <Trans>Ledger</Trans>
+          </h2>
           <p
             className={cn(
               'text-3xl font-semibold tracking-tight',
@@ -100,7 +103,7 @@ export function VsExpenseReport({
             />
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Net per category across months — click any amount to see its transactions
+            <Trans>Net per category across months — click any amount to see its transactions</Trans>
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -110,7 +113,7 @@ export function VsExpenseReport({
             onClick={() => setExpandedGroups(new Set(pivot.groups.map((group) => group.id)))}
             disabled={!pivot.groups.length}
           >
-            Expand all
+            <Trans>Expand all</Trans>
           </Button>
           <Button
             variant="outline"
@@ -118,7 +121,7 @@ export function VsExpenseReport({
             onClick={() => setExpandedGroups(new Set())}
             disabled={!pivot.groups.length}
           >
-            Collapse all
+            <Trans>Collapse all</Trans>
           </Button>
         </div>
       </div>
@@ -128,15 +131,21 @@ export function VsExpenseReport({
           <Skeleton className="h-[400px] w-full" />
         ) : isEmpty ? (
           <div className="flex h-[300px] flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border/70 text-sm text-muted-foreground">
-            <p>No category activity for the selected period.</p>
-            <p>Adjust the date range or filters to explore other results.</p>
+            <p>
+              <Trans>No category activity for the selected period.</Trans>
+            </p>
+            <p>
+              <Trans>Adjust the date range or filters to explore other results.</Trans>
+            </p>
           </div>
         ) : (
           <>
             {isTruncated && (
               <div className="mb-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
-                Showing only the most recent {MAX_PIVOT_MONTHS} months. Narrow your date range to
-                see earlier data.
+                <Trans>
+                  Showing only the most recent {MAX_PIVOT_MONTHS} months. Narrow your date range to
+                  see earlier data.
+                </Trans>
               </div>
             )}
             <div className="w-0 min-w-full overflow-hidden rounded-md border">
@@ -150,7 +159,7 @@ export function VsExpenseReport({
                           'z-30 min-w-[110px] bg-muted text-left font-medium text-muted-foreground sm:min-w-[180px]'
                         )}
                       >
-                        Category
+                        <Trans>Category</Trans>
                       </th>
                       {months.map((monthKey) => (
                         <th
@@ -166,11 +175,13 @@ export function VsExpenseReport({
                           'z-30 min-w-[100px] bg-muted font-medium text-muted-foreground'
                         )}
                       >
-                        Total
+                        <Trans>Total</Trans>
                       </th>
                     </tr>
                     <tr className="border-b border-border/40 text-sm font-semibold text-primary">
-                      <td className={cn(STICKY_LEFT, 'z-30 bg-muted')}>Totals</td>
+                      <td className={cn(STICKY_LEFT, 'z-30 bg-muted')}>
+                        <Trans>Totals</Trans>
+                      </td>
                       {pivot.columnTotals.map((value, index) => (
                         <td
                           key={months[index]}

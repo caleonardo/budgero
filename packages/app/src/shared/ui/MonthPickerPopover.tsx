@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { format, parse } from 'date-fns';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -133,7 +134,7 @@ export default function MonthPickerPopover({
         </div>
 
         <Button variant="outline" size="sm" className="mt-3 w-full" onClick={jumpToToday}>
-          Jump to today
+          <Trans>Jump to today</Trans>
         </Button>
       </PopoverContent>
     </Popover>

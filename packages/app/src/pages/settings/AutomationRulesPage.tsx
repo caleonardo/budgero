@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -281,15 +282,22 @@ export default function AutomationRulesPage() {
     <div className="space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Automation rules</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            <Trans>Automation rules</Trans>
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Create powerful rules that categorise, clean up, and reroute transactions the moment
-            they appear.
+            <Trans>
+              Create powerful rules that categorise, clean up, and reroute transactions the moment
+              they appear.
+            </Trans>
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
           <Button onClick={openCreateDialog} className="w-full sm:w-auto">
-            <Sparkles className="mr-2 h-4 w-4" /> New rule
+            <Trans>
+              <Sparkles className="mr-2 h-4 w-4" />
+              New rule
+            </Trans>
           </Button>
         </div>
       </div>
@@ -299,9 +307,11 @@ export default function AutomationRulesPage() {
       {!budgetId ? (
         <Card className="border-dashed">
           <CardHeader>
-            <CardTitle>No budget selected</CardTitle>
+            <CardTitle>
+              <Trans>No budget selected</Trans>
+            </CardTitle>
             <CardDescription>
-              Select or create a budget to configure automation rules.
+              <Trans>Select or create a budget to configure automation rules.</Trans>
             </CardDescription>
           </CardHeader>
         </Card>
@@ -315,17 +325,24 @@ export default function AutomationRulesPage() {
         <Card className="border-dashed">
           <CardHeader className="space-y-2">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Bot className="h-5 w-5 text-muted-foreground" />
-              Let Budgero handle the busywork
+              <Trans>
+                <Bot className="h-5 w-5 text-muted-foreground" />
+                Let Budgero handle the busywork
+              </Trans>
             </CardTitle>
             <CardDescription>
-              No rules yet. Create your first automation to categorise subscriptions, split income,
-              or tidy up imported descriptions.
+              <Trans>
+                No rules yet. Create your first automation to categorise subscriptions, split
+                income, or tidy up imported descriptions.
+              </Trans>
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={openCreateDialog}>
-              <Sparkles className="mr-2 h-4 w-4" /> Design a rule
+              <Trans>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Design a rule
+              </Trans>
             </Button>
           </CardContent>
         </Card>
@@ -372,22 +389,35 @@ export default function AutomationRulesPage() {
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
-                      <Layers2 className="h-3.5 w-3.5" /> Run order {rule.runOrder}
+                      <Trans>
+                        <Layers2 className="h-3.5 w-3.5" />
+                        Run order {rule.runOrder}
+                      </Trans>
                     </span>
                     <span className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" /> Last run {lastRunLabel}
+                      <Trans>
+                        <Clock className="h-3.5 w-3.5" />
+                        Last run {lastRunLabel}
+                      </Trans>
                     </span>
                     {isOneTimeConsumed ? (
                       <span className="flex items-center gap-1 text-destructive">
-                        <ShieldOff className="h-3.5 w-3.5" /> Consumed after retro run
+                        <Trans>
+                          <ShieldOff className="h-3.5 w-3.5" />
+                          Consumed after retro run
+                        </Trans>
                       </span>
                     ) : null}
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline">{rule.conditions.length} condition(s)</Badge>
-                    <Badge variant="outline">{rule.actions.length} action(s)</Badge>
+                    <Badge variant="outline">
+                      <Trans>{rule.conditions.length} condition(s)</Trans>
+                    </Badge>
+                    <Badge variant="outline">
+                      <Trans>{rule.actions.length} action(s)</Trans>
+                    </Badge>
                   </div>
                   <Separator />
                   <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
@@ -441,7 +471,10 @@ export default function AutomationRulesPage() {
                       className="w-full justify-center sm:w-auto sm:justify-start"
                       onClick={() => openHistoryForRule(rule)}
                     >
-                      <History className="mr-2 h-4 w-4" /> History
+                      <Trans>
+                        <History className="mr-2 h-4 w-4" />
+                        History
+                      </Trans>
                     </Button>
                     <Button
                       size="sm"
@@ -449,7 +482,10 @@ export default function AutomationRulesPage() {
                       className="w-full justify-center sm:w-auto sm:justify-start"
                       onClick={() => openEditDialog(rule)}
                     >
-                      <Pencil className="mr-2 h-4 w-4" /> Edit
+                      <Trans>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit
+                      </Trans>
                     </Button>
                     <DeleteRuleButton
                       rule={rule}
@@ -513,7 +549,10 @@ function DeleteRuleButton({
           variant="ghost"
           className="w-full justify-center text-destructive hover:text-destructive sm:w-auto sm:justify-start"
         >
-          <Trash2 className="mr-2 h-4 w-4" /> Delete
+          <Trans>
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
+          </Trans>
         </Button>
       }
       title={<>Delete “{rule.name}”?</>}

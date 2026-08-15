@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 import { useId, useMemo, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@shared/ui/button';
@@ -223,13 +225,15 @@ export function CCPaymentCoverPopover({
 
           {sourceAccounts.length === 0 ? (
             <div className="text-xs text-muted-foreground">
-              No on-budget checking/savings accounts available to pay from.
+              <Trans>No on-budget checking/savings accounts available to pay from.</Trans>
             </div>
           ) : (
             <>
               <div className="space-y-1">
                 {/* Caption, not a <label>: CalculatorCell exposes no labelable control. */}
-                <span className="text-xs text-muted-foreground">Amount</span>
+                <span className="text-xs text-muted-foreground">
+                  <Trans>Amount</Trans>
+                </span>
                 <CalculatorCell
                   value={amount}
                   onCommit={setAmount}
@@ -251,7 +255,7 @@ export function CCPaymentCoverPopover({
                   htmlFor={sourceAccountTriggerId}
                   className="font-normal text-xs text-muted-foreground"
                 >
-                  From account
+                  <Trans>From account</Trans>
                 </Label>
                 <Select
                   value={sourceAccountId !== null ? String(sourceAccountId) : ''}
@@ -272,7 +276,7 @@ export function CCPaymentCoverPopover({
 
               <div className="flex items-center justify-end gap-2 pt-1">
                 <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </Button>
                 <Button size="sm" onClick={handleConfirm} disabled={!canConfirm}>
                   {addTransaction.isPending || isConfirming ? 'Recording…' : 'Pay'}

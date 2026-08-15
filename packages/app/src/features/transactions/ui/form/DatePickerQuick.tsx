@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Date Picker with Quick Buttons Component
  *
@@ -74,7 +75,7 @@ export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePic
           className="h-8 sm:h-9 w-full justify-center"
           onClick={setDateToday}
         >
-          Today
+          <Trans>Today</Trans>
         </Button>
         <Button
           type="button"
@@ -83,7 +84,7 @@ export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePic
           className="h-8 sm:h-9 w-full justify-center"
           onClick={() => setDateRelative(-1)}
         >
-          -1 day
+          <Trans>-1 day</Trans>
         </Button>
         <Button
           type="button"
@@ -92,7 +93,7 @@ export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePic
           className="h-8 sm:h-9 w-full justify-center"
           onClick={() => setDateRelative(1)}
         >
-          +1 day
+          <Trans>+1 day</Trans>
         </Button>
       </div>
     </>

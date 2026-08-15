@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 /**
  * Transaction Details Section
  *
@@ -309,8 +311,10 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
           </div>
           {isOffBudgetTransfer && (
             <p className="text-xs text-muted-foreground ml-6">
-              Use &apos;Transfers&apos; to deduct from Ready to Assign, or select a category to
-              treat as spending
+              <Trans>
+                Use 'Transfers' to deduct from Ready to Assign, or select a category to treat as
+                spending
+              </Trans>
             </p>
           )}
         </div>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -172,7 +173,9 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="flex min-w-0 items-center gap-2 text-sm md:text-base">
             <CalendarClock className="h-4 w-4 shrink-0 text-primary" />
-            <span className="truncate">Upcoming transactions</span>
+            <span className="truncate">
+              <Trans>Upcoming transactions</Trans>
+            </span>
             {!showSkeleton && upcomingCount > 0 && (
               <Badge variant="secondary" className="shrink-0 tabular-nums">
                 {upcomingCount}
@@ -207,8 +210,10 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
         </div>
         {isExpanded && (
           <CardDescription>
-            Automations and scheduled entries that land soon are listed here. Mark recurring items
-            ready when you are prepared to post them.
+            <Trans>
+              Automations and scheduled entries that land soon are listed here. Mark recurring items
+              ready when you are prepared to post them.
+            </Trans>
           </CardDescription>
         )}
       </CardHeader>
@@ -234,7 +239,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
           {visibleOccurrences.length > 0 && (
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                From automations
+                <Trans>From automations</Trans>
               </p>
               {visibleOccurrences.map((occurrence) => {
                 const { template } = occurrence;
@@ -261,20 +266,23 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                         <Repeat className="h-3.5 w-3.5 text-primary" />
                         <span>{template.name}</span>
                         <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
-                          Recurring
+                          <Trans>Recurring</Trans>
                         </Badge>
                         {isOverdue && (
                           <Badge
                             variant="destructive"
                             className="text-[10px] uppercase tracking-wide"
                           >
-                            Overdue
+                            <Trans>Overdue</Trans>
                           </Badge>
                         )}
                       </div>
                       <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                         <span className="inline-flex items-center gap-1">
-                          <Clock className="h-3 w-3" /> Due {occurrence.dueDate} ({dueLabel})
+                          <Trans>
+                            <Clock className="h-3 w-3" />
+                            Due {occurrence.dueDate}({dueLabel})
+                          </Trans>
                         </span>
                         <span className="inline-flex items-center gap-1">
                           <Tag className="h-3 w-3" /> {categoryName}
@@ -310,7 +318,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                           onOccurrenceAction(occurrence.id, 'skip');
                         }}
                       >
-                        Skip this time
+                        <Trans>Skip this time</Trans>
                       </Button>
                     </div>
                   </div>
@@ -327,7 +335,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
           {visibleScheduled.length > 0 && (
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Scheduled entries
+                <Trans>Scheduled entries</Trans>
               </p>
               {visibleScheduled.map(({ transaction, parsedDate }) => {
                 if (!parsedDate) return null;
@@ -371,7 +379,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                         <CalendarDays className="h-3.5 w-3.5 text-primary" />
                         <span>{payeeName}</span>
                         <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
-                          Scheduled
+                          <Trans>Scheduled</Trans>
                         </Badge>
                       </div>
                       <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
@@ -403,7 +411,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
 
           {hasNoContent && (
             <div className="text-sm text-muted-foreground">
-              All set - nothing scheduled for this account right now.
+              <Trans>All set - nothing scheduled for this account right now.</Trans>
             </div>
           )}
         </CardContent>

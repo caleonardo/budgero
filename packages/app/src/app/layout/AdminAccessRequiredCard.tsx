@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Shield } from 'lucide-react';
 
@@ -8,14 +9,20 @@ export function AdminAccessRequiredCard() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-red-500" />
-            Admin Access Required
+            <Trans>
+              <Shield className="w-5 h-5 text-red-500" />
+              Admin Access Required
+            </Trans>
           </CardTitle>
-          <CardDescription>You don't have permission to access the admin panel.</CardDescription>
+          <CardDescription>
+            <Trans>You don't have permission to access the admin panel.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Please contact a system administrator if you believe you should have access.
+            <Trans>
+              Please contact a system administrator if you believe you should have access.
+            </Trans>
           </p>
         </CardContent>
       </Card>

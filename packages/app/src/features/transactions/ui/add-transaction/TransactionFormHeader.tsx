@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 /**
  * Transaction Form Header
  *
@@ -25,9 +27,11 @@ export const TransactionFormHeader = React.memo(function TransactionFormHeader({
   return (
     <>
       <DialogHeader className="space-y-1.5">
-        <DialogTitle className="text-lg sm:text-xl font-semibold">Add New Transaction</DialogTitle>
+        <DialogTitle className="text-lg sm:text-xl font-semibold">
+          <Trans>Add New Transaction</Trans>
+        </DialogTitle>
         <DialogDescription className="hidden sm:block text-xs sm:text-sm text-muted-foreground">
-          Choose a transaction type and fill in the details below.
+          <Trans>Choose a transaction type and fill in the details below.</Trans>
         </DialogDescription>
       </DialogHeader>
 
@@ -43,7 +47,7 @@ export const TransactionFormHeader = React.memo(function TransactionFormHeader({
             htmlFor="remember-last"
             className="text-[11px] sm:text-xs font-normal text-muted-foreground"
           >
-            Remember last category, payee, account
+            <Trans>Remember last category, payee, account</Trans>
           </Label>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import {
@@ -26,7 +27,9 @@ export function DesktopShell({ children }: DesktopShellProps) {
           <div className="flex items-center justify-between gap-2 px-2">
             <Link to="/dashboard" className="flex items-center gap-2">
               <img src={logoImg} alt="Budgero" className="h-8 w-8 rounded-lg shadow-sm" />
-              <span className="font-semibold">Budgero</span>
+              <span className="font-semibold">
+                <Trans>Budgero</Trans>
+              </span>
             </Link>
           </div>
         </SidebarHeader>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
@@ -76,7 +77,7 @@ export function TrialEndingBanner() {
             to="/settings/subscription"
             className="text-sm font-semibold underline whitespace-nowrap hover:opacity-90"
           >
-            Subscribe
+            <Trans>Subscribe</Trans>
           </Link>
           <button
             onClick={handleDismiss}

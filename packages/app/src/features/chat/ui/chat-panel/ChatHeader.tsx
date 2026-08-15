@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { X, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
@@ -78,7 +79,9 @@ export function ChatHeader({
         >
           {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
         </Button>
-        <h2 className="text-base font-semibold">Chat Assistant</h2>
+        <h2 className="text-base font-semibold">
+          <Trans>Chat Assistant</Trans>
+        </h2>
       </div>
       <div className="flex items-center gap-3">
         {/* Context usage indicator */}

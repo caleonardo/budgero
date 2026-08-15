@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import { Search, ChevronUp, ChevronDown, Filter, RotateCcw } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -62,10 +63,18 @@ export function SearchAndFilterControls({
           </div>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Categories</SelectItem>
-          <SelectItem value="overspent">Overspent</SelectItem>
-          <SelectItem value="underfunded">Underfunded Goals</SelectItem>
-          <SelectItem value="overfunded">Overfunded Goals</SelectItem>
+          <SelectItem value="all">
+            <Trans>All Categories</Trans>
+          </SelectItem>
+          <SelectItem value="overspent">
+            <Trans>Overspent</Trans>
+          </SelectItem>
+          <SelectItem value="underfunded">
+            <Trans>Underfunded Goals</Trans>
+          </SelectItem>
+          <SelectItem value="overfunded">
+            <Trans>Overfunded Goals</Trans>
+          </SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -114,12 +123,16 @@ export function SearchAndFilterControls({
                 {collapsedGroups.size === 0 ? (
                   <>
                     <ChevronUp className="h-3.5 w-3.5" />
-                    <span className="hidden xl:inline">Collapse</span>
+                    <span className="hidden xl:inline">
+                      <Trans>Collapse</Trans>
+                    </span>
                   </>
                 ) : (
                   <>
                     <ChevronDown className="h-3.5 w-3.5" />
-                    <span className="hidden xl:inline">Expand</span>
+                    <span className="hidden xl:inline">
+                      <Trans>Expand</Trans>
+                    </span>
                   </>
                 )}
               </Button>

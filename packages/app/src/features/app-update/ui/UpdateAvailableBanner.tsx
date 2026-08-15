@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -59,7 +60,9 @@ export function UpdateAvailableBanner() {
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-3 py-3">
           <p className="text-sm font-medium flex-1 min-w-0 truncate">
-            Budgero {latest} is available — you&apos;re running {data.build_version}
+            <Trans>
+              Budgero {latest} is available — you're running {data.build_version}
+            </Trans>
           </p>
           <a
             href="https://budgero.app/changelog"
@@ -67,7 +70,7 @@ export function UpdateAvailableBanner() {
             rel="noopener noreferrer"
             className="text-sm font-semibold underline whitespace-nowrap hover:opacity-90"
           >
-            See what&apos;s new
+            <Trans>See what's new</Trans>
           </a>
           <button
             onClick={handleDismiss}

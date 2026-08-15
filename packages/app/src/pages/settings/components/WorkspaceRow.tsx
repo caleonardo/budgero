@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -85,10 +86,14 @@ export function WorkspaceRow({
         ) : null}
       </div>
       <div className="flex items-center gap-2">
-        {isActive ? <Badge variant="secondary">Active</Badge> : null}
+        {isActive ? (
+          <Badge variant="secondary">
+            <Trans>Active</Trans>
+          </Badge>
+        ) : null}
         {isLocked ? (
           <Badge variant="outline" className="border-amber-500/70 text-amber-700">
-            Access blocked
+            <Trans>Access blocked</Trans>
           </Badge>
         ) : null}
         {canRename ? (
@@ -101,10 +106,10 @@ export function WorkspaceRow({
                 onClick={onSaveEdit}
                 loading={isUpdatingName}
               >
-                Save
+                <Trans>Save</Trans>
               </Button>
               <Button variant="ghost" size="sm" onClick={onCancelEdit} disabled={isUpdatingName}>
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
             </>
           ) : (
@@ -131,7 +136,9 @@ export function WorkspaceRow({
         ) : null}
         {isLocked && space.access_reason === 'owned_subscription_required' ? (
           <Button asChild variant="outline" size="sm">
-            <Link to="/settings/subscription">Subscribe</Link>
+            <Link to="/settings/subscription">
+              <Trans>Subscribe</Trans>
+            </Link>
           </Button>
         ) : null}
         {canSetDefault ? (
@@ -160,7 +167,7 @@ export function WorkspaceRow({
             variant="outline"
             className="border-amber-500/80 text-amber-700 dark:border-amber-400/60 dark:text-amber-300"
           >
-            Default
+            <Trans>Default</Trans>
           </Badge>
         ) : null}
       </div>

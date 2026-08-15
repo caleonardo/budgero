@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 // Landing page for workspace-invite URLs shaped like `/join#code=budg-xxxx`.
 // The secret lives in the fragment, which browsers never send to servers —
 // so the URL can travel through whatever channel the owner chose (mailto,
@@ -162,14 +163,20 @@ export default function JoinWorkspacePage() {
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>No invite code</CardTitle>
+            <CardTitle>
+              <Trans>No invite code</Trans>
+            </CardTitle>
             <CardDescription>
-              This join link is missing its invite code. Ask the workspace owner to resend the full
-              link.
+              <Trans>
+                This join link is missing its invite code. Ask the workspace owner to resend the
+                full link.
+              </Trans>
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate('/')}>Back to Budgero</Button>
+            <Button onClick={() => navigate('/')}>
+              <Trans>Back to Budgero</Trans>
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -185,7 +192,9 @@ export default function JoinWorkspacePage() {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex items-center gap-3 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
-          <span>Preparing your invite…</span>
+          <span>
+            <Trans>Preparing your invite…</Trans>
+          </span>
         </div>
       </div>
     );
@@ -204,16 +213,20 @@ export default function JoinWorkspacePage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Join a shared workspace</CardTitle>
+          <CardTitle>
+            <Trans>Join a shared workspace</Trans>
+          </CardTitle>
           <CardDescription>
-            Someone shared their Budgero workspace with you. Decrypt the space key on this device
-            and add it to your account — the secret never leaves your browser.
+            <Trans>
+              Someone shared their Budgero workspace with you. Decrypt the space key on this device
+              and add it to your account — the secret never leaves your browser.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1">
             <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Invite code
+              <Trans>Invite code</Trans>
             </div>
             <div className="rounded-md border border-dashed border-muted-foreground/30 bg-muted/30 p-3 font-mono text-xs break-all">
               {secret}
@@ -222,7 +235,7 @@ export default function JoinWorkspacePage() {
           {needsMasterPassword ? (
             <div className="space-y-1">
               <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Master password
+                <Trans>Master password</Trans>
               </div>
               <Input
                 type="password"
@@ -232,7 +245,7 @@ export default function JoinWorkspacePage() {
                 autoComplete="current-password"
               />
               <p className="text-xs text-muted-foreground">
-                Needed to encrypt the shared space key on this device.
+                <Trans>Needed to encrypt the shared space key on this device.</Trans>
               </p>
             </div>
           ) : null}
@@ -251,7 +264,7 @@ export default function JoinWorkspacePage() {
               }}
               disabled={redeemInvite.isPending}
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               onClick={handleRedeem}

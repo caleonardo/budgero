@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@shared/ui/sidebar';
 import { cn } from '@shared/lib/utils';
@@ -87,7 +88,9 @@ export const SidebarNav = React.memo(function SidebarNav() {
             >
               <div className="flex items-center gap-3 min-w-0">
                 <CreditCard className="h-4 w-4 flex-shrink-0" />
-                <span className="font-medium truncate">Accounts</span>
+                <span className="font-medium truncate">
+                  <Trans>Accounts</Trans>
+                </span>
                 {uncategorizedData && uncategorizedData.total > 0 && !accountsOpen && (
                   <Badge variant="destructive" className="h-5 px-1.5 text-xs">
                     {uncategorizedData.total}
@@ -139,7 +142,9 @@ export const SidebarNav = React.memo(function SidebarNav() {
             >
               <div className="flex items-center gap-3 min-w-0">
                 <BarChart3 className="h-4 w-4 flex-shrink-0" />
-                <span className="font-medium truncate">Reports</span>
+                <span className="font-medium truncate">
+                  <Trans>Reports</Trans>
+                </span>
               </div>
               <ChevronDown
                 className={cn('h-4 w-4 transition-transform', reportsOpen && 'rotate-180')}
@@ -165,7 +170,9 @@ export const SidebarNav = React.memo(function SidebarNav() {
               )}
             >
               <Settings className="h-4 w-4" />
-              <span className="font-medium">Settings</span>
+              <span className="font-medium">
+                <Trans>Settings</Trans>
+              </span>
               <ChevronDown
                 className={cn(
                   'ml-auto h-4 w-4 transition-transform duration-200',
@@ -179,7 +186,9 @@ export const SidebarNav = React.memo(function SidebarNav() {
             {!IS_SELF_HOSTABLE_BUILD && (
               <>
                 <div className="ml-6 mr-2 mt-2 mb-1">
-                  <span className={SETTINGS_SECTION_LABEL_CLASS}>Account</span>
+                  <span className={SETTINGS_SECTION_LABEL_CLASS}>
+                    <Trans>Account</Trans>
+                  </span>
                 </div>
                 {NAV_SETTINGS_ACCOUNT.map((link) => (
                   <SidebarNavLink key={link.to} {...toLinkProps(link)} />
@@ -197,7 +206,9 @@ export const SidebarNav = React.memo(function SidebarNav() {
 
             {/* Budgets & Data */}
             <div className="ml-6 mr-2 mt-3 mb-1">
-              <span className={SETTINGS_SECTION_LABEL_CLASS}>Budgets & Data</span>
+              <span className={SETTINGS_SECTION_LABEL_CLASS}>
+                <Trans>Budgets & Data</Trans>
+              </span>
             </div>
             {NAV_SETTINGS_DATA.map((link) => (
               <SidebarNavLink key={link.to} {...toLinkProps(link)} />
@@ -205,7 +216,9 @@ export const SidebarNav = React.memo(function SidebarNav() {
 
             {/* Automation & Integrations */}
             <div className="ml-6 mr-2 mt-3 mb-1">
-              <span className={SETTINGS_SECTION_LABEL_CLASS}>Automation</span>
+              <span className={SETTINGS_SECTION_LABEL_CLASS}>
+                <Trans>Automation</Trans>
+              </span>
             </div>
             {NAV_SETTINGS_AUTOMATION.map((link) => (
               <SidebarNavLink key={link.to} {...toLinkProps(link)} />
@@ -225,7 +238,9 @@ export const SidebarNav = React.memo(function SidebarNav() {
 
             {/* Preferences */}
             <div className="ml-6 mr-2 mt-3 mb-1">
-              <span className={SETTINGS_SECTION_LABEL_CLASS}>Preferences</span>
+              <span className={SETTINGS_SECTION_LABEL_CLASS}>
+                <Trans>Preferences</Trans>
+              </span>
             </div>
             {NAV_SETTINGS_PREFERENCES.map((link) => (
               <SidebarNavLink key={link.to} {...toLinkProps(link)} />

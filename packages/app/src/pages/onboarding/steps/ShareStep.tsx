@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import type { InviteInput } from '../onboarding-data';
 import { OnboardingGhostButton, StepHeroImage, Title, type StepProps } from './shared';
@@ -38,7 +39,7 @@ export const ShareStep: React.FC<StepProps> = ({ cur, state, set }) => {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 11, letterSpacing: 1.2, fontWeight: 700, color: '#393939' }}>
-            SEATS USED
+            <Trans>SEATS USED</Trans>
           </span>
           <div style={{ display: 'flex', gap: 3 }}>
             {Array.from({ length: maxSeats }).map((_, i) => (
@@ -78,11 +79,13 @@ export const ShareStep: React.FC<StepProps> = ({ cur, state, set }) => {
             lineHeight: 1.6,
           }}
         >
-          <div style={{ fontSize: 22, marginBottom: 6 }}>✉</div>
-          Flying solo? Skip this step and invite people later.
-          <div style={{ marginTop: 6, fontSize: 10, letterSpacing: 0.5, color: '#393939' }}>
-            All 5 seats are free, included in your plan.
-          </div>
+          <Trans>
+            <div style={{ fontSize: 22, marginBottom: 6 }}>✉</div>Flying solo? Skip this step and
+            invite people later.
+            <div style={{ marginTop: 6, fontSize: 10, letterSpacing: 0.5, color: '#393939' }}>
+              <Trans>All 5 seats are free, included in your plan.</Trans>
+            </div>
+          </Trans>
         </div>
       )}
 
@@ -146,10 +149,12 @@ export const ShareStep: React.FC<StepProps> = ({ cur, state, set }) => {
         }}
       >
         Everyone you invite becomes a{' '}
-        <span style={{ fontWeight: 700, color: '#141414' }}>collaborator</span> with the same view
-        and edit rights you have. After we set up your workspace we’ll generate a private link for
-        each person — Budgero never emails them on your behalf, you copy or send each link yourself
-        so the secret stays off our servers.
+        <span style={{ fontWeight: 700, color: '#141414' }}>
+          <Trans>collaborator</Trans>
+        </span>{' '}
+        with the same view and edit rights you have. After we set up your workspace we’ll generate a
+        private link for each person — Budgero never emails them on your behalf, you copy or send
+        each link yourself so the secret stays off our servers.
       </div>
     </div>
   );

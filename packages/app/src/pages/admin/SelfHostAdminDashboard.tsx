@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -111,26 +112,36 @@ export default function SelfHostAdminDashboard() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold">Self-host Control Center</h1>
-            <Badge variant="secondary">Self-host</Badge>
+            <h1 className="text-3xl font-bold">
+              <Trans>Self-host Control Center</Trans>
+            </h1>
+            <Badge variant="secondary">
+              <Trans>Self-host</Trans>
+            </Badge>
           </div>
           <p className="text-muted-foreground mt-1">
-            Monitor your private Budgero deployment and act on user accounts.
+            <Trans>Monitor your private Budgero deployment and act on user accounts.</Trans>
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" asChild>
-            <Link to="/admin/users">Manage Users</Link>
+            <Link to="/admin/users">
+              <Trans>Manage Users</Trans>
+            </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link to="/admin/database">Open DB Explorer</Link>
+            <Link to="/admin/database">
+              <Trans>Open DB Explorer</Trans>
+            </Link>
           </Button>
           <Button variant="outline" onClick={handleDownloadDb} disabled={downloadingDb}>
             {downloadingDb ? 'Downloading…' : 'Download SQLite'}
           </Button>
           <Button size="sm" onClick={loadStats} disabled={refreshing}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            <Trans>
+              <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Trans>
           </Button>
         </div>
       </div>
@@ -150,13 +161,19 @@ export default function SelfHostAdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>System Overview</CardTitle>
-            <CardDescription>Deployment details for this binary.</CardDescription>
+            <CardTitle>
+              <Trans>System Overview</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Deployment details for this binary.</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-medium">Database Path</p>
+                <p className="text-sm font-medium">
+                  <Trans>Database Path</Trans>
+                </p>
                 <p className="text-sm text-muted-foreground break-all">{stats?.databasePath}</p>
               </div>
               <Button
@@ -169,15 +186,17 @@ export default function SelfHostAdminDashboard() {
                   }
                 }}
               >
-                Copy
+                <Trans>Copy</Trans>
               </Button>
             </div>
             <Separator />
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-lg border p-3">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <HardDriveDownload className="w-4 h-4" />
-                  Database size
+                  <Trans>
+                    <HardDriveDownload className="w-4 h-4" />
+                    Database size
+                  </Trans>
                 </div>
                 <p className="text-lg font-semibold">
                   {formatBytes(stats?.databaseSizeBytes ?? 0)}
@@ -185,8 +204,10 @@ export default function SelfHostAdminDashboard() {
               </div>
               <div className="rounded-lg border p-3">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Server className="w-4 h-4" />
-                  Last updated
+                  <Trans>
+                    <Server className="w-4 h-4" />
+                    Last updated
+                  </Trans>
                 </div>
                 <p className="text-lg font-semibold">
                   {stats?.databaseLastModified
@@ -200,14 +221,20 @@ export default function SelfHostAdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Space Utilization</CardTitle>
-            <CardDescription>Storage and activity across budget spaces.</CardDescription>
+            <CardTitle>
+              <Trans>Space Utilization</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Storage and activity across budget spaces.</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Layers className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm">Active spaces</span>
+                <span className="text-sm">
+                  <Trans>Active spaces</Trans>
+                </span>
               </div>
               <span className="text-sm font-semibold">
                 {stats?.spacesWithMembers ?? 0} / {stats?.spaceCount ?? 0}
@@ -216,14 +243,18 @@ export default function SelfHostAdminDashboard() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm">Membership records</span>
+                <span className="text-sm">
+                  <Trans>Membership records</Trans>
+                </span>
               </div>
               <span className="text-sm font-semibold">{stats?.totalMemberships ?? 0}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Database className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm">Space storage</span>
+                <span className="text-sm">
+                  <Trans>Space storage</Trans>
+                </span>
               </div>
               <span className="text-sm font-semibold">
                 {formatBytes(stats?.spaceBlobBytes ?? 0)}
@@ -232,7 +263,9 @@ export default function SelfHostAdminDashboard() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm">Pending invites</span>
+                <span className="text-sm">
+                  <Trans>Pending invites</Trans>
+                </span>
               </div>
               <span className="text-sm font-semibold">{stats?.pendingInvites ?? 0}</span>
             </div>
@@ -242,8 +275,12 @@ export default function SelfHostAdminDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Signups</CardTitle>
-          <CardDescription>Latest users created on this deployment.</CardDescription>
+          <CardTitle>
+            <Trans>Recent Signups</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Latest users created on this deployment.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {stats?.recentUsers?.length ? (
@@ -261,7 +298,9 @@ export default function SelfHostAdminDashboard() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No users created yet.</p>
+            <p className="text-sm text-muted-foreground">
+              <Trans>No users created yet.</Trans>
+            </p>
           )}
         </CardContent>
       </Card>

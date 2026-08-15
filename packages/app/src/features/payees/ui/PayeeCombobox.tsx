@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import * as React from 'react';
 import { Check, ChevronsUpDown, PlusCircle, X } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -125,7 +126,9 @@ export function PayeeCombobox({
                     className="flex items-center gap-2"
                   >
                     <PlusCircle className="h-4 w-4" />
-                    <span>Create "{normalizedSearch}"</span>
+                    <span>
+                      <Trans>Create "{normalizedSearch}"</Trans>
+                    </span>
                   </CommandItem>
                 )}
                 {allowClear && normalizedValue && (
@@ -135,7 +138,9 @@ export function PayeeCombobox({
                     className="flex items-center gap-2"
                   >
                     <X className="h-4 w-4" />
-                    <span>Clear payee</span>
+                    <span>
+                      <Trans>Clear payee</Trans>
+                    </span>
                   </CommandItem>
                 )}
               </CommandGroup>

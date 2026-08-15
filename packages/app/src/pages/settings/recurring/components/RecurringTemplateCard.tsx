@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -112,10 +113,16 @@ export function RecurringTemplateCard({
             <Sparkles className="h-3.5 w-3.5 text-primary" /> {frequencyLabel}
           </span>
           <span className="flex items-center gap-1">
-            <CalendarDays className="h-3.5 w-3.5" /> Started {template.schedule.startDate}
+            <Trans>
+              <CalendarDays className="h-3.5 w-3.5" />
+              Started {template.schedule.startDate}
+            </Trans>
           </span>
           <span className="flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" /> Next due {dueLabel}
+            <Trans>
+              <Clock className="h-3.5 w-3.5" />
+              Next due {dueLabel}
+            </Trans>
           </span>
         </div>
       </CardHeader>
@@ -129,23 +136,33 @@ export function RecurringTemplateCard({
           </div>
           {template.toAccountId != null ? (
             <div>
-              <span className="font-medium text-foreground">To account:</span>{' '}
+              <span className="font-medium text-foreground">
+                <Trans>To account:</Trans>
+              </span>{' '}
               {toAccountName ?? 'Unknown account'}
             </div>
           ) : (
             <div>
-              <span className="font-medium text-foreground">Category:</span> {categoryName}
+              <span className="font-medium text-foreground">
+                <Trans>Category:</Trans>
+              </span>{' '}
+              {categoryName}
             </div>
           )}
           <div>
-            <span className="font-medium text-foreground">Remind me:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Remind me:</Trans>
+            </span>{' '}
             {template.notifyDaysBefore || 0} day(s) before
           </div>
         </div>
         <Separator />
         <div className="flex flex-wrap gap-2">
           <Button variant="ghost" size="sm" onClick={onEdit} disabled={isProcessing}>
-            <Pencil className="mr-2 h-4 w-4" /> Edit
+            <Trans>
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
+            </Trans>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -155,23 +172,32 @@ export function RecurringTemplateCard({
                 className="text-destructive hover:text-destructive"
                 disabled={isProcessing}
               >
-                <Trash2 className="mr-2 h-4 w-4" /> Delete
+                <Trans>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </Trans>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete “{template.name}”?</AlertDialogTitle>
+                <AlertDialogTitle>
+                  <Trans>Delete “{template.name}”?</Trans>
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will remove upcoming reminders. Existing transactions are unaffected.
+                  <Trans>
+                    This will remove upcoming reminders. Existing transactions are unaffected.
+                  </Trans>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>
+                  <Trans>Cancel</Trans>
+                </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={onDelete}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  Delete
+                  <Trans>Delete</Trans>
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

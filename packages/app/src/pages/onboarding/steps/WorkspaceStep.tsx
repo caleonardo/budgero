@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { WORKSPACE_SUGGESTIONS } from '../onboarding-data';
 import { InputRow, StepHeroImage, Title, type StepProps } from './shared';
@@ -16,7 +17,7 @@ export const WorkspaceStep: React.FC<StepProps> = ({ cur, state, set }) => (
       placeholder="e.g. Household 2026"
     />
     <div style={{ marginTop: 16, fontSize: 11, color: '#393939', marginBottom: 8 }}>
-      OR PICK ONE:
+      <Trans>OR PICK ONE:</Trans>
     </div>
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
       {WORKSPACE_SUGGESTIONS.map((s) => (

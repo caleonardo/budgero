@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -105,17 +106,23 @@ export function AccountOrderCard() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <ArrowUpDown className="h-5 w-5" />
-          Account order
+          <Trans>
+            <ArrowUpDown className="h-5 w-5" />
+            Account order
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Reorder how accounts appear in the sidebar and the mobile navigation. On-budget and
-          off-budget accounts are ordered separately.
+          <Trans>
+            Reorder how accounts appear in the sidebar and the mobile navigation. On-budget and
+            off-budget accounts are ordered separately.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {!hasAccounts ? (
-          <p className="text-sm text-muted-foreground">No accounts to reorder yet.</p>
+          <p className="text-sm text-muted-foreground">
+            <Trans>No accounts to reorder yet.</Trans>
+          </p>
         ) : (
           <>
             <ReorderList

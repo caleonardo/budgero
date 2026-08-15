@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo } from 'react';
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
@@ -36,15 +37,17 @@ export const ReportsPanel = memo(
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle>Saved Reports ({savedReports.length})</DialogTitle>
+          <DialogTitle>
+            <Trans>Saved Reports ({savedReports.length})</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Load a previously saved query or manage your reports.
+            <Trans>Load a previously saved query or manage your reports.</Trans>
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="h-[400px]">
           {savedReports.length === 0 ? (
             <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
-              No saved reports yet. Save a query to get started.
+              <Trans>No saved reports yet. Save a query to get started.</Trans>
             </div>
           ) : (
             <div className="space-y-2">
@@ -63,18 +66,20 @@ export const ReportsPanel = memo(
                         <span>Updated: {new Date(report.updatedAt).toLocaleDateString()}</span>
                         {report.isFavorite && (
                           <Badge variant="secondary" className="text-xs">
-                            Favorite
+                            <Trans>Favorite</Trans>
                           </Badge>
                         )}
                       </div>
                     </div>
                     <div className="flex gap-1 ml-2">
                       <Button size="sm" variant="outline" onClick={() => onLoadReport(report)}>
-                        Load
+                        <Trans>Load</Trans>
                       </Button>
                       <Button size="sm" variant="outline" onClick={() => onEditReport(report)}>
-                        <Edit className="h-3 w-3 mr-1" />
-                        Edit
+                        <Trans>
+                          <Edit className="h-3 w-3 mr-1" />
+                          Edit
+                        </Trans>
                       </Button>
                       <Button
                         size="sm"
@@ -82,15 +87,17 @@ export const ReportsPanel = memo(
                         onClick={() => onPinChart(report)}
                         disabled={!report.charts || report.charts.length === 0}
                       >
-                        <Pin className="h-3 w-3 mr-1" />
-                        Pin chart
+                        <Trans>
+                          <Pin className="h-3 w-3 mr-1" />
+                          Pin chart
+                        </Trans>
                       </Button>
                       <Button
                         size="sm"
                         variant="destructive"
                         onClick={() => onDeleteReport(report.id)}
                       >
-                        Delete
+                        <Trans>Delete</Trans>
                       </Button>
                     </div>
                   </div>
@@ -101,7 +108,7 @@ export const ReportsPanel = memo(
         </ScrollArea>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Close
+            <Trans>Close</Trans>
           </Button>
         </DialogFooter>
       </DialogContent>

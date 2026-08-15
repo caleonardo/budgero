@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { parseISO } from 'date-fns';
@@ -404,7 +406,9 @@ export function CommandPalette() {
           onValueChange={setSearchValue}
         />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>
+            <Trans>No results found.</Trans>
+          </CommandEmpty>
 
           {/* Quick Actions */}
           <CommandGroup heading="Quick Actions">
@@ -415,7 +419,9 @@ export function CommandPalette() {
               }}
             >
               <Plus className="mr-2 h-4 w-4" />
-              <span>Add Transaction</span>
+              <span>
+                <Trans>Add Transaction</Trans>
+              </span>
               {/* Handler listens for (Cmd|Ctrl)+Alt+T — plain Cmd/Ctrl+T is
                   reserved by the browser for "new tab" and can't be overridden. */}
               <CommandShortcut>⌥⌘T</CommandShortcut>
@@ -428,31 +434,45 @@ export function CommandPalette() {
           <CommandGroup heading="Pages">
             <CommandItem onSelect={() => handleNavigation('/dashboard')}>
               <Home className="mr-2 h-4 w-4" />
-              <span>Dashboard</span>
+              <span>
+                <Trans>Dashboard</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/budgeting')}>
               <Calculator className="mr-2 h-4 w-4" />
-              <span>Budget Planning</span>
+              <span>
+                <Trans>Budget Planning</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/accounts')}>
               <Wallet className="mr-2 h-4 w-4" />
-              <span>Accounts</span>
+              <span>
+                <Trans>Accounts</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/reports/prebuilt')}>
               <PieChart className="mr-2 h-4 w-4" />
-              <span>Reports</span>
+              <span>
+                <Trans>Reports</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/reports/explorer')}>
               <TrendingUp className="mr-2 h-4 w-4" />
-              <span>Explorer</span>
+              <span>
+                <Trans>Explorer</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/reports/dashboards')}>
               <LayoutGrid className="mr-2 h-4 w-4" />
-              <span>Custom Dashboards</span>
+              <span>
+                <Trans>Custom Dashboards</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/settings/recurring')}>
               <Clock className="mr-2 h-4 w-4" />
-              <span>Recurring</span>
+              <span>
+                <Trans>Recurring</Trans>
+              </span>
             </CommandItem>
           </CommandGroup>
 
@@ -463,7 +483,9 @@ export function CommandPalette() {
           <CommandGroup heading="Settings">
             <CommandItem onSelect={() => handleNavigation('/settings/appearance')}>
               <Palette className="mr-2 h-4 w-4" />
-              <span>Appearance</span>
+              <span>
+                <Trans>Appearance</Trans>
+              </span>
             </CommandItem>
             {!IS_SELF_HOSTABLE_BUILD &&
               NAV_SETTINGS_ACCOUNT.map((item) => (
@@ -475,7 +497,9 @@ export function CommandPalette() {
             {IS_SELF_HOSTABLE_BUILD && (
               <CommandItem onSelect={() => handleNavigation('/settings/security')}>
                 <Shield className="mr-2 h-4 w-4" />
-                <span>Security & Privacy</span>
+                <span>
+                  <Trans>Security & Privacy</Trans>
+                </span>
               </CommandItem>
             )}
             {NAV_SETTINGS_DATA.map((item) => (
@@ -523,7 +547,9 @@ export function CommandPalette() {
                     className="text-muted-foreground"
                   >
                     <Search className="mr-2 h-4 w-4" />
-                    <span>View all categories...</span>
+                    <span>
+                      <Trans>View all categories...</Trans>
+                    </span>
                   </CommandItem>
                 )}
               </CommandGroup>
@@ -551,7 +577,9 @@ export function CommandPalette() {
                   className="text-muted-foreground"
                 >
                   <Search className="mr-2 h-4 w-4" />
-                  <span>View all accounts...</span>
+                  <span>
+                    <Trans>View all accounts...</Trans>
+                  </span>
                 </CommandItem>
               )}
             </CommandGroup>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import {
   Dialog,
   DialogContent,
@@ -224,7 +225,7 @@ export function RuleRunOverlay({
                 onClick={onClose}
                 autoFocus
               >
-                Close
+                <Trans>Close</Trans>
               </Button>
             </div>
           )}

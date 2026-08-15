@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, addMonths, parseISO, differenceInCalendarDays } from 'date-fns';
@@ -256,8 +257,10 @@ export function UpcomingTransactionsCard({
     <Card className="h-full">
       <CardHeader className="pb-1">
         <CardTitle className="flex items-center gap-2 text-base font-semibold">
-          <CalendarClock className="h-5 w-5 text-muted-foreground" />
-          Upcoming transactions
+          <Trans>
+            <CalendarClock className="h-5 w-5 text-muted-foreground" />
+            Upcoming transactions
+          </Trans>
         </CardTitle>
         <CardDescription className="text-xs">
           Next charge for each recurring series, plus scheduled transactions in the next{' '}
@@ -286,8 +289,10 @@ export function UpcomingTransactionsCard({
           className="ml-auto gap-2"
           onClick={() => navigate('/settings/recurring')}
         >
-          Manage automations
-          <ArrowRight className="h-4 w-4" />
+          <Trans>
+            Manage automations
+            <ArrowRight className="h-4 w-4" />
+          </Trans>
         </Button>
       </CardFooter>
 

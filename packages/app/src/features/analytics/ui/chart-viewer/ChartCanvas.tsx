@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
@@ -334,7 +335,7 @@ export function ChartCanvas({
     if (yIndex === -1) {
       return (
         <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-          Metric column "{chartConfig.yAxisColumn}" is missing in query results.
+          <Trans>Metric column "{chartConfig.yAxisColumn}" is missing in query results.</Trans>
         </div>
       );
     }
@@ -342,7 +343,7 @@ export function ChartCanvas({
     if (values.length === 0) {
       return (
         <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-          No data available for stat
+          <Trans>No data available for stat</Trans>
         </div>
       );
     }
@@ -368,7 +369,7 @@ export function ChartCanvas({
     if (chartData.length === 0) {
       return (
         <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-          No data available for table
+          <Trans>No data available for table</Trans>
         </div>
       );
     }
@@ -411,7 +412,7 @@ export function ChartCanvas({
     if (!option) {
       return (
         <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
-          No data available for chart
+          <Trans>No data available for chart</Trans>
         </div>
       );
     }

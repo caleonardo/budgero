@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { isFutureDate } from '@shared/lib/date-utils';
@@ -148,7 +149,10 @@ export const TransactionRow = React.memo(function TransactionRow({
             <PopoverContent className="w-60 text-sm">
               <p>
                 This is the total of the split lines. To change it, click{' '}
-                <span className="font-medium">View splits</span>.
+                <span className="font-medium">
+                  <Trans>View splits</Trans>
+                </span>
+                .
               </p>
             </PopoverContent>
           </Popover>
@@ -324,7 +328,9 @@ export const TransactionRow = React.memo(function TransactionRow({
       <TableCell className="max-w-[240px]">
         {isSplitCategory ? (
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">Split</Badge>
+            <Badge variant="secondary">
+              <Trans>Split</Trans>
+            </Badge>
             <Button
               variant="ghost"
               size="sm"
@@ -334,7 +340,7 @@ export const TransactionRow = React.memo(function TransactionRow({
                 onSplitView(transaction);
               }}
             >
-              View splits
+              <Trans>View splits</Trans>
             </Button>
           </div>
         ) : (
@@ -356,7 +362,7 @@ export const TransactionRow = React.memo(function TransactionRow({
                   onSplitCreate(transaction);
                 }}
               >
-                Split
+                <Trans>Split</Trans>
               </Button>
             )}
           </div>

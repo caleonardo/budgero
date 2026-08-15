@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { applyOpInvalidations } from '@shared/lib/query-utils';
@@ -269,18 +270,22 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
     if (confidence >= 0.8) {
       return (
         <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
-          High
+          <Trans>High</Trans>
         </Badge>
       );
     }
     if (confidence >= 0.5) {
       return (
         <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300">
-          Medium
+          <Trans>Medium</Trans>
         </Badge>
       );
     }
-    return <Badge className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">Low</Badge>;
+    return (
+      <Badge className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
+        <Trans>Low</Trans>
+      </Badge>
+    );
   };
 
   return (
@@ -288,11 +293,13 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5" />
-            AI Auto-Categorize
+            <Trans>
+              <Sparkles className="h-5 w-5" />
+              AI Auto-Categorize
+            </Trans>
           </DialogTitle>
           <DialogDescription>
-            Use AI to automatically suggest categories for uncategorized transactions
+            <Trans>Use AI to automatically suggest categories for uncategorized transactions</Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -303,30 +310,38 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
             ) : (
               <>
                 <p className="text-sm text-muted-foreground">
-                  Found <strong>{uncategorizedTransactions.length}</strong> uncategorized
-                  transactions. The AI will analyze each transaction and suggest the best matching
-                  category.
+                  <Trans>
+                    Found <strong>{uncategorizedTransactions.length}</strong>uncategorized
+                    transactions. The AI will analyze each transaction and suggest the best matching
+                    category.
+                  </Trans>
                 </p>
                 <div className="rounded-lg border p-3 text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    Connected to: {llmSettings.EndpointURL}
+                    <Trans>
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Connected to: {llmSettings.EndpointURL}
+                    </Trans>
                   </div>
-                  <div className="mt-1 text-muted-foreground">Model: {llmSettings.TextModel}</div>
+                  <div className="mt-1 text-muted-foreground">
+                    <Trans>Model: {llmSettings.TextModel}</Trans>
+                  </div>
                 </div>
               </>
             )}
 
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={handleClose}>
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
               <Button
                 onClick={handleAnalyze}
                 disabled={!llmSettings?.Enabled || uncategorizedTransactions.length === 0}
               >
-                <Sparkles className="h-4 w-4 mr-2" />
-                Analyze Transactions
+                <Trans>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Analyze Transactions
+                </Trans>
               </Button>
             </div>
           </div>
@@ -340,7 +355,9 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
           <div className="flex flex-col flex-1 overflow-hidden">
             <div className="flex items-center justify-between py-2">
               <p className="text-sm text-muted-foreground">
-                {selectedCount} of {categorizedTransactions.length} selected to apply
+                <Trans>
+                  {selectedCount} of {categorizedTransactions.length} selected to apply
+                </Trans>
               </p>
               <Button variant="ghost" size="sm" onClick={handleSelectAll}>
                 {categorizedTransactions.every((t) => t.selected)
@@ -385,8 +402,10 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
                         <Badge variant="secondary">{t.suggestedCategory}</Badge>
                       ) : (
                         <Badge variant="outline" className="text-red-500">
-                          <XCircle className="h-3 w-3 mr-1" />
-                          Unknown category
+                          <Trans>
+                            <XCircle className="h-3 w-3 mr-1" />
+                            Unknown category
+                          </Trans>
                         </Badge>
                       )}
                       {getConfidenceBadge(t.confidence)}
@@ -401,10 +420,10 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
 
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={handleClose}>
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
               <Button onClick={handleApply} disabled={selectedCount === 0}>
-                Apply {selectedCount} Categories
+                <Trans>Apply {selectedCount} Categories</Trans>
               </Button>
             </div>
           </div>
@@ -418,13 +437,17 @@ export function AICategorizeDialog({ open, onOpenChange, budgetId }: AICategoriz
           <div className="space-y-4 py-8">
             <div className="flex flex-col items-center gap-4">
               <CheckCircle2 className="h-12 w-12 text-green-500" />
-              <p className="text-lg font-medium">Categories Applied!</p>
+              <p className="text-lg font-medium">
+                <Trans>Categories Applied!</Trans>
+              </p>
               <p className="text-sm text-muted-foreground text-center">
-                Successfully categorized {selectedCount} transactions.
+                <Trans>Successfully categorized {selectedCount} transactions.</Trans>
               </p>
             </div>
             <div className="flex justify-center pt-4">
-              <Button onClick={handleClose}>Done</Button>
+              <Button onClick={handleClose}>
+                <Trans>Done</Trans>
+              </Button>
             </div>
           </div>
         )}

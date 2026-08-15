@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Input } from '@shared/ui/input';
@@ -15,8 +16,12 @@ export const UserSearchCard = React.memo(function UserSearchCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Search Users</CardTitle>
-        <CardDescription>Find users by ID, email, or name</CardDescription>
+        <CardTitle>
+          <Trans>Search Users</Trans>
+        </CardTitle>
+        <CardDescription>
+          <Trans>Find users by ID, email, or name</Trans>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="relative">

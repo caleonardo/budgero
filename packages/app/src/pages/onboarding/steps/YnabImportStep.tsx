@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Title, type StepProps } from './shared';
 
@@ -23,17 +24,23 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
             border: '1px dashed rgba(57,57,57,0.3)',
           }}
         >
-          <span style={{ fontWeight: 700, color: '#141414' }}>Before you export:</span> in YNAB’s{' '}
-          <em>Plan Settings</em>, set Date Format to <code>2025-12-30</code>, Number Format to{' '}
-          <code>123,456.78</code> and Currency Placement to “Don’t Show”. Skipping this can shift
-          dates and break amounts. Details in the{' '}
+          <span style={{ fontWeight: 700, color: '#141414' }}>
+            <Trans>Before you export:</Trans>
+          </span>{' '}
+          in YNAB’s{' '}
+          <em>
+            <Trans>Plan Settings</Trans>
+          </em>
+          , set Date Format to <code>2025-12-30</code>, Number Format to <code>123,456.78</code> and
+          Currency Placement to “Don’t Show”. Skipping this can shift dates and break amounts.
+          Details in the{' '}
           <a
             href="https://budgero.app/docs/ynab-import"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: '#141414', fontWeight: 700 }}
           >
-            import guide
+            <Trans>import guide</Trans>
           </a>
           .
         </div>
@@ -63,11 +70,17 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
         >
           <div style={{ fontSize: 32, marginBottom: 8 }}>☁</div>
           <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>
-            Drop your YNAB export here
+            <Trans>Drop your YNAB export here</Trans>
           </div>
           <div style={{ fontSize: 11, color: '#393939', lineHeight: 1.5 }}>
-            In YNAB: <em>File › Export Budget</em>. Drop the .zip here —<br />
-            nothing leaves your device until you finish.
+            <Trans>
+              In YNAB:{' '}
+              <em>
+                <Trans>File › Export Budget</Trans>
+              </em>
+              . Drop the .zip here —<br />
+              nothing leaves your device until you finish.
+            </Trans>
           </div>
           <button
             type="button"
@@ -86,7 +99,7 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
               cursor: 'pointer',
             }}
           >
-            BROWSE FILES
+            <Trans>BROWSE FILES</Trans>
           </button>
           <input
             ref={inputRef}
@@ -131,11 +144,11 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 700 }}>{file.name}</div>
               <div style={{ fontSize: 10, color: '#393939' }}>
-                {file.size} · ready to import on finish
+                <Trans>{file.size}· ready to import on finish</Trans>
               </div>
             </div>
             <div style={{ fontSize: 11, fontWeight: 700, color: '#2f7d31', letterSpacing: 1 }}>
-              ✓ READY
+              <Trans>✓ READY</Trans>
             </div>
           </div>
           <div
@@ -147,10 +160,14 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
               border: '1px dashed rgba(57,57,57,0.3)',
             }}
           >
-            <span style={{ fontWeight: 700, color: '#141414' }}>Heads up:</span> YNAB’s “Age of
-            Money”, scheduled transactions, goals, and account types don’t carry over — accounts
-            arrive as Checking, so review their types after the import. Everything else does —
-            accounts, categories, assignments, and transaction history.
+            <Trans>
+              <span style={{ fontWeight: 700, color: '#141414' }}>
+                <Trans>Heads up:</Trans>
+              </span>
+              YNAB’s “Age of Money”, scheduled transactions, goals, and account types don’t carry
+              over — accounts arrive as Checking, so review their types after the import. Everything
+              else does — accounts, categories, assignments, and transaction history.
+            </Trans>
           </div>
         </div>
       )}

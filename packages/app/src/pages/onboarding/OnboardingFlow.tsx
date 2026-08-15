@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 // Post-signup onboarding — collects every setup choice, then fires the whole
 // setup pipeline on the final click. The pipeline has to run in order:
 // master password → workspace → runtime init → budget (or YNAB import) →
@@ -382,7 +383,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                   cursor: 'pointer',
                 }}
               >
-                ← Back
+                <Trans>← Back</Trans>
               </button>
             )}
           </div>
@@ -407,7 +408,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                   cursor: 'pointer',
                 }}
               >
-                Skip for now
+                <Trans>Skip for now</Trans>
               </button>
             )}
             <button
@@ -449,7 +450,9 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
           letterSpacing: 0.5,
         }}
       >
-        <span>BUDGERO · ONBOARDING v1</span>
+        <span>
+          <Trans>BUDGERO · ONBOARDING v1</Trans>
+        </span>
         <button
           type="button"
           onClick={() => logout.mutate()}
@@ -464,7 +467,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
             padding: 0,
           }}
         >
-          SIGN OUT
+          <Trans>SIGN OUT</Trans>
         </button>
       </div>
     </div>

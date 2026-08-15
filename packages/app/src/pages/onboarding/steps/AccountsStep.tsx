@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { ACCOUNT_TYPES, type AccountInput } from '../onboarding-data';
 import {
@@ -129,11 +130,15 @@ export const AccountsStep: React.FC<StepProps> = ({ cur, state, set }) => {
       </div>
       {state.accounts.some((a) => a.type === 'credit') && (
         <p style={{ marginTop: 8, fontSize: 12, color: '#6b6b6b' }}>
-          For credit cards, enter the amount you currently owe — the card will open with that
-          balance as debt.
+          <Trans>
+            For credit cards, enter the amount you currently owe — the card will open with that
+            balance as debt.
+          </Trans>
         </p>
       )}
-      <OnboardingGhostButton onClick={addAccount}>+ ADD ANOTHER ACCOUNT</OnboardingGhostButton>
+      <OnboardingGhostButton onClick={addAccount}>
+        <Trans>+ ADD ANOTHER ACCOUNT</Trans>
+      </OnboardingGhostButton>
     </div>
   );
 };

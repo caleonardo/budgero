@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { AlertTriangle, Tag, Sparkles } from 'lucide-react';
@@ -172,8 +173,10 @@ export function UncategorizedTransactionsCard({
         <CardHeader className="pb-1">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-base font-semibold">
-              <AlertTriangle className="h-5 w-5 text-muted-foreground" />
-              Needs categorising
+              <Trans>
+                <AlertTriangle className="h-5 w-5 text-muted-foreground" />
+                Needs categorising
+              </Trans>
             </CardTitle>
             {llmSettings?.Enabled && totalCount > 0 && (
               <Button
@@ -182,8 +185,10 @@ export function UncategorizedTransactionsCard({
                 onClick={() => setAiCategorizeOpen(true)}
                 className="h-8 px-2 text-xs"
               >
-                <Sparkles className="h-3.5 w-3.5 mr-1" />
-                AI Categorize
+                <Trans>
+                  <Sparkles className="h-3.5 w-3.5 mr-1" />
+                  AI Categorize
+                </Trans>
               </Button>
             )}
           </div>
@@ -247,7 +252,7 @@ export function UncategorizedTransactionsCard({
                           variant="outline"
                           className="text-[10px] sm:text-xs px-1.5 sm:px-2.5 py-0 sm:py-0.5"
                         >
-                          Uncategorised
+                          <Trans>Uncategorised</Trans>
                         </Badge>
                       </div>
                     </div>
@@ -257,7 +262,7 @@ export function UncategorizedTransactionsCard({
             </ul>
           ) : (
             <EmptyStateRow icon={AlertTriangle}>
-              Great job! No uncategorised transactions left.
+              <Trans>Great job! No uncategorised transactions left.</Trans>
             </EmptyStateRow>
           )}
         </CardContent>

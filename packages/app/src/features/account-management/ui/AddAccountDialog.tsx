@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import {
@@ -226,8 +227,10 @@ export function AddAccountDialog({
           }}
           data-testid="add-account-trigger"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          New Account
+          <Trans>
+            <Plus className="h-4 w-4 mr-2" />
+            New Account
+          </Trans>
         </button>
       )}
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -238,9 +241,11 @@ export function AddAccountDialog({
           data-testid="add-account-modal"
         >
           <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">Add New Account</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">
+              <Trans>Add New Account</Trans>
+            </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm">
-              Fill in the details below to create a new account.
+              <Trans>Fill in the details below to create a new account.</Trans>
             </DialogDescription>
           </DialogHeader>
           <form
@@ -324,13 +329,19 @@ export function AddAccountDialog({
               {/* Liability Details */}
               {isLiability && (
                 <div className="grid gap-2 sm:gap-3 p-2 sm:p-3 rounded-md border border-border/50 bg-muted/20">
-                  <div className="text-xs text-muted-foreground">Liability details</div>
+                  <div className="text-xs text-muted-foreground">
+                    <Trans>Liability details</Trans>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                     <Field
                       label="Original Debt"
                       htmlFor="debtTotal"
                       className="space-y-1"
-                      help={<p>Total amount borrowed at origination. Required.</p>}
+                      help={
+                        <p>
+                          <Trans>Total amount borrowed at origination. Required.</Trans>
+                        </p>
+                      }
                     >
                       <LiabilityNumberCell
                         value={debtTotal}
@@ -343,7 +354,11 @@ export function AddAccountDialog({
                       label="Interest % (APR)"
                       htmlFor="interestRate"
                       className="space-y-1"
-                      help={<p>Annual percentage rate, e.g., 5 for 5%.</p>}
+                      help={
+                        <p>
+                          <Trans>Annual percentage rate, e.g., 5 for 5%.</Trans>
+                        </p>
+                      }
                     >
                       <LiabilityNumberCell
                         value={interestRate}
@@ -359,7 +374,11 @@ export function AddAccountDialog({
                         label="Minimum Monthly Payment"
                         htmlFor="minPayment"
                         className="space-y-1"
-                        help={<p>Enter your card’s minimum payment from statements.</p>}
+                        help={
+                          <p>
+                            <Trans>Enter your card’s minimum payment from statements.</Trans>
+                          </p>
+                        }
                       >
                         <LiabilityNumberCell
                           value={minPayment}
@@ -385,7 +404,11 @@ export function AddAccountDialog({
                           label="Start Date"
                           htmlFor="startDate"
                           className="space-y-1"
-                          help={<p>Date the loan started or was disbursed.</p>}
+                          help={
+                            <p>
+                              <Trans>Date the loan started or was disbursed.</Trans>
+                            </p>
+                          }
                         >
                           <DatePickerButton value={startDate} onChange={setStartDate} />
                         </Field>
@@ -395,7 +418,11 @@ export function AddAccountDialog({
                           label="Original Term (years)"
                           htmlFor="termYears"
                           className="space-y-1"
-                          help={<p>Total loan duration (e.g., 30 for mortgages, up to 40).</p>}
+                          help={
+                            <p>
+                              <Trans>Total loan duration (e.g., 30 for mortgages, up to 40).</Trans>
+                            </p>
+                          }
                         >
                           <LiabilityNumberCell
                             value={termYears}
@@ -413,7 +440,11 @@ export function AddAccountDialog({
                       label="Target Payoff Date (optional)"
                       htmlFor="targetDate"
                       className="space-y-1"
-                      help={<p>Your desired payoff date, used for planning.</p>}
+                      help={
+                        <p>
+                          <Trans>Your desired payoff date, used for planning.</Trans>
+                        </p>
+                      }
                     >
                       <DatePickerButton value={targetDate} onChange={setTargetDate} />
                     </Field>
@@ -465,11 +496,13 @@ export function AddAccountDialog({
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button size="sm" type="button" className="opacity-50 cursor-not-allowed">
-                        Add Account
+                        <Trans>Add Account</Trans>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-3" side="top">
-                      <p className="text-sm">Please select an account type first</p>
+                      <p className="text-sm">
+                        <Trans>Please select an account type first</Trans>
+                      </p>
                     </PopoverContent>
                   </Popover>
                 ) : (

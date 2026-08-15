@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Plus, Trash2, MessageSquare, MoreHorizontal } from 'lucide-react';
 import {
@@ -31,7 +32,9 @@ export function ChatConversationList({
   return (
     <div className="flex h-full flex-col">
       <div className="flex shrink-0 items-center justify-between border-b px-3 py-2">
-        <span className="text-sm font-medium">Chats</span>
+        <span className="text-sm font-medium">
+          <Trans>Chats</Trans>
+        </span>
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onNew} title="New chat">
           <Plus className="h-4 w-4" />
         </Button>
@@ -40,7 +43,7 @@ export function ChatConversationList({
         <div className="p-2 space-y-1">
           {sorted.length === 0 ? (
             <div className="px-2 py-4 text-center text-xs text-muted-foreground">
-              No conversations yet
+              <Trans>No conversations yet</Trans>
             </div>
           ) : (
             sorted.map((conv) => (
@@ -78,8 +81,10 @@ export function ChatConversationList({
                         onDelete(conv.ID);
                       }}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      <Trans>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </Trans>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

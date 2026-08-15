@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Available Info Popover Component
  *
@@ -132,19 +133,27 @@ export function AvailableInfoPopover({
             {isCCPayment ? (
               <>
                 <div className="flex justify-between">
-                  <span>Assigned:</span>
+                  <span>
+                    <Trans>Assigned:</Trans>
+                  </span>
                   <span className="font-mono">{formatAmount(item.assigned)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Funded from spending:</span>
+                  <span>
+                    <Trans>Funded from spending:</Trans>
+                  </span>
                   <span className="font-mono">{formatAmount(item.totalFunded || 0)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Payments made:</span>
+                  <span>
+                    <Trans>Payments made:</Trans>
+                  </span>
                   <span className="font-mono">{formatAmount(item.activity)}</span>
                 </div>
                 <div className="border-t pt-1 flex justify-between font-medium">
-                  <span>Available for payment:</span>
+                  <span>
+                    <Trans>Available for payment:</Trans>
+                  </span>
                   <span className="font-mono">{formatAmount(item.available)}</span>
                 </div>
                 {item.cardBalance !== undefined && (
@@ -157,29 +166,39 @@ export function AvailableInfoPopover({
             ) : (
               <>
                 <div className="flex justify-between">
-                  <span>Previous month:</span>
+                  <span>
+                    <Trans>Previous month:</Trans>
+                  </span>
                   <span className="font-mono">
                     {formatAmount(item.available - item.assigned - item.activity)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Assigned this month:</span>
+                  <span>
+                    <Trans>Assigned this month:</Trans>
+                  </span>
                   <span className="font-mono">{formatAmount(item.assigned)}</span>
                 </div>
                 {hasCreditActivity ? (
                   <>
                     <div className="flex justify-between">
-                      <span>Cash spending:</span>
+                      <span>
+                        <Trans>Cash spending:</Trans>
+                      </span>
                       <span className="font-mono">{formatAmount(item.cashActivity ?? 0)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Credit spending:</span>
+                      <span>
+                        <Trans>Credit spending:</Trans>
+                      </span>
                       <span className="font-mono">{formatAmount(item.creditActivity ?? 0)}</span>
                     </div>
                   </>
                 ) : (
                   <div className="flex justify-between">
-                    <span>Activity:</span>
+                    <span>
+                      <Trans>Activity:</Trans>
+                    </span>
                     <span className="font-mono">{formatAmount(item.activity)}</span>
                   </div>
                 )}
@@ -198,7 +217,7 @@ export function AvailableInfoPopover({
             <div className="flex items-center gap-1.5 mb-2">
               <CreditCard className="h-3 w-3 text-blue-600 dark:text-blue-400" />
               <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                Funded from budgeted spending
+                <Trans>Funded from budgeted spending</Trans>
               </span>
             </div>
             <div className="space-y-1 text-xs">
@@ -214,36 +233,78 @@ export function AvailableInfoPopover({
 
         {showHelp && (
           <div className="text-muted-foreground">
-            <div className="mb-2 font-medium">How it works:</div>
+            <div className="mb-2 font-medium">
+              <Trans>How it works:</Trans>
+            </div>
             <ul className="space-y-1 text-xs">
               {isCCPayment ? (
                 <>
                   <li>
-                    <strong>Assigned</strong>: Money you manually allocated
+                    <Trans>
+                      <strong>
+                        <Trans>Assigned</Trans>
+                      </strong>
+                      : Money you manually allocated
+                    </Trans>
                   </li>
                   <li>
-                    <strong>Funded</strong>: Auto-moved from budgeted CC spending
+                    <Trans>
+                      <strong>
+                        <Trans>Funded</Trans>
+                      </strong>
+                      : Auto-moved from budgeted CC spending
+                    </Trans>
                   </li>
                   <li>
-                    <strong>Payments</strong>: Transfers made to pay the card
+                    <Trans>
+                      <strong>
+                        <Trans>Payments</Trans>
+                      </strong>
+                      : Transfers made to pay the card
+                    </Trans>
                   </li>
                   <li>
-                    <strong>Available</strong>: Ready for your next CC payment
+                    <Trans>
+                      <strong>
+                        <Trans>Available</Trans>
+                      </strong>
+                      : Ready for your next CC payment
+                    </Trans>
                   </li>
                 </>
               ) : (
                 <>
                   <li>
-                    <strong>Previous month</strong>: Unspent money carried over
+                    <Trans>
+                      <strong>
+                        <Trans>Previous month</Trans>
+                      </strong>
+                      : Unspent money carried over
+                    </Trans>
                   </li>
                   <li>
-                    <strong>Assigned</strong>: Money you allocated this month
+                    <Trans>
+                      <strong>
+                        <Trans>Assigned</Trans>
+                      </strong>
+                      : Money you allocated this month
+                    </Trans>
                   </li>
                   <li>
-                    <strong>Activity</strong>: Your spending (negative) or income (positive)
+                    <Trans>
+                      <strong>
+                        <Trans>Activity</Trans>
+                      </strong>
+                      : Your spending (negative) or income (positive)
+                    </Trans>
                   </li>
                   <li>
-                    <strong>Available</strong>: What's left to spend
+                    <Trans>
+                      <strong>
+                        <Trans>Available</Trans>
+                      </strong>
+                      : What's left to spend
+                    </Trans>
                   </li>
                 </>
               )}

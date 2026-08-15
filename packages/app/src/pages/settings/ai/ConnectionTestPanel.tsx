@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Label } from '@shared/ui/label';
 import { Input } from '@shared/ui/input';
 import { Button } from '@shared/ui/button';
@@ -31,7 +32,9 @@ export function ConnectionTestPanel({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="endpoint">Server URL</Label>
+        <Label htmlFor="endpoint">
+          <Trans>Server URL</Trans>
+        </Label>
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Server className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -53,7 +56,9 @@ export function ConnectionTestPanel({
             ) : (
               <RefreshCw className="h-4 w-4" />
             )}
-            <span className="ml-2 hidden sm:inline">Test</span>
+            <span className="ml-2 hidden sm:inline">
+              <Trans>Test</Trans>
+            </span>
           </Button>
         </div>
         <ConnectionStatusMessage
@@ -65,7 +70,9 @@ export function ConnectionTestPanel({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="apiKey">API Key</Label>
+        <Label htmlFor="apiKey">
+          <Trans>API Key</Trans>
+        </Label>
         <div className="relative">
           <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -104,8 +111,10 @@ function ConnectionStatusMessage({
   if (status === 'success') {
     return (
       <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
-        <CheckCircle2 className="h-4 w-4" />
-        Connected - {modelCount} models available
+        <Trans>
+          <CheckCircle2 className="h-4 w-4" />
+          Connected - {modelCount} models available
+        </Trans>
       </p>
     );
   }

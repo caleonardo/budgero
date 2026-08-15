@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Badge } from '@shared/ui/badge';
@@ -16,9 +17,13 @@ export const ResultsTable = memo(
       <Card>
         <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <CardTitle className="text-base">Results</CardTitle>
+            <CardTitle className="text-base">
+              <Trans>Results</Trans>
+            </CardTitle>
             <div className="flex gap-2 text-xs">
-              <Badge variant="secondary">{result.rowCount} rows</Badge>
+              <Badge variant="secondary">
+                <Trans>{result.rowCount} rows</Trans>
+              </Badge>
               <Badge variant="secondary">{result.executionTime.toFixed(1)}ms</Badge>
             </div>
           </div>

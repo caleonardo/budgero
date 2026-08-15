@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toDecimal, ZERO_MILLI } from '@budgero/core/browser';
 import { Button } from '@shared/ui/button';
@@ -190,7 +191,9 @@ export function GoalForm({
           <Target className="h-5 w-5" />
           {isEditing ? 'Edit Goal' : 'Create Goal'} for {categoryName}
         </CardTitle>
-        <CardDescription>Choose how you want to track this category.</CardDescription>
+        <CardDescription>
+          <Trans>Choose how you want to track this category.</Trans>
+        </CardDescription>
       </CardHeader>
 
       <CardContent className={asCard ? undefined : 'px-0 sm:px-6'}>
@@ -198,7 +201,7 @@ export function GoalForm({
           {/* ── Goal Type Selection ── */}
           <div className="space-y-2">
             <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-              Goal Type
+              <Trans>Goal Type</Trans>
             </Label>
             <div className="grid gap-2">
               {GOAL_PRESETS.map((preset) => {
@@ -264,7 +267,7 @@ export function GoalForm({
           {/* ── Target Amount ── */}
           <div className="space-y-2">
             <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-              Target Amount
+              <Trans>Target Amount</Trans>
             </Label>
             <CalculatorCell
               value={target}
@@ -294,7 +297,7 @@ export function GoalForm({
           {activePreset.needsDate && (
             <div className="space-y-3">
               <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-                Target Date
+                <Trans>Target Date</Trans>
               </Label>
               <Popover open={dateOpen} onOpenChange={setDateOpen}>
                 <PopoverTrigger asChild>
@@ -325,11 +328,15 @@ export function GoalForm({
                   checked={recurring}
                   onCheckedChange={(checked) => setRecurring(checked === true)}
                 />
-                <span className="text-sm">Recurring annually</span>
+                <span className="text-sm">
+                  <Trans>Recurring annually</Trans>
+                </span>
               </Label>
               {recurring && (
                 <p className="text-xs text-muted-foreground">
-                  Goal resets each year after the target date. A new cycle starts automatically.
+                  <Trans>
+                    Goal resets each year after the target date. A new cycle starts automatically.
+                  </Trans>
                 </p>
               )}
             </div>

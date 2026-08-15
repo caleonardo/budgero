@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 import React from 'react';
 import CreateBudgetForm from '@features/budget-management/ui/CreateBudgetForm';
 
@@ -19,7 +21,9 @@ const BudgetWizard: React.FC<BudgetWizardProps> = ({
   return (
     <div className="rounded-xl p-2 sm:p-4">
       {!hideHeader && (
-        <h2 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">Start a New Budget</h2>
+        <h2 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">
+          <Trans>Start a New Budget</Trans>
+        </h2>
       )}
       <CreateBudgetForm onCreated={onCreated} onModeChange={onModeChange} defaultTab={defaultTab} />
     </div>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState, useRef } from 'react';
 import { Button } from '@shared/ui/button';
 import {
@@ -158,8 +159,10 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
-          <Calculator className="h-4 w-4" />
-          Reconcile
+          <Trans>
+            <Calculator className="h-4 w-4" />
+            Reconcile
+          </Trans>
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -174,11 +177,15 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
       >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
-            Reconcile Account
+            <Trans>
+              <DollarSign className="h-5 w-5" />
+              Reconcile Account
+            </Trans>
           </DialogTitle>
           <DialogDescription className="hidden md:block">
-            Enter your actual account balance to reconcile with the current balance in the system.
+            <Trans>
+              Enter your actual account balance to reconcile with the current balance in the system.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -186,7 +193,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
           <div className="order-1 grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
             <div>
               <Label className="text-xs md:text-sm font-medium text-muted-foreground">
-                Current Balance
+                <Trans>Current Balance</Trans>
               </Label>
               <p className="text-sm md:text-lg font-semibold break-words">
                 {formatMilli(accountLocalizer, currentBalance)}
@@ -194,7 +201,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
             </div>
             <div>
               <Label className="text-xs md:text-sm font-medium text-muted-foreground">
-                Account
+                <Trans>Account</Trans>
               </Label>
               <p className="text-sm md:text-lg font-semibold break-words">{account.Name}</p>
             </div>
@@ -225,7 +232,9 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
           {difference !== null && (
             <div className="order-2 p-3 bg-muted/50 rounded-lg md:order-3">
               <div className="flex justify-between items-center gap-2">
-                <Label className="text-xs md:text-sm font-medium">Adjustment Needed:</Label>
+                <Label className="text-xs md:text-sm font-medium">
+                  <Trans>Adjustment Needed:</Trans>
+                </Label>
                 <span
                   className={`text-sm md:text-base font-semibold whitespace-nowrap ${
                     difference > 0
@@ -241,7 +250,9 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
               </div>
               {Math.abs(difference) < ONE_CENT_MILLI && (
                 <p className="text-xs md:text-sm text-muted-foreground mt-1">
-                  Balances match - reconciliation will mark transactions as reconciled
+                  <Trans>
+                    Balances match - reconciliation will mark transactions as reconciled
+                  </Trans>
                 </p>
               )}
             </div>
@@ -250,7 +261,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
 
         <DialogFooter>
           <Button variant="outline" onClick={() => handleOpenChange(false)}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button onClick={handleSubmit} disabled={actualBalance === null || isSubmitting}>
             {isSubmitting ? 'Reconciling...' : 'Reconcile Account'}

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import {
   Dialog,
   DialogContent,
@@ -71,11 +72,13 @@ export function AIReceiptScannerDialog({
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <ImagePlus className="h-5 w-5" />
-            Receipt Scanner
+            <Trans>
+              <ImagePlus className="h-5 w-5" />
+              Receipt Scanner
+            </Trans>
           </DialogTitle>
           <DialogDescription>
-            Upload a receipt or bank statement image to extract transactions
+            <Trans>Upload a receipt or bank statement image to extract transactions</Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -186,7 +189,9 @@ interface AccountSelectorProps {
 function AccountSelector({ accounts, selectedAccountId, onAccountChange }: AccountSelectorProps) {
   return (
     <div className="space-y-2">
-      <Label htmlFor="account">Import to Account</Label>
+      <Label htmlFor="account">
+        <Trans>Import to Account</Trans>
+      </Label>
       <Select value={String(selectedAccountId)} onValueChange={(v) => onAccountChange(Number(v))}>
         <SelectTrigger id="account">
           <SelectValue placeholder="Select account" />

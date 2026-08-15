@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -37,14 +38,16 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CreditCard className="w-5 h-5" />
-              Choose a Plan
+              <Trans>
+                <CreditCard className="w-5 h-5" />
+                Choose a Plan
+              </Trans>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {plans.length === 0 ? (
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Plans are not available right now. Please try again in a moment.
+                <Trans>Plans are not available right now. Please try again in a moment.</Trans>
               </p>
             ) : (
               <div className="grid gap-4 md:grid-cols-2">
@@ -132,11 +135,13 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CreditCard className="w-5 h-5" />
-              Billing Management
+              <Trans>
+                <CreditCard className="w-5 h-5" />
+                Billing Management
+              </Trans>
             </CardTitle>
             <CardDescription>
-              Update payment methods, download invoices, or manage billing details
+              <Trans>Update payment methods, download invoices, or manage billing details</Trans>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -165,12 +170,18 @@ export const PlanSelection = React.memo(function PlanSelection({ vm }: PlanSelec
 
             <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
               <p className="font-medium text-gray-900 dark:text-white">
-                In the billing portal, you can:
+                <Trans>In the billing portal, you can:</Trans>
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Update payment methods and billing information</li>
-                <li>Download invoices and payment history</li>
-                <li>Update billing address and tax information</li>
+                <li>
+                  <Trans>Update payment methods and billing information</Trans>
+                </li>
+                <li>
+                  <Trans>Download invoices and payment history</Trans>
+                </li>
+                <li>
+                  <Trans>Update billing address and tax information</Trans>
+                </li>
               </ul>
             </div>
           </CardContent>

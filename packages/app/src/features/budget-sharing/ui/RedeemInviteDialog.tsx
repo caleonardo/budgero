@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
@@ -116,16 +117,22 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Redeem workspace invite</DialogTitle>
+          <DialogTitle>
+            <Trans>Redeem workspace invite</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Enter the invite secret shared with you. Budgero will decrypt the space key locally
-            using your master password.
+            <Trans>
+              Enter the invite secret shared with you. Budgero will decrypt the space key locally
+              using your master password.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="invite-secret">Invite secret</Label>
+            <Label htmlFor="invite-secret">
+              <Trans>Invite secret</Trans>
+            </Label>
             <Input
               id="invite-secret"
               value={inviteSecret}
@@ -159,7 +166,9 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="master-password">Master password</Label>
+            <Label htmlFor="master-password">
+              <Trans>Master password</Trans>
+            </Label>
             <Input
               id="master-password"
               type="password"
@@ -168,8 +177,10 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
               placeholder={hasCachedPassword ? 'leave blank to use cached password' : 'required'}
             />
             <p className="text-xs text-muted-foreground">
-              Your master password never leaves this device. It wraps the decrypted workspace key
-              before sending it to the server.
+              <Trans>
+                Your master password never leaves this device. It wraps the decrypted workspace key
+                before sending it to the server.
+              </Trans>
             </p>
           </div>
 
@@ -188,7 +199,7 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
             onClick={() => onOpenChange(false)}
             disabled={redeemInvite.isPending}
           >
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             type="button"
