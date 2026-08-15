@@ -206,7 +206,21 @@ GLOSSARY:
 {glossary}"""
 
 
-def translate_batch(locale, batch):
+def translate_batch(locale, batch, _depth=0):
+    """Returns {index: translation}. On failure the batch is bisected rather
+    than dropped — this model spends most of its token budget on reasoning, so
+    a large batch can truncate mid-JSON and lose every message in it."""
+    got = _translate_once(locale, batch)
+    if got or len(batch) == 1 or _depth >= 4:
+        return got
+
+    mid = len(batch) // 2
+    left = translate_batch(locale, batch[:mid], _depth + 1)
+    right = translate_batch(locale, batch[mid:], _depth + 1)
+    return {**left, **{i + mid: v for i, v in right.items()}}
+
+
+def _translate_once(locale, batch):
     payload_msgs = {str(i): m for i, m in enumerate(batch)}
     user = (
         f"Translate each value into {LANG[locale]}.\n"
@@ -216,7 +230,7 @@ def translate_batch(locale, batch):
     res = post({
         "model": MODEL,
         "temperature": 0.2,
-        "max_tokens": 8000,
+        "max_tokens": 32000,
         "messages": [
             {"role": "system", "content": SYSTEM.format(language=LANG[locale], register=REGISTER[locale], glossary=glossary_block(locale))},
             {"role": "user", "content": user},
