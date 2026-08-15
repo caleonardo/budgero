@@ -282,7 +282,10 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
     },
     optimizeDeps: {
-      exclude: ['@sqlite.org/sqlite-wasm'],
+      // Lingui macros are compile-time only — the babel plugin removes them.
+      // Pre-bundling them ships a module whose body throws on import, which
+      // surfaces as a confusing runtime error if anything ever requests it.
+      exclude: ['@sqlite.org/sqlite-wasm', '@lingui/react/macro', '@lingui/core/macro'],
     },
     assetsInclude: ['**/*.wasm'],
   };
