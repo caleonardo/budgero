@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -27,6 +28,7 @@ function GitHubIcon({ className }: { className?: string }) {
 }
 
 export function SiteHeader() {
+  const t = useTranslations('common');
   const pathname = usePathname();
   const isOverlay = pathname === '/' || pathname.startsWith('/privacy');
 
@@ -66,19 +68,19 @@ export function SiteHeader() {
                 href="/docs"
                 className="font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
-                Docs
+                {t('nav_docs')}
               </Link>
               <Link
                 href="/blog"
                 className="font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
-                Blog
+                {t('nav_blog')}
               </Link>
               <Link
                 href="/changelog"
                 className="font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
-                Changelog
+                {t('nav_changelog')}
               </Link>
               <a
                 href="https://feedback.budgero.app"
@@ -172,19 +174,19 @@ export function SiteHeader() {
                     asChild
                     className="focus:bg-accent focus:text-accent-foreground"
                   >
-                    <Link href="/docs">Docs</Link>
+                    <Link href="/docs">{t('nav_docs')}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     asChild
                     className="focus:bg-accent focus:text-accent-foreground"
                   >
-                    <Link href="/blog">Blog</Link>
+                    <Link href="/blog">{t('nav_blog')}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     asChild
                     className="focus:bg-accent focus:text-accent-foreground"
                   >
-                    <Link href="/changelog">Changelog</Link>
+                    <Link href="/changelog">{t('nav_changelog')}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     asChild

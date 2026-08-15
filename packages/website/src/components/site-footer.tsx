@@ -1,10 +1,12 @@
 import Image from 'next/image';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { TrackedLink } from '@/components/TrackedLink';
 import { ManageCookiesButton } from '@/components/ManageCookiesButton';
 
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const t = await getTranslations('common');
   return (
     <footer className="bg-[#f5f0e3] border-t border-[#9e9e9e]/70 text-[#141414] py-16">
       <div className="container mx-auto px-4">
@@ -26,7 +28,7 @@ export function SiteFooter() {
             </p>
           </div>
           <div>
-            <h3 className="font-medium text-[#141414] mb-6">Product</h3>
+            <h3 className="font-medium text-[#141414] mb-6">{t('footer_product')}</h3>
             <ul className="space-y-3 text-sm text-[#4b5563]">
               <li>
                 <Link href="/#features" className="hover:text-[#141414] transition-colors">
@@ -86,7 +88,7 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h3 className="font-medium text-[#141414] mb-6">Support</h3>
+            <h3 className="font-medium text-[#141414] mb-6">{t('footer_support')}</h3>
             <ul className="space-y-3 text-sm text-[#4b5563]">
               <li>
                 <Link href="/docs" className="hover:text-[#141414] transition-colors">
@@ -129,7 +131,7 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h3 className="font-medium text-[#141414] mb-6">Community</h3>
+            <h3 className="font-medium text-[#141414] mb-6">{t('footer_community')}</h3>
             <ul className="space-y-3 text-sm text-[#4b5563]">
               <li>
                 <a
