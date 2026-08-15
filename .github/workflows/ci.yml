@@ -60,6 +60,9 @@ jobs:
       - name: Lint app
         run: pnpm run lint:app
 
+      - name: Check translation catalogs
+        run: pnpm run i18n:check
+
       - name: Test core
         run: pnpm run test:core
 
