@@ -12,3 +12,95 @@ msgstr ""
 "Last-Translator: \n"
 "Language-Team: \n"
 "Plural-Forms: \n"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "<0>♥</0>Donate to Budgero"
+msgstr "<0>♥</0>Donate to Budgero"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "<0>D</0>Join our Discord"
+msgstr "<0>D</0>Join our Discord"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "<0>R</0>r/budgero"
+msgstr "<0>R</0>r/budgero"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Application Details"
+msgstr "Application Details"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Budgero is continually updated. If you experience issues, share the version information above when contacting support so we can help quickly."
+msgstr "Budgero is continually updated. If you experience issues, share the version information above when contacting support so we can help quickly."
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Build metadata for support or troubleshooting."
+msgstr "Build metadata for support or troubleshooting."
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Changelog"
+msgstr "Changelog"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Discord Community"
+msgstr "Discord Community"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Latest updates"
+msgstr "Latest updates"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Learn more about Budgero or get in touch with the team."
+msgstr "Learn more about Budgero or get in touch with the team."
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Product Feedback"
+msgstr "Product Feedback"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Project Resources"
+msgstr "Project Resources"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Reddit Community"
+msgstr "Reddit Community"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Report a Bug"
+msgstr "Report a Bug"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Repository"
+msgstr "Repository"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Self-Host is free forever. If Budgero is useful to you, you can support its development with a one-time, pay-what-you-want donation."
+msgstr "Self-Host is free forever. If Budgero is useful to you, you can support its development with a one-time, pay-what-you-want donation."
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Share feedback"
+msgstr "Share feedback"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Submit a bug report"
+msgstr "Submit a bug report"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Support"
+msgstr "Support"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Support Development"
+msgstr "Support Development"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Update Service Worker"
+msgstr "Update Service Worker"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "View Changelog"
+msgstr "View Changelog"
+
+#: src/pages/settings/AboutPage.tsx
+msgid "Website"
+msgstr "Website"

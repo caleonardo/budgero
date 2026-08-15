@@ -47,7 +47,9 @@
     "security:go": "cd packages/server && go run golang.org/x/vuln/cmd/govulncheck@latest ./..."
   },
   "devDependencies": {
+    "@types/jscodeshift": "^17.3.0",
     "husky": "^9.1.7",
+    "jscodeshift": "^17.4.0",
     "lint-staged": "^16.1.5",
     "prettier": "^3.6.2"
   },
