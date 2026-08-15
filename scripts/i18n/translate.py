@@ -7,7 +7,7 @@ must survive the round trip, or the message is rejected and retried.
     SYN_KEY=... python3 scripts/i18n/translate.py de [--limit N] [--redo]
 """
 
-import json, os, re, ssl, sys, urllib.request
+import json, os, random, re, ssl, sys, time, urllib.error, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 import certifi
@@ -18,7 +18,7 @@ API = "https://api.synthetic.new/v1/chat/completions"
 KEY = os.environ["SYN_KEY"]
 MODEL = "hf:zai-org/GLM-5.2"
 BATCH = 25
-WORKERS = 6
+WORKERS = 4
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 GLOSSARY = os.path.join(ROOT, "i18n", "glossary.json")
@@ -140,20 +140,35 @@ def valid(source, translated):
 
 # ---------- model ----------
 
-def post(payload, tries=3):
+def post(payload, tries=7):
+    """POST with exponential backoff. 429s are expected under concurrency and
+    must be waited out — retrying instantly just burns the attempt budget."""
     body = json.dumps(payload).encode()
-    req = urllib.request.Request(
-        API, data=body,
-        headers={"Authorization": f"Bearer {KEY}", "Content-Type": "application/json"},
-    )
+    last = "unknown"
+
     for attempt in range(tries):
+        req = urllib.request.Request(
+            API, data=body,
+            headers={"Authorization": f"Bearer {KEY}", "Content-Type": "application/json"},
+        )
         try:
-            with urllib.request.urlopen(req, timeout=180, context=SSL_CTX) as r:
+            with urllib.request.urlopen(req, timeout=240, context=SSL_CTX) as r:
                 return json.load(r)
+        except urllib.error.HTTPError as e:
+            last = f"HTTP {e.code}"
+            if e.code not in (408, 429, 500, 502, 503, 504):
+                return {"_error": f"HTTPError: {e.code}"}
+            retry_after = e.headers.get("Retry-After") if e.headers else None
+            delay = float(retry_after) if retry_after and retry_after.isdigit() else 2 ** attempt
         except Exception as e:
-            if attempt == tries - 1:
-                return {"_error": f"{type(e).__name__}: {e}"}
-    return {"_error": "unreachable"}
+            last = f"{type(e).__name__}: {e}"
+            delay = 2 ** attempt
+
+        if attempt == tries - 1:
+            return {"_error": last}
+        time.sleep(min(delay, 60) + random.uniform(0, 1))
+
+    return {"_error": last}
 
 
 def glossary_block(locale):

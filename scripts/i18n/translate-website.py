@@ -16,7 +16,7 @@ import translate as T  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MESSAGES = os.path.join(ROOT, "packages", "website", "messages")
 BATCH = 12
-WORKERS = 8
+WORKERS = 4
 
 
 def flatten(obj, prefix=""):

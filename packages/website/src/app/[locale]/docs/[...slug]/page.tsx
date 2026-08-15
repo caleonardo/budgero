@@ -9,24 +9,32 @@ import { Mdx } from '@/components/mdx-components';
 import { Badge } from '@/components/ui/badge';
 
 const publishedGuides = allGuides.filter((guide) => guide.published !== false);
-const guidesBySlug = new Map(publishedGuides.map((guide) => [guide.slug, guide]));
+const guidesByKey = new Map(
+  publishedGuides.map((guide) => [`${guide.locale}:${guide.slug}`, guide])
+);
 
-const getGuideFromParams = (slugSegments: string[]) => {
+/** Falls back to the English guide so a partial translation never 404s. */
+const getGuideFromParams = (slugSegments: string[], locale: string) => {
   const slug = slugSegments.join('/');
-  return guidesBySlug.get(slug);
+  return guidesByKey.get(`${locale}:${slug}`) ?? guidesByKey.get(`en:${slug}`);
 };
 
+const isTranslated = (slugSegments: string[], locale: string) =>
+  locale === 'en' || guidesByKey.has(`${locale}:${slugSegments.join('/')}`);
+
 export function generateStaticParams() {
-  return publishedGuides.map((guide) => ({ slug: guide.slugSegments }));
+  return publishedGuides
+    .filter((guide) => guide.locale === 'en')
+    .map((guide) => ({ slug: guide.slugSegments }));
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug: string[]; locale: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const guide = getGuideFromParams(slug);
+  const { slug, locale } = await params;
+  const guide = getGuideFromParams(slug, locale);
   if (!guide) {
     notFound();
   }
@@ -52,15 +60,20 @@ export async function generateMetadata({
   };
 }
 
-export default async function GuidePage({ params }: { params: Promise<{ slug: string[] }> }) {
+export default async function GuidePage({
+  params,
+}: {
+  params: Promise<{ slug: string[]; locale: string }>;
+}) {
   const t = await getTranslations('docs_slug_');
-  const { slug } = await params;
-  const guide = getGuideFromParams(slug);
+  const { slug, locale } = await params;
+  const guide = getGuideFromParams(slug, locale);
   if (!guide) {
     notFound();
   }
 
   const badgeLabel = guide.badge ?? 'Guide';
+  const machineTranslated = locale !== 'en' && isTranslated(slug, locale);
 
   return (
     <main className="bg-background text-foreground">
@@ -81,6 +94,14 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 {guide.readingTimeMinutes} {t('min_read')} </span>
             ) : null}
           </div>
+          {machineTranslated ? (
+            <p className="mt-6 rounded-md border border-border/60 bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+              {t('machine_translated_notice')}{' '}
+              <Link href={`/docs/${slug.join('/')}`} className="underline hover:text-foreground">
+                {t('machine_translated_read_english')}
+              </Link>
+            </p>
+          ) : null}
           <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">{guide.title}</h1>
           <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
             {guide.summary}

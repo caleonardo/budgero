@@ -1261,7 +1261,9 @@
     "back_to_docs": "Back to docs",
     "min_read": "min read",
     "in_this_guide": "In this guide",
-    "explore_more_guides": "Explore more guides"
+    "explore_more_guides": "Explore more guides",
+    "machine_translated_notice": "This page was translated automatically and may contain errors.",
+    "machine_translated_read_english": "Read the English original"
   },
   "blog_slug_": {
     "back_to_blog": "← Back to blog",
