@@ -36,8 +36,12 @@ REGISTER = {
     "es": 'Address the user informally with "tú", never "usted". Use peninsular Spanish (Spain).',
 }
 
-PLACEHOLDER = re.compile(r"\{[^{}]*\}")
-TAG = re.compile(r"</?\d+>")
+# Only bare {name} / {0} count as placeholders. A looser pattern would match ICU
+# plural branch bodies, whose text is *supposed* to change under translation.
+PLACEHOLDER = re.compile(r"\{\s*(\w+)\s*\}")
+TAG = re.compile(r"</?\d+\s*/?>")
+ICU_HEAD = re.compile(r"\{\s*(\w+)\s*,\s*(plural|select|selectordinal)\s*,")
+ICU_BRANCH = re.compile(r"\b(zero|one|two|few|many|other)\s*\{")
 
 
 # ---------- .po ----------
@@ -107,23 +111,30 @@ def write_po(path, header, entries):
 
 # ---------- validation ----------
 
-def skeleton(text):
-    return sorted(PLACEHOLDER.findall(text)), sorted(TAG.findall(text))
-
-
 def valid(source, translated):
     if not translated or not translated.strip():
         return False, "empty"
-    s_ph, s_tag = skeleton(source)
-    t_ph, t_tag = skeleton(translated)
-    if s_ph != t_ph:
-        return False, f"placeholders {s_ph} -> {t_ph}"
-    if s_tag != t_tag:
-        return False, f"tags {s_tag} -> {t_tag}"
-    if ("plural," in source) != ("plural," in translated):
-        return False, "ICU plural structure lost"
+
+    if sorted(PLACEHOLDER.findall(source)) != sorted(PLACEHOLDER.findall(translated)):
+        return False, f"placeholders {PLACEHOLDER.findall(source)} -> {PLACEHOLDER.findall(translated)}"
+
+    if sorted(TAG.findall(source)) != sorted(TAG.findall(translated)):
+        return False, f"tags {TAG.findall(source)} -> {TAG.findall(translated)}"
+
+    # ICU: same variable and same construct, in the same order.
+    if ICU_HEAD.findall(source) != ICU_HEAD.findall(translated):
+        return False, f"ICU head {ICU_HEAD.findall(source)} -> {ICU_HEAD.findall(translated)}"
+
+    # Every branch keyword present in the source must survive.
+    if sorted(set(ICU_BRANCH.findall(source))) != sorted(set(ICU_BRANCH.findall(translated))):
+        return False, f"ICU branches {set(ICU_BRANCH.findall(source))} -> {set(ICU_BRANCH.findall(translated))}"
+
+    if source.count("#") != translated.count("#"):
+        return False, "# count"
+
     if source.count("{") != translated.count("{") or source.count("}") != translated.count("}"):
-        return False, "brace count"
+        return False, "brace balance"
+
     return True, ""
 
 
