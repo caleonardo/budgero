@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/react/macro';
 import { memo, useMemo } from 'react';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { ChevronLeft, ChevronRight, ArrowUpRight, ChevronDown, ChevronUp } from 'lucide-react';

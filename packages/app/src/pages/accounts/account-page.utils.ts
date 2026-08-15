@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import type { DateRange } from 'react-day-picker';
 import type { Category } from '@budgero/core/browser';
 

@@ -10,7 +10,8 @@ import {
   useReadyToAssign,
 } from '@entities/budget/api/useMonthlyBudget';
 import { useGoals } from '@entities/goal/api/useGoals';
-import { format, parseISO, startOfMonth, endOfMonth, differenceInDays } from 'date-fns';
+import { parseISO, startOfMonth, endOfMonth, differenceInDays } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Progress } from '@shared/ui/progress';
 import { TrendingDown, Target, Calendar, PiggyBank, Info } from 'lucide-react';
 import {

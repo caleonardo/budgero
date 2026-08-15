@@ -1,5 +1,6 @@
 import type { ChatConversation } from '@budgero/core/browser';
 import { normalizeUtcString } from '@shared/lib/date-utils';
+import { getLocaleTag } from '@shared/i18n';
 
 /**
  * Tailwind `prose` classes shared by every rendered-markdown chat bubble
@@ -62,7 +63,7 @@ export function formatTokenCount(tokens: number): string {
 export function formatMessageTime(dateString: string): string {
   // SQLite datetime('now') is timezone-naive UTC; anchor it before local display.
   const date = new Date(normalizeUtcString(dateString));
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString(getLocaleTag(), {
     hour: 'numeric',
     minute: '2-digit',
   });

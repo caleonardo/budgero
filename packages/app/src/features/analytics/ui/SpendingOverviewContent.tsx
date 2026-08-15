@@ -11,7 +11,8 @@ import { ChartEmptyState } from '@shared/ui/ChartEmptyState';
 import { useSpendingByDates } from '@features/analytics/api/useAnalyticsQueries';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useMemo } from 'react';
-import { format, eachDayOfInterval, differenceInDays, subDays } from 'date-fns';
+import { eachDayOfInterval, differenceInDays, subDays } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { asMilli, toDecimal } from '@shared/lib/currency/milli';
 
 export function SpendingOverviewContent() {

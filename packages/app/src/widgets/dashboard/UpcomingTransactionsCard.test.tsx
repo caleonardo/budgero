@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { format, addDays, addMonths } from 'date-fns';
+import { addDays, addMonths } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { UpcomingTransactionsCard } from './UpcomingTransactionsCard';
 
 const mockNavigate = vi.fn();

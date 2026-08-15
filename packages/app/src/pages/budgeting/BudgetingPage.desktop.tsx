@@ -10,7 +10,8 @@ import { useMonthlyBudget, useReadyToAssign } from '@entities/budget/api/useMont
 import { useGoals } from '@entities/goal/api/useGoals';
 import { transformBudgetRows } from '@features/budget-planning/lib/budget-transforms';
 import { useHideCategory } from '@features/category-management/api/useHideCategory';
-import { format, addMonths, parse } from 'date-fns';
+import { addMonths, parse } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Button } from '@shared/ui/button';
 import { Calendar, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Search } from 'lucide-react';
 import { Drawer, DrawerContent } from '@shared/ui/drawer';

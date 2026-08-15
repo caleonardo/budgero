@@ -1,5 +1,6 @@
 import { Trans } from '@lingui/react/macro';
-import { format, parseISO, startOfWeek, endOfWeek, addDays } from 'date-fns';
+import { parseISO, startOfWeek, endOfWeek, addDays } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui/tooltip';
 import type { AdminDayCount } from '@features/admin/model/admin-users';

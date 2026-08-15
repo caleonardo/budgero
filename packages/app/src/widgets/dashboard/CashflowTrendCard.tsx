@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { format, parseISO, differenceInCalendarDays, subDays } from 'date-fns';
+import { parseISO, differenceInCalendarDays, subDays } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { TrendingUp, TrendingDown, ArrowUpRight } from 'lucide-react';
 import type { EChartsCoreOption } from 'echarts/core';
 

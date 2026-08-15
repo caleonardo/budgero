@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import {
   fromDecimal,
   toDecimal,

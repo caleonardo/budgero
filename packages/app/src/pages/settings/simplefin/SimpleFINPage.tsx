@@ -28,6 +28,7 @@ import { trendTextClass } from '@shared/lib/amount-color';
 import { getErrorMessage } from '@shared/lib/errors';
 import { InlineLoadingRow } from '@shared/ui/InlineLoadingRow';
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
+import { getLocaleTag } from '@shared/i18n';
 
 function formatCurrency(amount: number, currency: string): string {
   return new Intl.NumberFormat('en-US', {
@@ -37,7 +38,7 @@ function formatCurrency(amount: number, currency: string): string {
 }
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(getLocaleTag(), {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

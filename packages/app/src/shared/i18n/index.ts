@@ -36,6 +36,11 @@ export function getDateLocale(): DateFnsLocale | undefined {
   return activeDateLocale;
 }
 
+/** BCP 47 tag for the active language, for Intl.* constructors. */
+export function getLocaleTag(): string {
+  return i18n.locale || DEFAULT_LOCALE;
+}
+
 async function loadMessages(locale: SupportedLocale) {
   switch (locale) {
     case 'de':

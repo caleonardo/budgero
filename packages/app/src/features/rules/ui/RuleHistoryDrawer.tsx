@@ -14,7 +14,7 @@ import type {
   TransactionRuleRun,
   TransactionRuleRunChange,
 } from '@budgero/core/browser';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
 import { toDecimal } from '@shared/lib/currency/milli';
 import { roundMilli } from '@shared/lib/currency/round-amount';
 import { Loader2, RotateCcw } from 'lucide-react';

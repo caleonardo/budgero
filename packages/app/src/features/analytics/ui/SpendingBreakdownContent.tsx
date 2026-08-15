@@ -5,7 +5,7 @@ import {
 } from '@features/analytics/api/useAnalyticsQueries';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useMemo, useState } from 'react';
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Button } from '@shared/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { ChartEmptyState } from '@shared/ui/ChartEmptyState';

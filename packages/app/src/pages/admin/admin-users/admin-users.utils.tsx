@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/react/macro';
 import { Badge } from '@shared/ui/badge';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import {
   getUserAccessStatus,
   getAccessLevelDisplay,

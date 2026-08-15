@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import type { EChartsCoreOption } from 'echarts/core';
 
 import { EChart } from '@shared/ui/echart';

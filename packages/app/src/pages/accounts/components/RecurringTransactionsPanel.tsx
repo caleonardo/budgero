@@ -13,7 +13,11 @@ import {
   Loader2,
   Repeat,
 } from 'lucide-react';
-import { format, formatDistanceToNow, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import {
+  formatDate as format,
+  formatRelativeToNow as formatDistanceToNow,
+} from '@shared/lib/date-format';
 import { cn } from '@shared/lib/utils';
 import { getTodayISO } from '@shared/lib/date-utils';
 import { asMilli, formatMilli } from '@shared/lib/currency/milli';

@@ -23,7 +23,6 @@ import { useSpendingTotalsByPeriod } from '@features/analytics/api/useAnalyticsQ
 import { useTransactionsByCategoryAndMonth } from '@entities/transaction/api/useTransactions';
 import { useGoalsByCategories, useCycleFinancialsForGoals } from '@entities/goal/api/useGoals';
 import {
-  format,
   eachMonthOfInterval,
   parse,
   subMonths,
@@ -35,6 +34,7 @@ import {
   isSameMonth,
   parseISO,
 } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import type { BudgetRow } from '@features/budget-planning/lib/budget-transforms';
 import {
   calculateUnderfundedGoals,

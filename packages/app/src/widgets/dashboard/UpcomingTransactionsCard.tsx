@@ -1,7 +1,8 @@
 import { Trans } from '@lingui/react/macro';
 import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { format, addMonths, parseISO, differenceInCalendarDays } from 'date-fns';
+import { addMonths, parseISO, differenceInCalendarDays } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { CalendarClock, ArrowRight, AlertCircle, Repeat } from 'lucide-react';
 
 import {

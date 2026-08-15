@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { Skeleton } from '@shared/ui/skeleton';
 import { cn } from '@shared/lib/utils';

@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react';
 import {
   addDays,
-  format,
   addMonths,
   endOfMonth,
   endOfYear,
@@ -13,6 +12,7 @@ import {
   subMonths,
   subYears,
 } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { DateRange } from 'react-day-picker';
 
 import { cn } from '@shared/lib/utils';

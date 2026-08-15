@@ -4,7 +4,7 @@
  * Amount conversion and validation helpers for the transaction form.
  */
 
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 
 import { formatNativeAmount } from '@entities/currency/lib/currency-utils';
 import type { TransactionType } from '@features/transactions/api/useTransactionForm';

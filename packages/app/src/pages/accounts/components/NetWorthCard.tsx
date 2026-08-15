@@ -15,6 +15,7 @@ import { cn } from '@shared/lib/utils';
 import { parseISO } from 'date-fns';
 import { trendTextClass } from '@shared/lib/amount-color';
 import { asMilli, fromDecimal, toDecimal } from '@shared/lib/currency/milli';
+import { getLocaleTag } from '@shared/i18n';
 
 interface NetWorthDataPoint {
   date: string;
@@ -76,7 +77,7 @@ export function NetWorthCard({
           const items = params as { dataIndex: number }[];
           const point = points[items[0]?.dataIndex ?? 0];
           if (!point) return '';
-          const title = parseISO(point.date).toLocaleDateString('en-US', {
+          const title = parseISO(point.date).toLocaleDateString(getLocaleTag(), {
             weekday: 'short',
             month: 'short',
             day: 'numeric',

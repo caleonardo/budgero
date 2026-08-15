@@ -16,7 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shar
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
 import { Separator } from '@shared/ui/separator';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
 import { toast } from 'sonner';
 import { downloadBlob } from '@shared/lib/download';
 import { formatBytes } from '@shared/lib/format-bytes';

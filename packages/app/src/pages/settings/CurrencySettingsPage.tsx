@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/react/macro';
 import { useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { toast } from 'sonner';
 import { Calendar as CalendarIcon, Coins, Plus, Pencil, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';

@@ -17,6 +17,7 @@ import {
   useChartPalette,
 } from '@shared/lib/charts/echarts-chrome';
 import { asMilli, toDecimal } from '@shared/lib/currency/milli';
+import { getLocaleTag } from '@shared/i18n';
 
 interface AccountSparklineProps {
   accountId: number;
@@ -45,7 +46,10 @@ export function AccountSparkline({
     // Chart values are decimal currency units.
     const points = sparklineData.map((point) => ({
       value: toDecimal(asMilli(point.balance)),
-      date: parseISO(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      date: parseISO(point.date).toLocaleDateString(getLocaleTag(), {
+        month: 'short',
+        day: 'numeric',
+      }),
     }));
 
     // Trend is exact in integer milliunits, converted for display below.

@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/react/macro';
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Calendar, WifiOff } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';

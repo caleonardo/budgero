@@ -1,7 +1,8 @@
 import { Trans } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { asMilli, fromDecimal, toDecimal, ZERO_MILLI } from '@budgero/core/browser';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent } from '@shared/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@shared/ui/dialog';

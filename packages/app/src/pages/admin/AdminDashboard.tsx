@@ -18,7 +18,7 @@ import {
   Send,
 } from 'lucide-react';
 import { useAdminApi } from '@features/admin/api/useAdminApi';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
 import { cn } from '@shared/lib/utils';
 import { toast } from 'sonner';
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';

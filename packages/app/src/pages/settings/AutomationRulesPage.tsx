@@ -28,7 +28,7 @@ import type {
   RuleExecutionResult,
   RuleRunUndoResult,
 } from '@budgero/core/browser';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
 import {
   Bot,
   Clock,

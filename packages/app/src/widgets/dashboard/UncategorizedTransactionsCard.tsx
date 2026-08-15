@@ -2,7 +2,8 @@ import { Trans } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { AlertTriangle, Tag, Sparkles } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 
 import type { GetAllTransactions, GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@shared/ui/card';

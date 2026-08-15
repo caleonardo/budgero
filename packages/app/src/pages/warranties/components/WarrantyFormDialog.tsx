@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/react/macro';
 import type React from 'react';
 import { useId } from 'react';
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';

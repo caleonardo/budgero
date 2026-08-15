@@ -1,6 +1,9 @@
 import { Trans } from '@lingui/react/macro';
 import React from 'react';
-import { format, formatDistanceToNow } from 'date-fns';
+import {
+  formatDate as format,
+  formatRelativeToNow as formatDistanceToNow,
+} from '@shared/lib/date-format';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';

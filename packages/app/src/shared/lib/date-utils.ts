@@ -1,4 +1,5 @@
 import { parseISO, isValid, isAfter, endOfDay } from 'date-fns';
+import { getLocaleTag } from '@shared/i18n';
 
 /**
  * Normalize any date-like value to a Date object.
@@ -255,7 +256,7 @@ export function formatMonthLabel(
 ): string {
   const date = parseMonthKey(monthKey);
   if (!date) return monthKey;
-  return date.toLocaleDateString('en-US', options);
+  return date.toLocaleDateString(getLocaleTag(), options);
 }
 
 export interface DateKeyGroup<T> {
@@ -312,7 +313,7 @@ export function formatShortDate(
 ): string {
   const { hideCurrentYear = false, weekday } = options;
   const showYear = !hideCurrentYear || date.getFullYear() !== new Date().getFullYear();
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(getLocaleTag(), {
     ...(weekday ? { weekday } : {}),
     month: 'short',
     day: 'numeric',

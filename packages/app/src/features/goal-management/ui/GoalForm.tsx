@@ -19,7 +19,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { Checkbox } from '@shared/ui/checkbox';
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { type Goal, GoalCalculations, GoalType, GoalPurpose } from '@budgero/core/browser';
 import { cn } from '@shared/lib/utils';
 
