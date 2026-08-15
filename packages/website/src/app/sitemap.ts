@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { allGuides, allPosts } from 'contentlayer/generated';
 
 import { changelogEntries } from '@/lib/changelog-data';
+import { routing } from '@/i18n/routing';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 const websiteRoot = path.resolve(appDir, '..', '..');
@@ -33,127 +34,127 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes: MetadataRoute.Sitemap = [
     {
       url: `${base}/`,
-      lastModified: getFileLastModified('src/app/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/page.tsx', nowIso),
       changeFrequency: 'weekly',
       priority: 1.0,
     },
     {
       url: `${base}/self-hostable`,
-      lastModified: getFileLastModified('src/app/self-hostable/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/self-hostable/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${base}/monarch-money-alternative`,
-      lastModified: getFileLastModified('src/app/monarch-money-alternative/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/monarch-money-alternative/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${base}/privacy`,
-      lastModified: getFileLastModified('src/app/privacy/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/privacy/page.tsx', nowIso),
       changeFrequency: 'yearly',
       priority: 0.2,
     },
     {
       url: `${base}/vs-ynab`,
-      lastModified: getFileLastModified('src/app/vs-ynab/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/vs-ynab/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${base}/ynab-alternative-europe`,
-      lastModified: getFileLastModified('src/app/ynab-alternative-europe/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/ynab-alternative-europe/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${base}/ynab-alternative-uk`,
-      lastModified: getFileLastModified('src/app/ynab-alternative-uk/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/ynab-alternative-uk/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${base}/ynab-alternative-australia`,
-      lastModified: getFileLastModified('src/app/ynab-alternative-australia/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/ynab-alternative-australia/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${base}/monarch-money-multi-currency`,
-      lastModified: getFileLastModified('src/app/monarch-money-multi-currency/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/monarch-money-multi-currency/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/firefly-iii-alternative`,
-      lastModified: getFileLastModified('src/app/firefly-iii-alternative/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/firefly-iii-alternative/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/self-hosted-ynab-alternative`,
-      lastModified: getFileLastModified('src/app/self-hosted-ynab-alternative/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/self-hosted-ynab-alternative/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${base}/monarch-money-europe-alternative`,
-      lastModified: getFileLastModified('src/app/monarch-money-europe-alternative/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/monarch-money-europe-alternative/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${base}/best-ynab-alternatives`,
-      lastModified: getFileLastModified('src/app/best-ynab-alternatives/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/best-ynab-alternatives/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/encrypted-budgeting`,
-      lastModified: getFileLastModified('src/app/encrypted-budgeting/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/encrypted-budgeting/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/multi-currency-budgeting`,
-      lastModified: getFileLastModified('src/app/multi-currency-budgeting/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/multi-currency-budgeting/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${base}/zero-based-budgeting`,
-      lastModified: getFileLastModified('src/app/zero-based-budgeting/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/zero-based-budgeting/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
       url: `${base}/everydollar-alternative`,
-      lastModified: getFileLastModified('src/app/everydollar-alternative/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/everydollar-alternative/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/goodbudget-alternative`,
-      lastModified: getFileLastModified('src/app/goodbudget-alternative/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/goodbudget-alternative/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/pocketguard-alternative`,
-      lastModified: getFileLastModified('src/app/pocketguard-alternative/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/pocketguard-alternative/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/quicken-simplifi-alternative`,
-      lastModified: getFileLastModified('src/app/quicken-simplifi-alternative/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/quicken-simplifi-alternative/page.tsx', nowIso),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/docs`,
-      lastModified: getFileLastModified('src/app/docs/page.tsx', nowIso),
+      lastModified: getFileLastModified('src/app/[locale]/docs/page.tsx', nowIso),
       changeFrequency: 'weekly',
       priority: 0.6,
     },
@@ -190,5 +191,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  return [...routes, ...posts, ...guides, ...changelogRoute];
+  const all = [...routes, ...posts, ...guides, ...changelogRoute];
+
+  // Emit every page once per locale, each carrying the full hreflang set so
+  // search engines treat them as translations rather than competing pages.
+  return all.flatMap((entry) => {
+    const pathname = entry.url.replace(base, '') || '/';
+    const languages = Object.fromEntries(
+      routing.locales.map((locale) => [
+        locale,
+        locale === routing.defaultLocale ? `${base}${pathname}` : `${base}/${locale}${pathname}`,
+      ])
+    );
+
+    return routing.locales.map((locale) => ({
+      ...entry,
+      url: locale === routing.defaultLocale ? `${base}${pathname}` : `${base}/${locale}${pathname}`,
+      alternates: { languages: { ...languages, 'x-default': `${base}${pathname}` } },
+    }));
+  });
 }

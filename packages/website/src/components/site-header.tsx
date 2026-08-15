@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { LanguageSwitcher } from '@/components/language-switcher';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -58,6 +59,7 @@ export function SiteHeader() {
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher />
             {/* Desktop links */}
             <div className="hidden sm:flex items-center gap-6 text-sm">
               <Link
