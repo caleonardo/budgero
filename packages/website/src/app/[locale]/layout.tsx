@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from 'next';
 import { IBM_Plex_Mono, Poppins } from 'next/font/google';
 import Script from 'next/script';
-import './globals.css';
+import '../globals.css';
 import { Providers } from '@/components/providers';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { NextIntlClientProvider, hasLocale } from 'next-intl';
+import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing';
 
 const poppins = Poppins({
   variable: '--font-poppins',
@@ -83,13 +86,22 @@ export const viewport: Viewport = {
   themeColor: '#111827',
 };
 
-export default function RootLayout({
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body className={`${poppins.variable} ${ibmPlexMono.variable} font-sans antialiased`}>
         {/* Umami — cookieless, self-hosted, no consent required (no device
             storage). Proxied through /stats (see next.config.ts rewrites) so
@@ -101,7 +113,8 @@ export default function RootLayout({
           data-domains="budgero.app"
           strategy="afterInteractive"
         />
-        <Providers>
+        <NextIntlClientProvider>
+          <Providers>
           <SiteHeader />
           {children}
           <SiteFooter />
@@ -134,7 +147,8 @@ export default function RootLayout({
               },
             }) }}
           />
-        </Providers>
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

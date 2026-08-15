@@ -25,7 +25,7 @@ const COLORS = {
 export default async function OgImage() {
   // Embed the real logo asset — packages/website/public/logo_512.png (512×512 logomark)
   const logoData = await fetch(
-    new URL('../../public/logo_512.png', import.meta.url)
+    new URL('../../../public/logo_512.png', import.meta.url)
   ).then((res) => res.arrayBuffer());
   const logoSrc = `data:image/png;base64,${Buffer.from(logoData).toString('base64')}`;
 
