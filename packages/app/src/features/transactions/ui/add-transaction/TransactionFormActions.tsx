@@ -61,7 +61,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
 
   return (
     <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:flex-wrap justify-between gap-2 sm:gap-3">
-      <div className="flex min-w-0 gap-2 order-2 sm:order-1 items-center">
+      <div className="flex w-full min-w-0 gap-2 order-2 sm:order-1 items-center sm:w-auto">
         <Button
           variant="outline"
           type="button"
@@ -75,7 +75,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
           <Trans>Press Cmd+Enter to save</Trans>
         </span>
       </div>
-      <div className="flex shrink-0 gap-2 order-1 sm:order-2">
+      <div className="flex w-full min-w-0 flex-wrap gap-2 order-1 sm:order-2 sm:w-auto sm:flex-nowrap">
         <Button
           onClick={onQuickAdd}
           disabled={isCalculatingTransfer}

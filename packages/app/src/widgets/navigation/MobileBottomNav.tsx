@@ -221,6 +221,7 @@ export function MobileBottomNav() {
 
   const navItems = [
     {
+      id: 'budgeting',
       title: t`Budgeting`,
       icon: ClipboardList,
       path: dashboardPath,
@@ -239,6 +240,7 @@ export function MobileBottomNav() {
       ],
     },
     {
+      id: 'accounts',
       title: t`Accounts`,
       icon: CreditCard,
       path: accountsPath,
@@ -246,12 +248,14 @@ export function MobileBottomNav() {
       hasDropdown: true,
     },
     {
+      id: 'add',
       title: t`Add`,
       icon: Plus,
       path: '#',
       isAction: true,
     },
     {
+      id: 'reports',
       title: t`Reports`,
       icon: ChartPie,
       path: reportsPath,
@@ -259,6 +263,7 @@ export function MobileBottomNav() {
       hasDropdown: true,
     },
     {
+      id: 'settings',
       title: t`Settings`,
       icon: Settings2,
       path: settingsPath,
@@ -351,11 +356,7 @@ export function MobileBottomNav() {
         {navItems.map((item) => {
           if (item.isAction) {
             return (
-              <Dialog
-                key={item.title}
-                open={addTransactionOpen}
-                onOpenChange={setAddTransactionOpen}
-              >
+              <Dialog key={item.id} open={addTransactionOpen} onOpenChange={setAddTransactionOpen}>
                 <DialogTrigger asChild>
                   <div
                     className="flex flex-col items-center gap-0"
@@ -385,11 +386,11 @@ export function MobileBottomNav() {
           if (item.options) {
             return (
               <DropdownMenu
-                key={item.title}
-                open={openDropdown === item.title}
-                onOpenChange={(open) => setOpenDropdown(open ? item.title : null)}
+                key={item.id}
+                open={openDropdown === item.id}
+                onOpenChange={(open) => setOpenDropdown(open ? item.id : null)}
               >
-                {renderTrigger(item, { testId: item.title.toLowerCase() })}
+                {renderTrigger(item, { testId: item.id })}
                 <DropdownMenuContent align="center" className="w-[200px] mb-4">
                   {item.options.map((option) => (
                     <DropdownMenuItem
@@ -413,12 +414,12 @@ export function MobileBottomNav() {
           }
 
           if (item.hasDropdown) {
-            if (item.title === 'Settings') {
+            if (item.id === 'settings') {
               return (
                 <DropdownMenu
-                  key={item.title}
-                  open={openDropdown === item.title}
-                  onOpenChange={(open) => setOpenDropdown(open ? item.title : null)}
+                  key={item.id}
+                  open={openDropdown === item.id}
+                  onOpenChange={(open) => setOpenDropdown(open ? item.id : null)}
                 >
                   {renderTrigger(item)}
                   <DropdownMenuContent align="center" className="w-[220px] mb-4">
@@ -595,12 +596,12 @@ export function MobileBottomNav() {
               );
             }
 
-            if (item.title === 'Reports') {
+            if (item.id === 'reports') {
               return (
                 <DropdownMenu
-                  key={item.title}
-                  open={openDropdown === item.title}
-                  onOpenChange={(open) => setOpenDropdown(open ? item.title : null)}
+                  key={item.id}
+                  open={openDropdown === item.id}
+                  onOpenChange={(open) => setOpenDropdown(open ? item.id : null)}
                 >
                   {renderTrigger(item)}
                   <DropdownMenuContent align="center" className="w-[200px] mb-4">
@@ -623,9 +624,9 @@ export function MobileBottomNav() {
 
             return (
               <DropdownMenu
-                key={item.title}
-                open={openDropdown === item.title}
-                onOpenChange={(open) => setOpenDropdown(open ? item.title : null)}
+                key={item.id}
+                open={openDropdown === item.id}
+                onOpenChange={(open) => setOpenDropdown(open ? item.id : null)}
               >
                 {renderTrigger(item, {
                   testId: 'accounts',
@@ -717,7 +718,7 @@ export function MobileBottomNav() {
           }
 
           return (
-            <Link key={item.title} to={item.path} className="flex flex-col items-center gap-0">
+            <Link key={item.id} to={item.path} className="flex flex-col items-center gap-0">
               <div
                 className={cn(
                   'p-2 transition-all duration-200 active:scale-95',
