@@ -52,7 +52,9 @@ export class AccountService {
     currency: string,
     balance: MilliUnits,
     metadata?: Record<string, unknown>,
-    onBudget?: boolean
+    onBudget?: boolean,
+    /** Memo written on the opening transaction; app passes a localized string. */
+    initialBalanceMemo = 'Initial Balance'
   ): Promise<Account> {
     if (!name.trim()) {
       throw new Error('account name cannot be empty');
@@ -261,7 +263,7 @@ export class AccountService {
           transfersCategoryId, // Transfers category - excluded from budget calculations
           budgetId,
           currentDate,
-          'Initial Balance',
+          initialBalanceMemo,
           '',
           SYSTEM_PAYEE
         );
@@ -275,7 +277,7 @@ export class AccountService {
         incomeCategoryId, // categoryId - Using Income category ID
         budgetId, // budgetId
         currentDate, // date
-        'Initial Balance', // memo
+        initialBalanceMemo, // memo
         '', // transferId (empty for initial balance)
         SYSTEM_PAYEE
       );

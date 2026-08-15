@@ -60,7 +60,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   }, [isCalculatingTransfer, isTransfer, isInflow, t]);
 
   return (
-    <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:flex-wrap justify-between gap-2 sm:gap-3">
+    <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between gap-2 sm:gap-3">
       <div className="flex w-full min-w-0 gap-2 order-2 sm:order-1 items-center sm:w-auto">
         <Button
           variant="outline"
@@ -70,11 +70,11 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
         >
           <Trans>Cancel</Trans>
         </Button>
-        {/* Hint must never squeeze the buttons — hide it before it wraps. */}
-        <span className="hidden md:inline-block whitespace-nowrap text-[10px] text-muted-foreground ml-2">
-          <Trans>Press Cmd+Enter to save</Trans>
-        </span>
       </div>
+      {/* Own full-width row so long translations never squeeze the buttons. */}
+      <span className="order-3 hidden w-full text-right text-[10px] text-muted-foreground sm:block">
+        <Trans>Press Cmd+Enter to save</Trans>
+      </span>
       <div className="flex w-full min-w-0 flex-wrap gap-2 order-1 sm:order-2 sm:w-auto sm:flex-nowrap">
         <Button
           onClick={onQuickAdd}

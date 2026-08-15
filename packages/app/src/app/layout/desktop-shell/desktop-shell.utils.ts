@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 import { capitalize } from '@shared/lib/utils';
 import { BREADCRUMB_LABEL_MAP } from './constants';
 import type { BreadcrumbItem } from './types';
@@ -7,12 +8,13 @@ import type { BreadcrumbItem } from './types';
  * Generates a human-readable label for a URL segment
  */
 export function getLabelForSegment(segment: string): string {
-  if (BREADCRUMB_LABEL_MAP[segment]) {
-    return BREADCRUMB_LABEL_MAP[segment];
+  const descriptor = BREADCRUMB_LABEL_MAP[segment];
+  if (descriptor) {
+    return i18n._(descriptor);
   }
   // If segment is a number (like account ID), show "Details"
   if (!Number.isNaN(Number(segment))) {
-    return 'Details';
+    return t`Details`;
   }
   return capitalize(segment);
 }

@@ -30,13 +30,14 @@ export function LabelCombobox({
   budgetId,
   value,
   onChange,
-  placeholder = 'No label',
+  placeholder: placeholderProp,
   triggerClassName,
   popoverContentClassName,
   disabled = false,
   allowClear = true,
 }: LabelComboboxProps) {
   const { t } = useLingui();
+  const placeholder = placeholderProp ?? t`No label`;
 
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');

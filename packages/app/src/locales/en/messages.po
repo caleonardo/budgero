@@ -166,6 +166,14 @@ msgstr "(Required)"
 msgid "(showing first {0} below)"
 msgstr "(showing first {0} below)"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "{{monthsRemaining}} months remaining"
+msgstr "{{monthsRemaining}} months remaining"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "{{successfulMonths}}/{{monthsTracked}} months"
+msgstr "{{successfulMonths}}/{{monthsTracked}} months"
+
 #. placeholder {0}: result.accountsRemoved
 #: src/pages/settings/ImportsPage.tsx
 msgid "{0, plural, one {, # account} other {, # accounts}}"
@@ -1940,6 +1948,26 @@ msgstr "~75MB, fastest"
 msgid "− Already set aside"
 msgstr "− Already set aside"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "⚠️ Target date passed - need {{needed}} more"
+msgstr "⚠️ Target date passed - need {{needed}} more"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "⚠️ Target date passed - need {{needed}} more available"
+msgstr "⚠️ Target date passed - need {{needed}} more available"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ {{assigned}} allocated this month — on track!"
+msgstr "✓ {{assigned}} allocated this month — on track!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ Fully allocated!"
+msgstr "✓ Fully allocated!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ Goal exceeded by {{excess}}"
+msgstr "✓ Goal exceeded by {{excess}}"
+
 #: src/pages/onboarding/steps/PasswordStep.tsx
 msgid "✓ MATCH"
 msgstr "✓ MATCH"
@@ -1948,6 +1976,30 @@ msgstr "✓ MATCH"
 msgid "✓ READY"
 msgstr "✓ READY"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ Target amount available!"
+msgstr "✓ Target amount available!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ Target available!"
+msgstr "✓ Target available!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ This month done! {{totalAssigned}} of {{target}} allocated"
+msgstr "✓ This month done! {{totalAssigned}} of {{target}} allocated"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ This month funded! {{available}}/{{target}} available"
+msgstr "✓ This month funded! {{available}}/{{target}} available"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ This month's {{monthlyTarget}} allocated!"
+msgstr "✓ This month's {{monthlyTarget}} allocated!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ This month's {{monthlyTarget}} saved!"
+msgstr "✓ This month's {{monthlyTarget}} saved!"
+
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "✓ ZERO-BASED. EVERY COIN NOW HAS A JOB."
 msgstr "✓ ZERO-BASED. EVERY COIN NOW HAS A JOB."
@@ -1955,6 +2007,10 @@ msgstr "✓ ZERO-BASED. EVERY COIN NOW HAS A JOB."
 #: src/pages/onboarding/steps/PasswordStep.tsx
 msgid "✗ DOES NOT MATCH"
 msgstr "✗ DOES NOT MATCH"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "🌟 Excellent consistency! Keep it up!"
+msgstr "🌟 Excellent consistency! Keep it up!"
 
 #: src/pages/settings/SecurityPage.tsx
 msgid "1 day"
@@ -2084,6 +2140,7 @@ msgstr "A workspace keeps your budgets, accounts, and collaborators organized in
 msgid "A workspace organizes your budgets and lets you share them with others. Think of it as a shared folder, everything inside is accessible to anyone you invite."
 msgstr "A workspace organizes your budgets and lets you share them with others. Think of it as a shared folder, everything inside is accessible to anyone you invite."
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/shared/model/nav-registry.ts
 msgid "About"
 msgstr "About"
@@ -2215,6 +2272,7 @@ msgstr "Account:"
 msgid "Account<0/>"
 msgstr "Account<0/>"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/accounts/AccountsPage.tsx
 #: src/pages/admin/SelfHostAdminUsers.tsx
@@ -2312,6 +2370,7 @@ msgstr "Active Subscribers"
 #: src/features/budget-planning/ui/CategoryGroupRow.tsx
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
 #: src/features/budget-planning/ui/DraggableBudgetTable.tsx
+#: src/features/goal-management/lib/core-goal-text.ts
 #: src/pages/admin/admin-users/UserDetailsDialog.tsx
 msgid "Activity"
 msgstr "Activity"
@@ -2604,6 +2663,7 @@ msgstr "All time"
 msgid "All transactions"
 msgstr "All transactions"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/accounts/AllTransactionsPage.tsx
 msgid "All Transactions"
@@ -2629,6 +2689,10 @@ msgstr "All your data is now synchronized"
 msgid "All-Time Mutations"
 msgstr "All-Time Mutations"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "All-time total"
+msgstr "All-time total"
+
 #: src/pages/admin/admin-users/user-details/MutationsTab.tsx
 msgid "All-time totals with a daily activity view for the current window."
 msgstr "All-time totals with a daily activity view for the current window."
@@ -2637,15 +2701,39 @@ msgstr "All-time totals with a daily activity view for the current window."
 msgid "Alloc."
 msgstr "Alloc."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocate {{monthlyNeeded}} more this month"
+msgstr "Allocate {{monthlyNeeded}} more this month"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocate {{stillNeeded}} more to complete this month's target"
+msgstr "Allocate {{stillNeeded}} more to complete this month's target"
+
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Allocate a total amount over a period by a target date"
 msgstr "Allocate a total amount over a period by a target date"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocate This Month"
+msgstr "Allocate This Month"
 
 #: src/features/budget-planning/ui/category-row/CategoryAmountsSection.tsx
 #: src/features/budget-planning/ui/CategoryGroupRow.tsx
 #: src/features/budget-planning/ui/DraggableBudgetTable.tsx
 msgid "Allocated"
 msgstr "Allocated"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocated so far: {{totalAssigned}} of {{target}} ({{pct}})"
+msgstr "Allocated so far: {{totalAssigned}} of {{target}} ({{pct}})"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocated this month"
+msgstr "Allocated this month"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocated This Month"
+msgstr "Allocated This Month"
 
 #: src/pages/settings/BudgetSettingsPage.tsx
 msgid "Allow over-assignment"
@@ -2658,6 +2746,10 @@ msgstr "Allow this user to log in again and resume normal access."
 #: src/pages/auth/AuthPage.tsx
 msgid "Already have an account? <0>Sign in</0>"
 msgstr "Already have an account? <0>Sign in</0>"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Already scheduled"
+msgstr "Already scheduled"
 
 #. placeholder {0}: reverseValue !== null ? ` (1 ${formData.toCurrency} = ${reverseValue} ${formData.fromCurrency})` : ''
 #: src/pages/settings/CurrencySettingsPage.tsx
@@ -2704,6 +2796,10 @@ msgstr "Amount already repaid on this debt."
 msgid "Amount conditions require a numeric value."
 msgstr "Amount conditions require a numeric value."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Amount needed available"
+msgstr "Amount needed available"
+
 #: src/pages/onboarding/steps/AccountsStep.tsx
 msgid "Amount owed"
 msgstr "Amount owed"
@@ -2711,6 +2807,10 @@ msgstr "Amount owed"
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "AMOUNT PER MONTH"
 msgstr "AMOUNT PER MONTH"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Amount to start the month with"
+msgstr "Amount to start the month with"
 
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
@@ -2932,6 +3032,10 @@ msgstr "Assets vs Debt"
 msgid "Assign"
 msgstr "Assign"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Assign {{needed}} to reach your target"
+msgstr "Assign {{needed}} to reach your target"
+
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Assign a fixed amount every month, regardless of spending"
 msgstr "Assign a fixed amount every month, regardless of spending"
@@ -2939,6 +3043,10 @@ msgstr "Assign a fixed amount every month, regardless of spending"
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "Assign the same amount every month. Best for emergency funds and ongoing buckets."
 msgstr "Assign the same amount every month. Best for emergency funds and ongoing buckets."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Assign this to reach target"
+msgstr "Assign this to reach target"
 
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
@@ -2955,6 +3063,10 @@ msgstr "Assigned {0} from Ready to Assign."
 #: src/features/budget-planning/ui/budget-table/DeleteCategoryDialog.tsx
 msgid "Assigned amount ({0})"
 msgstr "Assigned amount ({0})"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Assigned This Month"
+msgstr "Assigned This Month"
 
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Assigned this month:"
@@ -3072,6 +3184,10 @@ msgstr "Automation run details"
 msgid "Automation<0/>"
 msgstr "Automation<0/>"
 
+#: src/app/layout/desktop-shell/constants.ts
+msgid "Automations"
+msgstr "Automations"
+
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 msgid "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
 msgstr "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
@@ -3127,6 +3243,10 @@ msgstr "Average"
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Average monthly spend: <0>{0}</0>"
 msgstr "Average monthly spend: <0>{0}</0>"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Average Saved"
+msgstr "Average Saved"
 
 #: src/pages/admin/admin-users/user-details/MutationsTab.tsx
 #: src/pages/admin/admin-users/user-details/OverviewTab.tsx
@@ -3449,6 +3569,7 @@ msgstr "Budgero will revert every transaction touched by this run back to its or
 msgid "Budgero works either way. Pick the path that fits."
 msgstr "Budgero works either way. Pick the path that fits."
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/startup/StartupStepper.tsx
 #: src/pages/settings/AuditLogPage.tsx
 msgid "Budget"
@@ -3567,6 +3688,10 @@ msgstr "Build"
 msgid "Build Channel"
 msgstr "Build Channel"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Build consistent savings habits"
+msgstr "Build consistent savings habits"
+
 #: src/pages/custom-dashboards/CustomDashboardsPage.tsx
 msgid "Build dashboard layouts from Explorer charts. Drag to reorder, resize on desktop, and use size presets on mobile."
 msgstr "Build dashboard layouts from Explorer charts. Drag to reorder, resize on desktop, and use size presets on mobile."
@@ -3574,6 +3699,10 @@ msgstr "Build dashboard layouts from Explorer charts. Drag to reorder, resize on
 #: src/pages/settings/AboutPage.tsx
 msgid "Build metadata for support or troubleshooting."
 msgstr "Build metadata for support or troubleshooting."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Building habits takes time - keep trying!"
+msgstr "Building habits takes time - keep trying!"
 
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
 msgid "Bundle ready"
@@ -4388,6 +4517,10 @@ msgstr "Connectivity"
 msgid "Connectivity status"
 msgstr "Connectivity status"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Consecutive months"
+msgstr "Consecutive months"
+
 #. placeholder {0}: selectedCategories.length
 #: src/pages/budgeting/BudgetingPage.mobile.tsx
 msgid "Context ({0})"
@@ -4412,6 +4545,10 @@ msgstr "Context: {0} / {1} tokens ({2}%)"
 #: src/features/account-management/ui/EditAccountDialog.tsx
 msgid "Continue"
 msgstr "Continue"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Continue allocating {{monthlyTarget}} each month to reach your goal"
+msgstr "Continue allocating {{monthlyTarget}} each month to reach your goal"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
@@ -4568,6 +4705,10 @@ msgstr "Create a dashboard first to pin charts."
 #: src/pages/auth/AuthPage.tsx
 msgid "Create a Free Account | Budgero"
 msgstr "Create a Free Account | Budgero"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Create a goal to track your financial progress"
+msgstr "Create a goal to track your financial progress"
 
 #: src/app/startup/screens.tsx
 msgid "Create a New Budget"
@@ -4823,6 +4964,10 @@ msgstr "Currency rate changes"
 msgid "Current"
 msgstr "Current"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Current balance"
+msgstr "Current balance"
+
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
 msgid "Current Balance"
 msgstr "Current Balance"
@@ -4851,14 +4996,27 @@ msgstr "Current Period End"
 msgid "Current Plan"
 msgstr "Current Plan"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Current progress"
+msgstr "Current progress"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Current Streak"
+msgstr "Current Streak"
+
 #: src/features/goal-management/ui/GoalCard.tsx
 msgid "Current Streak:"
 msgstr "Current Streak:"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Currently Available"
+msgstr "Currently Available"
 
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Custom cadence"
 msgstr "Custom cadence"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/pages/custom-dashboards/CustomDashboardsPage.tsx
 #: src/shared/model/nav-registry.ts
 #: src/widgets/command-palette/CommandPalette.tsx
@@ -4880,6 +5038,10 @@ msgstr "Customer ID:"
 #: src/pages/settings/AppearancePage.tsx
 msgid "Customize how Budgero looks on your device"
 msgstr "Customize how Budgero looks on your device"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Cycle: {{cycleStart}} to {{cycleEnd}}"
+msgstr "Cycle: {{cycleStart}} to {{cycleEnd}}"
 
 #: src/features/budget-management/model/icon-options.ts
 msgid "Cycling"
@@ -4920,6 +5082,7 @@ msgid "Dark with copper warmth."
 msgstr "Dark with copper warmth."
 
 #: src/app/layout/AdminSidebar.tsx
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/desktop-shell.utils.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/app/layout/desktop-shell/useDesktopShellState.ts
@@ -5285,6 +5448,7 @@ msgstr "Destination account:"
 msgid "Destinations"
 msgstr "Destinations"
 
+#: src/app/layout/desktop-shell/desktop-shell.utils.ts
 #: src/pages/admin/admin-users/UsersTable.tsx
 #: src/pages/settings/AuditLogPage.tsx
 msgid "Details"
@@ -5915,6 +6079,10 @@ msgstr "Exactly"
 msgid "Examples:"
 msgstr "Examples:"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Exceeded target! Saved {{saved}} this month"
+msgstr "Exceeded target! Saved {{saved}} this month"
+
 #: src/pages/settings/ai/ai-settings.constants.ts
 msgid "Excellent for structured outputs"
 msgstr "Excellent for structured outputs"
@@ -5998,6 +6166,7 @@ msgstr "Expiry Date *"
 msgid "Explore detailed payoff projections. Adjust APR, monthly payment, and extras to see how they affect timeline and interest."
 msgstr "Explore detailed payoff projections. Adjust APR, monthly payment, and extras to see how they affect timeline and interest."
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/shared/model/nav-registry.ts
 #: src/widgets/command-palette/CommandPalette.tsx
 msgid "Explorer"
@@ -6361,6 +6530,10 @@ msgstr "Filter by name, username, or ID."
 msgid "Filter series..."
 msgstr "Filter series..."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Final month! Allocate {{stillNeeded}} to complete"
+msgstr "Final month! Allocate {{stillNeeded}} to complete"
+
 #: src/pages/settings/push-api/IdReferencePanel.tsx
 msgid "Find the IDs you need for API requests. Click any ID to copy it. Payees are referenced by name, not id."
 msgstr "Find the IDs you need for API requests. Click any ID to copy it. Payees are referenced by name, not id."
@@ -6420,6 +6593,10 @@ msgstr "For credit cards, this approximates a fixed payment schedule. Actual car
 #: src/pages/settings/ai/ModelSelectionSection.tsx
 msgid "For receipt/image scanning"
 msgstr "For receipt/image scanning"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "For this month"
+msgstr "For this month"
 
 #: src/pages/analytics/reports/WealthReport.tsx
 msgid "Forecast"
@@ -6591,6 +6768,10 @@ msgstr "Future transaction"
 msgid "Gaming"
 msgstr "Gaming"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Gap to target"
+msgstr "Gap to target"
+
 #: src/features/budget-management/model/icon-options.ts
 msgid "Garden & Outdoor"
 msgstr "Garden & Outdoor"
@@ -6655,6 +6836,10 @@ msgstr "Go to Settings → AI Assistant to configure your local LLM connection."
 msgid "Goal"
 msgstr "Goal"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Goal Amount"
+msgstr "Goal Amount"
+
 #: src/features/goal-management/ui/GoalSection.tsx
 msgid "Goal created"
 msgstr "Goal created"
@@ -6683,6 +6868,14 @@ msgstr "Goal Type"
 msgid "Goal updated"
 msgstr "Goal updated"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Goal: Save {{monthlyTarget}} every month"
+msgstr "Goal: Save {{monthlyTarget}} every month"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Goal: start each month with this amount available"
+msgstr "Goal: start each month with this amount available"
+
 #: src/features/budget-management/model/icon-options.ts
 msgid "Goals"
 msgstr "Goals"
@@ -6694,6 +6887,10 @@ msgstr "Good balance of speed and quality"
 #: src/pages/settings/ai/ai-settings.constants.ts
 msgid "Good general vision"
 msgstr "Good general vision"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Good progress - aim for more consistency"
+msgstr "Good progress - aim for more consistency"
 
 #: src/pages/admin/SelfHostAdminUsers.tsx
 msgid "Grant admin privileges"
@@ -6716,6 +6913,10 @@ msgstr "Granted {betaDays} days of free access to {0}"
 #: src/pages/admin/admin-users/useAdminUsersState.ts
 msgid "Granted founding member access to {0}"
 msgstr "Granted founding member access to {0}"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Great job! Monthly goal achieved. Total saved: {{totalSaved}}"
+msgstr "Great job! Monthly goal achieved. Total saved: {{totalSaved}}"
 
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
 msgid "Great job! No uncategorised transactions left."
@@ -6755,6 +6956,10 @@ msgstr "Groups"
 #: src/features/budget-management/model/icon-options.ts
 msgid "Hair & Beauty"
 msgstr "Hair & Beauty"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Halfway there! Save {{needed}} more this month"
+msgstr "Halfway there! Save {{needed}} more this month"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Have a specific amount available by a target date"
@@ -7118,6 +7323,10 @@ msgstr "Income category not found. Please ensure your budget has an Income categ
 msgid "Income counts as it arrives and last month’s overspending is pulled from this month (YNAB-style)."
 msgstr "Income counts as it arrives and last month’s overspending is pulled from this month (YNAB-style)."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Income this month"
+msgstr "Income this month"
+
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 msgid "Income vs expense trend"
 msgstr "Income vs expense trend"
@@ -7126,6 +7335,10 @@ msgstr "Income vs expense trend"
 #: src/features/recurring/api/useRecurringNotifications.ts
 msgid "Incoming: {0}"
 msgstr "Incoming: {0}"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Increase savings to reach your {{target}} monthly goal"
+msgstr "Increase savings to reach your {{target}} monthly goal"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Indian Rupee"
@@ -7155,6 +7368,10 @@ msgstr "InflowConverted"
 #: src/features/debt/ui/PayoffSimulator.tsx
 msgid "Info"
 msgstr "Info"
+
+#: src/shared/mutations/op-code-registry/domains/accounts.ts
+msgid "Initial Balance"
+msgstr "Initial Balance"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Instagram"
@@ -7544,6 +7761,10 @@ msgstr "Left in plan"
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "LEFT TO ASSIGN"
 msgstr "LEFT TO ASSIGN"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Leftover balance rolls into next month"
+msgstr "Leftover balance rolls into next month"
 
 #: src/pages/settings/push-api/PushApiPage.tsx
 msgid "Legacy payloads without the <0>\"v\"</0>field are treated as format 1 (decimal amounts, e.g. <1>25.50</1>) and upgraded on import. New integrations should send format 2."
@@ -8177,6 +8398,7 @@ msgstr "Monthly"
 msgid "Monthly Allocation Target"
 msgstr "Monthly Allocation Target"
 
+#: src/features/goal-management/lib/core-goal-text.ts
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Monthly Available Target"
@@ -8198,14 +8420,26 @@ msgstr "Monthly income"
 msgid "Monthly inflow vs outflow (12m)"
 msgstr "Monthly inflow vs outflow (12m)"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Monthly Pace"
+msgstr "Monthly Pace"
+
 #: src/features/debt/ui/PayoffPlanSheet.tsx
 #: src/features/debt/ui/PayoffSimulator.tsx
 msgid "Monthly payment"
 msgstr "Monthly payment"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Monthly Savings Goal"
+msgstr "Monthly Savings Goal"
+
 #: src/pages/analytics/reports/ScenarioReport.tsx
 msgid "Monthly spending"
 msgstr "Monthly spending"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Monthly Target"
+msgstr "Monthly Target"
 
 #: src/pages/analytics/reports/PlanRealityReport.tsx
 msgid "Months on plan"
@@ -8363,6 +8597,14 @@ msgstr "Name your new custom dashboard."
 #: src/pages/admin/admin-users/ActionDialog.tsx
 msgid "Name: {0}"
 msgstr "Name: {0}"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Nearly there! Complete this month to maintain your streak"
+msgstr "Nearly there! Complete this month to maintain your streak"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Need {{needed}} more available"
+msgstr "Need {{needed}} more available"
 
 #: src/pages/onboarding/steps/CurrencyStep.tsx
 msgid "NEED A DIFFERENT CURRENCY?"
@@ -8745,6 +8987,10 @@ msgstr "No foreign-currency accounts"
 msgid "No fresh rate available. Prefilled with the closest cached rate — adjust if needed."
 msgstr "No fresh rate available. Prefilled with the closest cached rate — adjust if needed."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "No Goal"
+msgstr "No Goal"
+
 #: src/features/goal-management/ui/GoalCard.tsx
 msgid "No goal set for {categoryName}"
 msgstr "No goal set for {categoryName}"
@@ -8785,6 +9031,7 @@ msgstr "No invite code"
 msgid "No invoices yet. Invoices will appear here after your first payment."
 msgstr "No invoices yet. Invoices will appear here after your first payment."
 
+#: src/features/labels/ui/LabelCombobox.tsx
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 msgid "No label"
 msgstr "No label"
@@ -8939,6 +9186,10 @@ msgstr "No saved report with chart configuration is available yet."
 #: src/pages/explorer-page/components/ReportsPanel.tsx
 msgid "No saved reports yet. Save a query to get started."
 msgstr "No saved reports yet. Save a query to get started."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "No savings target set"
+msgstr "No savings target set"
 
 #: src/shared/pwa/ServiceWorkerUpdateProvider.tsx
 msgid "No service worker registration found."
@@ -9181,6 +9432,14 @@ msgstr "On Budget"
 #: src/widgets/dashboard/AtAGlance.tsx
 msgid "On track"
 msgstr "On track"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "On track — {{needed}} still needed over {{monthsMore}} more months."
+msgstr "On track — {{needed}} still needed over {{monthsMore}} more months."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "On track — {{needed}} still needed over 1 more month."
+msgstr "On track — {{needed}} still needed over 1 more month."
 
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Once the workspace owner renews their plan, your shared workspace access comes back automatically."
@@ -9532,6 +9791,10 @@ msgstr "Overspent"
 msgid "Overspent by "
 msgstr "Overspent by "
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Overspent by {{overspent}}"
+msgstr "Overspent by {{overspent}}"
+
 #. placeholder {0}: formatAmount(cashOverspend)
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Overspent by {0}in cash"
@@ -9773,6 +10036,10 @@ msgstr "Pending invites still need their encrypted bundle."
 msgid "Pending mutations waiting to be processed when you connect."
 msgstr "Pending mutations waiting to be processed when you connect."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Per month historically"
+msgstr "Per month historically"
+
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 msgid "Percent"
 msgstr "Percent"
@@ -9910,6 +10177,10 @@ msgstr "Plan vs Reality"
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "Plan:"
 msgstr "Plan:"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Planned Future"
+msgstr "Planned Future"
 
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/features/budget-management/model/icon-options.ts
@@ -10089,6 +10360,7 @@ msgstr "Posted"
 msgid "PostHog (EU)"
 msgstr "PostHog (EU)"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/pages/analytics/AnalyticsPage.tsx
 #: src/shared/model/nav-registry.ts
 msgid "Prebuilt"
@@ -10245,9 +10517,17 @@ msgstr "Product Hunt"
 msgid "Progress"
 msgstr "Progress"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Progress resets at the start of each month"
+msgstr "Progress resets at the start of each month"
+
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Progress:"
 msgstr "Progress:"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Progress: {{available}} of {{target}} ({{pct}})"
+msgstr "Progress: {{available}} of {{target}} ({{pct}})"
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Project Resources"
@@ -10561,6 +10841,7 @@ msgstr "Recording…"
 msgid "Recording... {0} (click to stop)"
 msgstr "Recording... {0} (click to stop)"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/shared/model/nav-registry.ts
@@ -10604,6 +10885,14 @@ msgstr "Recurring transactions"
 #: src/pages/settings/RecurringTransactionsPage.tsx
 msgid "Recurring Transactions"
 msgstr "Recurring Transactions"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Recurring Yearly Allocation Target"
+msgstr "Recurring Yearly Allocation Target"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Recurring Yearly Available Target"
+msgstr "Recurring Yearly Available Target"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Reddit"
@@ -10724,6 +11013,10 @@ msgstr "Reload Application"
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 msgid "Remaining"
 msgstr "Remaining"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Remaining to allocate"
+msgstr "Remaining to allocate"
 
 #: src/features/transactions/ui/form/SplitEditor.tsx
 msgid "Remaining to assign"
@@ -10861,6 +11154,7 @@ msgstr "Report Loaded"
 msgid "Report Name *"
 msgstr "Report Name *"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/explorer-page/ExplorerPage.tsx
 #: src/widgets/command-palette/CommandPalette.tsx
@@ -11187,6 +11481,7 @@ msgstr "Rule paused"
 msgid "Rule updated"
 msgstr "Rule updated"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/shared/model/nav-registry.ts
 msgid "Rules"
 msgstr "Rules"
@@ -11268,6 +11563,10 @@ msgstr "Same currency"
 msgid "Save"
 msgstr "Save"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Save {{needed}} more this month"
+msgstr "Save {{needed}} more this month"
+
 #: src/features/reports/ui/SaveReportDialog.tsx
 msgid "Save & Pin"
 msgstr "Save & Pin"
@@ -11296,6 +11595,10 @@ msgstr "Save Chat Settings"
 #: src/features/import/ui/steps/configure/TemplatesTab.tsx
 msgid "Save current settings as template"
 msgstr "Save current settings as template"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Save each month"
+msgstr "Save each month"
 
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "Save failed"
@@ -11341,6 +11644,10 @@ msgstr "Saved scenarios"
 #: src/features/import/ui/steps/configure/TemplatesTab.tsx
 msgid "Saved Templates"
 msgstr "Saved Templates"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Saved This Month"
+msgstr "Saved This Month"
 
 #: src/features/account-management/ui/EditAccountDialog.tsx
 #: src/features/budget-planning/ui/GroupNameEditPopover.tsx
@@ -11752,6 +12059,10 @@ msgstr "Select or create a budget to configure automation rules."
 msgid "Select or create a workspace to manage sharing options."
 msgstr "Select or create a workspace to manage sharing options."
 
+#: src/features/payees/ui/PayeeCombobox.tsx
+msgid "Select or create payee"
+msgstr "Select or create payee"
+
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Select payee"
@@ -11980,6 +12291,7 @@ msgstr "Set up recurring paycheques, bills, or transfers and Budgero will remind
 msgid "Set up recurring transactions to automatically create entries on a schedule."
 msgstr "Set up recurring transactions to automatically create entries on a schedule."
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/widgets/navigation/MobileBottomNav.tsx
 msgid "Settings"
@@ -12319,6 +12631,10 @@ msgstr "Spending by label (90d)"
 msgid "Spending category (optional)"
 msgstr "Spending category (optional)"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Spending during the month doesn't reduce progress — only what you assign matters"
+msgstr "Spending during the month doesn't reduce progress — only what you assign matters"
+
 #. placeholder {0}: fmt.money(plan.totalSpent - plan.totalAssigned)
 #. placeholder {1}: (usage * 100).toFixed(0)
 #: src/pages/analytics/insights.ts
@@ -12338,6 +12654,10 @@ msgstr "Spending Pattern"
 #: src/pages/analytics/insights.ts
 msgid "Spending ran at {0}% of plan — {1} of assigned money went unspent."
 msgstr "Spending ran at {0}% of plan — {1} of assigned money went unspent."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Spending this month"
+msgstr "Spending this month"
 
 #: src/pages/analytics/reports/PlanRealityReport.tsx
 msgid "Spent"
@@ -12437,6 +12757,14 @@ msgstr "Start Import<0/>"
 msgid "Start monthly plan"
 msgstr "Start monthly plan"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Start saving {{monthlyTarget}} this month"
+msgstr "Start saving {{monthlyTarget}} this month"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Start this month's savings - aim for {{target}}"
+msgstr "Start this month's savings - aim for {{target}}"
+
 #: src/features/subscription/ui/SubscriptionSuccess.tsx
 msgid "Start Using Budgero"
 msgstr "Start Using Budgero"
@@ -12523,6 +12851,10 @@ msgstr "Stickiness over time"
 #: src/pages/analytics/reports/VsExpenseReport.tsx
 msgid "sticky left-0 z-10 max-w-[130px] truncate border-r px-2 py-2 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.15)] sm:max-w-none sm:px-3"
 msgstr "sticky left-0 z-10 max-w-[130px] truncate border-r px-2 py-2 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.15)] sm:max-w-none sm:px-3"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Still Needed"
+msgstr "Still Needed"
 
 #: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
 msgid "Still underfunded"
@@ -12613,6 +12945,10 @@ msgstr "Subscriptions"
 msgid "Success"
 msgstr "Success"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Success Rate"
+msgstr "Success Rate"
+
 #: src/features/ai/ui/AICategorizeDialog.tsx
 msgid "Successfully categorized {selectedCount} transactions."
 msgstr "Successfully categorized {selectedCount} transactions."
@@ -12651,6 +12987,10 @@ msgstr "Suggested models for best performance with budget tasks"
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
 msgid "Sum"
 msgstr "Sum"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Sum of assignments in cycle"
+msgstr "Sum of assignments in cycle"
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Summary"
@@ -12784,6 +13124,18 @@ msgstr "Takes about 2 minutes"
 msgid "Target Amount"
 msgstr "Target Amount"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target amount fully allocated for this cycle."
+msgstr "Target amount fully allocated for this cycle."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target amount is available and ready to use."
+msgstr "Target amount is available and ready to use."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target Available"
+msgstr "Target Available"
+
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Target Date"
 msgstr "Target Date"
@@ -12792,14 +13144,34 @@ msgstr "Target Date"
 msgid "TARGET DATE"
 msgstr "TARGET DATE"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target date has passed"
+msgstr "Target date has passed"
+
 #: src/features/goal-management/ui/GoalCard.tsx
 msgid "Target Date:"
 msgstr "Target Date:"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target met — category is fully funded"
+msgstr "Target met — category is fully funded"
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 #: src/features/account-management/ui/EditAccountDialog.tsx
 msgid "Target Payoff Date (optional)"
 msgstr "Target Payoff Date (optional)"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target per remaining month"
+msgstr "Target per remaining month"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target: {{target}} available by {{targetDate}}"
+msgstr "Target: {{target}} available by {{targetDate}}"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target: allocate {{target}} by {{targetDate}}"
+msgstr "Target: allocate {{target}} by {{targetDate}}"
 
 #: src/pages/analytics/reports/InOutReport.tsx
 msgid "Target<0/>%"
@@ -13028,6 +13400,10 @@ msgstr "This is the encryption key for all your financial data."
 msgid "This is the total of the split lines. To change it, click <0>View splits</0>."
 msgstr "This is the total of the split lines. To change it, click <0>View splits</0>."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "This is your final month!"
+msgstr "This is your final month!"
+
 #: src/pages/JoinWorkspacePage.tsx
 msgid "This join link is missing its invite code. Ask the workspace owner to resend the full link."
 msgstr "This join link is missing its invite code. Ask the workspace owner to resend the full link."
@@ -13051,6 +13427,10 @@ msgstr "This month"
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "THIS MONTH'S PAYCHECK"
 msgstr "THIS MONTH'S PAYCHECK"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "This month's target met! Continue with {{monthlyTarget}}/month to stay on track"
+msgstr "This month's target met! Continue with {{monthlyTarget}}/month to stay on track"
 
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 msgid "This note will be copied into the transaction memo."
@@ -13245,9 +13625,21 @@ msgstr "To account"
 msgid "To account:"
 msgstr "To account:"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "To complete the goal"
+msgstr "To complete the goal"
+
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "To connect, you need a SimpleFIN setup token. Get one from <0>SimpleFIN Bridge<1/></0>"
 msgstr "To connect, you need a SimpleFIN setup token. Get one from <0>SimpleFIN Bridge<1/></0>"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "To reach target available"
+msgstr "To reach target available"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "To stay on pace"
+msgstr "To stay on pace"
 
 #: src/features/transactions/ui/form/DatePickerQuick.tsx
 msgid "Today"
@@ -13296,6 +13688,10 @@ msgstr "Top payees by spending (30d)"
 #: src/pages/settings/push-api/QueueStatsPanel.tsx
 msgid "Total"
 msgstr "Total"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Total Allocated"
+msgstr "Total Allocated"
 
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 msgid "Total amount"
@@ -13354,6 +13750,10 @@ msgstr "Total paid this month"
 msgid "Total payments"
 msgstr "Total payments"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Total Saved"
+msgstr "Total Saved"
+
 #: src/pages/dashboard/DashboardPage.desktop.tsx
 #: src/pages/dashboard/DashboardPage.mobile.tsx
 msgid "total spent"
@@ -13370,6 +13770,10 @@ msgstr "Total Spent:"
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "TOTAL TARGET"
 msgstr "TOTAL TARGET"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Total to allocate"
+msgstr "Total to allocate"
 
 #: src/pages/admin/SelfHostAdminUsers.tsx
 msgid "Total users"
@@ -13406,6 +13810,14 @@ msgstr "Tracking accounts"
 #: src/pages/accounts/components/ValueChangeStat.tsx
 msgid "Tracking-only account: these changes affect net worth but not Ready to Assign."
 msgstr "Tracking-only account: these changes affect net worth but not Ready to Assign."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Tracks the actual balance — spending reduces progress"
+msgstr "Tracks the actual balance — spending reduces progress"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Tracks total assignments — spending does not affect progress"
+msgstr "Tracks total assignments — spending does not affect progress"
 
 #: src/pages/warranties/components/WarrantyTable.tsx
 msgid "Transaction"
@@ -13823,6 +14235,10 @@ msgstr "Unknown date"
 msgid "Unknown error"
 msgstr "Unknown error"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Unknown savings type"
+msgstr "Unknown savings type"
+
 #: src/pages/analytics/analytics-model.ts
 msgid "Unlabeled"
 msgstr "Unlabeled"
@@ -14229,6 +14645,7 @@ msgstr "Warm southwestern desert with sand, terracotta, and sage."
 msgid "Warning"
 msgstr "Warning"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/warranties/WarrantiesPage.tsx
 msgid "Warranties"
@@ -14555,11 +14972,13 @@ msgstr "Y-Axis"
 msgid "Yearly"
 msgstr "Yearly"
 
+#: src/features/goal-management/lib/core-goal-text.ts
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Yearly Allocation Target"
 msgstr "Yearly Allocation Target"
 
+#: src/features/goal-management/lib/core-goal-text.ts
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Yearly Available Target"
@@ -14824,6 +15243,10 @@ msgstr "You’re ready"
 #: src/pages/settings/ai/PrivacyWarnings.tsx
 msgid "You've configured a third-party server. Your financial data — transactions, payees, balances, receipt images and chat messages — will be sent to that provider, who can read and retain it. Only continue if you trust them and have reviewed their privacy policy. For full privacy, use a local server (Ollama or LM Studio) instead."
 msgstr "You've configured a third-party server. Your financial data — transactions, payees, balances, receipt images and chat messages — will be sent to that provider, who can read and retain it. Only continue if you trust them and have reviewed their privacy policy. For full privacy, use a local server (Ollama or LM Studio) instead."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "You've saved {{totalSaved}} total"
+msgstr "You've saved {{totalSaved}} total"
 
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
 msgid "Your account has reached the 5-person collaborator limit across owned workspaces. Remove a member or cancel a pending invite before creating another one."

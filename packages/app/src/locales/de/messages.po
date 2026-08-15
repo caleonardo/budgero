@@ -1,15 +1,5 @@
 msgid ""
-msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language: \n"
-"Language-Team: \n"
-"Content-Type: \n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+msgstr "Project-Id-Version: \nReport-Msgid-Bugs-To: \nPOT-Creation-Date: \nPO-Revision-Date: \nLast-Translator: \nLanguage: \nLanguage-Team: \nContent-Type: \nContent-Transfer-Encoding: \nPlural-Forms: \n"
 
 #: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
 msgid " — cover it to avoid creating debt."
@@ -163,6 +153,14 @@ msgstr "(Erforderlich)"
 #: src/features/import/ui/steps/PreviewStep.tsx
 msgid "(showing first {0} below)"
 msgstr "(die ersten {0} unten angezeigt)"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "{{monthsRemaining}} months remaining"
+msgstr "{{monthsRemaining}} Monate verbleibend"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "{{successfulMonths}}/{{monthsTracked}} months"
+msgstr "{{successfulMonths}}/{{monthsTracked}} Monate"
 
 #. placeholder {0}: result.accountsRemoved
 #: src/pages/settings/ImportsPage.tsx
@@ -1938,6 +1936,26 @@ msgstr "~75 MB, am schnellsten"
 msgid "− Already set aside"
 msgstr "− Bereits zurückgelegt"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "⚠️ Target date passed - need {{needed}} more"
+msgstr "⚠️ Zieldatum überschritten – {{needed}} mehr nötig"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "⚠️ Target date passed - need {{needed}} more available"
+msgstr "⚠️ Zieldatum überschritten – noch {{needed}} verfügbar nötig"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ {{assigned}} allocated this month — on track!"
+msgstr "✓ {{assigned}} diesen Monat zugewiesen — im Plan!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ Fully allocated!"
+msgstr "✓ Vollständig zugewiesen!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ Goal exceeded by {{excess}}"
+msgstr "✓ Ziel um {{excess}} überschritten"
+
 #: src/pages/onboarding/steps/PasswordStep.tsx
 msgid "✓ MATCH"
 msgstr "✓ STIMMT ÜBEREIN"
@@ -1946,6 +1964,30 @@ msgstr "✓ STIMMT ÜBEREIN"
 msgid "✓ READY"
 msgstr "✓ BEREIT"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ Target amount available!"
+msgstr "✓ Zielbetrag verfügbar!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ Target available!"
+msgstr "✓ Ziel verfügbar!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ This month done! {{totalAssigned}} of {{target}} allocated"
+msgstr "✓ Diesen Monat erledigt! {{totalAssigned}} von {{target}} zugewiesen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ This month funded! {{available}}/{{target}} available"
+msgstr "✓ Diesen Monat finanziert! {{available}}/{{target}} verfügbar"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ This month's {{monthlyTarget}} allocated!"
+msgstr "✓ Diesen Monat {{monthlyTarget}} zugewiesen!"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "✓ This month's {{monthlyTarget}} saved!"
+msgstr "✓ Diesen Monat {{monthlyTarget}} gespart!"
+
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "✓ ZERO-BASED. EVERY COIN NOW HAS A JOB."
 msgstr "✓ ZERO-BASED. JETZT HAT JEDER CENT EINE AUFGABE."
@@ -1953,6 +1995,10 @@ msgstr "✓ ZERO-BASED. JETZT HAT JEDER CENT EINE AUFGABE."
 #: src/pages/onboarding/steps/PasswordStep.tsx
 msgid "✗ DOES NOT MATCH"
 msgstr "✗ STIMMT NICHT ÜBEREIN"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "🌟 Excellent consistency! Keep it up!"
+msgstr "🌟 Ausgezeichnete Konsistenz! Weiter so!"
 
 #: src/pages/settings/SecurityPage.tsx
 msgid "1 day"
@@ -1963,12 +2009,8 @@ msgid "1 month"
 msgstr "1 Monat"
 
 #: src/shared/hooks/usePWA.ts
-msgid "1. Tap the Share icon (square with arrow)\n"
-"2. Choose \"Add to Home Screen\"\n"
-"3. Confirm the name and tap Add"
-msgstr "1. Tippe auf das Teilen-Symbol (Quadrat mit Pfeil)\n"
-"2. Wähle \"Zum Home-Bildschirm hinzufügen\"\n"
-"3. Bestätige den Namen und tippe auf Hinzufügen"
+msgid "1. Tap the Share icon (square with arrow)\n2. Choose \"Add to Home Screen\"\n3. Confirm the name and tap Add"
+msgstr "1. Tippe auf das Teilen-Symbol (Quadrat mit Pfeil)\n2. Wähle \"Zum Home-Bildschirm hinzufügen\"\n3. Bestätige den Namen und tippe auf Hinzufügen"
 
 #: src/pages/admin/StickinessAnalyticsSection.tsx
 msgid "10–20% — typical SaaS"
@@ -2082,6 +2124,7 @@ msgstr "Ein Arbeitsbereich hält deine Budgets, Konten und Mitwirkenden an einem
 msgid "A workspace organizes your budgets and lets you share them with others. Think of it as a shared folder, everything inside is accessible to anyone you invite."
 msgstr "Ein Arbeitsbereich organisiert deine Budgets und ermöglicht dir, sie mit anderen zu teilen. Stell dir ihn wie einen gemeinsamen Ordner vor – alles darin ist für jeden zugänglich, den du einlädst."
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/shared/model/nav-registry.ts
 msgid "About"
 msgstr "Über"
@@ -2213,6 +2256,7 @@ msgstr "Konto:"
 msgid "Account<0/>"
 msgstr "Konto<0/>"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/accounts/AccountsPage.tsx
 #: src/pages/admin/SelfHostAdminUsers.tsx
@@ -2310,6 +2354,7 @@ msgstr "Aktive Abonnenten"
 #: src/features/budget-planning/ui/CategoryGroupRow.tsx
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
 #: src/features/budget-planning/ui/DraggableBudgetTable.tsx
+#: src/features/goal-management/lib/core-goal-text.ts
 #: src/pages/admin/admin-users/UserDetailsDialog.tsx
 msgid "Activity"
 msgstr "Aktivität"
@@ -2602,6 +2647,7 @@ msgstr "Gesamtzeitraum"
 msgid "All transactions"
 msgstr "Alle Transaktionen"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/accounts/AllTransactionsPage.tsx
 msgid "All Transactions"
@@ -2627,6 +2673,10 @@ msgstr "Alle deine Daten sind jetzt synchronisiert"
 msgid "All-Time Mutations"
 msgstr "Alle Änderungen"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "All-time total"
+msgstr "Gesamtsumme"
+
 #: src/pages/admin/admin-users/user-details/MutationsTab.tsx
 msgid "All-time totals with a daily activity view for the current window."
 msgstr "Gesamtsummen mit täglicher Aktivitätsansicht für den aktuellen Zeitraum."
@@ -2635,15 +2685,39 @@ msgstr "Gesamtsummen mit täglicher Aktivitätsansicht für den aktuellen Zeitra
 msgid "Alloc."
 msgstr "Zugew."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocate {{monthlyNeeded}} more this month"
+msgstr "Diesen Monat {{monthlyNeeded}} mehr zuweisen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocate {{stillNeeded}} more to complete this month's target"
+msgstr "Noch {{stillNeeded}} zuweisen, um das Ziel dieses Monats zu erreichen"
+
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Allocate a total amount over a period by a target date"
 msgstr "Einen Gesamtbetrag über einen Zeitraum bis zu einem Zieldatum verteilen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocate This Month"
+msgstr "Diesen Monat zuweisen"
 
 #: src/features/budget-planning/ui/category-row/CategoryAmountsSection.tsx
 #: src/features/budget-planning/ui/CategoryGroupRow.tsx
 #: src/features/budget-planning/ui/DraggableBudgetTable.tsx
 msgid "Allocated"
 msgstr "Zugewiesen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocated so far: {{totalAssigned}} of {{target}} ({{pct}})"
+msgstr "Bisher zugewiesen: {{totalAssigned}} von {{target}} ({{pct}})"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocated this month"
+msgstr "Diesen Monat zugewiesen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Allocated This Month"
+msgstr "Diesen Monat zugewiesen"
 
 #: src/pages/settings/BudgetSettingsPage.tsx
 msgid "Allow over-assignment"
@@ -2656,6 +2730,10 @@ msgstr "Diesem Benutzer erlauben, sich erneut anzumelden und den normalen Zugrif
 #: src/pages/auth/AuthPage.tsx
 msgid "Already have an account? <0>Sign in</0>"
 msgstr "Bereits ein Konto? <0>Anmelden</0>"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Already scheduled"
+msgstr "Bereits geplant"
 
 #. placeholder {0}: reverseValue !== null ? ` (1 ${formData.toCurrency} = ${reverseValue} ${formData.fromCurrency})` : ''
 #: src/pages/settings/CurrencySettingsPage.tsx
@@ -2702,6 +2780,10 @@ msgstr "Bereits zurückgezahlter Betrag dieser Schuld."
 msgid "Amount conditions require a numeric value."
 msgstr "Betragsbedingungen erfordern einen numerischen Wert."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Amount needed available"
+msgstr "Benötigter Betrag verfügbar"
+
 #: src/pages/onboarding/steps/AccountsStep.tsx
 msgid "Amount owed"
 msgstr "Offener Betrag"
@@ -2709,6 +2791,10 @@ msgstr "Offener Betrag"
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "AMOUNT PER MONTH"
 msgstr "BETRAG PRO MONAT"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Amount to start the month with"
+msgstr "Betrag für den Monatsbeginn"
 
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
@@ -2930,6 +3016,10 @@ msgstr "Vermögen vs. Schulden"
 msgid "Assign"
 msgstr "Zuweisen"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Assign {{needed}} to reach your target"
+msgstr "{{needed}} zuweisen, um dein Ziel zu erreichen"
+
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Assign a fixed amount every month, regardless of spending"
 msgstr "Jeden Monat einen festen Betrag zuweisen, unabhängig von den Ausgaben"
@@ -2937,6 +3027,10 @@ msgstr "Jeden Monat einen festen Betrag zuweisen, unabhängig von den Ausgaben"
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "Assign the same amount every month. Best for emergency funds and ongoing buckets."
 msgstr "Weise jeden Monat denselben Betrag zu. Ideal für Notgroschen und fortlaufende Budgets."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Assign this to reach target"
+msgstr "Zum Erreichen des Ziels zuweisen"
 
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
@@ -2953,6 +3047,10 @@ msgstr "{0} aus Zu budgetieren zugewiesen."
 #: src/features/budget-planning/ui/budget-table/DeleteCategoryDialog.tsx
 msgid "Assigned amount ({0})"
 msgstr "Zugewiesener Betrag ({0})"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Assigned This Month"
+msgstr "Diesen Monat zugewiesen"
 
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Assigned this month:"
@@ -3070,6 +3168,10 @@ msgstr "Details zur Automatisierungsausführung"
 msgid "Automation<0/>"
 msgstr "Automatisierung<0/>"
 
+#: src/app/layout/desktop-shell/constants.ts
+msgid "Automations"
+msgstr "Automatisierungen"
+
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 msgid "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
 msgstr "Hier werden Automatisierungen und geplante Buchungen aufgelistet, die in Kürze fällig werden. Markiere wiederkehrende Einträge als bereit, wenn du sie verbuchen möchtest."
@@ -3125,6 +3227,10 @@ msgstr "Durchschnitt"
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Average monthly spend: <0>{0}</0>"
 msgstr "Durchschnittliche monatliche Ausgaben: <0>{0}</0>"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Average Saved"
+msgstr "Durchschnittlich gespart"
 
 #: src/pages/admin/admin-users/user-details/MutationsTab.tsx
 #: src/pages/admin/admin-users/user-details/OverviewTab.tsx
@@ -3447,6 +3553,7 @@ msgstr "Budgero setzt jede Transaktion, die von diesem Durchlauf betroffen war, 
 msgid "Budgero works either way. Pick the path that fits."
 msgstr "Budgero funktioniert auf beide Arten. Wähle den Weg, der zu dir passt."
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/startup/StartupStepper.tsx
 #: src/pages/settings/AuditLogPage.tsx
 msgid "Budget"
@@ -3565,6 +3672,10 @@ msgstr "Build"
 msgid "Build Channel"
 msgstr "Build-Kanal"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Build consistent savings habits"
+msgstr "Regelmäßige Spargewohnheiten aufbauen"
+
 #: src/pages/custom-dashboards/CustomDashboardsPage.tsx
 msgid "Build dashboard layouts from Explorer charts. Drag to reorder, resize on desktop, and use size presets on mobile."
 msgstr "Erstelle Dashboard-Layouts aus Explorer-Diagrammen. Ziehe zum Neuanordnen, passe die Größe auf dem Desktop an und nutze Größenvoreinstellungen auf dem Mobilgerät."
@@ -3572,6 +3683,10 @@ msgstr "Erstelle Dashboard-Layouts aus Explorer-Diagrammen. Ziehe zum Neuanordne
 #: src/pages/settings/AboutPage.tsx
 msgid "Build metadata for support or troubleshooting."
 msgstr "Erstelle Metadaten für Support oder Fehlerbehebung."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Building habits takes time - keep trying!"
+msgstr "Gewohnheiten brauchen Zeit – bleib dran!"
 
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
 msgid "Bundle ready"
@@ -4386,6 +4501,10 @@ msgstr "Verbindung"
 msgid "Connectivity status"
 msgstr "Verbindungsstatus"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Consecutive months"
+msgstr "Monate in Folge"
+
 #. placeholder {0}: selectedCategories.length
 #: src/pages/budgeting/BudgetingPage.mobile.tsx
 msgid "Context ({0})"
@@ -4410,6 +4529,10 @@ msgstr "Kontext: {0} / {1} Token ({2}%)"
 #: src/features/account-management/ui/EditAccountDialog.tsx
 msgid "Continue"
 msgstr "Weiter"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Continue allocating {{monthlyTarget}} each month to reach your goal"
+msgstr "Weise weiterhin jeden Monat {{monthlyTarget}} zu, um dein Ziel zu erreichen"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
@@ -4566,6 +4689,10 @@ msgstr "Erstelle zuerst ein Dashboard, um Diagramme anzupinnen."
 #: src/pages/auth/AuthPage.tsx
 msgid "Create a Free Account | Budgero"
 msgstr "Kostenloses Konto erstellen | Budgero"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Create a goal to track your financial progress"
+msgstr "Erstelle ein Ziel, um deinen finanziellen Fortschritt zu verfolgen"
 
 #: src/app/startup/screens.tsx
 msgid "Create a New Budget"
@@ -4821,6 +4948,10 @@ msgstr "Wechselkursänderungen"
 msgid "Current"
 msgstr "Aktuell"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Current balance"
+msgstr "Aktueller Saldo"
+
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
 msgid "Current Balance"
 msgstr "Aktueller Saldo"
@@ -4849,14 +4980,27 @@ msgstr "Aktuelles Periodenende"
 msgid "Current Plan"
 msgstr "Aktueller Plan"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Current progress"
+msgstr "Aktueller Fortschritt"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Current Streak"
+msgstr "Aktuelle Serie"
+
 #: src/features/goal-management/ui/GoalCard.tsx
 msgid "Current Streak:"
 msgstr "Aktuelle Serie:"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Currently Available"
+msgstr "Aktuell verfügbar"
 
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Custom cadence"
 msgstr "Benutzerdefinierter Rhythmus"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/pages/custom-dashboards/CustomDashboardsPage.tsx
 #: src/shared/model/nav-registry.ts
 #: src/widgets/command-palette/CommandPalette.tsx
@@ -4878,6 +5022,10 @@ msgstr "Kunden-ID:"
 #: src/pages/settings/AppearancePage.tsx
 msgid "Customize how Budgero looks on your device"
 msgstr "Passe an, wie Budgero auf deinem Gerät aussieht"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Cycle: {{cycleStart}} to {{cycleEnd}}"
+msgstr "Zyklus: {{cycleStart}} bis {{cycleEnd}}"
 
 #: src/features/budget-management/model/icon-options.ts
 msgid "Cycling"
@@ -4918,6 +5066,7 @@ msgid "Dark with copper warmth."
 msgstr "Dunkel mit kupfernem Warmton."
 
 #: src/app/layout/AdminSidebar.tsx
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/desktop-shell.utils.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/app/layout/desktop-shell/useDesktopShellState.ts
@@ -5283,6 +5432,7 @@ msgstr "Zielkonto:"
 msgid "Destinations"
 msgstr "Ziele"
 
+#: src/app/layout/desktop-shell/desktop-shell.utils.ts
 #: src/pages/admin/admin-users/UsersTable.tsx
 #: src/pages/settings/AuditLogPage.tsx
 msgid "Details"
@@ -5913,6 +6063,10 @@ msgstr "Genau"
 msgid "Examples:"
 msgstr "Beispiele:"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Exceeded target! Saved {{saved}} this month"
+msgstr "Ziel übertroffen! {{saved}} diesen Monat gespart"
+
 #: src/pages/settings/ai/ai-settings.constants.ts
 msgid "Excellent for structured outputs"
 msgstr "Hervorragend für strukturierte Ausgaben"
@@ -5996,6 +6150,7 @@ msgstr "Ablaufdatum *"
 msgid "Explore detailed payoff projections. Adjust APR, monthly payment, and extras to see how they affect timeline and interest."
 msgstr "Entdecke detaillierte Tilgungsprognosen. Passe APR, monatliche Zahlung und Extras an, um zu sehen, wie sie Zeitplan und Zinsen beeinflussen."
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/shared/model/nav-registry.ts
 #: src/widgets/command-palette/CommandPalette.tsx
 msgid "Explorer"
@@ -6359,6 +6514,10 @@ msgstr "Nach Name, Benutzername oder ID filtern."
 msgid "Filter series..."
 msgstr "Serien filtern..."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Final month! Allocate {{stillNeeded}} to complete"
+msgstr "Letzter Monat! Weise {{stillNeeded}} zu, um abzuschließen"
+
 #: src/pages/settings/push-api/IdReferencePanel.tsx
 msgid "Find the IDs you need for API requests. Click any ID to copy it. Payees are referenced by name, not id."
 msgstr "Finde die IDs, die du für API-Anfragen benötigst. Klicke auf eine ID, um sie zu kopieren. Empfänger werden über den Namen referenziert, nicht über die ID."
@@ -6418,6 +6577,10 @@ msgstr "Bei Kreditkarten entspricht dies näherungsweise einem festen Zahlungspl
 #: src/pages/settings/ai/ModelSelectionSection.tsx
 msgid "For receipt/image scanning"
 msgstr "Für Beleg- und Bildscan"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "For this month"
+msgstr "Für diesen Monat"
 
 #: src/pages/analytics/reports/WealthReport.tsx
 msgid "Forecast"
@@ -6538,12 +6701,8 @@ msgstr "Aus Automatisierungen"
 
 #. placeholder {0}: sections.join('\n\n---\n\n')
 #: src/features/ai/lib/tools/query-docs.ts
-msgid "From Budgero's official docs/policy:\n"
-"\n"
-"{0}"
-msgstr "Aus Budgeros offizieller Dokumentation/Richtlinie:\n"
-"\n"
-"{0}"
+msgid "From Budgero's official docs/policy:\n\n{0}"
+msgstr "Aus Budgeros offizieller Dokumentation/Richtlinie:\n\n{0}"
 
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 msgid "From your last transaction for \"{name}\""
@@ -6588,6 +6747,10 @@ msgstr "Zukünftige Transaktion"
 #: src/features/budget-management/model/icon-options.ts
 msgid "Gaming"
 msgstr "Gaming"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Gap to target"
+msgstr "Differenz zum Ziel"
 
 #: src/features/budget-management/model/icon-options.ts
 msgid "Garden & Outdoor"
@@ -6653,6 +6816,10 @@ msgstr "Gehe zu Einstellungen → KI-Assistent, um deine lokale LLM-Verbindung z
 msgid "Goal"
 msgstr "Ziel"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Goal Amount"
+msgstr "Zielbetrag"
+
 #: src/features/goal-management/ui/GoalSection.tsx
 msgid "Goal created"
 msgstr "Ziel erstellt"
@@ -6681,6 +6848,14 @@ msgstr "Zieltyp"
 msgid "Goal updated"
 msgstr "Ziel aktualisiert"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Goal: Save {{monthlyTarget}} every month"
+msgstr "Ziel: {{monthlyTarget}} jeden Monat sparen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Goal: start each month with this amount available"
+msgstr "Ziel: Jeden Monat mit diesem verfügbaren Betrag starten"
+
 #: src/features/budget-management/model/icon-options.ts
 msgid "Goals"
 msgstr "Ziele"
@@ -6692,6 +6867,10 @@ msgstr "Gute Balance aus Geschwindigkeit und Qualität"
 #: src/pages/settings/ai/ai-settings.constants.ts
 msgid "Good general vision"
 msgstr "Gute allgemeine Bilderkennung"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Good progress - aim for more consistency"
+msgstr "Guter Fortschritt – strebe mehr Beständigkeit an"
 
 #: src/pages/admin/SelfHostAdminUsers.tsx
 msgid "Grant admin privileges"
@@ -6714,6 +6893,10 @@ msgstr "{betaDays} Tage kostenlosen Zugriff für {0} gewährt"
 #: src/pages/admin/admin-users/useAdminUsersState.ts
 msgid "Granted founding member access to {0}"
 msgstr "Gründungsmitglied-Zugriff für {0} gewährt"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Great job! Monthly goal achieved. Total saved: {{totalSaved}}"
+msgstr "Klasse! Monatsziel erreicht. Insgesamt gespart: {{totalSaved}}"
 
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
 msgid "Great job! No uncategorised transactions left."
@@ -6753,6 +6936,10 @@ msgstr "Gruppen"
 #: src/features/budget-management/model/icon-options.ts
 msgid "Hair & Beauty"
 msgstr "Haare & Beauty"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Halfway there! Save {{needed}} more this month"
+msgstr "Halb geschafft! Spare diesen Monat noch {{needed}}"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Have a specific amount available by a target date"
@@ -7116,6 +7303,10 @@ msgstr "Einnahmen-Kategorie nicht gefunden. Bitte stelle sicher, dass dein Budge
 msgid "Income counts as it arrives and last month’s overspending is pulled from this month (YNAB-style)."
 msgstr "Einkommen wird bei Eingang berücksichtigt und die Überziehung des Vormonats wird von diesem Monat abgezogen (YNAB-Stil)."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Income this month"
+msgstr "Einkommen diesen Monat"
+
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 msgid "Income vs expense trend"
 msgstr "Einkommen vs. Ausgaben-Trend"
@@ -7124,6 +7315,10 @@ msgstr "Einkommen vs. Ausgaben-Trend"
 #: src/features/recurring/api/useRecurringNotifications.ts
 msgid "Incoming: {0}"
 msgstr "Eingang: {0}"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Increase savings to reach your {{target}} monthly goal"
+msgstr "Erhöhe deine Ersparnisse, um dein monatliches Ziel von {{target}} zu erreichen"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Indian Rupee"
@@ -7153,6 +7348,10 @@ msgstr "EinnahmeKonvertiert"
 #: src/features/debt/ui/PayoffSimulator.tsx
 msgid "Info"
 msgstr "Info"
+
+#: src/shared/mutations/op-code-registry/domains/accounts.ts
+msgid "Initial Balance"
+msgstr "Anfangssaldo"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Instagram"
@@ -7542,6 +7741,10 @@ msgstr "Verbleibend im Plan"
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "LEFT TO ASSIGN"
 msgstr "NOCH ZUZUWEISEN"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Leftover balance rolls into next month"
+msgstr "Restguthaben wird in den nächsten Monat übertragen"
 
 #: src/pages/settings/push-api/PushApiPage.tsx
 msgid "Legacy payloads without the <0>\"v\"</0>field are treated as format 1 (decimal amounts, e.g. <1>25.50</1>) and upgraded on import. New integrations should send format 2."
@@ -8175,6 +8378,7 @@ msgstr "Monatlich"
 msgid "Monthly Allocation Target"
 msgstr "Monatliches Zuweisungsziel"
 
+#: src/features/goal-management/lib/core-goal-text.ts
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Monthly Available Target"
@@ -8196,14 +8400,26 @@ msgstr "Monatliches Einkommen"
 msgid "Monthly inflow vs outflow (12m)"
 msgstr "Monatliche Einnahmen vs. Ausgaben (12M)"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Monthly Pace"
+msgstr "Monatliches Tempo"
+
 #: src/features/debt/ui/PayoffPlanSheet.tsx
 #: src/features/debt/ui/PayoffSimulator.tsx
 msgid "Monthly payment"
 msgstr "Monatliche Zahlung"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Monthly Savings Goal"
+msgstr "Monatliches Sparziel"
+
 #: src/pages/analytics/reports/ScenarioReport.tsx
 msgid "Monthly spending"
 msgstr "Monatliche Ausgaben"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Monthly Target"
+msgstr "Monatliches Ziel"
 
 #: src/pages/analytics/reports/PlanRealityReport.tsx
 msgid "Months on plan"
@@ -8361,6 +8577,14 @@ msgstr "Gib deinem neuen individuellen Dashboard einen Namen."
 #: src/pages/admin/admin-users/ActionDialog.tsx
 msgid "Name: {0}"
 msgstr "Name: {0}"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Nearly there! Complete this month to maintain your streak"
+msgstr "Fast geschafft! Schließe diesen Monat ab, um deine Serie zu wahren"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Need {{needed}} more available"
+msgstr "Noch {{needed}} mehr verfügbar nötig"
 
 #: src/pages/onboarding/steps/CurrencyStep.tsx
 msgid "NEED A DIFFERENT CURRENCY?"
@@ -8743,6 +8967,10 @@ msgstr "Keine Fremdwährungskonten"
 msgid "No fresh rate available. Prefilled with the closest cached rate — adjust if needed."
 msgstr "Kein aktueller Kurs verfügbar. Mit dem nächstgelegenen zwischengespeicherten Kurs vorausgefüllt — bei Bedarf anpassen."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "No Goal"
+msgstr "Kein Ziel"
+
 #: src/features/goal-management/ui/GoalCard.tsx
 msgid "No goal set for {categoryName}"
 msgstr "Kein Ziel für {categoryName} gesetzt"
@@ -8783,6 +9011,7 @@ msgstr "Kein Einladungscode"
 msgid "No invoices yet. Invoices will appear here after your first payment."
 msgstr "Noch keine Rechnungen. Rechnungen erscheinen hier nach deiner ersten Zahlung."
 
+#: src/features/labels/ui/LabelCombobox.tsx
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 msgid "No label"
 msgstr "Kein Label"
@@ -8937,6 +9166,10 @@ msgstr "Noch kein gespeicherter Bericht mit Diagrammkonfiguration verfügbar."
 #: src/pages/explorer-page/components/ReportsPanel.tsx
 msgid "No saved reports yet. Save a query to get started."
 msgstr "Noch keine gespeicherten Berichte. Speichere eine Abfrage, um loszulegen."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "No savings target set"
+msgstr "Kein Sparziel festgelegt"
 
 #: src/shared/pwa/ServiceWorkerUpdateProvider.tsx
 msgid "No service worker registration found."
@@ -9179,6 +9412,14 @@ msgstr "Im Budget"
 #: src/widgets/dashboard/AtAGlance.tsx
 msgid "On track"
 msgstr "Auf Kurs"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "On track — {{needed}} still needed over {{monthsMore}} more months."
+msgstr "Auf Kurs — noch {{needed}} nötig über {{monthsMore}} weitere Monate"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "On track — {{needed}} still needed over 1 more month."
+msgstr "Auf Kurs — noch {{needed}} nötig über 1 weiteren Monat"
 
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Once the workspace owner renews their plan, your shared workspace access comes back automatically."
@@ -9530,6 +9771,10 @@ msgstr "Überzogen"
 msgid "Overspent by "
 msgstr "Überzogen um "
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Overspent by {{overspent}}"
+msgstr "Um {{overspent}} überzogen"
+
 #. placeholder {0}: formatAmount(cashOverspend)
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Overspent by {0}in cash"
@@ -9771,6 +10016,10 @@ msgstr "Ausstehende Einladungen benötigen noch ihr verschlüsseltes Bundle."
 msgid "Pending mutations waiting to be processed when you connect."
 msgstr "Ausstehende Änderungen, die bei Verbindung verarbeitet werden."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Per month historically"
+msgstr "Historisch pro Monat"
+
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 msgid "Percent"
 msgstr "Prozent"
@@ -9908,6 +10157,10 @@ msgstr "Plan vs. Realität"
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "Plan:"
 msgstr "Plan:"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Planned Future"
+msgstr "Zukünftig geplant"
 
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/features/budget-management/model/icon-options.ts
@@ -10087,6 +10340,7 @@ msgstr "Verbucht"
 msgid "PostHog (EU)"
 msgstr "PostHog (EU)"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/pages/analytics/AnalyticsPage.tsx
 #: src/shared/model/nav-registry.ts
 msgid "Prebuilt"
@@ -10243,9 +10497,17 @@ msgstr "Product Hunt"
 msgid "Progress"
 msgstr "Fortschritt"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Progress resets at the start of each month"
+msgstr "Fortschritt wird am Anfang jedes Monats zurückgesetzt"
+
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Progress:"
 msgstr "Fortschritt:"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Progress: {{available}} of {{target}} ({{pct}})"
+msgstr "Fortschritt: {{available}} von {{target}} ({{pct}})"
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Project Resources"
@@ -10559,6 +10821,7 @@ msgstr "Erfassen…"
 msgid "Recording... {0} (click to stop)"
 msgstr "Erfassen... {0} (zum Stoppen klicken)"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/shared/model/nav-registry.ts
@@ -10602,6 +10865,14 @@ msgstr "Wiederkehrende Transaktionen"
 #: src/pages/settings/RecurringTransactionsPage.tsx
 msgid "Recurring Transactions"
 msgstr "Wiederkehrende Transaktionen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Recurring Yearly Allocation Target"
+msgstr "Wiederkehrendes jährliches Zuweisungsziel"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Recurring Yearly Available Target"
+msgstr "Wiederkehrendes jährliches Verfügbarkeitsziel"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Reddit"
@@ -10722,6 +10993,10 @@ msgstr "Anwendung neu laden"
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 msgid "Remaining"
 msgstr "Verbleibend"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Remaining to allocate"
+msgstr "Noch zuzuweisen"
 
 #: src/features/transactions/ui/form/SplitEditor.tsx
 msgid "Remaining to assign"
@@ -10859,6 +11134,7 @@ msgstr "Bericht geladen"
 msgid "Report Name *"
 msgstr "Berichtsname *"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/explorer-page/ExplorerPage.tsx
 #: src/widgets/command-palette/CommandPalette.tsx
@@ -11185,6 +11461,7 @@ msgstr "Regel pausiert"
 msgid "Rule updated"
 msgstr "Regel aktualisiert"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/shared/model/nav-registry.ts
 msgid "Rules"
 msgstr "Regeln"
@@ -11266,6 +11543,10 @@ msgstr "Gleiche Währung"
 msgid "Save"
 msgstr "Speichern"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Save {{needed}} more this month"
+msgstr "Diesen Monat noch {{needed}} mehr sparen"
+
 #: src/features/reports/ui/SaveReportDialog.tsx
 msgid "Save & Pin"
 msgstr "Speichern & Anheften"
@@ -11294,6 +11575,10 @@ msgstr "Chat-Einstellungen speichern"
 #: src/features/import/ui/steps/configure/TemplatesTab.tsx
 msgid "Save current settings as template"
 msgstr "Aktuelle Einstellungen als Vorlage speichern"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Save each month"
+msgstr "Jeden Monat sparen"
 
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "Save failed"
@@ -11339,6 +11624,10 @@ msgstr "Gespeicherte Szenarien"
 #: src/features/import/ui/steps/configure/TemplatesTab.tsx
 msgid "Saved Templates"
 msgstr "Gespeicherte Vorlagen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Saved This Month"
+msgstr "Diesen Monat gespart"
 
 #: src/features/account-management/ui/EditAccountDialog.tsx
 #: src/features/budget-planning/ui/GroupNameEditPopover.tsx
@@ -11750,6 +12039,10 @@ msgstr "Wähle oder erstelle ein Budget, um Automatisierungsregeln zu konfigurie
 msgid "Select or create a workspace to manage sharing options."
 msgstr "Wähle oder erstelle einen Arbeitsbereich, um Freigabeoptionen zu verwalten."
 
+#: src/features/payees/ui/PayeeCombobox.tsx
+msgid "Select or create payee"
+msgstr "Empfänger auswählen oder erstellen"
+
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Select payee"
@@ -11978,6 +12271,7 @@ msgstr "Richte wiederkehrende Gehälter, Rechnungen oder Umbuchungen ein und Bud
 msgid "Set up recurring transactions to automatically create entries on a schedule."
 msgstr "Richte wiederkehrende Transaktionen ein, um automatisch Einträge nach Zeitplan zu erstellen."
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/widgets/navigation/MobileBottomNav.tsx
 msgid "Settings"
@@ -12317,6 +12611,10 @@ msgstr "Ausgaben nach Label (90 Tage)"
 msgid "Spending category (optional)"
 msgstr "Ausgabenkategorie (optional)"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Spending during the month doesn't reduce progress — only what you assign matters"
+msgstr "Ausgaben während des Monats reduzieren den Fortschritt nicht — nur was du zuweist, zählt"
+
 #. placeholder {0}: fmt.money(plan.totalSpent - plan.totalAssigned)
 #. placeholder {1}: (usage * 100).toFixed(0)
 #: src/pages/analytics/insights.ts
@@ -12336,6 +12634,10 @@ msgstr "Ausgabenmuster"
 #: src/pages/analytics/insights.ts
 msgid "Spending ran at {0}% of plan — {1} of assigned money went unspent."
 msgstr "Die Ausgaben lagen bei {0}% des Plans — {1} des zugewiesenen Geldes blieben ungenutzt."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Spending this month"
+msgstr "Ausgaben diesen Monat"
 
 #: src/pages/analytics/reports/PlanRealityReport.tsx
 msgid "Spent"
@@ -12435,6 +12737,14 @@ msgstr "Import starten<0/>"
 msgid "Start monthly plan"
 msgstr "Monatlichen Plan starten"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Start saving {{monthlyTarget}} this month"
+msgstr "Diesen Monat mit dem Sparen von {{monthlyTarget}} beginnen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Start this month's savings - aim for {{target}}"
+msgstr "Dieses Monat mit Sparen beginnen – Ziel: {{target}}"
+
 #: src/features/subscription/ui/SubscriptionSuccess.tsx
 msgid "Start Using Budgero"
 msgstr "Mit Budgero starten"
@@ -12521,6 +12831,10 @@ msgstr "Bindung im Zeitverlauf"
 #: src/pages/analytics/reports/VsExpenseReport.tsx
 msgid "sticky left-0 z-10 max-w-[130px] truncate border-r px-2 py-2 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.15)] sm:max-w-none sm:px-3"
 msgstr "sticky left-0 z-10 max-w-[130px] truncate border-r px-2 py-2 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.15)] sm:max-w-none sm:px-3"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Still Needed"
+msgstr "Noch nötig"
 
 #: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
 msgid "Still underfunded"
@@ -12611,6 +12925,10 @@ msgstr "Abonnements"
 msgid "Success"
 msgstr "Erfolg"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Success Rate"
+msgstr "Erfolgsquote"
+
 #: src/features/ai/ui/AICategorizeDialog.tsx
 msgid "Successfully categorized {selectedCount} transactions."
 msgstr "{selectedCount} Transaktionen erfolgreich kategorisiert."
@@ -12649,6 +12967,10 @@ msgstr "Empfohlene Modelle für beste Leistung bei Budget-Aufgaben"
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
 msgid "Sum"
 msgstr "Summe"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Sum of assignments in cycle"
+msgstr "Summe der Zuweisungen im Zyklus"
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Summary"
@@ -12782,6 +13104,18 @@ msgstr "Dauert ca. 2 Minuten"
 msgid "Target Amount"
 msgstr "Zielbetrag"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target amount fully allocated for this cycle."
+msgstr "Zielbetrag für diesen Zyklus vollständig zugewiesen."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target amount is available and ready to use."
+msgstr "Zielbetrag ist verfügbar und einsatzbereit."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target Available"
+msgstr "Zielbetrag verfügbar"
+
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Target Date"
 msgstr "Zieldatum"
@@ -12790,14 +13124,34 @@ msgstr "Zieldatum"
 msgid "TARGET DATE"
 msgstr "ZIELDATUM"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target date has passed"
+msgstr "Zieldatum überschritten"
+
 #: src/features/goal-management/ui/GoalCard.tsx
 msgid "Target Date:"
 msgstr "Zieldatum:"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target met — category is fully funded"
+msgstr "Ziel erreicht – Kategorie vollständig finanziert"
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 #: src/features/account-management/ui/EditAccountDialog.tsx
 msgid "Target Payoff Date (optional)"
 msgstr "Geplantes Tilgungsdatum (optional)"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target per remaining month"
+msgstr "Ziel pro verbleibendem Monat"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target: {{target}} available by {{targetDate}}"
+msgstr "Ziel: {{target}} verfügbar bis {{targetDate}}"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Target: allocate {{target}} by {{targetDate}}"
+msgstr "Ziel: {{target}} zuweisen bis {{targetDate}}"
 
 #: src/pages/analytics/reports/InOutReport.tsx
 msgid "Target<0/>%"
@@ -12996,10 +13350,8 @@ msgid "This assignment would exceed your ready-to-assign amount by {0}."
 msgstr "Diese Zuweisung würde den Zu budgetieren-Betrag um {0} überschreiten."
 
 #: src/shared/hooks/usePWA.ts
-msgid "This browser does not support the automatic install prompt.\n"
-"Try browser menu options like “Install app” or “Add to Home Screen”, or use Chrome/Edge for the best install flow."
-msgstr "Dieser Browser unterstützt den automatischen Installationshinweis nicht.\n"
-"Versuche Menüoptionen wie „App installieren\" oder „Zum Startbildschirm hinzufügen\", oder verwende Chrome/Edge für den besten Installationsablauf."
+msgid "This browser does not support the automatic install prompt.\nTry browser menu options like “Install app” or “Add to Home Screen”, or use Chrome/Edge for the best install flow."
+msgstr "Dieser Browser unterstützt den automatischen Installationshinweis nicht.\nVersuche Menüoptionen wie „App installieren\" oder „Zum Startbildschirm hinzufügen\", oder verwende Chrome/Edge für den besten Installationsablauf."
 
 #: src/pages/settings/SecurityPage.tsx
 msgid "This cache survives app restarts and is cleared when the timer expires, you log out, or you reset local data."
@@ -13026,6 +13378,10 @@ msgstr "Dies ist der Verschlüsselungsschlüssel für alle deine Finanzdaten."
 msgid "This is the total of the split lines. To change it, click <0>View splits</0>."
 msgstr "Dies ist die Summe der Teilungszeilen. Um sie zu ändern, klicke auf <0>Teilung anzeigen</0>."
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "This is your final month!"
+msgstr "Dies ist dein letzter Monat!"
+
 #: src/pages/JoinWorkspacePage.tsx
 msgid "This join link is missing its invite code. Ask the workspace owner to resend the full link."
 msgstr "Diesem Einladungslink fehlt der Einladungscode. Bitte den Besitzer des Arbeitsbereichs, den vollständigen Link erneut zu senden."
@@ -13049,6 +13405,10 @@ msgstr "Diesen Monat"
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "THIS MONTH'S PAYCHECK"
 msgstr "GEHALT DIESEN MONAT"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "This month's target met! Continue with {{monthlyTarget}}/month to stay on track"
+msgstr "Dieses Monatsziel erreicht! Weiter mit {{monthlyTarget}}/Monat, um auf Kurs zu bleiben"
 
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 msgid "This note will be copied into the transaction memo."
@@ -13243,9 +13603,21 @@ msgstr "Auf Konto"
 msgid "To account:"
 msgstr "Auf Konto:"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "To complete the goal"
+msgstr "Um das Ziel abzuschließen"
+
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "To connect, you need a SimpleFIN setup token. Get one from <0>SimpleFIN Bridge<1/></0>"
 msgstr "Zum Verbinden benötigst du ein SimpleFIN-Setup-Token. Hol dir eines von <0>SimpleFIN Bridge<1/></0>"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "To reach target available"
+msgstr "Um den Zielbetrag zu erreichen"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "To stay on pace"
+msgstr "Um im Tempo zu bleiben"
 
 #: src/features/transactions/ui/form/DatePickerQuick.tsx
 msgid "Today"
@@ -13294,6 +13666,10 @@ msgstr "Top-Empfänger nach Ausgaben (30 Tage)"
 #: src/pages/settings/push-api/QueueStatsPanel.tsx
 msgid "Total"
 msgstr "Gesamt"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Total Allocated"
+msgstr "Gesamt zugewiesen"
 
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 msgid "Total amount"
@@ -13352,6 +13728,10 @@ msgstr "Diesen Monat insgesamt gezahlt"
 msgid "Total payments"
 msgstr "Gesamtzahlungen"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Total Saved"
+msgstr "Gesamt gespart"
+
 #: src/pages/dashboard/DashboardPage.desktop.tsx
 #: src/pages/dashboard/DashboardPage.mobile.tsx
 msgid "total spent"
@@ -13368,6 +13748,10 @@ msgstr "Insgesamt ausgegeben:"
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "TOTAL TARGET"
 msgstr "GESAMTZIEL"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Total to allocate"
+msgstr "Gesamt zuzuweisen"
 
 #: src/pages/admin/SelfHostAdminUsers.tsx
 msgid "Total users"
@@ -13404,6 +13788,14 @@ msgstr "Tracking-Konten"
 #: src/pages/accounts/components/ValueChangeStat.tsx
 msgid "Tracking-only account: these changes affect net worth but not Ready to Assign."
 msgstr "Nur-Tracking-Konto: Diese Änderungen beeinflussen das Nettovermögen, aber nicht das Zu budgetieren."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Tracks the actual balance — spending reduces progress"
+msgstr "Verfolgt den tatsächlichen Saldo – Ausgaben verringern den Fortschritt"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Tracks total assignments — spending does not affect progress"
+msgstr "Verfolgt die gesamten Zuweisungen – Ausgaben beeinflussen den Fortschritt nicht"
 
 #: src/pages/warranties/components/WarrantyTable.tsx
 msgid "Transaction"
@@ -13821,6 +14213,10 @@ msgstr "Unbekanntes Datum"
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Unknown savings type"
+msgstr "Unbekannter Spar-Typ"
+
 #: src/pages/analytics/analytics-model.ts
 msgid "Unlabeled"
 msgstr "Ohne Label"
@@ -14227,6 +14623,7 @@ msgstr "Warme südwestliche Wüste mit Sand, Terrakotta und Salbei."
 msgid "Warning"
 msgstr "Warnung"
 
+#: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/warranties/WarrantiesPage.tsx
 msgid "Warranties"
@@ -14553,11 +14950,13 @@ msgstr "Y-Achse"
 msgid "Yearly"
 msgstr "Jährlich"
 
+#: src/features/goal-management/lib/core-goal-text.ts
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Yearly Allocation Target"
 msgstr "Jährliches Zuweisungsziel"
 
+#: src/features/goal-management/lib/core-goal-text.ts
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Yearly Available Target"
@@ -14582,132 +14981,8 @@ msgstr "YNAB-Web-App"
 #. placeholder {0}: todayStr.slice(0, 7)
 #. placeholder {1}: budgetContext.summary
 #: src/features/ai/lib/chat-client.ts
-msgid "You are a helpful budget assistant for Budgero, a zero-based budgeting app.\n"
-"\n"
-"## Today's Date\n"
-"{todayStr}\n"
-"\n"
-"## Budgero Concepts (Zero-Based Budgeting)\n"
-"\n"
-"**Ready to Assign**: The amount of unassigned cash that needs a job. It's static (doesn't change based on which month you view).\n"
-"- Formula: Total Income - Total Assignments - Off-Budget Transfers\n"
-"- Zero = ideal (every unit has a purpose)\n"
-"- Positive = unassigned cash available\n"
-"- Negative = assigned more than you have (overspent)\n"
-"\n"
-"**Assigned (Allocated)**: Money intentionally allocated to a category for a specific month. User-controlled.\n"
-"\n"
-"**Activity**: Actual spending/income in a category for a month. Negative = spending, Positive = income/refunds.\n"
-"- Formula: InflowConverted - OutflowConverted for transactions in that category\n"
-"\n"
-"**Available**: Running balance available to spend in a category. Rolls over between months.\n"
-"- Formula: Leftover from previous months + Current month's Assigned + Current month's Activity\n"
-"\n"
-"**Category Groups**: Categories are organized into groups (e.g., \"Fixed Expenses\", \"Savings\", \"Fun Money\")\n"
-"\n"
-"**On-Budget vs Off-Budget Accounts**:\n"
-"- On-Budget: Checking, savings - contribute to Ready to Assign\n"
-"- Off-Budget: Tracking accounts (investments, loans) - tracked but don't affect Ready to Assign\n"
-"\n"
-"## Currency Formatting\n"
-"IMPORTANT: When mentioning monetary amounts in your responses, ALWAYS use the budget's DISPLAY_CURRENCY (shown in the budget context). Never mix currency symbols and never invent exchange rates.\n"
-"- Accounts may hold different currencies. Each account row lists its native_balance + currency AND a balance_in_<DISPLAY_CURRENCY> value already converted for you.\n"
-"- For any total, net worth, or cross-account comparison, sum the balance_in_<DISPLAY_CURRENCY> values — NEVER add native balances of different currencies together.\n"
-"- Only quote a native amount when talking about that single account, and label it with its own currency.\n"
-"\n"
-"## Tool Usage Guidelines\n"
-"- Use query_transactions for ANY question about transactions, spending amounts, comparisons, etc.\n"
-"- Use query_budget for budget-specific data like ready to assign, account balances, category spending summaries, and monthly summaries.\n"
-"- Use add_transaction ONLY when the user explicitly wants to add/record a transaction.\n"
-"- Use edit_transaction to re-categorize or change the payee/memo/date of an EXISTING transaction. You can edit transactions — first find the transaction's id via query_transactions or run_analytics_sql, then call edit_transaction with that transactionId. Never tell the user you can't edit transactions.\n"
-"- Use render_chart to SHOW a chart when a visualization helps (spending trends over time, category breakdowns, comparisons). You can draw charts — it renders inline for the user. Always also summarize the takeaway in text; the chart supports your answer.\n"
-"- Use search_docs for ANY question about Budgero itself — privacy, data retention, security/encryption, how a feature works, imports, sharing, self-hosting, the API. You DO have access to Budgero's official docs and privacy policy through this tool; never tell the user you don't know Budgero's policy — search_docs first, then answer (cite the doc).\n"
-"- ALWAYS set filters.type: When the user asks about expenses/spending/costs, set filters.type=\"expense\". When they ask about income/earnings, set filters.type=\"income\". This prevents mixing up expense and income transactions.\n"
-"- ALWAYS set date filters: When the user mentions a time period (\"this month\", \"last 30 days\", \"in January\"), calculate the exact YYYY-MM-DD dates based on today ({todayStr}) and set filters.dateFrom and filters.dateTo. \"yesterday\" = calculate it, \"this month\" = {0}-01 to {todayStr}, etc.\n"
-"- For add_transaction: always try to infer a category from context and always provide a descriptive memo.\n"
-"- You can call multiple tools if needed (e.g., querying groceries AND dining to compare them).\n"
-"- After getting tool results, summarize them naturally and concisely for the user. Don't repeat raw data — highlight the key insight.\n"
-"\n"
-"## Recording changes — add_transaction / edit_transaction (CRITICAL)\n"
-"- To add or edit a transaction you MUST actually call the add_transaction / edit_transaction tool. If you did NOT call the tool this turn, nothing happened — so NEVER write \"Done\", \"I recorded it\", \"I've added it\", or \"I've updated it\" from text alone. That is a lie to the user.\n"
-"- These actions REQUIRE the user to confirm: calling the tool shows them a confirmation card, and the change is only saved AFTER they click Confirm. So after you call the tool, say something like \"I've prepared that — confirm it above to save it.\" Do NOT claim it is already saved.\n"
-"- Only state that something was saved/added/changed after you have actually called the tool (and, for add/edit, the user has confirmed).\n"
-"\n"
-"## Accuracy — NEVER fabricate numbers\n"
-"- Every specific figure (amounts, totals, balances, dates, payees, counts) you state MUST come from a tool result you actually received in THIS conversation. Never estimate, guess, assume, or invent a number — not even a \"placeholder\" or \"example\".\n"
-"- If you don't yet have a number you need, call a tool to get it BEFORE writing your answer. If a query fails, fix it and retry; do not substitute a made-up value.\n"
-"- Do not claim you \"verified\", \"excluded transfers\", or \"checked\" something unless a tool result actually shows it.\n"
-"\n"
-"## Finishing the task — don't stop early\n"
-"- Keep working until you can give a complete, data-backed answer. Run ALL the queries you need in sequence, THEN write the final answer.\n"
-"- Do NOT pause mid-task to narrate \"let me check...\" and then stop, and do NOT ask the user for permission to continue with something they already asked for — just continue and deliver the result.\n"
-"- Be efficient: gather what you need with as few queries as possible (aggregate in SQL) rather than many tiny steps.\n"
-"\n"
-"## User's Budget Context\n"
-"{1}"
-msgstr "Du bist ein hilfreicher Budget-Assistent für Budgero, eine Zero-Based-Budgeting-App.\n"
-"\n"
-"## Heutiges Datum\n"
-"{todayStr}\n"
-"\n"
-"## Budgero-Konzepte (Zero-Based-Budgeting)\n"
-"\n"
-"**Zu budgetieren**: Der Betrag an nicht zugewiesenem Geld, das eine Aufgabe braucht. Er ist statisch (ändert sich nicht, je nachdem, welchen Monat du ansiehst).\n"
-"- Formel: Gesamteinkommen - Gesamtzuweisungen - Nicht-im-Budget-Umbuchungen\n"
-"- Null = ideal (jede Einheit hat einen Zweck)\n"
-"- Positiv = nicht zugewiesenes Geld verfügbar\n"
-"- Negativ = mehr zugewiesen als vorhanden (Überzogen)\n"
-"\n"
-"**Zugewiesen (zugeordnet)**: Geld, das bewusst einer Kategorie für einen bestimmten Monat zugeordnet wurde. Vom Nutzer steuerbar.\n"
-"\n"
-"**Aktivität**: Tatsächliche Ausgaben/Einnahmen in einer Kategorie für einen Monat. Negativ = Ausgaben, Positiv = Einnahmen/Rückerstattungen.\n"
-"- Formel: InflowConverted - OutflowConverted für Transaktionen in dieser Kategorie\n"
-"\n"
-"**Verfügbar**: Laufender Saldo, der in einer Kategorie ausgegeben werden kann. Wird zwischen Monaten übertragen.\n"
-"- Formel: Rest aus vorherigen Monaten + Zugewiesen des aktuellen Monats + Aktivität des aktuellen Monats\n"
-"\n"
-"**Kategoriengruppen**: Kategorien sind in Gruppen organisiert (z. B. \"Feste Ausgaben\", \"Sparen\", \"Taschengeld\")\n"
-"\n"
-"**Im-Budget- vs. Nicht-im-Budget-Konten**:\n"
-"- Im Budget: Girokonto, Sparkonto - tragen zu Zu budgetieren bei\n"
-"- Nicht im Budget: Tracking-Konten (Investitionen, Kredite) - werden verfolgt, beeinflussen aber Zu budgetieren nicht\n"
-"\n"
-"## Währungsformatierung\n"
-"WICHTIG: Wenn du in deinen Antworten Geldbeträge erwähnst, verwende IMMER die DISPLAY_CURRENCY des Budgets (im Budget-Kontext angezeigt). Mische niemals Währungssymbole und erfinde niemals Wechselkurse.\n"
-"- Konten können verschiedene Währungen halten. Jede Kontenzeile listet ihren native_balance + Währung UND einen balance_in_<DISPLAY_CURRENCY>-Wert, der bereits für dich umgerechnet wurde.\n"
-"- Für jeden Gesamtbetrag, jedes Nettovermögen oder jeden kontenübergreifenden Vergleich summiere die balance_in_<DISPLAY_CURRENCY>-Werte — addiere NIEMALS native Salden verschiedener Währungen.\n"
-"- Nenne einen nativen Betrag nur, wenn du über dieses einzelne Konto sprichst, und beschrifte ihn mit seiner eigenen Währung.\n"
-"\n"
-"## Richtlinien zur Tool-Nutzung\n"
-"- Verwende query_transactions für JEDE Frage zu Transaktionen, Ausgabebeträgen, Vergleichen usw.\n"
-"- Verwende query_budget für budgetspezifische Daten wie Zu budgetieren, Kontostände, Kategorie-Ausgabenübersichten und monatliche Übersichten.\n"
-"- Verwende add_transaction NUR, wenn der Nutzer ausdrücklich eine Transaktion hinzufügen/erfassen möchte.\n"
-"- Verwende edit_transaction, um eine VORHANDENE Transaktion neu zu kategorisieren oder Empfänger/Notiz/Datum zu ändern. Du kannst Transaktionen bearbeiten — finde zuerst die Transaktions-ID über query_transactions oder run_analytics_sql, rufe dann edit_transaction mit dieser transactionId auf. Sag dem Nutzer niemals, dass du Transaktionen nicht bearbeiten kannst.\n"
-"- Verwende render_chart, um ein Diagramm ANZUZEIGEN, wenn eine Visualisierung hilft (Ausgabetrends über Zeit, Kategorie-Aufschlüsselungen, Vergleiche). Du kannst Diagramme zeichnen — sie werden inline für den Nutzer gerendert. Fasse die Erkenntnis immer auch im Text zusammen; das Diagramm unterstützt deine Antwort.\n"
-"- Verwende search_docs für JEDE Frage zu Budgero selbst — Datenschutz, Datenaufbewahrung, Sicherheit/Verschlüsselung, wie eine Funktion funktioniert, Importe, Freigabe, Self-Hosting, die API. Du HAST Zugriff auf Budgeros offizielle Dokumentation und Datenschutzerklärung über dieses Tool; sag dem Nutzer niemals, du wüsstest nicht über Budgeros Richtlinien Bescheid — suche zuerst mit search_docs, dann antworte (und zitiere die Doku).\n"
-"- Setze IMMER filters.type: Wenn der Nutzer nach Ausgaben/Kosten fragt, setze filters.type=\"expense\". Wenn er nach Einnahmen fragt, setze filters.type=\"income\". Das verhindert das Vermischen von Ausgaben- und Einnahmetransaktionen.\n"
-"- Setze IMMER Datumsfilter: Wenn der Nutzer einen Zeitraum nennt (\"dieser Monat\", \"letzte 30 Tage\", \"im Januar\"), berechne die genauen YYYY-MM-DD-Daten basierend auf heute ({todayStr}) und setze filters.dateFrom und filters.dateTo. \"gestern\" = berechne es, \"dieser Monat\" = {0}-01 bis {todayStr} usw.\n"
-"- Für add_transaction: Versuche immer, eine Kategorie aus dem Kontext abzuleiten und gib immer eine aussagekräftige Notiz an.\n"
-"- Du kannst bei Bedarf mehrere Tools aufrufen (z. B. Lebensmittel UND Essen abfragen, um sie zu vergleichen).\n"
-"- Fasse die Tool-Ergebnisse nach dem Erhalt natürlich und prägnant für den Nutzer zusammen. Wiederhole keine Rohdaten — hebe die zentrale Erkenntnis hervor.\n"
-"\n"
-"## Änderungen erfassen — add_transaction / edit_transaction (KRITISCH)\n"
-"- Um eine Transaktion hinzuzufügen oder zu bearbeiten, MUSST du das Tool add_transaction / edit_transaction tatsächlich aufrufen. Wenn du das Tool in diesem Zug NICHT aufgerufen hast, ist nichts passiert — schreibe also NIEMALS \"Erledigt\", \"Ich habe es erfasst\", \"Ich habe es hinzugefügt\" oder \"Ich habe es aktualisiert\" nur als Text. Das wäre eine Lüge gegenüber dem Nutzer.\n"
-"- Diese Aktionen ERFORDERN die Bestätigung des Nutzers: Der Tool-Aufruf zeigt ihm eine Bestätigungskarte, und die Änderung wird erst NACH dem Klick auf Bestätigen gespeichert. Sage also nach dem Tool-Aufruf etwas wie \"Ich habe das vorbereitet — bestätige es oben, um es zu speichern.\" Behaupte NICHT, es sei bereits gespeichert.\n"
-"- Stelle erst fest, dass etwas gespeichert/hinzugefügt/geändert wurde, nachdem du das Tool tatsächlich aufgerufen hast (und bei Hinzufügen/Bearbeiten der Nutzer bestätigt hat).\n"
-"\n"
-"## Genauigkeit — erfinde NIEMALS Zahlen\n"
-"- Jede konkrete Zahl (Beträge, Summen, Salden, Daten, Empfänger, Anzahlen), die du nennst, MUSS aus einem Tool-Ergebnis stammen, das du in DIESER Unterhaltung tatsächlich erhalten hast. Schätze, rate, nimm an oder erfinde niemals eine Zahl — nicht einmal als \"Platzhalter\" oder \"Beispiel\".\n"
-"- Wenn du eine benötigte Zahl noch nicht hast, rufe ein Tool auf, um sie zu holen, BEVOR du deine Antwort schreibst. Wenn eine Abfrage fehlschlägt, behebe den Fehler und versuche es erneut; ersetze sie nicht durch einen erfundenen Wert.\n"
-"- Behaupte nicht, du hättest etwas \"überprüft\", \"Umbuchungen ausgeschlossen\" oder \"geprüft\", es sei denn, ein Tool-Ergebnis zeigt das tatsächlich.\n"
-"\n"
-"## Aufgabe abschließen — nicht vorzeitig abbrechen\n"
-"- Arbeite weiter, bis du eine vollständige, datengestützte Antwort geben kannst. Führe ALLE benötigten Abfragen nacheinander aus, DANN schreibe die finale Antwort.\n"
-"- Pausiere NICHT mitten in der Aufgabe, um \"lass mich prüfen...\" zu sagen und dann anzuhalten, und frage den Nutzer NICHT um Erlaubnis, mit etwas fortzufahren, das er bereits angefragt hat — fahre einfach fort und liefere das Ergebnis.\n"
-"- Sei effizient: Sammle, was du brauchst, mit so wenigen Abfragen wie möglich (in SQL aggregieren) anstatt vieler kleiner Schritte.\n"
-"\n"
-"## Budget-Kontext des Nutzers\n"
-"{1}"
+msgid "You are a helpful budget assistant for Budgero, a zero-based budgeting app.\n\n## Today's Date\n{todayStr}\n\n## Budgero Concepts (Zero-Based Budgeting)\n\n**Ready to Assign**: The amount of unassigned cash that needs a job. It's static (doesn't change based on which month you view).\n- Formula: Total Income - Total Assignments - Off-Budget Transfers\n- Zero = ideal (every unit has a purpose)\n- Positive = unassigned cash available\n- Negative = assigned more than you have (overspent)\n\n**Assigned (Allocated)**: Money intentionally allocated to a category for a specific month. User-controlled.\n\n**Activity**: Actual spending/income in a category for a month. Negative = spending, Positive = income/refunds.\n- Formula: InflowConverted - OutflowConverted for transactions in that category\n\n**Available**: Running balance available to spend in a category. Rolls over between months.\n- Formula: Leftover from previous months + Current month's Assigned + Current month's Activity\n\n**Category Groups**: Categories are organized into groups (e.g., \"Fixed Expenses\", \"Savings\", \"Fun Money\")\n\n**On-Budget vs Off-Budget Accounts**:\n- On-Budget: Checking, savings - contribute to Ready to Assign\n- Off-Budget: Tracking accounts (investments, loans) - tracked but don't affect Ready to Assign\n\n## Currency Formatting\nIMPORTANT: When mentioning monetary amounts in your responses, ALWAYS use the budget's DISPLAY_CURRENCY (shown in the budget context). Never mix currency symbols and never invent exchange rates.\n- Accounts may hold different currencies. Each account row lists its native_balance + currency AND a balance_in_<DISPLAY_CURRENCY> value already converted for you.\n- For any total, net worth, or cross-account comparison, sum the balance_in_<DISPLAY_CURRENCY> values — NEVER add native balances of different currencies together.\n- Only quote a native amount when talking about that single account, and label it with its own currency.\n\n## Tool Usage Guidelines\n- Use query_transactions for ANY question about transactions, spending amounts, comparisons, etc.\n- Use query_budget for budget-specific data like ready to assign, account balances, category spending summaries, and monthly summaries.\n- Use add_transaction ONLY when the user explicitly wants to add/record a transaction.\n- Use edit_transaction to re-categorize or change the payee/memo/date of an EXISTING transaction. You can edit transactions — first find the transaction's id via query_transactions or run_analytics_sql, then call edit_transaction with that transactionId. Never tell the user you can't edit transactions.\n- Use render_chart to SHOW a chart when a visualization helps (spending trends over time, category breakdowns, comparisons). You can draw charts — it renders inline for the user. Always also summarize the takeaway in text; the chart supports your answer.\n- Use search_docs for ANY question about Budgero itself — privacy, data retention, security/encryption, how a feature works, imports, sharing, self-hosting, the API. You DO have access to Budgero's official docs and privacy policy through this tool; never tell the user you don't know Budgero's policy — search_docs first, then answer (cite the doc).\n- ALWAYS set filters.type: When the user asks about expenses/spending/costs, set filters.type=\"expense\". When they ask about income/earnings, set filters.type=\"income\". This prevents mixing up expense and income transactions.\n- ALWAYS set date filters: When the user mentions a time period (\"this month\", \"last 30 days\", \"in January\"), calculate the exact YYYY-MM-DD dates based on today ({todayStr}) and set filters.dateFrom and filters.dateTo. \"yesterday\" = calculate it, \"this month\" = {0}-01 to {todayStr}, etc.\n- For add_transaction: always try to infer a category from context and always provide a descriptive memo.\n- You can call multiple tools if needed (e.g., querying groceries AND dining to compare them).\n- After getting tool results, summarize them naturally and concisely for the user. Don't repeat raw data — highlight the key insight.\n\n## Recording changes — add_transaction / edit_transaction (CRITICAL)\n- To add or edit a transaction you MUST actually call the add_transaction / edit_transaction tool. If you did NOT call the tool this turn, nothing happened — so NEVER write \"Done\", \"I recorded it\", \"I've added it\", or \"I've updated it\" from text alone. That is a lie to the user.\n- These actions REQUIRE the user to confirm: calling the tool shows them a confirmation card, and the change is only saved AFTER they click Confirm. So after you call the tool, say something like \"I've prepared that — confirm it above to save it.\" Do NOT claim it is already saved.\n- Only state that something was saved/added/changed after you have actually called the tool (and, for add/edit, the user has confirmed).\n\n## Accuracy — NEVER fabricate numbers\n- Every specific figure (amounts, totals, balances, dates, payees, counts) you state MUST come from a tool result you actually received in THIS conversation. Never estimate, guess, assume, or invent a number — not even a \"placeholder\" or \"example\".\n- If you don't yet have a number you need, call a tool to get it BEFORE writing your answer. If a query fails, fix it and retry; do not substitute a made-up value.\n- Do not claim you \"verified\", \"excluded transfers\", or \"checked\" something unless a tool result actually shows it.\n\n## Finishing the task — don't stop early\n- Keep working until you can give a complete, data-backed answer. Run ALL the queries you need in sequence, THEN write the final answer.\n- Do NOT pause mid-task to narrate \"let me check...\" and then stop, and do NOT ask the user for permission to continue with something they already asked for — just continue and deliver the result.\n- Be efficient: gather what you need with as few queries as possible (aggregate in SQL) rather than many tiny steps.\n\n## User's Budget Context\n{1}"
+msgstr "Du bist ein hilfreicher Budget-Assistent für Budgero, eine Zero-Based-Budgeting-App.\n\n## Heutiges Datum\n{todayStr}\n\n## Budgero-Konzepte (Zero-Based-Budgeting)\n\n**Zu budgetieren**: Der Betrag an nicht zugewiesenem Geld, das eine Aufgabe braucht. Er ist statisch (ändert sich nicht, je nachdem, welchen Monat du ansiehst).\n- Formel: Gesamteinkommen - Gesamtzuweisungen - Nicht-im-Budget-Umbuchungen\n- Null = ideal (jede Einheit hat einen Zweck)\n- Positiv = nicht zugewiesenes Geld verfügbar\n- Negativ = mehr zugewiesen als vorhanden (Überzogen)\n\n**Zugewiesen (zugeordnet)**: Geld, das bewusst einer Kategorie für einen bestimmten Monat zugeordnet wurde. Vom Nutzer steuerbar.\n\n**Aktivität**: Tatsächliche Ausgaben/Einnahmen in einer Kategorie für einen Monat. Negativ = Ausgaben, Positiv = Einnahmen/Rückerstattungen.\n- Formel: InflowConverted - OutflowConverted für Transaktionen in dieser Kategorie\n\n**Verfügbar**: Laufender Saldo, der in einer Kategorie ausgegeben werden kann. Wird zwischen Monaten übertragen.\n- Formel: Rest aus vorherigen Monaten + Zugewiesen des aktuellen Monats + Aktivität des aktuellen Monats\n\n**Kategoriengruppen**: Kategorien sind in Gruppen organisiert (z. B. \"Feste Ausgaben\", \"Sparen\", \"Taschengeld\")\n\n**Im-Budget- vs. Nicht-im-Budget-Konten**:\n- Im Budget: Girokonto, Sparkonto - tragen zu Zu budgetieren bei\n- Nicht im Budget: Tracking-Konten (Investitionen, Kredite) - werden verfolgt, beeinflussen aber Zu budgetieren nicht\n\n## Währungsformatierung\nWICHTIG: Wenn du in deinen Antworten Geldbeträge erwähnst, verwende IMMER die DISPLAY_CURRENCY des Budgets (im Budget-Kontext angezeigt). Mische niemals Währungssymbole und erfinde niemals Wechselkurse.\n- Konten können verschiedene Währungen halten. Jede Kontenzeile listet ihren native_balance + Währung UND einen balance_in_<DISPLAY_CURRENCY>-Wert, der bereits für dich umgerechnet wurde.\n- Für jeden Gesamtbetrag, jedes Nettovermögen oder jeden kontenübergreifenden Vergleich summiere die balance_in_<DISPLAY_CURRENCY>-Werte — addiere NIEMALS native Salden verschiedener Währungen.\n- Nenne einen nativen Betrag nur, wenn du über dieses einzelne Konto sprichst, und beschrifte ihn mit seiner eigenen Währung.\n\n## Richtlinien zur Tool-Nutzung\n- Verwende query_transactions für JEDE Frage zu Transaktionen, Ausgabebeträgen, Vergleichen usw.\n- Verwende query_budget für budgetspezifische Daten wie Zu budgetieren, Kontostände, Kategorie-Ausgabenübersichten und monatliche Übersichten.\n- Verwende add_transaction NUR, wenn der Nutzer ausdrücklich eine Transaktion hinzufügen/erfassen möchte.\n- Verwende edit_transaction, um eine VORHANDENE Transaktion neu zu kategorisieren oder Empfänger/Notiz/Datum zu ändern. Du kannst Transaktionen bearbeiten — finde zuerst die Transaktions-ID über query_transactions oder run_analytics_sql, rufe dann edit_transaction mit dieser transactionId auf. Sag dem Nutzer niemals, dass du Transaktionen nicht bearbeiten kannst.\n- Verwende render_chart, um ein Diagramm ANZUZEIGEN, wenn eine Visualisierung hilft (Ausgabetrends über Zeit, Kategorie-Aufschlüsselungen, Vergleiche). Du kannst Diagramme zeichnen — sie werden inline für den Nutzer gerendert. Fasse die Erkenntnis immer auch im Text zusammen; das Diagramm unterstützt deine Antwort.\n- Verwende search_docs für JEDE Frage zu Budgero selbst — Datenschutz, Datenaufbewahrung, Sicherheit/Verschlüsselung, wie eine Funktion funktioniert, Importe, Freigabe, Self-Hosting, die API. Du HAST Zugriff auf Budgeros offizielle Dokumentation und Datenschutzerklärung über dieses Tool; sag dem Nutzer niemals, du wüsstest nicht über Budgeros Richtlinien Bescheid — suche zuerst mit search_docs, dann antworte (und zitiere die Doku).\n- Setze IMMER filters.type: Wenn der Nutzer nach Ausgaben/Kosten fragt, setze filters.type=\"expense\". Wenn er nach Einnahmen fragt, setze filters.type=\"income\". Das verhindert das Vermischen von Ausgaben- und Einnahmetransaktionen.\n- Setze IMMER Datumsfilter: Wenn der Nutzer einen Zeitraum nennt (\"dieser Monat\", \"letzte 30 Tage\", \"im Januar\"), berechne die genauen YYYY-MM-DD-Daten basierend auf heute ({todayStr}) und setze filters.dateFrom und filters.dateTo. \"gestern\" = berechne es, \"dieser Monat\" = {0}-01 bis {todayStr} usw.\n- Für add_transaction: Versuche immer, eine Kategorie aus dem Kontext abzuleiten und gib immer eine aussagekräftige Notiz an.\n- Du kannst bei Bedarf mehrere Tools aufrufen (z. B. Lebensmittel UND Essen abfragen, um sie zu vergleichen).\n- Fasse die Tool-Ergebnisse nach dem Erhalt natürlich und prägnant für den Nutzer zusammen. Wiederhole keine Rohdaten — hebe die zentrale Erkenntnis hervor.\n\n## Änderungen erfassen — add_transaction / edit_transaction (KRITISCH)\n- Um eine Transaktion hinzuzufügen oder zu bearbeiten, MUSST du das Tool add_transaction / edit_transaction tatsächlich aufrufen. Wenn du das Tool in diesem Zug NICHT aufgerufen hast, ist nichts passiert — schreibe also NIEMALS \"Erledigt\", \"Ich habe es erfasst\", \"Ich habe es hinzugefügt\" oder \"Ich habe es aktualisiert\" nur als Text. Das wäre eine Lüge gegenüber dem Nutzer.\n- Diese Aktionen ERFORDERN die Bestätigung des Nutzers: Der Tool-Aufruf zeigt ihm eine Bestätigungskarte, und die Änderung wird erst NACH dem Klick auf Bestätigen gespeichert. Sage also nach dem Tool-Aufruf etwas wie \"Ich habe das vorbereitet — bestätige es oben, um es zu speichern.\" Behaupte NICHT, es sei bereits gespeichert.\n- Stelle erst fest, dass etwas gespeichert/hinzugefügt/geändert wurde, nachdem du das Tool tatsächlich aufgerufen hast (und bei Hinzufügen/Bearbeiten der Nutzer bestätigt hat).\n\n## Genauigkeit — erfinde NIEMALS Zahlen\n- Jede konkrete Zahl (Beträge, Summen, Salden, Daten, Empfänger, Anzahlen), die du nennst, MUSS aus einem Tool-Ergebnis stammen, das du in DIESER Unterhaltung tatsächlich erhalten hast. Schätze, rate, nimm an oder erfinde niemals eine Zahl — nicht einmal als \"Platzhalter\" oder \"Beispiel\".\n- Wenn du eine benötigte Zahl noch nicht hast, rufe ein Tool auf, um sie zu holen, BEVOR du deine Antwort schreibst. Wenn eine Abfrage fehlschlägt, behebe den Fehler und versuche es erneut; ersetze sie nicht durch einen erfundenen Wert.\n- Behaupte nicht, du hättest etwas \"überprüft\", \"Umbuchungen ausgeschlossen\" oder \"geprüft\", es sei denn, ein Tool-Ergebnis zeigt das tatsächlich.\n\n## Aufgabe abschließen — nicht vorzeitig abbrechen\n- Arbeite weiter, bis du eine vollständige, datengestützte Antwort geben kannst. Führe ALLE benötigten Abfragen nacheinander aus, DANN schreibe die finale Antwort.\n- Pausiere NICHT mitten in der Aufgabe, um \"lass mich prüfen...\" zu sagen und dann anzuhalten, und frage den Nutzer NICHT um Erlaubnis, mit etwas fortzufahren, das er bereits angefragt hat — fahre einfach fort und liefere das Ergebnis.\n- Sei effizient: Sammle, was du brauchst, mit so wenigen Abfragen wie möglich (in SQL aggregieren) anstatt vieler kleiner Schritte.\n\n## Budget-Kontext des Nutzers\n{1}"
 
 #. placeholder {0}: selectedFile?.name
 #: src/pages/settings/DataManagementPage.tsx
@@ -14822,6 +15097,10 @@ msgstr "Du bist bereit"
 #: src/pages/settings/ai/PrivacyWarnings.tsx
 msgid "You've configured a third-party server. Your financial data — transactions, payees, balances, receipt images and chat messages — will be sent to that provider, who can read and retain it. Only continue if you trust them and have reviewed their privacy policy. For full privacy, use a local server (Ollama or LM Studio) instead."
 msgstr "Du hast einen Drittanbieter-Server konfiguriert. Deine Finanzdaten — Transaktionen, Empfänger, Salden, Belegfotos und Chat-Nachrichten — werden an diesen Anbieter gesendet, der sie lesen und speichern kann. Fahre nur fort, wenn du ihm vertraust und seine Datenschutzerklärung geprüft hast. Für volle Privatsphäre verwende stattdessen einen lokalen Server (Ollama oder LM Studio)."
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "You've saved {{totalSaved}} total"
+msgstr "Du hast insgesamt {{totalSaved}} gespart"
 
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
 msgid "Your account has reached the 5-person collaborator limit across owned workspaces. Remove a member or cancel a pending invite before creating another one."

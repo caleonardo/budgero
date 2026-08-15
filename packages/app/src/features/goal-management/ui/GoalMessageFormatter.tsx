@@ -1,11 +1,17 @@
 import React from 'react';
 import { toDecimal } from '@shared/lib/currency/milli';
 import { roundMilli } from '@shared/lib/currency/round-amount';
+import { formatDate } from '@shared/lib/date-format';
+import { parseISO } from 'date-fns';
 
 interface GoalMessageFormatterProps {
   message: string;
-  /** Placeholder values in integer milliunits (from core goal calculations). */
-  values?: Record<string, number>;
+  /**
+   * Placeholder values from core goal calculations: numbers are integer
+   * milliunits formatted with the localizer; strings pass through (ISO dates
+   * are rendered with the locale date formatter).
+   */
+  values?: Record<string, number | string>;
   formatter: Intl.NumberFormat;
   className?: string;
 }
@@ -47,11 +53,19 @@ export function GoalMessageFormatter({
         parts.push(message.substring(lastIndex, match.index));
       }
 
-      parts.push(
-        <span key={match.index} className="font-mono">
-          {formatter.format(toDecimal(roundMilli(value)))}
-        </span>
-      );
+      if (typeof value === 'number') {
+        parts.push(
+          <span key={match.index} className="font-mono">
+            {formatter.format(toDecimal(roundMilli(value)))}
+          </span>
+        );
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        parts.push(
+          <span key={match.index}>{formatDate(parseISO(value), 'MMM d, yyyy')}</span>
+        );
+      } else {
+        parts.push(<span key={match.index}>{value}</span>);
+      }
 
       lastIndex = match.index + fullMatch.length;
     }

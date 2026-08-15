@@ -273,7 +273,8 @@ export function MobileBottomNav() {
     },
   ];
 
-  const triggerContainerClassName = 'group relative flex flex-col items-center gap-0';
+  const triggerContainerClassName =
+    'group relative flex min-w-0 flex-1 flex-col items-center gap-0 px-0.5';
 
   const getTriggerButtonClassName = (isActive: boolean) =>
     cn(
@@ -283,7 +284,7 @@ export function MobileBottomNav() {
 
   const getTriggerLabelClassName = (isActive: boolean) =>
     cn(
-      'text-xs font-medium transition-colors',
+      'max-w-full truncate text-center text-xs font-medium transition-colors',
       isActive ? 'text-foreground' : 'text-muted-foreground'
     );
 
@@ -359,7 +360,7 @@ export function MobileBottomNav() {
               <Dialog key={item.id} open={addTransactionOpen} onOpenChange={setAddTransactionOpen}>
                 <DialogTrigger asChild>
                   <div
-                    className="flex flex-col items-center gap-0"
+                    className="flex min-w-0 flex-1 flex-col items-center gap-0 px-0.5"
                     data-testid="mobile-add-transaction-button"
                   >
                     <button
@@ -368,7 +369,7 @@ export function MobileBottomNav() {
                     >
                       <item.icon className="h-6 w-6 text-foreground" />
                     </button>
-                    <span className="text-xs text-muted-foreground font-medium">{item.title}</span>
+                    <span className="max-w-full truncate text-center text-xs text-muted-foreground font-medium">{item.title}</span>
                   </div>
                 </DialogTrigger>
                 <DialogContent onInteractOutside={(e) => e.preventDefault()}>

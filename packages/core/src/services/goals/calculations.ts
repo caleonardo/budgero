@@ -33,8 +33,8 @@ export interface GoalProgress {
 
   // Raw values for frontend formatting
   // These allow the frontend to format currency values using the proper localizer
-  statusValues?: Record<string, number>;
-  recommendationValues?: Record<string, number>;
+  statusValues?: Record<string, number | string>;
+  recommendationValues?: Record<string, number | string>;
 
   // Detailed breakdown for UI display
   breakdown: GoalBreakdown;
@@ -58,9 +58,17 @@ export interface GoalBreakdown {
   items: {
     label: string;
     value: number;
+    /** How the value should be rendered; currency when omitted. */
+    unit?: 'months' | 'percent';
     description?: string;
   }[];
   explanation: string[];
+  /**
+   * Placeholder values for {{tokens}} in descriptions and explanations.
+   * Numbers are milliunits the frontend formats with its localizer;
+   * strings (counts, ISO dates) pass through.
+   */
+  values?: Record<string, number | string>;
 }
 
 export interface TimeMetrics {
@@ -124,6 +132,7 @@ interface YearlyGoalTexts {
   fundedRecommendation: string;
   monthlyFundedRecommendation: string;
   breakdownTitle: string;
+  recurringBreakdownTitle: string;
   targetItem: { label: string; description: string };
   metricItem: { label: string; description: string };
   stillNeededDescription: string;
@@ -210,7 +219,7 @@ export class GoalCalculations {
     }
 
     let statusMessage: string;
-    const statusValues: Record<string, number> = {};
+    const statusValues: Record<string, number | string> = {};
     if (status === 'completed') {
       statusMessage = '✓ Target available!';
     } else if (status === 'overfunded') {
@@ -224,8 +233,10 @@ export class GoalCalculations {
 
     const recommendation =
       amountNeeded > 0
-        ? `Assign ${this.formatCurrency(amountNeeded, currencyCode)} to reach your target`
+        ? 'Assign {{needed}} to reach your target'
         : 'Target met — category is fully funded';
+    const recommendationValues: Record<string, number | string> =
+      amountNeeded > 0 ? { needed: amountNeeded } : {};
 
     const breakdown: GoalBreakdown = {
       title: 'Monthly Available Target',
@@ -274,6 +285,7 @@ export class GoalCalculations {
       recommendation,
       breakdown,
       statusValues,
+      recommendationValues,
     };
   }
 
@@ -351,25 +363,26 @@ export class GoalCalculations {
     }
 
     let statusMessage: string;
+    const statusValues: Record<string, number | string> = {};
     if (status === 'overspent') {
-      statusMessage = `Overspent by ${this.formatCurrency(Math.abs(totalSaved), currencyCode)}`;
+      statusMessage = 'Overspent by {{overspent}}';
+      statusValues.overspent = Math.abs(totalSaved);
     } else if (status === 'overfunded') {
-      statusMessage = `Exceeded target! Saved ${this.formatCurrency(currentMonthAssigned, currencyCode)} this month`;
+      statusMessage = 'Exceeded target! Saved {{saved}} this month';
+      statusValues.saved = currentMonthAssigned;
     } else if (status === 'completed') {
-      statusMessage = `✓ This month's ${this.formatCurrency(monthlyTarget, currencyCode)} saved!`;
+      statusMessage = "✓ This month's {{monthlyTarget}} saved!";
+      statusValues.monthlyTarget = monthlyTarget;
     } else if (status === 'not-started') {
-      statusMessage = `Start saving ${this.formatCurrency(monthlyTarget, currencyCode)} this month`;
+      statusMessage = 'Start saving {{monthlyTarget}} this month';
+      statusValues.monthlyTarget = monthlyTarget;
     } else {
-      statusMessage = `Save ${this.formatCurrency(amountNeeded, currencyCode)} more this month`;
+      statusMessage = 'Save {{needed}} more this month';
+      statusValues.needed = amountNeeded;
     }
 
-    const recommendation = this.getMonthlySavingsRecommendation(
-      percentage,
-      currentMonthAssigned,
-      monthlyTarget,
-      totalSaved,
-      currencyCode
-    );
+    const { message: recommendation, values: recommendationValues } =
+      this.getMonthlySavingsRecommendation(percentage, currentMonthAssigned, monthlyTarget, totalSaved);
 
     const breakdown: GoalBreakdown = {
       title: 'Monthly Savings Goal',
@@ -380,24 +393,32 @@ export class GoalCalculations {
         { label: 'Total Saved', value: totalSaved, description: 'All-time total' },
       ],
       explanation: [
-        `Goal: Save ${this.formatCurrency(monthlyTarget, currencyCode)} every month`,
+        'Goal: Save {{monthlyTarget}} every month',
         'Progress resets at the start of each month',
         'Build consistent savings habits',
-        `You've saved ${this.formatCurrency(totalSaved, currencyCode)} total`,
+        "You've saved {{totalSaved}} total",
       ],
+      values: { monthlyTarget, totalSaved },
     };
 
     if (historicalStats.monthsTracked > 0) {
       breakdown.items.push({
         label: 'Success Rate',
         value: historicalStats.successRate,
-        description: `${historicalStats.successfulMonths}/${historicalStats.monthsTracked} months`,
+        unit: 'percent',
+        description: '{{successfulMonths}}/{{monthsTracked}} months',
       });
+      breakdown.values = {
+        ...breakdown.values,
+        successfulMonths: String(historicalStats.successfulMonths),
+        monthsTracked: String(historicalStats.monthsTracked),
+      };
 
       if (historicalStats.currentStreak > 1) {
         breakdown.items.push({
           label: 'Current Streak',
           value: historicalStats.currentStreak,
+          unit: 'months',
           description: 'Consecutive months',
         });
       }
@@ -431,7 +452,9 @@ export class GoalCalculations {
       isOnTrack,
       status,
       statusMessage,
+      statusValues,
       recommendation,
+      recommendationValues,
       breakdown,
       timeMetrics: {
         startDate: parseDateOnlyLocal(goal.StartDate) ?? new Date(),
@@ -448,27 +471,26 @@ export class GoalCalculations {
     percentage: number,
     currentSaved: number,
     target: number,
-    totalSaved: number,
-    currencyCode = 'USD'
-  ): string {
+    totalSaved: number
+  ): { message: string; values: Record<string, number | string> } {
     if (percentage >= 100) {
-      return `Great job! Monthly goal achieved. Total saved: ${this.formatCurrency(totalSaved, currencyCode)}`;
+      return { message: 'Great job! Monthly goal achieved. Total saved: {{totalSaved}}', values: { totalSaved } };
     }
 
     if (percentage === 0) {
-      return `Start this month's savings - aim for ${this.formatCurrency(target, currencyCode)}`;
+      return { message: "Start this month's savings - aim for {{target}}", values: { target } };
     }
 
     if (percentage >= 75) {
-      return 'Nearly there! Complete this month to maintain your streak';
+      return { message: 'Nearly there! Complete this month to maintain your streak', values: {} };
     }
 
     if (percentage >= 50) {
       const needed = target - currentSaved;
-      return `Halfway there! Save ${this.formatCurrency(needed, currencyCode)} more this month`;
+      return { message: 'Halfway there! Save {{needed}} more this month', values: { needed } };
     }
 
-    return `Increase savings to reach your ${this.formatCurrency(target, currencyCode)} monthly goal`;
+    return { message: 'Increase savings to reach your {{target}} monthly goal', values: { target } };
   }
 
   private static parseTargetDate(targetDate: string | undefined, currentMonth: string): Date {
@@ -505,31 +527,7 @@ export class GoalCalculations {
     return Math.min(100, Math.max(0, value));
   }
 
-  /**
-   * Helper: Format a milliunit amount for display in messages
-   */
-  private static formatCurrency(value: number, currencyCode = 'USD'): string {
-    const absValue = Math.abs(value) / 1000;
-    const hasDecimals = Math.abs(absValue - Math.round(absValue)) > 0.005;
-
-    try {
-      return new Intl.NumberFormat(undefined, {
-        style: 'currency',
-        currency: currencyCode,
-        currencyDisplay: 'code',
-        minimumFractionDigits: hasDecimals ? 2 : 0,
-        maximumFractionDigits: hasDecimals ? 2 : 0,
-      }).format(absValue);
-    } catch {
-      // Fallback for environments without Intl currency support
-      const formatted = absValue.toLocaleString(undefined, {
-        minimumFractionDigits: hasDecimals ? 2 : 0,
-        maximumFractionDigits: hasDecimals ? 2 : 0,
-      });
-      return `${currencyCode} ${formatted}`;
-    }
-  }
-
+  
   private static calculatePlannedContributions(
     plannedAssignments: MonthlyAssignment[] | undefined,
     currentMonth: string,
@@ -651,17 +649,21 @@ export class GoalCalculations {
         cycleTargetDate,
       }) => ({
         fundedStatusMessage: '✓ Fully allocated!',
-        monthlyFundedStatusMessage: `✓ ${this.formatCurrency(currentMonthAssigned, currencyCode)} allocated this month — on track!`,
-        datePassedStatusMessage: `⚠️ Target date passed - need ${this.formatCurrency(amountNeeded, currencyCode)} more`,
-        monthDoneStatusMessage: `✓ This month done! ${this.formatCurrency(totalAssigned, currencyCode)} of ${this.formatCurrency(target, currencyCode)} allocated`,
+        monthlyFundedStatusMessage: '✓ {{assigned}} allocated this month — on track!',
+        datePassedStatusMessage: '⚠️ Target date passed - need {{needed}} more',
+        monthDoneStatusMessage: '✓ This month done! {{totalAssigned}} of {{target}} allocated',
         fundedRecommendation: 'Target amount fully allocated for this cycle.',
-        monthlyFundedRecommendation: `On track — ${this.formatCurrency(amountNeeded, currencyCode)} still needed over ${monthsRemaining - 1} more month${monthsRemaining > 2 ? 's' : ''}.`,
+        monthlyFundedRecommendation:
+          monthsRemaining === 2
+            ? 'On track — {{needed}} still needed over 1 more month.'
+            : 'On track — {{needed}} still needed over {{monthsMore}} more months.',
         breakdownTitle: 'Yearly Allocation Target',
+        recurringBreakdownTitle: 'Recurring Yearly Allocation Target',
         targetItem: { label: 'Goal Amount', description: 'Total to allocate' },
         metricItem: { label: 'Total Allocated', description: 'Sum of assignments in cycle' },
         stillNeededDescription: 'Remaining to allocate',
-        targetExplanation: `Target: allocate ${this.formatCurrency(target, currencyCode)} by ${cycleTargetDate.toLocaleDateString()}`,
-        progressExplanation: `Allocated so far: ${this.formatCurrency(totalAssigned, currencyCode)} of ${this.formatCurrency(target, currencyCode)} (${Math.round(overallPercentage)}%)`,
+        targetExplanation: 'Target: allocate {{target}} by {{targetDate}}',
+        progressExplanation: 'Allocated so far: {{totalAssigned}} of {{target}} ({{pct}})',
         trackingExplanation: 'Tracks total assignments — spending does not affect progress',
         finalMonthDescription: 'To complete the goal',
       }),
@@ -693,17 +695,19 @@ export class GoalCalculations {
         Math.max(0, finances.available - (finances.assigned || 0) - (finances.activity || 0)),
       texts: ({ target, monthlyTarget, amountNeeded, overallPercentage, cycleTargetDate }) => ({
         fundedStatusMessage: '✓ Target amount available!',
-        monthlyFundedStatusMessage: `✓ This month's ${this.formatCurrency(monthlyTarget, currencyCode)} allocated!`,
-        datePassedStatusMessage: `⚠️ Target date passed - need ${this.formatCurrency(amountNeeded, currencyCode)} more available`,
-        monthDoneStatusMessage: `✓ This month funded! ${this.formatCurrency(available, currencyCode)}/${this.formatCurrency(target, currencyCode)} available`,
+        monthlyFundedStatusMessage: "✓ This month's {{monthlyTarget}} allocated!",
+        datePassedStatusMessage: '⚠️ Target date passed - need {{needed}} more available',
+        monthDoneStatusMessage: '✓ This month funded! {{available}}/{{target}} available',
         fundedRecommendation: 'Target amount is available and ready to use.',
-        monthlyFundedRecommendation: `This month's target met! Continue with ${this.formatCurrency(monthlyTarget, currencyCode)}/month to stay on track`,
+        monthlyFundedRecommendation:
+          "This month's target met! Continue with {{monthlyTarget}}/month to stay on track",
         breakdownTitle: 'Yearly Available Target',
+        recurringBreakdownTitle: 'Recurring Yearly Available Target',
         targetItem: { label: 'Target Available', description: 'Amount needed available' },
         metricItem: { label: 'Currently Available', description: 'Current balance' },
         stillNeededDescription: 'Gap to target',
-        targetExplanation: `Target: ${this.formatCurrency(target, currencyCode)} available by ${cycleTargetDate.toLocaleDateString()}`,
-        progressExplanation: `Progress: ${this.formatCurrency(available, currencyCode)} of ${this.formatCurrency(target, currencyCode)} (${Math.round(overallPercentage)}%)`,
+        targetExplanation: 'Target: {{target}} available by {{targetDate}}',
+        progressExplanation: 'Progress: {{available}} of {{target}} ({{pct}})',
         trackingExplanation: 'Tracks the actual balance — spending reduces progress',
         finalMonthDescription: 'To reach target available',
       }),
@@ -807,6 +811,26 @@ export class GoalCalculations {
       status = 'at-risk';
     }
 
+    // One shared bag: numbers are milliunits the app formats with its
+    // localizer; strings (counts, dates, month keys) pass through.
+    const stillNeededThisMonth = Math.max(0, monthlyTarget - currentMonthAssigned);
+    const templateValues: Record<string, number | string> = {
+      target,
+      monthlyTarget,
+      needed: amountNeeded,
+      assigned: currentMonthAssigned,
+      totalAssigned: metricValue,
+      available: metricValue,
+      stillNeeded: stillNeededThisMonth,
+      monthlyNeeded: stillNeededThisMonth,
+      pct: `${Math.round(overallPercentage)}%`,
+      targetDate: `${cycleTargetDate.getFullYear()}-${String(cycleTargetDate.getMonth() + 1).padStart(2, '0')}-${String(cycleTargetDate.getDate()).padStart(2, '0')}`,
+      monthsMore: String(Math.max(0, monthsRemaining - 1)),
+      monthsRemaining: String(monthsRemaining),
+      cycleStart,
+      cycleEnd,
+    };
+
     let statusMessage: string;
     if (isFunded) {
       statusMessage = texts.fundedStatusMessage;
@@ -815,13 +839,11 @@ export class GoalCalculations {
     } else if (monthsRemaining <= 0) {
       statusMessage = texts.datePassedStatusMessage;
     } else if (monthsRemaining === 1) {
-      const stillNeeded = Math.max(0, monthlyTarget - currentMonthAssigned);
-      statusMessage = `Final month! Allocate ${this.formatCurrency(stillNeeded, currencyCode)} to complete`;
+      statusMessage = 'Final month! Allocate {{stillNeeded}} to complete';
     } else {
-      const monthlyNeeded = Math.max(0, monthlyTarget - currentMonthAssigned);
       statusMessage =
-        monthlyNeeded > 0
-          ? `Allocate ${this.formatCurrency(monthlyNeeded, currencyCode)} more this month`
+        stillNeededThisMonth > 0
+          ? 'Allocate {{monthlyNeeded}} more this month'
           : texts.monthDoneStatusMessage;
     }
 
@@ -831,16 +853,15 @@ export class GoalCalculations {
     } else if (isMonthlyFunded) {
       recommendation = texts.monthlyFundedRecommendation;
     } else {
-      const stillNeededThisMonth = Math.max(0, monthlyTarget - currentMonthAssigned);
       recommendation =
         stillNeededThisMonth > 0
-          ? `Allocate ${this.formatCurrency(stillNeededThisMonth, currencyCode)} more to complete this month's target`
-          : `Continue allocating ${this.formatCurrency(monthlyTarget, currencyCode)} each month to reach your goal`;
+          ? "Allocate {{stillNeeded}} more to complete this month's target"
+          : 'Continue allocating {{monthlyTarget}} each month to reach your goal';
     }
 
     const isRecurring = !!goal.Recurring;
     const breakdown: GoalBreakdown = {
-      title: isRecurring ? `Recurring ${texts.breakdownTitle}` : texts.breakdownTitle,
+      title: isRecurring ? texts.recurringBreakdownTitle : texts.breakdownTitle,
       items: [
         {
           label: texts.targetItem.label,
@@ -859,11 +880,12 @@ export class GoalCalculations {
         texts.progressExplanation,
         texts.trackingExplanation,
         monthsRemaining > 1
-          ? `${monthsRemaining} months remaining`
+          ? '{{monthsRemaining}} months remaining'
           : monthsRemaining === 1
             ? 'This is your final month!'
             : 'Target date has passed',
       ],
+      values: templateValues,
     };
 
     if (!isFunded) {
@@ -906,7 +928,7 @@ export class GoalCalculations {
     }
 
     if (isRecurring) {
-      breakdown.explanation.push(`Cycle: ${cycleStart} to ${cycleEnd}`);
+      breakdown.explanation.push('Cycle: {{cycleStart}} to {{cycleEnd}}');
     }
 
     return {
@@ -919,7 +941,9 @@ export class GoalCalculations {
       isOnTrack: isFunded || isMonthlyFunded || overallPercentage >= 70,
       status,
       statusMessage,
+      statusValues: templateValues,
       recommendation,
+      recommendationValues: templateValues,
       breakdown,
       timeMetrics: {
         monthsRemaining,

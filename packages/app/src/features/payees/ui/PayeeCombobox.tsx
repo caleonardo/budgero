@@ -33,13 +33,14 @@ export function PayeeCombobox({
   budgetId,
   value,
   onChange,
-  placeholder = 'Select or create payee',
+  placeholder: placeholderProp,
   triggerClassName,
   popoverContentClassName,
   disabled = false,
   allowClear = true,
 }: PayeeComboboxProps) {
   const { t } = useLingui();
+  const placeholder = placeholderProp ?? t`Select or create payee`;
 
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');

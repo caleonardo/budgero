@@ -32,6 +32,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { AnimatedNumber } from '@shared/ui/animated-number';
 import { GoalMessageFormatter } from '@features/goal-management/ui/GoalMessageFormatter';
+import { translateGoalText } from '@features/goal-management/lib/core-goal-text';
 
 function getStatusColor(status: string) {
   switch (status) {
@@ -80,7 +81,7 @@ function GoalStatusBadge({ progress, formatter, className = '' }: GoalStatusBadg
     >
       {getStatusIcon(progress.status)}
       <GoalMessageFormatter
-        message={progress.statusMessage}
+        message={translateGoalText(progress.statusMessage)}
         values={progress.statusValues}
         formatter={formatter}
       />
@@ -90,6 +91,7 @@ function GoalStatusBadge({ progress, formatter, className = '' }: GoalStatusBadg
 
 interface BreakdownItemsListProps {
   items: GoalProgress['breakdown']['items'];
+  values?: GoalProgress['breakdown']['values'];
   formatter: Intl.NumberFormat;
   /** Full-view variant: larger rows, muted labels, optional per-item descriptions. */
   showDescriptions?: boolean;
@@ -97,37 +99,47 @@ interface BreakdownItemsListProps {
 
 function BreakdownItemsList({
   items,
+  values,
   formatter,
   showDescriptions = false,
 }: BreakdownItemsListProps) {
   return (
     <div className="space-y-1">
       {items.map((item, idx) => {
-        const isMonthsCount = item.label === 'Months Left' || item.label === 'Months Remaining';
-        // Currency values are milliunits; month counts are dimensionless.
+        // Currency values are milliunits; counts and percentages are dimensionless.
         const animatedValue = (
           <AnimatedNumber
             value={item.value}
             formatter={(v) =>
-              isMonthsCount ? `${Math.round(v)}` : formatter.format(toDecimal(roundMilli(v)))
+              item.unit === 'months'
+                ? `${Math.round(v)}`
+                : item.unit === 'percent'
+                  ? `${Math.round(v)}%`
+                  : formatter.format(toDecimal(roundMilli(v)))
             }
-            rounding={isMonthsCount ? 'integer' : 'none'}
+            rounding={item.unit ? 'integer' : 'none'}
             className="font-mono tabular-nums"
           />
         );
         return showDescriptions ? (
           <div key={idx} className="flex justify-between text-sm">
-            <span className="text-muted-foreground">{item.label}:</span>
+            <span className="text-muted-foreground">{translateGoalText(item.label)}:</span>
             <div className="text-right">
               {animatedValue}
               {item.description && (
-                <div className="text-xs text-muted-foreground">{item.description}</div>
+                <div className="text-xs text-muted-foreground">
+                  <GoalMessageFormatter
+                    message={translateGoalText(item.description)}
+                    values={values}
+                    formatter={formatter}
+                  />
+                </div>
               )}
             </div>
           </div>
         ) : (
           <div key={idx} className="flex justify-between">
-            <span>{item.label}:</span>
+            <span>{translateGoalText(item.label)}:</span>
             {animatedValue}
           </div>
         );
@@ -166,11 +178,11 @@ function GoalControls({
         </PopoverTrigger>
         <PopoverContent className="w-72 p-4" side="top" align="start" modal>
           <div className="space-y-3">
-            <div className="text-sm font-medium">{progress.breakdown.title}</div>
+            <div className="text-sm font-medium">{translateGoalText(progress.breakdown.title)}</div>
 
             <div className="space-y-3 text-xs">
               <div className="space-y-2 rounded-lg bg-muted/50 p-3">
-                <BreakdownItemsList items={progress.breakdown.items} formatter={formatter} />
+                <BreakdownItemsList items={progress.breakdown.items} values={progress.breakdown.values} formatter={formatter} />
               </div>
 
               <div className="text-muted-foreground">
@@ -179,7 +191,14 @@ function GoalControls({
                 </div>
                 <ul className="space-y-1 text-xs">
                   {progress.breakdown.explanation.map((item, idx) => (
-                    <li key={idx}>• {item}</li>
+                    <li key={idx}>
+                      •{' '}
+                      <GoalMessageFormatter
+                        message={translateGoalText(item)}
+                        values={progress.breakdown.values}
+                        formatter={formatter}
+                      />
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -427,14 +446,14 @@ export function GoalCard({
               <div className="space-y-1">
                 <div className="font-medium">
                   <GoalMessageFormatter
-                    message={progress.statusMessage}
+                    message={translateGoalText(progress.statusMessage)}
                     values={progress.statusValues}
                     formatter={formatter}
                   />
                 </div>
                 <div className="text-xs opacity-90">
                   <GoalMessageFormatter
-                    message={progress.recommendation}
+                    message={translateGoalText(progress.recommendation)}
                     values={progress.recommendationValues}
                     formatter={formatter}
                   />
@@ -447,9 +466,10 @@ export function GoalCard({
         {/* Breakdown Details - Always show when expanded */}
         <div className="space-y-3 pt-2 border-t">
           <div className="space-y-2">
-            <h4 className="text-sm font-medium">{progress.breakdown.title}</h4>
+            <h4 className="text-sm font-medium">{translateGoalText(progress.breakdown.title)}</h4>
             <BreakdownItemsList
               items={progress.breakdown.items}
+              values={progress.breakdown.values}
               formatter={formatter}
               showDescriptions
             />
@@ -503,7 +523,14 @@ export function GoalCard({
             </h4>
             <ul className="space-y-1 text-xs text-muted-foreground">
               {progress.breakdown.explanation.map((item, idx) => (
-                <li key={idx}>• {item}</li>
+                <li key={idx}>
+                  •{' '}
+                  <GoalMessageFormatter
+                    message={translateGoalText(item)}
+                    values={progress.breakdown.values}
+                    formatter={formatter}
+                  />
+                </li>
               ))}
             </ul>
           </div>
