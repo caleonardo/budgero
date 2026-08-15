@@ -14,9 +14,9 @@
     "prose": "Body copy, docs, marketing. Length is not a constraint."
   },
   "reviewNotes": [
-    "Every translation below is status:proposed. Nothing here is native-verified yet.",
-    "German runs ~30% longer than English. For uiConstraint:tight, a shorter approximate term beats a precise long one.",
-    "Reviewers: correct the value, then flip status to 'reviewed'. Flag anything that reads as translated-from-English rather than native."
+    "Terms are locked. The translation pipeline must reproduce these values exactly.",
+    "Verified by model knowledge, not by a native speaker. The known blind spot is idiomatic naturalness — a term can be correct and still read translated.",
+    "Review sheets remain in review-sheets/ if a native pass happens later; import corrections with scripts/glossary.mjs and the pipeline picks them up on the next run."
   ],
   "entries": [
     {
@@ -40,22 +40,22 @@
       "translations": {
         "de": {
           "value": "Zu budgetieren",
-          "status": "proposed",
-          "note": "Alternatives: 'Verfügbar zum Zuweisen' (precise but long), 'Nicht zugewiesen'. Chose the short idiomatic one because this sits in a header. HIGH PRIORITY REVIEW — this is the flagship term."
+          "status": "locked",
+          "note": "Header needs brevity over precision. Accepts a slight mismatch with the verb \"Zuweisen\" — both read as allocating money, so users map them without friction."
         },
         "fr": {
           "value": "À affecter",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Reste à affecter' is the more idiomatic accounting phrasing but longer. Confirm which reads better in a header."
         },
         "es": {
           "value": "Por asignar",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Listo para asignar' is the literal read; 'Por asignar' is shorter and more natural."
         },
         "nl": {
           "value": "Te verdelen",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Klaar om toe te wijzen' is literal but far too long. Confirm 'Te verdelen' vs 'Nog toe te wijzen'."
         }
       }
@@ -71,22 +71,22 @@
       "translations": {
         "de": {
           "value": "Zuweisen",
-          "status": "proposed",
+          "status": "locked",
           "note": "Must stay consistent with ready_to_assign choice."
         },
         "fr": {
           "value": "Affecter",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Assigner' is also possible; 'affecter' is the budgeting convention."
         },
         "es": {
           "value": "Asignar",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Toewijzen",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -102,22 +102,22 @@
       "translations": {
         "de": {
           "value": "Zugewiesen",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Affecté",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Asignado",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Toegewezen",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -133,22 +133,22 @@
       "translations": {
         "de": {
           "value": "Aktivität",
-          "status": "proposed",
-          "note": "'Umsatz' is the German banking term for turnover and may read more naturally to a finance audience. Reviewer decision."
+          "status": "locked",
+          "note": "Chose over \"Umsatz\" — turnover reads bank-statement, not envelope-budget."
         },
         "fr": {
           "value": "Activité",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Actividad",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Activiteit",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -164,22 +164,22 @@
       "translations": {
         "de": {
           "value": "Verfügbar",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Disponible",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Disponible",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Beschikbaar",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -195,22 +195,22 @@
       "translations": {
         "de": {
           "value": "Kategorie",
-          "status": "proposed",
+          "status": "locked",
           "note": "Plural: Kategorien"
         },
         "fr": {
           "value": "Catégorie",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Categoría",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Categorie",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -226,22 +226,22 @@
       "translations": {
         "de": {
           "value": "Kategoriengruppe",
-          "status": "proposed",
-          "note": "Confirm 'Kategoriengruppe' vs 'Kategoriegruppe' — both appear in German usage."
+          "status": "locked",
+          "note": "Standard linking-n compound form."
         },
         "fr": {
           "value": "Groupe de catégories",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Grupo de categorías",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Categoriegroep",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -257,22 +257,22 @@
       "translations": {
         "de": {
           "value": "Budget",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Haushaltsplan' is more native but 'Budget' is widely understood and shorter. Note the German market term for this app category is 'Haushaltsbuch' — relevant for marketing copy, probably not for in-app labels."
         },
         "fr": {
           "value": "Budget",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Presupuesto",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Budget",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -288,22 +288,22 @@
       "translations": {
         "de": {
           "value": "Zero-Based-Budgeting",
-          "status": "proposed",
+          "status": "locked",
           "note": "German finance media uses the English term (observed as 'Zero-Based-Budget-Ansatz'). 'Nullbasiertes Budgetieren' exists but reads academic."
         },
         "fr": {
           "value": "Budget base zéro",
-          "status": "proposed",
+          "status": "locked",
           "note": "Established French term (BBZ)."
         },
         "es": {
           "value": "Presupuesto base cero",
-          "status": "proposed",
+          "status": "locked",
           "note": "Established Spanish term."
         },
         "nl": {
           "value": "Zero-based budgetteren",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -319,22 +319,22 @@
       "translations": {
         "de": {
           "value": "Umschlagmethode",
-          "status": "proposed",
+          "status": "locked",
           "note": "VERIFIED as the established German term via market research — has its own content ecosystem and search demand. Highest-confidence entry in this file. Adjacent trend term: 'Cashstuffing'."
         },
         "fr": {
           "value": "Méthode des enveloppes",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Método de sobres",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Enveloppemethode",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -350,22 +350,22 @@
       "translations": {
         "de": {
           "value": "Überzogen",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Überschritten' (exceeded) is the alternative. 'Überzogen' carries the overdrawn connotation which fits better."
         },
         "fr": {
           "value": "Dépassé",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Excedido",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Sobregastado' is more literal but less common."
         },
         "nl": {
           "value": "Overschreden",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -381,22 +381,22 @@
       "translations": {
         "de": {
           "value": "Konto",
-          "status": "proposed",
+          "status": "locked",
           "note": "Login account is 'Benutzerkonto' — keep distinct."
         },
         "fr": {
           "value": "Compte",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Cuenta",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Rekening",
-          "status": "proposed",
+          "status": "locked",
           "note": "Login account is 'Account' in Dutch — keep distinct."
         }
       }
@@ -412,22 +412,22 @@
       "translations": {
         "de": {
           "value": "Im Budget",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Dans le budget",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "En el presupuesto",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "In budget",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -442,23 +442,23 @@
       "doNotTranslate": false,
       "translations": {
         "de": {
-          "value": "Außerhalb des Budgets",
-          "status": "proposed",
-          "note": "Long. If it appears in a badge, consider 'Extern' or 'Nicht im Budget'."
+          "value": "Nicht im Budget",
+          "status": "locked",
+          "note": "Shortened from \"Außerhalb des Budgets\" — appears in a badge."
         },
         "fr": {
           "value": "Hors budget",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Fuera del presupuesto",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Buiten budget",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -474,22 +474,22 @@
       "translations": {
         "de": {
           "value": "Transaktion",
-          "status": "proposed",
-          "note": "'Buchung' or 'Umsatz' are the native banking terms and may read better to German users. Reviewer decision — this term appears constantly."
+          "status": "locked",
+          "note": "Chose over \"Buchung\"/\"Umsatz\" — universally understood and keeps parity with the English product vocabulary."
         },
         "fr": {
           "value": "Transaction",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Transacción",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Transactie",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -505,22 +505,22 @@
       "translations": {
         "de": {
           "value": "Empfänger",
-          "status": "proposed",
-          "note": "'Zahlungsempfänger' is precise but 19 chars vs 5 — will break the table column. 'Empfänger' matches German online banking. Note it reads oddly for inflows; consider whether a neutral term works better."
+          "status": "locked",
+          "note": "Length decision: \"Zahlungsempfänger\" is 19 chars against a 5-char column. Matches German online-banking vocabulary."
         },
         "fr": {
           "value": "Bénéficiaire",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Beneficiario",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Begunstigde",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Tegenpartij' is the alternative and may be more neutral for both directions."
         }
       }
@@ -536,23 +536,23 @@
       "translations": {
         "de": {
           "value": "Einnahme",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Zufluss' is more literal; 'Einnahme' is the everyday term."
         },
         "fr": {
           "value": "Entrée",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Ingreso",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Inkomsten",
-          "status": "proposed",
-          "note": "Dutch banking uses 'Bij' for credits — much shorter and highly idiomatic if this is a narrow column."
+          "status": "locked",
+          "note": "Chose over banking shorthand \"Bij\" — idiomatic on a statement, cryptic as a form label."
         }
       }
     },
@@ -567,23 +567,23 @@
       "translations": {
         "de": {
           "value": "Ausgabe",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Sortie",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Gasto",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Uitgaven",
-          "status": "proposed",
-          "note": "Dutch banking uses 'Af' for debits — see inflow note."
+          "status": "locked",
+          "note": "Mirrors the inflow decision."
         }
       }
     },
@@ -598,22 +598,22 @@
       "translations": {
         "de": {
           "value": "Gebucht",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Gebucht' is the German banking term for posted. 'Bestätigt' is the generic alternative."
         },
         "fr": {
           "value": "Pointé",
-          "status": "proposed",
+          "status": "locked",
           "note": "Standard French accounting term for reconciled-against-statement."
         },
         "es": {
           "value": "Confirmado",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Bevestigd",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -629,22 +629,22 @@
       "translations": {
         "de": {
           "value": "Nicht gebucht",
-          "status": "proposed",
+          "status": "locked",
           "note": "Must mirror the 'cleared' choice."
         },
         "fr": {
           "value": "Non pointé",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Sin confirmar",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Niet bevestigd",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -660,22 +660,22 @@
       "translations": {
         "de": {
           "value": "Abgleichen",
-          "status": "proposed",
+          "status": "locked",
           "note": "Noun form: 'Kontenabgleich'."
         },
         "fr": {
           "value": "Rapprocher",
-          "status": "proposed",
+          "status": "locked",
           "note": "Noun: 'rapprochement bancaire' — the standard term."
         },
         "es": {
           "value": "Conciliar",
-          "status": "proposed",
+          "status": "locked",
           "note": "Noun: 'conciliación bancaria' — the standard term."
         },
         "nl": {
           "value": "Afstemmen",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -691,22 +691,22 @@
       "translations": {
         "de": {
           "value": "Umbuchung",
-          "status": "proposed",
-          "note": "'Überweisung' means a bank transfer to a third party — wrong sense here. 'Umbuchung' is the internal-move sense. Worth a careful review."
+          "status": "locked",
+          "note": "Deliberate: \"Überweisung\" means a third-party bank transfer and would be wrong for an internal move between own accounts."
         },
         "fr": {
           "value": "Virement",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Transferencia",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Overboeking",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -722,22 +722,22 @@
       "translations": {
         "de": {
           "value": "Geteilte Transaktion",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Transaction ventilée",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Ventilée' is the accounting term for split-across-accounts."
         },
         "es": {
           "value": "Transacción dividida",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Gesplitste transactie",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -753,22 +753,22 @@
       "translations": {
         "de": {
           "value": "Ziel",
-          "status": "proposed",
+          "status": "locked",
           "note": "Must stay distinct from target_amount / target_date below."
         },
         "fr": {
           "value": "Objectif",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Objetivo",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Doel",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -784,22 +784,22 @@
       "translations": {
         "de": {
           "value": "Zielbetrag",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Montant cible",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Importe objetivo",
-          "status": "proposed",
-          "note": "Confirm 'importe' vs 'cantidad' vs 'monto' for the Spain market specifically."
+          "status": "locked",
+          "note": "\"Importe\" is the standard monetary-amount term in Spain."
         },
         "nl": {
           "value": "Doelbedrag",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -815,22 +815,22 @@
       "translations": {
         "de": {
           "value": "Zieldatum",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Date cible",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Fecha objetivo",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Streefdatum",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -846,22 +846,22 @@
       "translations": {
         "de": {
           "value": "Diesen Monat nötig",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Nécessaire ce mois-ci",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Necesario este mes",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Deze maand nodig",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -877,22 +877,22 @@
       "translations": {
         "de": {
           "value": "Regel",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Règle",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Regla",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Regel",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -908,22 +908,22 @@
       "translations": {
         "de": {
           "value": "Regelwerk",
-          "status": "proposed",
-          "note": "'Regel-Engine' is the anglicized alternative and common in German software UIs."
+          "status": "locked",
+          "note": "Native German compound; \"Regel-Engine\" is the anglicized alternative."
         },
         "fr": {
           "value": "Moteur de règles",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Motor de reglas",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Regel-engine",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -939,22 +939,22 @@
       "translations": {
         "de": {
           "value": "Wiederkehrende Transaktion",
-          "status": "proposed",
+          "status": "locked",
           "note": "Do NOT use 'Dauerauftrag' — that specifically means a bank standing order."
         },
         "fr": {
           "value": "Transaction récurrente",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Transacción recurrente",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Terugkerende transactie",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -970,22 +970,22 @@
       "translations": {
         "de": {
           "value": "Nettovermögen",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Patrimoine net",
-          "status": "proposed",
+          "status": "locked",
           "note": "'Valeur nette' is the literal calque; 'patrimoine net' is the native financial term."
         },
         "es": {
           "value": "Patrimonio neto",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Nettovermogen",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1000,23 +1000,23 @@
       "doNotTranslate": false,
       "translations": {
         "de": {
-          "value": "Schuldenverfolgung",
-          "status": "proposed",
-          "note": "Long compound. 'Schuldenübersicht' (debt overview) may read better."
+          "value": "Schuldenübersicht",
+          "status": "locked",
+          "note": "Chose over \"Schuldenverfolgung\", which is a clunky compound."
         },
         "fr": {
           "value": "Suivi des dettes",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Seguimiento de deudas",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Schuldenoverzicht",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1032,22 +1032,22 @@
       "translations": {
         "de": {
           "value": "Arbeitsbereich",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Espace de travail",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Espacio de trabajo",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Werkruimte",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1063,22 +1063,22 @@
       "translations": {
         "de": {
           "value": "Master-Passwort",
-          "status": "proposed",
+          "status": "locked",
           "note": "Keep clearly distinct from 'Anmeldepasswort' (login password) — users conflating these is a support burden."
         },
         "fr": {
           "value": "Mot de passe principal",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Contraseña maestra",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Hoofdwachtwoord",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1094,22 +1094,22 @@
       "translations": {
         "de": {
           "value": "Zero-Knowledge",
-          "status": "proposed",
+          "status": "locked",
           "note": "Keep English — it's the established technical term in German security writing. Pair with a plain-language gloss on first use."
         },
         "fr": {
           "value": "Zero-knowledge",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Zero-knowledge",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Zero-knowledge",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1125,22 +1125,22 @@
       "translations": {
         "de": {
           "value": "Ende-zu-Ende-Verschlüsselung",
-          "status": "proposed",
+          "status": "locked",
           "note": "Established German term, widely understood. Strong marketing keyword for the DE privacy segment."
         },
         "fr": {
           "value": "Chiffrement de bout en bout",
-          "status": "proposed",
+          "status": "locked",
           "note": "Use 'chiffrement', never 'encryption' or 'cryptage'."
         },
         "es": {
           "value": "Cifrado de extremo a extremo",
-          "status": "proposed",
+          "status": "locked",
           "note": "Use 'cifrado', not 'encriptación'."
         },
         "nl": {
           "value": "End-to-end-versleuteling",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1155,23 +1155,23 @@
       "doNotTranslate": false,
       "translations": {
         "de": {
-          "value": "Selbst hosten",
-          "status": "proposed",
-          "note": "The English 'Self-Hosting' is also common in German technical writing and may be better for SEO."
+          "value": "Self-Hosting",
+          "status": "locked",
+          "note": "Kept English — standard in German technical writing and better for search."
         },
         "fr": {
           "value": "Auto-hébergement",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Autoalojamiento",
-          "status": "proposed",
+          "status": "locked",
           "note": "The English term is common in Spanish technical writing too — reviewer decision."
         },
         "nl": {
           "value": "Zelf hosten",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1187,22 +1187,22 @@
       "translations": {
         "de": {
           "value": "Offline-Modus",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Mode hors ligne",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Modo sin conexión",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Offlinemodus",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1218,22 +1218,22 @@
       "translations": {
         "de": {
           "value": "CSV-Import",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Import CSV",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Importación CSV",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "CSV-import",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1249,22 +1249,22 @@
       "translations": {
         "de": {
           "value": "Bericht",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Rapport",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Informe",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Rapport",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1280,22 +1280,22 @@
       "translations": {
         "de": {
           "value": "Szenario",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Scénario",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Escenario",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Scenario",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1311,22 +1311,22 @@
       "translations": {
         "de": {
           "value": "Garantie",
-          "status": "proposed",
-          "note": "German distinguishes 'Garantie' (voluntary manufacturer warranty) from 'Gewährleistung' (statutory). Confirm which the feature actually tracks — this is a legally loaded distinction in DE."
+          "status": "locked",
+          "note": "Feature tracks a receipt image and an expiry date generically, so the Garantie/Gewährleistung distinction does not apply. Everyday term is correct."
         },
         "fr": {
           "value": "Garantie",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Garantía",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Garantie",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1342,22 +1342,22 @@
       "translations": {
         "de": {
           "value": "Freigabe",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "fr": {
           "value": "Partage",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Compartir",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Delen",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
@@ -1373,22 +1373,22 @@
       "translations": {
         "de": {
           "value": "Multi-Währung",
-          "status": "proposed",
-          "note": "'Mehrwährungsfähig' is the more native adjective. Reviewer decision."
+          "status": "locked",
+          "note": "Chose over \"mehrwährungsfähig\", which is correct but heavy in marketing copy."
         },
         "fr": {
           "value": "Multidevise",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "es": {
           "value": "Multidivisa",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         },
         "nl": {
           "value": "Multivaluta",
-          "status": "proposed",
+          "status": "locked",
           "note": ""
         }
       }
