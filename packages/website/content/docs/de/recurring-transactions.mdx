@@ -1,0 +1,109 @@
+---
+title: "Wiederkehrende Transaktionen"
+summary: "Plane Rechnungen, Gehaltseingänge und zukünftige Ausgaben, bevor sie anfallen. Richte wiederkehrende Zeitpläne mit Erinnerungen ein oder datiere eine einmalige Transaktion in die Zukunft — und behalte beides im Dashboard im Blick."
+section: integrations
+topicId: recurring-transactions
+takeaways:
+  - "Wie wiederkehrende Vorlagen, Termine und der Als-bereit-markieren-Ablauf zusammenwirken."
+  - "Eine einmalige zukünftige Transaktion direkt im Transaktionsformular einplanen."
+  - "Was die Dashboard-Karte für anstehende Transaktionen anzeigt und wie weit sie vorausschaut."
+  - "Wie projizierte Zeilen und zukünftige Datumsbereiche das Kontoregister und Berichte in eine Cashflow-Prognose verwandeln."
+---
+
+Die meisten Geldbewegungen kommen nicht überraschend. Die Miete ist am Ersten fällig, das Gehalt geht am 25. ein, und den Zahnarzttermin nächsten Monat hast du auch schon im Kopf. Budgero gibt dir zwei Möglichkeiten, dieses Wissen ins Budget zu packen, bevor das Geld fließt – **wiederkehrende Transaktionen** für Dinge, die sich wiederholen, und **geplante Einmalzahlungen** für Dinge, die nur einmal anfallen. Beide erscheinen auf deinem Dashboard, damit die nächsten Wochen nie ein Rätsel bleiben.
+
+Im Geiste der Manual-First-Philosophie von Budgero bucht weder noch etwas hinter deinem Rücken: Wiederkehrende Transaktionen warten auf deine Bestätigung, und Einmalzahlungen sind Einträge, die du selbst erstellt hast.
+
+## Wiederkehrende Transaktionen
+
+Eine wiederkehrende Transaktion ist eine Vorlage: was du zahlst (oder erhältst), von welchem Konto, in welcher Kategorie und in welchem Rhythmus. Du verwaltest sie unter **Einstellungen → Wiederkehrende Transaktionen**.
+
+Jede Vorlage definiert:
+
+- **Name und Notiz** — „Miete", „Gehalt", „Fitnessstudio".
+- **Richtung** — eine **Rechnung** (Ausgabe) oder **Einkommen** (Einnahme).
+- **Betrag, Konto und Kategorie** — genau wie bei einer normalen Transaktion.
+- **Zeitplan** — täglich, wöchentlich, alle 2 Wochen, monatlich, alle 2 Monate, vierteljährlich, alle 6 Monate oder jährlich, verankert an einem Startdatum.
+- **Erinnerung** — wie viele Tage vor dem Fälligkeitsdatum du eine Benachrichtigung erhalten möchtest.
+
+Aus dem Zeitplan generiert Budgero **Termine** — die einzelnen bevorstehenden Fälligkeitsdaten — etwa sechs Monate in die Zukunft. Die Einstellungsseite listet auf, was als Nächstes ansteht, und für jeden Termin hast du zwei Möglichkeiten:
+
+- **Als bereit markieren** erstellt die echte Transaktion und wendet deine [fortlaufenden Regeln](/docs/rules-engine) automatisch darauf an — sodass die automatisierte Bereinigung von Empfänger, Kategorie und Notiz auch für wiederkehrende Einträge gilt. Die Transaktion wird immer auf das Fälligkeitsdatum des Termins datiert, auch wenn du sie ein paar Tage früher bestätigst.
+- **Diesmal überspringen** verwirft einen einzelnen Termin, ohne den Zeitplan zu verändern. Die Reihe wird mit dem nächsten Datum fortgesetzt.
+
+Es wird nie etwas automatisch gebucht. Eine wiederkehrende Transaktion ist eine Erinnerung mit einem Ein-Klick-"Umsetzen"-Button, kein Dauerauftrag – du bleibst die letzte Kontrollinstanz zwischen Plan und Buchung.
+
+Vorlagen können jederzeit **pausiert** und **fortgesetzt** werden, und das Löschen einer Vorlage entfernt anstehende Erinnerungen, ohne bereits gebuchte Transaktionen zu verändern.
+
+### Erinnerungen
+
+Aktiviere Benachrichtigungen auf der Seite für wiederkehrende Transaktionen und Budgero erinnert dich vor jedem Fälligkeitsdatum, basierend auf der pro Vorlage festgelegten Einstellung „Tage vorher". Benachrichtigungen laufen lokal auf deinem Gerät – im Einklang mit dem [Zero-Knowledge-Modell](/docs/security), kein Server erfährt jemals, welche Rechnungen du hast.
+
+## Geplante einmalige Transaktionen
+
+Nicht alles wiederholt sich. Für eine einzelne bekannte zukünftige Ausgabe – eine Flugzahlung, eine jährliche Versicherungsprämie, einen geplanten Kauf – gib einfach eine normale Transaktion ein und versehe sie mit einem **zukünftigen Datum**. Du musst keine separate Funktion lernen: Das reguläre Transaktionsformular auf jeder Kontoseite reicht völlig aus.
+
+Eine Transaktion mit zukünftigem Datum ist ein echter Buchungseintrag, der sein Datum einfach noch nicht erreicht hat. Du kannst sie wie jede andere Transaktion bearbeiten oder löschen, und sie erscheint auf dem Dashboard als **Geplant**, damit sie dich nicht überrascht.
+
+## Die Karte für anstehende Transaktionen
+
+Die Karte **Anstehende Transaktionen** im Dashboard führt beide Arten geplanter Aktivität in einer Zeitleiste zusammen:
+
+- **Wiederkehrende Serien** zeigen nur ihre *nächste* Fälligkeit — eine monatliche Rechnung erscheint einmal, nicht sechsmal. Wiederkehrende Einträge tragen ein **Wiederkehrend**-Badge (oder **Bereit zur Buchung**, sobald du sie als bereit markiert hast).
+- **Geplante Einmaltransaktionen** zeigen jede Transaktion mit zukünftigem Datum innerhalb der **nächsten 3 Monate**, markiert mit einem **Geplant**-Badge.
+
+Die Karte zeigt die sechs nächsten Einträge, jeweils mit Betrag, Konto und einem Countdown bis zur Fälligkeit. Die Einträge sind interaktiv:
+
+- Klicke auf einen **wiederkehrenden** Eintrag, um zur entsprechenden Kontoseite zu springen.
+- Klicke auf einen **geplanten** Eintrag, um einen Schnellbearbeitungs-Dialog zu öffnen, in dem du Datum, Betrag, Empfänger oder Kategorie anpassen — oder den Eintrag löschen — kannst, ohne das Dashboard zu verlassen.
+
+Der Link **Automatisierungen verwalten** unten führt dich zur Einstellungsseite für wiederkehrende Transaktionen.
+
+## Deinen Cashflow prognostizieren
+
+Zu wissen, was geplant ist, ist die halbe Miete — die andere Hälfte ist zu sehen, was es mit deinem Kontostand macht. Budgero projiziert wiederkehrende Transaktionen, die noch nicht als bereit markiert wurden, in zwei Ansichten, sodass du ein paar Monate vorausschauen kannst, ohne etwas zu buchen.
+
+### Auf der Kontoseite
+
+Jede Kontoseite hat eine kompakte Leiste für **Anstehende Transaktionen** oberhalb des Registers, die anzeigt, wie viele wiederkehrende und geplante Einträge anstehen, einschließlich der summierten Einnahmen und Ausgaben. Klicke darauf, um die vollständige Liste einzublenden — von dort aus kannst du Termine als bereit markieren oder überspringen. Es merkt sich, ob du sie geöffnet oder geschlossen gelassen hast.
+
+Das Register selbst wird auf Wunsch zur Prognose. Erweitere den Datumsbereich der Seite über das heutige Datum hinaus und anstehende wiederkehrende Termine erscheinen direkt als **projizierte Zeilen** — mit einem Badge markiert, neben deinen tatsächlichen Transaktionen angezeigt, aber schreibgeschützt: eine Projektion ist keine Buchung, also gibt es nichts zu bearbeiten. Um eine zu ändern, bearbeite die wiederkehrende Vorlage oder markiere den Termin als bereit. Ein Termin, dessen Fälligkeitsdatum überschritten wurde, ohne als bereit markiert worden zu sein, bleibt ebenfalls im Register, im anstehenden Bereich als **Überfällig** markiert, bis du ihn buchst oder überspringst.
+
+Projizierte Zeilen fließen in die **Saldo-Spalte** des Registers ein, sodass du bis in den nächsten Monat scrollen und ablesen kannst, wohin sich das Konto entwickelt. Projizierte Saldowerte sind mit **≈** markiert, um klarzustellen, dass es sich um Schätzungen handelt. Der Hauptsaldo des Kontos und die Salden in der Seitenleiste enthalten nie Projektionen oder zukünftig datierte Transaktionen — diese zeigen immer den tatsächlichen Geldstand, Stand heute.
+
+### In Berichten
+
+Die Berichte-Seite akzeptiert zukünftige Datumsbereiche — die Auswahl enthält die Voreinstellungen **Nächste 30 Tage** und **Nächste 3 Monate**. Wenn dein Bereich über das heutige Datum hinausgeht, werden wiederkehrende Termine, die nicht als bereit markiert sind, so gezählt, als wären sie an ihrem Fälligkeitsdatum gebucht worden, und die Seite zeigt den Hinweis **Enthält projizierte wiederkehrende Transaktionen**. Ausgabetrends, Aufschlüsselungen nach Kategorie und Empfänger sowie die Periodenzusammenfassung beziehen sie alle ein, sodass „Wie sieht mein Cashflow bis zum Quartalsende aus?" eine Datumsauswahl ist und keine Tabellenkalkulation.
+
+Projektionen korrigieren sich selbst: Sie werden live aus deinen wiederkehrenden Vorlagen berechnet, sodass das Markieren eines Termins als bereit, das Überspringen oder das Bearbeiten der Vorlage jede Prognose sofort aktualisiert. Eine Projektion ist nur so genau wie der Betrag der Vorlage — variable Rechnungen weichen ein wenig ab, bis sie gebucht werden, dann übernimmt die tatsächliche Zahl.
+
+## Welches Werkzeug für welche Aufgabe?
+
+<table>
+  <thead>
+    <tr>
+      <th>Du kennst…</th>
+      <th>Verwende</th>
+      <th>Warum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Es wiederholt sich in einem Rhythmus (Miete, Gehalt, Abonnements)</td>
+      <td><strong>Wiederkehrende Transaktion</strong></td>
+      <td>Eine Vorlage deckt jedes zukünftige Vorkommen ab, mit Erinnerungen</td>
+    </tr>
+    <tr>
+      <td>Es passiert einmal, an einem bekannten Datum</td>
+      <td><strong>Zukünftig datierte Transaktion</strong></td>
+      <td>Ein echter Eintrag, bereits im Hauptbuch, sichtbar im Dashboard</td>
+    </tr>
+    <tr>
+      <td>Du sparst darauf, hast dich aber noch nicht auf ein Datum oder einen Empfänger festgelegt</td>
+      <td><strong>Ein Ziel</strong></td>
+      <td>Es ist ein Finanzierungsplan, noch keine Transaktion — siehe <a href="/docs/goals">Ziele</a></td>
+    </tr>
+  </tbody>
+</table>
+
+Ein gängiges Muster kombiniert alle drei: Ein Ziel mit Zieldatum spart das Geld an, eine wiederkehrende Erinnerung stupst dich an, wenn die Rechnung näher rückt, und durch das Markieren als bereit wird die Transaktion gegen die Kategorie gebucht, die das Ziel die ganze Zeit über aufgefüllt hat.

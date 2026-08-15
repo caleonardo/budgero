@@ -1,0 +1,51 @@
+---
+title: "Moneda del presupuesto"
+summary: "Elige la moneda que ancla tu presupuesto y descubre cómo Budgero mantiene sincronizadas las cuentas multidivisa y los informes."
+section: getting-started
+topicId: budget-currency
+takeaways:
+  - "Conoce qué controla la moneda del presupuesto en Por asignar, los paneles y los informes."
+  - "Entiende cómo Budgero convierte las cuentas multidivisa usando tipos de cambio diarios y valores manuales de respaldo."
+  - "Cambia la moneda del presupuesto con confianza y conoce cómo se comporta el recálculo."
+---
+
+La moneda del presupuesto es la unidad única que Budgero usa para totales, análisis y Por asignar. Aunque tu dinero esté en cuentas de distintas monedas, Budgero convierte todo a este ancla para que cada decisión se tome en un mismo idioma.
+
+## Qué controla la moneda del presupuesto
+
+- **Por asignar y saldos de categorías.** Todos los totales del presupuesto aparecen en la moneda del presupuesto, incluso cuando la cuenta subyacente usa otra moneda.
+- **Paneles e informes.** El patrimonio neto, los gráficos de flujo de caja y los informes de gasto se consolidan en la moneda del presupuesto para que las comparaciones sean consistentes de mes a mes.
+- **Resúmenes de cuentas.** Cada cuenta muestra tanto el saldo original como un saldo convertido referenciado a la moneda del presupuesto para comprobaciones rápidas y equivalentes.
+
+## Elegir la moneda adecuada
+
+- Usa la misma moneda con la que gestionas tu hogar o negocio. La mayoría de personas eligen la moneda de su país para que los valores coincidan con facturas y nóminas.
+- Al importar desde YNAB, usa la misma moneda de visualización que usabas allí. Budgero reflejará los totales con mayor precisión y facilitará la migración de objetivos.
+- Si sueles gastar en varias monedas, configura la moneda del presupuesto en la que quieras evaluar tu rendimiento; normalmente, la moneda en la que ingresas o pagas impuestos.
+
+## Trabajar con cuentas multidivisa
+
+Budgero permite que cada cuenta mantenga su moneda nativa. Cuando se registran transacciones, Budgero almacena tanto el importe original como un importe convertido en la moneda del presupuesto:
+
+- Budgero obtiene tipos de cambio oficiales a diario y los almacena en caché en el archivo de presupuesto. El tiempo que se conserva la caché es configurable en Ajustes → Monedas (30 días por defecto); los tipos antiguos se eliminan para mantener el archivo de presupuesto pequeño y se vuelven a obtener bajo demanda.
+- Cuando se necesita un tipo actualizado, Budgero lo obtiene del servicio de tipos de cambio y lo almacena. Si estás sin conexión y no hay ningún tipo en caché, puedes introducir un tipo manual para que la conversión pueda realizarse; ese tipo manual se reemplaza automáticamente al reconectar, a menos que desactives la opción «actualizar tipos sin conexión» — y los tipos que fijes en una transacción nunca se modifican.
+- Los saldos convertidos se actualizan automáticamente cuando editas una transacción, concilias una cuenta o importas el historial, para que Por asignar y los informes se mantengan precisos.
+
+## Cambiar la moneda del presupuesto más adelante
+
+Puedes cambiar la moneda del presupuesto en cualquier momento:
+
+Budgero borra los tipos de cambio en caché, recalcula cada transacción y convierte las asignaciones y los importes objetivo a la nueva moneda. La aplicación muestra una superposición breve con el estado de la conversión mientras trabaja. Después del cambio, Budgero obtiene tipos de cambio actualizados la próxima vez que veas un mes que los necesite.
+
+Espera que los historiales extensos tarden un momento mientras se actualizan las conversiones. Puedes seguir trabajando en el presupuesto una vez que desaparezca la superposición.
+
+## Tipos de cambio sin conexión y manuales
+
+- ¿Te vas a quedar sin conexión? Introduce tipos de cambio manuales para que Budgero mantenga conversiones precisas sin necesidad de una llamada de red. Budgero guarda tanto el tipo como su recíproco para facilitar su reutilización.
+- Al reconectar, Budgero sustituye las conversiones sin conexión por tipos oficiales automáticamente — una opción que está activada por defecto y se puede cambiar en Ajustes → Monedas o directamente en el aviso de tipo sin conexión.
+- Si el día exacto no está en caché, Budgero usa el tipo más cercano anterior, hasta una semana atrás. Más allá de eso, te pide un tipo, rellenado previamente con el más cercano en caché.
+
+## Solución de problemas
+
+- **Los totales convertidos no cuadran:** Comprueba que exista un tipo para la fecha de la transacción. Vuelve a abrir la cuenta o actualiza el panel para que Budgero obtenga o recalcule el tipo.
+- **Las asignaciones cambiaron al cambiar de moneda:** Budgero multiplica las asignaciones y los importes objetivo por el tipo de la nueva moneda para que su poder adquisitivo se mantenga intacto. Ajusta las categorías manualmente si quieres fijar una cantidad diferente.

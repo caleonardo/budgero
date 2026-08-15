@@ -1,0 +1,124 @@
+---
+title: "Push API-overzicht"
+summary: "Verstuur versleutelde transacties naar Budgero vanuit elk systeem via de Push API of de Python SDK."
+section: integrations
+topicId: push-api
+badge: "Nieuw"
+order: 10
+takeaways:
+  - "Genereer een Push API-token en exporteer je versleutelingssleutel voor de werkruimte via Instellingen → Integraties → Push API."
+  - "Versleutel een transactions.add-payload met AES-GCM, codeer deze als Base64 en stuur een POST naar /api/v1/push met een bearer-token; gebruik message_id om duplicaten bij nieuwe pogingen te voorkomen."
+  - "Gebruik de Python SDK voor versleuteling, message-id's en wachtrij-inzicht (in behandeling/verwerkt/mislukt)."
+---
+
+Met de Push API kun je transacties vanuit andere systemen naar Budgero sturen, terwijl alles end-to-end versleuteld blijft. Je genereert een token, versleutelt de payload met je space key, en stuurt deze via een POST naar het push-endpoint over HTTPS.
+
+## Snelle installatie
+
+1. Ga naar **Instellingen → Integraties → Push API** en genereer een Push API-token.  
+2. Exporteer je **space-encryptiesleutel** (Budgero slaat deze nooit server-side op).  
+3. Maak een JSON-payload aan (zie formaat hieronder), versleutel deze met **AES-256-GCM**, codeer deze als Base64, en stuur deze via een POST naar het push-endpoint met je bearer-token.  
+4. Voeg optioneel een **message_id** toe zodat retries worden ontdubbeld.  
+5. Houd de wachtrijstatistieken in de app of via de API in de gaten om de verwerking te bevestigen.
+
+## Endpoint- en payloadspecificatie
+
+- Endpoint: `POST /api/v1/push` (gebruik je basis-URL; standaard is `https://my.budgero.app`)
+- Auth: `Authorization: Bearer <push-api-token>`
+- Body-velden:
+  - `encrypted_payload` (string, Base64): met AES-GCM versleutelde JSON-payload (IV + ciphertext + auth tag).
+  - `message_id` (string, optioneel): door de client gegenereerd id om retries te ontdubbelen.
+
+### Vorm van de ontsleutelde payload (vóór versleuteling)
+
+```json
+{
+  "v": 2,
+  "op": "transactions.add",
+  "args": {
+    "accountId": 1,
+    "categoryId": 5,
+    "budgetId": 1,
+    "date": "2024-11-27",
+    "inflow": 0,
+    "outflow": 42500,
+    "memo": "API push",
+    "payee": "Vendor",
+    "transferId": ""
+  },
+  "message_id": "optional-unique-id"
+}
+```
+
+Geldbedragen zijn gehele getallen in milli-eenheden (1/1000 van een valuta-eenheid), dus 42.50 wordt verzonden als `42500`. Voeg altijd `"v": 2` toe; legacy-payloads zonder deze vlag worden behandeld als formaat 1 (decimale bedragen) en bijgewerkt bij import, maar nieuwe integraties moeten formaat 2 verzenden. De Python SDK regelt zowel de formaatvlag als de conversie voor je.
+
+### Momenteel ondersteunde bewerking
+
+- `transactions.add` — stuur inkomsten of uitgaven. Gebruik `inflow` voor inkomsten en `outflow` voor uitgaven (slechts één moet ongelijk aan nul zijn). Geef je bestaande budget-, rekening- en categorie-ID's op.
+
+## Versleutelingsvereisten
+
+- Algoritme: AES-256-GCM  
+- IV: 12 bytes (voeg toe vóór de ciphertext)  
+- Auth-tag: 16 bytes (voeg toe na de ciphertext)  
+- Codering: Base64 van IV + ciphertext + tag  
+- Sleutel: Jouw **versleutelingssleutel voor de werkruimte** (geëxporteerd via Instellingen).
+
+## Python SDK-snelstartgids
+
+```python
+from budgero import BudgeroClient
+
+client = BudgeroClient(
+    api_key="your-push-token",
+    encryption_key="your-space-key",
+    base_url="https://my.budgero.app",
+)
+
+result = client.add_transaction(
+    account_id=1,
+    category_id=5,
+    budget_id=1,
+    date="2024-11-27",
+    outflow=42.50,
+    memo="Example push",
+    payee="API Demo",
+)
+
+print("Queued id:", result.queue_id)
+```
+
+SDK-hulpfuncties:
+
+- `get_queue()` — toon items in afwachting  
+- `get_queue_stats()` — aantallen in afwachting/verwerkt/mislukt  
+- `clear_queue()` — wis items in afwachting (of alle met een vlag)
+
+- **Deduplicatie:** Geef een stabiele `message_id` op bij het opnieuw proberen om dubbele invoegingen te voorkomen.  
+- **Wachtrij-inzicht:** Controleer wachtrijstatistieken in de app of via `/push/queue` en `/push/stats` om de levering te verifiëren.  
+- **Tokenhygiëne:** Roteer of regenereer bij blootstelling. Schakel indien nodig uit of trek in via Instellingen.  
+- **Sleutelhygiëne:** Houd de token/sleutel buiten versiebeheer.  
+  <figure>
+    <img src="/gandalf_keep_it_secret.gif" alt="“Houd het geheim, houd het veilig” — Gandalf die Frodo herinnert" />
+    <figcaption>Houd het geheim, houd het veilig.</figcaption>
+  </figure>
+  
+  Gebruik omgevingsvariabelen (bijv. `BUDGERO_PUSH_TOKEN`, `BUDGERO_SPACE_KEY`) of de geheime manager van je besturingssysteem, beperk bestandsrechten en vermijd ze te loggen.  
+- **Transport:** Gebruik altijd HTTPS zodat de bearer-token en metadata beveiligd blijven.  
+- **Toegangsbeheer:** Beperk wie de token/sleutel kan lezen. Behandel ze als inloggegevens met toegang tot je budget.  
+- **Foutafhandeling:** Bij een 409 met message_id, beschouw het als een ontdubbelde poging. Bij 401/403, regenereer of schakel de token in. Houd wachtrijfouten in de gaten en wis of plaats ze opnieuw in de wachtrij indien nodig.
+
+
+- **Deduplication:** Provide a stable `message_id` when retrying to prevent double inserts.  
+- **Queue visibility:** Check queue stats in-app or via `/push/queue` and `/push/stats` to verify delivery.  
+- **Token hygiene:** Rotate/regenerate if exposed. Disable or revoke from Settings as needed.  
+- **Key hygiene:** Keep the token/key out of source control.  
+  <figure>
+    <img src="/gandalf_keep_it_secret.gif" alt="“Keep it secret, keep it safe” — Gandalf reminding Frodo" />
+    <figcaption>Keep it secret, keep it safe.</figcaption>
+  </figure>
+  
+  Use env vars (e.g., `BUDGERO_PUSH_TOKEN`, `BUDGERO_SPACE_KEY`) or your OS secret manager, restrict file perms, and avoid logging them.  
+- **Transport:** Always use HTTPS so the bearer token and metadata stay protected.  
+- **Access control:** Restrict who can read the token/key. Treat them like credentials with scope to your budget.  
+- **Error handling:** On 409 with message_id, treat it as a deduped retry. On 401/403, regenerate/enable the token. Monitor queue failures and clear or requeue as needed.

@@ -1,0 +1,77 @@
+---
+title: "Importación y exportación CSV"
+summary: "Importa el historial de transacciones de tus bancos y exporta copias de seguridad completas que puedes usar para la temporada de impuestos, contables o análisis más profundos."
+section: accounts-and-imports
+topicId: csv-import
+takeaways:
+  - "Formatos de archivo compatibles y cómo funciona la vista previa de mapeo de columnas."
+  - "Cómo evitar duplicados al combinar importaciones con entrada manual."
+  - "Qué genera la exportación: un paquete CSV completo más una copia de seguridad de la base de datos."
+---
+
+Budgero es manual por defecto, pero "manual" no significa teclear cada línea. El importador convierte las exportaciones de tu banco en transacciones en un par de minutos — y el exportador garantiza que tus datos nunca queden atrapados.
+
+## Formatos compatibles
+
+El importador acepta más que solo CSV:
+
+- **CSV / TSV / TXT** — la exportación bancaria universal
+- **OFX / QFX / QIF** — formatos clásicos de banco y Quicken
+- **CAMT.053** — el formato de extracto en XML habitual en bancos europeos
+- **PDF** — Budgero extrae tablas de los PDF de extractos; eliges la tabla y luego mapeas las columnas igual que con un CSV
+
+Ese último punto importa más de lo que parece: muchos bancos solo ofrecen extractos en PDF, y la extracción de tablas significa que no tienes que volver a teclearlos. (Esto es extracción de tablas, no escaneado de recibos — apúntalo a extractos, no a tickets de compra arrugados.)
+
+## Mapeo de tu archivo
+
+Las exportaciones bancarias nunca se ponen de acuerdo en los nombres de las columnas, así que el importador muestra una vista previa y te permite mapear las columnas tú mismo:
+
+1. **Elige la fila de encabezados.** Si tu banco rellena el archivo con líneas de logotipo y avisos legales, salta las filas hasta que aparezcan los encabezados reales.
+2. **Mapea las columnas.** Obligatorias: una columna de **fecha** y, o bien una única columna de **importe**, o un par **ingreso/gasto**. Opcionales: beneficiario, memo/descripción, categoría y cuenta.
+3. **Configura los formatos.** Las fechas se detectan automáticamente entre los patrones habituales (`YYYY-MM-DD`, `DD/MM/YYYY`, `MM/DD/YYYY`, `DD.MM.YYYY` y más), y los formatos numéricos cubren las convenciones de EE. UU./Reino Unido (`1,234.56`), europeas (`1.234,56`), suizas y francesas — de modo que una exportación de Deutsche Bank y una de Chase se procesan ambas correctamente.
+4. **Revisa la vista previa** e importa.
+
+If the file doesn't carry an account column, you choose the destination account up front — the usual case, since most banks export one account per file.
+
+## Avoiding duplicates
+
+El importador **no** deduplica automáticamente contra las transacciones existentes — combinar importaciones con registro manual es el origen de los duplicados, así que adopta una de estas dos disciplinas:
+
+- **Cuentas solo de importación:** para las cuentas que importas con regularidad, no introduzcas también las transacciones a mano. Importa en rangos de fechas que no se solapen (p. ej., exporta "el mes pasado" el día 1) y los duplicados simplemente no pueden producirse.
+- **Primero manual con relleno posterior:** si registras a medida que gastas, usa las importaciones como mecanismo de comprobación — concilia con el banco (ver [Cuentas](/docs/accounts)) en lugar de importar el mismo periodo dos veces.
+
+Si importas un rango dos veces, ordena las transacciones de la cuenta por fecha y elimina uno de los lados — y concilia después, para que el saldo verificado confirme que has eliminado las correctas.
+
+## Categorizar lo que llega
+
+Las transacciones importadas sin categoría van a **Sin categorizar** — el cajón de sastre del sistema. Reduce la lista a cero poco después de cada importación; un presupuesto preciso con un saldo abultado en Sin categorizar es una contradicción. Si la exportación de tu banco incluye una columna de categoría que coincide aproximadamente con tu estructura, mapeala durante la importación y solo tendrás que corregir los rezagados.
+
+## Exportar tus datos
+
+Todo sale por la misma puerta por la que entró. **Ajustes → Gestión de datos → Exportar datos** ofrece dos formatos:
+
+<table>
+  <thead>
+    <tr>
+      <th>Exportación</th>
+      <th>Contenido</th>
+      <th>Ideal para</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Paquete CSV</strong> (zip)</td>
+      <td>presupuestos, cuentas, categorías, grupos de categorías, transacciones, asignaciones, objetivos — un CSV para cada uno</td>
+      <td>Contables, hojas de cálculo, temporada fiscal, análisis</td>
+    </tr>
+    <tr>
+      <td><strong>Copia de seguridad de la base de datos</strong> (.db)</td>
+      <td>Tu presupuesto completo como base de datos SQLite</td>
+      <td>Copias de seguridad completas, migrar a autoalojamiento</td>
+    </tr>
+  </tbody>
+</table>
+
+Como tus datos están cifrados de extremo a extremo, las exportaciones se realizan en tu dispositivo después de desbloquear con tu contraseña maestra — el servidor nunca ve el texto plano en ningún momento (consulta el [Modelo de seguridad](/docs/security) para entender por qué importa).
+
+Un hábito de copia de seguridad sensato: exporta el paquete CSV trimestralmente y antes de cualquier reestructuración importante. Cuesta un solo clic, y significa que incluso un error en el peor de los casos — una categoría eliminada, una importación fallida — se puede recuperar desde la última instantánea de la verdad.

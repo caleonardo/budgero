@@ -1,0 +1,77 @@
+---
+title: CSV Import & Export
+summary: "Importiere den Transaktionsverlauf deiner Banken und exportiere vollständige Backups, die du für die Steuererklärung, deinen Steuerberater oder tiefere Analysen nutzen kannst."
+section: accounts-and-imports
+topicId: csv-import
+takeaways:
+  - "Unterstützte Dateiformate und wie die Vorschau der Spaltenzuordnung funktioniert."
+  - "So vermeidest du Duplikate, wenn du Importe mit manueller Eingabe kombinierst."
+  - "Was der Export erzeugt – ein vollständiges CSV-Paket plus ein Datenbank-Backup."
+---
+
+Budgero ist in erster Linie manuell, aber »manuell« heißt nicht, jede Zeile einzutippen. Der Importer verwandelt die Exporte deiner Bank in wenigen Minuten in Transaktionen — und der Exporter garantiert, dass deine Daten nie eingesperrt sind.
+
+## Unterstützte Formate
+
+Der Importer akzeptiert mehr als nur CSV:
+
+- **CSV / TSV / TXT** — der universelle Bankexport
+- **OFX / QFX / QIF** — klassische Bank- und Quicken-Formate
+- **CAMT.053** — das XML-Kontoauszugsformat, das bei europäischen Banken verbreitet ist
+- **PDF** — Budgero extrahiert Tabellen aus Kontoauszugs-PDFs; du wählst die Tabelle und ordnest die Spalten dann genau wie bei einer CSV zu
+
+Der letzte Punkt ist wichtiger, als er klingt: Viele Banken bieten Kontoauszüge nur als PDF an, und die Tabellenextraktion bedeutet, dass du sie nicht abtippen musst. (Es handelt sich um Tabellenextraktion, nicht um Belegscanning — richte es auf Kontoauszüge, nicht auf zerknitterte Kassenbons.)
+
+## Deine Datei zuordnen
+
+Bankexporte sind sich bei Spaltennamen nie einig, deshalb zeigt der Importer eine Vorschau und lässt dich die Spalten selbst zuordnen:
+
+1. **Wähle die Kopfzeile.** Wenn deine Bank die Datei mit Logo-Zeilen und Hinweisen füllt, überspringe Zeilen, bis die echten Überschriften erscheinen.
+2. **Ordne die Spalten zu.** Erforderlich: eine **Datums**-Spalte und entweder eine einzelne **Betrag**-Spalte oder ein **Einnahme/Ausgabe**-Paar. Optional: Empfänger, Notiz/Beschreibung, Kategorie und Konto.
+3. **Lege die Formate fest.** Daten werden automatisch über die gängigen Muster erkannt (`YYYY-MM-DD`, `DD/MM/YYYY`, `MM/DD/YYYY`, `DD.MM.YYYY` und weitere), und Zahlenformate decken US/UK (`1,234.56`), europäische (`1.234,56`), Schweizer und französische Konventionen ab — sodass ein Deutsche-Bank-Export und ein Chase-Export beide korrekt importiert werden.
+4. **Überprüfe die Vorschau** und importiere.
+
+Wenn die Datei keine Kontospalte enthält, wählst du vorab das Zielkonto aus — der Normalfall, da die meisten Banken pro Datei nur ein Konto exportieren.
+
+## Duplikate vermeiden
+
+Der Import führt **kein** automatisches Deduplizieren mit bestehenden Transaktionen durch — die Kombination von Import und manueller Eingabe ist die Quelle von Duplikaten. Behalte daher eine von zwei Vorgehensweisen bei:
+
+- **Reine Import-Konten:** Bei Konten, die du regelmäßig importierst, erfasse Transaktionen nicht zusätzlich manuell. Importiere in sich nicht überschneidenden Zeiträumen (z. B. am 1. des Monats mit dem Export „letzter Monat") und Duplikate können gar nicht erst entstehen.
+- **Zuerst manuell, dann auffüllen:** Wenn du Ausgaben direkt erfasst, nutze Importe stattdessen als Kontrollmechanismus — gleiche mit der Bank ab (siehe [Konten](/docs/accounts)), anstatt denselben Zeitraum zweimal zu importieren.
+
+Falls du einen Zeitraum doppelt importierst, sortiere die Transaktionen des Kontos nach Datum und lösche eine Seite — und gleiche danach ab, damit der verifizierte Saldo bestätigt, dass du die richtigen entfernt hast.
+
+## Kategorisieren, was ankommt
+
+Importierte Transaktionen ohne Kategorie landen in **Unkategorisiert** — der Ablage des Systems. Arbeite die Liste nach jedem Import schnell auf null herunter; ein genaues Budget mit einem hohen Unkategorisiert-Saldo ist ein Widerspruch in sich. Wenn der Export deiner Bank eine Kategorie-Spalte enthält, die grob deiner Struktur entspricht, ordne sie beim Import zu und du musst nur noch die Nachzügler korrigieren.
+
+## Deine Daten exportieren
+
+Deine Daten verlassen das System auf demselben Weg, auf dem sie hineingelangt sind. **Einstellungen → Datenverwaltung → Daten exportieren** bietet zwei Formate:
+
+<table>
+  <thead>
+    <tr>
+      <th>Export</th>
+      <th>Inhalt</th>
+      <th>Am besten geeignet für</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CSV-Paket</strong> (zip)</td>
+      <td>Budgets, Konten, Kategorien, Kategoriengruppen, Transaktionen, Zuweisungen, Ziele — jeweils eine CSV</td>
+      <td>Steuerberater, Tabellenkalkulation, Steuersaison, Analyse</td>
+    </tr>
+    <tr>
+      <td><strong>Datenbank-Backup</strong> (.db)</td>
+      <td>Dein komplettes Budget als SQLite-Datenbank</td>
+      <td>Vollständige Backups, Migration zu Self-Hosting</td>
+    </tr>
+  </tbody>
+</table>
+
+Da deine Daten Ende-zu-Ende-verschlüsselt sind, erfolgen Exporte auf deinem Gerät, nachdem du mit deinem Master-Passwort entsperrt hast — der Server sieht zu keinem Zeitpunkt den Klartext (siehe das [Sicherheitsmodell](/docs/security), um zu verstehen, warum das wichtig ist).
+
+Eine sinnvolle Backup-Routine: Exportiere das CSV-Paket quartalsweise und vor jeder größeren Umstrukturierung. Das kostet nur einen Klick und bedeutet, dass selbst ein Worst-Case-Fehler — eine gelöschte Kategorie, ein missglückter Import — aus dem letzten verlässlichen Snapshot wiederherstellbar ist.

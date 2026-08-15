@@ -1,0 +1,107 @@
+---
+title: "Multidevise"
+summary: "Conservez des comptes dans plus de 120 devises fiat — ou en crypto — au sein d'un même budget. Découvrez comment fonctionne la conversion, d'où proviennent les taux et comment les remplacer lorsque la réalité diffère."
+section: accounts-and-imports
+topicId: multi-currency
+takeaways:
+  - "Comment chaque transaction étrangère conserve à la fois un montant d'origine et un montant converti."
+  - "La hiérarchie des taux — remplacements par transaction, taux personnalisés, taux récupérés, taux manuels."
+  - "Modes opératoires pour rapprocher les relevés, gérer les dépenses de voyage et budgéter hors ligne."
+---
+
+Multi-currency is not a display option in Budgero — it's core accounting. You can hold accounts in any of 168 currencies inside a single budget, and every number still adds up in one place. This guide covers the conversion machinery; for choosing and changing the anchor currency itself, see [Budget currency](/docs/budget-currency).
+
+## Two amounts per transaction
+
+Chaque transaction sur un compte en devise étrangère stocke deux valeurs :
+
+- le **montant d'origine** — ce qui s'est réellement passé, dans la devise du compte. C'est la source de vérité et cela ne change jamais.
+- le **montant converti** — la même transaction exprimée dans la devise de votre budget, ce que les catégories, [À affecter](/docs/ready-to-assign) et les rapports utilisent.
+
+Parallèlement, Budgero enregistre le **taux de change** utilisé et indique si vous l'avez remplacé. L'historique de votre compte en CHF reste en francs ; votre budget s'affiche en euros ; rien ne se perd en chemin. Les soldes des comptes fonctionnent de la même manière — chaque compte étranger connaît à la fois son solde d'origine et sa contribution convertie à votre patrimoine net.
+
+## D'où proviennent les taux
+
+Lorsqu'une transaction nécessite une conversion, Budgero détermine le taux selon une hiérarchie stricte — la première source applicable l'emporte :
+
+<table>
+  <thead>
+    <tr>
+      <th>Priorité</th>
+      <th>Source</th>
+      <th>Quand elle s'applique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>Remplacement par transaction</strong></td>
+      <td>Vous définissez le taux exact pour cette transaction</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>Taux personnalisés</strong></td>
+      <td>Un taux que vous avez défini pour une plage de dates couvrant la transaction</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>Taux récupérés</strong></td>
+      <td>Taux quotidiens que Budgero récupère automatiquement</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><strong>Taux manuels</strong></td>
+      <td>Taux permanents que vous avez saisis vous-même — aucune connexion requise</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><strong>Taux récent le plus proche</strong></td>
+      <td>Le taux du jour antérieur le plus proche (jusqu'à une semaine en arrière), lorsque le jour exact n'est pas en cache</td>
+    </tr>
+  </tbody>
+</table>
+
+Pour la plupart des gens, les taux récupérés font tout le travail en toute transparence. Les couches au-dessus existent pour les moments où « la moyenne du marché » ne correspond pas à votre réalité.
+
+## Taux personnalisés : votre taux, votre plage de dates
+
+**Paramètres → Devises** est la salle de contrôle. C'est là que vous définissez des **taux de change personnalisés** : une paire de devises, un taux et une plage de dates. Dans cette plage, votre taux prime sur celui récupéré.
+
+Cas d'usage typiques :
+
+- **Vous avez transféré de l'argent à un taux connu.** Vous avez converti 10 000 € à 1,0845 le 3 mars — fixez ce taux pour cette semaine et vos comptes correspondent au reçu du virement.
+- **Une devise gérée ou indexée.** Si vous opérez avec une devise dont le taux officiel et le taux réel diffèrent, définissez celui qui reflète votre réalité.
+- **Nettoyage historique.** Vous avez importé des années de transactions en devises étrangères ? Définissez des taux personnalisés par période plutôt que de modifier les lignes une par une.
+
+Les taux personnalisés sont des paramètres dynamiques, et non des horodatages uniques : lorsque vous en ajoutez, modifiez ou supprimez un, Budgero **recalcule les montants convertis** de chaque transaction dans cette plage — à l'exception des transactions que vous avez individuellement remplacées, qui conservent toujours leur taux fixé.
+
+## Remplacements par transaction : correspondre au relevé
+
+Les taux du marché sont des moyennes ; le taux de règlement de votre carte ne l'est jamais tout à fait. Lorsque le montant converti doit correspondre à un relevé au centime près, remplacez le taux sur la transaction concernée — saisissez soit le taux, soit le montant réglé exact, et la transaction est dès lors exemptée de tout recalcul automatique.
+
+Cet outil est fait pour : les achats par carte à l'étranger (les banques ajoutent leur propre marge), les virements dont le reçu indique le taux exact, et toute ligne que votre comptable finira par comparer à un relevé.
+
+## Taux manuels : budgéter sans flux de taux
+
+Les taux manuels sont des taux fixes que vous saisissez vous-même, utilisés lorsque les taux récupérés ne sont pas disponibles — en [mode hors ligne](/docs/offline), ou sur une instance [auto-hébergée](/docs/self-hosting-guide) que vous n'avez pas connectée à une API de taux. Définissez-les une fois pour les paires que vous utilisez et le multidevise continue de fonctionner sans aucune connexion réseau ; vous pourrez toujours régulariser des transactions individuelles avec des remplacements plus tard.
+
+## Flux de travail au quotidien
+
+**Le foyer transfrontalier.** Le salaire arrive en GBP, le loyer part en EUR. Chaque compte conserve sa propre devise ; les décisions d'affectation et de dépense se font toutes dans la devise du budget. Aucun calcul de change mental à aucun moment — la hiérarchie des taux s'en charge.
+
+**Voyage.** Payez avec votre carte locale à l'étranger et la transaction arrive dans la devise du compte comme d'habitude — saisissez ce que le terminal a affiché dans la devise étrangère ou ce que l'application de votre banque indique comme réglé, selon ce dont vous disposez ; un remplacement rapprochera la différence à l'arrivée du relevé.
+
+**Rapprochement des comptes étrangers.** Le [rapprochement](/docs/accounts) compare les montants *originaux* à votre banque — des francs contre des francs. La conversion n'interfère jamais avec l'exactitude du solde de votre compte ; elle détermine seulement comment ce solde se lit dans la devise de votre budget.
+
+## Ce que la conversion ne touche jamais
+
+Un principe à retenir : les taux affectent la façon dont les montants étrangers sont *exprimés*, jamais ce qui *s'est passé*. Les montants d'origine sont des faits immuables ; les montants convertis sont des interprétations qui s'améliorent à mesure que vos données de taux s'enrichissent. Supprimer un taux personnalisé ne corrompt pas l'historique — cela renvoie simplement ces transactions au niveau inférieur de la hiérarchie, vers le prochain taux applicable.
+
+## Comptes crypto
+
+Les comptes peuvent également être libellés en cryptomonnaie — Bitcoin, Ethereum et une vingtaine d'autres principales cryptomonnaies. Certains aspects fonctionnent différemment des devises fiduciaires :
+
+- **Précision au sat.** Les montants en cryptomonnaie sont stockés avec huit décimales, donc 0.00000001 BTC est représentable. La précision des devises fiduciaires reste inchangée.
+- **Suivi uniquement par défaut.** Les nouveaux comptes crypto démarrent hors budget : leur valeur compte dans le patrimoine net, mais les fluctuations quotidiennes du marché ne font pas varier le montant À affecter. Passez le compte dans le budget si vous *souhaitez* que votre budget respire avec le marché.
+- **Réévaluation quotidienne.** Chaque jour, le solde converti du compte est ajusté pour correspondre à son solde natif multiplié par le dernier taux, et le changement est journalisé. Vos transactions conservent le taux du jour où elles ont eu lieu — les rapports de dépenses ne réécrivent jamais l'historique — tandis que les soldes reflètent toujours le marché du jour.
+- **Pas de repli 1:1.** Une transaction en devise fiduciaire sans taux connu se replie sur une conversion temporaire 1:1 et se corrige plus tard ; pour la cryptomonnaie, ce serait catastrophique, Budgero refuse donc d'enregistrer la transaction tant qu'aucun taux n'est disponible (ajoutez un taux manuel ou reconnectez-vous).

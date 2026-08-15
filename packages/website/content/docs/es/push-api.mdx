@@ -1,0 +1,124 @@
+---
+title: "Descripción general de la Push API"
+summary: "Envía transacciones cifradas a Budgero desde cualquier sistema usando la Push API o el SDK de Python."
+section: integrations
+topicId: push-api
+badge: "Nuevo"
+order: 10
+takeaways:
+  - "Genera un token de la Push API y exporta la clave de cifrado de tu espacio de trabajo desde Ajustes → Integraciones → Push API."
+  - "Cifra una carga útil de transactions.add con AES-GCM, codifícala en Base64 y haz un POST a /api/v1/push con un bearer token; usa message_id para evitar duplicados en los reintentos."
+  - "Usa el SDK de Python para gestionar el cifrado, los ids de mensaje y la visibilidad de la cola (pendiente/procesado/fallido)."
+---
+
+La API Push te permite enviar transacciones a Budgero desde otros sistemas manteniendo todo con cifrado de extremo a extremo. Generas un token, cifras la carga útil con tu clave de espacio y la envías por POST al endpoint de push a través de HTTPS.
+
+## Configuración rápida
+
+1. En **Ajustes → Integraciones → API Push**, genera un token de API Push.  
+2. Exporta tu **clave de cifrado del espacio** (Budgero nunca la almacena en el servidor).  
+3. Construye una carga útil JSON (consulta el formato más abajo), cífrala con **AES-256-GCM**, codifícala en Base64 y envíala por POST al endpoint de push con tu token bearer.  
+4. Opcionalmente, incluye un **message_id** para que los reintentos se dedupliquen.  
+5. Supervisa las estadísticas de la cola en la app o a través de la API para confirmar el procesamiento.
+
+## Endpoint y especificación de la carga útil
+
+- Endpoint: `POST /api/v1/push` (usa tu URL base; el predeterminado es `https://my.budgero.app`)
+- Auth: `Authorization: Bearer <push-api-token>`
+- Campos del body:
+  - `encrypted_payload` (cadena, Base64): carga útil JSON cifrada con AES-GCM (IV + texto cifrado + etiqueta de autenticación).
+  - `message_id` (cadena, opcional): ID generado por el cliente para deduplicar reintentos.
+
+### Estructura de la carga útil descifrada (antes del cifrado)
+
+```json
+{
+  "v": 2,
+  "op": "transactions.add",
+  "args": {
+    "accountId": 1,
+    "categoryId": 5,
+    "budgetId": 1,
+    "date": "2024-11-27",
+    "inflow": 0,
+    "outflow": 42500,
+    "memo": "API push",
+    "payee": "Vendor",
+    "transferId": ""
+  },
+  "message_id": "optional-unique-id"
+}
+```
+
+Los valores monetarios son milunidades enteras (1/1000 de una unidad de moneda), por lo que 42.50 se envía como `42500`. Incluye siempre `"v": 2`; las cargas útiles heredadas sin este campo se tratan como formato 1 (importes decimales) y se actualizan al importar, pero las integraciones nuevas deberían enviar el formato 2. El SDK de Python gestiona tanto el indicador de formato como la conversión por ti.
+
+### Operación admitida actualmente
+
+- `transactions.add` — envía un ingreso o gasto. Usa `inflow` para ingresos y `outflow` para gastos (solo uno debe ser distinto de cero). Proporciona los IDs existentes de tu presupuesto, cuenta y categoría.
+
+## Requisitos de cifrado
+
+- Algoritmo: AES-256-GCM  
+- IV: 12 bytes (añadir al principio del texto cifrado)  
+- Etiqueta de autenticación: 16 bytes (añadir después del texto cifrado)  
+- Codificación: Base64 de IV + texto cifrado + etiqueta  
+- Clave: Tu **clave de cifrado del espacio** (exportada desde Ajustes).
+
+## Inicio rápido del SDK de Python
+
+```python
+from budgero import BudgeroClient
+
+client = BudgeroClient(
+    api_key="your-push-token",
+    encryption_key="your-space-key",
+    base_url="https://my.budgero.app",
+)
+
+result = client.add_transaction(
+    account_id=1,
+    category_id=5,
+    budget_id=1,
+    date="2024-11-27",
+    outflow=42.50,
+    memo="Example push",
+    payee="API Demo",
+)
+
+print("Queued id:", result.queue_id)
+```
+
+Funciones auxiliares del SDK:
+
+- `get_queue()` — lista los elementos pendientes  
+- `get_queue_stats()` — recuentos de pendientes/procesados/fallidos  
+- `clear_queue()` — borra los elementos pendientes (o todos con un flag)
+
+- **Desduplicación:** Proporciona un `message_id` estable al reintentar para evitar inserciones duplicadas.  
+- **Visibilidad de la cola:** Comprueba las estadísticas de la cola en la aplicación o mediante `/push/queue` y `/push/stats` para verificar la entrega.  
+- **Higiene de tokens:** Rota/regenera si se han expuesto. Desactiva o revoca desde Ajustes según sea necesario.  
+- **Higiene de claves:** Mantén el token/clave fuera del control de versiones.  
+  <figure>
+    <img src="/gandalf_keep_it_secret.gif" alt="“Guárdalo en secreto, mantenlo a salvo” — Gandalf recordándole a Frodo" />
+    <figcaption>Guárdalo en secreto, mantenlo a salvo.</figcaption>
+  </figure>
+  
+  Usa variables de entorno (p. ej., `BUDGERO_PUSH_TOKEN`, `BUDGERO_SPACE_KEY`) o el gestor de secretos de tu sistema operativo, restringe los permisos de archivo y evita registrarlos en logs.  
+- **Transporte:** Usa siempre HTTPS para que el token bearer y los metadatos permanezcan protegidos.  
+- **Control de acceso:** Restringe quién puede leer el token/clave. Trátalos como credenciales con alcance en tu presupuesto.  
+- **Gestión de errores:** En un 409 con message_id, trátalo como un reintento desduplicado. En 401/403, regenera/activa el token. Supervisa los fallos de la cola y borra o vuelve a encolar según sea necesario.
+
+
+- **Deduplication:** Provide a stable `message_id` when retrying to prevent double inserts.  
+- **Queue visibility:** Check queue stats in-app or via `/push/queue` and `/push/stats` to verify delivery.  
+- **Token hygiene:** Rotate/regenerate if exposed. Disable or revoke from Settings as needed.  
+- **Key hygiene:** Keep the token/key out of source control.  
+  <figure>
+    <img src="/gandalf_keep_it_secret.gif" alt="“Keep it secret, keep it safe” — Gandalf reminding Frodo" />
+    <figcaption>Keep it secret, keep it safe.</figcaption>
+  </figure>
+  
+  Use env vars (e.g., `BUDGERO_PUSH_TOKEN`, `BUDGERO_SPACE_KEY`) or your OS secret manager, restrict file perms, and avoid logging them.  
+- **Transport:** Always use HTTPS so the bearer token and metadata stay protected.  
+- **Access control:** Restrict who can read the token/key. Treat them like credentials with scope to your budget.  
+- **Error handling:** On 409 with message_id, treat it as a deduped retry. On 401/403, regenerate/enable the token. Monitor queue failures and clear or requeue as needed.

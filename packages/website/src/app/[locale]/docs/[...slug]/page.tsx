@@ -65,8 +65,9 @@ export default async function GuidePage({
 }: {
   params: Promise<{ slug: string[]; locale: string }>;
 }) {
-  const t = await getTranslations('docs_slug_');
   const { slug, locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('docs_slug_');
   const guide = getGuideFromParams(slug, locale);
   if (!guide) {
     notFound();

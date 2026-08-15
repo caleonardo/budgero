@@ -1268,5 +1268,13 @@
   "blog_slug_": {
     "back_to_blog": "← Zurück zum Blog",
     "back_to_blog_2": "← Zurück zum Blog"
+  },
+  "common": {
+    "nav_docs": "Dokumentation",
+    "nav_blog": "Blog",
+    "nav_changelog": "Changelog",
+    "footer_product": "Produkt",
+    "footer_support": "Support",
+    "footer_community": "Community"
   }
 }

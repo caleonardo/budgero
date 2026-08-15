@@ -1,0 +1,111 @@
+---
+title: "Push-API-Übersicht"
+summary: "Sende verschlüsselte Transaktionen von jedem System über die Push-API oder das Python SDK an Budgero."
+section: integrations
+topicId: push-api
+badge: "Neu"
+order: 10
+takeaways:
+  - "Generiere einen Push-API-Token und exportiere deinen Space-Verschlüsselungsschlüssel unter Einstellungen → Integrationen → Push API."
+  - "Verschlüssele einen transactions.add-Payload mit AES-GCM, Base64-kodiere ihn und sende ihn per POST mit einem Bearer-Token an /api/v1/push; verwende message_id, um Wiederholungen zu deduplizieren."
+  - "Verwende das Python SDK, um Verschlüsselung, Message-IDs und Warteschlangen-Sichtbarkeit (ausstehend/verarbeitet/fehlgeschlagen) zu verwalten."
+---
+
+The Push API lets you send transactions into Budgero from other systems while keeping everything end-to-end encrypted. You generate a token, encrypt the payload with your space key, and POST it to the push endpoint over HTTPS.
+
+## Quick setup
+
+1. Erstelle unter **Einstellungen → Integrationen → Push API** einen Push-API-Token.  
+2. Exportiere deinen **Space-Verschlüsselungsschlüssel** (Budgero speichert ihn nie serverseitig).  
+3. Erstelle einen JSON-Payload (siehe Format unten), verschlüssele ihn mit **AES-256-GCM**, Base64-kodiere ihn und sende ihn per POST mit deinem Bearer-Token an den Push-Endpunkt.  
+4. Optional kannst du eine **message_id** angeben, damit Wiederholungen dedupliziert werden.  
+5. Überwache die Warteschlangen-Statistiken in der App oder über die API, um die Verarbeitung zu bestätigen.
+
+## Endpunkt- und Payload-Spezifikation
+
+- Endpunkt: `POST /api/v1/push` (verwende deine Basis-URL; Standard ist `https://my.budgero.app`)
+- Auth: `Authorization: Bearer <push-api-token>`
+- Body-Felder:
+  - `encrypted_payload` (String, Base64): AES-GCM-verschlüsselte JSON-Nutzdaten (IV + Ciphertext + Auth-Tag).
+  - `message_id` (String, optional): Vom Client generierte ID zur Deduplizierung bei Wiederholungen.
+
+### Form der entschlüsselten Nutzdaten (vor der Verschlüsselung)
+
+```json
+{
+  "v": 2,
+  "op": "transactions.add",
+  "args": {
+    "accountId": 1,
+    "categoryId": 5,
+    "budgetId": 1,
+    "date": "2024-11-27",
+    "inflow": 0,
+    "outflow": 42500,
+    "memo": "API push",
+    "payee": "Vendor",
+    "transferId": ""
+  },
+  "message_id": "optional-unique-id"
+}
+```
+
+Geldbeträge sind ganzzahlige Millieinheiten (1/1000 einer Währungseinheit), daher wird 42,50 als `42500` gesendet. Schließe immer `"v": 2` ein; veraltete Nutzdaten ohne dieses Flag werden als Format 1 (Dezimalbeträge) behandelt und beim Import aktualisiert, aber neue Integrationen sollten Format 2 senden. Das Python-SDK übernimmt sowohl das Format-Flag als auch die Konvertierung für dich.
+
+### Aktuell unterstützte Operation
+
+- `transactions.add` — sende eine Einnahme oder Ausgabe. Verwende `inflow` für Einnahmen und `outflow` für Ausgaben (nur eines sollte ungleich null sein). Gib deine bestehenden Budget-, Konto- und Kategorie-IDs an.
+
+## Verschlüsselungsanforderungen
+
+- Algorithmus: AES-256-GCM  
+- IV: 12 Bytes (vor den Ciphertext stellen)  
+- Auth-Tag: 16 Bytes (nach dem Ciphertext anhängen)  
+- Codierung: Base64 aus IV + Ciphertext + Tag  
+- Schlüssel: Dein **Space-Verschlüsselungsschlüssel** (aus den Einstellungen exportiert).
+
+## Python SDK – Schnellstart
+
+```python
+from budgero import BudgeroClient
+
+client = BudgeroClient(
+    api_key="your-push-token",
+    encryption_key="your-space-key",
+    base_url="https://my.budgero.app",
+)
+
+result = client.add_transaction(
+    account_id=1,
+    category_id=5,
+    budget_id=1,
+    date="2024-11-27",
+    outflow=42.50,
+    memo="Example push",
+    payee="API Demo",
+)
+
+print("Queued id:", result.queue_id)
+```
+
+SDK-Hilfsfunktionen:
+
+- `get_queue()` — ausstehende Elemente auflisten  
+- `get_queue_stats()` — Anzahlen ausstehend/verarbeitet/fehlgeschlagen  
+- `clear_queue()` — ausstehende Elemente löschen (oder alle mit einem Flag)
+
+## Hinweise zum Betrieb und Sicherheitstipps
+
+- **Deduplizierung:** Gib beim Wiederholen eine stabile `message_id` an, um doppelte Einträge zu vermeiden.  
+- **Warteschlangen-Einblick:** Prüfe Warteschlangen-Statistiken in der App oder über `/push/queue` und `/push/stats`, um die Zustellung zu überprüfen.  
+- **Token-Hygiene:** Rotiere/erneuere bei Kompromittierung. Deaktiviere oder widerrufe bei Bedarf in den Einstellungen.  
+- **Schlüssel-Hygiene:** Halte Token/Schlüssel aus der Versionskontrolle heraus.  
+  <figure>
+    <img src="/gandalf_keep_it_secret.gif" alt="„Keep it secret, keep it safe“ — Gandalf erinnert Frodo" />
+    <figcaption>Keep it secret, keep it safe.</figcaption>
+  </figure>
+  
+  Verwende Umgebungsvariablen (z. B. `BUDGERO_PUSH_TOKEN`, `BUDGERO_SPACE_KEY`) oder den Secret-Manager deines Betriebssystems, beschränke Dateiberechtigungen und vermeide, sie zu protokollieren.  
+- **Übertragung:** Verwende immer HTTPS, damit Bearer-Token und Metadaten geschützt bleiben.  
+- **Zugriffskontrolle:** Beschränke, wer den Token/Schlüssel lesen kann. Behandle sie wie Zugangsdaten mit Zugriff auf dein Budget.  
+- **Fehlerbehandlung:** Bei 409 mit message_id behandle es als deduplizierten Wiederholungsversuch. Bei 401/403 erneuere/aktiviere den Token. Überwache Warteschlangen-Fehler und bereinige oder reihe sie bei Bedarf neu ein.

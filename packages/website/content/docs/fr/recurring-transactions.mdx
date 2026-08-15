@@ -1,0 +1,109 @@
+---
+title: "Transactions récurrentes"
+summary: "Planifiez les factures, les salaires et les dépenses à venir avant qu'elles ne surviennent. Configurez des échéanciers récurrents avec des rappels, ou planifiez une transaction ponctuelle à une date future — et voyez les deux apparaître sur le tableau de bord."
+section: integrations
+topicId: recurring-transactions
+takeaways:
+  - "Comment les modèles récurrents, les occurrences et le flux « Marquer comme prêt » fonctionnent ensemble."
+  - "Planifier une transaction future ponctuelle directement depuis le formulaire de transaction."
+  - "Ce que la carte Transactions à venir du tableau de bord affiche et sur quelle période elle anticipe."
+  - "Comment les lignes projetées et les plages de dates futures transforment le registre de compte et les rapports en prévision de trésorerie."
+---
+
+La plupart des mouvements d'argent ne sont pas des surprises. Le loyer est dû le premier, le salaire tombe le 25, et vous connaissez déjà le rendez-vous chez le dentiste le mois prochain. Budgero vous offre deux façons d'intégrer cette connaissance dans votre budget avant que l'argent ne bouge — les **transactions récurrentes** pour les choses qui se répètent, et les **opérations planifiées uniques** pour les choses qui ne se produisent qu'une fois. Les deux apparaissent sur votre tableau de bord pour que les prochaines semaines ne soient jamais un mystère.
+
+Fidèle à la philosophie manuelle d'abord de Budgero, aucune des deux n'enregistre quoi que ce soit dans votre dos : les transactions récurrentes attendent votre confirmation, et les opérations uniques sont des saisies que vous avez créées vous-même.
+
+## Transactions récurrentes
+
+Une transaction récurrente est un modèle : quoi payer (ou recevoir), depuis quel compte, dans quelle catégorie, et à quel rythme. Vous les gérez dans **Paramètres → Transactions récurrentes**.
+
+Chaque modèle définit :
+
+- **Nom et mémo** — « Loyer », « Salaire », « Abonnement salle de sport ».
+- **Sens** — une **Facture** (sortie) ou un **Revenu** (entrée).
+- **Montant, compte et catégorie** — exactement comme une transaction normale.
+- **Fréquence** — quotidienne, hebdomadaire, toutes les 2 semaines, mensuelle, tous les 2 mois, trimestrielle, tous les 6 mois ou annuelle, ancrée à une date de début.
+- **Rappel** — combien de jours avant la date d'échéance vous souhaitez recevoir une notification.
+
+À partir de la fréquence, Budgero génère des **occurrences** — les dates d'échéance à venir individuelles — sur environ six mois dans le futur. La page des paramètres liste ce qui arrive ensuite, et pour chaque occurrence vous avez deux choix :
+
+- **Marquer comme prête** crée la transaction réelle et y applique automatiquement vos [règles continues](/docs/rules-engine) — ainsi, le nettoyage du bénéficiaire, de la catégorie et du mémo que vous avez automatisé s'applique également aux saisies récurrentes. La transaction est toujours datée à la date d'échéance de l'occurrence, même si vous la confirmez quelques jours en avance.
+- **Passer cette fois** supprime une seule occurrence sans toucher à la fréquence. La série continue avec la prochaine date.
+
+Rien n'est jamais enregistré automatiquement. Une transaction récurrente est un rappel avec un bouton « concrétiser en un clic », et non un ordre permanent — vous restez le point de contrôle final entre le plan et le registre.
+
+Les modèles peuvent être **mis en pause** et **repris** à tout moment, et en supprimer un élimine les rappels à venir sans toucher aux transactions déjà enregistrées.
+
+### Rappels
+
+Activez les notifications sur la page des Transactions récurrentes et Budgero vous rappellera avant chaque échéance, en utilisant le paramètre « jours avant » propre à chaque modèle. Les notifications sont locales à votre appareil — conformément au [modèle zero-knowledge](/docs/security), aucun serveur ne connaît jamais la nature de vos factures.
+
+## Transactions ponctuelles planifiées
+
+Tout ne se répète pas. Pour une dépense future unique et connue — un paiement de vol, une prime d'assurance annuelle, un achat prévu — saisissez simplement une transaction normale et donnez-lui une **date future**. Il n'y a pas de fonctionnalité distincte à apprendre : le formulaire de transaction habituel sur n'importe quelle page de compte suffit.
+
+Une transaction à date future est une véritable écriture de registre qui n'a simplement pas encore atteint sa date. Vous pouvez la modifier ou la supprimer comme n'importe quelle autre transaction, et elle apparaît sur le tableau de bord comme **Planifiée** pour ne pas vous surprendre.
+
+## La carte Transactions à venir
+
+La carte **Transactions à venir** du tableau de bord fusionne les deux types d'activité planifiée en une seule chronologie :
+
+- Les **séries récurrentes** n'affichent que leur *prochaine* occurrence — une facture mensuelle apparaît une fois, pas six. Les éléments récurrents portent un badge **Récurrent** (ou **Prêt à publier** une fois que vous les avez marqués comme prêts).
+- Les **transactions uniques planifiées** affichent chaque transaction datée dans le futur dans les **3 prochains mois**, marquées d'un badge **Planifié**.
+
+La carte affiche les six éléments les plus proches, chacun avec son montant, son compte et un compte à rebours d'échéance. Les éléments sont interactifs :
+
+- Cliquez sur un élément **récurrent** pour accéder à la page de son compte.
+- Cliquez sur un élément **planifié** pour ouvrir une boîte de dialogue d'édition rapide où vous pouvez ajuster la date, le montant, le bénéficiaire ou la catégorie — ou le supprimer — sans quitter le tableau de bord.
+
+Le lien **Gérer les automatisations** en bas vous dirige vers la page des paramètres des transactions récurrentes.
+
+## Prévision de votre trésorerie
+
+Savoir ce qui est planifié ne représente que la moitié du tableau — l'autre moitié consiste à voir l'impact sur votre solde. Budgero projette les transactions récurrentes qui n'ont pas encore été marquées comme prêtes dans deux surfaces de lecture, afin que vous puissiez anticiper de quelques mois sans rien publier.
+
+### Sur la page du compte
+
+Chaque page de compte possède une barre compacte **Transactions à venir** au-dessus du registre, indiquant combien d'opérations récurrentes et planifiées sont à venir, ainsi que leurs entrées et sorties combinées. Cliquez dessus pour déployer la liste complète — de là, vous pouvez marquer les occurrences comme prêtes ou les ignorer. Elle se souvient si vous l'avez laissée ouverte ou fermée.
+
+Le registre lui-même devient une prévision lorsque vous le souhaitez. Étendez la plage de dates de la page au-delà d'aujourd'hui et les occurrences récurrentes à venir apparaissent directement comme des **lignes projetées** — signalées par un badge, affichées à côté de vos vraies transactions, mais en lecture seule : une projection n'est pas un enregistrement, il n'y a donc rien à modifier. Pour en changer une, modifiez le modèle récurrent ou marquez l'occurrence comme prête. Une occurrence dont la date d'échéance est dépassée sans avoir été marquée comme prête reste également dans le registre, signalée **En retard** dans le panneau des transactions à venir jusqu'à ce que vous la validiez ou l'ignoriez.
+
+Les lignes projetées s'intègrent dans la **colonne de solde** du registre, vous pouvez ainsi faire défiler jusqu'au mois suivant et constater où le compte se dirige. Les valeurs de solde projeté sont marquées avec **≈** pour indiquer clairement qu'il s'agit d'estimations. Le solde principal du compte et les soldes de la barre latérale n'incluent jamais les projections ni les transactions à date future — ils affichent toujours l'argent effectivement disponible, à ce jour.
+
+### Dans les rapports
+
+La page des rapports accepte les plages de dates futures — le sélecteur inclut les préréglages **30 prochains jours** et **3 prochains mois**. Lorsque votre plage s'étend au-delà d'aujourd'hui, les occurrences récurrentes qui ne sont pas marquées comme prêtes sont comptées comme si elles avaient été validées à leurs dates d'échéance, et la page affiche une mention **Inclut les transactions récurrentes projetées**. Les tendances de dépenses, les ventilations par catégorie et par bénéficiaire, ainsi que le résumé de la période les intègrent toutes, de sorte que « à quoi ressemble ma trésorerie d'ici la fin du trimestre ? » est une sélection de date, pas un exercice de tableur.
+
+Les projections s'auto-corrigent : elles sont calculées en direct à partir de vos modèles récurrents, de sorte que marquer une occurrence comme prête, l'ignorer ou modifier le modèle met à jour chaque prévision instantanément. Une projection n'est exacte que dans la mesure du montant du modèle — les factures variables dériveront un peu jusqu'à leur validation, puis le montant réel prendra le relais.
+
+## Quel outil pour quel usage ?
+
+<table>
+  <thead>
+    <tr>
+      <th>Vous savez…</th>
+      <th>Utilisez</th>
+      <th>Pourquoi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cela se répète selon un rythme (loyer, salaire, abonnements)</td>
+      <td><strong>Transaction récurrente</strong></td>
+      <td>Un seul modèle couvre toutes les occurrences futures, avec des rappels</td>
+    </tr>
+    <tr>
+      <td>Cela se produit une fois, à une date connue</td>
+      <td><strong>Transaction à date future</strong></td>
+      <td>Une entrée réelle, déjà dans le registre, visible sur le tableau de bord</td>
+    </tr>
+    <tr>
+      <td>Vous épargnez pour cela mais ne vous êtes pas engagé sur une date ou un bénéficiaire</td>
+      <td><strong>Un objectif</strong></td>
+      <td>C'est un plan de financement, pas encore une transaction — voir <a href="/docs/goals">Objectifs</a></td>
+    </tr>
+  </tbody>
+</table>
+
+Un schéma courant combine les trois : un objectif à date cible accumule les fonds, un rappel récurrent vous prévient lorsque l'échéance approche, et le marquer comme prêt impute la transaction à la catégorie que l'objectif a alimentée tout au long.

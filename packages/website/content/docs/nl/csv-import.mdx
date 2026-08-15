@@ -1,0 +1,77 @@
+---
+title: "CSV-import & Export"
+summary: "Importeer transactiegeschiedenis van je banken en exporteer complete backups die je kunt gebruiken voor het belastingseizoen, accountants of diepere analyse."
+section: accounts-and-imports
+topicId: csv-import
+takeaways:
+  - "Ondersteunde bestandsformaten en hoe het voorbeeld van kolomtoewijzing werkt."
+  - "Hoe je duplicaten voorkomt bij het combineren van imports met handmatige invoer."
+  - "Wat de export oplevert: een volledige CSV-bundel plus een database-backup."
+---
+
+Budgero gaat uit van handmatige invoer, maar 'handmatig' betekent niet dat je elke regel zelf typt. De importer zet de exports van je bank binnen een paar minuten om in transacties — en de exporter garandeert dat je gegevens nooit vastzitten.
+
+## Ondersteunde formaten
+
+De importer accepteert meer dan alleen CSV:
+
+- **CSV / TSV / TXT** — de universele bankexport
+- **OFX / QFX / QIF** — klassieke bank- en Quicken-formaten
+- **CAMT.053** — het XML-afschriftformaat dat veel bij Europese banken voorkomt
+- **PDF** — Budgero haalt tabellen uit afschrift-PDF's; je kiest de tabel en koppelt de kolommen net als bij een CSV
+
+Die laatste is belangrijker dan het klinkt: heel wat banken bieden afschriften alleen als PDF aan, en tabelextractie betekent dat je ze niet hoeft over te typen. (Dit is tabelextractie, geen bonnetjes scannen — richt het op afschriften, niet op verfrommelde kassabonnetjes.)
+
+## Je bestand koppelen
+
+Bankexports gebruiken nooit dezelfde kolomnamen, dus de importer toont een voorbeeld en laat je de kolommen zelf koppelen:
+
+1. **Kies de koprij.** Als je bank het bestand opvult met logoregels en disclaimers, sla dan rijen over totdat de echte kolomkoppen verschijnen.
+2. **Koppel de kolommen.** Vereist: een **datum**kolom en óf één enkele **bedrag**kolom óf een **inkomsten/uitgaven**-paar. Optioneel: begunstigde, memo/omschrijving, categorie en rekening.
+3. **Stel de formaten in.** Datums worden automatisch herkend in de gangbare patronen (`YYYY-MM-DD`, `DD/MM/YYYY`, `MM/DD/YYYY`, `DD.MM.YYYY`, en meer), en getalnotaties dekken Amerikaanse/Britse (`1,234.56`), Europese (`1.234,56`), Zwitserse en Franse conventies — zodat een Deutsche Bank-export en een Chase-export allebei correct worden verwerkt.
+4. **Controleer het voorbeeld** en importeer.
+
+Als het bestand geen rekeningkolom bevat, kies je vooraf de bestemmingsrekening — de gebruikelijke situatie, aangezien de meeste banken één rekening per bestand exporteren.
+
+## Dubbele transacties voorkomen
+
+De importer dedupliceert **niet** automatisch tegen bestaande transacties — het combineren van imports met handmatige invoer is waar duplicaten vandaan komen, dus hanteer een van twee disciplines:
+
+- **Alleen-import rekeningen:** voor rekeningen die je regelmatig importeert, voer transacties niet ook handmatig in. Importeer in niet-overlappende datumbereiken (bijv. exporteer "vorige maand" op de 1e) en duplicaten kunnen simpelweg niet voorkomen.
+- **Handmatig eerst, later aanvullen:** als je invoert terwijl je uitgeeft, behandel imports dan als een controlemechanisme — stem af met de bank (zie [Rekeningen](/docs/accounts)) in plaats van dezelfde periode twee keer te importeren.
+
+Als je toch een bereik dubbel importeert, sorteer de transacties van de rekening op datum en verwijder één kant — en stem achteraf af, zodat het geverifieerde saldo bevestigt dat je de juiste hebt verwijderd.
+
+## Binnenkomende transacties categoriseren
+
+Geïmporteerde transacties zonder categorie belanden in **Ongecategoriseerd** — de tijdelijke opslag van het systeem. Werk de lijst na elke import snel naar nul; een accuraat budget met een dik Ongecategoriseerd saldo is een contradictio in terminis. Als de export van je bank een categoriekolom bevat die ongeveer overeenkomt met je structuur, koppel deze dan tijdens het importeren en hoef je alleen de achterblijvers te corrigeren.
+
+## Je gegevens exporteren
+
+Alles verlaat het systeem via dezelfde weg als waar het binnenkwam. **Instellingen → Gegevensbeheer → Gegevens exporteren** biedt twee formaten:
+
+<table>
+  <thead>
+    <tr>
+      <th>Export</th>
+      <th>Inhoud</th>
+      <th>Het beste voor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CSV-bundel</strong> (zip)</td>
+      <td>budgetten, rekeningen, categorieën, categoriegroepen, transacties, toewijzingen, doelen — elk één CSV</td>
+      <td>Accountants, spreadsheets, belastingseizoen, analyse</td>
+    </tr>
+    <tr>
+      <td><strong>Databaseback-up</strong> (.db)</td>
+      <td>Je volledige budget als SQLite-database</td>
+      <td>Volledige back-ups, migreren naar zelf hosten</td>
+    </tr>
+  </tbody>
+</table>
+
+Omdat je gegevens end-to-end versleuteld zijn, vinden exports plaats op je apparaat nadat je ontgrendelt met je hoofdwachtwoord — de server ziet op geen enkel moment de platte tekst (zie het [Beveiligingsmodel](/docs/security) voor waarom dat belangrijk is).
+
+Een verstandige back-upgewoonte: exporteer de CSV-bundel elk kwartaal en vóór een grote herstructurering. Het kost één klik, en het betekent dat zelfs een ergst mogelijke fout — een verwijderde categorie, een mislukte import — herstelbaar is vanuit de laatste momentopname van de waarheid.

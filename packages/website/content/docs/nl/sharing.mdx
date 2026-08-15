@@ -1,0 +1,69 @@
+---
+title: "Budgetten delen"
+summary: "Nodig je partner of huishouden uit, houd iedereen gesynchroniseerd en begrijp hoe versleutelingssleutels worden gedeeld zonder de server ooit te raken."
+section: collaboration
+topicId: sharing
+takeaways:
+  - "Hoe uitnodigingslinks werken en waarom het geheim nooit de server bereikt."
+  - "Wat Eigenaren en Leden elk kunnen doen in een gedeeld budget."
+  - "Praktische afspraken die voorkomen dat een gedeeld budget een gedeelde chaos wordt."
+---
+
+Budgetteren is een teamsport voor de meeste huishoudens — en delen is waar de meeste "privé" apps stilletjes hun privacyverhaal opgeven. Budgero deelt budgetten zonder de versleuteling te verzwakken: jouw gegevens blijven end-to-end versleuteld, en de sleutels worden op een manier verzonden die de server niet kan onderscheppen.
+
+## Hoe delen werkt
+
+1. De **eigenaar** van het budget opent het deelpaneel en genereert een **uitnodigingslink**.
+2. De link bevat een eenmalige geheime code in zijn **URL-fragment** — het deel na `#`. Fragmenten worden nooit meegestuurd in HTTP-verzoeken, dus de server stuurt de uitnodiging door zonder de geheime code ooit te zien.
+3. De uitgenodigde opent de link, logt in en stelt een eigen [hoofdwachtwoord](/docs/master-password) in als dat nog niet is gebeurd.
+4. Het apparaat van de uitgenodigde gebruikt de uitnodigingscode om de gedeelde sleutel van het budget te ontsleutelen en verpakt deze vervolgens onder het eigen hoofdwachtwoord.
+
+Het resultaat: elk lid ontgrendelt hetzelfde budget met zijn *eigen* hoofdwachtwoord, de server bewaart alleen verpakte sleutels die niet te openen zijn, en er zijn onderling geen wachtwoorden gedeeld. Behandel de uitnodigingslink als gevoelig zolang deze actief is — iedereen die hem heeft kan hem inwisselen — en verstuur hem via een kanaal dat je vertrouwt.
+
+Elk Budgero-abonnement omvat **5 plekken**, wat ruim voldoende is voor een huishouden.
+
+## Rollen
+
+<table>
+  <thead>
+    <tr>
+      <th>Rol</th>
+      <th>Wie</th>
+      <th>Wat ze kunnen doen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Eigenaar</strong></td>
+      <td>Wie het budget heeft aangemaakt</td>
+      <td>Alles — plus uitnodigingen genereren en leden verwijderen</td>
+    </tr>
+    <tr>
+      <td><strong>Lid</strong></td>
+      <td>Iedereen die is uitgenodigd</td>
+      <td>Dagelijks budgetteren: transacties, toewijzingen, categorieën</td>
+    </tr>
+  </tbody>
+</table>
+
+Lidmaatschappen en uitnodigingen worden beheerd vanuit het deelpaneel; de eigenaar kan de toegang van een lid op elk moment intrekken, waarna het lid geen nieuwe gegevens meer kan synchroniseren.
+
+## Everyone syncs, everywhere
+
+Once joined, members see the same live budget. A grocery transaction your partner enters at the checkout appears on your laptop when it syncs; the assignment you change at your desk shows up on their phone. [Offline mode](/docs/offline) works per-device — both of you can record spending on a plane and the changes merge when you reconnect.
+
+## Afspraken die gedeelde budgetten gezond houden
+
+De software regelt de synchronisatie; de mensen moeten nog steeds afspraken maken. Drie afspraken doen het meeste werk:
+
+1. **Maak het plan zichtbaar in het budget zelf.** Koppel een [doel](/docs/goals) aan elke categorie waarvoor je samen een bedrag hebt afgesproken — het doelbedrag en de voortgangsbalk vormen de afspraak, gesynchroniseerd en zichtbaar voor jullie allebei. Voor fijnere afspraken kun je ze in de categorienaam verwerken ("Eten buiten de deur (excl. uitjes)").
+2. **Eén persoon is verantwoordelijk voor het toewijzen.** Dat beide partners transacties vastleggen werkt prima; allebei onafhankelijk geld verplaatsen werkt meestal niet. Spreek af wie de [toewijzingsroutine](/docs/assign-money) uitvoert — of doe het samen maandelijks.
+3. **Voer uitgaven in op het moment dat ze plaatsvinden.** Gedeelde budgetten versterken veroudering: als de dinsdaguitgaven van de één op vrijdag verschijnen, heeft de ander op woensdag beslissingen genomen op basis van verkeerde cijfers. Hoe sneller iedereen vastlegt, hoe meer de gedeelde Beschikbaar-cijfers te vertrouwen zijn.
+
+## Vertrekken en verwijderen
+
+Wanneer een lid wordt verwijderd (of vertrekt), eindigt hun toegang tot toekomstige synchronisaties. Houd rekening met de eerlijke grenzen van elk deelsysteem: gegevens die een lid al naar hun apparaat heeft gesynchroniseerd, waren per definitie van hen om te zien — versleuteling beschermt je tegen de server, niet tegen mensen die je hebt besloten te vertrouwen. Deel dienovereenkomstig.
+
+## Wat delen niet verandert
+
+Delen voegt geen zichtbaarheid aan de serverzijde toe. Wat de server van een gedeeld budget ziet, is dezelfde cijfertekst als bij een solo budget, plus de minimale metadata die nodig is om het te routeren: wie lid is en welke versleutelde blobs bij welke werkruimte horen. Het volledige overzicht van wat de server wel en niet kan zien, staat in het [Beveiligingsmodel](/docs/security).

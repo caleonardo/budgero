@@ -1,0 +1,107 @@
+---
+title: "Rekeningen"
+summary: "Voeg betaalrekeningen, spaarrekeningen, contanten, creditcards en trackingrekeningen met vertrouwen toe. Ontdek hoe saldo's, valuta's en afstemmen samenwerken."
+section: accounts-and-imports
+topicId: accounts
+takeaways:
+  - "Welke rekeningtypes in budget, buiten budget of naar keuze vallen."
+  - "Hoe multivalutarekeningen worden omgezet naar jouw budgetvaluta."
+  - "Het afstemproces en wat het archiveren van een rekening behoudt."
+---
+
+Accounts are where your money physically lives; the budget is the plan laid over them. Budgero keeps that distinction sharp — which is why picking the right account type matters more than it first appears.
+
+## Account types
+
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Kind</th>
+      <th>Budget participation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Checking</strong></td>
+      <td>Asset</td>
+      <td>Always on-budget</td>
+    </tr>
+    <tr>
+      <td><strong>Savings</strong></td>
+      <td>Asset</td>
+      <td>Always on-budget</td>
+    </tr>
+    <tr>
+      <td><strong>Cash</strong></td>
+      <td>Asset</td>
+      <td>Always on-budget</td>
+    </tr>
+    <tr>
+      <td><strong>Credit Card</strong></td>
+      <td>Liability</td>
+      <td>Your choice</td>
+    </tr>
+    <tr>
+      <td><strong>Loan</strong></td>
+      <td>Liability</td>
+      <td>Your choice</td>
+    </tr>
+    <tr>
+      <td><strong>Mortgage</strong></td>
+      <td>Liability</td>
+      <td>Always off-budget</td>
+    </tr>
+    <tr>
+      <td><strong>Investment / Retirement</strong></td>
+      <td>Asset</td>
+      <td>Always off-budget</td>
+    </tr>
+    <tr>
+      <td><strong>Real Estate / Other Asset</strong></td>
+      <td>Asset</td>
+      <td>Always off-budget</td>
+    </tr>
+  </tbody>
+</table>
+
+**In budget**-rekeningen voeden je budget: hun geld verschijnt in [Te verdelen](/docs/ready-to-assign) en hun uitgaven komen terecht in categorieën. **Buiten budget** (volg)rekeningen dragen bij aan je nettovermogen maar blijven buiten de enveloppenberekening — je budgetteert niet de marktfluctuaties van je pensioenfonds.
+
+Creditcards en leningen zijn **flexibel**: in budget als je wilt dat Budgero's schuldenmechanisme betalingen en aflossing beheert (zie [Schuldenoverzicht](/docs/debt-tracking)), buiten budget als je alleen het saldo wilt bijhouden.
+
+## Beginsaldi
+
+Als je een rekening met een saldo aanmaakt, registreert Budgero dit als een openingstransactie, zodat de boeken vanaf dag één kloppen:
+
+- **Activarekeningen** krijgen inkomsten ("Beginsaldo") die in Inkomen belanden — wat betekent dat je bestaande geld direct toewijsbaar wordt.
+- **Schuldenrekeningen** kunnen zowel het totaal geleende bedrag als wat je al hebt afgelost registreren, zodat het saldo weerspiegelt wat je vandaag daadwerkelijk verschuldigd bent.
+
+## Multivaluta-rekeningen
+
+Elke rekening kan worden aangeduid in meer dan 120 fiat-valuta's of 25 belangrijke cryptovaluta's, onafhankelijk van je [budgetvaluta](/docs/budget-currency). Voor een rekening in een andere valuta slaat elke transactie twee bedragen op: het **oorspronkelijke** bedrag (wat er daadwerkelijk is gebeurd, in de valuta van de rekening) en de **omgerekende** waarde (wat je budget ziet), samen met de gebruikte wisselkoers.
+
+Wisselkoersen worden in een vaste volgorde bepaald:
+
+1. **Aangepaste koersen** die je aan een datumbereik hebt gekoppeld — handig wanneer je geld hebt omgewisseld tegen een bekende koers.
+2. **Opgehaalde koersen** — Budgero haalt dagelijkse koersen automatisch op.
+3. **Handmatige koersen** die je hebt ingevoerd — deze zorgen er ook voor dat multivaluta volledig offline werkt en op zelf hosten-omgevingen zonder een koers-API.
+4. **Meest recente nabije koers** — de koers van de dichtstbijzijnde eerdere dag (tot een week terug) wanneer de exacte dag niet in de cache staat.
+
+Je kunt de koers ook per afzonderlijke transactie overschrijven — de juiste oplossing wanneer de werkelijke afwikkelingskoers van je kaart afwijkt van het marktgemiddelde en je wilt dat het omgerekende bedrag tot op de cent overeenkomt met je afschrift.
+
+## Afstemmen
+
+Afstemmen is de gewoonte die een handmatig budget betrouwbaar houdt: je vergelijkt het saldo in Budgero met dat van je bank en bevestigt dat ze overeenkomen.
+
+1. Open de rekening en vergelijk het saldo met je bank-app of afschrift.
+2. Als ze verschillen, zoek dan het verschil — meestal een gemiste transactie, een duplicaat, of een openstaande afschrijving die de bank nog niet heeft verwerkt.
+3. Voeg een correctietransactie toe als een klein verschil niet het graven waard is.
+4. **Stem de rekening af** — Budgero markeert alle transacties tot die datum als afgestemd en legt het tijdstip van afstemmen vast op de rekening.
+
+Afgestemde transacties vormen je geverifieerde geschiedenis; het stempel laat zien hoe recent die verificatie is. Wekelijks afstemmen kost ongeveer twee minuten per rekening. Maandelijks kan ook. "Nooit" is hoe handmatige budgetten sterven — zie [Te verdelen](/docs/ready-to-assign) voor hoe niet-afgestemde afwijkingen zichtbaar worden in je cijfers.
+
+## Een rekening sluiten
+
+Rekeningen worden **gearchiveerd**, niet verwijderd. Een gearchiveerde rekening verdwijnt uit keuzelijsten en dagelijkse overzichten, maar elke transactie die er ooit op stond blijft behouden in je rapporten en geschiedenis — sluit je oude bankrekening zonder vijf jaar aan gegevens kwijt te raken. Archiveren is omkeerbaar; maak de archivering ongedaan en alles staat er weer precies zoals het was.
+
+Voordat je archiveert, breng je het saldo naar nul (boek het resterende saldo over naar een andere rekening) zodat je nettovermogen en Te verdelen niet achterblijven met een spooksaldo.

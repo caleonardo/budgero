@@ -197,6 +197,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // search engines treat them as translations rather than competing pages.
   return all.flatMap((entry) => {
     const pathname = entry.url.replace(base, '') || '/';
+
+    // Blog posts are intentionally English-only. Emitting locale variants with
+    // hreflang would tell search engines translations exist when they do not.
+    if (pathname.startsWith('/blog/')) return [entry];
+
     const languages = Object.fromEntries(
       routing.locales.map((locale) => [
         locale,

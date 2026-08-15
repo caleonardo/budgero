@@ -1,0 +1,94 @@
+---
+title: Ready to Assign
+summary: Ready to Assign is the heartbeat of Budgero's zero-based budgeting system. It shows exactly how much of your available cash still needs a job.
+section: getting-started
+topicId: ready-to-assign
+badge: New
+takeaways:
+  - "Wähle pro Budget zwischen Kumulativ und Monatlich (YNAB-Stil) für Zu budgetieren."
+  - "Verstehe, welche Ereignisse Zu budgetieren automatisch erhöhen oder verringern."
+  - "Meistere die mathematischen Operationen im Zuweisungsfeld für schnelle Budget-Anpassungen."
+---
+
+Zu budgetieren zeigt den Teil deines budgetierten Geldes, der noch eine Aufgabe braucht. Steht der Wert auf null, ist jede Einheit einer Kategorie zugeordnet. Ist er positiv, hast du noch Entscheidungen zu treffen. Wird er negativ, hast du mehr Geld zugewiesen, als du tatsächlich hast.
+
+## Der Kreislauf von Zu budgetieren
+
+1. **Erfasse Geld, sobald es ankommt.** Trage Gehaltszahlungen, Umbuchungen, Erstattungen und Bargeldeinzahlungen auf dem Konto ein, auf dem das Geld tatsächlich liegt. Budgero aktualisiert Zu budgetieren sofort basierend auf dem Einnahmebetrag und der Kontowährung.
+2. **Prüfe deine Budgettabelle.** Zu budgetieren steht ganz oben in der Budgettabelle und zeigt, wie viel von deinem Geld noch eine Aufgabe braucht, bevor die nächste Einnahme kommt.
+3. **Weise Geld gezielt zu.** Klicke auf das Zuweisungsfeld einer beliebigen Kategorie, um Geld zuzuweisen. Das Feld fungiert als Mini-Taschenrechner, in dem du Beträge direkt eingeben oder mathematische Operationen (Addition, Subtraktion, Multiplikation, Division) nutzen kannst, um bestehende Zuweisungen anzupassen. Weise Geld zu, bis Zu budgetieren null erreicht.
+4. **Gleiche regelmäßig ab.** Wenn du Budgero-Salden mit deinen Banksalden abgleichst, bleibt Zu budgetieren mit dem Geld im Einklang, das tatsächlich verfügbar ist.
+
+<Callout variant="note" title="Zero-based reminder">
+Wenn Zu budgetieren null anzeigt, hat jede Währungseinheit einen Zweck. Ist der Wert positiv, hast du noch Entscheidungen zu treffen. Ist er negativ, nimm Geld aus Kategorien mit niedrigerer Priorität zurück, bis der Saldo wieder null ist.
+</Callout>
+
+## Zwei Wege, Zu budgetieren zu berechnen
+
+Budgero kann Zu budgetieren in einem von zwei Modi berechnen, die **pro Budget** unter **Einstellungen → Budget-Einstellungen** gewählt werden. Das Umschalten erfolgt sofort und ohne Datenverlust — es ändert nur die Berechnung, niemals deine Transaktionen oder Zuweisungen. Das Hilfepopover neben Zu budgetieren zeigt immer die vollständige Aufschlüsselung für den jeweils aktiven Modus.
+
+### Kumulativ (Standard)
+
+Zu budgetieren ist ein einziger, zeitübergreifender Wert: Gesamteinkommen minus alles, was du jemals zugewiesen hast (und Geld, das durch Umbuchungen aus dem Budget entfernt wurde). Er ist **in jedem Monat gleich** — der Monat, den du gerade ansiehst, ändert ihn nicht — was ihn einfach und vorhersehbar macht.
+
+- Einkommen zählt, sobald es erfasst wird, unabhängig vom Datum.
+- Eine Überziehung **bleibt innerhalb der Kategorie** als negativer Saldo und wird von Monat zu Monat weitergeführt, bis du sie ausgleichst. Zu budgetieren bleibt davon unberührt.
+
+Wähle Kumulativ, wenn du dein Budget als einen durchgehenden Pool betrachtest und es dir nichts ausmacht, wenn Zu budgetieren über die Monate hinweg konstant bleibt.
+
+### Monatlich (YNAB-Stil)
+
+Zu budgetieren wird **für den Monat berechnet, den du gerade ansiehst**, sodass jeder Monat für sich steht. Das entspricht dem, was Personen erwarten, die von YNAB kommen.
+
+- Einkommen zählt nur **bis einschließlich des ausgewählten Monats** — Geld, das in einem zukünftigen Monat eingeht, steht erst zur Zuweisung zur Verfügung, wenn du diesen Monat erreichst.
+- **Bar-Überziehung** wird vom Zu budgetieren des **nächsten** Monats abgezogen, und die Kategorie wird auf null zurückgesetzt, anstatt einen roten Saldo ewig mitzuschleppen.
+- **Kreditkarten-Überziehung** wird als Kartenschuld behandelt, nicht als verlorenes Bargeld, daher **verringert** sie **nicht** Zu budgetieren. Stattdessen wird die Kreditkartenzahlung-Kategorie der Karte als unterfinanziert angezeigt; klicke darauf, um genau zu sehen, welche Kategorien und Monate die Schulden verursacht haben.
+
+Wähle Monatlich, wenn du von YNAB kommst oder möchtest, dass jeder Monat für sich abgeglichen wird — Einkommen, sobald es eingeht, und die Überziehung des letzten Monats, die Zu budgetieren in diesem Monat verringert.
+
+## Wie sich Zu budgetieren verändert
+
+### Einnahmen
+
+- **Neues Einkommen.** Gehaltszahlungen, Freelancer-Zahlungen oder Rückerstattungen fließen mit ihrem Nettobetrag in Zu budgetieren. Diese Transaktionen müssen der Kategorie „Einkommen“ zugeordnet werden, damit Zu budgetieren korrekt steigt.
+- **Umbuchungen zwischen Konten.** Wenn du Geld von einem Konto, das nicht im Budget ist (wie ein Sparkonto), auf ein Konto, das im Budget ist (wie ein Girokonto), überträgst, erhöht sich Zu budgetieren. Interne Umbuchungen zwischen Konten, die im Budget sind, lassen Zu budgetieren unverändert. Umbuchungen von Konten, die im Budget sind, auf Konten, die nicht im Budget sind, senken Zu budgetieren um den übertragenen Betrag.
+- **Kontoabgleiche.** Wenn du ein Konto abgleichst, wirkt sich jede Anpassung, die nötig ist, um mit deinem Bankkontostand übereinzustimmen, auf Zu budgetieren aus. Standardmäßig werden diese Anpassungen als „Einkommen“ kategorisiert, es sei denn, du weist sie einer anderen Kategorie neu zu.
+
+### Ausgaben
+
+- **Geld zuweisen.** Wenn du eine Kategorie mit Geld versorgst, sinkt Zu budgetieren um denselben Betrag.
+- **Gelder neu zuweisen.** Wenn du Geld zwischen Kategorien verschiebst, ändert sich Zu budgetieren nicht, aber wenn du Geld zurück in Zu budgetieren schiebst, erhöht sich Zu budgetieren.
+
+## So weist du Geld zu
+
+1. Wähle eine Kategorie, die Geld benötigt, und klicke auf ihr Zuweisungsfeld.
+2. Gib den Betrag ein, den du zuweisen möchtest, oder verwende +, -, * und /, um die bestehende Zuweisung wie mit einem Taschenrechner anzupassen.
+3. Drücke Enter zum Bestätigen und weise dann weiter Geld zu, bis Zu budgetieren null ist.
+
+## Häufige Probleme beheben
+
+### Zu budgetieren ist negativ
+
+1. Prüfe die Kategorien auf Überziehungshinweise — rot bei Bargeld-Überziehung, gelb bei Kreditüberziehung — und verschiebe Geld zurück, bis diese Kategorien null oder grün sind.
+2. Prüfe auf doppelte Ausgaben oder Ausgabe-Transaktionen, die zweimal erfasst wurden, und lösche das Duplikat.
+3. Gleiche jedes Budget-Konto ab. Wenn die Salden von deiner Bank abweichen, passe den Kontostand an, damit Zu budgetieren deinen tatsächlichen Geldbestand widerspiegelt.
+
+### Zu budgetieren ist nach einem Gehaltseingang nicht gestiegen
+
+- Stelle sicher, dass die Transaktion eine Einnahme ist und „Zu budgetieren“ zugeordnet ist (lass die Kategorie leer).
+- Bestätige, dass das Konto Teil des Budgets ist – Tracking-Konten haben keinen Einfluss auf „Zu budgetieren“.
+- Wenn das Einkommen in einer anderen Währung eingegangen ist, überprüfe den Umrechnungskurs und korrigiere den Betrag, falls er sich nach der Eingabe geändert hat.
+
+### Mein „Zu budgetieren“ stimmt nicht mit YNAB überein
+
+Standardmäßig verwendet Budgero den Modus **Kumulativ**, der sich in zwei Punkten von YNAB unterscheid: Alle Einnahmen werden sofort gezählt, unabhängig vom angezeigten Monat, und Überziehungen bleiben in der Kategorie, anstatt von „Zu budgetieren“ abgezogen zu werden. Wenn du das Verhalten von YNAB möchtest, wechsle dieses Budget unter Einstellungen → Budget-Einstellungen in den Modus **Monatlich** – Einnahmen werden dann nur für den angezeigten Monat gezählt, und die Bargeld-Überziehung des letzten Monats wird vom „Zu budgetieren“ des aktuellen Monats abgezogen. Siehe [Zwei Wege, „Zu budgetieren“ zu berechnen](#two-ways-to-calculate-ready-to-assign) oben für den vollständigen Vergleich.
+
+### Du möchtest Geld für später zurücklegen
+
+- Erstelle eine Haltekategorie (zum Beispiel „Puffer für nächsten Monat“). Weise das Geld dorthin zu, anstatt es nicht zugewiesen zu lassen.
+- Wenn du bereit bist, das Geld zu verwenden, verschiebe es von dieser Haltekategorie in die Kategorie, die es benötigt.
+- Nutze lieber Ziele für vorhersehbare Zielvorgaben – sie erinnern dich daran, wann du Geld zuweisen musst und wie viel nötig ist, um auf Kurs zu bleiben.
+
+## Nächste Schritte
+
+„Zu budgetieren“ funktioniert am besten, wenn Ziele und Kategorien deine Prioritäten widerspiegeln. Entdecke weitere Leitfäden im [Budgero-Doku-Hub](/docs), um weiter Schwung aufzubauen.

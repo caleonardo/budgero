@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 
 interface Params {
   slug: string[];
+  locale: string;
 }
 
 export function generateStaticParams(): Params[] {
@@ -48,8 +49,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 }
 
 export default async function PostPage({ params }: { params: Promise<Params> }) {
+  const { slug, locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations('blog_slug_');
-  const { slug } = await params;
   const slugStr = slug.join('/');
   const post = allPosts.find((p) => p.slugAsParams === slugStr);
   if (!post || post.draft || post.published === false) return notFound();

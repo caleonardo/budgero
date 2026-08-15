@@ -97,10 +97,10 @@ def translate_front(locale, front):
         value = got.get(idx)
         if not value:
             continue
-        if kind == "scalar":
-            lines[line_no] = f'{meta}: "{value}"'
-        else:
-            lines[line_no] = f'{meta}- "{value}"'
+        # json.dumps escapes inner quotes; YAML accepts JSON-style scalars.
+        # Translators routinely add quotes around terms, which breaks naive f-strings.
+        encoded = json.dumps(value, ensure_ascii=False)
+        lines[line_no] = f"{meta}: {encoded}" if kind == "scalar" else f"{meta}- {encoded}"
     return "\n".join(lines)
 
 

@@ -1,0 +1,94 @@
+---
+title: "À affecter"
+summary: "À affecter est le cœur du système de budget base zéro de Budgero. Il indique exactement quelle part de votre argent disponible doit encore être affectée."
+section: getting-started
+topicId: ready-to-assign
+badge: "Nouveau"
+takeaways:
+  - "Choisissez entre un mode cumulatif et mensuel (façon YNAB) pour À affecter, par budget."
+  - "Comprenez les événements qui augmentent ou diminuent automatiquement À affecter."
+  - "Maîtrisez les opérations mathématiques du champ d'affectation pour des ajustements rapides du budget."
+---
+
+À affecter indique la part de votre argent budgétisé qui n'a pas encore de destination. Lorsqu'il affiche zéro, chaque unité est affectée à une catégorie. S'il est positif, vous avez encore des décisions à prendre. S'il passe en négatif, vous avez affecté plus d'argent que vous n'en avez réellement.
+
+## Le cycle de l'À affecter
+
+1. **Enregistrez l'argent dès son arrivée.** Saisissez les salaires, virements, remboursements et dépôts en espèces dans le compte où se trouve réellement l'argent. Budgero met à jour À affecter instantanément en fonction du montant de l'entrée et de la devise du compte.
+2. **Vérifiez votre tableau budgétaire.** À affecter se trouve en haut du tableau budgétaire et indique combien de votre argent n'a pas encore de destination avant la prochaine entrée.
+3. **Affectez les fonds avec intention.** Cliquez sur le champ alloué dans n'importe quelle catégorie pour affecter de l'argent. Le champ fonctionne comme une mini-calculatrice où vous pouvez saisir des montants directement ou utiliser des opérations mathématiques (addition, soustraction, multiplication, division) pour ajuster les affectations existantes. Affectez des fonds jusqu'à ce que À affecter atteigne zéro.
+4. **Rapprochez régulièrement.** Faire correspondre les soldes Budgero avec les soldes de votre banque permet de garder À affecter aligné avec l'argent réellement disponible.
+
+<Callout variant="note" title="Zero-based reminder">
+Lorsque À affecter affiche zéro, chaque unité de devise a une destination. S'il est positif, vous avez encore des décisions à prendre. S'il est négatif, reprenez de l'argent des catégories moins prioritaires jusqu'à ce que le solde soit de nouveau à zéro.
+</Callout>
+
+## Deux façons de calculer À affecter
+
+Budgero peut calculer À affecter selon l'un de deux modes, à choisir **par budget** sous **Paramètres → Paramètres du budget**. Le changement est instantané et non destructif — il ne modifie que le calcul, jamais vos transactions ou vos affectations. L'infobulle d'aide à côté de À affecter affiche toujours le détail complet du mode actif.
+
+### Cumulatif (par défaut)
+
+À affecter est un chiffre unique et global : le revenu total moins tout ce que vous avez affecté (et l'argent transféré hors budget). Il est **identique chaque mois** — le mois que vous consultez ne le modifie pas — ce qui le rend simple et prévisible.
+
+- Les revenus sont comptabilisés dès leur enregistrement, quelle que soit leur date.
+- Le dépassement de budget **reste dans la catégorie** sous forme de solde négatif et est reporté de mois en mois jusqu'à ce que vous le couvriez. Il ne touche jamais au montant À affecter.
+
+Choisissez Cumulatif si vous considérez votre budget comme un seul réservoir continu et ne voyez pas d'inconvénient à ce que le montant À affecter reste constant d'un mois à l'autre.
+
+### Mensuel (style YNAB)
+
+Le montant À affecter est calculé **pour le mois que vous consultez**, de sorte que chaque mois est indépendant. Cela correspond à ce que les utilisateurs venant de YNAB attendent.
+
+- Les revenus sont comptabilisés uniquement **jusqu'au mois sélectionné inclus** — l'argent reçu dans un mois futur n'est pas disponible pour être affecté avant d'atteindre ce mois.
+- Le **dépassement de budget en espèces** est prélevé sur le montant À affecter du mois **suivant**, et la catégorie est réinitialisée à zéro au lieu de conserver un solde négatif indéfiniment.
+- Le **dépassement de budget par carte de crédit** est traité comme une dette de carte, et non comme une perte de liquidités, il ne réduit donc **pas** le montant À affecter. Au lieu de cela, la catégorie de Remboursement de carte de crédit de la carte apparaît comme sous-financée ; cliquez dessus pour voir exactement quelles catégories et quels mois ont créé la dette.
+
+Choisissez Mensuel si vous venez de YNAB, ou si vous souhaitez que chaque mois puisse être rapproché indépendamment — les revenus au fur et à mesure de leur arrivée, et le dépassement de budget du mois dernier réduisant le montant À affecter de ce mois.
+
+## Comment le montant À affecter évolue
+
+### Entrées
+
+- **Nouveaux revenus.** Les salaires, paiements en freelance ou remboursements envoient leur montant net dans À affecter. Ces transactions doivent être classées dans la catégorie « Revenus » pour que À affecter augmente correctement.
+- **Virements entre comptes.** Déplacer des fonds d'un compte hors budget (comme l'épargne) vers un compte dans le budget (comme le compte courant) augmente À affecter. Les virements internes entre comptes dans le budget laissent À affecter inchangé. Les virements sortants de comptes dans le budget vers des comptes hors budget diminuent À affecter du montant transféré.
+- **Rapprochements de comptes.** Lorsque vous rapprochez un compte, tout ajustement nécessaire pour correspondre au solde de votre banque affecte À affecter. Par défaut, ces ajustements sont classés dans la catégorie « Revenus » sauf si vous les réaffectez à une autre catégorie.
+
+### Sorties
+
+- **Affecter de l'argent.** Lorsque vous financez une catégorie, À affecter diminue du même montant.
+- **Réaffecter des fonds.** Déplacer de l'argent entre des catégories ne modifie pas À affecter, mais renvoyer de l'argent vers À affecter l'augmente.
+
+## Comment affecter de l'argent
+
+1. Sélectionnez une catégorie qui a besoin de fonds et cliquez sur son champ d'affectation.
+2. Saisissez le montant que vous souhaitez affecter ou utilisez +, -, * et / pour ajuster l'affectation existante comme avec une calculatrice.
+3. Appuyez sur Entrée pour confirmer, puis continuez à affecter jusqu'à ce que À affecter affiche zéro.
+
+## Résoudre les problèmes courants
+
+### À affecter est négatif
+
+1. Parcourez les catégories à la recherche de badges de dépassement — rouge pour les dépassements en espèces, ambre pour le crédit — et replacez de l'argent jusqu'à ce que ces catégories atteignent zéro ou le vert.
+2. Vérifiez les sorties en double ou les transactions de dépense saisies deux fois et supprimez le doublon.
+3. Rapprochez chaque compte du budget. Si les soldes diffèrent de ceux de votre banque, ajustez le solde du compte pour que À affecter reflète votre trésorerie réelle.
+
+### Le montant À affecter n'a pas augmenté après un salaire
+
+- Assurez-vous que le type de transaction est une Entrée catégorisée vers À affecter (laissez la catégorie vide).
+- Confirmez que le compte fait partie du budget — les comptes hors budget n'affectent pas le montant À affecter.
+- Si le revenu est arrivé dans une autre devise, vérifiez le taux de conversion et modifiez le montant s'il a changé après la saisie.
+
+### Mon montant À affecter ne correspond pas à YNAB
+
+Par défaut, Budgero utilise le mode **Cumulatif**, qui diffère de YNAB de deux manières : il compte tous les revenus immédiatement quel que soit le mois que vous consultez, et les dépassements restent dans la catégorie au lieu d'être déduits du montant À affecter. Si vous souhaitez le comportement de YNAB, passez ce budget en mode **Mensuel** sous Paramètres → Paramètres du budget — les revenus ne sont alors comptés que pour le mois que vous consultez, et les dépassements de trésorerie du mois dernier sont retirés du montant À affecter de ce mois-ci. Voir [Deux façons de calculer le montant À affecter](#two-ways-to-calculate-ready-to-assign) ci-dessus pour la comparaison complète.
+
+### Vous souhaitez mettre de l'argent de côté pour plus tard
+
+- Créez une catégorie de réserve (par exemple, « Réserve pour le mois suivant »). Affectez les fonds là-bas au lieu de les laisser non affectés.
+- Lorsque vous êtes prêt à utiliser l'argent, déplacez-le de cette catégorie de réserve vers la catégorie qui en a besoin.
+- Préférez les objectifs pour les cibles prévisibles — ils vous rappellent quand financer et combien garder pour rester sur la bonne voie.
+
+## Prochaines étapes
+
+Le montant À affecter est plus satisfaisant lorsque les objectifs et les catégories reflètent vos priorités. Explorez d'autres guides dans le [centre de documentation Budgero](/docs) pour continuer à prendre de l'élan.

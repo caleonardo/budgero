@@ -1,0 +1,272 @@
+---
+title: "Suivi des dettes"
+summary: "Suivez vos cartes de crédit, prêts et hypothèques dans Budgero. Apprenez comment chaque type de dette affecte différemment votre budget et comment rembourser vos dettes de manière réfléchie."
+section: accounts-and-imports
+topicId: debt-tracking
+takeaways:
+  - "Comprenez comment les cartes de crédit diffèrent des prêts et des hypothèques."
+  - "Apprenez comment les catégories de paiement par carte suivent automatiquement l'argent mis de côté pour votre carte."
+  - "Maîtrisez le remboursement de vos dettes en budgétisant les catégories de prêts."
+---
+
+Budgero gère les comptes de dette, mais les cartes de crédit fonctionnent fondamentalement différemment des prêts et hypothèques. Comprendre cette distinction vous aide à gérer votre Budget avec précision.
+
+## Cartes de crédit et prêts
+
+La différence clé tient au **moment où les dépenses impactent votre Budget** :
+
+<table>
+  <thead>
+    <tr>
+      <th>Type de dette</th>
+      <th>Moment d'enregistrement des dépenses</th>
+      <th>Effet du paiement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Carte de crédit</strong></td>
+      <td>Lorsque vous passez la carte</td>
+      <td>Virement neutre</td>
+    </tr>
+    <tr>
+      <td><strong>Prêt / hypothèque</strong></td>
+      <td>Lorsque vous effectuez un paiement</td>
+      <td>Crée des dépenses dans la Catégorie liée</td>
+    </tr>
+  </tbody>
+</table>
+
+### Cartes de crédit
+
+Lorsque vous achetez des courses avec votre carte de crédit, ces 50 $ apparaissent immédiatement comme une dépense dans votre Catégorie Courses. La carte de crédit n'est qu'un moyen de paiement — l'impact sur le Budget se produit au moment de l'achat.
+
+Payer la facture de votre carte de crédit plus tard consiste simplement à déplacer de l'argent pour couvrir des dépenses que vous avez déjà enregistrées. Cela ne crée pas de dépenses supplémentaires dans votre Budget.
+
+### Prêts et hypothèques
+
+Les prêts fonctionnent à l'inverse. Vous n'achetez pas vos courses avec votre prêt immobilier. Le paiement mensuel lui-même constitue la dépense. Budgero crée une catégorie liée (comme « Prêt immobilier » ou « Prêt automobile ») et enregistre chaque paiement comme une dépense dans cette catégorie.
+
+## Catégories de paiement de carte de crédit
+
+Lorsque vous créez un compte de carte de crédit, Budgero configure automatiquement une **Catégorie de paiement de carte de crédit** pour cette carte. Cette catégorie utilise des mécaniques de type YNAB pour suivre le montant dont vous disposez pour payer votre carte.
+
+### Comment ça marche
+
+1. **Configuration automatique :** Lorsque vous créez une carte de crédit, Budgero crée un groupe de catégories « Paiements de carte de crédit » et une catégorie de paiement portant le nom de votre carte (par exemple, « Chase CC »).
+
+2. **Alimentation automatique à partir des dépenses :** Lorsque vous effectuez des achats avec la carte, l'argent est automatiquement « provisionné » depuis vos catégories de dépenses vers la catégorie de paiement de la carte de crédit. Cela vous montre exactement combien vous avez mis de côté pour payer la facture.
+
+3. **Seules les dépenses budgétées alimentent la catégorie :** Si vous dépassez le budget dans une catégorie, seule la portion budgétée alimente votre paiement de carte de crédit. Le montant dépassé devient une dette de carte de crédit.
+
+### Exemples d'alimentation
+
+<table>
+  <thead>
+    <tr>
+      <th>Budget de catégorie</th>
+      <th>Dépenses CB</th>
+      <th>Financé pour paiement CB</th>
+      <th>Dette CB créée</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>$100</td>
+      <td>$50</td>
+      <td>$50</td>
+      <td>$0</td>
+    </tr>
+    <tr>
+      <td>$100</td>
+      <td>$150</td>
+      <td>$100</td>
+      <td>$50</td>
+    </tr>
+    <tr>
+      <td>$0</td>
+      <td>$50</td>
+      <td>$0</td>
+      <td>$50</td>
+    </tr>
+    <tr>
+      <td>$30</td>
+      <td>$50</td>
+      <td>$30</td>
+      <td>$20</td>
+    </tr>
+  </tbody>
+</table>
+
+Lorsque plusieurs cartes de crédit sont utilisées dans la même catégorie, le montant financé est réparti entre leurs catégories de paiement CB proportionnellement à la part de chaque carte dans les dépenses de cette catégorie.
+
+### Lire la catégorie de paiement CB
+
+La catégorie de paiement CB affiche :
+
+- **Affecté :** Argent que vous avez budgétisé manuellement pour rembourser la dette
+- **Activité :** Paiements effectués vers la carte (affichés en négatif)
+- **Disponible :** Montant dont vous disposez pour payer la carte
+
+Cliquez sur l'icône d'information à côté du montant Disponible pour voir une **répartition du financement** — exactement quelles catégories ont contribué et pour quels montants. Pour chaque carte, la répartition reflète uniquement les dépenses de cette carte.
+
+<Callout variant="tip" title="Funding breakdown">
+La répartition du financement vous aide à comprendre d'où provient l'argent de votre paiement CB. Si vous avez dépensé 60 $ en courses et 30 $ en essence avec votre carte, vous verrez les deux catégories listées avec leurs contributions.
+</Callout>
+
+## Comment fonctionnent les soldes initiaux
+
+Lorsque vous configurez un compte de dette, le solde d'ouverture représente l'argent que vous devez déjà. Cette dette initiale n'affecte pas vos catégories de budget ni votre À affecter.
+
+**Exemple :** Vous créez une carte de crédit avec un solde de 2 000 $. Budgero affiche -2 000 $ sur le compte, mais les soldes de vos catégories et votre À affecter restent inchangés. La dette existait avant que vous ne commenciez à gérer votre budget.
+
+<Callout variant="note" title="Starting fresh">
+Si vous avez déjà remboursé une partie d'une dette avant d'utiliser Budgero, saisissez le montant initial de la dette et le montant déjà remboursé lors de la création du compte. Budgero calculera automatiquement votre solde actuel.
+</Callout>
+
+## Flux de travail de la carte de crédit
+
+Voici comment fonctionne un cycle typique de carte de crédit :
+
+1. **Passez votre carte** pour un achat de courses de 50 $
+2. **Catégorisez la transaction** dans Courses (ou laissez l'auto-catégorisation s'en charger)
+3. **La catégorie Courses** affiche une activité de -50 $, le Disponible diminue
+4. **La catégorie Paiement carte de crédit** gagne 50 $ en Disponible (financée automatiquement depuis Courses)
+5. **Le solde de la carte de crédit** affiche -50 $
+
+Lorsque vous payez la carte :
+
+1. **Virement** de 50 $ du compte courant vers la carte de crédit
+2. **La catégorie Paiement carte de crédit** affiche une activité de -50 $ (le paiement)
+3. **Le Disponible du paiement carte de crédit** revient à 0 $
+4. **Le solde de la carte de crédit** revient à 0 $
+
+The key insight: your spending categories already reflect the actual spending. The CC Payment category just tracks the money set aside to cover it.
+
+## Paying down legacy debt
+
+Si vous avez déjà des dettes de carte de crédit lorsque vous commencez à utiliser Budgero :
+
+1. La dette initiale est enregistrée comme une sortie dans la catégorie « Virements ». Si vous renseignez « Payé à ce jour » lors de la création du compte, Budgero l'enregistre également comme une entrée afin que le solde restant soit égal à montant initial − payé.
+2. Ces deux écritures affectent uniquement le solde du compte, et non une catégorie du budget.
+3. Votre catégorie de remboursement de carte de crédit démarre à 0 $ (aucune dépense n'a encore été financée).
+
+**Pour rembourser une dette antérieure :**
+
+1. Affectez de l'argent directement à la catégorie Paiement par carte de crédit
+2. Virez cet argent vers la carte de crédit
+3. Regardez le solde de votre carte de crédit baisser
+
+Lorsque vous payez plus que ce qui a été « financé » par les dépenses, le Disponible du Paiement par carte de crédit devient négatif. C'est normal — cela indique que vous remboursez une ancienne dette, et non simplement que vous couvrez vos dépenses actuelles.
+
+## Flux de travail pour les prêts et hypothèques
+
+Les prêts et hypothèques fonctionnent différemment car le paiement lui-même EST la dépense :
+
+1. **Budgero crée une catégorie liée** lorsque vous ajoutez le prêt (par ex., « Prêt automobile »)
+2. **Budgetez les paiements** en affectant de l'argent à cette catégorie chaque mois
+3. **Effectuez le paiement** en virant du compte courant vers le compte de prêt
+4. **Le paiement apparaît comme une dépense** dans la catégorie liée
+
+**Exemple :** Vous avez un prêt automobile de 10 000 $ avec des paiements mensuels de 300 $.
+
+1. Affectez 300 $ à la catégorie « Prêt automobile » lorsque vous êtes payé
+2. Virez 300 $ du compte courant vers le compte de prêt automobile
+3. La catégorie « Prêt automobile » affiche une activité de -300 $
+4. Le solde du prêt diminue de 300 $
+
+### Le plafond de dépenses
+
+Pour les prêts et hypothèques, Budgero plafonne les dépenses au montant réel de la dette. Si vous payez en trop :
+
+**Exemple :** Le solde de votre prêt automobile est de -100 $. Vous virez 300 $ pour le rembourser par anticipation.
+- Le compte reçoit 300 $, portant le solde à +200 $
+- Seuls 100 $ sont comptabilisés comme dépenses dans la catégorie « Prêt automobile »
+- Les 200 $ restants sont enregistrés comme un virement ordinaire (pas de dépense de catégorie)
+
+Cela permet à vos rapports de dépenses de rester exacts lorsque vous remboursez vos dettes par anticipation.
+
+## Cycle de vie des comptes et des catégories
+
+### Catégories de paiement par carte de crédit
+
+Lorsque vous créez une carte de crédit :
+- Un groupe de catégories « Paiements par carte de crédit » est créé (s'il n'existe pas)
+- Une catégorie de paiement portant le nom de votre carte est créée
+- La catégorie est supprimée automatiquement lorsque vous supprimez le compte
+
+### Catégories liées (prêts/hypothèques uniquement)
+
+Lorsque vous créez un prêt ou une hypothèque, Budgero crée une catégorie liée sous le groupe **Passifs**. Cette catégorie :
+- Partage le nom du compte (renommez le compte et la catégorie se met à jour)
+- Est supprimée automatiquement lorsque vous supprimez le compte
+- Ne peut pas être supprimée tant que le compte existe
+
+### Renommer les comptes
+
+Lorsque vous renommez un compte de dette, Budgero met à jour toutes les notes de virement qui font référence à l'ancien nom. Pour les cartes de crédit, le nom de la catégorie de paiement par carte de crédit se met également à jour.
+
+## Dans le budget vs hors budget
+
+La plupart des comptes de dette doivent rester **dans le budget**. Pour les prêts et les hypothèques, cela signifie que les paiements créent des dépenses dans la catégorie liée. Les cartes de crédit et les prêts sont dans le budget par défaut ; les hypothèques sont hors budget par défaut mais peuvent être basculées.
+
+Comptes de dette hors budget :
+- Suivent toujours votre solde de dette avec précision
+- Les paiements sont toujours des virements neutres — aucune dépense n'est enregistrée dans une catégorie
+- Pour les prêts/hypothèques, la catégorie liée est toujours créée lors de la configuration mais reste vide tant que le compte reste hors budget
+
+Utilisez hors budget pour les dettes que vous ne souhaitez pas budgéter mois par mois (par exemple, une hypothèque que vous voulez seulement voir du côté du patrimoine net).
+
+## Budgéter le remboursement des dettes
+
+### Cartes de crédit
+
+Pour les dépenses courantes, aucun budget spécial n'est nécessaire. Budgétez simplement vos catégories de dépenses (courses, essence, etc.) et la catégorie de paiement de la carte de crédit affiche automatiquement ce que vous avez disponible pour payer.
+
+**Pour rembourser une dette existante plus rapidement :**
+1. Affectez de l'argent supplémentaire à la catégorie de paiement de la carte de crédit
+2. Virez cet argent vers la carte
+3. Le disponible du paiement de la carte de crédit devenant négatif indique que vous payez au-delà des dépenses courantes
+
+### Prêts et hypothèques
+
+1. **Définissez un objectif de financement** sur la catégorie liée pour votre montant de paiement mensuel
+2. **Affectez de l'argent** à la catégorie chaque mois lorsque vous êtes payé
+3. **Effectuez le virement** de votre compte courant vers le compte de dette
+4. **Regardez le solde baisser** à mesure que vos paiements réduisent ce que vous devez
+
+La catégorie liée fonctionne comme n'importe quelle autre catégorie de dépenses. Prévoyez un budget pour elle, financez-la et dépensez-y en effectuant des paiements.
+
+## Questions fréquentes
+
+### Pourquoi mon paiement de carte de crédit n'apparaît-il pas comme une dépense ?
+
+Parce que la dépense a déjà eu lieu lorsque vous avez utilisé la carte. Payer la facture déplace simplement de l'argent pour couvrir des dépenses que vous avez déjà enregistrées. Cela évite le double comptage.
+
+### Que signifie un paiement CC disponible négatif ?
+
+Cela signifie que vous avez payé plus sur la carte que ce qui a été financé par vos dépenses budgétées. Cela se produit généralement lorsque :
+- Vous remboursez une dette antérieure à votre début de budget
+- Vous êtes « Dépassé » dans des catégories et couvrez maintenant cette dette
+- Vous avez effectué un paiement supplémentaire au-delà de vos dépenses du mois en cours
+
+### Mon paiement CC disponible ne correspond pas au solde de ma carte. Est-ce une erreur ?
+
+C'est normal. Le montant Disponible pour le paiement de votre carte de crédit correspond aux sommes réservées pour vos dépenses **budgétées**. Le solde de votre carte comprend :
+- Les dépenses du mois en cours (pouvant inclure des dépassements non encore couverts)
+- Les dettes antérieures à la mise en place de votre budget
+- Les frais d'intérêts
+
+La différence représente la dette que vous devez encore couvrir dans votre budget.
+
+### Puis-je suivre un prêt sans créer de dépenses dans le budget ?
+
+Oui. Marquez le compte comme Hors budget lors de sa création, ou modifiez un compte existant pour changer ce paramètre. Les prêts Hors budget suivent les soldes sans affecter vos catégories de budget.
+
+### Où puis-je voir quelles catégories ont financé mon paiement de carte de crédit ?
+
+Cliquez sur l'icône d'information à côté du montant Disponible dans la ligne de paiement de la carte de crédit. Une fenêtre contextuelle affiche le détail du financement avec chaque catégorie contributrice et son montant, spécifiquement pour cette carte.
+
+## Prochaines étapes
+
+Le suivi des dettes fonctionne mieux en combinaison avec des objectifs et des revues régulières du budget. Pour les cartes de crédit, surveillez le montant Disponible pour le paiement de votre carte afin de vous assurer que vous pouvez couvrir la facture. Pour les prêts et hypothèques, définissez des objectifs de financement mensuels et regardez vos soldes diminuer au fil du temps.

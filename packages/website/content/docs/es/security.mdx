@@ -1,0 +1,84 @@
+---
+title: "Modelo de seguridad"
+summary: "Profundiza en el diseño de cifrado de extremo a extremo de Budgero, lo que el servidor puede y no puede ver, y qué ocurre si pierdes un dispositivo."
+section: collaboration
+topicId: security
+takeaways:
+  - "Cómo el cifrado de envoltura convierte tu contraseña maestra en claves de trabajo."
+  - "Qué metadatos ve exactamente el servidor - y qué datos nunca puede ver."
+  - "Qué significa perder un dispositivo en la práctica y cómo prepararte para ello."
+---
+
+La mayoría de las apps de finanzas te piden que confíes en sus intenciones. Budgero está diseñado para que no tengas que hacerlo: la arquitectura hace que leer tus datos nos resulte imposible, no solo prohibido. Esta guía explica el diseño con detalle — porque "confía en nosotros, está cifrado" es precisamente la afirmación que no deberías aceptar sin detalles.
+
+## El proceso de cifrado
+
+Budgero utiliza **cifrado de sobres**, el mismo patrón que se usa en sistemas serios de gestión de claves:
+
+1. Tu [contraseña maestra](/docs/master-password) se procesa con **PBKDF2-HMAC-SHA256 con 600.000 iteraciones** en tu dispositivo, generando una **clave de cifrado de claves (KEK)**. El número de iteraciones existe para hacer que cada intento de adivinar la contraseña sea computacionalmente costoso.
+2. Una **clave de cifrado de datos (DEK)** generada aleatoriamente hace el trabajo real de cifrar tu presupuesto.
+3. La KEK envuelve (cifra) la DEK. Solo se almacena la DEK envuelta — desbloquear significa derivar la KEK de tu contraseña y desenvolver la DEK, después de lo cual la derivación costosa no necesita ejecutarse de nuevo durante la sesión.
+4. Todo el cifrado de datos usa **AES-256-GCM**, un cifrado autenticado — no solo oculta los datos, también detecta manipulaciones.
+
+Cada cambio en el presupuesto se cifra en tu dispositivo *antes* de sincronizarse. El servidor recibe, almacena y retransmite texto cifrado.
+
+## Lo que el servidor ve — y lo que no puede ver
+
+Las afirmaciones honestas de zero-knowledge exigen decir ambas partes en voz alta:
+
+<table>
+  <thead>
+    <tr>
+      <th>El servidor puede ver</th>
+      <th>El servidor nunca puede ver</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Que tienes una cuenta (email, identidad de inicio de sesión)</td>
+      <td>Transacciones — importes, beneficiarios, notas, fechas</td>
+    </tr>
+    <tr>
+      <td>Pertenencia al espacio de trabajo y roles (quién comparte con quién)</td>
+      <td>Saldos de cuentas y nombres de cuentas</td>
+    </tr>
+    <tr>
+      <td>Marcas de tiempo y números de versión de los cambios sincronizados</td>
+      <td>Categorías, asignaciones, objetivos — el presupuesto en sí</td>
+    </tr>
+    <tr>
+      <td>El tamaño y la frecuencia de los blobs cifrados</td>
+      <td>Tu contraseña maestra o cualquier clave derivada</td>
+    </tr>
+  </tbody>
+</table>
+
+Esa columna izquierda es lo mínimo necesario para operar un servicio de sincronización: enrutar el texto cifrado a las personas correctas y facturar a la cuenta correcta. La columna derecha es tu vida financiera, y solo existe de forma legible en tus dispositivos desbloqueados.
+
+Esta arquitectura también define el escenario de una brecha de seguridad. Si los servidores de Budgero se comprometieran por completo, el atacante obtendría claves envueltas y texto cifrado AES-256-GCM — y aún tendría que enfrentarse a un PBKDF2 de 600.000 iteraciones por usuario contra cada contraseña maestra para lograr algo. Con una frase de contraseña robusta, «algo» es nada.
+
+## Dónde viven tus datos
+
+Budgero Cloud está alojado en **Finlandia, bajo jurisdicción de la UE** — y la aplicación **no envía telemetría a menos que optes explícitamente**. Si incluso los blobs cifrados en nuestra infraestructura suponen más confianza de la que quieres otorgar, [Budgero Self-Host](/docs/self-hosting-guide) ejecuta el mismo proceso de cifrado en hardware que tú controlas. El cifrado no es una función de Cloud — es así como funciona el producto.
+
+## Compartir sin debilitar el modelo
+
+Los presupuestos compartidos mantienen las mismas garantías: las claves de los miembros compartidos se intercambian mediante secretos del enlace de invitación transportados en fragmentos de URL (nunca enviados al servidor) y se reenvuelven bajo la contraseña maestra de cada miembro. El servidor sabe que dos cuentas comparten un espacio de trabajo — nunca lo que hay dentro. Más detalles en [Compartir presupuestos](/docs/sharing).
+
+## Perder un dispositivo
+
+Lo que un ladrón obtiene de tu dispositivo es lo que tus decisiones en el dispositivo dejaron allí:
+
+- Los datos locales del presupuesto están cifrados en reposo; sin tu contraseña maestra son texto cifrado.
+- Si activaste el **desbloqueo de sesión** con una duración larga y el dispositivo no tiene código de acceso, una sesión desbloqueada es la exposición realista. Las mitigaciones son habituales pero eficaces: código de acceso/biometría del dispositivo, y duraciones de sesión más cortas en dispositivos portátiles (consulta [Contraseña maestra](/docs/master-password)).
+- El inicio de sesión de tu cuenta (que controla el acceso a la sincronización) se puede restablecer mediante la recuperación de identidad habitual sin perder nada. La contraseña maestra es distinta: se puede cambiar si la conoces, o restablecer si no la conoces — pero un restablecimiento borra los datos cifrados, porque nada puede descifrarlos sin la contraseña anterior (consulta [Contraseña maestra](/docs/master-password)).
+
+Tras perder un dispositivo, cambia la contraseña de tu *cuenta* para cortar el acceso del dispositivo a futuras sincronizaciones, y sigue adelante. El cifrado cumplió su función.
+
+## Soporte y tus datos
+
+Una consecuencia de este diseño que conviene decir claramente: cuando contactas con soporte, podemos ver datos del lado del servicio — estado de sincronización, suscripción, registros de errores — y nada dentro de tu presupuesto. El soporte nunca te pedirá tu contraseña maestra; nada de lo que gestionamos la utiliza.
+
+## El registro de auditoría
+
+Cada cambio sincronizado es una entrada cifrada en un registro de mutaciones de solo adición — así es como funcionan tanto la sincronización como la [fusión sin conexión](/docs/offline), y también un historial de tu presupuesto con detección de manipulaciones. Como todo lo demás, su contenido es opaco para el servidor.

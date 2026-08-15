@@ -1,0 +1,116 @@
+---
+title: "Importación de YNAB"
+summary: "Importa tus datos de YNAB sin perder el ritmo. Entiende qué se transfiere automáticamente, qué necesita reconstruirse y cómo aterrizar sin problemas."
+section: accounts-and-imports
+topicId: ynab-import
+takeaways:
+  - "Lo que Budgero importa de tu exportación de YNAB — y lo que no puede."
+  - "La lista de comprobación post-importación: tipos de cuenta, vinculación de deudas y objetivos."
+  - "Por qué deberías exportar desde YNAB antes de que caduque tu suscripción."
+---
+
+Cambiar de aplicación de presupuestos no debería significar abandonar años de historial. Budgero lee directamente el formato de exportación de YNAB y reconstruye tu presupuesto — cuentas, categorías, transacciones e incluso tus asignaciones mensuales — en unos minutos.
+
+## Antes que nada: exporta desde YNAB
+
+En YNAB, abre los ajustes del presupuesto y elige **Exportar presupuesto**. Obtendrás un archivo ZIP con dos CSV — el registro de transacciones y el archivo de presupuesto (plan). Budgero acepta el ZIP tal cual; no hace falta descomprimirlo ni editarlo.
+
+**Configura tus formatos antes de exportar.** YNAB escribe los CSV con el formato de visualización que tengas en los ajustes del plan, y los formatos ambiguos son la causa número uno de importaciones fallidas (fechas como `01/05/2025` pueden significar 5 de enero *o* 1 de mayo). En la aplicación web de YNAB, abre **Ajustes del plan** y configura:
+
+- **Formato de fecha** a `2025-12-30` (ISO — sin ambigüedad)
+- **Formato de números** a `123,456.78`
+- **Posición de la moneda** a **"No mostrar"**
+
+Después exporta. Budgero detecta otros formatos de fecha y número cuando puede, pero los ajustes anteriores son los únicos que se importan sin pérdida de datos.
+
+Haz esto **mientras tu suscripción a YNAB esté activa**. El acceso a la exportación normalmente desaparece cuando la suscripción caduca — el soporte de YNAB podría ayudarte a posteriori, pero no confíes en ello para recuperar tu historial. Exportar primero no cuesta nada.
+
+## Qué se transfiere
+
+<table>
+  <thead>
+    <tr>
+      <th>Datos</th>
+      <th>¿Importado?</th>
+      <th>Notas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cuentas</td>
+      <td>✓</td>
+      <td>Creadas a partir de tu registro; los tipos necesitan revisión tras la importación</td>
+    </tr>
+    <tr>
+      <td>Grupos de categorías y categorías</td>
+      <td>✓</td>
+      <td>Jerarquía completa preservada</td>
+    </tr>
+    <tr>
+      <td>Transacciones</td>
+      <td>✓</td>
+      <td>Fechas, beneficiarios, notas, importes — historial completo</td>
+    </tr>
+    <tr>
+      <td>Transferencias</td>
+      <td>✓</td>
+      <td>Detectadas y recreadas como transferencias bidireccionales correctas</td>
+    </tr>
+    <tr>
+      <td>Asignaciones mensuales</td>
+      <td>✓</td>
+      <td>Tus importes presupuestados, mes a mes</td>
+    </tr>
+    <tr>
+      <td>Saldos iniciales</td>
+      <td>✓</td>
+      <td>Las entradas "Starting Balance" de YNAB se convierten en transacciones de apertura</td>
+    </tr>
+    <tr>
+      <td>Objetivos / metas</td>
+      <td>✗</td>
+      <td>La exportación de YNAB no los incluye — recréalos en Budgero</td>
+    </tr>
+    <tr>
+      <td>Transacciones programadas</td>
+      <td>✗</td>
+      <td>No forman parte de la exportación de YNAB</td>
+    </tr>
+    <tr>
+      <td>Banderas</td>
+      <td>✗</td>
+      <td>No se transfieren</td>
+    </tr>
+  </tbody>
+</table>
+
+La mecánica especial de YNAB se adapta en lugar de copiarse: los ingresos hacia **"Ingreso: Por asignar"** se mapean a la categoría **Ingresos** de Budgero, de modo que tu historial de ingresos alimenta [Por asignar](/docs/ready-to-assign) correctamente desde la primera sincronización.
+
+## Ejecutar la importación
+
+1. Durante la configuración inicial (o desde Ajustes si tu presupuesto ya existe), elige **Importar desde YNAB**.
+2. Arrastra el ZIP. Budgero analiza ambos archivos y muestra una vista previa — cuentas encontradas, categorías mapeadas, número de transacciones.
+3. Confirma. La importación suele completarse en menos de un minuto incluso con presupuestos de hace una década.
+
+Si importas durante la configuración inicial, Budgero omite los pasos de configuración que la importación ya cubrió — no se te pedirá que crees cuentas y categorías que acabas de traer contigo.
+
+## Lista de comprobación tras la importación
+
+Tres cosas merecen diez minutos de atención después de cualquier importación:
+
+1. **Revisa los tipos de cuenta.** Las cuentas importadas llegan como Cuenta corriente por defecto, porque la exportación de YNAB no indica qué tipo de cuenta es cada una. Reasigna tus tarjetas de crédito, cuentas de ahorro y cuentas de efectivo a sus [tipos de cuenta](/docs/accounts) correspondientes — esto importa especialmente para las tarjetas de crédito, ya que la gestión de deudas de Budgero se activa según el tipo de cuenta.
+2. **Vincula tus categorías de deuda.** Las categorías de pago de tarjeta de crédito de YNAB llegan como categorías normales. Una vez que hayas establecido el tipo de cuenta como Tarjeta de crédito, conéctala según la [guía de Seguimiento de deudas](/docs/debt-tracking) para que los pagos no afecten al presupuesto.
+3. **Recrea tus objetivos.** Tus metas de YNAB no sobrevivieron el viaje — YNAB no las exporta. Recrearlas en Budgero lleva unos minutos y la [guía de Objetivos](/docs/goals) mapea los tipos de meta de YNAB a los cuatro tipos de objetivo de Budgero casi uno a uno.
+
+Por último, concilia cada cuenta con tu banco una vez (consulta [Cuentas](/docs/accounts)) para confirmar que los saldos coinciden con la realidad.
+
+## Si algo no cuadra
+
+Las sorpresas más comunes después de importar, en orden:
+
+- **Por asignar no coincide con lo que mostraba YNAB** — normalmente no es un error. Budgero calcula [Por asignar](/docs/ready-to-assign) de forma distinta a YNAB: es un número estático y acumulado (ingresos totales menos asignaciones totales), no una cifra que cambia según el mes que estés viendo. Creemos que es más fácil de entender, pero significa que las dos aplicaciones legítimamente no estarán de acuerdo justo después de importar. Si el número sigue sin cuadrar después de tener eso en cuenta, comprueba si hay alguna cuenta cuyo tipo necesite corrección o una transferencia que YNAB registró unilateralmente — conciliar cada cuenta revela estos problemas rápido.
+- **Las fechas o los importes parecen incorrectos** — casi siempre es un problema del formato de exportación. Reexporta desde YNAB con Date Format `2025-12-30`, Number Format `123,456.78`, y Currency Placement "Don't Show" (ver arriba), y luego importa en un presupuesto nuevo.
+- **Transacciones que parecen duplicadas** — las transacciones divididas de YNAB se exportan como varias filas; revisa las notas antes de borrar nada.
+- **Dudas sobre la moneda** — los presupuestos de YNAB son de una sola moneda, así que todo se importa en esa moneda. Si vas a cambiar a una configuración multidivisa, consulta [Moneda del presupuesto](/docs/budget-currency) antes de modificar nada.
+
+Los datos de YNAB no se ven afectados por nada de esto — la importación solo lee el archivo de exportación, así que puedes volver a ejecutarla en un presupuesto nuevo si alguna vez quieres un segundo intento limpio.

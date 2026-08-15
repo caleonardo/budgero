@@ -1,0 +1,162 @@
+---
+title: "Regel-engine"
+summary: "Automatiseer het opschonen van transacties met regels — match op begunstigde, memo, bedrag of rekening, en categoriseer, hernoem en pas automatisch aan."
+section: integrations
+topicId: rules-engine
+takeaways:
+  - "De drie regelmodi - Continu, Eenmalig en Auto-invullen - en wanneer elk daarvan wordt uitgevoerd."
+  - "Elke beschikbare voorwaarde en actie, en hoe meerdere regels samenwerken."
+  - "Retro-uitvoeringen, uitvoeringsgeschiedenis en het vangnet om met één klik ongedaan te maken."
+---
+
+Handmatig budgetteren hoeft niet repetitief te zijn. De Regel-engine houdt transacties in de gaten zodra ze binnenkomen — via imports, handmatige invoer of de [Push API](/docs/push-api) — en voert de opschoning uit die je anders met de hand zou doen: begunstigdenamen corrigeren, categorieën toewijzen, notities opschonen. Jij definieert het patroon één keer; Budgero past het voor altijd toe.
+
+Regels vind je onder **Instellingen → Regels**.
+
+## De drie modi
+
+Elke regel draait in een van drie modi:
+
+<table>
+  <thead>
+    <tr>
+      <th>Modus</th>
+      <th>Wanneer hij draait</th>
+      <th>Gebruik hem voor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Continue</strong></td>
+      <td>Automatisch, bij elke nieuwe overeenkomende transactie</td>
+      <td>De vaste opschoning: "AMZN Mktp*" → Amazon, categorie Winkelen</td>
+    </tr>
+    <tr>
+      <td><strong>Eenmalig</strong></td>
+      <td>Eén keer, met terugwerkende kracht op bestaande transacties</td>
+      <td>Migraties en correcties: sportschoolkosten van vorig jaar hercategoriseren</td>
+    </tr>
+    <tr>
+      <td><strong>Automatisch invullen</strong></td>
+      <td>Terwijl je typt in het formulier Transactie toevoegen</td>
+      <td>Suggesties, geen wijzigingen — je accepteert of wijst ze één voor één af</td>
+    </tr>
+  </tbody>
+</table>
+
+Continue regels worden geactiveerd op elk invoerpad — CSV/PDF-imports, handmatige invoer, Push API. Eenmalige regels markeren zichzelf als verbruikt na hun uitvoering en worden niet opnieuw geactiveerd tot ze worden gereset. Regels voor automatisch invullen wijzigen nooit zelf iets; ze vullen velden vooraf als suggesties in het invoerformulier, één keer per formuliersessie.
+
+## Voorwaarden: waar een regel op matcht
+
+Een regel heeft minimaal één voorwaarde nodig. Als er meerdere zijn, moeten ze **allemaal matchen** (EN-logica — er is geen OF; als je "deze begunstigde of die begunstigde" nodig hebt, maak dan twee regels).
+
+<table>
+  <thead>
+    <tr>
+      <th>Veld</th>
+      <th>Operatoren</th>
+      <th>Opmerkingen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Begunstigde</strong></td>
+      <td>gelijk aan · bevat · regex</td>
+      <td>Standaard hoofdletterongevoelig; schakel om voor hoofdlettergevoelig</td>
+    </tr>
+    <tr>
+      <td><strong>Memo</strong></td>
+      <td>gelijk aan · bevat · regex</td>
+      <td>Dezelfde schakelaar voor hoofdlettergevoeligheid</td>
+    </tr>
+    <tr>
+      <td><strong>Bedrag</strong></td>
+      <td>= · ≠ · &gt; · ≥ · &lt; · ≤</td>
+      <td>Vergelijkt het netto bedrag (inkomsten − uitgaven); voor rekeningen in vreemde valuta het oorspronkelijke bedrag, niet het omgerekende</td>
+    </tr>
+    <tr>
+      <td><strong>Rekening</strong></td>
+      <td>is · is niet</td>
+      <td>Beperk een regel tot specifieke rekeningen (of sluit ze uit)</td>
+    </tr>
+  </tbody>
+</table>
+
+Regex ontsluit de lastige gevallen — bankexporten die winkelnummers als achtervoegsel aan begunstigden toevoegen (`MIGROS M-0451`), referentiecodes in memo's — met de volledige JavaScript-patroonsyntaxis.
+
+## Acties: wat een regel doet
+
+Een passende regel past een of meer acties toe, **in de volgorde waarin je ze opsomt** — elke actie ziet het resultaat van de vorige.
+
+<table>
+  <thead>
+    <tr>
+      <th>Actie</th>
+      <th>Wat het doet</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Categorie instellen</strong></td>
+      <td>Wijs de transactie toe aan een categorie</td>
+    </tr>
+    <tr>
+      <td><strong>Begunstigde instellen</strong></td>
+      <td>Vervangt (of wist) de begunstigde — het werkpaard voor normalisatie</td>
+    </tr>
+    <tr>
+      <td><strong>Memo instellen</strong></td>
+      <td>Vervangt de memo door vaste tekst</td>
+    </tr>
+    <tr>
+      <td><strong>Verwijderen uit memo (regex)</strong></td>
+      <td>Verwijdert overeenkomende patronen — referentienummers, kaartachtervoegsels, ruis</td>
+    </tr>
+    <tr>
+      <td><strong>Bedrag instellen</strong></td>
+      <td>Vervangt het bedrag volledig</td>
+    </tr>
+    <tr>
+      <td><strong>Bedrag aanpassen op waarde</strong></td>
+      <td>Telt een vast bedrag op of af (bijv. −5)</td>
+    </tr>
+    <tr>
+      <td><strong>Bedrag aanpassen op percentage</strong></td>
+      <td>Schaalt het bedrag (bijv. −10%)</td>
+    </tr>
+    <tr>
+      <td><strong>Rekening instellen</strong></td>
+      <td>Leidt de transactie om naar een andere rekening</td>
+    </tr>
+  </tbody>
+</table>
+
+De acties voor bedrag en rekening zijn krachtig genoeg om serieus te nemen: een percentage-aanpassing op een te brede voorwaarde herschrijft veel geschiedenis bij een achteraf uitvoeren. Beperk agressieve regels strak — een rekeningvoorwaarde plus een begunstigdevoorwaarde is een goede gewoonte.
+
+## Volgorde: wanneer meerdere regels passen
+
+Regels stoppen niet bij de eerste match — **elke passende regel wordt uitgevoerd**, in oplopende **uitvoervolgorde** (een numeriek veld op elke regel; bij gelijkstand bepaalt leeftijd). Latere regels zien de transactie zoals eerdere regels deze hebben achtergelaten, wat doelgerichte pijplijnen mogelijk maakt: regel 1 normaliseert de begunstigde, regel 2 matcht de *schone* naam van de begunstigde en stelt de categorie in.
+
+Elke regel heeft ook een schakelaar om hem **in te schakelen** — pauzeer een regel zonder hem te verwijderen.
+
+## Regels uitvoeren op bestaande transacties
+
+Twee knoppen op elke regelkaart gaan verder dan wachten op nieuwe transacties:
+
+- **Nu uitvoeren** voert de regel op aanvraag uit over het hele budget — dezelfde logica als de continue modus, handmatig geactiveerd.
+- **Retro uitvoeren** past de regel toe op **alle eerdere transacties**, na een bevestigingsvenster. Dit is de flow voor toepassing op bestaande transacties, en de logische tweede stap nadat je een regel hebt gemaakt waarvan je een jaar geleden al wenste dat je hem had.
+
+Na elke uitvoering toont de resultaatoverlay hoeveel transacties zijn geëvalueerd en gewijzigd.
+
+## Geschiedenis en ongedaan maken
+
+Elke uitvoering wordt vastgelegd. Het **Geschiedenis**-paneel op elke regel toont eerdere uitvoeringen met de aangebrachte wijzigingen — en de meest recente voltooide uitvoering kan met één klik **ongedaan gemaakt** worden, waarbij de betreffende transacties worden hersteld. Het ongedaan maken van een eenmalige regel-uitvoering reset ook de verbruikte vlag, zodat hij opnieuw kan afgaan.
+
+Dit is het vangnet dat experimenteren laagdrempelig maakt: schrijf de regel, voer een retro-uitvoering uit, inspecteer het resultaat, maak ongedaan als hij meer heeft gepakt dan je bedoelde, verfijn de voorwaarden en voer opnieuw uit.
+
+## Patronen om te kopiëren
+
+- **De import-opruimer.** De CSV van je bank zegt `CARD PURCHASE 4421 TESCO STORES 2284`. Eén regel: memo bevat `TESCO` → stel begunstigde in op "Tesco", stel categorie in op Boodschappen, verwijder de referentierommel uit de memo via regex. Elke toekomstige [import](/docs/csv-import) komt vooraf opgeschoond binnen.
+- **De abonnementen-tagger.** Begunstigde bevat "Spotify" en rekening is je betaalkaart → categorie Abonnementen. Herhaal per dienst; tien minuten instellen maakt permanent een einde aan categorieverschuiving.
+- **De salaris-splitter helper.** Bedrag ≥ jouw salaris en rekening is je betaalrekening → stel begunstigde in op "Werkgever", categorie Inkomsten — zodat het salaris op betaaldag gelabeld aankomt, zelfs als de memo van de bank onzin is.
+- **De auto-invul-assistent.** Een Regel voor automatisch invullen wanneer begunstigde "Shell" bevat, die categorie Brandstof suggereert, verandert handmatige invoer bij de pomp in twee tikken — terwijl jij het laatste woord hebt.

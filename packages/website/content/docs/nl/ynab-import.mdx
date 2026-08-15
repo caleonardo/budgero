@@ -1,0 +1,116 @@
+---
+title: "YNAB-import"
+summary: "Importeer je YNAB-gegevens zonder vaart te verliezen. Begrijp wat automatisch wordt overgebracht, wat je opnieuw moet opbouwen en hoe je de overstap soepel maakt."
+section: accounts-and-imports
+topicId: ynab-import
+takeaways:
+  - "Wat Budgero importeert uit je YNAB-export — en wat niet."
+  - "De checklist na import - rekeningtypes, schulden koppelen en doelen."
+  - "Waarom je vanuit YNAB moet exporteren voordat je abonnement afloopt."
+---
+
+Switching budgeting apps shouldn't mean abandoning years of history. Budgero reads YNAB's export format directly and rebuilds your budget — accounts, categories, transactions, and even your monthly assignments — in a few minutes.
+
+## Allereerst: exporteren uit YNAB
+
+Open in YNAB je budgetinstellingen en kies **Budget exporteren**. Je krijgt een ZIP-bestand met twee CSV's — je transactieregister en je budgetbestand (plan). Budgero accepteert de ZIP direct; uitpakken of bewerken is niet nodig.
+
+**Stel je indelingen in voordat je exporteert.** YNAB schrijft de CSV's in de weergave-indeling die je planinstellingen gebruiken, en dubbelzinnige indelingen zijn de belangrijkste oorzaak van mislukte imports (datums zoals `01/05/2025` kunnen 5 januari *of* 1 mei betekenen). Open in de YNAB-webapp **Planinstellingen** en stel in:
+
+- **Datumnotatie** op `2025-12-30` (ISO — eenduidig)
+- **Getalnotatie** op `123,456.78`
+- **Valutaweergave** op **"Niet weergeven"**
+
+Exporteer daarna. Budgero detecteert waar mogelijk andere datum- en getalnotaties, maar de bovenstaande instellingen zijn de enige die verliesvrij worden geïmporteerd.
+
+Doe dit **terwijl je YNAB-abonnement actief is**. De mogelijkheid om te exporteren verdwijnt normaal gesproken wanneer je abonnement afloopt — YNAB-ondersteuning kan misschien achteraf helpen, maar reken er niet op dat je je geschiedenis terugkrijgt. Eerst exporteren kost niets.
+
+## Wat wordt overgezet
+
+<table>
+  <thead>
+    <tr>
+      <th>Gegevens</th>
+      <th>Geïmporteerd?</th>
+      <th>Opmerkingen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Rekeningen</td>
+      <td>✓</td>
+      <td>Aangemaakt vanuit je register; types moeten na import worden gecontroleerd</td>
+    </tr>
+    <tr>
+      <td>Categoriegroepen &amp; categorieën</td>
+      <td>✓</td>
+      <td>Volledige hiërarchie behouden</td>
+    </tr>
+    <tr>
+      <td>Transacties</td>
+      <td>✓</td>
+      <td>Datums, begunstigden, memo's, bedragen — volledige geschiedenis</td>
+    </tr>
+    <tr>
+      <td>Overboekingen</td>
+      <td>✓</td>
+      <td>Gedetecteerd en opnieuw aangemaakt als echte tweezijdige overboekingen</td>
+    </tr>
+    <tr>
+      <td>Maandelijkse toewijzingen</td>
+      <td>✓</td>
+      <td>Je gebudgetteerde bedragen, maand voor maand</td>
+    </tr>
+    <tr>
+      <td>Beginsaldi</td>
+      <td>✓</td>
+      <td>YNAB's "Starting Balance"-posten worden openingstransacties</td>
+    </tr>
+    <tr>
+      <td>Doelen / streefdoelen</td>
+      <td>✗</td>
+      <td>YNAB's export bevat deze niet — herstel ze in Budgero</td>
+    </tr>
+    <tr>
+      <td>Geplande transacties</td>
+      <td>✗</td>
+      <td>Geen onderdeel van YNAB's export</td>
+    </tr>
+    <tr>
+      <td>Vlaggen</td>
+      <td>✗</td>
+      <td>Niet overgenomen</td>
+    </tr>
+  </tbody>
+</table>
+
+YNAB's speciale afhandeling wordt vertaald in plaats van gekopieerd: inkomsten naar **"Inkomsten: Te verdelen"** worden omgezet naar de **Inkomsten**-categorie van Budgero, zodat je inkomstenhistorie [Te verdelen](/docs/ready-to-assign) vanaf de eerste synchronisatie correct vult.
+
+## De import uitvoeren
+
+1. Tijdens onboarding (of vanuit Instellingen als je budget al bestaat), kies **Importeren vanuit YNAB**.
+2. Upload de ZIP. Budgero leest beide bestanden uit en toont een voorbeeld — gevonden rekeningen, gekoppelde categorieën, aantal transacties.
+3. Bevestig. De import is doorgaans binnen een minuut voltooid, zelfs voor budgetten van tien jaar oud.
+
+Als je tijdens onboarding importeert, slaat Budgero de instelstappen over die de import al heeft afgedekt — je wordt niet gevraagd rekeningen en categorieën aan te maken die je net hebt meegebracht.
+
+## De controlelijst na import
+
+Drie dingen verdienen na elke import tien minuten aandacht:
+
+1. **Controleer de rekeningtypes.** Geïmporteerde rekeningen komen standaard binnen als betaalrekening, omdat YNAB's export niet aangeeft wat voor soort rekening het is. Wijs je creditcards, spaarrekeningen en kasrekeningen opnieuw toe aan de juiste [rekeningtypes](/docs/accounts) — dit is vooral belangrijk voor creditcards, aangezien Budgero's schuldenbeheer per rekeningtype wordt geactiveerd.
+2. **Koppel je schuldencategorieën.** YNAB's creditcard-aflossingscategorieën komen binnen als gewone categorieën. Zodra je een rekeningtype op Creditcard hebt gezet, koppel deze volgens de [Schuldenoverzicht-handleiding](/docs/debt-tracking) zodat betalingen budgetneutraal blijven.
+3. **Herstel je doelen.** Je YNAB-doelen hebben de overgang niet overleefd — YNAB exporteert ze niet. Ze opnieuw aanmaken in Budgero kost een paar minuten en de [Doelen-handleiding](/docs/goals) koppelt YNAB's doeltypen vrijwel één-op-één aan Budgero's vier doeltypen.
+
+Stem ten slotte elke rekening één keer af met je bank (zie [Rekeningen](/docs/accounts)) om te bevestigen dat de saldi overeenkomen met de werkelijkheid.
+
+## Als iets niet klopt
+
+De meest voorkomende verrassingen na het importeren, in volgorde:
+
+- **Te verdelen komt niet overeen met wat YNAB liet zien** — meestal geen fout. Budgero berekent [Te verdelen](/docs/ready-to-assign) anders dan YNAB: het is één statisch getal over de hele periode (totale inkomsten minus totale toewijzingen), geen cijfer dat verschuift met de maand die je bekijkt. We vinden dat makkelijker om mee te redeneren, maar het betekent dat de twee apps terecht van mening verschillen direct na het importeren. Als het getal nog steeds niet klopt als je daar rekening mee houdt, controleer dan op een rekening waarvan het type gecorrigeerd moet worden of een overboeking die YNAB aan één kant heeft geboekt — elke rekening afstemmen brengt dit snel aan het licht.
+- **Datums of bedragen kloppen niet** — bijna altijd een exportformaatprobleem. Exporteer opnieuw vanuit YNAB met Date Format `2025-12-30`, Number Format `123,456.78` en Currency Placement "Don't Show" (zie hierboven), en importeer daarna in een nieuw budget.
+- **Transacties die eruitzien als duplicaten** — YNAB exporteert gesplitste transacties als meerdere rijen; controleer de notities voordat je iets verwijdert.
+- **Valutavragen** — YNAB-budgetten gebruiken één valuta, dus alles wordt in die valuta geïmporteerd. Als je overstapt naar een multivaluta-instelling, zie [Budgetvaluta](/docs/budget-currency) voordat je iets wijzigt.
+
+Je YNAB-gegevens blijven hierdoor onaangeroerd — de import leest alleen het exportbestand, dus je kunt het opnieuw uitvoeren in een nieuw budget als je ooit een schone tweede poging wilt doen.

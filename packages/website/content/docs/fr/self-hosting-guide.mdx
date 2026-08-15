@@ -1,0 +1,385 @@
+---
+title: "Guide d'auto-hébergement"
+summary: "Guide complet pour déployer Budgero sur votre propre infrastructure avec Docker, des binaires natifs, la configuration de l'environnement et des intégrations optionnelles."
+section: getting-started
+topicId: self-hosting-guide
+takeaways:
+  - "Déployez Budgero avec Docker ou des binaires natifs sur n'importe quelle plateforme."
+  - "Aucune configuration pour localhost — compte administrateur créé automatiquement au premier lancement."
+  - "Définissez WEBSOCKET_ALLOWED_ORIGINS lorsque vous accédez à Budgero via une adresse IP LAN ou un domaine — la synchronisation en a besoin."
+  - "Configurez en option l'API de conversion de devises pour la prise en charge multidevise."
+---
+
+This guide walks you through deploying Budgero on your own infrastructure. Whether you prefer Docker containers or native binaries, you'll have a fully functional budget server running in minutes.
+
+## Deployment options
+
+Budgero auto-hébergé peut être déployé de trois manières :
+
+- **Docker** - Recommandé pour la plupart des utilisateurs. Une seule commande, fonctionne sur toute plateforme avec Docker.
+- **Binaire natif** - Installation directe sur macOS, Linux ou Windows. Idéal pour les configurations minimales ou lorsque Docker n'est pas disponible.
+- **Docker Compose** - Le meilleur choix pour les déploiements en production avec stockage persistant et mises à jour faciles.
+
+## Démarrage rapide avec Docker
+
+```bash
+docker run -d \
+  --name budgero \
+  -p 127.0.0.1:3001:3001 \
+  -v budgero_data:/data \
+  budgero/budgero
+```
+
+Au premier démarrage, consultez les journaux pour récupérer vos identifiants d'administrateur :
+
+```bash
+docker logs budgero
+```
+
+```
+  Admin account created:
+    Username: admin
+    Password: <randomly-generated-password>
+
+  ⚠️  Save this password now - it will NOT be shown again.
+```
+
+- **Application** : `http://localhost:3001`
+- **Interface d'administration** : `http://localhost:3001/admin`
+
+Utilisez un proxy inverse (Caddy/nginx) si vous avez besoin d'un accès externe via HTTPS.
+
+La commande de démarrage rapide se lie à `127.0.0.1`, elle est donc prête à l'emploi. Si vous accédez à Budgero depuis **une autre origine** — une adresse IP LAN, un nom d'hôte ou un domaine derrière un proxy inverse — vous devez également définir `WEBSOCKET_ALLOWED_ORIGINS` (voir [origines WebSocket](#websocket-origins-required-for-non-localhost-access)), sinon la synchronisation en temps réel ne se connectera pas.
+
+Budgero stocke toutes les données auto-hébergées sous `/data` :
+
+- Base de données de métadonnées : `/data/budgero.db`
+- Blobs de budget chiffrés : `/data/budget_spaces/`
+
+## Docker Compose
+
+```yaml
+services:
+  budgero:
+    image: budgero/budgero:latest
+    ports:
+      - "127.0.0.1:3001:3001"
+    # environment:
+    #   # Required if you access Budgero from anywhere other than localhost:
+    #   - WEBSOCKET_ALLOWED_ORIGINS=http://192.168.1.50:3001
+    volumes:
+      - budgero_data:/data
+    restart: unless-stopped
+
+volumes:
+  budgero_data:
+```
+
+```bash
+docker compose up -d
+docker compose logs budgero  # get admin credentials on first run
+```
+
+### Avec Caddy pour HTTPS
+
+```yaml
+services:
+  budgero:
+    image: budgero/budgero:latest
+    expose:
+      - "3001"
+    environment:
+      - WEBSOCKET_ALLOWED_ORIGINS=https://budget.yourdomain.com
+    volumes:
+      - budgero_data:/data
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    restart: unless-stopped
+
+volumes:
+  budgero_data:
+  caddy_data:
+```
+
+```
+# Caddyfile
+budget.yourdomain.com {
+    reverse_proxy budgero:3001
+}
+```
+
+## Installation du binaire natif
+
+### macOS et Linux
+
+```bash
+curl -fsSL https://budgero.app/install.sh | bash
+```
+
+### Windows (PowerShell)
+
+```powershell
+irm https://budgero.app/install.ps1 | iex
+```
+
+Après l'installation, démarrez le serveur :
+
+```bash
+budgero serve
+```
+
+Le serveur fonctionne sur le port 3001 par défaut. Votre base de données est stockée dans `./data/budgero.db`.
+
+## Origines WebSocket (requises pour un accès non local)
+
+Budgero synchronise votre budget en temps réel via une connexion WebSocket, et le serveur n'accepte les connexions WebSocket que depuis des origines qu'il connaît. Par défaut, seules les origines `localhost` / `127.0.0.1` sont autorisées. Si vous ouvrez Budgero depuis une autre adresse — une IP LAN comme `http://192.168.1.50:3001`, ou `https://budget.yourdomain.com` derrière un proxy inverse — la connexion de synchronisation est rejetée et l'application ne peut pas charger votre budget.
+
+Définissez `WEBSOCKET_ALLOWED_ORIGINS` avec la ou les origines exactes que vous utilisez dans le navigateur, séparées par des virgules :
+
+```bash
+# Single origin (reverse proxy with HTTPS)
+WEBSOCKET_ALLOWED_ORIGINS=https://budget.yourdomain.com
+
+# Multiple origins (domain + direct LAN access)
+WEBSOCKET_ALLOWED_ORIGINS=https://budget.yourdomain.com,http://192.168.1.50:3001
+```
+
+Chaque entrée doit correspondre exactement à l'origine du navigateur : schéma, hôte et port (lorsqu'il n'est pas celui par défaut). Les caractères génériques ne sont pas pris en charge. Si l'origine est absente ou ne correspond pas, le serveur journalise `WebSocket connection rejected due to CORS` avec l'origine qu'il a détectée et la liste qu'il a autorisée — copiez l'origine rejetée depuis cette ligne de journal telle quelle.
+
+## Variables d'environnement
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Valeur par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>PORT</code></td>
+      <td><code>3001</code></td>
+      <td>Port du serveur HTTP</td>
+    </tr>
+    <tr>
+      <td><code>DB_PATH</code></td>
+      <td><code>data/budgero.db</code></td>
+      <td>Chemin du fichier de base de données SQLite</td>
+    </tr>
+    <tr>
+      <td><code>WEBSOCKET_ALLOWED_ORIGINS</code></td>
+      <td>Origines localhost uniquement</td>
+      <td>Liste séparée par des virgules des origines de navigateur autorisées à se connecter pour la synchronisation. <strong>Requise pour tout accès non local</strong> — voir <a href="#websocket-origins-required-for-non-localhost-access">Origines WebSocket</a></td>
+    </tr>
+    <tr>
+      <td><code>LOG_LEVEL</code></td>
+      <td><code>info</code></td>
+      <td><code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code></td>
+    </tr>
+    <tr>
+      <td><code>CURRENCY_API_BASE_URL</code></td>
+      <td>CDN public jsDelivr</td>
+      <td>Optionnel : URL de base d'un miroir de taux de change auto-hébergé — voir <a href="#currency-conversion">Conversion de devises</a></td>
+    </tr>
+    <tr>
+      <td><code>UPDATE_CHECK_DISABLED</code></td>
+      <td><code>false</code></td>
+      <td>Définir sur <code>true</code> pour désactiver la vérification des mises à jour — voir <a href="#update-check">Vérification des mises à jour</a></td>
+    </tr>
+  </tbody>
+</table>
+
+### Vérification des mises à jour
+
+Lorsqu'une personne ouvre l'application, le serveur vérifie s'il existe une version plus récente de Budgero — au plus une fois toutes les 12 heures, avec mise en cache entre deux vérifications. La requête vers <code>budgero.app</code> transmet exactement trois valeurs : la version de votre installation, son build sha, et la chaîne <code>selfhost</code>. Aucun identifiant d'instance, aucune donnée utilisateur, aucun cookie. Nous agrégeons ces informations dans des compteurs de versions quotidiens pour estimer le nombre d'installations et les versions utilisées — rien n'est stocké par instance.
+
+Définissez <code>UPDATE_CHECK_DISABLED=true</code> pour le désactiver complètement ; l'application ne fait alors aucun appel sortant non sollicité. Les installations isolées (air-gapped) ne nécessitent aucune configuration — une vérification échouée est mise en cache silencieusement et l'application se comporte comme si elle était à jour.
+
+### Configuration de l'administrateur au premier lancement
+
+Au premier lancement (lorsqu'aucun utilisateur n'existe), Budgero crée automatiquement un compte administrateur avec un mot de passe aléatoire et l'affiche une seule fois :
+
+- **Docker** : `docker logs budgero`
+- **Premier plan** : Affiché directement dans votre terminal
+- **Mode daemon** : Consultez `data/logs/<name>.log`
+
+## Conversion de devises
+
+La conversion multidevise fonctionne immédiatement — aucune clé d'API, aucune inscription. Les taux proviennent du jeu de données ouvert [exchange-api](https://github.com/fawazahmed0/exchange-api) (~350 devises incluant les cryptomonnaies, mis à jour quotidiennement) via le CDN public jsDelivr, et votre serveur les met en cache localement afin que les requêtes répétées ne quittent jamais votre machine.
+
+Si vous souhaitez n'effectuer aucun appel à des tiers, répliquez les fichiers JSON statiques du jeu de données (une tâche cron quotidienne copiant `currencies/*.min.json` suffit) et pointez Budgero vers votre miroir :
+
+```bash
+CURRENCY_API_BASE_URL=https://rates.example.com/{date}/v1
+```
+
+L'espace réservé `{date}` est remplacé par la date du jeu de données (AAAA-MM-JJ). Les utilisateurs monodevise peuvent ignorer tout cela — Budgero fonctionne parfaitement sans.
+
+## Gestion des utilisateurs
+
+### Interface d'administration
+
+Accédez au tableau de bord d'administration à l'adresse `/admin` pour gérer les utilisateurs, consulter l'activité et configurer les paramètres via une interface web.
+
+### CLI
+
+Vous pouvez également gérer les utilisateurs via la ligne de commande :
+
+```bash
+# Create a user
+budgero admin create-user --username johndoe --name "John" --password "secret"
+
+# List all users
+budgero admin list-users
+
+# Reset a password
+budgero admin reset-password --username johndoe --password "new-password"
+
+# Block a user
+budgero admin block-user --username johndoe
+```
+
+## Exécution en tant que service d'arrière-plan
+
+### Utilisation du démon intégré (toutes plateformes)
+
+```bash
+budgero daemon start --port 3001 --name production
+```
+
+Vérifier les démons en cours d'exécution :
+
+```bash
+budgero daemon list
+```
+
+Arrêter un démon :
+
+```bash
+budgero daemon stop production
+```
+
+### Utilisation de systemd (Linux)
+
+Créer `/etc/systemd/system/budgero.service` :
+
+```ini
+[Unit]
+Description=Budgero Budget Server
+After=network.target
+
+[Service]
+Type=simple
+User=budgero
+WorkingDirectory=/opt/budgero
+ExecStart=/opt/budgero/budgero serve
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Activer et démarrer :
+
+```bash
+sudo systemctl enable budgero
+sudo systemctl start budgero
+```
+
+## Mise à jour
+
+### Docker
+
+```bash
+docker pull budgero/budgero:latest
+docker compose down
+docker compose up -d
+```
+
+### Binaire natif
+
+```bash
+budgero update
+```
+
+Ceci vérifie la dernière version et remplace le binaire automatiquement.
+
+## Configuration du reverse proxy
+
+En production, exécutez Budgero derrière un reverse proxy comme nginx ou Caddy pour le HTTPS.
+
+N'oubliez pas de définir `WEBSOCKET_ALLOWED_ORIGINS` sur le serveur Budgero à l'origine publique servie par le proxy (par ex. `https://budget.yourdomain.com`), et assurez-vous que le proxy transmet les mises à niveau WebSocket (les deux configurations ci-dessous le font).
+
+### Caddy (HTTPS automatique)
+
+```
+budget.yourdomain.com {
+    reverse_proxy localhost:3001
+}
+```
+
+### nginx
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name budget.yourdomain.com;
+
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+## Dépannage
+
+### L'application se charge mais le budget n'apparaît jamais (la synchronisation ne se connecte pas)
+
+Si vous pouvez vous connecter mais que l'application reste bloquée au chargement de votre budget — ou que les appareils ne voient plus les changements des autres — le WebSocket de synchronisation est presque certainement rejeté. Recherchez dans les journaux du serveur :
+
+```
+WebSocket connection rejected due to CORS
+```
+
+La ligne de journal indique l'origine envoyée par le navigateur et les origines autorisées par le serveur. Ajoutez l'origine rejetée à `WEBSOCKET_ALLOWED_ORIGINS` exactement telle qu'elle apparaît dans le journal (le schéma, l'hôte et le port doivent tous correspondre) et redémarrez le serveur.
+
+### Erreurs de base de données verrouillée
+
+SQLite ne gère pas bien les écritures concurrentes. Si vous voyez des erreurs de verrouillage :
+1. Assurez-vous qu'une seule instance de Budgero est en cours d'exécution
+2. Vérifiez que `DB_PATH` pointe vers un système de fichiers local (et non un partage réseau)
+
+### Port déjà utilisé
+
+Modifiez le port avec `PORT=4000` ou `--port 4000`.
+
+### Le conteneur ne démarre pas
+
+Consultez les journaux avec `docker logs budgero`. Problèmes courants :
+- Permissions du volume (assurez-vous que le conteneur peut écrire dans `/data`)
+- Conflits de port (un autre service utilise le port 3001)
+
+## FAQ
+
+- **Dois-je configurer une base de données ?** Non. Budgero utilise SQLite plus des fichiers blob chiffrés. Montez simplement `/data` et Budgero s'occupe du reste.
+- **Puis-je migrer de Budgero Cloud vers une instance auto-hébergée ?** Oui. Exportez vos données depuis Cloud et importez-les dans votre instance auto-hébergée.
+- **Existe-t-il une application mobile ?** Accédez à votre instance auto-hébergée depuis n'importe quel navigateur. Ajoutez-la à votre écran d'accueil pour une expérience de type application.
+- **Comment sauvegarder mes données ?** Sauvegardez l'intégralité du volume `/data` (inclut `budgero.db` et `budget_spaces/`).

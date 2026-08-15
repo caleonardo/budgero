@@ -1,0 +1,51 @@
+---
+title: "Budgetvaluta"
+summary: "Kies de valuta die de basis vormt van je budget en ontdek hoe Budgero multivalutarekeningen en rapporten gesynchroniseerd houdt."
+section: getting-started
+topicId: budget-currency
+takeaways:
+  - "Begrijp wat de budgetvaluta bepaalt voor Te verdelen, dashboards en rapporten."
+  - "Begrijp hoe Budgero multivalutarekeningen omrekent aan de hand van dagelijkse wisselkoersen en handmatige terugvalopties."
+  - "Wijzig de budgetvaluta met vertrouwen en leer hoe de herberekening werkt."
+---
+
+Jouw budgetvaluta is de eenheid die Budgero gebruikt voor totalen, inzichten en Te verdelen. Zelfs als je geld op rekeningen in verschillende valuta's staat, zet Budgero alles om naar dit ankerpunt, zodat elke beslissing in één taal plaatsvindt.
+
+## Wat de budgetvaluta bepaalt
+
+- **Te verdelen en categoriesaldi.** Alle budgettotalen verschijnen in de budgetvaluta, ook als de onderliggende rekening een andere valuta gebruikt.
+- **Dashboards en rapporten.** Nettovermogen, cashflow-grafieken en uitgavenrapporten worden samengevoegd tot de budgetvaluta, zodat vergelijkingen van maand tot maand consistent blijven.
+- **Rekeningoverzichten.** Elke rekening toont zowel het oorspronkelijke saldo als een omgerekend saldo gebaseerd op de budgetvaluta, voor snelle vergelijkingen op gelijke basis.
+
+## De juiste valuta kiezen
+
+- Kies de valuta die je gebruikt voor je huishouden of bedrijf. De meeste mensen kiezen de valuta van hun thuisland, zodat de bedragen aansluiten bij rekeningen en salaris.
+- Bij het importeren vanuit YNAB, gebruik dezelfde weergavevaluta als daar. Budgero zal totalen nauwkeuriger spiegelen en het migreren van doelen eenvoudiger maken.
+- Als je regelmatig in meerdere valuta's uitgeeft, stel de budgetvaluta dan in op de valuta waarin je je prestaties wilt beoordelen — meestal de valuta waarin je verdient of belasting betaalt.
+
+## Werken met multivalutarekeningen
+
+Budgero laat elke rekening zijn oorspronkelijke valuta behouden. Wanneer transacties worden geboekt, slaat Budgero zowel het oorspronkelijke bedrag als een omgerekend bedrag in de budgetvaluta op:
+
+- Budgero haalt dagelijks officiële wisselkoersen op en bewaart ze in het budgetbestand. Hoe lang de cache wordt bewaard is instelbaar via Instellingen → Valuta's (standaard 30 dagen) — oudere koersen worden verwijderd om het budgetbestand klein te houden en opnieuw opgehaald wanneer nodig.
+- Wanneer een verse koers nodig is, haalt Budgero deze op van de wisselkoersdienst en slaat deze op. Als je offline bent en er geen gecachte koers bestaat, kun je een handmatige koers opgeven zodat de omrekening kan doorgaan; die handmatige koers wordt automatisch vervangen zodra je opnieuw verbinding maakt, tenzij je de optie "offline koersen bijwerken" uitzet — en koersen die je vastzet op een transactie worden nooit gewijzigd.
+- Omgerekende saldo's worden automatisch bijgewerkt wanneer je een transactie bewerkt, een rekening afstemt of geschiedenis importeert, zodat Te verdelen en rapporten accuraat blijven.
+
+## Changing the budget currency later
+
+You can switch the budget currency at any time:
+
+Budgero wist gecachte wisselkoersen, berekent elke transactie opnieuw en zet toewijzingen en doelbedragen om naar de nieuwe valuta. Tijdens het omrekenen toont de app een korte status-overlay. Na de wijziging haalt Budgero nieuwe wisselkoersen op zodra je een maand bekijkt die deze nodig heeft.
+
+Houd er rekening mee dat het bij grote historieken even kan duren terwijl de conversies worden vernieuwd. Je kunt verder werken in het budget zodra de overlay verdwijnt.
+
+## Offline en handmatige wisselkoersen
+
+- Ga je offline? Voer handmatige wisselkoersen in zodat Budgero conversies nauwkeurig kan houden zonder een netwerkverzoek. Budgero slaat zowel de koers als de omgekeerde koers op voor eenvoudig hergebruik.
+- Wanneer je opnieuw verbinding maakt, vervangt Budgero offline conversies automatisch door officiële koersen — een optie die standaard aan staat en kan worden gewijzigd in Instellingen → Valuta of direct in de prompt voor offline koersen.
+- Als de exacte dag niet in de cache staat, gebruikt Budgero de dichtstbijzijnde eerdere koers tot een week terug. Daarna vraagt Budgero je om een koers, vooraf ingevuld met de dichtstbijzijnde gecachte koers.
+
+## Problemen oplossen
+
+- **Geconverteerde totalen lijken niet te kloppen:** Controleer of er een koers bestaat voor de transactiedatum. Open de rekening opnieuw of vernieuw het dashboard om Budgero te vragen de koers op te halen of te herberekenen.
+- **Toewijzingen gewijzigd na het wisselen van valuta:** Budgero vermenigvuldigt toewijzingen en doelbedragen met de nieuwe valutakoers zodat hun koopkracht behouden blijft. Pas categorieën handmatig aan als je een ander bedrag wilt vastleggen.

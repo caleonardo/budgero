@@ -1,0 +1,164 @@
+---
+title: "Motor de reglas"
+summary: "Automatiza la limpieza de transacciones con reglas — busca coincidencias por beneficiario, nota, importe o cuenta, y luego categoriza, renombra y ajusta automáticamente."
+section: integrations
+topicId: rules-engine
+takeaways:
+  - "Los tres modos de reglas — Continuo, Una vez y Autocompletar — y cuándo se ejecuta cada uno."
+  - "Todas las condiciones y acciones disponibles, y cómo se combinan varias reglas."
+  - "Ejecuciones retroactivas, historial de ejecuciones y la red de seguridad para deshacer con un clic."
+---
+
+Llevar un presupuesto manual no tiene que significar repetitivo. El Motor de reglas vigila las transacciones a medida que llegan — desde importaciones, entrada manual o la [Push API](/docs/push-api) — y aplica la limpieza que de otro modo harías a mano: corregir nombres de beneficiarios, asignar categorías, eliminar el ruido de las notas. Defines el patrón una vez; Budgero lo aplica para siempre.
+
+Las reglas se encuentran en **Ajustes → Reglas**.
+
+## Los tres modos
+
+Cada regla se ejecuta en uno de tres modos:
+
+<table>
+  <thead>
+    <tr>
+      <th>Modo</th>
+      <th>Cuándo se ejecuta</th>
+      <th>Para qué sirve</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Continuo</strong></td>
+      <td>Automáticamente, en cada transacción coincidente nueva</td>
+      <td>La limpieza habitual: "AMZN Mktp*" → Amazon, categoría Compras</td>
+    </tr>
+    <tr>
+      <td><strong>Una vez</strong></td>
+      <td>Una vez, retroactivamente sobre las transacciones existentes</td>
+      <td>Migraciones y correcciones: recategorizar los cargos del gimnasio del año pasado</td>
+    </tr>
+    <tr>
+      <td><strong>Autocompletar</strong></td>
+      <td>Mientras escribes en el formulario de Añadir transacción</td>
+      <td>Sugerencias, no cambios — aceptas o rechazas cada una</td>
+    </tr>
+  </tbody>
+</table>
+
+Las reglas continuas se activan en cada vía de entrada — importaciones CSV/PDF, entrada manual, Push API. Las reglas de una vez se marcan como consumidas tras su ejecución y no se vuelven a activar hasta que se reinician. Las reglas de autocompletar nunca modifican nada por sí solas; rellenan los campos como sugerencias en el formulario de entrada, una vez por sesión de formulario.
+
+## Condiciones: qué coincide con una regla
+
+Una regla necesita al menos una condición. Cuando tiene varias, **todas deben coincidir** (lógica AND — no hay OR; si necesitas "este beneficiario o aquel beneficiario", crea dos reglas).
+
+<table>
+  <thead>
+    <tr>
+      <th>Campo</th>
+      <th>Operadores</th>
+      <th>Notas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Beneficiario</strong></td>
+      <td>equals · contains · regex</td>
+      <td>No distingue mayúsculas de minúsculas por defecto; actívalo para distinguirlas</td>
+    </tr>
+    <tr>
+      <td><strong>Memo</strong></td>
+      <td>equals · contains · regex</td>
+      <td>Misma opción de distinción de mayúsculas</td>
+    </tr>
+    <tr>
+      <td><strong>Importe</strong></td>
+      <td>= · ≠ · &gt; · ≥ · &lt; · ≤</td>
+      <td>Compara el importe neto (ingreso − gasto); para cuentas en moneda extranjera, el importe original, no el convertido</td>
+    </tr>
+    <tr>
+      <td><strong>Cuenta</strong></td>
+      <td>is · is not</td>
+      <td>Limita una regla a (o excluye de) cuentas específicas</td>
+    </tr>
+  </tbody>
+</table>
+
+Las expresiones regulares resuelven los casos complicados: exportaciones bancarias que añaden a los beneficiarios sufijos con números de tienda (`MIGROS M-0451`), códigos de referencia en memos — con la sintaxis completa de patrones de JavaScript.
+
+## Acciones: lo que hace una regla
+
+Una regla que coincide aplica una o más acciones, **en el orden en que las enumeres** — cada acción ve el resultado de la anterior.
+
+<table>
+  <thead>
+    <tr>
+      <th>Acción</th>
+      <th>Qué hace</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Asignar categoría</strong></td>
+      <td>Asigna la transacción a una categoría</td>
+    </tr>
+    <tr>
+      <td><strong>Asignar beneficiario</strong></td>
+      <td>Reemplaza (o borra) el beneficiario — la herramienta estrella de normalización</td>
+    </tr>
+    <tr>
+      <td><strong>Asignar memo</strong></td>
+      <td>Reemplaza el memo con texto fijo</td>
+    </tr>
+    <tr>
+      <td><strong>Eliminar del memo (regex)</strong></td>
+      <td>Elimina los patrones que coinciden — números de referencia, sufijos de tarjeta, ruido</td>
+    </tr>
+    <tr>
+      <td><strong>Asignar importe</strong></td>
+      <td>Reemplaza el importe directamente</td>
+    </tr>
+    <tr>
+      <td><strong>Ajustar importe por valor</strong></td>
+      <td>Suma o resta un importe fijo (p. ej. −5)</td>
+    </tr>
+    <tr>
+      <td><strong>Ajustar importe por porcentaje</strong></td>
+      <td>Escala el importe (p. ej. −10%)</td>
+    </tr>
+    <tr>
+      <td><strong>Asignar cuenta</strong></td>
+      <td>Redirige la transacción a una cuenta diferente</td>
+    </tr>
+  </tbody>
+</table>
+
+Las acciones de importe y cuenta son lo suficientemente potentes como para merecer respeto: un ajuste porcentual con una condición demasiado amplia reescribe mucho historial en una ejecución retroactiva. Acota bien las reglas agresivas — una condición de cuenta más una condición de beneficiario es un buen hábito.
+
+## Orden: cuando varias reglas coinciden
+
+Las reglas no se detienen en la primera coincidencia — **se ejecuta toda regla que coincida**, en **orden de ejecución** ascendente (un campo numérico en cada regla; los empates se desempatan por antigüedad). Las reglas posteriores ven la transacción tal como la dejaron las anteriores, lo que permite crear flujos deliberados: la regla 1 normaliza el beneficiario, la regla 2 coincide con el nombre *limpio* del beneficiario y asigna la categoría.
+
+Rules don't stop at first match — **every matching rule runs**, in ascending **run order** (a numeric field on each rule; ties break by age). Later rules see the transaction as earlier rules left it, which enables deliberate pipelines: rule 1 normalizes the payee, rule 2 matches the *clean* payee name and sets the category.
+
+Cada regla también tiene un interruptor de **activación** — pausa una sin eliminarla.
+
+## Ejecutar reglas sobre transacciones existentes
+
+Dos botones en cada tarjeta de regla van más allá de esperar a nuevas transacciones:
+
+- **Ejecutar ahora** ejecuta la regla en todo el presupuesto bajo demanda — la misma lógica que el modo continuo, activada manualmente.
+- **Ejecución retroactiva** aplica la regla a **todas las transacciones pasadas**, tras un diálogo de confirmación. Este es el flujo de aplicación a existentes, y el segundo paso natural tras crear una regla que deseas haber tenido hace un año.
+
+Después de cualquier ejecución, la superposición de resultados muestra cuántas transacciones fueron evaluadas y modificadas.
+
+## Historial y deshacer
+
+Cada ejecución se registra. El cajón de **Historial** en cada regla lista las ejecuciones pasadas con los cambios que hicieron — y la ejecución completada más reciente se puede **deshacer** con un clic, restaurando las transacciones afectadas. Deshacer la ejecución de una regla de Una Sola Vez también restablece su indicador de consumido para que pueda dispararse de nuevo.
+
+Esta es la red de seguridad que hace que la experimentación sea barata: escribe la regla, ejecútala retroactivamente, inspecciona el resultado, deshaz si capturó más de lo que pretendías, ajusta las condiciones, ejecuta de nuevo.
+
+## Patrones que vale la pena copiar
+
+- **El conserje de importación.** El CSV de tu banco dice `CARD PURCHASE 4421 TESCO STORES 2284`. Una regla: la nota contiene `TESCO` → establecer beneficiario "Tesco", establecer categoría Comestibles, eliminar la basura de referencia de la nota con regex. Cada [importación](/docs/csv-import) futura llega ya limpia.
+- **El etiquetador de suscripciones.** El beneficiario contiene "Spotify" y la cuenta es tu tarjeta de facturación → categoría Suscripciones. Repite por cada servicio; diez minutos de configuración acaban con la deriva de categorías para siempre.
+- **El asistente del divisor de salario.** Importe ≥ tu salario y la cuenta es corriente → establecer beneficiario "Empleador", categoría Ingresos — para que el día de pago llegue etiquetado incluso cuando la nota del banco sea incomprensible.
+- **El asistente de autocompletado.** Una regla de Autocompletado en la que el beneficiario contiene "Shell" sugiere la categoría Combustible y convierte la entrada manual en la gasolinera en dos toques — mientras te deja la última palabra.
