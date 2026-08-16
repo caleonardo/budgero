@@ -16,10 +16,36 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.9.2',
+    date: 'August 16, 2026',
+    summary: '"Set memo" automation rules now work, and rule runs can be undone one after another.',
+    isLatest: true,
+    items: [
+      {
+        type: 'fixed',
+        title: 'Rules with a "Set memo" action now update the memo',
+        description:
+          'A rule whose action set the memo text was silently ignored — running it reported zero transactions affected, and when combined with "Set category" only the category changed. Set memo now applies (and can be undone) like every other action.',
+      },
+      {
+        type: 'fixed',
+        title: 'Undo earlier rule runs',
+        description:
+          'After undoing a rule\'s most recent run, the run before it can now be undone as well. Previously only a single run per rule could ever be reverted.',
+      },
+      {
+        type: 'fixed',
+        title: 'Rule run history lists newest runs first',
+        description:
+          'Runs triggered within the same second no longer appear out of order in the history drawer.',
+      },
+    ],
+  },
+  {
     version: 'v1.9.1',
     date: 'August 12, 2026',
     summary: 'Ready to Assign now counts money moved in from your off-budget accounts.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'fixed',
