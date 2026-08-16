@@ -41,6 +41,11 @@ export function RuleHistoryDrawer({
 }: RuleHistoryDrawerProps) {
   const ruleId = rule?.id ?? 0;
   const { data: runs = [], isLoading } = useRuleRuns(ruleId, 25, open);
+  // Runs are newest-first. Only the newest run whose changes are still applied
+  // (i.e. not already undone) can be undone — mirrors RulesService.undoRun.
+  const latestUndoableIndex = runs.findIndex(
+    (run) => run.status === 'completed' || run.status === 'partial'
+  );
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -79,7 +84,7 @@ export function RuleHistoryDrawer({
                   <RunAccordionItem
                     key={run.id}
                     run={run}
-                    isLatest={index === 0}
+                    isLatest={index === latestUndoableIndex}
                     ruleId={rule?.id ?? run.ruleId}
                     budgetId={rule?.budgetId ?? 0}
                     onUndoRun={onUndoRun}

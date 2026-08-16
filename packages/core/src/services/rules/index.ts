@@ -642,7 +642,11 @@ export class RulesService {
 
     const latestRow = getRow<{ ID: number | bigint }>(
       this.db,
-      `SELECT ID FROM transaction_rule_runs WHERE RuleID = ? AND CompletedAt IS NOT NULL ORDER BY datetime(CompletedAt) DESC, ID DESC LIMIT 1`,
+      // Undone runs are excluded: once the newest run is reverted, the run before it
+      // is the latest one whose changes are still applied, so it becomes undoable.
+      `SELECT ID FROM transaction_rule_runs
+       WHERE RuleID = ? AND CompletedAt IS NOT NULL AND Status IN ('completed', 'partial')
+       ORDER BY datetime(CompletedAt) DESC, ID DESC LIMIT 1`,
       run.ruleId
     );
     const latestId = latestRow ? Number(latestRow.ID) : null;
@@ -802,7 +806,7 @@ export class RulesService {
   listRuns(ruleId: number, limit = 20, offset = 0): TransactionRuleRun[] {
     const rows = allRows<TransactionRuleRunRow>(
       this.db,
-      `SELECT * FROM transaction_rule_runs WHERE RuleID = ? ORDER BY StartedAt DESC LIMIT ? OFFSET ?`,
+      `SELECT * FROM transaction_rule_runs WHERE RuleID = ? ORDER BY StartedAt DESC, ID DESC LIMIT ? OFFSET ?`,
       ruleId,
       limit,
       offset
@@ -993,6 +997,23 @@ export class RulesService {
           }
           break;
         }
+        case 'memo.set': {
+          const rawMemo = action.payload?.memo;
+          if (typeof rawMemo !== 'string') {
+            throw new ValidationError('memo.set action requires a memo string');
+          }
+          const nextMemo = rawMemo.trim();
+          if (nextMemo !== working.memo) {
+            metadataByField.set('memo', {
+              oldMemo: original.memo,
+              newMemo: nextMemo,
+              action: action.type,
+            });
+            working.memo = nextMemo;
+            changeSources.set('memo', action.type);
+          }
+          break;
+        }
         case 'category.set': {
           const categoryId = Number(action.payload?.categoryId);
           if (!Number.isFinite(categoryId)) {
@@ -1069,8 +1090,14 @@ export class RulesService {
           });
           break;
         }
-        default:
-          break;
+        default: {
+          // Compile-time exhaustiveness guard: adding a RuleActionType without a
+          // handler here fails typecheck instead of silently no-op'ing at runtime.
+          const unhandled: never = action;
+          throw new ValidationError(
+            `Unsupported rule action type: ${(unhandled as { type?: string }).type ?? 'unknown'}`
+          );
+        }
       }
     }
 

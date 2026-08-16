@@ -90,6 +90,79 @@ describe('Rules payee actions (Node/sql.js)', () => {
     expect(restored?.Payee ?? '').toBe('');
   });
 
+  it('applies and undoes memo.set actions', async () => {
+    const today = getLocalDateString();
+    const transactionId = await services.transactions.addTransaction(
+      0,
+      42,
+      accountId,
+      categoryId,
+      budgetId,
+      today,
+      'walmart supercenter #123'
+    );
+
+    const rule = services.rules.createRule({
+      budgetId,
+      name: 'Walmart memo',
+      conditions: [{ field: 'memo', operator: 'contains', value: 'walmart' }],
+      actions: [{ type: 'memo.set', payload: { memo: 'WALMART!' } }],
+    });
+
+    const execution = await services.rules.executeRule(rule.id, {
+      transactionIds: [transactionId],
+      trigger: 'manual',
+    });
+
+    expect(execution.matchedCount).toBe(1);
+    const memoChange = execution.changes.find((change) => change.field === 'memo');
+    expect(memoChange?.oldValue).toBe('walmart supercenter #123');
+    expect(memoChange?.newValue).toBe('WALMART!');
+    expect(services.transactions.getTransactionByID(transactionId)?.Memo).toBe('WALMART!');
+
+    const undoResult = await services.rules.undoRun(execution.run.id);
+    expect(undoResult.restoredTransactions).toBe(1);
+    expect(services.transactions.getTransactionByID(transactionId)?.Memo).toBe(
+      'walmart supercenter #123'
+    );
+  });
+
+  it('applies memo.set alongside category.set in the same rule', async () => {
+    const today = getLocalDateString();
+    const allCategories = services.categories.getAllCategories(budgetId);
+    const otherCategoryId = allCategories.find((c: { ID: number }) => c.ID !== categoryId)!.ID;
+    const transactionId = await services.transactions.addTransaction(
+      0,
+      10,
+      accountId,
+      categoryId,
+      budgetId,
+      today,
+      'walmart groceries'
+    );
+
+    const rule = services.rules.createRule({
+      budgetId,
+      name: 'Walmart memo + category',
+      conditions: [{ field: 'memo', operator: 'contains', value: 'walmart' }],
+      actions: [
+        { type: 'memo.set', payload: { memo: 'Groceries run' } },
+        { type: 'category.set', payload: { categoryId: otherCategoryId } },
+      ],
+    });
+
+    const execution = await services.rules.executeRule(rule.id, {
+      transactionIds: [transactionId],
+      trigger: 'manual',
+    });
+
+    expect(execution.matchedCount).toBe(1);
+    expect(execution.changes.map((c) => c.field).sort()).toEqual(['categoryId', 'memo']);
+    const updated = services.transactions.getTransactionByID(transactionId);
+    expect(updated?.Memo).toBe('Groceries run');
+    expect(updated?.CategoryID).toBe(otherCategoryId);
+  });
+
   it('supports account conditions with is/is_not operators', async () => {
     const otherAccount = await services.accounts.createAccount(
       'High Yield Savings',
