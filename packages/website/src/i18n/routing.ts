@@ -11,6 +11,14 @@ export const localeNames: Record<Locale, string> = {
   nl: 'Nederlands',
 };
 
+export const localeFlags: Record<Locale, string> = {
+  en: '🇬🇧',
+  de: '🇩🇪',
+  fr: '🇫🇷',
+  es: '🇪🇸',
+  nl: '🇳🇱',
+};
+
 export const routing = defineRouting({
   locales,
   defaultLocale: 'en',

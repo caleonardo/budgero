@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import {
   activateLocale,
+  LOCALE_FLAGS,
   LOCALE_LABELS,
   SUPPORTED_LOCALES,
   type SupportedLocale,
@@ -25,6 +26,7 @@ export function LanguageSwitch({ id }: { id?: string }) {
       <SelectContent>
         {SUPPORTED_LOCALES.map((locale) => (
           <SelectItem key={locale} value={locale}>
+            <span className="mr-2">{LOCALE_FLAGS[locale]}</span>
             {LOCALE_LABELS[locale]}
           </SelectItem>
         ))}

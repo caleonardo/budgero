@@ -12,6 +12,14 @@ export const LOCALE_LABELS: Record<SupportedLocale, string> = {
   nl: 'Nederlands',
 };
 
+export const LOCALE_FLAGS: Record<SupportedLocale, string> = {
+  en: '🇬🇧',
+  de: '🇩🇪',
+  fr: '🇫🇷',
+  es: '🇪🇸',
+  nl: '🇳🇱',
+};
+
 function isSupported(value: string | null | undefined): value is SupportedLocale {
   return !!value && (SUPPORTED_LOCALES as readonly string[]).includes(value);
 }

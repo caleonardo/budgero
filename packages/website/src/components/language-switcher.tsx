@@ -3,7 +3,7 @@
 import { useLocale } from 'next-intl';
 import { useTransition } from 'react';
 import { usePathname, useRouter } from '@/i18n/navigation';
-import { localeNames, routing, type Locale } from '@/i18n/routing';
+import { localeFlags, localeNames, routing, type Locale } from '@/i18n/routing';
 
 export function LanguageSwitcher() {
   const locale = useLocale();
@@ -24,7 +24,7 @@ export function LanguageSwitcher() {
     >
       {routing.locales.map((code) => (
         <option key={code} value={code}>
-          {localeNames[code]}
+          {localeFlags[code]} {localeNames[code]}
         </option>
       ))}
     </select>

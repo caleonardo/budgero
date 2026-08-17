@@ -11,6 +11,7 @@ export {
   SUPPORTED_LOCALES,
   DEFAULT_LOCALE,
   LOCALE_LABELS,
+  LOCALE_FLAGS,
   type SupportedLocale,
 } from '@/shared/runtime/locale-preference';
 
