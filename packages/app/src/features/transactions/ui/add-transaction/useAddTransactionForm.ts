@@ -117,7 +117,9 @@ export function useAddTransactionForm({
     if (!form.isTransfer) return false;
     const fromAcc = accounts.find((a) => a.ID.toString() === form.selectedFromAccount);
     const toAcc = accounts.find((a) => a.ID.toString() === form.selectedToAccount);
-    return fromAcc?.OnBudget && !toAcc?.OnBudget;
+    // Require a chosen target: with none selected `!toAcc?.OnBudget` was true,
+    // surfacing the category field before the transfer's shape is even known.
+    return !!fromAcc?.OnBudget && !!toAcc && !toAcc.OnBudget;
   }, [form.isTransfer, form.selectedFromAccount, form.selectedToAccount, accounts]);
 
   const totalSplits = React.useMemo(

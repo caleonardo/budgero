@@ -80,18 +80,20 @@ export default function AnalyticsPage() {
             key={key}
             variant={report === key ? 'default' : 'ghost'}
             className={cn(
-              'h-auto flex-col items-start gap-0.5 px-3 py-2',
+              // min-w-0 + truncation: long translations shrink into their
+              // grid cell instead of blowing the 7-column strip open.
+              'h-auto min-w-0 flex-col items-start gap-0.5 px-3 py-2',
               report !== key && 'text-muted-foreground'
             )}
             onClick={() => setReport(key)}
           >
-            <span className="flex items-center gap-1.5 text-sm font-semibold">
-              <Icon className="h-4 w-4" />
-              {label}
+            <span className="flex w-full min-w-0 items-center gap-1.5 text-sm font-semibold">
+              <Icon className="h-4 w-4 shrink-0" />
+              <span className="truncate">{label}</span>
             </span>
             <span
               className={cn(
-                'text-[11px] font-normal',
+                'w-full min-w-0 truncate text-left text-[11px] font-normal',
                 report === key ? 'text-primary-foreground/75' : 'text-muted-foreground'
               )}
             >
