@@ -1907,7 +1907,7 @@ msgstr "<0>Proefperiode gestart</0>— wanneer je gratis proefperiode begint"
 #. placeholder {0}: activeSpace?.display_name ? ( <> {' '} (<strong>{activeSpace.display_name}</strong>) </> ) : null
 #: src/pages/settings/DataManagementPage.tsx
 msgid "<0>Warning:</0> Restore replaces the data in the currently active workspace{0} — on this device and on the server. Other workspaces are not affected. This action cannot be undone, so export this workspace first if you want a backup."
-msgstr "<0>Waarschuwing:</0> Herstellen vervangt de gegevens in de huidige actieve werkruimte{0} — op dit apparaat en op de server. Andere werkruimten worden niet beïnvloed. Deze actie kan niet ongedaan worden gemaakt, dus exporteer deze werkruimte eerst als je een back-up wilt."
+msgstr "<0>Waarschuwing:</0> Herstellen vervangt de gegevens in de huidige actieve werkruimte{0} — op dit apparaat en op de server. Andere werkruimtes worden niet beïnvloed. Deze actie kan niet ongedaan worden gemaakt, dus exporteer deze werkruimte eerst als je een back-up wilt."
 
 #: src/pages/admin/StickinessAnalyticsSection.tsx
 msgid "<10% — low engagement"
@@ -2960,7 +2960,7 @@ msgstr "Rekening archiveren"
 
 #: src/features/account-management/ui/ArchiveAccountDialog.tsx
 msgid "Archive adjustment"
-msgstr "Archief aanpassing"
+msgstr "Archiveringsaanpassing"
 
 #: src/pages/accounts/AccountsPage.tsx
 msgid "Archived"
@@ -4084,7 +4084,7 @@ msgstr "Je versleutelingssleutel controleren…"
 
 #: src/app/startup/resolve.ts
 msgid "Checking your workspaces…"
-msgstr "Je werkruimten controleren…"
+msgstr "Je werkruimtes controleren…"
 
 #: src/pages/dashboard/DashboardPage.desktop.tsx
 #: src/pages/dashboard/DashboardPage.mobile.tsx
@@ -4717,7 +4717,7 @@ msgstr "Maak eerst een dashboard aan om grafieken vast te pinnen."
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Create a Free Account | Budgero"
-msgstr "Gratis rekening aanmaken | Budgero"
+msgstr "Gratis account aanmaken | Budgero"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Create a goal to track your financial progress"
@@ -4741,7 +4741,7 @@ msgstr "Maak een nieuwe categorie aan in deze groep"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Create account"
-msgstr "Rekening aanmaken"
+msgstr "Account aanmaken"
 
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 msgid "Create Account"
@@ -6440,7 +6440,7 @@ msgstr "Opslaan mislukt"
 
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Failed to save order"
-msgstr "Bestelling opslaan mislukt"
+msgstr "Volgorde opslaan mislukt"
 
 #: src/pages/warranties/WarrantiesPage.tsx
 msgid "Failed to save warranty"
@@ -7210,7 +7210,7 @@ msgstr "Identiteit"
 
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "If you subscribe, you can immediately regain access to your own workspaces and create new ones from <0>subscription settings</0>."
-msgstr "Als je een abonnement neemt, kun je direct weer toegang krijgen tot je eigen werkruimten en nieuwe maken via de <0>abonnementsinstellingen</0>."
+msgstr "Als je een abonnement neemt, kun je direct weer toegang krijgen tot je eigen werkruimtes en nieuwe maken via de <0>abonnementsinstellingen</0>."
 
 #: src/pages/settings/ai/ConnectionTestPanel.tsx
 msgid "If you're accessing Budgero over HTTPS, Ollama needs to allow your origin. Start Ollama with <0>OLLAMA_ORIGINS=* ollama serve</0> or set the <1>OLLAMA_ORIGINS</1> environment variable in your Ollama service config."
@@ -7559,12 +7559,12 @@ msgstr "Deelnemen aan werkruimte →"
 
 #: src/pages/admin/admin-users/UsersTable.tsx
 msgid "Joined"
-msgstr "Aangesloten"
+msgstr "Aangemeld"
 
 #. placeholder {0}: formatShortDate(resolvedUser.created_at)
 #: src/pages/admin/admin-users/UserDetailsDialog.tsx
 msgid "Joined {0}"
-msgstr "Deelgenomen aan {0}"
+msgstr "Aangemeld op {0}"
 
 #. placeholder {0}: summary.display_name || summary.space_id
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
@@ -8093,7 +8093,7 @@ msgstr "Vergrendel je grootboek."
 
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 msgid "Locked workspaces"
-msgstr "Vergrendelde werkruimten"
+msgstr "Vergrendelde werkruimtes"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Login to Budgero Cloud"
@@ -8677,7 +8677,7 @@ msgstr "ANDERE VALUTA NODIG?"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Need an account? <0>Sign up</0>"
-msgstr "Geen rekening? <0>Registreren</0>"
+msgstr "Nog geen account? <0>Registreren</0>"
 
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 msgid "Need to split this transaction across categories?"
@@ -9262,7 +9262,7 @@ msgstr "Geen service worker-registratie gevonden."
 
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 msgid "No shared workspaces yet. Ask the workspace owner to send you an invite."
-msgstr "Nog geen gedeelde werkruimten. Vraag de eigenaar van de werkruimte om je een uitnodiging te sturen."
+msgstr "Nog geen gedeelde werkruimtes. Vraag de eigenaar van de werkruimte om je een uitnodiging te sturen."
 
 #: src/features/budget-planning/ui/spending-drawer-mobile/SpendingChart.tsx
 msgid "No spending data"
@@ -9369,7 +9369,7 @@ msgstr "Geen werkruimte beschikbaar"
 
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 msgid "No workspaces yet. Use the button above to create your first workspace."
-msgstr "Nog geen werkruimten. Gebruik de knop hierboven om je eerste werkruimte aan te maken."
+msgstr "Nog geen werkruimtes. Gebruik de knop hierboven om je eerste werkruimte aan te maken."
 
 #: src/features/import/ui/steps/CompleteStep.tsx
 #: src/features/import/ui/steps/configure/FormattingTab.tsx
@@ -9512,7 +9512,7 @@ msgstr "Zodra de werkruimte-eigenaar hun abonnement verlengt, krijg je automatis
 
 #: src/features/budget-sharing/ui/OnboardingInviteShareDialog.tsx
 msgid "Once you close this dialog the secrets are gone from Budgero. You can regenerate fresh invites any time from <0>Settings → Workspaces</0>."
-msgstr "Zodra je dit dialoogvenster sluit, zijn de geheimen verdwenen uit Budgero. Je kunt op elk moment nieuwe uitnodigingen genereren via <0>Instellingen → Werkruimten</0>."
+msgstr "Zodra je dit dialoogvenster sluit, zijn de geheimen verdwenen uit Budgero. Je kunt op elk moment nieuwe uitnodigingen genereren via <0>Instellingen → Werkruimtes</0>."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "One jar to get you started. Big or small."
@@ -9602,15 +9602,15 @@ msgstr "Open <0>accountinstellingen</0> en meld je normaal af."
 
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Open <0>workspace settings</0> to review locked workspaces and any shared access that is still available to you."
-msgstr "Open <0>werkruimte-instellingen</0> om vergrendelde werkruimten en eventuele gedeelde toegang die nog voor je beschikbaar is te bekijken."
+msgstr "Open <0>werkruimte-instellingen</0> om vergrendelde werkruimtes en eventuele gedeelde toegang die nog voor je beschikbaar is te bekijken."
 
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Open <0>workspace settings</0> to review locked workspaces and any shared access you still have."
-msgstr "Open <0>werkruimte-instellingen</0> om vergrendelde werkruimten en eventuele gedeelde toegang die je nog hebt te bekijken."
+msgstr "Open <0>werkruimte-instellingen</0> om vergrendelde werkruimtes en eventuele gedeelde toegang die je nog hebt te bekijken."
 
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Open <0>workspace settings</0> to see which shared workspaces are locked."
-msgstr "Open <0>werkruimte-instellingen</0> om te zien welke gedeelde werkruimten zijn vergrendeld."
+msgstr "Open <0>werkruimte-instellingen</0> om te zien welke gedeelde werkruimtes zijn vergrendeld."
 
 #: src/features/chat/ui/ChatBubble.tsx
 msgid "Open chat assistant"
@@ -10743,7 +10743,7 @@ msgstr "Snelle query's"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate"
-msgstr "Beoordelen"
+msgstr "Koers"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate added"
@@ -10751,7 +10751,7 @@ msgstr "Koers toegevoegd"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate cache & offline sync"
-msgstr "Cache en offlinesynchronisatie beoordelen"
+msgstr "Koersencache en offline synchronisatie"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate cache pruned"
@@ -10781,7 +10781,7 @@ msgstr "Koers: 1 {fromCurrency}= {0} {toCurrency}"
 
 #: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
 msgid "Rate<0/>"
-msgstr "Beoordelen<0/>"
+msgstr "Koers<0/>"
 
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "Reach a total by a date"
@@ -10890,7 +10890,7 @@ msgstr "Rekening afstemmen"
 
 #: src/features/transactions/ui/StatusIndicatorPopover.tsx
 msgid "Reconciled transaction"
-msgstr "Afgetemde transactie"
+msgstr "Afgestemde transactie"
 
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
 msgid "Reconciling..."
@@ -11353,7 +11353,7 @@ msgstr "Herstellen is niet beschikbaar omdat je werkruimtetoegang vergrendeld is
 
 #: src/pages/settings/DataManagementPage.tsx
 msgid "Restore is unavailable while your workspace access is locked. Subscribe again to unlock owned workspace changes."
-msgstr "Herstellen is niet beschikbaar terwijl je werkruimtetoegang is vergrendeld. Abonneer je opnieuw om wijzigingen aan eigen werkruimten te ontgrendelen."
+msgstr "Herstellen is niet beschikbaar terwijl je werkruimtetoegang is vergrendeld. Abonneer je opnieuw om wijzigingen aan eigen werkruimtes te ontgrendelen."
 
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 msgid "Restore real rates"
@@ -11385,7 +11385,7 @@ msgstr "Herstellen…"
 
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Resubscribing restores access to your owned workspaces immediately and lets you create new ones again."
-msgstr "Opnieuw abonneren herstelt onmiddellijk de toegang tot je eigen werkruimten en laat je weer nieuwe aanmaken."
+msgstr "Opnieuw abonneren herstelt onmiddellijk de toegang tot je eigen werkruimtes en laat je weer nieuwe aanmaken."
 
 #: src/pages/explorer-page/components/ResultsTable.tsx
 msgid "Results"
@@ -12382,7 +12382,7 @@ msgstr "Instellingen"
 
 #: src/app/startup/screens.tsx
 msgid "Settings → Workspaces"
-msgstr "Instellingen → Werkruimten"
+msgstr "Instellingen → Werkruimtes"
 
 #: src/pages/onboarding/apply-onboarding.ts
 #: src/pages/onboarding/steps/DoneStep.tsx
@@ -12415,7 +12415,7 @@ msgstr "Gedeelde werkruimte niet beschikbaar"
 
 #: src/pages/admin/admin-users/user-details/WorkspacesTab.tsx
 msgid "Shares Used"
-msgstr "Gebruikte aandelen"
+msgstr "Gebruikte plekken"
 
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 msgid "Sharing & invitations"
@@ -15034,7 +15034,7 @@ msgstr "Werkruimtelidmaatschappen"
 #: src/app/startup/screens.tsx
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 msgid "Workspace name"
-msgstr "Werkruimtenaam"
+msgstr "Werkruimtesaam"
 
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 msgid "Workspace renamed"
@@ -15058,11 +15058,11 @@ msgstr "Werkruimte om te exporteren"
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 #: src/shared/model/nav-registry.ts
 msgid "Workspaces"
-msgstr "Werkruimten"
+msgstr "Werkruimtes"
 
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 msgid "Workspaces & Sharing"
-msgstr "Werkruimten & Delen"
+msgstr "Werkruimtes & Delen"
 
 #: src/pages/admin/admin-users/user-details/OverviewTab.tsx
 msgid "Write activity from the mutation log."
@@ -15247,7 +15247,7 @@ msgstr "Je hebt in totaal {{totalSaved}} bespaard"
 
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
 msgid "Your account has reached the 5-person collaborator limit across owned workspaces. Remove a member or cancel a pending invite before creating another one."
-msgstr "Je account heeft de limiet van 5 medewerkers bereikt voor werkruimten die je bezit. Verwijder een lid of annuleer een openstaande uitnodiging voordat je een nieuwe aanmaakt."
+msgstr "Je account heeft de limiet van 5 medewerkers bereikt voor werkruimtes die je bezit. Verwijder een lid of annuleer een openstaande uitnodiging voordat je een nieuwe aanmaakt."
 
 #: src/pages/settings/push-api/TokenStatusCard.tsx
 msgid "Your API Token"

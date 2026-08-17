@@ -705,7 +705,7 @@ msgstr "{previewImportableCount} {0}se importarán"
 #. placeholder {0}: previewSkippedCount === 1 ? 'row' : 'rows'
 #: src/features/import/ui/steps/PreviewStep.tsx
 msgid "{previewSkippedCount} {0}will be skipped (no/unreadable amount)"
-msgstr "{previewSkippedCount} {0}se omitirán (sin importo o ilegible)"
+msgstr "{previewSkippedCount} {0}se omitirán (sin importe o ilegible)"
 
 #: src/features/ai/ui/receipt-scanner/ScanProgress.tsx
 msgid "{progress}% complete"
@@ -970,7 +970,7 @@ msgstr "<0/>Bloqueado"
 
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "<0/>Budget Currency"
-msgstr "<0/>Divisa del presupuesto"
+msgstr "<0/>Moneda del presupuesto"
 
 #: src/widgets/dashboard/AtAGlance.tsx
 msgid "<0/>Budget Pacing"
@@ -1267,7 +1267,7 @@ msgstr "<0/>Importar datos"
 
 #: src/pages/settings/ImportsPage.tsx
 msgid "<0/>Import History"
-msgstr "<0/>Importar historial"
+msgstr "<0/>Historial de importaciones"
 
 #: src/features/import/ui/steps/UploadStep.tsx
 msgid "<0/>Import Transactions"
@@ -2012,7 +2012,7 @@ msgstr "1. Toca el icono Compartir (un cuadrado con una flecha)\n2. Elige \"Aña
 
 #: src/pages/admin/StickinessAnalyticsSection.tsx
 msgid "10–20% — typical SaaS"
-msgstr "20–50% — fuerte"
+msgstr "10–20% — SaaS típico"
 
 #: src/pages/analytics/reports/WealthReport.tsx
 msgid "10+ years"
@@ -2193,11 +2193,11 @@ msgstr "Cuenta creada:"
 #: src/features/transactions/ui/TransactionsTable.tsx
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "Account Currency"
-msgstr "Divisa de la cuenta"
+msgstr "Moneda de la cuenta"
 
 #: src/features/account-management/ui/EditAccountDialog.tsx
 msgid "Account currency has been changed successfully."
-msgstr "La divisa de la cuenta se ha cambiado correctamente."
+msgstr "La moneda de la cuenta se ha cambiado correctamente."
 
 #: src/features/account-management/ui/EditAccountDialog.tsx
 msgid "Account deleted"
@@ -2401,7 +2401,7 @@ msgstr "Añade primero una cuenta"
 
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 msgid "Add an account in another currency (or crypto) first."
-msgstr "Añade primero una cuenta en otra divisa (o cripto)."
+msgstr "Añade primero una cuenta en otra moneda (o cripto)."
 
 #: src/features/rules/ui/rule-editor/rule-editor.utils.ts
 msgid "Add at least one action for Budgero to perform."
@@ -3830,7 +3830,7 @@ msgstr "No se puede eliminar un grupo de categorías no vacío"
 
 #: src/pages/admin/SelfHostAdminUsers.tsx
 msgid "Cannot log in"
-msgstr "No puedo iniciar sesión"
+msgstr "No puede iniciar sesión"
 
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Card balance owed:"
@@ -4947,27 +4947,27 @@ msgstr "Monedas"
 #: src/features/currencies/ui/CurrencySelector.tsx
 #: src/pages/onboarding/steps/CurrencyStep.tsx
 msgid "Currency"
-msgstr "Divisa"
+msgstr "Moneda"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "Currency and number formatting stay controlled by your budget settings."
-msgstr "El formato de divisa y de números sigue controlado por la configuración de tu presupuesto."
+msgstr "El formato de moneda y de números sigue controlado por la configuración de tu presupuesto."
 
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "Currency Conversion"
-msgstr "Conversión de divisa"
+msgstr "Conversión de moneda"
 
 #: src/features/currencies/ui/CurrencyConversionOverlay.tsx
 msgid "Currency Conversion in Progress"
-msgstr "Conversión de divisa en curso"
+msgstr "Conversión de moneda en curso"
 
 #: src/features/currencies/ui/CurrencySelector.tsx
 msgid "Currency conversion requires an internet connection to fetch current exchange rates. You are currently offline."
-msgstr "La conversión de divisa requiere conexión a internet para obtener los tipos de cambio actuales. Actualmente estás sin conexión."
+msgstr "La conversión de moneda requiere conexión a internet para obtener los tipos de cambio actuales. Actualmente estás sin conexión."
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Currency Pair"
-msgstr "Par de divisas"
+msgstr "Par de monedas"
 
 #: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
 msgid "Currency rate changes"
@@ -6440,7 +6440,7 @@ msgstr "Error al guardar"
 
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Failed to save order"
-msgstr "Error al guardar el pedido"
+msgstr "Error al guardar el orden"
 
 #: src/pages/warranties/WarrantiesPage.tsx
 msgid "Failed to save warranty"
@@ -6859,7 +6859,7 @@ msgstr "Dale a tu espacio de trabajo un nombre descriptivo para que los colabora
 
 #: src/pages/onboarding/steps/CurrencyStep.tsx
 msgid "Globe with currencies orbiting around it"
-msgstr "Globo con divisas orbitando a su alrededor"
+msgstr "Globo con monedas orbitando a su alrededor"
 
 #: src/features/ai/ui/AINotConfiguredWarning.tsx
 msgid "Go to Settings → AI Assistant to configure your local LLM connection."
@@ -7564,7 +7564,7 @@ msgstr "Unido"
 #. placeholder {0}: formatShortDate(resolvedUser.created_at)
 #: src/pages/admin/admin-users/UserDetailsDialog.tsx
 msgid "Joined {0}"
-msgstr "Te uniste a {0}"
+msgstr "Se unió el {0}"
 
 #. placeholder {0}: summary.display_name || summary.space_id
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
@@ -10197,7 +10197,7 @@ msgstr "Elige qué cookies te parecen bien. Tus datos de presupuesto cifrados nu
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Pick your currency and locale. Everything else adapts."
-msgstr "Elige tu monida y configuración regional. Todo lo demás se adapta."
+msgstr "Elige tu moneda y configuración regional. Todo lo demás se adapta."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Pick your path"
@@ -10743,7 +10743,7 @@ msgstr "Consultas rápidas"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate"
-msgstr "Valorar"
+msgstr "Tipo de cambio"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate added"
@@ -10751,7 +10751,7 @@ msgstr "Tasa añadida"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate cache & offline sync"
-msgstr "Valora la caché y la sincronización sin conexión"
+msgstr "Caché de tipos de cambio y sincronización sin conexión"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate cache pruned"
@@ -10781,7 +10781,7 @@ msgstr "Tipo: 1 {fromCurrency}= {0} {toCurrency}"
 
 #: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
 msgid "Rate<0/>"
-msgstr "Valorar<0/>"
+msgstr "Cambio<0/>"
 
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "Reach a total by a date"
@@ -11620,7 +11620,7 @@ msgstr "Safari no permite que las aplicaciones activen la instalación automáti
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Same currency"
-msgstr "Misma divisa"
+msgstr "Misma moneda"
 
 #: src/features/budget-planning/ui/GroupNameEditPopover.tsx
 #: src/features/currencies/ui/ManualRatePrompt.tsx
@@ -11857,7 +11857,7 @@ msgstr "Buscar categoría..."
 
 #: src/features/currencies/ui/CurrencySelector.tsx
 msgid "Search currencies..."
-msgstr "Buscar divisas..."
+msgstr "Buscar monedas..."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Search engine (Google, etc.)"
@@ -14481,11 +14481,11 @@ msgstr "Las actualizaciones no están disponibles en este entorno."
 
 #: src/entities/account/api/useAccounts.ts
 msgid "Updating account currency and recalculating transactions..."
-msgstr "Actualizando la divisa de la cuenta y recalculando las transacciones..."
+msgstr "Actualizando la moneda de la cuenta y recalculando las transacciones..."
 
 #: src/entities/budget/api/useBudgets.ts
 msgid "Updating budget currency and recalculating all transactions..."
-msgstr "Actualizando la divisa del presupuesto y recalculando todas las transacciones..."
+msgstr "Actualizando la moneda del presupuesto y recalculando todas las transacciones..."
 
 #: src/features/rules/ui/RuleRunOverlay.tsx
 msgid "Updating cached data..."
@@ -14924,7 +14924,7 @@ msgstr "Cuando está activado, puedes asignar más dinero a las categorías del 
 
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "When viewing transactions from all accounts, amounts are always shown in your budget currency for consistency."
-msgstr "Al ver transacciones de todas las cuentas, los importes siempre se muestran en la divisa de tu presupuesto para mantener la coherencia."
+msgstr "Al ver transacciones de todas las cuentas, los importes siempre se muestran en la moneda de tu presupuesto para mantener la coherencia."
 
 #: src/features/rules/ui/PayeeCategoryMemoryCard.tsx
 msgid "When you add a transaction for a payee you've used before, the category pre-fills with whatever you chose last time, marked with an amber ring. An autofill rule always wins over this, and it never touches imports or a category you've already picked."

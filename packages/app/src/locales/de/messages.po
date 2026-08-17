@@ -1512,7 +1512,7 @@ msgstr "<0/>Token widerrufen"
 #. placeholder {0}: rule.runOrder
 #: src/pages/settings/AutomationRulesPage.tsx
 msgid "<0/>Run order {0}"
-msgstr "<0/>Auftrag {0} ausführen"
+msgstr "<0/>Ausführungsreihenfolge {0}"
 
 #: src/pages/admin/sql-explorer/QueryCard.tsx
 msgid "<0/>Run Query"
@@ -3809,7 +3809,7 @@ msgstr "Abonnement kündigen"
 
 #: src/features/chat/ui/ToolConfirmation.tsx
 msgid "Cancelled"
-msgstr "Gekündigt"
+msgstr "Abgebrochen"
 
 #. placeholder {0}: formatShortDate(user.subscription_ends_at)
 #: src/pages/admin/admin-users/admin-users.utils.tsx
@@ -6440,7 +6440,7 @@ msgstr "Speichern fehlgeschlagen"
 
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Failed to save order"
-msgstr "Bestellung konnte nicht gespeichert werden"
+msgstr "Reihenfolge konnte nicht gespeichert werden"
 
 #: src/pages/warranties/WarrantiesPage.tsx
 msgid "Failed to save warranty"
@@ -10743,7 +10743,7 @@ msgstr "Schnellabfragen"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate"
-msgstr "Bewerten"
+msgstr "Kurs"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate added"
@@ -10751,7 +10751,7 @@ msgstr "Kurs hinzugefügt"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate cache & offline sync"
-msgstr "Cache & Offline-Sync bewerten"
+msgstr "Kurs-Cache & Offline-Synchronisierung"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Rate cache pruned"
@@ -10781,7 +10781,7 @@ msgstr "Kurs: 1 {fromCurrency}= {0} {toCurrency}"
 
 #: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
 msgid "Rate<0/>"
-msgstr "Bewerten<0/>"
+msgstr "Kurs<0/>"
 
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "Reach a total by a date"
@@ -12658,11 +12658,11 @@ msgstr "Leerzeichen ( )"
 #. placeholder {0}: details.mutations.lastMutation.spaceId
 #: src/pages/admin/admin-users/user-details/OverviewTab.tsx
 msgid "Space {0}"
-msgstr "Speicherplatz {0}"
+msgstr "Bereich {0}"
 
 #: src/pages/settings/push-api/TokenStatusCard.tsx
 msgid "Space ID"
-msgstr "Speicherplatz-ID"
+msgstr "Bereichs-ID"
 
 #: src/pages/admin/SelfHostAdminDashboard.tsx
 msgid "Space storage"
@@ -12674,7 +12674,7 @@ msgstr "Speicherplatznutzung"
 
 #: src/pages/admin/SelfHostAdminUsers.tsx
 msgid "Spaces"
-msgstr "Speicherplätze"
+msgstr "Bereiche"
 
 #: src/pages/admin/AdminDashboard.tsx
 msgid "Special Access"
@@ -13706,7 +13706,7 @@ msgstr "Titel (optional)"
 #: src/pages/admin/StickinessAnalyticsSection.tsx
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "To"
-msgstr "An"
+msgstr "Nach"
 
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 msgid "To account"

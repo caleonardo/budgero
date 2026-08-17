@@ -2736,7 +2736,7 @@ msgstr "Affecté ce mois-ci"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Allocated This Month"
-msgstr "Affecter ce mois-ci"
+msgstr "Affecté ce mois-ci"
 
 #: src/pages/settings/BudgetSettingsPage.tsx
 msgid "Allow over-assignment"
@@ -3667,7 +3667,7 @@ msgstr "Budget mis à jour avec succès"
 #: src/features/budget-management/model/icon-options.ts
 #: src/widgets/navigation/MobileBottomNav.tsx
 msgid "Budgeting"
-msgstr "Budgetisation"
+msgstr "Budgétisation"
 
 #: src/pages/settings/push-api/IdReferencePanel.tsx
 msgid "Budgets"
@@ -6767,7 +6767,7 @@ msgstr "guide d'importation complet"
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Fund goal"
-msgstr "Objectif de financement"
+msgstr "Financer l'objectif"
 
 #: src/features/budget-planning/ui/assign-dropdown/AssignQuickActions.tsx
 msgid "Fund Goals"
@@ -7118,7 +7118,7 @@ msgstr "Comment inviter quelqu'un ?"
 
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "HOW DO YOU WANT TO SAVE?"
-msgstr "COMMENT SOUHAITEZ-VOUS ENREGISTRER ?"
+msgstr "COMMENT SOUHAITEZ-VOUS ÉPARGNER ?"
 
 #: src/pages/analytics/AnalyticsPage.tsx
 msgid "How does it move?"
