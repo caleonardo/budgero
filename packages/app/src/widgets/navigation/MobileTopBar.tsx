@@ -320,7 +320,7 @@ export function MobileTopBar() {
             <DialogDescription>
               <Trans>Set up a new budget to track your finances</Trans>
             </DialogDescription>
-            <BudgetWizard onCreated={handleBudgetCreated} />
+            <BudgetWizard onCreated={handleBudgetCreated} hideHeader />
           </DialogContent>
         </Dialog>
       )}

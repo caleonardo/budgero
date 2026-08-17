@@ -18,13 +18,17 @@ const BudgetWizard: React.FC<BudgetWizardProps> = ({
   defaultTab,
   hideHeader,
 }) => {
+  if (hideHeader) {
+    return (
+      <CreateBudgetForm onCreated={onCreated} onModeChange={onModeChange} defaultTab={defaultTab} />
+    );
+  }
+
   return (
     <div className="rounded-xl p-2 sm:p-4">
-      {!hideHeader && (
-        <h2 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">
-          <Trans>Start a New Budget</Trans>
-        </h2>
-      )}
+      <h2 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">
+        <Trans>Start a New Budget</Trans>
+      </h2>
       <CreateBudgetForm onCreated={onCreated} onModeChange={onModeChange} defaultTab={defaultTab} />
     </div>
   );
