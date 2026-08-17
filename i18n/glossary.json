@@ -1428,6 +1428,37 @@
           "note": "Standard Dutch software term; kept deliberately."
         }
       }
+    },
+    {
+      "id": "dashboard",
+      "term": "Dashboard",
+      "partOfSpeech": "noun",
+      "definition": "The overview page; also the fallback display name for a custom dashboard entity.",
+      "context": "Main nav, breadcrumbs, admin sidebar, custom-dashboards fallback name.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Dashboard",
+          "status": "locked",
+          "note": "Deliberate loanword: Duden-listed, dominant in German fintech (N26, Finanzguru). 'Übersicht' would clash with the Custom-Dashboards feature naming and the entity fallback name."
+        },
+        "fr": {
+          "value": "Tableau de bord",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Panel",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Dashboard",
+          "status": "locked",
+          "note": "Standard Dutch software term."
+        }
+      }
     }
   ]
 }
