@@ -30,7 +30,7 @@ export const TransactionFormHeader = React.memo(function TransactionFormHeader({
         <DialogTitle className="text-lg sm:text-xl font-semibold">
           <Trans>Add New Transaction</Trans>
         </DialogTitle>
-        <DialogDescription className="hidden sm:block text-xs sm:text-sm text-muted-foreground">
+        <DialogDescription className="sr-only">
           <Trans>Choose a transaction type and fill in the details below.</Trans>
         </DialogDescription>
       </DialogHeader>

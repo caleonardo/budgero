@@ -199,7 +199,7 @@ export function AddTransactionForm({
     <form
       onSubmit={onFormSubmit}
       onKeyDownCapture={handleKeyDown}
-      className="max-w-lg w-full mx-auto max-h-[calc(100dvh-1rem)] sm:max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto px-1 sm:px-0"
+      className="max-w-lg w-full mx-auto px-1 sm:px-0"
       data-testid="add-transaction-form"
     >
       {form.showRatePrompt && form.pendingRatePair && (
