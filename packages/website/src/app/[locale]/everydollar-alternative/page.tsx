@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import { ArrowRight, Check, X, Globe, Shield, DollarSign, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,10 +10,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'EveryDollar Alternative - Private Zero-Based Budgeting | Budgero',
-  description:
-    'Looking for an EveryDollar alternative? Budgero offers zero-based budgeting with zero-knowledge encryption, multi-currency support, and no bank connection required.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'everydollar_alternative' });
+  return withLocalizedUrls(locale, '/everydollar-alternative', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'everydollar alternative',
     'everydollar replacement',
@@ -23,30 +30,29 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/everydollar-alternative' },
   openGraph: {
-    title: 'EveryDollar Alternative - Private Zero-Based Budgeting | Budgero',
-    description:
-      'Looking for an EveryDollar alternative? Budgero offers zero-based budgeting with zero-knowledge encryption, multi-currency support, and no bank connection required.',
+    title: t('meta_title'),
+    description: t('meta_description'),
     url: 'https://budgero.app/everydollar-alternative',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'EveryDollar Alternative - Private Zero-Based Budgeting | Budgero',
-    description:
-      'Looking for an EveryDollar alternative? Budgero offers zero-based budgeting with zero-knowledge encryption, multi-currency support, and no bank connection required.',
+    title: t('meta_title'),
+    description: t('meta_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Annual price',
+    feature: t('comparisonData_annual_price'),
     budgero: `${pricing.yearly}/year`,
-    everydollar: 'Free / $79.99/yr Premium',
-    budgeroNote: 'Or free with Self-Host',
+    everydollar: t('comparisonData_free_79_99_yr_premium'),
+    budgeroNote: t('comparisonData_or_free_with_self_host'),
     everydollarNote: null,
   },
   {
-    feature: 'Zero-based budgeting',
+    feature: t('comparisonData_zero_based_budgeting'),
     budgero: true,
     everydollar: true,
     budgeroNote: null,
@@ -56,94 +62,94 @@ const comparisonData = [
     feature: 'Encryption',
     budgero: 'AES-256-GCM',
     everydollar: 'Standard',
-    budgeroNote: 'Zero-knowledge, client-side',
-    everydollarNote: 'Server-side, Ramsey can access data',
+    budgeroNote: t('comparisonData_zero_knowledge_client_side'),
+    everydollarNote: t('comparisonData_server_side_ramsey_can_access_data'),
   },
   {
-    feature: 'Bank sync',
-    budgero: 'No (by design)',
-    everydollar: 'Premium only',
-    budgeroNote: 'Privacy-first approach',
-    everydollarNote: 'US banks only',
+    feature: t('comparisonData_bank_sync'),
+    budgero: t('comparisonData_no_by_design'),
+    everydollar: t('comparisonData_premium_only'),
+    budgeroNote: t('comparisonData_privacy_first_approach'),
+    everydollarNote: t('comparisonData_us_banks_only'),
   },
   {
     feature: 'Multi-currency',
-    budgero: '168 currencies',
+    budgero: t('comparisonData_168_currencies'),
     everydollar: 'No',
-    budgeroNote: 'Live FX rates',
-    everydollarNote: 'USD only',
+    budgeroNote: t('comparisonData_live_fx_rates'),
+    everydollarNote: t('comparisonData_usd_only'),
   },
   {
-    feature: 'Works offline',
+    feature: t('comparisonData_works_offline'),
     budgero: true,
     everydollar: false,
     budgeroNote: null,
-    everydollarNote: 'Limited offline support',
+    everydollarNote: t('comparisonData_limited_offline_support'),
   },
   {
-    feature: 'Shared budgets',
-    budgero: '5 seats',
-    everydollar: 'Per user',
-    budgeroNote: 'Included in plan',
-    everydollarNote: 'Each user needs own subscription',
+    feature: t('comparisonData_shared_budgets'),
+    budgero: t('comparisonData_5_seats'),
+    everydollar: t('comparisonData_per_user'),
+    budgeroNote: t('comparisonData_included_in_plan'),
+    everydollarNote: t('comparisonData_each_user_needs_own_subscription'),
   },
   {
-    feature: 'Self-host option',
+    feature: t('comparisonData_self_host_option'),
     budgero: true,
     everydollar: false,
-    budgeroNote: 'Free forever',
+    budgeroNote: t('comparisonData_free_forever'),
     everydollarNote: null,
   },
   {
-    feature: 'Works worldwide',
+    feature: t('comparisonData_works_worldwide'),
     budgero: true,
     everydollar: false,
     budgeroNote: null,
-    everydollarNote: 'US only',
+    everydollarNote: t('comparisonData_us_only'),
   },
   {
-    feature: 'YNAB/CSV import',
+    feature: t('comparisonData_ynab_csv_import'),
     budgero: true,
     everydollar: false,
     budgeroNote: null,
     everydollarNote: null,
   },
   {
-    feature: 'Debt tracking',
+    feature: t('comparisonData_debt_tracking'),
     budgero: true,
     everydollar: true,
     budgeroNote: null,
     everydollarNote: null,
   },
   {
-    feature: 'AI features',
-    budgero: 'Local LLM',
+    feature: t('comparisonData_ai_features'),
+    budgero: t('comparisonData_local_llm'),
     everydollar: 'No',
-    budgeroNote: 'Data stays on your device',
+    budgeroNote: t('comparisonData_data_stays_on_your_device'),
     everydollarNote: null,
   },
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'Can I keep following the Baby Steps with Budgero?',
-    a: "Yes — the Ramsey method is app-agnostic. Budgero is zero-based budgeting, the same engine EveryDollar runs on: give every dollar a job, fund your emergency starter fund, attack debts smallest-first with the debt snowball (Budgero's debt tracking handles payoff ordering), then build the full emergency fund as a sinking-fund envelope. You lose the Ramsey branding and FPU integration, not the method.",
+    q: t('faqs_can_i_keep_following_the_baby'),
+    a: t('faqs_yes_the_ramsey_method_is_app'),
   },
   {
-    q: 'Is there a free version like EveryDollar\u2019s free tier?',
-    a: "EveryDollar's free tier is manual-entry with the basics; the $79.99/yr premium adds bank sync and extras. Budgero's equivalent: a 35-day free Cloud trial, and Budgero Self-Host — free forever with every feature, if you're willing to run it on your own server with Docker.",
+    q: t('faqs_is_there_a_free_version_like'),
+    a: t('faqs_everydollar_s_free_tier_is_manual'),
   },
   {
-    q: 'How does the debt snowball work in Budgero?',
-    a: 'Budgero tracks each debt account with its balance and payoff progress. Order them smallest to largest, give your snowball payment envelope a fixed amount each month, and roll the freed-up minimum into the next debt when one closes. The mechanics are manual where EveryDollar automates the Ramsey ordering — the trade-off is flexibility if you ever want avalanche ordering instead.',
+    q: t('faqs_how_does_the_debt_snowball_work'),
+    a: t('faqs_budgero_tracks_each_debt_account_with'),
   },
   {
-    q: 'Does EveryDollar work outside the US?',
-    a: 'Not meaningfully. EveryDollar is USD-only with US bank sync, and the Ramsey content assumes US financial products. If you live elsewhere or budget in multiple currencies, Budgero gives you the same zero-based method with 168 currencies and no geographic assumptions.',
+    q: t('faqs_does_everydollar_work_outside_the_us'),
+    a: t('faqs_not_meaningfully_everydollar_is_usd_only'),
   },
   {
-    q: 'How do I switch from EveryDollar to Budgero?',
-    a: 'Export your transactions from EveryDollar as CSV (premium feature), or simply start fresh — many EveryDollar users carry over only category names and current balances, which takes about 20 minutes. Set up your envelopes to mirror your EveryDollar budget, enter starting balances, and continue your Baby Step wherever you left off.',
+    q: t('faqs_how_do_i_switch_from_everydollar'),
+    a: t('faqs_export_your_transactions_from_everydollar_as'),
   },
 ];
 
@@ -162,6 +168,8 @@ export default async function EveryDollarAlternativePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('everydollar_alternative');
+  const faqs = makeFaqs(t);
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [

@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import { ArrowRight, Check, X, Globe, Shield, Target, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,10 +10,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Quicken Simplifi Alternative - Private Budgeting App | Budgero',
-  description:
-    'Looking for a Quicken Simplifi alternative? Budgero offers zero-based budgeting with zero-knowledge encryption, 168 currencies, and no bank connection required.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'quicken_simplifi_alternative' });
+  return withLocalizedUrls(locale, '/quicken-simplifi-alternative', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'quicken simplifi alternative',
     'simplifi alternative',
@@ -23,120 +30,121 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/quicken-simplifi-alternative' },
   openGraph: {
-    title: 'Quicken Simplifi Alternative - Private Budgeting App | Budgero',
-    description:
-      'Looking for a Quicken Simplifi alternative? Budgero offers zero-based budgeting with zero-knowledge encryption, 168 currencies, and no bank connection required.',
+    title: t('meta_title'),
+    description: t('meta_description'),
     url: 'https://budgero.app/quicken-simplifi-alternative',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Quicken Simplifi Alternative - Private Budgeting App | Budgero',
-    description:
-      'Looking for a Quicken Simplifi alternative? Budgero offers zero-based budgeting with zero-knowledge encryption, 168 currencies, and no bank connection required.',
+    title: t('meta_title'),
+    description: t('meta_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Annual price',
+    feature: t('comparisonData_annual_price'),
     budgero: `${pricing.yearly}/year`,
     simplifi: '$35.88/year',
-    budgeroNote: 'Or free with Self-Host',
-    simplifiNote: '$2.99/mo billed annually',
+    budgeroNote: t('comparisonData_or_free_with_self_host'),
+    simplifiNote: t('comparisonData_2_99_mo_billed_annually'),
   },
   {
-    feature: 'Works outside the US',
+    feature: t('comparisonData_works_outside_the_us'),
     budgero: true,
     simplifi: false,
-    budgeroNote: 'Any country, 168 currencies',
-    simplifiNote: 'US banks and USD only',
+    budgeroNote: t('comparisonData_any_country_168_currencies'),
+    simplifiNote: t('comparisonData_us_banks_and_usd_only'),
   },
   {
-    feature: 'Budgeting method',
-    budgero: 'Zero-based',
-    simplifi: 'Spending plan',
-    budgeroNote: 'Every dollar gets a job',
-    simplifiNote: 'Tracks spending after the fact',
+    feature: t('comparisonData_budgeting_method'),
+    budgero: t('cell_zero_based'),
+    simplifi: t('comparisonData_spending_plan'),
+    budgeroNote: t('comparisonData_every_dollar_gets_a_job'),
+    simplifiNote: t('comparisonData_tracks_spending_after_the_fact'),
   },
   {
-    feature: 'Zero-knowledge encryption',
+    feature: t('comparisonData_zero_knowledge_encryption'),
     budgero: true,
     simplifi: false,
-    budgeroNote: 'We cannot see your data',
-    simplifiNote: 'Data stored on Quicken servers',
+    budgeroNote: t('comparisonData_we_cannot_see_your_data'),
+    simplifiNote: t('comparisonData_data_stored_on_quicken_servers'),
   },
   {
-    feature: 'Bank sync required',
+    feature: t('comparisonData_bank_sync_required'),
     budgero: false,
     simplifi: true,
-    budgeroNote: 'Manual-first by design',
-    simplifiNote: 'Core functionality depends on it',
+    budgeroNote: t('comparisonData_manual_first_by_design'),
+    simplifiNote: t('comparisonData_core_functionality_depends_on_it'),
   },
   {
-    feature: 'Multi-currency support',
+    feature: t('comparisonData_multi_currency_support'),
     budgero: true,
     simplifi: false,
-    budgeroNote: '168 currencies with live FX rates',
-    simplifiNote: 'USD only',
+    budgeroNote: t('comparisonData_168_currencies_with_live_fx_rates'),
+    simplifiNote: t('comparisonData_usd_only'),
   },
   {
-    feature: 'Works offline',
+    feature: t('comparisonData_works_offline'),
     budgero: true,
     simplifi: false,
     budgeroNote: null,
-    simplifiNote: 'Cloud-only, needs internet',
+    simplifiNote: t('comparisonData_cloud_only_needs_internet'),
   },
   {
-    feature: 'Investment tracking',
-    budgero: 'Manual',
-    simplifi: 'Automatic',
+    feature: t('comparisonData_investment_tracking'),
+    budgero: t('cell_manual'),
+    simplifi: t('cell_automatic'),
     budgeroNote: null,
-    simplifiNote: 'Syncs with brokerages',
+    simplifiNote: t('comparisonData_syncs_with_brokerages'),
   },
   {
-    feature: 'Shared budgets',
+    feature: t('comparisonData_shared_budgets'),
     budgero: true,
     simplifi: false,
     budgeroNote: null,
     simplifiNote: null,
   },
   {
-    feature: 'Self-host option',
+    feature: t('comparisonData_self_host_option'),
     budgero: true,
     simplifi: false,
-    budgeroNote: 'Free forever with full features',
+    budgeroNote: t('comparisonData_free_forever_with_full_features'),
     simplifiNote: null,
   },
   {
-    feature: 'Works worldwide',
+    feature: t('comparisonData_works_worldwide'),
     budgero: true,
     simplifi: false,
     budgeroNote: null,
-    simplifiNote: 'US focused',
+    simplifiNote: t('comparisonData_us_focused'),
   },
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'What is the difference between Simplifi and Budgero?',
-    a: "Philosophy. Simplifi is automation-first: it syncs your banks, categorizes transactions, and its Spending Plan tells you what's left to spend after bills and savings. Budgero is intention-first: zero-based budgeting where you assign every dollar a job before spending it, with no bank connection required and zero-knowledge encryption so nobody — including us — can read your data.",
+    q: t('faqs_what_is_the_difference_between_simplifi'),
+    a: t('faqs_philosophy_simplifi_is_automation_first_it'),
   },
   {
-    q: 'Is Simplifi cheaper than Budgero?',
-    a: `No — Budgero Cloud at ${pricing.yearly}/year (tax included) now edges out Simplifi's $35.88/year ($2.99/mo billed annually). And Budgero Self-Host is free forever with the full feature set, which makes it the cheaper option by far if you're willing to run a Docker container.`,
+    q: t('faqs_is_simplifi_cheaper_than_budgero'),
+    a: t('faqs_no_budgero_cloud_at_yearly_year', {
+      yearly: pricing.yearly
+    }),
   },
   {
-    q: 'Does Simplifi work outside the US?',
-    a: 'Not really. Simplifi connects to US financial institutions and operates in USD. If you live outside the US, bank with non-US institutions, or need multiple currencies, Simplifi is not built for you — that is exactly the case Budgero covers, with 168 currencies and no dependency on bank connections.',
+    q: t('faqs_does_simplifi_work_outside_the_us'),
+    a: t('faqs_not_really_simplifi_connects_to_us'),
   },
   {
-    q: 'Can I switch from Simplifi to Budgero?',
-    a: 'Yes. Export your transactions from Simplifi as CSV, then import them into Budgero — the import preview maps dates, payees, amounts, and categories before anything is written. Expect to spend an evening tidying categories and setting up your first zero-based budget.',
+    q: t('faqs_can_i_switch_from_simplifi_to'),
+    a: t('faqs_yes_export_your_transactions_from_simplifi'),
   },
   {
-    q: 'Does Budgero require sharing my bank credentials?',
-    a: 'No — and it never asks. Simplifi pulls transactions through bank connections, which means credentials and transaction data flow through aggregator infrastructure. Budgero is manual-first: you enter transactions or import CSVs, and your banking credentials never leave your control.',
+    q: t('faqs_does_budgero_require_sharing_my_bank'),
+    a: t('faqs_no_and_it_never_asks_simplifi'),
   },
 ];
 
@@ -155,6 +163,8 @@ export default async function QuickenSimplifiAlternativePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('quicken_simplifi_alternative');
+  const faqs = makeFaqs(t);
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [

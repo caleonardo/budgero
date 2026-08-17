@@ -1,19 +1,20 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { localeFlags, localeNames, routing, type Locale } from '@/i18n/routing';
 
 export function LanguageSwitcher() {
   const locale = useLocale();
+  const t = useTranslations('common');
   const pathname = usePathname();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   return (
     <select
-      aria-label="Language"
+      aria-label={t('aria_language')}
       value={locale}
       disabled={pending}
       onChange={(event) => {

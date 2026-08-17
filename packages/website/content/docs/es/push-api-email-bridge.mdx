@@ -1,6 +1,6 @@
 ---
-title: "Puente Zero-knowledge: Importación automática de correos bancarios"
-summary: "Reenvía los correos de alerta del banco directamente a Budgero mediante la Push API con un asistente local de Python; no necesitas conocimientos de programación ni compartir las contraseñas del banco."
+title: "Puente Zero-knowledge: Importación automática de correos del banco"
+summary: "Reenvía los correos de alerta del banco directamente a Budgero mediante la Push API usando un asistente local de Python; no se requiere experiencia en programación, no se comparten contraseñas del banco."
 section: integrations
 topicId: push-api-email-bridge
 badge: "Nuevo"
@@ -8,11 +8,11 @@ order: 20
 takeaways:
   - "Instala Python + VS Code, genera un token de la Push API de Budgero y una clave de cifrado, y guárdalos en un archivo .env local."
   - "Usa el script puente inicial para leer los correos de alerta del banco, deja que la IA cree un analizador para tu banco y pruébalo de forma segura en modo dry-run."
-  - "Envía las transacciones cifradas a Budgero con el SDK de Python; programa el script para que se ejecute automáticamente una vez validado."
+  - "Envía transacciones cifradas a Budgero con el SDK de Python; programa el script para que se ejecute automáticamente una vez validado."
 ---
 
-**"Si quieres que algo salga bien, hazlo tú mismo."**  
-Budgero no te pedirá la contraseña de tu banco ni entregará datos a agregadores de terceros. En su lugar, puedes canalizar los correos del banco directamente a Budgero en tu propia máquina. El flujo de tus datos: **Correo del banco → Tu script → Budgero (cifrado)**. Ningún intermediario ve los datos sin cifrar.
+**"Si quieres que algo se haga bien, hazlo tú mismo."**  
+Budgero no te pedirá la contraseña de tu banco ni entregará datos a agregadores de terceros. En su lugar, puedes canalizar los correos del banco directamente a Budgero en tu propio equipo. Tus datos fluyen: **Correo del banco → Tu script → Budgero (cifrado)**. Ningún intermediario ve los datos sin cifrar.
 
 Sigue esta guía para principiantes (no se necesita experiencia programando). Mantén todo local y privado.
 
@@ -21,18 +21,18 @@ Sigue esta guía para principiantes (no se necesita experiencia programando). Ma
 ## Parte 1: Instalar las herramientas
 
 1. **Python 3.12+**  
-   - Windows: [Descargar Python](https://www.python.org/downloads/windows/) y marca **"Añadir python.exe al PATH."**  
-   - Mac: [Descargar Python](https://www.python.org/downloads/macos/).
+   - Windows: [Descarga Python](https://www.python.org/downloads/windows/) y marca **"Añadir python.exe al PATH."**  
+   - Mac: [Descarga Python](https://www.python.org/downloads/macos/).
 2. **VS Code**  
    - Instala [VS Code](https://code.visualstudio.com/download) y ábrelo.
 
 ---
 
-## Parte 2: Prepara tu correo electrónico (contraseña de aplicación)
+## Parte 2: Prepara tu correo (contraseña de aplicación)
 
-Use an app password so you never store your main email password.
+Usa una contraseña de aplicación para no almacenar nunca la contraseña principal de tu correo.
 
-- Gmail: Activa la verificación en dos pasos → crea una **[contraseña de aplicación](https://myaccount.google.com/apppasswords)** (llámala «Budgero Bridge») → copia el código de 16 caracteres.  
+- Gmail: Activa la verificación en dos pasos → crea una **[Contraseña de aplicación](https://myaccount.google.com/apppasswords)** (llámala «Budgero Bridge») → copia el código de 16 caracteres.  
 - Otros proveedores (Outlook/Yahoo/iCloud): busca «Generar contraseña de aplicación para tu proveedor» y sigue sus pasos.
 
 ---
@@ -50,7 +50,7 @@ pip install budgero rich pandas python-dotenv imap-tools
 (En Mac, usa `pip3` si lo necesitas.)
 
 4. **Crea tu archivo de configuración (`.env`)**  
-   El script necesita saber quién eres y dónde guardar los datos. Usamos un archivo `.env` para almacenarlo de forma segura.
+   El script necesita saber quién eres y dónde poner los datos. Usamos un archivo `.env` para guardar esto de forma segura.
    - En VS Code, haz clic en **Nuevo archivo** y nómbralo exactamente `.env` (solo dot-env).
    - Copia y pega el texto de abajo y rellénalo:
 
@@ -73,12 +73,12 @@ TARGET_ACCOUNT_ID="1"
 TARGET_CATEGORY_ID="5"
 ```
 
-**Qué significa cada opción:**
+**Qué significa cada cosa:**
 
 <table>
   <thead>
     <tr>
-      <th>Ajuste</th>
+      <th>Configuración</th>
       <th>Qué poner ahí</th>
     </tr>
   </thead>
@@ -105,22 +105,22 @@ TARGET_CATEGORY_ID="5"
     </tr>
     <tr>
       <td><code>BUDGERO_ENCRYPTION_KEY</code></td>
-      <td>Tu clave de cifrado del espacio desde <strong>Ajustes → Push API</strong> en Budgero.</td>
+      <td>Tu clave de cifrado del espacio de trabajo desde <strong>Ajustes → Push API</strong> en Budgero.</td>
     </tr>
   </tbody>
 </table>
 
-📍 **Finding your target IDs (easy mode)**  
-- In Budgero, go to **Settings → Push API** and scroll to the bottom.  
-- The **Your IDs** table lists every Budget, Account, and Category with its ID.  
-- Copy the IDs you need:
-  - `TARGET_BUDGET_ID`: The budget you want to import into.  
-  - `TARGET_ACCOUNT_ID`: The bank account (e.g., “Chase Checking”) where these transactions should land.  
-  - `TARGET_CATEGORY_ID` (important): Use your “Uncategorized”/“To Be Budgeted” category ID to start.
+📍 **Encontrar tus IDs de destino (modo fácil)**  
+- En Budgero, ve a **Ajustes → Push API** y baja hasta el final.  
+- La tabla **Tus IDs** lista cada Presupuesto, Cuenta y Categoría con su ID.  
+- Copia los IDs que necesitas:
+  - `TARGET_BUDGET_ID`: El presupuesto en el que quieres importar.  
+  - `TARGET_ACCOUNT_ID`: La cuenta bancaria (p. ej., «Chase Checking») donde deben ir estas transacciones.  
+  - `TARGET_CATEGORY_ID` (importante): Usa el ID de tu categoría «Sin categorizar»/«Por asignar» para empezar.
 
-💡 **Pro tip:** Send all email imports to your Uncategorized category. Then create Rules in Budgero (e.g., “If Payee contains Netflix, set Category to Subscriptions”) so the app does the sorting. This keeps the Python script simple.
+💡 **Consejo:** Envía todas las importaciones por correo a tu categoría Sin categorizar. Luego crea Reglas en Budgero (p. ej., «Si el Beneficiario contiene Netflix, asigna la Categoría a Suscripciones») para que la app haga la clasificación. Así mantienes el script de Python sencillo.
 
-> **Keep it secret, keep it safe.** Store `.env` locally; never share or upload it.
+> **Mantenlo en secreto, manténlo a salvo.** Guarda `.env` localmente; nunca lo compartas ni lo subas.
 
 ---
 
@@ -368,25 +368,25 @@ if __name__ == '__main__':
 ## Parte 6: Prueba en simulación y luego actívalo
 
 1. Asegúrate de que `DRY_RUN = True`. Ejecuta `python bridge.py`.  
-2. Revisa la salida en forma de tabla. Si los importes y las fechas parecen correctos, configura `DRY_RUN = False` y vuelve a ejecutar para enviarlo a Budgero.  
-3. ¿No están bien? Vuelve a ejecutar la configuración con más muestras estableciendo `NUM_SAMPLES = 10` antes de `SETUP_MODE = True`.
+2. Revisa la tabla de salida. Si los importes y las fechas son correctos, configura `DRY_RUN = False` y vuelve a ejecutar para enviar a Budgero.  
+3. ¿No es correcto? Vuelve a ejecutar la configuración con más ejemplos estableciendo `NUM_SAMPLES = 10` antes de `SETUP_MODE = True`.
 
 ---
 
 ## Automatízalo a diario
 
 - **Windows:** Usa el Programador de tareas para ejecutar `python bridge.py` una vez al día.  
-- **Mac/Linux:** Usa `cron` (por ejemplo, `0 7 * * * /usr/bin/python3 /path/to/bridge.py`).  
-- Deja DRY_RUN desactivado una vez que confíes en el parser.
+- **Mac/Linux:** Usa `cron` (p. ej., `0 7 * * * /usr/bin/python3 /path/to/bridge.py`).  
+- Deja DRY_RUN desactivado cuando confíes en el parser.
 
 ---
 
 ## Lista de comprobación de seguridad
 
-- Mantén `.env` en local; nunca lo subas a un repositorio ni lo compartas.  
-- Cambia la contraseña de tu aplicación de correo y el token de la Push API de Budgero si alguna vez sospechas que han quedado expuestos.  
+- Mantén `.env` en local; nunca lo confirmes ni lo compartas.  
+- Rota la contraseña de tu aplicación de correo y el token de Budgero Push API si sospechas que han podido quedar expuestos.  
 - Usa HTTPS (por defecto) para que los tokens estén protegidos en tránsito.  
-- Si Budgero devuelve un 409 con `message_id`, significa que se ha descartado un reintento por duplicado; no se inserta nada dos veces.  
-- Si cambias de banco o de formato, vuelve a ejecutar la configuración para actualizar el parser.
+- Si Budgero devuelve un 409 con `message_id`, significa que se ha deduplicado un reintento; no se ha insertado ningún duplicado.  
+- Si cambias de banco o de formato, vuelve a ejecutar la configuración para actualizar el analizador.
 
-Ahora tienes un puente Zero-knowledge: tu banco nunca comparte contraseñas, tus datos permanecen cifrados y Budgero recibe las transacciones automáticamente. Disfruta de la automatización que respeta tu privacidad.
+Ahora tienes un puente zero-knowledge: tu banco nunca comparte contraseñas, tus datos permanecen cifrados y Budgero recibe transacciones automáticamente. Disfruta de la automatización que respeta tu privacidad.

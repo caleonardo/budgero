@@ -53,9 +53,9 @@ Des affirmations honnêtes sur le Zero-knowledge exigent d'énoncer les deux vol
   </tbody>
 </table>
 
-That left column is the minimum needed to operate a sync service: routing ciphertext to the right people and billing the right account. The right column is your financial life, and it exists in readable form only on your unlocked devices.
+La colonne de gauche représente le minimum nécessaire pour faire fonctionner un service de synchronisation : acheminer le texte chiffré vers les bonnes personnes et facturer le bon compte. La colonne de droite, c'est votre vie financière, qui n'existe sous forme lisible que sur vos appareils déverrouillés.
 
-This architecture also defines the breach story. If Budgero's servers were fully compromised, the attacker would obtain wrapped keys and AES-256-GCM ciphertext — and would still face per-user, 600,000-iteration PBKDF2 against each master password to get anywhere. With a strong passphrase, "anywhere" is nowhere.
+Cette architecture définit également le scénario en cas de violation. Si les serveurs de Budgero étaient entièrement compromis, l'attaquant obtiendrait des clés encapsulées et du texte chiffré AES-256-GCM — et se heurterait encore, pour chaque utilisateur, à 600 000 itérations PBKDF2 contre chaque mot de passe principal pour aller quelque part. Avec une phrase de passe robuste, « quelque part » n'est nulle part.
 
 ## Où sont stockées vos données
 

@@ -15,7 +15,9 @@ import {
   Command,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { FAQ_KEYS } from '@/components/landing/faq';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +29,7 @@ import { TestimonialsSection } from '@/components/landing/Testimonials';
 // Newsletter signup coming soon
 
 export default function LandingPage() {
+  const t = useTranslations('home');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
   const [activeFeature, setActiveFeature] = useState(0);
@@ -78,51 +81,46 @@ export default function LandingPage() {
   const featureShowcases = [
     {
       icon: <FileText className="h-6 w-6 text-foreground/70" strokeWidth={1.8} />,
-      title: 'Seamless imports in seconds',
-      description:
-        'Drop in your YNAB or CSV files and Budgero maps everything automatically. Review, confirm, and keep moving—no manual cleanup required.',
+      title: t('feature_import_title'),
+      description: t('feature_import_desc'),
       media: '/features_desktop/ynab_import_desktop.webm',
       mediaMobile: '/features_mobile/ynab_import_mobile.webm',
-      mediaAlt: 'Demo showing Budgero importing a YNAB budget.',
+      mediaAlt: t('feature_import_alt'),
     },
     {
       icon: <Coins className="h-6 w-6 text-foreground/70" strokeWidth={1.8} />,
-      title: 'Effortless multi-currency transfers',
-      description:
-        'Move money across accounts in 100+ currencies and watch Budgero convert instantly with live rates. No mental math, no spreadsheets—just accurate balances everywhere.',
+      title: t('feature_currency_title'),
+      description: t('feature_currency_desc'),
       media: '/features_desktop/multi_currency_desktop.png',
       mediaMobile: '/features_mobile/multi_currency_mobile.png',
-      mediaAlt: 'Screenshot preview of Budgero multi-currency budgeting.',
+      mediaAlt: t('feature_currency_alt'),
     },
     {
       icon: <BarChart3 className="h-6 w-6 text-foreground/70" strokeWidth={1.8} />,
-      title: 'Semantic search that understands intent',
-      description:
-        'Find exactly the transactions you need using natural-language queries that match meaning, not just exact text.',
+      title: t('feature_search_title'),
+      description: t('feature_search_desc'),
       media: '/features_desktop/semantic_search_desktop.webm',
       mediaMobile: '/features_mobile/semantic_search_mobile.webm',
-      mediaAlt: 'Demo of semantic search in Budgero.',
+      mediaAlt: t('feature_search_alt'),
     },
     {
       icon: (
         <CalendarRange className="h-6 w-6 text-foreground/70" strokeWidth={1.8} />
       ),
-      title: 'Plan months ahead instantly',
-      description:
-        'Zoom out to anywhere from three to six months at a time and adjust plans in seconds. Every change ripples across future buckets so you always know what is coming next.',
-      subtext: '(Desktop only)',
+      title: t('feature_months_title'),
+      description: t('feature_months_desc'),
+      subtext: t('desktop_only'),
       media: '/features_desktop/multi_month_view_desktop.png',
       mediaMobile: '/features_desktop/multi_month_view_desktop.png',
-      mediaAlt: 'Screenshot of Budgero multi-month planning view.',
+      mediaAlt: t('feature_months_alt'),
     },
     {
       icon: <Command className="h-6 w-6 text-foreground/70" strokeWidth={1.8} />,
-      title: 'Autofill rules for repetitive work',
-      description:
-        'Set once and let Budgero auto-apply category and assignment patterns so routine budget updates happen consistently with minimal manual input.',
+      title: t('feature_rules_title'),
+      description: t('feature_rules_desc'),
       media: '/features_desktop/autofill_rules_demo_video.webm',
       mediaMobile: '/features_mobile/autofil_rules_mobile.webm',
-      mediaAlt: 'Demo of Budgero autofill rules workflow.',
+      mediaAlt: t('feature_rules_alt'),
     },
   ];
 
@@ -165,92 +163,40 @@ export default function LandingPage() {
   }, [activeFeature, totalFeatures]);
 
   const selfHostFeatures = [
-    'Open source (AGPL-3.0)',
-    'Run Budgero on your own infrastructure',
-    'Encrypted sync and collaboration included',
-    'Seamless multi-currency with live rates',
-    'YNAB & CSV import',
-    'Local LLM integration',
-    'No subscription fees',
+    t('selfhost_f1'),
+    t('selfhost_f2'),
+    t('selfhost_f3'),
+    t('selfhost_f4'),
+    t('selfhost_f5'),
+    t('selfhost_f6'),
+    t('selfhost_f7'),
   ];
 
   const paidFeatures = [
-    'Encrypted sync across unlimited devices',
-    '5 Seats per Subscription',
-    'Seamless multi-currency with live rates',
-    'YNAB & CSV import',
-    'Powerful Analytics Engine with Custom Dashboards',
+    t('paid_f1'),
+    t('paid_f2'),
+    t('paid_f3'),
+    t('paid_f4'),
+    t('paid_f5'),
   ];
 
   const paidPlanPricing = {
     monthly: {
       price: pricing.monthly,
-      period: 'month',
-      priceNote: null,
+      period: t('period_month'),
+      priceNote: null as string | null,
     },
     yearly: {
       price: pricing.yearly,
-      period: 'year',
-      priceNote: `Equivalent to ${pricing.yearlyEquivMonthly} per month`,
+      period: t('period_year'),
+      priceNote: t('price_equiv', { price: pricing.yearlyEquivMonthly }) as string | null,
     },
-  } as const;
+  };
 
-  const faqs = [
-    {
-      question: 'How is my data kept private?',
-      answer:
-        'Your data is encrypted with your password using AES-256 encryption before it ever leaves your device. We use zero-knowledge architecture, meaning we literally cannot decrypt or view your financial information - only you can.',
-    },
-    {
-      question: "What's the difference between Budgero Cloud and Self-Host?",
-      answer:
-        'Budgero Cloud is fully managed by us and includes encrypted sync, collaboration, and automatic updates. Self-Host gives you the same core feature set on your own infrastructure, so you manage hosting, backups, and operations yourself.',
-    },
-    {
-      question: 'Does Budgero automatically connect to my bank?',
-      answer:
-        "No, and that's by design. To protect your privacy, we will never ask for your bank credentials. This approach, combined with our end-to-end encryption, ensures your data remains yours alone. For convenience, you can easily import transactions via a CSV file from your bank.",
-    },
-    {
-      question: 'Can I import from YNAB or other apps?',
-      answer:
-        'Absolutely! We support direct YNAB imports and CSV files from most banking apps and budgeting tools. The import process takes just a few minutes and preserves your categories, transactions, and account structure.',
-    },
-    {
-      question: 'Does it work offline?',
-      answer:
-        "Yes, completely! You can add transactions, update budgets, and review your finances without any internet connection. All changes sync automatically when you're back online.",
-    },
-    {
-      question: 'Is Budgero open source?',
-      answer:
-        'Yes. Budgero is open source under the AGPL-3.0, an OSI-approved license. The full source code is public on GitHub — you can read it, audit the encryption yourself, build from source, and self-host it for free.',
-    },
-    {
-      question: 'What happens if Budgero shuts down?',
-      answer:
-        "Nothing you rely on disappears. The code is open source and self-hostable, so the app keeps working and anyone can keep building it. Plus, you can export all your data anytime in standard formats, so you're never locked in.",
-    },
-    {
-      question: 'Can I export my data?',
-      answer:
-        'Yes. You can download a full SQLite backup or CSV bundle from Data Management. You retain complete ownership of your budgets.',
-    },
-    {
-      question: 'Do paid plans include a free trial?',
-      answer:
-        'Yes. Every paid plan comes with a 35-day free trial — no credit card required. Try the full app with encrypted sync and collaboration. When your trial ends, subscribe to keep using the app.',
-    },
-    {
-      question: 'Do prices include tax?',
-      answer: `Yes. Prices are tax-inclusive — ${pricing.monthly}/month or ${pricing.yearly}/year is exactly what you pay, anywhere in the world. VAT and sales tax are included in the price, never added at checkout.`,
-    },
-    {
-      question: 'What devices does it work on?',
-      answer:
-        'Budgero works on all devices — iPhone, Android, Windows, Mac, and Linux. The web app is fully responsive and optimized for a great experience across platforms.',
-    },
-  ];
+  const faqs = FAQ_KEYS.map((key) => ({
+    question: t(`faq_${key}_q`),
+    answer: t(`faq_${key}_a`, { monthly: pricing.monthly, yearly: pricing.yearly }),
+  }));
   const DIVIDER_CLASS =
     'my-14 -mx-4 sm:-mx-6 lg:-mx-10 xl:-mx-12 2xl:-mx-16 border-t-2 border-border';
 
@@ -272,25 +218,23 @@ export default function LandingPage() {
               <section id="hero" className="py-32 text-center relative overflow-hidden">
                 <div className="relative z-10 max-w-4xl mx-auto">
                   <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.08]">
-                    Budget nobody can read but you.
+                    {t('hero_h1')}
                   </h1>
                   <div className="text-lg md:text-2xl text-foreground/70 mb-8 max-w-3xl mx-auto leading-relaxed space-y-3">
+                    <p>{t('hero_p1')}</p>
                     <p>
-                      Not Budgero. Not an aggregator. Not a subpoena. Every transaction
-                      is encrypted before it leaves your device — zero-knowledge, by
-                      architecture, not by promise.
-                    </p>
-                    <p>
-                      And you don&apos;t have to take our word for it: Budgero is{' '}
-                      <a
-                        href="https://github.com/tombadilo-bombadilo/budgero"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline underline-offset-4 decoration-dotted hover:text-foreground"
-                      >
-                        open source
-                      </a>{' '}
-                      (AGPL-3.0).
+                      {t.rich('hero_p2', {
+                        link: (chunks) => (
+                          <a
+                            href="https://github.com/tombadilo-bombadilo/budgero"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline underline-offset-4 decoration-dotted hover:text-foreground"
+                          >
+                            {chunks}
+                          </a>
+                        ),
+                      })}
                     </p>
                   </div>
                   <div className="flex items-center justify-center">
@@ -298,7 +242,7 @@ export default function LandingPage() {
                       onClick={() => goToApp()}
                       className="h-11 w-full sm:w-auto px-6 text-sm bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b] transition-colors font-semibold"
                     >
-                      Start 35-day free trial
+                      {t('cta_trial')}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -308,28 +252,31 @@ export default function LandingPage() {
                       onClick={() => goToSelfHost()}
                       className="font-medium underline underline-offset-4 decoration-dotted"
                     >
-                      Explore Self-Host
+                      {t('explore_selfhost')}
                     </button>
                   </div>
                   <p className="mt-4 text-xs sm:text-sm text-foreground/60">
-                    No Plaid. No bank connections. 35-day trial, no card.
+                    {t('hero_note')}
                   </p>
                   <p className="mt-2 text-xs sm:text-sm text-foreground/60">
-                    Looking for a{' '}
-                    <Link
-                      href="/best-ynab-alternatives"
-                      className="underline underline-offset-4 decoration-dotted hover:text-foreground"
-                    >
-                      YNAB alternative
-                    </Link>
-                    ?{' '}
-                    <Link
-                      href="/vs-ynab"
-                      className="underline underline-offset-4 decoration-dotted hover:text-foreground"
-                    >
-                      Compare Budgero vs YNAB
-                    </Link>
-                    .
+                    {t.rich('hero_ynab', {
+                      alt: (chunks) => (
+                        <Link
+                          href="/best-ynab-alternatives"
+                          className="underline underline-offset-4 decoration-dotted hover:text-foreground"
+                        >
+                          {chunks}
+                        </Link>
+                      ),
+                      cmp: (chunks) => (
+                        <Link
+                          href="/vs-ynab"
+                          className="underline underline-offset-4 decoration-dotted hover:text-foreground"
+                        >
+                          {chunks}
+                        </Link>
+                      ),
+                    })}
                   </p>
                 </div>
 
@@ -338,7 +285,7 @@ export default function LandingPage() {
                     <div className="hidden md:block mx-auto max-w-[1400px] px-6 lg:px-10">
                       <Image
                         src={heroDesktopImageSrc}
-                        alt="Budgero analytics dashboard"
+                        alt={t('hero_img_alt_desktop')}
                         width={2880}
                         height={2160}
                         priority
@@ -349,7 +296,7 @@ export default function LandingPage() {
                     <div className="block md:hidden mx-auto w-full max-w-[560px] px-2 sm:px-4">
                       <Image
                         src={heroMobileImageSrc}
-                        alt="Budgero on mobile"
+                        alt={t('hero_img_alt_mobile')}
                         width={2880}
                         height={2160}
                         priority
@@ -367,26 +314,26 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4 relative z-10">
                   <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6 leading-tight">
-                      Start with Cloud,{' '}
-                      <span className="text-foreground/85">keep full control</span>
+                      {t.rich('pricing_h2', {
+                        accent: (chunks) => <span className="text-foreground/85">{chunks}</span>,
+                      })}
                     </h2>
                     <div className="max-w-3xl mx-auto space-y-3">
                       <p className="text-xl md:text-2xl text-foreground/80 font-medium leading-relaxed">
-                        Begin with a 35-day trial to get encrypted sync, shared workspaces, and
-                        native multi-currency from day one.
+                        {t('pricing_p1')}
                       </p>
-                      <p className="text-sm md:text-base text-foreground/80">
-                        You can self-host Budgero for free when you want full infrastructure
-                        ownership.
-                      </p>
+                      <p className="text-sm md:text-base text-foreground/80">{t('pricing_p2')}</p>
                       <p className="text-base md:text-lg text-foreground/70 leading-relaxed">
-                        Need help choosing?{' '}
-                        <Link
-                          href="/self-hostable"
-                          className="text-foreground font-semibold underline underline-offset-4 decoration-dotted hover:text-foreground/80 transition-colors"
-                        >
-                          Explore Budgero Self-Host.
-                        </Link>
+                        {t.rich('pricing_help', {
+                          link: (chunks) => (
+                            <Link
+                              href="/self-hostable"
+                              className="text-foreground font-semibold underline underline-offset-4 decoration-dotted hover:text-foreground/80 transition-colors"
+                            >
+                              {chunks}
+                            </Link>
+                          ),
+                        })}
                       </p>
                     </div>
                   </div>
@@ -394,7 +341,7 @@ export default function LandingPage() {
                     <div className="relative group h-full order-2">
                       <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20">
                         <Badge className="px-4 py-1.5 bg-[#111c34] text-[#f8fafc] border border-[#111c34] shadow-sm">
-                          Self-Host
+                          {t('badge_selfhost')}
                         </Badge>
                       </div>
                       <div className="absolute -inset-1 rounded-3xl border border-border/40 opacity-0 group-hover:opacity-100 transition duration-500"></div>
@@ -406,14 +353,14 @@ export default function LandingPage() {
                               variant="secondary"
                               className="bg-[#d7dbe2] text-[#141414] border-[#b9bec8] px-3 py-1"
                             >
-                              Free
+                              {t('free')}
                             </Badge>
                           </div>
                           <CardTitle className="text-5xl font-bold text-foreground mb-2 tracking-tight">
-                            Free
+                            {t('free')}
                           </CardTitle>
                           <CardDescription className="text-foreground/80 font-medium">
-                            Full Budgero stack on your own infrastructure.
+                            {t('selfhost_card_desc')}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="relative flex-grow flex flex-col space-y-8">
@@ -434,7 +381,7 @@ export default function LandingPage() {
                             variant="outline"
                             className="w-full h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 mt-auto"
                           >
-                            Deploy Self-Host
+                            {t('deploy_selfhost')}
                             <ArrowRight className="ml-2 w-4 h-4" />
                           </Button>
                         </CardContent>
@@ -444,7 +391,7 @@ export default function LandingPage() {
                     <div className="relative group h-full order-1">
                       <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20">
                         <Badge className="px-4 py-1.5 bg-[#111c34] text-[#f8fafc] border border-[#111c34] shadow-sm">
-                          Cloud • Recommended
+                          {t('badge_cloud')}
                         </Badge>
                       </div>
                       <div className="absolute -inset-1 rounded-3xl border border-border/40 opacity-0 group-hover:opacity-100 transition duration-500"></div>
@@ -456,7 +403,7 @@ export default function LandingPage() {
                               variant="secondary"
                               className="bg-[#d7dbe2] text-[#141414] border-[#b9bec8] px-3 py-1"
                             >
-                              {billingCycle === 'monthly' ? 'Flexible' : 'Save $13'}
+                              {billingCycle === 'monthly' ? t('badge_flexible') : t('badge_save')}
                             </Badge>
                             <div className="flex items-center justify-center gap-1 bg-[#d7dbe2] rounded-full p-1 border border-[#b9bec8]">
                               {(['monthly', 'yearly'] as const).map((cycle) => (
@@ -471,7 +418,7 @@ export default function LandingPage() {
                                       : 'text-[#4b5563] hover:text-[#141414] hover:bg-transparent'
                                   }`}
                                 >
-                                  {cycle === 'monthly' ? 'Monthly' : 'Yearly'}
+                                  {cycle === 'monthly' ? t('monthly') : t('yearly')}
                                 </Button>
                               ))}
                             </div>
@@ -491,13 +438,11 @@ export default function LandingPage() {
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-foreground/60">
-                            Tax included — the price you see is the price you pay, worldwide.
-                          </p>
+                          <p className="text-xs text-foreground/60">{t('tax_note')}</p>
                         </CardHeader>
                         <CardContent className="relative flex-grow flex flex-col space-y-8">
                           <ul className="space-y-4 flex-grow">
-                            {[...paidFeatures, '35-day free trial - no credit card required'].map(
+                            {[...paidFeatures, t('paid_trial_feature')].map(
                               (feature, idx) => (
                                 <li key={idx} className="flex items-start gap-3 group/item">
                                   <div className="mt-1 p-0.5 rounded-full bg-[#d7dbe2] text-[#374151] group-hover/item:bg-[#c9ced8] transition-colors">
@@ -514,7 +459,7 @@ export default function LandingPage() {
                             onClick={() => goToApp()}
                             className="w-full bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b] h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 mt-auto"
                           >
-                            Start 35-day free trial
+                            {t('cta_trial')}
                             <ArrowRight className="ml-2 w-4 h-4" />
                           </Button>
                         </CardContent>
@@ -533,20 +478,20 @@ export default function LandingPage() {
                       <Lock className="w-10 h-10 text-foreground" />
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-foreground mb-6 leading-tight">
-                      Your Data is{' '}
-                      <span className="text-foreground/85">Truly Private</span>
+                      {t.rich('security_h2', {
+                        accent: (chunks) => <span className="text-foreground/85">{chunks}</span>,
+                      })}
                     </h2>
                     <p className="text-xl text-foreground/70 max-w-3xl mx-auto">
-                      In most finance apps, your raw data sits on someone else's servers where
-                      employees or third parties could access it. Budgero flips that model:
-                      everything is encrypted on your device before it ever leaves.{' '}
-                      <span className="font-semibold text-foreground/85">
-                        We literally cannot read, mine, or sell your transactions.
-                      </span>
+                      {t.rich('security_p', {
+                        b: (chunks) => (
+                          <span className="font-semibold text-foreground/85">{chunks}</span>
+                        ),
+                      })}
                     </p>
                   </div>
                   <div className="grid md:grid-cols-3 gap-8">
-                    {["We Can't See Your Data", 'Self-Hostable', 'Bank-Level Security'].map(
+                    {[t('sec_card1_title'), t('sec_card2_title'), t('sec_card3_title')].map(
                       (title, i) => (
                         <div className="relative group h-full" key={i}>
                           <div className="absolute -inset-1 rounded-2xl border border-border/40 opacity-0 group-hover:opacity-100 transition duration-300"></div>
@@ -565,11 +510,7 @@ export default function LandingPage() {
                             </h3>
                             <p className="text-foreground/70 leading-relaxed flex-grow">
                               {
-                                [
-                                  'Your password encrypts everything before it reaches our servers. We never see your balances, categories, or transactions — period.',
-                                  "Run Budgero on your own server with Docker — free, full feature parity. Your data never has to touch our infrastructure, and you can export or migrate anytime.",
-                                  'AES-256-GCM with PBKDF2-HMAC-SHA256 key derivation (600,000 iterations) protects your data using battle-tested cryptography in your browser.',
-                                ][i]
+                                [t('sec_card1_desc'), t('sec_card2_desc'), t('sec_card3_desc')][i]
                               }
                             </p>
                           </div>
@@ -587,12 +528,12 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4 relative z-10">
                   <div className="text-center mb-16 space-y-4">
                     <h2 className="text-4xl md:text-5xl font-black text-foreground leading-tight">
-                      Features You&apos;ll{' '}
-                      <span className="text-foreground/85">Love</span>
+                      {t.rich('features_h2', {
+                        accent: (chunks) => <span className="text-foreground/85">{chunks}</span>,
+                      })}
                     </h2>
                     <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
-                      Peek behind the curtain at how Budgero feels in motion. These quick clips
-                      showcase the polished workflows that make budgeting actually enjoyable.
+                      {t('features_p')}
                     </p>
                   </div>
                   <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-2 sm:px-4 lg:px-0">
@@ -636,7 +577,7 @@ export default function LandingPage() {
                           <div className="inline-flex items-center gap-3 rounded-full bg-muted/30 px-5 py-2 text-sm font-semibold text-foreground shadow-sm border border-border/60">
                             {currentFeature?.icon}
                             <span className="tracking-wide uppercase text-xs font-semibold text-foreground">
-                              In action
+                              {t('in_action')}
                             </span>
                           </div>
                           <h3 className="mt-5 text-2xl font-bold text-foreground lg:text-3xl">
@@ -661,19 +602,19 @@ export default function LandingPage() {
                             type="button"
                             onClick={goToPrevFeature}
                             className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-muted/30"
-                            aria-label="View previous feature"
+                            aria-label={t('aria_prev_feature')}
                           >
                             <ChevronLeft className="h-5 w-5" />
-                            Previous
+                            {t('prev')}
                           </button>
                           <button
                             type="button"
                             onClick={goToNextFeature}
                             className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-muted/30 disabled:cursor-not-allowed disabled:opacity-50"
                             disabled={totalFeatures <= 1}
-                            aria-label="View next feature"
+                            aria-label={t('aria_next_feature')}
                           >
-                            Next
+                            {t('next')}
                             <ChevronRight className="h-5 w-5" />
                           </button>
                         </div>
@@ -690,7 +631,7 @@ export default function LandingPage() {
                                     ? 'w-8 bg-foreground'
                                     : 'w-2.5 bg-muted/60'
                                 }`}
-                                aria-label={`Showcase ${feature.title}`}
+                                aria-label={t('aria_showcase', { title: feature.title })}
                                 aria-pressed={isActive}
                               ></button>
                             );
@@ -712,7 +653,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4 relative z-10">
                   <div className="max-w-4xl mx-auto space-y-8">
                     <h2 className="text-3xl md:text-4xl font-black text-foreground">
-                      FAQ
+                      {t('faq_h2')}
                     </h2>
                     <div className="space-y-4">
                       {faqs.map((faq, index) => {
@@ -761,18 +702,17 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4">
                   <div className="mx-auto max-w-4xl rounded-3xl border border-border/70 bg-muted/20 px-6 py-12 text-center shadow-xl sm:px-10">
                     <h2 className="text-3xl md:text-4xl font-black text-foreground leading-tight">
-                      Ready to try Budgero Cloud?
+                      {t('final_h2')}
                     </h2>
                     <p className="mt-4 text-base md:text-lg text-foreground/70 leading-relaxed">
-                      Start your 35-day trial in minutes. If you prefer owning infrastructure, run
-                      Budgero Self-Host for free.
+                      {t('final_p')}
                     </p>
                     <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                       <Button
                         onClick={() => goToApp()}
                         className="h-11 w-full sm:w-auto px-6 bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                       >
-                        Start 35-day free trial
+                        {t('cta_trial')}
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                       <Button
@@ -780,12 +720,10 @@ export default function LandingPage() {
                         onClick={() => goToSelfHost()}
                         className="h-11 w-full sm:w-auto px-6"
                       >
-                        Explore Self-Host
+                        {t('explore_selfhost')}
                       </Button>
                     </div>
-                    <p className="mt-4 text-sm text-foreground/70">
-                      Prefer self-managed infrastructure? Self-Host is free forever.
-                    </p>
+                    <p className="mt-4 text-sm text-foreground/70">{t('final_note')}</p>
                   </div>
                 </div>
               </section>
@@ -809,10 +747,10 @@ export default function LandingPage() {
                 onClick={() => goToApp()}
                 className="flex-1 h-11 text-sm font-semibold bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
               >
-                Start free trial
+                {t('sticky_cta')}
               </Button>
               <Button variant="ghost" onClick={() => goToSelfHost()} className="h-11 px-3 text-xs">
-                Self-host
+                {t('sticky_selfhost')}
               </Button>
             </div>
           </div>

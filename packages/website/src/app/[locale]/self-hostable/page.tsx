@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import {
   Server,
   Shield,
@@ -22,10 +23,16 @@ import { TrackedLink } from '@/components/TrackedLink';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Self-Hosted Budgeting App — Docker, NAS & Homelab | Budgero',
-  description:
-    'A self-hosted budgeting app you can run on your own server, NAS, Raspberry Pi, or homelab via Docker. Zero-knowledge encryption, 168 currencies, full feature set — free forever, no license, no feature gating.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'self_hostable' });
+  return withLocalizedUrls(locale, '/self-hostable', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'self hosted budgeting app',
     'self hosted budget app',
@@ -47,105 +54,104 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/self-hostable' },
   openGraph: {
-    title: 'Self-Hosted Budgeting App — Docker, NAS & Homelab | Budgero',
-    description:
-      'Run a self-hosted budgeting app on your own server, NAS, or homelab via Docker. Zero-knowledge encryption, 168 currencies, full feature set — free forever.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/self-hostable',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Self-Hosted Budgeting App — Docker, NAS & Homelab | Budgero',
-    description:
-      'Run a self-hosted budgeting app on your own server, NAS, or homelab. Zero-knowledge encryption, 168 currencies, full feature set — free forever.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const features = [
+const makeFeatures = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
     icon: Server,
-    title: 'Your Infrastructure',
+    title: t('features_your_infrastructure'),
     description:
-      'Run Budgero on your own server, NAS, Raspberry Pi, or any cloud provider you trust.',
+      t('features_run_budgero_on_your_own_server'),
   },
   {
     icon: Shield,
-    title: 'Zero-Knowledge Encryption',
+    title: t('features_zero_knowledge_encryption'),
     description:
-      'Your data is encrypted with your master password. Even on your own server, data stays protected.',
+      t('features_your_data_is_encrypted_with_your'),
   },
   {
     icon: Database,
-    title: 'Own Your Data',
-    description: 'Complete data ownership. Back up, migrate, or export anytime. No vendor lock-in.',
+    title: t('features_own_your_data'),
+    description: t('features_complete_data_ownership_back_up_migrate'),
   },
   {
     icon: Globe,
-    title: 'Access Anywhere',
-    description: 'Access your budget from any device through your self-hosted instance.',
+    title: t('features_access_anywhere'),
+    description: t('features_access_your_budget_from_any_device'),
   },
   {
     icon: Lock,
-    title: 'No Third Parties',
-    description: 'Your financial data never touches external servers. Complete privacy by design.',
+    title: t('features_no_third_parties'),
+    description: t('features_your_financial_data_never_touches_external'),
   },
   {
     icon: RefreshCw,
-    title: 'Import from YNAB',
+    title: t('features_import_from_ynab'),
     description:
-      'Easily import your existing YNAB budget. Keep your categories, transactions, and history.',
+      t('features_easily_import_your_existing_ynab_budget'),
   },
 ];
 
-const whySelfHost = [
-  'Full feature parity with Budgero Cloud',
-  'Run on your home server, NAS, or VPS',
-  'Maximum control, zero vendor lock-in',
-  'Air-gapped deployment option',
-  'You manage updates and backups',
-  'You handle security and uptime',
+const makeWhySelfHost = (t: (key: string, values?: Record<string, string | number>) => string) => [
+  t('whySelfHost_full_feature_parity_with_budgero_cloud'),
+  t('whySelfHost_run_on_your_home_server_nas'),
+  t('whySelfHost_maximum_control_zero_vendor_lock_in'),
+  t('whySelfHost_air_gapped_deployment_option'),
+  t('whySelfHost_you_manage_updates_and_backups'),
+  t('whySelfHost_you_handle_security_and_uptime'),
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'What hardware do I need to self-host Budgero?',
-    a: "Anything that runs Docker. A Raspberry Pi 4 (4GB+) is enough for a single user. A NAS, a small home server, or a $5/month VPS will comfortably handle a household. Budgero is a small Go binary and a SQLite-backed database — there is no Postgres, no Redis, no message queue, no Java. Resource use stays under 200MB of RAM in normal operation.",
+    q: t('faqs_what_hardware_do_i_need_to'),
+    a: t('faqs_anything_that_runs_docker_a_raspberry'),
   },
   {
-    q: 'Can I run Budgero on a Synology, Unraid, or QNAP NAS?',
-    a: "Yes. Synology DSM, Unraid, QNAP Container Station, and TrueNAS all run the official Budgero Docker image without modification. You point a single port at the container, mount a persistent volume for the SQLite database, and you are done. The full setup guide covers the NAS-specific paths.",
+    q: t('faqs_can_i_run_budgero_on_a'),
+    a: t('faqs_yes_synology_dsm_unraid_qnap_container'),
   },
   {
-    q: 'Does self-hosted Budgero work on a Raspberry Pi?',
-    a: "Yes — Budgero ships multi-arch Docker images (linux/amd64 and linux/arm64), so a Raspberry Pi 4 or 5 works out of the box. A Pi Zero 2 W will technically run it, but for responsiveness a Pi 4 is recommended.",
+    q: t('faqs_does_self_hosted_budgero_work_on'),
+    a: t('faqs_yes_budgero_ships_multi_arch_docker'),
   },
   {
-    q: 'Does Budgero need HTTPS?',
-    a: "Yes — for any deployment beyond localhost, Budgero needs to be served over HTTPS. The zero-knowledge encryption runs in the browser via the Web Crypto API (window.crypto.subtle), which browsers only expose in secure contexts (HTTPS, or http://localhost). For LAN-wide or remote access the easiest path is a reverse proxy with automatic Let's Encrypt — Caddy is the simplest, Traefik and Nginx Proxy Manager also work well. If you'd rather skip certs entirely, Tailscale (HTTPS MagicDNS) and Cloudflare Tunnel both terminate TLS for you and require no port forwarding.",
+    q: t('faqs_does_budgero_need_https'),
+    a: t('faqs_yes_for_any_deployment_beyond_localhost'),
   },
   {
-    q: 'How do I back up my self-hosted Budgero data?',
-    a: "All data lives in a single SQLite file inside the volume you mounted. Snapshot the volume, copy the file with `docker cp`, or use any standard SQLite backup tool. Because Budgero is end-to-end encrypted on the device, even if you store backups in third-party cloud storage, the contents stay encrypted under your master password.",
+    q: t('faqs_how_do_i_back_up_my'),
+    a: t('faqs_all_data_lives_in_a_single'),
   },
   {
-    q: 'How do updates work for self-hosted Budgero?',
-    a: "Pull the latest Docker image and restart the container. Database migrations run automatically on startup. The app shows a dismissable notice when a newer release is available, but you decide when to upgrade — the running container will keep working on the version you deployed for as long as you want. The Self-Hostable changelog is published alongside Cloud releases.",
+    q: t('faqs_how_do_updates_work_for_self'),
+    a: t('faqs_pull_the_latest_docker_image_and'),
   },
   {
-    q: 'Can I run Budgero air-gapped (fully offline)?',
-    a: "Yes. There is no telemetry, no license check, no analytics. The only routine outbound call is a daily update check against budgero.app that carries the version number of your install and nothing else — set UPDATE_CHECK_DISABLED=true and it never fires, with no loss of functionality. Optional currency exchange rates (a free public dataset on the jsDelivr CDN, no API key) are the only other outbound call — and CURRENCY_API_BASE_URL can point them at your own mirror. You can run Budgero on a fully isolated network indefinitely.",
+    q: t('faqs_can_i_run_budgero_air_gapped'),
+    a: t('faqs_yes_there_is_no_telemetry_no'),
   },
   {
-    q: 'How do I import my YNAB data into self-hosted Budgero?',
-    a: "Export your YNAB budget as CSV and use the import flow inside Budgero. Categories, transactions, and account structure come across. The import preview lets you confirm before anything is written, so you can iterate until the mapping is right.",
+    q: t('faqs_how_do_i_import_my_ynab'),
+    a: t('faqs_export_your_ynab_budget_as_csv'),
   },
   {
-    q: 'What about authentication and multi-user access?',
-    a: "Self-hosted Budgero handles authentication locally. You create accounts directly on your instance, and each user has their own encrypted workspace. For households, you can run a shared instance and invite household members. There is no SSO out of the box, but the auth layer is designed so you can put it behind your own reverse proxy (Authelia, Authentik, Tailscale) if you want.",
+    q: t('faqs_what_about_authentication_and_multi_user'),
+    a: t('faqs_self_hosted_budgero_handles_authentication_local'),
   },
   {
-    q: 'Is Budgero open source?',
-    a: "Yes. Budgero is open source under the AGPL-3.0, an OSI-approved license — the same license used by Firefly III. The full source code is published on GitHub: you can read, audit, modify, self-host, redistribute — and contribute to — it; the AGPL's one condition is that if you offer a modified version over a network, you must share your modified source with its users. We are a small commercial project funded by the Cloud edition; self-hosters get a free Docker image with the full feature set, no license keys, no feature gating, and no telemetry beyond a disable-able daily update check (a version number, nothing else). Because the code is open source, your ability to keep running Budgero doesn't depend on our continued operation.",
+    q: t('faqs_is_budgero_open_source'),
+    a: t('faqs_yes_budgero_is_open_source_under'),
   },
 ];
 
@@ -164,6 +170,9 @@ export default async function SelfHostablePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('self_hostable');
+  const faqs = makeFaqs(t);
+  const whySelfHost = makeWhySelfHost(t);
+  const features = makeFeatures(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [

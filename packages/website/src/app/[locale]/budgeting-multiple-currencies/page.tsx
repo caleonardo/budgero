@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import { ArrowRight, Globe, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,10 +9,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'How to Budget with Multiple Currencies | Budgero',
-  description:
-    'A practical guide to budgeting across multiple currencies. Learn approaches for expats, digital nomads, and anyone managing money in more than one currency.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'budgeting_multiple_currencies' });
+  return withLocalizedUrls(locale, '/budgeting-multiple-currencies', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'how to budget multiple currencies',
     'budgeting as an expat',
@@ -24,77 +31,77 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/budgeting-multiple-currencies' },
   openGraph: {
-    title: 'How to Budget with Multiple Currencies | Budgero',
-    description:
-      'A practical guide to budgeting across multiple currencies for expats, nomads, and global earners.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/budgeting-multiple-currencies',
     type: 'article',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'How to Budget with Multiple Currencies | Budgero',
-    description: 'Practical guide to multi-currency budgeting for expats and digital nomads.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const approaches = [
+const makeApproaches = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    title: 'The Spreadsheet',
+    title: t('approaches_the_spreadsheet'),
     description:
-      'Convert everything to one base currency manually. Update rates weekly. Look up FX rates on Google and type them in.',
-    pros: 'Free and flexible.',
-    cons: 'Tedious, error-prone, and you will stop doing it within a month.',
+      t('approaches_convert_everything_to_one_base_currency'),
+    pros: t('approaches_free_and_flexible'),
+    cons: t('approaches_tedious_error_prone_and_you_will'),
   },
   {
-    title: 'Separate Budgets',
+    title: t('approaches_separate_budgets'),
     description:
-      'One budget per currency. Track each independently. Review them side by side.',
-    pros: 'Simple per budget.',
-    cons: 'No unified view. Cannot see total spending across currencies. Category splits are awkward.',
+      t('approaches_one_budget_per_currency_track_each'),
+    pros: t('approaches_simple_per_budget'),
+    cons: t('approaches_no_unified_view_cannot_see_total'),
   },
   {
-    title: 'A Multi-Currency App',
+    title: t('approaches_a_multi_currency_app'),
     description:
-      'Use a budgeting app that handles currencies natively. Accounts in any currency, live FX rates, unified reporting in your base currency.',
-    pros: 'Accurate, automatic, and sustainable.',
-    cons: 'Fewer app options. Most budgeting apps do not support this properly.',
+      t('approaches_use_a_budgeting_app_that_handles'),
+    pros: t('approaches_accurate_automatic_and_sustainable'),
+    cons: t('approaches_fewer_app_options_most_budgeting_apps'),
   },
 ];
 
-const checklist = [
-  'Native currency support per account, not just conversion',
-  'Live exchange rates updated automatically',
-  'Reporting that converts to your display currency',
-  'Ability to budget in your base currency while spending in others',
-  'Support for 50+ currencies minimum',
-  'Clear handling of transfers between currencies',
+const makeChecklist = (t: (key: string, values?: Record<string, string | number>) => string) => [
+  t('checklist_native_currency_support_per_account_not'),
+  t('checklist_live_exchange_rates_updated_automatically'),
+  t('checklist_reporting_that_converts_to_your_display'),
+  t('checklist_ability_to_budget_in_your_base'),
+  t('checklist_support_for_50_currencies_minimum'),
+  t('checklist_clear_handling_of_transfers_between_currencies'),
 ];
 
-const tips = [
+const makeTips = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    title: 'Pick a base currency',
+    title: t('tips_pick_a_base_currency'),
     description:
-      'Choose the currency you think in. Usually where you pay rent. All your budgeting targets should be in this currency.',
+      t('tips_choose_the_currency_you_think_in'),
   },
   {
-    title: 'Do not convert manually',
+    title: t('tips_do_not_convert_manually'),
     description:
-      'Manual FX conversion is the fastest way to burn out on budgeting. Use a tool that does it for you.',
+      t('tips_manual_fx_conversion_is_the_fastest'),
   },
   {
-    title: 'Budget for FX fluctuations',
+    title: t('tips_budget_for_fx_fluctuations'),
     description:
-      'Add a 3-5% buffer to categories affected by currency swings. This prevents your budget from breaking when rates move.',
+      t('tips_add_a_3_5_buffer_to'),
   },
   {
-    title: 'Review in one currency',
+    title: t('tips_review_in_one_currency'),
     description:
-      'Your spending reports should roll up to one display currency so you can see the real picture. Looking at separate currency totals is misleading.',
+      t('tips_your_spending_reports_should_roll_up'),
   },
   {
-    title: 'Track transfers separately',
+    title: t('tips_track_transfers_separately'),
     description:
-      'Moving money between currencies is not spending. Make sure your tool does not count FX transfers as expenses.',
+      t('tips_moving_money_between_currencies_is_not'),
   },
 ];
 
@@ -113,6 +120,9 @@ export default async function BudgetingMultipleCurrenciesPage(
 
   setRequestLocale(locale);
   const t = await getTranslations('budgeting_multiple_currencies');
+  const tips = makeTips(t);
+  const checklist = makeChecklist(t);
+  const approaches = makeApproaches(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',

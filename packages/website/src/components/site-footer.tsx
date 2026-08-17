@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { TrackedLink } from '@/components/TrackedLink';
 import { ManageCookiesButton } from '@/components/ManageCookiesButton';
 
@@ -23,8 +23,7 @@ export async function SiteFooter() {
               <span className="text-xl font-bold tracking-tight">Budgero</span>
             </div>
             <p className="text-[#404040] text-sm leading-relaxed max-w-xs">
-              Take control of your finances with smart budgeting and expense tracking. Private,
-              secure, and simple.
+              {t('footer_tagline')}
             </p>
           </div>
           <div>
@@ -32,17 +31,17 @@ export async function SiteFooter() {
             <ul className="space-y-3 text-sm text-[#4b5563]">
               <li>
                 <Link href="/#features" className="hover:text-[#141414] transition-colors">
-                  Features
+                  {t('footer_features')}
                 </Link>
               </li>
               <li>
                 <Link href="/#pricing" className="hover:text-[#141414] transition-colors">
-                  Pricing
+                  {t('footer_pricing')}
                 </Link>
               </li>
               <li>
                 <Link href="/#security" className="hover:text-[#141414] transition-colors">
-                  Security
+                  {t('footer_security')}
                 </Link>
               </li>
               <li>
@@ -55,7 +54,7 @@ export async function SiteFooter() {
                   href="/best-ynab-alternatives"
                   className="hover:text-[#141414] transition-colors"
                 >
-                  Best YNAB Alternatives
+                  {t('footer_best_alternatives')}
                 </Link>
               </li>
               <li>
@@ -63,7 +62,7 @@ export async function SiteFooter() {
                   href="/monarch-money-alternative"
                   className="hover:text-[#141414] transition-colors"
                 >
-                  Monarch Money Alternative
+                  {t('footer_monarch_alt')}
                 </Link>
               </li>
               <li>
@@ -72,17 +71,17 @@ export async function SiteFooter() {
                   event="Self-Host Link - Footer"
                   className="hover:text-[#141414] transition-colors"
                 >
-                  Self-Hostable
+                  {t('footer_self_hostable')}
                 </TrackedLink>
               </li>
               <li>
                 <Link href="/blog" className="hover:text-[#141414] transition-colors">
-                  Blog
+                  {t('nav_blog')}
                 </Link>
               </li>
               <li>
                 <a href="https://my.budgero.app" className="hover:text-[#141414] transition-colors">
-                  Try Now
+                  {t('footer_try_now')}
                 </a>
               </li>
             </ul>
@@ -92,7 +91,7 @@ export async function SiteFooter() {
             <ul className="space-y-3 text-sm text-[#4b5563]">
               <li>
                 <Link href="/docs" className="hover:text-[#141414] transition-colors">
-                  Docs
+                  {t('nav_docs')}
                 </Link>
               </li>
               <li>
@@ -102,17 +101,17 @@ export async function SiteFooter() {
                   rel="noopener noreferrer"
                   className="hover:text-[#141414] transition-colors"
                 >
-                  Feedback
+                  {t('feedback')}
                 </a>
               </li>
               <li>
                 <Link href="/privacy" className="hover:text-[#141414] transition-colors">
-                  Privacy Policy
+                  {t('footer_privacy')}
                 </Link>
               </li>
               <li>
                 <a href="mailto:hello@budgero.app" className="hover:text-[#141414] transition-colors">
-                  Contact Us
+                  {t('footer_contact')}
                 </a>
               </li>
               <li>
@@ -125,7 +124,7 @@ export async function SiteFooter() {
                   rel="noopener noreferrer"
                   className="hover:text-[#141414] transition-colors"
                 >
-                  Status
+                  {t('footer_status')}
                 </a>
               </li>
             </ul>
@@ -176,14 +175,14 @@ export async function SiteFooter() {
               </li>
               <li>
                 <Link href="/changelog" className="hover:text-[#141414] transition-colors">
-                  Changelog
+                  {t('nav_changelog')}
                 </Link>
               </li>
             </ul>
           </div>
         </div>
         <div className="border-t border-[#9e9e9e]/70 mt-16 pt-8 text-center text-sm text-[#6b7280]">
-          <p>© {new Date().getFullYear()} Budgero. All rights reserved.</p>
+          <p>{t('footer_copyright', { year: new Date().getFullYear() })}</p>
         </div>
       </div>
     </footer>

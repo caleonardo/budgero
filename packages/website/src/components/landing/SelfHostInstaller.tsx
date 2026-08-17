@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Check, Copy, ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { track } from '@/lib/analytics';
 
 type InstallMethod = 'unix' | 'windows' | 'docker';
@@ -56,6 +57,7 @@ function SyntaxHighlightedCommand({ method }: { method: InstallMethod }) {
 }
 
 export default function SelfHostInstaller() {
+  const t = useTranslations('self_hostable');
   const [selectedMethod, setSelectedMethod] = useState<InstallMethod>('unix');
   const [copied, setCopied] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -122,7 +124,7 @@ export default function SelfHostInstaller() {
           <button
             onClick={handleCopy}
             className="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-white/10 rounded transition-colors"
-            title="Copy to clipboard"
+            title={t('installer_copy')}
           >
             {copied ? (
               <Check className="w-4 h-4 text-green-500 dark:text-green-400" />
@@ -135,16 +137,9 @@ export default function SelfHostInstaller() {
 
       {/* Help text */}
       <p className="mt-6 text-sm text-gray-500">
-        {selectedMethod === 'docker' ? (
-          <>
-            Access Budgero at <code className="font-mono text-gray-600">http://localhost:3001</code>
-          </>
-        ) : (
-          <>
-            Then run <code className="font-mono text-gray-600">budgero serve</code> to start the
-            server.
-          </>
-        )}
+        {t.rich(selectedMethod === 'docker' ? 'installer_help_docker' : 'installer_help_unix', {
+          cmd: (chunks) => <code className="font-mono text-gray-600">{chunks}</code>,
+        })}
       </p>
     </div>
   );

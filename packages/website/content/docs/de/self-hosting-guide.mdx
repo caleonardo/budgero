@@ -216,7 +216,7 @@ Beim ersten Start (wenn noch keine Nutzer existieren), erstellt Budgero automati
 
 Die Multi-Währungsumrechnung funktioniert sofort — kein API-Schlüssel, keine Anmeldung. Die Kurse stammen aus dem offenen [exchange-api](https://github.com/fawazahmed0/exchange-api)-Datensatz (~350 Währungen inklusive Krypto, täglich aktualisiert) über das öffentliche jsDelivr-CDN, und dein Server cacht sie lokal, sodass wiederholte Anfragen nie deinen Rechner verlassen.
 
-If you want zero third-party calls, mirror the dataset's static JSON files (a daily cron copying `currencies/*.min.json` is enough) and point Budgero at your mirror:
+Wenn du keine Drittanbieter-Aufrufe möchtest, spiegele die statischen JSON-Dateien des Datensatzes (ein täglicher Cronjob, der `currencies/*.min.json` kopiert, reicht aus) und richte Budgero auf deinen Spiegel:
 
 ```bash
 CURRENCY_API_BASE_URL=https://rates.example.com/{date}/v1

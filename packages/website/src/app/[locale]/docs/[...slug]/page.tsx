@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import { notFound } from 'next/navigation';
 import { allGuides } from 'contentlayer/generated';
 import { ArrowLeft, ArrowRightCircle, Clock3 } from 'lucide-react';
@@ -41,23 +42,20 @@ export async function generateMetadata({
 
   const title = `${guide.title} — Budgero Docs`;
   const description = guide.summary;
-  const canonical = `https://budgero.app/docs/${guide.slug}`;
 
-  return {
+  return withLocalizedUrls(locale, `/docs/${guide.slug}`, {
     title,
     description,
-    alternates: { canonical },
     openGraph: {
       title,
       description,
-      url: canonical,
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
     },
-  };
+  });
 }
 
 export default async function GuidePage({
@@ -73,7 +71,7 @@ export default async function GuidePage({
     notFound();
   }
 
-  const badgeLabel = guide.badge ?? 'Guide';
+  const badgeLabel = guide.badge ?? t('badge_guide');
   const machineTranslated = locale !== 'en' && isTranslated(slug, locale);
 
   return (

@@ -12,286 +12,174 @@ export type DocsSection = {
   topics: DocsTopic[];
 };
 
-export const docsSections: DocsSection[] = [
+type Translator = (key: string) => string;
+
+// Copy lives in messages/*.json under "docs" so every locale gets its own registry.
+export const getDocsSections = (t: Translator): DocsSection[] => [
   {
     id: 'getting-started',
-    title: 'Getting started',
-    description:
-      'Lay the groundwork for a secure, zero-based budget. These guides help you set up the essentials so Budgero feels tailored to your household from day one.',
+    title: t('sec_getting_started_title'),
+    description: t('sec_getting_started_desc'),
     topics: [
       {
         id: 'zero-based-budgeting',
-        title: 'Zero-based budgeting',
-        summary:
-          'Connect the zero-based budgeting methodology to Budgero tools so every unit of income gets a job the moment it arrives.',
-        takeaways: [
-          'Core tenets of zero-based budgeting and why they matter',
-          'How Ready to Assign, categories, and goals implement the method',
-          'Ways Budgero reports and reconciliations keep the plan on track',
-        ],
+        title: t('top_zero_based_budgeting_title'),
+        summary: t('top_zero_based_budgeting_summary'),
+        takeaways: [t('top_zero_based_budgeting_tk1'), t('top_zero_based_budgeting_tk2'), t('top_zero_based_budgeting_tk3')],
       },
       {
         id: 'self-hosting-guide',
-        title: 'Self-Hosting Guide',
-        summary:
-          'Deploy Budgero on your own infrastructure with Docker or native binaries. Configure authentication, database, and optional integrations.',
-        takeaways: [
-          'Deploy using Docker, Docker Compose, or native binaries',
-          'Configure JWT secrets, database paths, and environment variables',
-          'Set up currency conversion API and user management',
-        ],
+        title: t('top_self_hosting_guide_title'),
+        summary: t('top_self_hosting_guide_summary'),
+        takeaways: [t('top_self_hosting_guide_tk1'), t('top_self_hosting_guide_tk2'), t('top_self_hosting_guide_tk3')],
       },
       {
         id: 'budget-currency',
-        title: 'Budget currency',
-        summary:
-          'Choose the currency that drives your dashboards, reports, and readiness to assign. Accounts in other currencies sync using Budgero’s built-in converter.',
-        takeaways: [
-          'How budget currency affects analytics and cash-flow charts',
-          'When to change the currency and what happens to historic data',
-          'Ways to handle households that earn in multiple currencies',
-        ],
+        title: t('top_budget_currency_title'),
+        summary: t('top_budget_currency_summary'),
+        takeaways: [t('top_budget_currency_tk1'), t('top_budget_currency_tk2'), t('top_budget_currency_tk3')],
       },
       {
         id: 'ready-to-assign',
-        title: 'Ready to assign',
-        summary:
-          'See how new money arrives in Budgero, how it flows into ready to assign, and how the Cumulative and Monthly (YNAB-style) modes differ.',
-        takeaways: [
-          'Choosing between Cumulative and Monthly (YNAB-style) calculation',
-          'How inflows, transfers, and reimbursements update ready to assign',
-          'Common reasons the balance might be negative and how to fix it fast',
-        ],
+        title: t('top_ready_to_assign_title'),
+        summary: t('top_ready_to_assign_summary'),
+        takeaways: [t('top_ready_to_assign_tk1'), t('top_ready_to_assign_tk2'), t('top_ready_to_assign_tk3')],
       },
       {
         id: 'personalizing-budgero',
-        title: 'Personalizing Budgero',
-        summary:
-          'Make Budgero look and behave the way you want — themes and fonts, budget table and home-page layouts, privacy mode, installing the app, and the over-assignment toggle.',
-        takeaways: [
-          'The five themes, light/dark control, and the Budgero Classic font picker',
-          'Budget table layouts for desktop and mobile, account order, and the default home page',
-          'Privacy mode, installing Budgero as an app, and the over-assignment behaviour toggle',
-        ],
+        title: t('top_personalizing_budgero_title'),
+        summary: t('top_personalizing_budgero_summary'),
+        takeaways: [t('top_personalizing_budgero_tk1'), t('top_personalizing_budgero_tk2'), t('top_personalizing_budgero_tk3')],
       },
     ],
   },
   {
     id: 'budget-basics',
-    title: 'Budget building blocks',
-    description:
-      'Learn the core mechanics of Budgero’s zero-based budgeting model, from structuring category groups to planning long-term goals.',
+    title: t('sec_budget_basics_title'),
+    description: t('sec_budget_basics_desc'),
     topics: [
       {
         id: 'category-groups',
-        title: 'Category groups',
-        summary:
-          'Structure your budget around the priorities that matter most. Group recurring bills, true expenses, and savings targets into categories that match your rhythms.',
-        takeaways: [
-          'Recommended blueprint for monthly, quarterly, and annual expenses',
-          'How groups and categories influence rollovers and reports',
-          'Creating defaults vs. building a budget from scratch',
-        ],
+        title: t('top_category_groups_title'),
+        summary: t('top_category_groups_summary'),
+        takeaways: [t('top_category_groups_tk1'), t('top_category_groups_tk2'), t('top_category_groups_tk3')],
       },
       {
         id: 'categories',
-        title: 'Categories',
-        summary:
-          'Translate real-life jobs for your money into actionable categories with clear intentions and budgets you can check at a glance.',
-        takeaways: [
-          'Setting targets and notes so teammates know the plan',
-          'When to archive vs. delete and what happens to history',
-          'Making room for seasonal spend without losing sight of fixed bills',
-        ],
+        title: t('top_categories_title'),
+        summary: t('top_categories_summary'),
+        takeaways: [t('top_categories_tk1'), t('top_categories_tk2'), t('top_categories_tk3')],
       },
       {
         id: 'goals',
-        title: 'Goals',
-        summary:
-          'Use Budgero goals to stay accountable to future spending. Dial in amounts, timelines, and funding automation that match the way you save.',
-        takeaways: [
-          'Goal types and when to use monthly vs. target date amounts',
-          'How progress bars, streaks, and reminders keep goals on track',
-          'Linking assignments and goals so funding is always intentional',
-        ],
+        title: t('top_goals_title'),
+        summary: t('top_goals_summary'),
+        takeaways: [t('top_goals_tk1'), t('top_goals_tk2'), t('top_goals_tk3')],
       },
       {
         id: 'assign-money',
-        title: 'Assigning money',
-        summary:
-          'Follow the workflow for moving funds from ready to assign into the categories that need them, with tips for smoothing out cash-flow dips.',
-        takeaways: [
-          'Keyboard shortcuts and multi-select for power users',
-          'Resolving overspending and reclaiming funds after returns',
-          'Balancing long-term goals with urgent, short-term needs',
-        ],
+        title: t('top_assign_money_title'),
+        summary: t('top_assign_money_summary'),
+        takeaways: [t('top_assign_money_tk1'), t('top_assign_money_tk2'), t('top_assign_money_tk3')],
       },
     ],
   },
   {
     id: 'accounts-and-imports',
-    title: 'Accounts & imports',
-    description:
-      'Keep every account in sync and understand how Budgero treats historical data so your reports always reflect reality across currencies.',
+    title: t('sec_accounts_and_imports_title'),
+    description: t('sec_accounts_and_imports_desc'),
     topics: [
       {
         id: 'accounts',
-        title: 'Accounts',
-        summary:
-          'Add checking, savings, cash, credit, and investment accounts with confidence. Learn how balances, currencies, and reconciliation work together.',
-        takeaways: [
-          'Choosing the right account types for tracking accuracy',
-          'Managing multi-currency budgets with live conversion rates',
-          'Reconciliation workflow and how to fix mismatched balances',
-        ],
+        title: t('top_accounts_title'),
+        summary: t('top_accounts_summary'),
+        takeaways: [t('top_accounts_tk1'), t('top_accounts_tk2'), t('top_accounts_tk3')],
       },
       {
         id: 'multi-currency',
-        title: 'Multi-currency',
-        summary:
-          'Hold accounts in 168 currencies inside one budget. Learn how conversion works, where rates come from, and how to override them when reality disagrees.',
-        takeaways: [
-          'How every foreign transaction stores both an original and a converted amount',
-          'The rate hierarchy: per-transaction overrides, custom rates, fetched rates, manual rates',
-          'Workflows for matching statements, travel spending, and offline budgeting',
-        ],
+        title: t('top_multi_currency_title'),
+        summary: t('top_multi_currency_summary'),
+        takeaways: [t('top_multi_currency_tk1'), t('top_multi_currency_tk2'), t('top_multi_currency_tk3')],
       },
       {
         id: 'debt-tracking',
-        title: 'Debt tracking',
-        summary:
-          'Track credit cards, loans, and mortgages in Budgero. Learn how each debt type affects your budget differently and how to pay down debt intentionally.',
-        takeaways: [
-          'Understand how credit cards differ from loans and mortgages',
-          'Learn why credit card payments are budget-neutral while loan payments count as spending',
-          'Master debt payoff by budgeting for loan categories',
-        ],
+        title: t('top_debt_tracking_title'),
+        summary: t('top_debt_tracking_summary'),
+        takeaways: [t('top_debt_tracking_tk1'), t('top_debt_tracking_tk2'), t('top_debt_tracking_tk3')],
       },
       {
         id: 'ynab-import',
-        title: 'YNAB import',
-        summary:
-          'Import your YNAB data without losing momentum. Understand what comes over, how Budgero handles goals, and how onboarding changes for existing budgets.',
-        takeaways: [
-          'Data types we import automatically vs. what stays in YNAB',
-          'Mapping categories, accounts, and assignments for a clean start',
-          'Marking onboarding complete and skipping redundant steps',
-        ],
+        title: t('top_ynab_import_title'),
+        summary: t('top_ynab_import_summary'),
+        takeaways: [t('top_ynab_import_tk1'), t('top_ynab_import_tk2'), t('top_ynab_import_tk3')],
       },
       {
         id: 'csv-import',
-        title: 'CSV import & export',
-        summary:
-          'Bring in transaction history from your banks or accounting system and export backups you can use for tax season or deeper analysis.',
-        takeaways: [
-          'Formatting CSV columns so Budgero recognizes payees and notes',
-          'Avoiding duplicate transactions when combining with manual entry',
-          'Exporting filtered reports for accountants and stakeholders',
-        ],
+        title: t('top_csv_import_title'),
+        summary: t('top_csv_import_summary'),
+        takeaways: [t('top_csv_import_tk1'), t('top_csv_import_tk2'), t('top_csv_import_tk3')],
       },
     ],
   },
   {
     id: 'collaboration',
-    title: 'Collaboration & privacy',
-    description:
-      'Share budgets with your household while keeping zero-knowledge promises intact. Learn how permissions and encryption safeguards your data.',
+    title: t('sec_collaboration_title'),
+    description: t('sec_collaboration_desc'),
     topics: [
       {
         id: 'master-password',
-        title: 'Master password',
-        summary:
-          'Understand why your master password never leaves your device and learn best practices for keeping it safe and memorable.',
-        takeaways: [
-          'Why Budgero uses zero-knowledge encryption',
-          'How to create a strong passphrase that you will still remember',
-          'What to do if you want to rotate the master password later',
-        ],
+        title: t('top_master_password_title'),
+        summary: t('top_master_password_summary'),
+        takeaways: [t('top_master_password_tk1'), t('top_master_password_tk2'), t('top_master_password_tk3')],
       },
       {
         id: 'sharing',
-        title: 'Sharing budgets',
-        summary:
-          'Invite partners or teammates, assign roles, and stay in sync without sacrificing control over sensitive information.',
-        takeaways: [
-          'Role-based access and what each role can edit or approve',
-          'Auditing changes with activity history and notification settings',
-          'How encryption keys are shared securely between members',
-        ],
+        title: t('top_sharing_title'),
+        summary: t('top_sharing_summary'),
+        takeaways: [t('top_sharing_tk1'), t('top_sharing_tk2'), t('top_sharing_tk3')],
       },
       {
         id: 'security',
-        title: 'Security model',
-        summary:
-          'Dig into Budgero’s end-to-end encryption design, master password safeguards, and how we keep support hands off your raw financial data.',
-        takeaways: [
-          'How encryption keys are derived and stored locally',
-          'What metadata the server can see and what stays client-side',
-          'Steps we take to keep your data safe even if you lose a device',
-        ],
+        title: t('top_security_title'),
+        summary: t('top_security_summary'),
+        takeaways: [t('top_security_tk1'), t('top_security_tk2'), t('top_security_tk3')],
       },
       {
         id: 'offline',
-        title: 'Offline mode',
-        summary:
-          'Budget on flights or rural getaways. Understand how Budgero queues changes, resolves conflicts, and keeps ledgers consistent once you reconnect.',
-        takeaways: [
-          'How offline edits are synced and merged automatically',
-          'Best practices when multiple people go offline simultaneously',
-          'What to expect with attachment uploads and large imports offline',
-        ],
+        title: t('top_offline_title'),
+        summary: t('top_offline_summary'),
+        takeaways: [t('top_offline_tk1'), t('top_offline_tk2'), t('top_offline_tk3')],
       },
     ],
   },
   {
     id: 'integrations',
-    title: 'Integrations & API',
-    description:
-      'Automate Budgero by sending encrypted transactions from other systems. Use the Push API to keep your budget up to date without manual imports.',
+    title: t('sec_integrations_title'),
+    description: t('sec_integrations_desc'),
     topics: [
       {
         id: 'recurring-transactions',
-        title: 'Recurring transactions',
-        summary:
-          'Plan bills, paycheques, and future spending before they happen — recurring schedules with reminders, future-dated one-offs, and the dashboard card that shows both.',
-        takeaways: [
-          'How recurring templates, occurrences, and the Mark ready flow work together',
-          'Scheduling a one-off future transaction straight from the transaction form',
-          'What the dashboard Upcoming transactions card shows and how far it looks ahead',
-        ],
+        title: t('top_recurring_transactions_title'),
+        summary: t('top_recurring_transactions_summary'),
+        takeaways: [t('top_recurring_transactions_tk1'), t('top_recurring_transactions_tk2'), t('top_recurring_transactions_tk3')],
       },
       {
         id: 'rules-engine',
-        title: 'Rules Engine',
-        summary:
-          'Automate transaction cleanup with rules — match on payee, memo, amount, or account, then categorize, rename, and adjust automatically.',
-        takeaways: [
-          'The three rule modes — Continuous, One Time, and Autofill — and when each runs',
-          'Every condition and action available, and how multiple rules combine',
-          'Retro runs, run history, and the one-click undo safety net',
-        ],
+        title: t('top_rules_engine_title'),
+        summary: t('top_rules_engine_summary'),
+        takeaways: [t('top_rules_engine_tk1'), t('top_rules_engine_tk2'), t('top_rules_engine_tk3')],
       },
       {
         id: 'push-api',
-        title: 'Push API',
-        summary:
-          'Send encrypted transactions directly into your budget via a bearer token and queue that deduplicates requests with message IDs.',
-        takeaways: [
-          'Generate a Push API token and export your encryption key from Settings > Integrations > Push API',
-          'Encrypt a transactions.add payload (or let the Python SDK handle it) and POST it to /api/v1/push',
-          'Monitor the push queue and stats from the app or via the SDK to confirm processing',
-        ],
+        title: t('top_push_api_title'),
+        summary: t('top_push_api_summary'),
+        takeaways: [t('top_push_api_tk1'), t('top_push_api_tk2'), t('top_push_api_tk3')],
       },
       {
         id: 'push-api-email-bridge',
-        title: 'Email bridge (no coding)',
-        summary:
-          'Set up a local, zero-knowledge bridge that reads bank alert emails and pushes transactions into Budgero without sharing bank credentials.',
-        takeaways: [
-          'Install Python/VS Code, create a .env with your email app password and Budgero Push API credentials',
-          'Use the starter bridge script plus AI-generated parsing to map your bank’s emails into transactions',
-          'Test in dry-run mode, then automate daily to keep Budgero updated privately',
-        ],
+        title: t('top_push_api_email_bridge_title'),
+        summary: t('top_push_api_email_bridge_summary'),
+        takeaways: [t('top_push_api_email_bridge_tk1'), t('top_push_api_email_bridge_tk2'), t('top_push_api_email_bridge_tk3')],
       },
     ],
   },

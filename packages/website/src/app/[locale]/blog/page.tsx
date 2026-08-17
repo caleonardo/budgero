@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { PenLine, Sparkles, SquareLibrary } from 'lucide-react';
 import { allPosts } from 'contentlayer/generated';
@@ -8,10 +9,18 @@ import { allPosts } from 'contentlayer/generated';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export const metadata: Metadata = {
-  title: 'Blog',
-  description: 'Articles and updates from Budgero.',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'blog' });
+  return withLocalizedUrls(locale, '/blog', {
+  title: t('meta_title'),
+  description: t('meta_description'),
+});
+}
 
 export default async function BlogPage(
   {

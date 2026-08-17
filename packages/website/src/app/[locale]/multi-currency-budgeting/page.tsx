@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import {
   ArrowRight,
   Globe,
@@ -18,10 +19,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Multi-Currency Budgeting App for Expats | Budgero',
-  description:
-    'Budget in USD, EUR, GBP, and 100+ currencies in one app. Live FX rates, zero-knowledge encryption, and zero-based budgeting built for multi-currency lives.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'multi_currency_budgeting' });
+  return withLocalizedUrls(locale, '/multi-currency-budgeting', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'multi currency budgeting',
     'budgeting app multiple currencies',
@@ -34,64 +41,64 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/multi-currency-budgeting' },
   openGraph: {
-    title: 'Multi-Currency Budgeting App for Expats | Budgero',
-    description:
-      'Budget in USD, EUR, GBP, and 100+ currencies in one app. Live FX rates and zero-based budgeting.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/multi-currency-budgeting',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Multi-Currency Budgeting App for Expats | Budgero',
-    description: 'One budget, every currency. 100+ currencies with live FX rates.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const features = [
+const makeFeatures = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
     icon: Globe,
-    title: 'Any Currency, One Budget',
+    title: t('features_any_currency_one_budget'),
     description:
-      'Create accounts in USD, EUR, GBP, JPY, or any of 100+ supported currencies. They all live in one budget with one set of categories.',
+      t('features_create_accounts_in_usd_eur_gbp'),
   },
   {
     icon: TrendingUp,
-    title: 'Live Exchange Rates',
+    title: t('features_live_exchange_rates'),
     description:
-      'Budgero fetches live FX rates automatically. Your reports and totals convert to your display currency in real time. No manual math.',
+      t('features_budgero_fetches_live_fx_rates_automatically'),
   },
   {
     icon: Wallet,
-    title: 'Budget in Your Base Currency',
+    title: t('features_budget_in_your_base_currency'),
     description:
-      'Set your preferred currency for budgeting. Assign amounts in your base currency even when spending in others. Budgero handles the conversion.',
+      t('features_set_your_preferred_currency_for_budgeting'),
   },
 ];
 
-const personas = [
+const makePersonas = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
     icon: Plane,
     title: 'Expats',
     description:
-      'You earn in one country and live in another. Your salary arrives in EUR but your groceries are in PLN. Budgero keeps it all in one place.',
+      t('personas_you_earn_in_one_country_and'),
   },
   {
     icon: Globe,
-    title: 'Digital Nomads',
+    title: t('personas_digital_nomads'),
     description:
-      'Different country every few months means different currencies. Stop starting over with each move.',
+      t('personas_different_country_every_few_months_means'),
   },
   {
     icon: Briefcase,
     title: 'Freelancers',
     description:
-      'You invoice in USD but live in Europe. Track what you earn and what you spend without currency confusion.',
+      t('personas_you_invoice_in_usd_but_live'),
   },
   {
     icon: Users,
-    title: 'Multi-Country Households',
+    title: t('personas_multi_country_households'),
     description:
-      'Partner in one country, you in another. One shared budget with 5 included seats, every currency accounted for.',
+      t('personas_partner_in_one_country_you_in'),
   },
 ];
 
@@ -110,6 +117,8 @@ export default async function MultiCurrencyBudgetingPage(
 
   setRequestLocale(locale);
   const t = await getTranslations('multi_currency_budgeting');
+  const personas = makePersonas(t);
+  const features = makeFeatures(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',

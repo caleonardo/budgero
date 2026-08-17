@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import { ArrowRight, Check, X, Download, Globe, Shield, Euro } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +11,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'YNAB Alternative for Europe — Hosted in Finland | Budgero',
-  description: `The YNAB alternative built for Europe. EUR, GBP, CHF, PLN and 168 currencies in one budget, end-to-end encrypted, data hosted in Finland, and no telemetry unless you allow it. From ${pricing.monthly}/mo. 35-day free trial.`,
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'ynab_alternative_europe' });
+  return withLocalizedUrls(locale, '/ynab-alternative-europe', {
+  title: t('meta_title'),
+  description: t('meta_description', { monthly: pricing.monthly, yearly: pricing.yearly, yearlyEquivMonthly: pricing.yearlyEquivMonthly }),
   keywords: [
     'ynab alternative europe',
     'ynab alternative eu',
@@ -31,183 +39,185 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/ynab-alternative-europe' },
   openGraph: {
-    title: 'YNAB Alternative for Europe — Hosted in Finland | Budgero',
-    description:
-      'The YNAB alternative built for Europe. EUR, GBP, CHF, PLN and 168 currencies in one budget, end-to-end encrypted, data hosted in Finland, no telemetry unless you allow it.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/ynab-alternative-europe',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'YNAB Alternative for Europe — Hosted in Finland | Budgero',
-    description:
-      'EUR, GBP, CHF and 168 currencies in one budget. End-to-end encrypted, hosted in Finland, no telemetry by default.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Works across Europe',
+    feature: t('comparisonData_works_across_europe'),
     budgero: true,
-    ynab: 'Partial',
-    budgeroNote: 'Every country, every currency',
-    ynabNote: 'UK/EU bank sync via Plaid only (select banks)',
+    ynab: t('cell_partial'),
+    budgeroNote: t('comparisonData_every_country_every_currency'),
+    ynabNote: t('comparisonData_uk_eu_bank_sync_via_plaid'),
   },
   {
-    feature: 'Multi-currency in one budget',
-    budgero: '168 currencies',
+    feature: t('comparisonData_multi_currency_in_one_budget'),
+    budgero: t('comparisonData_168_currencies'),
     ynab: false,
-    budgeroNote: 'EUR, GBP, CHF, PLN, SEK, NOK + live FX',
-    ynabNote: 'One currency per budget, no conversion',
+    budgeroNote: t('comparisonData_eur_gbp_chf_pln_sek_nok'),
+    ynabNote: t('comparisonData_one_currency_per_budget_no_conversion'),
   },
   {
-    feature: 'Annual price',
+    feature: t('comparisonData_annual_price'),
     budgero: `${pricing.yearly}/year`,
-    ynab: '$109/year (~€100)',
-    budgeroNote: 'Or free with Self-Host',
+    ynab: t('comparisonData_109_year_100'),
+    budgeroNote: t('comparisonData_or_free_with_self_host'),
     ynabNote: null,
   },
   {
-    feature: 'Where your data lives',
-    budgero: 'Finland 🇫🇮',
-    ynab: 'United States',
-    budgeroNote: 'EU jurisdiction, zero-knowledge encrypted',
-    ynabNote: 'US servers, subject to US data law',
+    feature: t('comparisonData_where_your_data_lives'),
+    budgero: t('comparisonData_finland'),
+    ynab: t('comparisonData_united_states'),
+    budgeroNote: t('comparisonData_eu_jurisdiction_zero_knowledge_encrypted'),
+    ynabNote: t('comparisonData_us_servers_subject_to_us_data'),
   },
   {
-    feature: 'Telemetry & tracking',
-    budgero: 'Opt-in only',
+    feature: t('comparisonData_telemetry_tracking'),
+    budgero: t('comparisonData_opt_in_only'),
     ynab: true,
-    budgeroNote: 'No telemetry unless you explicitly allow it',
-    ynabNote: 'Third-party analytics by default',
+    budgeroNote: t('comparisonData_no_telemetry_unless_you_explicitly_allow'),
+    ynabNote: t('comparisonData_third_party_analytics_by_default'),
   },
   {
-    feature: 'End-to-end encryption',
+    feature: t('comparisonData_end_to_end_encryption'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'AES-256-GCM, zero-knowledge',
-    ynabNote: 'Plaintext on their servers',
+    budgeroNote: t('comparisonData_aes_256_gcm_zero_knowledge'),
+    ynabNote: t('comparisonData_plaintext_on_their_servers'),
   },
   {
-    feature: 'Offline mode',
+    feature: t('comparisonData_offline_mode'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'PWA works fully offline',
-    ynabNote: 'Requires internet',
+    budgeroNote: t('comparisonData_pwa_works_fully_offline'),
+    ynabNote: t('comparisonData_requires_internet'),
   },
   {
-    feature: 'Billing in your currency',
+    feature: t('comparisonData_billing_in_your_currency'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'VAT-compliant EU invoicing',
-    ynabNote: 'USD-only charges',
+    budgeroNote: t('comparisonData_vat_compliant_eu_invoicing'),
+    ynabNote: t('comparisonData_usd_only_charges'),
   },
   {
-    feature: 'Zero-based budgeting',
+    feature: t('comparisonData_zero_based_budgeting'),
     budgero: true,
     ynab: true,
     budgeroNote: null,
     ynabNote: null,
   },
   {
-    feature: 'YNAB data import',
+    feature: t('comparisonData_ynab_data_import'),
     budgero: true,
     ynab: 'N/A',
-    budgeroNote: 'Full categories, transactions, history',
+    budgeroNote: t('comparisonData_full_categories_transactions_history'),
     ynabNote: null,
   },
   {
-    feature: 'Self-host option',
+    feature: t('comparisonData_self_host_option'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'Docker, your EU server',
+    budgeroNote: t('comparisonData_docker_your_eu_server'),
     ynabNote: null,
   },
 ];
 
-const euBankingExamples = [
+const makeEuBankingExamples = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    country: 'Germany',
+    country: t('cell_germany'),
     flag: '🇩🇪',
-    banks: 'N26, DKB, Deutsche Bank, ING, Commerzbank',
-    pain: 'YNAB\u2019s Plaid sync covers only select German banks — N26, DKB, and regional Sparkassen still mean manual CSV.',
+    banks: t('euBankingExamples_n26_dkb_deutsche_bank_ing_commerzbank'),
+    pain: t('euBankingExamples_ynab_s_plaid_sync_covers_only'),
   },
   {
-    country: 'United Kingdom',
+    country: t('euBankingExamples_united_kingdom'),
     flag: '🇬🇧',
-    banks: 'Monzo, Revolut, Starling, HSBC, Lloyds',
-    pain: 'YNAB returned in 2024–25 via Plaid, but Starling and Lloyds are still outside coverage — and billing stays in USD.',
+    banks: t('euBankingExamples_monzo_revolut_starling_hsbc_lloyds'),
+    pain: t('euBankingExamples_ynab_returned_in_2024_25_via'),
   },
   {
-    country: 'Netherlands',
+    country: t('cell_netherlands'),
     flag: '🇳🇱',
-    banks: 'ING, ABN AMRO, Rabobank, Bunq',
-    pain: 'Plaid coverage is spotty and iDEAL-linked transfers rarely show up correctly.',
+    banks: t('euBankingExamples_ing_abn_amro_rabobank_bunq'),
+    pain: t('euBankingExamples_plaid_coverage_is_spotty_and_ideal'),
   },
   {
-    country: 'Switzerland',
+    country: t('cell_switzerland'),
     flag: '🇨🇭',
-    banks: 'UBS, Raiffeisen, PostFinance, Revolut CH',
-    pain: 'CHF is not a first-class citizen in YNAB. Manual FX conversion every time.',
+    banks: t('euBankingExamples_ubs_raiffeisen_postfinance_revolut_ch'),
+    pain: t('euBankingExamples_chf_is_not_a_first_class'),
   },
   {
-    country: 'Nordics',
+    country: t('cell_nordics'),
     flag: '🇸🇪',
-    banks: 'Swedbank, Nordea, SEB, DNB',
-    pain: 'SEK and NOK are not supported as budget currencies alongside EUR.',
+    banks: t('euBankingExamples_swedbank_nordea_seb_dnb'),
+    pain: t('euBankingExamples_sek_and_nok_are_not_supported'),
   },
   {
-    country: 'Central Europe',
+    country: t('euBankingExamples_central_europe'),
     flag: '🇵🇱',
-    banks: 'mBank, PKO BP, Revolut, ING PL',
-    pain: 'PLN, CZK, HUF are second-class currencies in most US-built apps.',
+    banks: t('euBankingExamples_mbank_pko_bp_revolut_ing_pl'),
+    pain: t('euBankingExamples_pln_czk_huf_are_second_class'),
   },
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'Does Budgero work across Europe?',
-    a: "Yes. Budgero works in every EU country plus the UK, Switzerland, Norway, and Iceland. The app, billing, onboarding, and support are all built without US-centric assumptions. Our users are concentrated across Germany, the UK, the Netherlands, France, Spain, Poland, and Sweden.",
+    q: t('faqs_does_budgero_work_across_europe'),
+    a: t('faqs_yes_budgero_works_in_every_eu'),
   },
   {
-    q: 'Is Budgero GDPR-compliant?',
-    a: "Yes — structurally, not just on paper. Your data is hosted in Finland under EU jurisdiction, and it is encrypted on your device before it ever reaches our servers, so we literally cannot decrypt it. There is no sensitive personal data for us to expose, lose, or be compelled to hand over, and no telemetry runs unless you explicitly enable it. You can also self-host on your own EU infrastructure if you prefer full data sovereignty.",
+    q: t('faqs_is_budgero_gdpr_compliant'),
+    a: t('faqs_yes_structurally_not_just_on_paper'),
   },
   {
-    q: 'What happened to YNAB in the UK and Europe?',
-    a: "YNAB officially withdrew from the UK in 2022, citing the cost of maintaining UK-specific features. In 2024\u201325 it returned via Plaid's Open Banking integration — UK users can now link select banks (Revolut, Monzo, Nationwide, NatWest, HSBC, American Express and others) and import transactions directly. Coverage is real but selective: many UK and EU banks are still outside Plaid's supported list, billing remains in USD, there is still no multi-currency support, EU-specific flows like SEPA direct debits or iDEAL-linked transfers don't map cleanly, and VAT-compliant invoicing isn't offered. So YNAB works in the UK again, it just doesn't work the way most European households need it to.",
+    q: t('faqs_what_happened_to_ynab_in_the'),
+    a: t('faqs_ynab_officially_withdrew_from_the_uk'),
   },
   {
-    q: 'Can I budget in EUR, GBP, and other European currencies?',
-    a: `Yes. Budgero supports 168 currencies natively — EUR, GBP, CHF, PLN, SEK, NOK, DKK, CZK, HUF, RON, HRK, BGN and more. You can hold accounts in multiple currencies simultaneously, see your total net worth in your home currency, and assign budget amounts across currencies. Live exchange rates update automatically.`,
+    q: t('faqs_can_i_budget_in_eur_gbp'),
+    a: t('faqs_yes_budgero_supports_168_currencies'),
   },
   {
-    q: 'How much does Budgero cost in euros?',
-    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year. At current rates that is roughly €3.50/month or €30/year — about a third of what YNAB charges, tax included. Payments run through Lemon Squeezy, our merchant of record, which handles VAT and issues proper VAT-compliant invoices for freelancers and businesses. If you prefer to not pay anything, Budgero Self-Host is free forever on your own server.`,
+    q: t('faqs_how_much_does_budgero_cost_in'),
+    a: t('faqs_budgero_cloud_is_monthly_month_or', {
+      monthly: pricing.monthly,
+      yearly: pricing.yearly
+    }),
   },
   {
-    q: 'Can I get a VAT invoice?',
-    a: "Yes. Every payment generates a VAT-compliant invoice downloadable from your account. For freelancers and small businesses across the EU, this means Budgero is properly deductible as a business expense. YNAB does not issue VAT invoices by default.",
+    q: t('faqs_can_i_get_a_vat_invoice'),
+    a: t('faqs_yes_every_payment_generates_a_vat'),
   },
   {
-    q: 'Can I import my YNAB budget?',
-    a: 'Yes. Budgero imports YNAB export files directly. Categories, transactions, budget groups, and accounts come across intact. The process takes about 5 minutes. Your years of YNAB history are preserved.',
+    q: t('faqs_can_i_import_my_ynab_budget'),
+    a: t('faqs_yes_budgero_imports_ynab_export_files'),
   },
   {
-    q: 'Does Budgero connect to European banks?',
-    a: "No, and that is deliberate. Automatic bank sync requires sharing your banking credentials with a third-party aggregator like Plaid or Tink. Budgero is manual-first: you either enter transactions yourself or import a CSV from your bank. This keeps your credentials under your control and is part of why Budgero can offer true end-to-end encryption. If automatic bank sync is a dealbreaker, Budgero is not the right choice.",
+    q: t('faqs_does_budgero_connect_to_european_banks'),
+    a: t('faqs_no_and_that_is_deliberate_automatic'),
   },
   {
-    q: 'Where is my data stored?',
-    a: "In Finland. Budgero Cloud runs on EU infrastructure under EU jurisdiction — your encrypted data never sits on US servers. And because it is encrypted on your device with a key we never see, even we cannot read it where it sits. If you want full control over hosting location, Budgero Self-Host lets you run the same app on your own server with Docker in under an hour.",
+    q: t('faqs_where_is_my_data_stored'),
+    a: t('faqs_in_finland_budgero_cloud_runs_on'),
   },
   {
-    q: 'Does Budgero work offline?',
-    a: "Yes. Budgero is a Progressive Web App with full offline support. Add transactions on a train without signal, review your budget on a flight, or keep your data off the network entirely. Everything syncs automatically when you reconnect.",
+    q: t('faqs_does_budgero_work_offline'),
+    a: t('faqs_yes_budgero_is_a_progressive_web'),
   },
   {
-    q: 'Does Budgero collect telemetry or usage analytics?',
-    a: 'Not unless you explicitly allow it. By default the app sends no telemetry, no usage tracking, and no analytics events. If you opt in, anonymized diagnostics help us fix bugs — and you can turn it off again at any time.',
+    q: t('faqs_does_budgero_collect_telemetry_or_usage'),
+    a: t('faqs_not_unless_you_explicitly_allow_it'),
   },
 ];
 
@@ -253,6 +263,9 @@ export default async function YnabAlternativeEuropePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('ynab_alternative_europe');
+  const faqs = makeFaqs(t);
+  const euBankingExamples = makeEuBankingExamples(t);
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [

@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import { ArrowRight, Check, X, Shield, Globe, BarChart3, Paintbrush } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,10 +10,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Goodbudget Alternative - Encrypted Envelope Budgeting | Budgero',
-  description:
-    'Looking for a Goodbudget alternative? Budgero offers envelope budgeting with zero-knowledge encryption, 168 currencies, modern UI, and powerful reporting.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'goodbudget_alternative' });
+  return withLocalizedUrls(locale, '/goodbudget-alternative', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'goodbudget alternative',
     'goodbudget replacement',
@@ -23,97 +30,96 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/goodbudget-alternative' },
   openGraph: {
-    title: 'Goodbudget Alternative - Encrypted Envelope Budgeting | Budgero',
-    description:
-      'Looking for a Goodbudget alternative? Budgero offers envelope budgeting with zero-knowledge encryption, 168 currencies, modern UI, and powerful reporting.',
+    title: t('meta_title'),
+    description: t('meta_description'),
     url: 'https://budgero.app/goodbudget-alternative',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Goodbudget Alternative - Encrypted Envelope Budgeting | Budgero',
-    description:
-      'Looking for a Goodbudget alternative? Budgero offers envelope budgeting with zero-knowledge encryption, 168 currencies, modern UI, and powerful reporting.',
+    title: t('meta_title'),
+    description: t('meta_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Annual price',
+    feature: t('comparisonData_annual_price'),
     budgero: `${pricing.yearly}/year`,
     goodbudget: '$70/year',
-    budgeroNote: 'Or free with Self-Host',
-    goodbudgetNote: 'Plus plan; free tier available',
+    budgeroNote: t('comparisonData_or_free_with_self_host'),
+    goodbudgetNote: t('comparisonData_plus_plan_free_tier_available'),
   },
   {
-    feature: 'Envelope / zero-based method',
+    feature: t('comparisonData_envelope_zero_based_method'),
     budgero: true,
     goodbudget: true,
     budgeroNote: null,
     goodbudgetNote: null,
   },
   {
-    feature: 'Zero-knowledge encryption',
+    feature: t('comparisonData_zero_knowledge_encryption'),
     budgero: true,
     goodbudget: false,
-    budgeroNote: 'We cannot see your data',
-    goodbudgetNote: 'Standard server-side storage',
+    budgeroNote: t('comparisonData_we_cannot_see_your_data'),
+    goodbudgetNote: t('comparisonData_standard_server_side_storage'),
   },
   {
-    feature: 'Bank sync',
+    feature: t('comparisonData_bank_sync'),
     budgero: false,
     goodbudget: false,
     budgeroNote: null,
     goodbudgetNote: null,
   },
   {
-    feature: 'Multi-currency support',
+    feature: t('comparisonData_multi_currency_support'),
     budgero: true,
     goodbudget: false,
-    budgeroNote: '168 currencies, live FX rates',
-    goodbudgetNote: 'Single currency only',
+    budgeroNote: t('comparisonData_168_currencies_live_fx_rates'),
+    goodbudgetNote: t('comparisonData_single_currency_only'),
   },
   {
-    feature: 'Works offline',
+    feature: t('comparisonData_works_offline'),
     budgero: true,
     goodbudget: true,
     budgeroNote: null,
     goodbudgetNote: null,
   },
   {
-    feature: 'Shared budgets',
+    feature: t('comparisonData_shared_budgets'),
     budgero: true,
     goodbudget: true,
-    budgeroNote: '5 seats included',
-    goodbudgetNote: 'Sync between partners',
+    budgeroNote: t('comparisonData_5_seats_included'),
+    goodbudgetNote: t('comparisonData_sync_between_partners'),
   },
   {
-    feature: 'Reporting & analytics',
+    feature: t('comparisonData_reporting_analytics'),
     budgero: 'Advanced',
     goodbudget: 'Basic',
-    budgeroNote: 'Spending breakdowns, net worth, trends',
-    goodbudgetNote: 'Simple spending reports',
+    budgeroNote: t('comparisonData_spending_breakdowns_net_worth_trends'),
+    goodbudgetNote: t('comparisonData_simple_spending_reports'),
   },
   {
-    feature: 'Mobile app',
+    feature: t('comparisonData_mobile_app'),
     budgero: 'PWA',
-    goodbudget: 'Native',
-    budgeroNote: 'Works on any device via browser',
-    goodbudgetNote: 'iOS and Android apps',
+    goodbudget: t('cell_native'),
+    budgeroNote: t('comparisonData_works_on_any_device_via_browser'),
+    goodbudgetNote: t('comparisonData_ios_and_android_apps'),
   },
   {
-    feature: 'Self-host option',
+    feature: t('comparisonData_self_host_option'),
     budgero: true,
     goodbudget: false,
-    budgeroNote: 'Full features, free forever',
+    budgeroNote: t('comparisonData_full_features_free_forever'),
     goodbudgetNote: null,
   },
   {
-    feature: 'CSV / data import',
+    feature: t('comparisonData_csv_data_import'),
     budgero: true,
     goodbudget: true,
-    budgeroNote: 'CSV, PDF, YNAB import',
-    goodbudgetNote: 'CSV import',
+    budgeroNote: t('comparisonData_csv_pdf_ynab_import'),
+    goodbudgetNote: t('comparisonData_csv_import'),
   },
 ];
 
@@ -132,6 +138,7 @@ export default async function GoodbudgetAlternativePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('goodbudget_alternative');
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',

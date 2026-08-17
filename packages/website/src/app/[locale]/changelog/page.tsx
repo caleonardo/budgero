@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import type { ComponentType } from 'react';
 import {
   ArrowRight,
@@ -18,54 +19,63 @@ import { cn } from '@/lib/utils';
 
 const latestEntry = changelogEntries.find((entry) => entry.isLatest) ?? changelogEntries[0];
 
-export const metadata: Metadata = {
-  title: "What's New in Budgero - Changelog",
-  description: 'Read the latest updates, features, and bug fixes for Budgero.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'changelog' });
+  return withLocalizedUrls(locale, '/changelog', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   alternates: {
     canonical: 'https://budgero.app/changelog',
   },
   openGraph: {
-    title: "What's New in Budgero - Changelog",
-    description: 'Read the latest updates, features, and bug fixes for Budgero.',
+    title: t('meta_title'),
+    description: t('meta_description'),
     url: 'https://budgero.app/changelog',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "What's New in Budgero - Changelog",
-    description: 'Read the latest updates, features, and bug fixes for Budgero.',
+    title: t('meta_title'),
+    description: t('meta_description'),
   },
-};
+});
+}
 
-const typeMeta: Record<
-  ChangelogItemType,
-  { label: string; className: string; icon: ComponentType<{ className?: string }> }
-> = {
+const makeTypeMeta = (t: (key: string, values?: Record<string, string | number>) => string) => ({
   new: {
     label: 'New',
-    className: 'border-border/60 bg-muted/40 text-foreground',
+    className: t('typeMeta_border_border_60_bg_muted_40'),
     icon: Sparkles,
   },
+
   improved: {
     label: 'Improved',
-    className: 'border-border/60 bg-muted/40 text-foreground',
+    className: t('typeMeta_border_border_60_bg_muted_40'),
     icon: ArrowUpRight,
   },
+
   fixed: {
     label: 'Fixed',
-    className: 'border-border/60 bg-muted/40 text-foreground',
+    className: t('typeMeta_border_border_60_bg_muted_40'),
     icon: Wrench,
   },
+
   'coming-soon': {
-    label: 'Coming soon',
-    className: 'border-border/60 bg-muted/40 text-foreground',
+    label: t('typeMeta_coming_soon'),
+    className: t('typeMeta_border_border_60_bg_muted_40'),
     icon: Clock3,
   },
+
   deprecated: {
     label: 'Deprecated',
-    className: 'border-border/60 bg-muted/40 text-foreground',
+    className: t('typeMeta_border_border_60_bg_muted_40'),
     icon: Archive,
-  },
-};
+  }
+});
 
 export default async function ChangelogPage(
   {
@@ -82,6 +92,7 @@ export default async function ChangelogPage(
 
   setRequestLocale(locale);
   const t = await getTranslations('changelog');
+  const typeMeta = makeTypeMeta(t);
   return (
     <main className="bg-background text-foreground">
       <section className="border-b border-border/60 bg-muted/30">

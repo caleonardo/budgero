@@ -1,50 +1,15 @@
 import { Star } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { pricing } from '@/lib/pricing';
 
-const testimonials = [
-  {
-    quote:
-      'I used YNAB for years and love zero-based budgeting. Budgero nails the same methodology with a design I actually enjoy using. I keep coming back because I\'m a budget geek. The SQL Explorer is a dream if you have a technical background.',
-    highlight: 'a design I actually enjoy using',
-    name: 'Developer & self-described budget geek',
-    detail: 'Switched from YNAB',
-    initial: 'D',
-    badge: 'Ex-YNAB',
-  },
-  {
-    quote:
-      'I started with YNAB and then tried a bunch of different tools over the past year. Budgero is the closest to perfect for my use case while also matching what I want visually. Transaction entry is fast, the savings goals with sub-sections are exactly what I need, and the whole experience just feels right.',
-    highlight: 'the closest to perfect for my use case',
-    name: 'Savings-focused budgeter',
-    detail: 'Tried 5+ apps before Budgero',
-    initial: 'S',
-    badge: 'Ex-YNAB',
-  },
-  {
-    quote:
-      'The app is really advanced in both functionality and UI. I was impressed by how polished the whole experience feels. This is a serious budgeting tool with a design that competes with anything on the market.',
-    highlight: 'really advanced in both functionality and UI',
-    name: 'Personal finance enthusiast',
-    detail: 'Evaluated multiple budgeting tools',
-    initial: 'B',
-  },
-  {
-    quote:
-      'The latest update made a noticeable difference. Animations are smoother, everything feels faster. Nice to see a budgeting tool where the developer actually cares about performance.',
-    highlight: 'animations are smoother, everything feels faster',
-    name: 'Long-time Budgero user',
-    detail: 'Self-hosted',
-    initial: 'M',
-  },
-];
-
-
-const trustStats = [
-  { value: '168', label: 'Currencies supported' },
-  { value: '100%', label: 'Zero-knowledge encrypted' },
-  { value: pricing.monthly, label: '/mo for Cloud' },
-  { value: '0', label: 'Third parties see your data' },
-];
+type Testimonial = {
+  quote: string;
+  highlight: string;
+  name: string;
+  detail: string;
+  initial: string;
+  badge?: string;
+};
 
 function Stars() {
   return (
@@ -71,13 +36,7 @@ function HighlightedQuote({ text, highlight }: { text: string; highlight: string
   );
 }
 
-function Card({
-  item,
-  className,
-}: {
-  item: (typeof testimonials)[number];
-  className?: string;
-}) {
+function Card({ item, className }: { item: Testimonial; className?: string }) {
   return (
     <div
       className={`bg-card rounded-2xl border border-border/70 p-6 sm:p-7 flex flex-col gap-4 transition-colors hover:border-border ${className ?? ''}`}
@@ -106,18 +65,58 @@ function Card({
  * Shared testimonials section. Drop into any page.
  */
 export function TestimonialsSection() {
+  const t = useTranslations('home');
+
+  const testimonials: Testimonial[] = [
+    {
+      quote: t('t1_quote'),
+      highlight: t('t1_highlight'),
+      name: t('t1_name'),
+      detail: t('t1_detail'),
+      initial: 'D',
+      badge: t('badge_ex_ynab'),
+    },
+    {
+      quote: t('t2_quote'),
+      highlight: t('t2_highlight'),
+      name: t('t2_name'),
+      detail: t('t2_detail'),
+      initial: 'S',
+      badge: t('badge_ex_ynab'),
+    },
+    {
+      quote: t('t3_quote'),
+      highlight: t('t3_highlight'),
+      name: t('t3_name'),
+      detail: t('t3_detail'),
+      initial: 'B',
+    },
+    {
+      quote: t('t4_quote'),
+      highlight: t('t4_highlight'),
+      name: t('t4_name'),
+      detail: t('t4_detail'),
+      initial: 'M',
+    },
+  ];
+
+  const trustStats = [
+    { value: '168', label: t('stat_currencies') },
+    { value: '100%', label: t('stat_zk') },
+    { value: pricing.monthly, label: t('stat_mo') },
+    { value: '0', label: t('stat_third') },
+  ];
+
   return (
     <section className="py-16 max-w-5xl mx-auto px-4 sm:px-6">
       <div className="text-center mb-12">
         <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">
-          Real Users, Real Budgets
+          {t('testimonials_eyebrow')}
         </p>
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-          What Budgero Users Are Saying
+          {t('testimonials_h2')}
         </h2>
-        <p className="text-foreground/60 max-w-lg mx-auto">
-          People who switched from YNAB and other tools share their experience.
-        </p>
+        <p className="text-foreground/60 max-w-lg mx-auto">{t('testimonials_p')}</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-5 max-w-lg md:max-w-none mx-auto">

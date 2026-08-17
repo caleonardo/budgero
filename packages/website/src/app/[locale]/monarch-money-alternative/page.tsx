@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import { ArrowRight, Check, X, Globe, Shield, Cpu, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,10 +11,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Monarch Money Alternative — Private, No Plaid Required | Budgero',
-  description:
-    'Budgero is the private Monarch Money alternative: zero-knowledge encryption, no Plaid, no bank credentials shared — and 65% cheaper. Works in 168 currencies, anywhere. 35-day free trial, no card.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'monarch_money_alternative' });
+  return withLocalizedUrls(locale, '/monarch-money-alternative', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'monarch money alternative',
     'monarch alternative',
@@ -28,139 +35,143 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/monarch-money-alternative' },
   openGraph: {
-    title: 'Monarch Money Alternative — Private, No Plaid Required | Budgero',
-    description:
-      'Zero-knowledge encryption, no Plaid, no bank credentials shared — and 65% cheaper than Monarch. Works in 168 currencies, anywhere in the world.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/monarch-money-alternative',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Monarch Money Alternative — Private, No Plaid Required | Budgero',
-    description:
-      'Zero-knowledge encryption, no Plaid, no bank credentials shared — and 65% cheaper than Monarch. Works in 168 currencies, anywhere.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Annual price',
+    feature: t('comparisonData_annual_price'),
     budgero: `${pricing.yearly}/year`,
     monarch: '$99.99/year',
-    budgeroNote: 'Or free with Self-Host',
+    budgeroNote: t('comparisonData_or_free_with_self_host'),
     monarchNote: null,
   },
   {
-    feature: 'Monthly price',
+    feature: t('comparisonData_monthly_price'),
     budgero: `${pricing.monthly}/mo`,
     monarch: '$14.99/mo',
     budgeroNote: null,
     monarchNote: null,
   },
   {
-    feature: 'Multi-currency support',
+    feature: t('comparisonData_multi_currency_support'),
     budgero: true,
     monarch: false,
-    budgeroNote: 'Live FX rates, auto conversion',
-    monarchNote: 'USD/CAD only, no conversion',
+    budgeroNote: t('comparisonData_live_fx_rates_auto_conversion'),
+    monarchNote: t('comparisonData_usd_cad_only_no_conversion'),
   },
   {
-    feature: 'Works worldwide',
-    budgero: true,
-    monarch: false,
-    budgeroNote: null,
-    monarchNote: 'US & Canada only',
-  },
-  {
-    feature: 'Works offline',
+    feature: t('comparisonData_works_worldwide'),
     budgero: true,
     monarch: false,
     budgeroNote: null,
-    monarchNote: 'Cloud-only, needs internet',
+    monarchNote: t('comparisonData_us_canada_only'),
   },
   {
-    feature: 'Zero-knowledge encryption',
+    feature: t('comparisonData_works_offline'),
     budgero: true,
     monarch: false,
-    budgeroNote: 'We cannot see your data',
-    monarchNote: 'Bank-level, but not zero-knowledge',
+    budgeroNote: null,
+    monarchNote: t('comparisonData_cloud_only_needs_internet'),
   },
   {
-    feature: 'Local LLM integration',
+    feature: t('comparisonData_zero_knowledge_encryption'),
     budgero: true,
     monarch: false,
-    budgeroNote: 'Connect to locally-hosted models',
-    monarchNote: 'Uses third-party AI (data processed externally)',
+    budgeroNote: t('comparisonData_we_cannot_see_your_data'),
+    monarchNote: t('comparisonData_bank_level_but_not_zero_knowledge'),
   },
   {
-    feature: 'Bank sync',
-    budgero: 'Push API*',
+    feature: t('comparisonData_local_llm_integration'),
+    budgero: true,
+    monarch: false,
+    budgeroNote: t('comparisonData_connect_to_locally_hosted_models'),
+    monarchNote: t('comparisonData_uses_third_party_ai_data_processed'),
+  },
+  {
+    feature: t('comparisonData_bank_sync'),
+    budgero: t('comparisonData_push_api'),
     monarch: true,
-    budgeroNote: 'DIY with encrypted Python SDK',
-    monarchNote: 'US/Canada banks only',
+    budgeroNote: t('comparisonData_diy_with_encrypted_python_sdk'),
+    monarchNote: t('comparisonData_us_canada_banks_only'),
   },
   {
-    feature: 'Investment tracking',
-    budgero: 'Manual',
-    monarch: 'Automatic',
+    feature: t('comparisonData_investment_tracking'),
+    budgero: t('cell_manual'),
+    monarch: t('cell_automatic'),
     budgeroNote: null,
-    monarchNote: 'Syncs with brokerages',
+    monarchNote: t('comparisonData_syncs_with_brokerages'),
   },
   {
-    feature: 'Zero-based budgeting',
-    budgero: true,
-    monarch: true,
-    budgeroNote: null,
-    monarchNote: null,
-  },
-  {
-    feature: 'Shared budgets',
+    feature: t('comparisonData_zero_based_budgeting'),
     budgero: true,
     monarch: true,
     budgeroNote: null,
     monarchNote: null,
   },
   {
-    feature: 'Free tier available',
+    feature: t('comparisonData_shared_budgets'),
+    budgero: true,
+    monarch: true,
+    budgeroNote: null,
+    monarchNote: null,
+  },
+  {
+    feature: t('comparisonData_free_tier_available'),
     budgero: true,
     monarch: false,
-    budgeroNote: 'Budgero Self-Host is free forever',
-    monarchNote: '7-day trial only',
+    budgeroNote: t('comparisonData_budgero_self_host_is_free_forever'),
+    monarchNote: t('comparisonData_7_day_trial_only'),
   },
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'Does Monarch Money work outside the US?',
-    a: 'Not really. Monarch Money is built for the US (with limited Canadian support). You cannot connect non-US/Canadian banks, the iOS app is not in most international App Stores, and balances are displayed as plain "$" with no currency conversion. If you live outside North America, manage money in multiple currencies, or travel often, Monarch is effectively unusable.',
+    q: t('faqs_does_monarch_money_work_outside_the'),
+    a: t('faqs_not_really_monarch_money_is_built'),
   },
   {
-    q: 'What is the cheapest Monarch Money alternative?',
-    a: `Budgero. Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year — about 65% less than Monarch Money's $99.99/year. You get a 35-day free trial with no credit card, native multi-currency support, zero-knowledge encryption, and offline mode. If you do not want to pay anything at all, Budgero Self-Host is free forever on your own Docker server.`,
+    q: t('faqs_what_is_the_cheapest_monarch_money'),
+    a: t('faqs_budgero_budgero_cloud_is_monthly_month', {
+      monthly: pricing.monthly,
+      yearly: pricing.yearly
+    }),
   },
   {
-    q: 'Does Budgero connect to my bank like Monarch Money does?',
-    a: 'No, and that is by design. Bank sync requires sharing credentials with a third-party aggregator (Plaid, MX, Tink), which limits the providers you can use, restricts which countries the app works in, and prevents true zero-knowledge encryption. Budgero is manual-first: enter transactions yourself, import CSVs from any bank in the world, or use our Push API for DIY automation. The trade-off is that Budgero works literally everywhere, your credentials stay yours, and your data is end-to-end encrypted.',
+    q: t('faqs_does_budgero_connect_to_my_bank'),
+    a: t('faqs_no_and_that_is_by_design'),
   },
   {
-    q: 'Can I import my Monarch Money data into Budgero?',
-    a: 'Yes. Budgero imports CSV exports from Monarch (and from most other budgeting apps including YNAB, Mint, EveryDollar, and Goodbudget). Categories, transactions, and account balances come across. You get a preview before confirming, so nothing is overwritten unexpectedly. Most users finish migrating in under 15 minutes.',
+    q: t('faqs_can_i_import_my_monarch_money'),
+    a: t('faqs_yes_budgero_imports_csv_exports_from'),
   },
   {
-    q: 'Does Budgero support shared budgets like Monarch Money?',
-    a: 'Yes. Budgero Cloud supports encrypted shared workspaces — invite your partner or roommates and budget together, with every transaction still end-to-end encrypted in transit and at rest. Self-Host users can run a shared server for the same effect.',
+    q: t('faqs_does_budgero_support_shared_budgets_like'),
+    a: t('faqs_yes_budgero_cloud_supports_encrypted_shared'),
   },
   {
-    q: 'Is Budgero really 65% cheaper than Monarch Money?',
-    a: `Yes, and there is no asterisk. Monarch is $99.99/year. Budgero Cloud is ${pricing.yearly}/year, tax included, for the full feature set — multi-currency, zero-knowledge encryption, encrypted sync, shared budgets, AI categorization, and 35-day cardless trial. Budgero Self-Host is free forever and includes the same feature set. There is no "premium" upsell tier.`,
+    q: t('faqs_is_budgero_really_65_cheaper_than'),
+    a: t('faqs_yes_and_there_is_no_asterisk', {
+      yearly: pricing.yearly
+    }),
   },
   {
-    q: 'What about investment tracking — Monarch syncs with brokerages.',
-    a: 'Budgero supports manual investment tracking — you can record any asset, in any currency, at any value. Automatic brokerage sync is something Monarch does well in the US, but it does not work with European, UK, Asian, or most non-US brokerages anyway. If you live outside the US, manual tracking is what you would end up with on Monarch too — just without multi-currency support.',
+    q: t('faqs_what_about_investment_tracking_monarch_syncs'),
+    a: t('faqs_budgero_supports_manual_investment_tracking_you'),
   },
   {
-    q: 'Can I self-host Budgero?',
-    a: `Yes. Budgero Self-Host is free, runs on Docker, and includes the full feature set — zero-knowledge encryption, multi-currency, shared budgets, and YNAB import. No license keys, no feature gating, no telemetry. You can run it on a Raspberry Pi, NAS (Synology, Unraid, TrueNAS), homelab server, or any cloud VPS. Monarch has no self-host option.`,
+    q: t('faqs_can_i_self_host_budgero'),
+    a: t('faqs_yes_budgero_selfhost_is_free'),
   },
 ];
 
@@ -185,6 +196,8 @@ export default async function MonarchMoneyAlternativePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('monarch_money_alternative');
+  const faqs = makeFaqs(t);
+  const comparisonData = makeComparisonData(t);
   const budgeroYearly = parseFloat(priceNumber(pricing.yearly));
   const yearlySavings = Math.max(0, Math.round(MONARCH_YEARLY_USD - budgeroYearly));
   const percentCheaper = Math.max(

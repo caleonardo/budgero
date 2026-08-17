@@ -1,20 +1,20 @@
 ---
 title: "Zero-Knowledge-Bridge: Auto-Import von Bank-E-Mails"
-summary: "Leite Bank-Benachrichtigungs-E-Mails über die Push-API mit einem lokalen Python-Helper direkt in Budgero weiter – keine Programmierkenntnisse erforderlich, keine Bankpasswörter geteilt."
+summary: "Leite Benachrichtigungs-E-Mails deiner Bank direkt über die Push API an Budgero weiter – mit einem lokalen Python-Helper. Keine Programmierkenntnisse nötig, keine Bank-Passwörter geteilt."
 section: integrations
 topicId: push-api-email-bridge
 badge: "Neu"
 order: 20
 takeaways:
-  - "Installiere Python + VS Code, generiere einen Budgero-Push-API-Token und einen Verschlüsselungsschlüssel und speichere sie in einer lokalen .env-Datei."
-  - "Nutze das Starter-Bridge-Skript, um Bank-Benachrichtigungs-E-Mails zu lesen, lass KI einen Parser für deine Bank erstellen und teste sicher im Dry-Run-Modus."
-  - "Übertrage verschlüsselte Transaktionen mit dem Python-SDK in Budgero; plane das Skript für die automatische Ausführung ein, sobald es validiert ist."
+  - "Installiere Python + VS Code, generiere einen Budgero-Push-API-Token und einen Verschlüsselungs-Schlüssel und speichere sie in einer lokalen .env-Datei."
+  - "Nutze das Starter-Bridge-Skript, um Benachrichtigungs-E-Mails deiner Bank auszulesen, lass die KI einen Parser für deine Bank erstellen und teste sicher im Dry-Run-Modus."
+  - "Übertrage verschlüsselte Transaktionen mit dem Python-SDK an Budgero; richte das Skript so ein, dass es automatisch ausgeführt wird, sobald es validiert ist."
 ---
 
-**„Willst du etwas richtig gemacht haben, mach es selbst.“**  
-Budgero fragt nicht nach deinem Bankpasswort und übergibt keine Daten an Drittanbieter-Aggregatoren. Stattdessen kannst du Bank-E-Mails direkt auf deinem eigenen Rechner in Budgero einspeisen. Deine Daten fließen: **Bank-E-Mail → Dein Skript → Budgero (verschlüsselt)**. Kein Zwischenmann sieht unverschlüsselte Daten.
+**„Wenn du etwas richtig gemacht haben willst, mach es selbst.“**  
+Budgero fragt nicht nach deinem Bankpasswort und übergibt keine Daten an Drittanbieter. Stattdessen kannst du Bank-E-Mails direkt auf deinem eigenen Rechner in Budgero einspeisen. Deine Daten fließen: **Bank-E-Mail → Dein Skript → Budgero (verschlüsselt)**. Kein Mittelsmann sieht unverschlüsselte Daten.
 
-Folge dieser anfängerfreundlichen Anleitung (keine Programmierkenntnisse erforderlich). Alles bleibt lokal und privat.
+Folge dieser anfängerfreundlichen Anleitung (keine Programmierkenntnisse erforderlich). Behalte alles lokal und privat.
 
 ---
 
@@ -24,7 +24,7 @@ Folge dieser anfängerfreundlichen Anleitung (keine Programmierkenntnisse erford
    - Windows: [Python herunterladen](https://www.python.org/downloads/windows/) und **„python.exe zum PATH hinzufügen“** aktivieren.  
    - Mac: [Python herunterladen](https://www.python.org/downloads/macos/).
 2. **VS Code**  
-   - [VS Code](https://code.visualstudio.com/download) installieren und öffnen.
+   - Installiere [VS Code](https://code.visualstudio.com/download) und öffne es.
 
 ---
 
@@ -32,27 +32,27 @@ Folge dieser anfängerfreundlichen Anleitung (keine Programmierkenntnisse erford
 
 Verwende ein App-Passwort, damit du dein Haupt-E-Mail-Passwort nie speichern musst.
 
-- Gmail: Enable 2-Step Verification → create an **[App Password](https://myaccount.google.com/apppasswords)** (name it “Budgero Bridge”) → copy the 16-character code.  
-- Other providers (Outlook/Yahoo/iCloud): search “Generate app password for your provider” and follow their steps.
+- Gmail: 2-Faktor-Authentifizierung aktivieren → ein **[App-Passwort](https://myaccount.google.com/apppasswords)** erstellen (nenn es „Budgero Bridge") → den 16-stelligen Code kopieren.  
+- Andere Anbieter (Outlook/Yahoo/iCloud): Suche nach „App-Passwort für deinen Anbieter generieren" und folge den Anweisungen.
 
 ---
 
-## Teil 3: Dein Projekt einrichten
+## Teil 3: Konfiguriere dein Projekt
 
-1. **Erstelle einen Ordner:** `BudgeroBridge` auf deinem Desktop. Öffne ihn in VS Code (Datei → Ordner öffnen).  
-2. **Öffne ein Terminal:** VS Code → Terminal → Neues Terminal.
-3. **Installiere Bibliotheken:**
+1. **Ordner erstellen:** `BudgeroBridge` auf deinem Desktop. Öffne ihn in VS Code (File → Open Folder).  
+2. **Terminal öffnen:** VS Code → Terminal → New Terminal.
+3. **Bibliotheken installieren:**
 
 ```bash
 pip install budgero rich pandas python-dotenv imap-tools
 ```
 
-(Verwende auf dem Mac bei Bedarf `pip3`.)
+(Auf dem Mac verwende bei Bedarf `pip3`.)
 
-4. **Erstelle deine Konfigurationsdatei (`.env`)**  
+4. **Konfigurationsdatei erstellen (`.env`)**  
    Das Skript muss wissen, wer du bist und wo die Daten gespeichert werden sollen. Wir verwenden eine `.env`-Datei, um dies sicher zu speichern.
    - Klicke in VS Code auf **New File** und nenne die Datei genau `.env` (nur dot-env).
-   - Kopiere den folgenden Text und fülle ihn aus:
+   - Kopiere den Text unten und fülle ihn aus:
 
 ```bash
 # --- EMAIL SETTINGS ---
@@ -73,7 +73,7 @@ TARGET_ACCOUNT_ID="1"
 TARGET_CATEGORY_ID="5"
 ```
 
-**Was diese bedeuten:**
+**Was das bedeutet:**
 
 <table>
   <thead>
@@ -97,34 +97,34 @@ TARGET_CATEGORY_ID="5"
     </tr>
     <tr>
       <td><code>BANK_SUBJECT_KEYWORD</code></td>
-      <td>Ein Wort oder eine Phrase, die immer im Betreff steht (z. B. <code>Transaction Alert</code>, <code>Your Receipt</code>, <code>Purchase</code>).</td>
+      <td>Ein Wort/ein Begriff, der immer im Betreff steht (z. B. <code>Transaktionsbenachrichtigung</code>, <code>Deine Quittung</code>, <code>Einkauf</code>).</td>
     </tr>
     <tr>
       <td><code>BUDGERO_API_KEY</code></td>
-      <td>Dein Push-API-Token aus <strong>Settings → Push API</strong> in Budgero.</td>
+      <td>Dein Push-API-Token aus <strong>Einstellungen → Push API</strong> in Budgero.</td>
     </tr>
     <tr>
       <td><code>BUDGERO_ENCRYPTION_KEY</code></td>
-      <td>Dein Space-Verschlüsselungsschlüssel aus <strong>Settings → Push API</strong> in Budgero.</td>
+      <td>Dein Space-Verschlüsselungsschlüssel aus <strong>Einstellungen → Push API</strong> in Budgero.</td>
     </tr>
   </tbody>
 </table>
 
 📍 **Deine Ziel-IDs finden (einfacher Modus)**  
 - Gehe in Budgero zu **Einstellungen → Push API** und scrolle nach unten.  
-- Die Tabelle **Deine IDs** listet jedes Budget, Konto und jede Kategorie mit der zugehörigen ID auf.  
+- Die Tabelle **Deine IDs** listet jedes Budget, jedes Konto und jede Kategorie mit der zugehörigen ID auf.  
 - Kopiere die IDs, die du benötigst:
   - `TARGET_BUDGET_ID`: Das Budget, in das du importieren möchtest.  
   - `TARGET_ACCOUNT_ID`: Das Bankkonto (z. B. „Chase Checking“), auf dem diese Transaktionen landen sollen.  
   - `TARGET_CATEGORY_ID` (wichtig): Verwende die ID deiner Kategorie „Nicht kategorisiert“/„Zu budgetieren“ als Startpunkt.
 
-💡 **Pro-Tipp:** Sende alle E-Mail-Importe an deine Kategorie „Nicht kategorisiert“. Erstelle dann Regeln in Budgero (z. B. „Wenn Empfänger Netflix enthält, setze Kategorie auf Abonnements“), damit die App die Sortierung übernimmt. So bleibt das Python-Skript einfach.
+💡 **Pro-Tipp:** Sende alle E-Mail-Importe an deine Kategorie „Nicht kategorisiert“. Erstelle dann Regeln in Budgero (z. B. „Wenn der Empfänger Netflix enthält, setze die Kategorie auf Abonnements“), damit die App die Sortierung übernimmt. So bleibt das Python-Skript einfach.
 
-> **Halte es geheim, halte es sicher.** Speichere `.env` lokal; teile oder lade es nie hoch.
+> **Halte es geheim, halte es sicher.** Speichere `.env` lokal; teile oder lade es niemals hoch.
 
 ---
 
-## Teil 4: Füge das Startskript hinzu
+## Teil 4: Startskript hinzufügen
 
 Erstelle `bridge.py` und füge dieses gesamte Skript ein:
 
@@ -359,7 +359,7 @@ if __name__ == '__main__':
 1. Öffne `bridge.py` und setze `SETUP_MODE = True`.  
 2. Führe `python bridge.py` aus (oder `python3 bridge.py`).  
 3. Das Skript gibt einen KI-Prompt mit Beispiel-E-Mails aus. Kopiere ihn.  
-4. Füge ihn in ChatGPT/Claude/Gemini ein. Bitte die KI, `extract_transaction_info(body)` gemäß dem Prompt zu schreiben.  
+4. Füge ihn in ChatGPT/Claude/Gemini ein. Bitte darum, `extract_transaction_info(body)` gemäß dem Prompt zu schreiben.  
 5. Ersetze die Platzhalter-Funktion `extract_transaction_info` in `bridge.py` durch die Version der KI.  
 6. Setze `SETUP_MODE = False` und speichere.
 
@@ -368,8 +368,8 @@ if __name__ == '__main__':
 ## Teil 6: Im Dry-Run testen, dann live gehen
 
 1. Stelle sicher, dass `DRY_RUN = True`. Führe `python bridge.py` aus.  
-2. Überprüfe die Tabellenausgabe. Wenn Beträge und Daten korrekt aussehen, setze `DRY_RUN = False` und führe es erneut aus, um in Budgero zu übertragen.  
-3. Nicht korrekt? Führe das Setup mit mehr Beispielen erneut aus, indem du `NUM_SAMPLES = 10` vor `SETUP_MODE = True` setzt.
+2. Prüfe die Tabellenausgabe. Wenn Beträge und Daten korrekt aussehen, setze `DRY_RUN = False` und führe es erneut aus, um in Budgero zu übertragen.  
+3. Nicht korrekt? Führe das Setup erneut mit mehr Beispielen aus, indem du `NUM_SAMPLES = 10` vor `SETUP_MODE = True` setzt.
 
 ---
 
@@ -384,9 +384,9 @@ if __name__ == '__main__':
 ## Sicherheits-Checkliste
 
 - Behalte `.env` lokal; commite oder teile es niemals.  
-- Wechsle dein E-Mail-App-Passwort und deinen Budgero Push API Token, wenn du jemals eine Kompromittierung vermutest.  
-- Verwende HTTPS (Standard), damit Tokens beim Übertragen geschützt bleiben.  
-- Wenn Budgero eine 409 mit `message_id` zurückgibt, bedeutet das, dass ein Wiederholungsversuch als Duplikat erkannt wurde – kein doppelter Eintrag.  
+- Wechsle dein E-Mail-App-Passwort und dein Budgero-Push-API-Token, wenn du jemals eine Kompromittierung vermutest.  
+- Verwende HTTPS (Standard), damit Token bei der Übertragung geschützt bleiben.  
+- Wenn Budgero eine 409 mit `message_id` zurückgibt, bedeutet das, dass ein Wiederholungsversuch dedupliziert wurde – kein doppelter Eintrag.  
 - Wenn du die Bank oder das Format änderst, führe das Setup erneut aus, um den Parser zu aktualisieren.
 
-Du hast nun eine Zero-Knowledge-Brücke: Deine Bank teilt niemals Passwörter, deine Daten bleiben verschlüsselt und Budgero empfängt Transaktionen automatisch. Viel Spaß mit der datenschutzfreundlichen Automatisierung.
+Du hast nun eine Zero-Knowledge-Verbindung: Deine Bank teilt niemals Passwörter, deine Daten bleiben verschlüsselt und Budgero empfängt Transaktionen automatisch. Viel Spaß mit der datenschutzfreundlichen Automatisierung.

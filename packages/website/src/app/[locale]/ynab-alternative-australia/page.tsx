@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import { ArrowRight, Check, X, Download, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +11,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'YNAB Alternative for Australia — AUD Budgeting | Budgero',
-  description: `The YNAB alternative built for Australia. Budget in AUD (and 167 other currencies), works with every Australian bank via CSV, end-to-end encrypted. From ${pricing.monthly}/mo. 35-day free trial.`,
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'ynab_alternative_australia' });
+  return withLocalizedUrls(locale, '/ynab-alternative-australia', {
+  title: t('meta_title'),
+  description: t('meta_description', { monthly: pricing.monthly, yearly: pricing.yearly, yearlyEquivMonthly: pricing.yearlyEquivMonthly }),
   keywords: [
     'ynab alternative australia',
     'ynab australia',
@@ -29,121 +37,123 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/ynab-alternative-australia' },
   openGraph: {
-    title: 'YNAB Alternative for Australia — AUD Budgeting | Budgero',
-    description:
-      'The YNAB alternative built for Australia. AUD budgeting, works with every Australian bank via CSV, end-to-end encrypted.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/ynab-alternative-australia',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'YNAB Alternative for Australia — AUD Budgeting | Budgero',
-    description:
-      'AUD budgeting that works with every Australian bank. End-to-end encrypted, a third the price of YNAB.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Built for Australia',
+    feature: t('comparisonData_built_for_australia'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'AUD-first, works with every Australian bank',
-    ynabNote: 'No Australian bank sync — manual only',
+    budgeroNote: t('comparisonData_aud_first_works_with_every_australian'),
+    ynabNote: t('comparisonData_no_australian_bank_sync_manual_only'),
   },
   {
-    feature: 'Works with your bank',
-    budgero: 'All AU banks',
-    ynab: 'No native sync',
-    budgeroNote: 'CSV import from CommBank, Up, anyone',
-    ynabNote: 'Third-party syncers only, at extra cost',
+    feature: t('comparisonData_works_with_your_bank'),
+    budgero: t('comparisonData_all_au_banks'),
+    ynab: t('comparisonData_no_native_sync'),
+    budgeroNote: t('comparisonData_csv_import_from_commbank_up_anyone'),
+    ynabNote: t('comparisonData_third_party_syncers_only_at_extra'),
   },
   {
-    feature: 'AUD + other currencies in one budget',
+    feature: t('comparisonData_aud_other_currencies_in_one_budget'),
     budgero: true,
     ynab: false,
-    budgeroNote: '168 currencies with live FX',
-    ynabNote: 'One currency per budget',
+    budgeroNote: t('comparisonData_168_currencies_with_live_fx'),
+    ynabNote: t('comparisonData_one_currency_per_budget'),
   },
   {
-    feature: 'Annual price',
+    feature: t('comparisonData_annual_price'),
     budgero: `${pricing.yearly}/year`,
-    ynab: '$109 USD/year (~A$165)',
-    budgeroNote: 'Or free with Self-Host',
-    ynabNote: 'USD billing + card FX fees',
+    ynab: t('comparisonData_109_usd_year_a_165'),
+    budgeroNote: t('comparisonData_or_free_with_self_host'),
+    ynabNote: t('comparisonData_usd_billing_card_fx_fees'),
   },
   {
-    feature: 'End-to-end encryption',
+    feature: t('comparisonData_end_to_end_encryption'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'AES-256-GCM, zero-knowledge',
-    ynabNote: 'Plaintext on US servers',
+    budgeroNote: t('comparisonData_aes_256_gcm_zero_knowledge'),
+    ynabNote: t('comparisonData_plaintext_on_us_servers'),
   },
   {
-    feature: 'Telemetry & tracking',
-    budgero: 'Opt-in only',
+    feature: t('comparisonData_telemetry_tracking'),
+    budgero: t('comparisonData_opt_in_only'),
     ynab: true,
-    budgeroNote: 'No telemetry unless you explicitly allow it',
-    ynabNote: 'Third-party analytics by default',
+    budgeroNote: t('comparisonData_no_telemetry_unless_you_explicitly_allow'),
+    ynabNote: t('comparisonData_third_party_analytics_by_default'),
   },
   {
-    feature: 'Offline mode',
+    feature: t('comparisonData_offline_mode'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'PWA works fully offline',
-    ynabNote: 'Requires internet',
+    budgeroNote: t('comparisonData_pwa_works_fully_offline'),
+    ynabNote: t('comparisonData_requires_internet'),
   },
   {
-    feature: 'Zero-based budgeting',
+    feature: t('comparisonData_zero_based_budgeting'),
     budgero: true,
     ynab: true,
     budgeroNote: null,
     ynabNote: null,
   },
   {
-    feature: 'YNAB data import',
+    feature: t('comparisonData_ynab_data_import'),
     budgero: true,
     ynab: 'N/A',
-    budgeroNote: 'Full categories, transactions, history',
+    budgeroNote: t('comparisonData_full_categories_transactions_history'),
     ynabNote: null,
   },
   {
-    feature: 'Self-host option',
+    feature: t('comparisonData_self_host_option'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'Docker, your own server',
+    budgeroNote: t('comparisonData_docker_your_own_server'),
     ynabNote: null,
   },
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'Does YNAB work in Australia?',
-    a: "You can use YNAB in Australia, but it doesn't work the way it does in the US. YNAB's native bank import covers US, Canadian, and (since 2024–25) select UK banks — Australian banks aren't supported directly. Third-party services like Redbark or Budget Feeder can sync AU banks into YNAB via Open Banking, but that's an additional subscription on top of YNAB's $109 USD/year (roughly A$165 once FX fees hit your card), and another company handling your transaction data.",
+    q: t('faqs_does_ynab_work_in_australia'),
+    a: t('faqs_you_can_use_ynab_in_australia'),
   },
   {
-    q: 'Does Budgero work with Australian banks like CommBank and Up?',
-    a: 'Yes — with every Australian bank, because Budgero is deliberately manual-first. Export a CSV from CommBank, Westpac, ANZ, NAB, Macquarie, ING, or Up (app-first banks like Up make this especially painless) and import it in seconds, or enter transactions as you spend. No bank credentials are shared with anyone.',
+    q: t('faqs_does_budgero_work_with_australian_banks'),
+    a: t('faqs_yes_with_every_australian_bank_because'),
   },
   {
-    q: 'Can I budget in AUD and other currencies together?',
-    a: 'Yes. Budgero supports 168 currencies in one budget with live exchange rates — AUD as your home currency with NZD, USD, EUR, or GBP accounts alongside. If you have overseas income, family abroad, or just a Wise account for travel, it all rolls up into one picture in dollars.',
+    q: t('faqs_can_i_budget_in_aud_and'),
+    a: t('faqs_yes_budgero_supports_168_currencies_in'),
   },
   {
-    q: 'How much does Budgero cost in Australian dollars?',
-    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year — roughly a third of YNAB's $109 USD (~A$165), and the price is tax-inclusive — what you see is what you pay, with no foreign-transaction surprises. Budgero Self-Host is free forever on your own server.`,
+    q: t('faqs_how_much_does_budgero_cost_in'),
+    a: t('faqs_budgero_cloud_is_monthly_month_or', {
+      monthly: pricing.monthly,
+      yearly: pricing.yearly
+    }),
   },
   {
-    q: 'Can I import my YNAB budget?',
-    a: 'Yes. Budgero imports YNAB export files directly — categories, transactions, budget groups, and accounts come across intact in about 5 minutes. Export from YNAB before your subscription lapses, because YNAB cuts off export access when you stop paying.',
+    q: t('faqs_can_i_import_my_ynab_budget'),
+    a: t('faqs_yes_budgero_imports_ynab_export_files'),
   },
   {
-    q: 'Does Monarch Money work in Australia?',
-    a: "No. Monarch Money officially supports only the US and Canada — Australian banks can't connect and there's no AUD support. If you were considering Monarch as your YNAB replacement, it's not an option in Australia; Budgero, PocketSmith (NZ-based, strong AU bank feeds), and Actual Budget (self-hosted) are the realistic shortlist.",
+    q: t('faqs_does_monarch_money_work_in_australia'),
+    a: t('faqs_no_monarch_money_officially_supports_only'),
   },
   {
-    q: 'Where is my data stored?',
-    a: 'Budgero Cloud data is hosted in Finland, in the EU — and it is encrypted on your device with a key we never see before it gets there, so we cannot read it regardless. No telemetry runs unless you explicitly opt in. If you want your data on Australian soil, Budgero Self-Host runs on any local server or NAS.',
+    q: t('faqs_where_is_my_data_stored'),
+    a: t('faqs_budgero_cloud_data_is_hosted_in'),
   },
 ];
 
@@ -189,6 +199,8 @@ export default async function YnabAlternativeAustraliaPage(
 
   setRequestLocale(locale);
   const t = await getTranslations('ynab_alternative_australia');
+  const faqs = makeFaqs(t);
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [

@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import { ArrowRight, Check, X, Server, Shield, Terminal, Download, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,10 +11,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Self-Hosted YNAB Alternative — Docker, NAS, Free | Budgero',
-  description:
-    'The free, self-hosted YNAB alternative. Zero-based budgeting with 168 currencies and end-to-end encryption, running on your own Docker server. No subscription, no license keys, no feature gating, no telemetry.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'self_hosted_ynab_alternative' });
+  return withLocalizedUrls(locale, '/self-hosted-ynab-alternative', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'self hosted ynab alternative',
     'self-hosted ynab alternative',
@@ -31,51 +38,50 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/self-hosted-ynab-alternative' },
   openGraph: {
-    title: 'Self-Hosted YNAB Alternative — Docker, NAS, Free | Budgero',
-    description:
-      'The free, self-hosted YNAB alternative. Zero-based budgeting with multi-currency support, running on your own Docker server. No subscription, no license keys, no telemetry.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/self-hosted-ynab-alternative',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Self-Hosted YNAB Alternative — Docker, NAS, Free | Budgero',
-    description:
-      'Zero-based budgeting. Multi-currency. Your server, your rules. Free forever with Docker.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Where your data lives',
-    budgero: 'Your server',
-    ynab: 'YNAB servers (US)',
-    budgeroNote: 'You control backups, location, retention',
-    ynabNote: 'US jurisdiction, their retention',
+    feature: t('comparisonData_where_your_data_lives'),
+    budgero: t('comparisonData_your_server'),
+    ynab: t('comparisonData_ynab_servers_us'),
+    budgeroNote: t('comparisonData_you_control_backups_location_retention'),
+    ynabNote: t('comparisonData_us_jurisdiction_their_retention'),
   },
   {
-    feature: 'Price',
-    budgero: 'Free forever',
+    feature: t('cell_price'),
+    budgero: t('comparisonData_free_forever'),
     ynab: '$109/year',
-    budgeroNote: 'Pay for your VPS (~€5/mo)',
+    budgeroNote: t('comparisonData_pay_for_your_vps_5_mo'),
     ynabNote: null,
   },
   {
     feature: 'Deployment',
-    budgero: 'Docker / docker-compose',
-    ynab: 'N/A (SaaS only)',
-    budgeroNote: 'Single container, 5-minute setup',
+    budgero: t('comparisonData_docker_docker_compose'),
+    ynab: t('comparisonData_n_a_saas_only'),
+    budgeroNote: t('comparisonData_single_container_5_minute_setup'),
     ynabNote: null,
   },
   {
-    feature: 'Source code',
-    budgero: 'Open source',
+    feature: t('comparisonData_source_code'),
+    budgero: t('comparisonData_open_source'),
     ynab: 'Closed-source',
-    budgeroNote: 'Open source on GitHub (AGPL-3.0), free Docker image, no license keys',
-    ynabNote: 'SaaS only, no binaries',
+    budgeroNote: t('comparisonData_open_source_on_github_agpl_3'),
+    ynabNote: t('comparisonData_saas_only_no_binaries'),
   },
   {
-    feature: 'Zero-based budgeting',
+    feature: t('comparisonData_zero_based_budgeting'),
     budgero: true,
     ynab: true,
     budgeroNote: null,
@@ -83,95 +89,95 @@ const comparisonData = [
   },
   {
     feature: 'Multi-currency',
-    budgero: '168 currencies',
+    budgero: t('comparisonData_168_currencies'),
     ynab: false,
-    budgeroNote: 'Live FX rates, auto conversion',
-    ynabNote: 'One currency per budget',
+    budgeroNote: t('comparisonData_live_fx_rates_auto_conversion'),
+    ynabNote: t('comparisonData_one_currency_per_budget'),
   },
   {
-    feature: 'Offline mode',
+    feature: t('comparisonData_offline_mode'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'PWA, full offline support',
-    ynabNote: 'Requires internet',
+    budgeroNote: t('comparisonData_pwa_full_offline_support'),
+    ynabNote: t('comparisonData_requires_internet'),
   },
   {
-    feature: 'End-to-end encryption',
+    feature: t('comparisonData_end_to_end_encryption'),
     budgero: true,
     ynab: false,
-    budgeroNote: 'Even on your own server',
+    budgeroNote: t('comparisonData_even_on_your_own_server'),
     ynabNote: 'Plaintext',
   },
   {
-    feature: 'YNAB data import',
+    feature: t('comparisonData_ynab_data_import'),
     budgero: true,
     ynab: 'N/A',
-    budgeroNote: 'Full transaction + category history',
+    budgeroNote: t('comparisonData_full_transaction_category_history'),
     ynabNote: null,
   },
   {
-    feature: 'Account ownership when you stop paying',
-    budgero: 'N/A — no subscription',
+    feature: t('comparisonData_account_ownership_when_you_stop_paying'),
+    budgero: t('comparisonData_n_a_no_subscription'),
     ynab: false,
-    budgeroNote: 'Always yours',
-    ynabNote: 'Lose access',
+    budgeroNote: t('comparisonData_always_yours'),
+    ynabNote: t('comparisonData_lose_access'),
   },
   {
-    feature: 'Multi-user / shared budget',
+    feature: t('comparisonData_multi_user_shared_budget'),
     budgero: true,
     ynab: true,
-    budgeroNote: 'Up to 5 users on shared server',
-    ynabNote: 'Up to 6 users',
+    budgeroNote: t('comparisonData_up_to_5_users_on_shared'),
+    ynabNote: t('comparisonData_up_to_6_users'),
   },
   {
-    feature: 'Update cadence',
-    budgero: 'You decide',
-    ynab: 'YNAB decides',
-    budgeroNote: 'docker pull when ready',
-    ynabNote: 'Forced updates',
+    feature: t('comparisonData_update_cadence'),
+    budgero: t('comparisonData_you_decide'),
+    ynab: t('comparisonData_ynab_decides'),
+    budgeroNote: t('comparisonData_docker_pull_when_ready'),
+    ynabNote: t('comparisonData_forced_updates'),
   },
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'Is Budgero open source?',
-    a: 'Yes — Budgero is open source under the AGPL-3.0, an OSI-approved license. The full source code is public on GitHub: you can read, audit, modify, self-host, redistribute — and contribute to — it; the AGPL\'s condition is that offering a modified version over a network requires sharing your modified source with its users. Self-hosters get a free Docker image with the full feature set, no license keys, and no feature gating, running on your own infrastructure under your control. Because the code is open source, what you run today keeps working regardless of what happens to the company.',
+    q: t('faqs_is_budgero_open_source'),
+    a: t('faqs_yes_budgero_is_open_source_under'),
   },
   {
-    q: 'How do I self-host Budgero?',
-    a: 'Pull the Docker image, copy the example docker-compose.yml, set a few environment variables (database URL, JWT secret, base URL), and docker compose up. Typical setup is under 10 minutes on a fresh VPS. There is a full walkthrough in the self-host documentation.',
+    q: t('faqs_how_do_i_self_host_budgero'),
+    a: t('faqs_pull_the_docker_image_copy_the'),
   },
   {
-    q: 'What hardware do I need to self-host?',
-    a: 'Very little. Budgero runs comfortably on any VPS with 1 vCPU and 1 GB of RAM. A €4–€6/month DigitalOcean, Hetzner, or OVH droplet is more than enough for a household. Raspberry Pi 4 also works.',
+    q: t('faqs_what_hardware_do_i_need_to'),
+    a: t('faqs_very_little_budgero_runs_comfortably_on'),
   },
   {
-    q: 'Is the self-hosted version as fully-featured as Cloud?',
-    a: 'Yes. Self-host is the same codebase as Cloud. You get zero-based budgeting, 168-currency multi-currency support, end-to-end encryption, offline PWA, YNAB import, shared budgets, AI-powered categorization (bring your own LLM or local Ollama), the push API, and everything else. The only difference is we do not manage the hosting, updates, or backups for you.',
+    q: t('faqs_is_the_self_hosted_version_as'),
+    a: t('faqs_yes_self_host_is_the_same'),
   },
   {
-    q: 'What if I want to stop self-hosting later?',
-    a: 'Export your data from self-hosted Budgero, then import it directly into Budgero Cloud. There is no lock-in in either direction. Your encrypted SQLite database is yours, in a standard format.',
+    q: t('faqs_what_if_i_want_to_stop'),
+    a: t('faqs_export_your_data_from_self_hosted'),
   },
   {
-    q: 'How do backups work?',
-    a: "Self-host backups are your responsibility. Budgero's database is a single SQLite file (encrypted end-to-end with your key), so backup is as simple as scheduling a nightly copy to S3, Backblaze B2, or another server. The documentation includes a sample backup script. Because data is encrypted client-side, your backup storage provider cannot see your financial data even if they wanted to.",
+    q: t('faqs_how_do_backups_work'),
+    a: t('faqs_self_host_backups_are_your_responsibility'),
   },
   {
-    q: 'Can I use a custom domain?',
-    a: "Yes. Point your domain at your server, put a reverse proxy (Caddy, Traefik, nginx) in front of Budgero, and you get a TLS-terminated, custom-domain deployment. The documentation has reference configs for Caddy and Traefik.",
+    q: t('faqs_can_i_use_a_custom_domain'),
+    a: t('faqs_yes_point_your_domain_at_your'),
   },
   {
-    q: 'Will there be updates and new features?',
-    a: "Yes. We ship new features continuously to the main branch, and tag stable Docker images. Self-hosters pull the latest image on their own schedule. You will never be forced to update, but you also will not miss out on improvements if you want them.",
+    q: t('faqs_will_there_be_updates_and_new'),
+    a: t('faqs_yes_we_ship_new_features_continuously'),
   },
   {
-    q: 'Can I import my YNAB budget into self-hosted Budgero?',
-    a: 'Yes. Budgero ingests YNAB export files directly — categories, transactions, budget groups, accounts, history. Same import flow as Cloud. Takes about 5 minutes.',
+    q: t('faqs_can_i_import_my_ynab_budget'),
+    a: t('faqs_yes_budgero_ingests_ynab_export_files'),
   },
   {
-    q: 'How does self-hosted Budgero compare to Actual Budget?',
-    a: "Actual Budget is the other major self-hosted, open-source YNAB-style app. We like Actual and think it is a great project. The differences most people care about: Budgero supports 168 currencies natively in a single budget with live FX rates (Actual is largely single-currency). Budgero includes end-to-end encryption with zero-knowledge server architecture. Budgero ships a fully managed Cloud option if you ever stop wanting to run servers yourself. If you only need single-currency budgeting on your own box, Actual is a fine choice. If you need multi-currency or want a Cloud fallback, Budgero is the better fit.",
+    q: t('faqs_how_does_self_hosted_budgero_compare'),
+    a: t('faqs_actual_budget_is_the_other_major'),
   },
 ];
 
@@ -217,6 +223,8 @@ export default async function SelfHostedYnabAlternativePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('self_hosted_ynab_alternative');
+  const faqs = makeFaqs(t);
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [

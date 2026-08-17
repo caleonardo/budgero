@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import { ArrowRight, Check, X, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,10 +11,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Firefly III Alternative — Self-Hosted Budgeting | Budgero',
-  description:
-    'Looking for a Firefly III alternative? Budgero Self-Host is free, runs in Docker, and adds zero-based envelope budgeting, 168 currencies with live FX, end-to-end encryption, and a polished PWA.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'firefly_iii_alternative' });
+  return withLocalizedUrls(locale, '/firefly-iii-alternative', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'firefly iii alternative',
     'firefly iii alternatives',
@@ -27,113 +34,114 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/firefly-iii-alternative' },
   openGraph: {
-    title: 'Firefly III Alternative — Self-Hosted Budgeting | Budgero',
-    description:
-      'Budgero Self-Host is free, runs in Docker, and adds zero-based envelope budgeting, 168 currencies, end-to-end encryption, and a polished PWA.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/firefly-iii-alternative',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Firefly III Alternative — Self-Hosted Budgeting | Budgero',
-    description:
-      'Free, Docker-based, zero-based envelope budgeting with 168 currencies and end-to-end encryption.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Price (self-hosted)',
-    budgero: 'Free',
-    firefly: 'Free',
-    budgeroNote: 'Full feature parity, no gating',
-    fireflyNote: 'Free and open source',
+    feature: t('comparisonData_price_self_hosted'),
+    budgero: t('cell_free'),
+    firefly: t('cell_free'),
+    budgeroNote: t('comparisonData_full_feature_parity_no_gating'),
+    fireflyNote: t('comparisonData_free_and_open_source'),
   },
   {
-    feature: 'Open source',
+    feature: t('comparisonData_open_source'),
     budgero: false,
     firefly: true,
-    budgeroNote: 'Open source (AGPL), self-hostable',
-    fireflyNote: 'AGPL, community-driven',
+    budgeroNote: t('comparisonData_open_source_agpl_self_hostable'),
+    fireflyNote: t('comparisonData_agpl_community_driven'),
   },
   {
-    feature: 'Budgeting method',
-    budgero: 'Zero-based envelopes',
-    firefly: 'Double-entry ledger',
-    budgeroNote: 'YNAB-style "every dollar a job"',
-    fireflyNote: 'Budgets exist, but accounting-first',
+    feature: t('comparisonData_budgeting_method'),
+    budgero: t('comparisonData_zero_based_envelopes'),
+    firefly: t('comparisonData_double_entry_ledger'),
+    budgeroNote: t('comparisonData_ynab_style_every_dollar_a_job'),
+    fireflyNote: t('comparisonData_budgets_exist_but_accounting_first'),
   },
   {
-    feature: 'Multi-currency budgeting',
-    budgero: '168 currencies, live FX',
-    firefly: 'Partial',
-    budgeroNote: 'One budget across currencies',
-    fireflyNote: 'Currencies supported; cross-currency budgeting and reporting are limited',
+    feature: t('comparisonData_multi_currency_budgeting'),
+    budgero: t('comparisonData_168_currencies_live_fx'),
+    firefly: t('cell_partial'),
+    budgeroNote: t('comparisonData_one_budget_across_currencies'),
+    fireflyNote: t('comparisonData_currencies_supported_cross_currency_budgeting'),
   },
   {
-    feature: 'End-to-end encryption',
+    feature: t('comparisonData_end_to_end_encryption'),
     budgero: true,
     firefly: false,
-    budgeroNote: 'AES-256-GCM, zero-knowledge',
-    fireflyNote: 'Server-side data, protected by your setup',
+    budgeroNote: t('comparisonData_aes_256_gcm_zero_knowledge'),
+    fireflyNote: t('comparisonData_server_side_data_protected_by_your'),
   },
   {
-    feature: 'Mobile experience',
-    budgero: 'PWA, offline-first',
-    firefly: 'Community apps',
-    budgeroNote: 'Installable, works offline',
-    fireflyNote: 'No official mobile app',
+    feature: t('comparisonData_mobile_experience'),
+    budgero: t('comparisonData_pwa_offline_first'),
+    firefly: t('comparisonData_community_apps'),
+    budgeroNote: t('comparisonData_installable_works_offline'),
+    fireflyNote: t('comparisonData_no_official_mobile_app'),
   },
   {
     feature: 'Setup',
-    budgero: 'Docker Compose',
-    firefly: 'Docker Compose',
-    budgeroNote: 'Single compose file, ~10 minutes',
-    fireflyNote: 'App + separate data importer',
+    budgero: t('comparisonData_docker_compose'),
+    firefly: t('comparisonData_docker_compose'),
+    budgeroNote: t('comparisonData_single_compose_file_10_minutes'),
+    fireflyNote: t('comparisonData_app_separate_data_importer'),
   },
   {
-    feature: 'Managed cloud option',
+    feature: t('comparisonData_managed_cloud_option'),
     budgero: true,
     firefly: false,
-    budgeroNote: `${pricing.monthly}/mo if you stop wanting to run servers`,
-    fireflyNote: 'Self-host only',
+    budgeroNote: t('comparisonData_monthly_mo_if_you_stop_wanting', {
+      monthly: pricing.monthly
+    }),
+    fireflyNote: t('comparisonData_self_host_only'),
   },
   {
-    feature: 'YNAB import',
+    feature: t('comparisonData_ynab_import'),
     budgero: true,
-    firefly: 'Via importer',
-    budgeroNote: 'Direct import, 5 minutes',
-    fireflyNote: 'CSV through the data importer',
+    firefly: t('comparisonData_via_importer'),
+    budgeroNote: t('comparisonData_direct_import_5_minutes'),
+    fireflyNote: t('comparisonData_csv_through_the_data_importer'),
   },
   {
-    feature: 'API access',
+    feature: t('comparisonData_api_access'),
     budgero: true,
     firefly: true,
-    budgeroNote: 'Push API',
-    fireflyNote: 'Full REST API',
+    budgeroNote: t('comparisonData_push_api'),
+    fireflyNote: t('comparisonData_full_rest_api'),
   },
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'Why would I switch from Firefly III?',
-    a: "The two most common reasons: budgeting method and day-to-day ergonomics. Firefly III is a double-entry personal finance ledger — superb for recording and reporting on what happened, less natural for forward-looking envelope budgeting. And while Firefly's web UI is powerful, there's no official mobile app and the learning curve is real. If you want YNAB-style zero-based budgeting on your own server with a polished, offline-capable PWA, that's exactly the gap Budgero Self-Host fills.",
+    q: t('faqs_why_would_i_switch_from_firefly'),
+    a: t('faqs_the_two_most_common_reasons_budgeting'),
   },
   {
-    q: 'Is Budgero open source like Firefly III?',
-    a: 'Yes — Budgero is open source under the AGPL-3.0, the same OSI-approved license Firefly III uses. The full code is public on GitHub: read, audit, modify, self-host, and redistribute it freely; the AGPL requires that anyone offering a modified version over a network shares their modified source with its users. So on licensing the two projects are on equal footing — the real differences are elsewhere: Budgero is local-first with end-to-end encrypted sync and envelope budgeting, while Firefly III is server-rendered double-entry bookkeeping.',
+    q: t('faqs_is_budgero_open_source_like_firefly'),
+    a: t('faqs_yes_budgero_is_open_source_under'),
   },
   {
-    q: 'How does multi-currency compare between Budgero and Firefly III?',
-    a: 'Firefly III supports multiple currencies at the transaction and account level, but budgeting and reporting across currencies is limited — it remains primarily a one-main-currency system. Budgero treats multi-currency as the core feature: 168 currencies in one budget, live exchange rates, and a unified home-currency rollup across all accounts and envelopes.',
+    q: t('faqs_how_does_multi_currency_compare_between'),
+    a: t('faqs_firefly_iii_supports_multiple_currencies_at'),
   },
   {
-    q: 'Can I migrate my Firefly III data to Budgero?',
-    a: 'Yes, via CSV. Export your transactions from Firefly III (it has solid export options), then import the CSV into Budgero — accounts, dates, payees, amounts, and categories map in a preview before anything is written. Plan an evening for it if you have years of history and want to tidy categories afterwards.',
+    q: t('faqs_can_i_migrate_my_firefly_iii'),
+    a: t('faqs_yes_via_csv_export_your_transactions'),
   },
   {
-    q: 'What does Budgero Self-Host require?',
-    a: 'Docker and roughly 10 minutes: pull the image, copy the example docker-compose.yml, set a few environment variables, and docker compose up. It runs comfortably on a Raspberry Pi, a NAS, or the smallest VPS tier. There is no license key, no telemetry unless you opt in, and no feature gating versus the Cloud edition.',
+    q: t('faqs_what_does_budgero_self_host_require'),
+    a: t('faqs_docker_and_roughly_10_minutes_pull'),
   },
 ];
 
@@ -179,6 +187,8 @@ export default async function FireflyAlternativePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('firefly_iii_alternative');
+  const faqs = makeFaqs(t);
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [

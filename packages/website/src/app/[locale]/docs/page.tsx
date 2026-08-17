@@ -1,60 +1,57 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import { allGuides } from 'contentlayer/generated';
 import { ArrowRight, BookOpenCheck, Compass, Layers3 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { docsSections } from '@/lib/docs-sections';
+import { getDocsSections, type DocsSection, type DocsTopic } from '@/lib/docs-sections';
 import { cn } from '@/lib/utils';
 
-export const metadata: Metadata = {
-  title: 'Budgero Docs — Master zero-based budgeting with confidence',
-  description:
-    'Deep dive into Budgero features. Learn how ready to assign works, master password best practices, goals, accounts, imports, collaboration, and more.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'docs' });
+  return withLocalizedUrls(locale, '/docs', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   alternates: {
     canonical: 'https://budgero.app/docs',
   },
   openGraph: {
-    title: 'Budgero Docs',
-    description:
-      'Guides that walk you through Budgero budgeting workflows — from ready to assign to multi-currency accounts and encrypted collaboration.',
+    title: t('og_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/docs',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Budgero Docs',
-    description:
-      'Guides that walk you through Budgero budgeting workflows — from ready to assign to multi-currency accounts and encrypted collaboration.',
+    title: t('og_title'),
+    description: t('og_description'),
   },
-};
+});
+}
 
 const heroHighlights = [
-  {
-    icon: Compass,
-    label: 'Step-by-step guides',
-  },
-  {
-    icon: BookOpenCheck,
-    label: 'Zero-knowledge friendly',
-  },
-  {
-    icon: Layers3,
-    label: 'Budgets that scale with you',
-  },
-];
+  { icon: Compass, key: 'hero_step_by_step' },
+  { icon: BookOpenCheck, key: 'hero_zero_knowledge' },
+  { icon: Layers3, key: 'hero_scale' },
+] as const;
 
 type TopicStatus = 'available' | 'coming-soon';
 
-type AugmentedTopic = (typeof docsSections)[number]['topics'][number] & {
+type AugmentedTopic = DocsTopic & {
   status: TopicStatus;
   href?: string;
   badge?: string;
   readingTimeMinutes?: number;
 };
 
-type AugmentedSection = (typeof docsSections)[number] & { topics: AugmentedTopic[] };
+type AugmentedSection = Omit<DocsSection, 'topics'> & { topics: AugmentedTopic[] };
 
 export default async function DocsPage(
   {
@@ -72,11 +69,16 @@ export default async function DocsPage(
   setRequestLocale(locale);
   const t = await getTranslations('docs');
   const publishedGuides = allGuides.filter((guide) => guide.published !== false);
-  const guidesByTopic = new Map(publishedGuides.map((guide) => [guide.topicId, guide]));
+  // Prefer this locale's guide for copy, falling back to English; the href
+  // always uses the locale-independent slug so the i18n Link adds the prefix.
+  const guideForTopic = (topicId: string) =>
+    publishedGuides.find((g) => g.topicId === topicId && g.locale === locale) ??
+    publishedGuides.find((g) => g.topicId === topicId && g.locale === 'en');
 
+  const docsSections = getDocsSections(t);
   const sections: AugmentedSection[] = docsSections.map((section) => {
     const topics: AugmentedTopic[] = section.topics.map((topic) => {
-      const guide = guidesByTopic.get(topic.id);
+      const guide = guideForTopic(topic.id);
       if (guide) {
         return {
           ...topic,
@@ -84,8 +86,8 @@ export default async function DocsPage(
           takeaways:
             guide.takeaways && guide.takeaways.length > 0 ? guide.takeaways : topic.takeaways,
           status: 'available' as const,
-          href: guide.url,
-          badge: guide.badge ?? 'Guide',
+          href: `/docs/${guide.slug}`,
+          badge: guide.badge ?? t('badge_guide'),
           readingTimeMinutes: guide.readingTimeMinutes,
         };
       }
@@ -115,11 +117,11 @@ export default async function DocsPage(
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             {heroHighlights.map((item) => (
               <span
-                key={item.label}
+                key={item.key}
                 className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-4 py-2"
               >
                 <item.icon className="size-4" aria-hidden />
-                {item.label}
+                {t(item.key)}
               </span>
             ))}
           </div>
@@ -140,7 +142,7 @@ export default async function DocsPage(
                     >
                       <span>{section.title}</span>
                       <span className="text-xs text-muted-foreground transition group-hover:text-foreground">
-                        {section.topics.length} {section.topics.length === 1 ? 'guide' : 'guides'}
+                        {t('guide_count', { count: section.topics.length })}
                       </span>
                     </a>
                   </div>
@@ -162,7 +164,7 @@ export default async function DocsPage(
                     </p>
                   </div>
                   <Badge className="self-start rounded-full border border-primary/30 bg-primary/15 text-primary">
-                    {section.topics.length} {section.topics.length === 1 ? 'guide' : 'guides'}
+                    {t('guide_count', { count: section.topics.length })}
                   </Badge>
                 </div>
 

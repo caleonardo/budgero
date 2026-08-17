@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import { Heart, ArrowRight, Star, MessageCircle, Cloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TrackedLink } from '@/components/TrackedLink';
@@ -14,43 +15,49 @@ export const revalidate = false;
 const LEMON_SQUEEZY_DONATE_URL =
   'https://store.budgero.app/checkout/buy/ea5134f6-0853-41b1-9f75-cd76e910a3a2';
 
-export const metadata: Metadata = {
-  title: 'Support Budgero — Donate',
-  description:
-    'Budgero Self-Host is free forever — no license keys, no feature gating, no telemetry. If it saves you money or time, you can chip in whatever feels right.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'donate' });
+  return withLocalizedUrls(locale, '/donate', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   alternates: { canonical: 'https://budgero.app/donate' },
   openGraph: {
-    title: 'Support Budgero — Donate',
-    description:
-      'Budgero Self-Host is free forever. Donations fund development time and keep the self-host build a first-class citizen.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/donate',
     type: 'website',
   },
-};
+});
+}
 
-const otherWays = [
+const makeOtherWays = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
     icon: Star,
-    title: 'Star the repo',
-    description: 'A GitHub star helps other self-hosters find Budgero.',
+    title: t('otherWays_star_the_repo'),
+    description: t('otherWays_a_github_star_helps_other_self'),
     href: 'https://github.com/tombadilo-bombadilo/budgero',
-    event: 'Donate - GitHub Star',
+    event: t('otherWays_donate_github_star'),
     external: true,
   },
   {
     icon: MessageCircle,
-    title: 'Join the community',
-    description: 'Report bugs, request features, or help other users on Discord.',
+    title: t('otherWays_join_the_community'),
+    description: t('otherWays_report_bugs_request_features_or_help'),
     href: 'https://discord.gg/ZgWnzaPqae',
-    event: 'Donate - Discord',
+    event: t('otherWays_donate_discord'),
     external: true,
   },
   {
     icon: Cloud,
-    title: 'Use Budgero Cloud',
-    description: 'A Cloud subscription is the most direct way to fund development.',
+    title: t('otherWays_use_budgero_cloud'),
+    description: t('otherWays_a_cloud_subscription_is_the_most'),
     href: 'https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=donate&utm_content=cloud',
-    event: 'Donate - Cloud CTA',
+    event: t('otherWays_donate_cloud_cta'),
     external: true,
   },
 ];
@@ -70,6 +77,7 @@ export default async function DonatePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('donate');
+  const otherWays = makeOtherWays(t);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="relative mx-auto max-w-screen-2xl">

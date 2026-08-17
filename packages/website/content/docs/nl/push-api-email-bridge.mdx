@@ -1,18 +1,18 @@
 ---
-title: "Zero-knowledge-brug: Bank-e-mails automatisch importeren"
-summary: "Stuur waarschuwingsmails van je bank rechtstreeks naar Budgero via de Push API met een lokale Python-helper—geen programmeerkennis vereist, geen bankwachtwoorden gedeeld."
+title: "Zero-knowledge-brug: bankmeldingen automatisch importeren"
+summary: "Stuur e-mailmeldingen van je bank rechtstreeks naar Budgero via de Push API met een lokale Python-helper—geen programmeerkennis vereist, geen bankwachtwoorden gedeeld."
 section: integrations
 topicId: push-api-email-bridge
 badge: "Nieuw"
 order: 20
 takeaways:
-  - "Installeer Python + VS Code, genereer een Budgero Push API-token en encryptiesleutel, en sla deze op in een lokaal .env-bestand."
-  - "Gebruik het meegeleverde brugscript om waarschuwingsmails van je bank te lezen, laat AI een parser maken voor jouw bank, en test veilig in de dry-run modus."
+  - "Installeer Python + VS Code, genereer een Budgero Push API-token en versleutelingssleutel, en sla ze op in een lokaal .env-bestand."
+  - "Gebruik het starters-brugscript om e-mailmeldingen van je bank te lezen, laat AI een parser maken voor je bank, en test veilig in dry-run-modus."
   - "Push versleutelde transacties naar Budgero met de Python SDK; plan het script in om automatisch uit te voeren zodra het is gevalideerd."
 ---
 
 **"Als je iets goed wilt doen, doe het dan zelf."**  
-Budgero vraagt niet om je bankwachtwoord en deelt geen gegevens met externe aggregators. In plaats daarvan kun je bank-e-mails zelf rechtstreeks in Budgero op je eigen machine importeren. Je gegevens stromen: **Bank-e-mail → Jouw script → Budgero (versleuteld)**. Geen tussenpersoon ziet onversleutelde gegevens.
+Budgero vraagt niet om je bankwachtwoord en deelt geen gegevens met externe aggregators. In plaats daarvan kun je bank-e-mails zelf rechtstreeks in Budgero inladen op je eigen apparaat. Je gegevens stromen: **Bank-e-mail → Jouw script → Budgero (versleuteld)**. Geen tussenpersoon ziet onversleutelde gegevens.
 
 Volg dit stappenplan voor beginners (geen programmeerervaring vereist). Houd alles lokaal en privé.
 
@@ -30,10 +30,10 @@ Volg dit stappenplan voor beginners (geen programmeerervaring vereist). Houd all
 
 ## Deel 2: Bereid je e-mail voor (app-wachtwoord)
 
-Gebruik een app-wachtwoord, zodat je nooit je gewone e-mailwachtwoord hoeft op te slaan.
+Gebruik een app-wachtwoord, zodat je je hoofd-e-mailwachtwoord nooit hoeft op te slaan.
 
-- Gmail: Schakel verificatie in twee stappen in → maak een **[App-wachtwoord](https://myaccount.google.com/apppasswords)** aan (noem het „Budgero Bridge”) → kopieer de code van 16 tekens.  
-- Andere providers (Outlook/Yahoo/iCloud): zoek op „Genereer app-wachtwoord voor jouw provider” en volg hun stappen.
+- Gmail: Schakel verificatie in twee stappen in → maak een **[App-wachtwoord](https://myaccount.google.com/apppasswords)** aan (noem het "Budgero Bridge") → kopieer de code van 16 tekens.  
+- Andere providers (Outlook/Yahoo/iCloud): zoek op "Generate app password for your provider" en volg hun stappen.
 
 ---
 
@@ -47,11 +47,11 @@ Gebruik een app-wachtwoord, zodat je nooit je gewone e-mailwachtwoord hoeft op t
 pip install budgero rich pandas python-dotenv imap-tools
 ```
 
-(Op Mac gebruik je `pip3` indien nodig.)
+(Gebruik op Mac `pip3` indien nodig.)
 
 4. **Maak je configuratiebestand aan (`.env`)**  
    Het script moet weten wie je bent en waar de gegevens naartoe moeten. We gebruiken een `.env`-bestand om dit veilig op te slaan.
-   - Klik in VS Code op **Nieuw bestand** en noem het precies `.env` (gewoon dot-env).
+   - Klik in VS Code op **Nieuw bestand** en noem het precies `.env` (alleen dot-env).
    - Kopieer en plak de onderstaande tekst en vul deze in:
 
 ```bash
@@ -93,32 +93,32 @@ TARGET_CATEGORY_ID="5"
     </tr>
     <tr>
       <td><code>BANK_SENDER_EMAIL</code></td>
-      <td>Open een recente bankbevestiging en kopieer het exacte „Van”-adres (bijv. <code>no-reply@bank.com</code>).</td>
+      <td>Open een recente bankbevestiging en kopieer het exacte "Van"-adres (bijv. <code>no-reply@bank.com</code>).</td>
     </tr>
     <tr>
       <td><code>BANK_SUBJECT_KEYWORD</code></td>
-      <td>Een woord of zin die altijd in het onderwerp staat (bijv. <code>Transaction Alert</code>, <code>Your Receipt</code>, <code>Purchase</code>).</td>
+      <td>Een woord/zin die altijd in het onderwerp staat (bijv. <code>Transaction Alert</code>, <code>Your Receipt</code>, <code>Purchase</code>).</td>
     </tr>
     <tr>
       <td><code>BUDGERO_API_KEY</code></td>
-      <td>Je Push API-token van <strong>Instellingen → Push API</strong> in Budgero.</td>
+      <td>Je Push API-token uit <strong>Instellingen → Push API</strong> in Budgero.</td>
     </tr>
     <tr>
       <td><code>BUDGERO_ENCRYPTION_KEY</code></td>
-      <td>Je versleutelingssleutel van je werkruimte via <strong>Instellingen → Push API</strong> in Budgero.</td>
+      <td>Je werkruimte-versleutelingssleutel uit <strong>Instellingen → Push API</strong> in Budgero.</td>
     </tr>
   </tbody>
 </table>
 
 📍 **Je doel-ID's vinden (eenvoudige modus)**  
-- Ga in Budgero naar **Instellingen → Push API** en scroll naar onderen.  
+- Ga in Budgero naar **Instellingen → Push API** en scroll naar beneden.  
 - De tabel **Jouw ID's** toont elk Budget, Rekening en Categorie met het bijbehorende ID.  
 - Kopieer de ID's die je nodig hebt:
   - `TARGET_BUDGET_ID`: Het budget waarin je wilt importeren.  
   - `TARGET_ACCOUNT_ID`: De bankrekening (bijv. “Chase Checking”) waar deze transacties moeten belanden.  
-  - `TARGET_CATEGORY_ID` (belangrijk): Gebruik je “Ongecategoriseerd”/“Te budgetteren” categorie-ID om te beginnen.
+  - `TARGET_CATEGORY_ID` (belangrijk): Gebruik je “Niet-gecategoriseerd”/“Te verdelen” categorie-ID om te beginnen.
 
-💡 **Pro tip:** Stuur alle e-mailimports naar je Ongecategoriseerde categorie. Maak vervolgens Regels aan in Budgero (bijv. “Als Begunstigde Netflix bevat, stel Categorie in op Abonnementen”) zodat de app het sorteren doet. Dit houdt het Python-script eenvoudig.
+💡 **Pro tip:** Stuur alle e-mailimports naar je Niet-gecategoriseerd categorie. Maak dan Regels aan in Budgero (bijv. “Als Begunstigde Netflix bevat, stel Categorie in op Abonnementen”) zodat de app het sorteren doet. Dit houdt het Python-script eenvoudig.
 
 > **Houd het geheim, houd het veilig.** Sla `.env` lokaal op; deel of upload het nooit.
 
@@ -126,7 +126,7 @@ TARGET_CATEGORY_ID="5"
 
 ## Deel 4: Voeg het startscript toe
 
-Maak `bridge.py` aan en plak dit volledige script:
+Maak `bridge.py` aan en plak dit hele script:
 
 ```python
 import os
@@ -365,17 +365,17 @@ if __name__ == '__main__':
 
 ---
 
-## Deel 6: Testen in dry-run, dan live gaan
+## Deel 6: Test in dry-run en ga dan live
 
 1. Zorg voor `DRY_RUN = True`. Voer `python bridge.py` uit.  
-2. Controleer de tabel-uitvoer. Als bedragen en datums kloppen, stel `DRY_RUN = False` in en voer opnieuw uit om naar Budgero te pushen.  
+2. Controleer de tabeluitvoer. Als de bedragen/datums kloppen, stel `DRY_RUN = False` in en voer opnieuw uit om naar Budgero te pushen.  
 3. Klopt het niet? Voer de setup opnieuw uit met meer voorbeelden door `NUM_SAMPLES = 10` in te stellen vóór `SETUP_MODE = True`.
 
 ---
 
 ## Automatiseer het dagelijks
 
-- **Windows:** Gebruik Taakplanner om `python bridge.py` één keer per dag uit te voeren.  
+- **Windows:** Gebruik Task Scheduler om `python bridge.py` één keer per dag uit te voeren.  
 - **Mac/Linux:** Gebruik `cron` (bijv. `0 7 * * * /usr/bin/python3 /path/to/bridge.py`).  
 - Laat DRY_RUN uit staan zodra je de parser vertrouwt.
 
@@ -384,9 +384,9 @@ if __name__ == '__main__':
 ## Veiligheidscontrolelijst
 
 - Houd `.env` lokaal; commit of deel het nooit.  
-- Roteer je e-mailapp-wachtwoord en Budgero Push API-token als je ooit vermoedt dat ze zijn gelekt.  
-- Gebruik HTTPS (standaard) zodat tokens tijdens transport beveiligd blijven.  
-- Als Budgero een 409 retourneert met `message_id`, betekent dit dat een herhaalpoging is ontdubbeld — geen dubbele invoer.  
+- Ververs je e-mailapp-wachtwoord en Budgero Push API-token als je ooit vermoedt dat ze zijn gelekt.  
+- Gebruik HTTPS (standaard) zodat tokens tijdens verzending beveiligd blijven.  
+- Als Budgero een 409 retourneert met `message_id`, betekent dit dat een nieuwe poging is ontdubbeld—geen dubbele invoer.  
 - Als je van bank of formaat verandert, voer de installatie opnieuw uit om de parser te vernieuwen.
 
-Je hebt nu een Zero-knowledge brug: je bank deelt nooit wachtwoorden, je gegevens blijven versleuteld, en Budgero ontvangt transacties automatisch. Geniet van de privacyvriendelijke automatisering.
+Je hebt nu een Zero-knowledge brug: je bank deelt nooit wachtwoorden, je gegevens blijven versleuteld, en Budgero ontvangt automatisch transacties. Geniet van de privacyvriendelijke automatisering.

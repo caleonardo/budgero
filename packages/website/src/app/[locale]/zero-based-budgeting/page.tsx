@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import { ArrowRight, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,10 +9,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'What is Zero-Based Budgeting? A Complete Guide | Budgero',
-  description:
-    'Learn how zero-based budgeting works, why it is effective, and how to start. Give every dollar a job and take control of your finances.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'zero_based_budgeting' });
+  return withLocalizedUrls(locale, '/zero-based-budgeting', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'zero based budgeting',
     'what is zero based budgeting',
@@ -24,64 +31,64 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/zero-based-budgeting' },
   openGraph: {
-    title: 'What is Zero-Based Budgeting? A Complete Guide | Budgero',
-    description:
-      'Learn how zero-based budgeting works, why it is effective, and how to start.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/zero-based-budgeting',
     type: 'article',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'What is Zero-Based Budgeting? A Complete Guide | Budgero',
-    description: 'Give every dollar a job. A practical guide to zero-based budgeting.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const steps = [
+const makeSteps = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
     number: '1',
-    title: 'Calculate Your Income',
+    title: t('steps_calculate_your_income'),
     description:
-      'Start with what you will earn this month. Salary, freelance income, side gigs. Everything that is coming in.',
+      t('steps_start_with_what_you_will_earn'),
   },
   {
     number: '2',
-    title: 'List Your Expenses',
+    title: t('steps_list_your_expenses'),
     description:
-      'Fixed costs (rent, utilities, insurance), variable costs (groceries, dining, transport), and savings goals. Everything that needs money.',
+      t('steps_fixed_costs_rent_utilities_insurance_variable'),
   },
   {
     number: '3',
-    title: 'Assign Every Dollar',
+    title: t('steps_assign_every_dollar'),
     description:
-      'Distribute your income across categories until you reach zero. If you have $200 left, put it toward savings or debt. If you are over, cut something.',
+      t('steps_distribute_your_income_across_categories_until'),
   },
   {
     number: '4',
-    title: 'Track and Adjust',
+    title: t('steps_track_and_adjust'),
     description:
-      'As the month progresses, track actual spending against your plan. Move money between categories when priorities shift. This is normal and expected.',
+      t('steps_as_the_month_progresses_track_actual'),
   },
 ];
 
-const methods = [
+const makeMethods = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    name: 'Zero-Based (Envelope)',
+    name: t('methods_zero_based_envelope'),
     description:
-      'Every dollar assigned to a category. Proactive. You decide before spending.',
-    bestFor: 'People who want full control over every dollar.',
+      t('methods_every_dollar_assigned_to_a_category'),
+    bestFor: t('methods_people_who_want_full_control_over'),
   },
   {
-    name: '50/30/20 Rule',
+    name: t('methods_50_30_20_rule'),
     description:
-      '50% needs, 30% wants, 20% savings. Simple percentages, no detailed tracking.',
-    bestFor: 'People who want a rough framework without tracking every transaction.',
+      t('methods_50_needs_30_wants_20_savings'),
+    bestFor: t('methods_people_who_want_a_rough_framework'),
   },
   {
-    name: 'Pay Yourself First',
+    name: t('methods_pay_yourself_first'),
     description:
-      'Save a fixed amount first, spend the rest freely. No category tracking needed.',
-    bestFor: 'High earners who want to prioritize savings without detailed budgeting.',
+      t('methods_save_a_fixed_amount_first_spend'),
+    bestFor: t('methods_high_earners_who_want_to_prioritize'),
   },
 ];
 
@@ -100,6 +107,8 @@ export default async function ZeroBasedBudgetingPage(
 
   setRequestLocale(locale);
   const t = await getTranslations('zero_based_budgeting');
+  const methods = makeMethods(t);
+  const steps = makeSteps(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',

@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import Image from 'next/image';
@@ -89,7 +89,7 @@ export function SiteHeader() {
                 onClick={() => track('Feedback Clicked - Desktop Header')}
                 className="font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
-                Feedback
+                {t('feedback')}
               </a>
               <a
                 href="https://discord.gg/ZgWnzaPqae"
@@ -99,7 +99,7 @@ export function SiteHeader() {
                 className="inline-flex items-center gap-2 font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Image src="/Discord-Symbol-Blurple.svg" alt="" width={16} height={16} aria-hidden="true" />
-                Join Discord
+                {t('join_discord')}
               </a>
               <a
                 href="https://www.reddit.com/r/budgero/"
@@ -109,14 +109,14 @@ export function SiteHeader() {
                 className="inline-flex items-center gap-2 font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Image src="/Reddit_Logo.webp" alt="" width={16} height={16} aria-hidden="true" />
-                Join Reddit
+                {t('join_reddit')}
               </a>
               <a
                 href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('Community Clicked - GitHub (Desktop Header)')}
-                aria-label="View source on GitHub"
+                aria-label={t('aria_github')}
                 className="inline-flex items-center gap-2 font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
                 <GitHubIcon />
@@ -130,7 +130,7 @@ export function SiteHeader() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('Community Clicked - Discord (Mobile Header)')}
-                aria-label="Join Discord community"
+                aria-label={t('aria_join_discord')}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Image src="/Discord-Symbol-Blurple.svg" alt="" width={16} height={16} aria-hidden="true" />
@@ -140,7 +140,7 @@ export function SiteHeader() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('Community Clicked - Reddit (Mobile Header)')}
-                aria-label="Join Reddit community"
+                aria-label={t('aria_join_reddit')}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Image src="/Reddit_Logo.webp" alt="" width={16} height={16} aria-hidden="true" />
@@ -150,7 +150,7 @@ export function SiteHeader() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('Community Clicked - GitHub (Mobile Header)')}
-                aria-label="View source on GitHub"
+                aria-label={t('aria_github')}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/70 hover:text-foreground transition-colors"
               >
                 <GitHubIcon />
@@ -214,7 +214,7 @@ export function SiteHeader() {
                   href="https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=header&utm_content=start-trial"
                   className="inline-flex items-center"
                 >
-                  Start free trial
+                  {t('start_free_trial')}
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </a>
               </Button>

@@ -31,9 +31,9 @@ Las exportaciones bancarias nunca se ponen de acuerdo en los nombres de las colu
 3. **Configura los formatos.** Las fechas se detectan automáticamente entre los patrones habituales (`YYYY-MM-DD`, `DD/MM/YYYY`, `MM/DD/YYYY`, `DD.MM.YYYY` y más), y los formatos numéricos cubren las convenciones de EE. UU./Reino Unido (`1,234.56`), europeas (`1.234,56`), suizas y francesas — de modo que una exportación de Deutsche Bank y una de Chase se procesan ambas correctamente.
 4. **Revisa la vista previa** e importa.
 
-If the file doesn't carry an account column, you choose the destination account up front — the usual case, since most banks export one account per file.
+Si el archivo no incluye una columna de cuenta, eliges la cuenta de destino de antemano —lo habitual, dado que la mayoría de los bancos exportan una cuenta por archivo.
 
-## Avoiding duplicates
+## Evitar duplicados
 
 El importador **no** deduplica automáticamente contra las transacciones existentes — combinar importaciones con registro manual es el origen de los duplicados, así que adopta una de estas dos disciplinas:
 

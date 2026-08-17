@@ -1,21 +1,28 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy - Budgero',
-  description:
-    'How Budgero collects, uses, and shares personal data — and the rights you have under GDPR, UK GDPR, and CCPA. Plain English, with the legal terms preserved where they matter.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'privacy' });
+  return withLocalizedUrls(locale, '/privacy', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   alternates: { canonical: 'https://budgero.app/privacy' },
   openGraph: {
-    title: 'Privacy Policy - Budgero',
-    description:
-      'How Budgero collects, uses, and shares personal data, and the rights you have under GDPR and CCPA.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/privacy',
   },
-};
+});
+}
 
 export default async function PrivacyPolicy(
   {

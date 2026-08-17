@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import { ArrowRight, Check, X, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,10 +10,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Does Monarch Money Support Multiple Currencies? (2026)',
-  description:
-    "No — Monarch Money is USD/CAD only, with no multi-currency budgets. Here's exactly what Monarch supports in 2026, the workarounds people use, and what to use instead if you need real multi-currency budgeting.",
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'monarch_money_multi_currency' });
+  return withLocalizedUrls(locale, '/monarch-money-multi-currency', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'monarch money multi currency',
     'monarch money multi currency support',
@@ -27,73 +34,74 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/monarch-money-multi-currency' },
   openGraph: {
-    title: 'Does Monarch Money Support Multiple Currencies? (2026)',
-    description:
-      "No — Monarch is USD/CAD only. What Monarch supports in 2026, the workarounds, and what to use instead for real multi-currency budgeting.",
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/monarch-money-multi-currency',
     type: 'article',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Does Monarch Money Support Multiple Currencies? (2026)',
-    description:
-      'No — Monarch is USD/CAD only. What it supports, the workarounds, and what to use instead.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Currencies per budget',
-    monarch: 'One (USD or CAD)',
-    budgero: '168, mixed freely',
+    feature: t('comparisonData_currencies_per_budget'),
+    monarch: t('comparisonData_one_usd_or_cad'),
+    budgero: t('comparisonData_168_mixed_freely'),
   },
   {
-    feature: 'Live exchange rates',
+    feature: t('comparisonData_live_exchange_rates'),
     monarch: false,
     budgero: true,
   },
   {
-    feature: 'Home-currency rollup',
+    feature: t('comparisonData_home_currency_rollup'),
     monarch: false,
     budgero: true,
   },
   {
-    feature: 'Supported countries',
-    monarch: 'US & Canada',
+    feature: t('comparisonData_supported_countries'),
+    monarch: t('comparisonData_us_canada'),
     budgero: 'Everywhere',
   },
   {
-    feature: 'Foreign accounts (EUR, GBP, AUD…)',
-    monarch: 'Manual workarounds',
-    budgero: 'Native',
+    feature: t('comparisonData_foreign_accounts_eur_gbp_aud'),
+    monarch: t('comparisonData_manual_workarounds'),
+    budgero: t('cell_native'),
   },
   {
-    feature: 'Price',
+    feature: t('cell_price'),
     monarch: '$99.99/yr',
-    budgero: `${pricing.yearly}/yr (or free self-host)`,
+    budgero: t('comparisonData_yearly_yr_or_free_self_host', {
+      yearly: pricing.yearly
+    }),
   },
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'Does Monarch Money support multiple currencies?',
-    a: 'No. As of 2026, Monarch Money does not support multi-currency budgeting. Each budget operates in a single currency (USD, or CAD for Canadian users), there is no native way to hold accounts in different currencies, no automatic exchange-rate conversion, and no consolidated view across currencies.',
+    q: t('faqs_does_monarch_money_support_multiple_currencies'),
+    a: t('faqs_no_as_of_2026_monarch_money'),
   },
   {
-    q: 'Which countries does Monarch Money support?',
-    a: 'Monarch Money officially supports the United States and Canada. Its bank connections run through Plaid and similar US-focused aggregators, billing is in USD, and the company states it is not available internationally. You can create an account from elsewhere, but bank sync and currency handling will not work for non-US/CA banks.',
+    q: t('faqs_which_countries_does_monarch_money_support'),
+    a: t('faqs_monarch_money_officially_supports_the_united'),
   },
   {
-    q: 'What workarounds do people use for foreign currencies in Monarch?',
-    a: 'The common ones: tracking foreign accounts as manual accounts converted by hand at a fixed rate, keeping a separate spreadsheet for non-USD holdings, or simply excluding foreign finances from Monarch entirely. All three break down quickly — rates drift, manual entries go stale, and your net worth is permanently wrong by whatever the FX moved.',
+    q: t('faqs_what_workarounds_do_people_use_for'),
+    a: t('faqs_the_common_ones_tracking_foreign_accounts'),
   },
   {
-    q: 'What should I use instead if I need multi-currency budgeting?',
-    a: 'Use an app where multi-currency is native rather than bolted on. Budgero supports 168 currencies in one budget with live exchange rates and a home-currency rollup. PocketSmith (forecast-oriented) and Lunch Money (tracking-oriented) also handle multiple currencies. If you specifically want zero-based envelope budgeting across currencies, Budgero is the closest fit.',
+    q: t('faqs_what_should_i_use_instead_if'),
+    a: t('faqs_use_an_app_where_multi_currency'),
   },
   {
-    q: 'Is Monarch Money planning to add multi-currency support?',
-    a: "Multi-currency has been a long-running feature request in Monarch's community forums, but as of 2026 Monarch has not shipped it or committed to a date. Monarch's product focus remains the US/Canada market, where the demand is for bank sync coverage and investment tracking rather than currency handling.",
+    q: t('faqs_is_monarch_money_planning_to_add'),
+    a: t('faqs_multi_currency_has_been_a_long'),
   },
 ];
 
@@ -129,6 +137,8 @@ export default async function MonarchMultiCurrencyPage(
 
   setRequestLocale(locale);
   const t = await getTranslations('monarch_money_multi_currency');
+  const faqs = makeFaqs(t);
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [

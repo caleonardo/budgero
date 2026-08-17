@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import { ArrowRight, Check, X, Shield, Lock, Target, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,10 +10,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'PocketGuard Alternative - Budget Without Bank Connections | Budgero',
-  description:
-    'Looking for a PocketGuard alternative that doesn\'t require bank connections? Budgero offers zero-based budgeting with zero-knowledge encryption and multi-currency support.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'pocketguard_alternative' });
+  return withLocalizedUrls(locale, '/pocketguard-alternative', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'pocketguard alternative',
     'pocketguard replacement',
@@ -23,90 +30,89 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/pocketguard-alternative' },
   openGraph: {
-    title: 'PocketGuard Alternative - Budget Without Bank Connections | Budgero',
-    description:
-      'Looking for a PocketGuard alternative that doesn\'t require bank connections? Budgero offers zero-based budgeting with zero-knowledge encryption and multi-currency support.',
+    title: t('meta_title'),
+    description: t('meta_description'),
     url: 'https://budgero.app/pocketguard-alternative',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PocketGuard Alternative - Budget Without Bank Connections | Budgero',
-    description:
-      'Looking for a PocketGuard alternative that doesn\'t require bank connections? Budgero offers zero-based budgeting with zero-knowledge encryption and multi-currency support.',
+    title: t('meta_title'),
+    description: t('meta_description'),
   },
-};
+});
+}
 
-const comparisonData = [
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Annual price',
+    feature: t('comparisonData_annual_price'),
     budgero: `${pricing.yearly}/year`,
     pocketguard: '$34.99/year',
-    budgeroNote: 'Or free with Self-Host',
-    pocketguardNote: '$7.99/mo if monthly',
+    budgeroNote: t('comparisonData_or_free_with_self_host'),
+    pocketguardNote: t('comparisonData_7_99_mo_if_monthly'),
   },
   {
-    feature: 'Budgeting method',
-    budgero: 'Zero-based',
-    pocketguard: 'Spending tracker',
-    budgeroNote: 'Every dollar gets a job',
-    pocketguardNote: '"In My Pocket" after bills',
+    feature: t('comparisonData_budgeting_method'),
+    budgero: t('cell_zero_based'),
+    pocketguard: t('comparisonData_spending_tracker'),
+    budgeroNote: t('comparisonData_every_dollar_gets_a_job'),
+    pocketguardNote: t('comparisonData_in_my_pocket_after_bills'),
   },
   {
-    feature: 'Zero-knowledge encryption',
+    feature: t('comparisonData_zero_knowledge_encryption'),
     budgero: true,
     pocketguard: false,
-    budgeroNote: 'We cannot see your data',
-    pocketguardNote: 'Standard server-side encryption',
+    budgeroNote: t('comparisonData_we_cannot_see_your_data'),
+    pocketguardNote: t('comparisonData_standard_server_side_encryption'),
   },
   {
-    feature: 'Bank sync required',
+    feature: t('comparisonData_bank_sync_required'),
     budgero: false,
     pocketguard: true,
-    budgeroNote: 'Manual-first, works without it',
-    pocketguardNote: 'Core functionality depends on it',
+    budgeroNote: t('comparisonData_manual_first_works_without_it'),
+    pocketguardNote: t('comparisonData_core_functionality_depends_on_it'),
   },
   {
-    feature: 'Multi-currency support',
+    feature: t('comparisonData_multi_currency_support'),
     budgero: true,
     pocketguard: false,
-    budgeroNote: '168 currencies, live FX rates',
-    pocketguardNote: 'USD only',
+    budgeroNote: t('comparisonData_168_currencies_live_fx_rates'),
+    pocketguardNote: t('comparisonData_usd_only'),
   },
   {
-    feature: 'Works offline',
+    feature: t('comparisonData_works_offline'),
     budgero: true,
     pocketguard: false,
     budgeroNote: null,
-    pocketguardNote: 'Requires internet for sync',
+    pocketguardNote: t('comparisonData_requires_internet_for_sync'),
   },
   {
-    feature: 'Shared budgets',
+    feature: t('comparisonData_shared_budgets'),
     budgero: true,
     pocketguard: false,
-    budgeroNote: '5 seats included',
-    pocketguardNote: 'Single-user only',
+    budgeroNote: t('comparisonData_5_seats_included'),
+    pocketguardNote: t('comparisonData_single_user_only'),
   },
   {
-    feature: 'Self-host option',
+    feature: t('comparisonData_self_host_option'),
     budgero: true,
     pocketguard: false,
-    budgeroNote: 'Free forever, full features',
+    budgeroNote: t('comparisonData_free_forever_full_features'),
     pocketguardNote: null,
   },
   {
-    feature: 'Data export',
+    feature: t('comparisonData_data_export'),
     budgero: true,
     pocketguard: true,
-    budgeroNote: 'CSV export',
-    pocketguardNote: 'CSV export',
+    budgeroNote: t('comparisonData_csv_export'),
+    pocketguardNote: t('comparisonData_csv_export'),
   },
   {
-    feature: 'Works worldwide',
+    feature: t('comparisonData_works_worldwide'),
     budgero: true,
     pocketguard: false,
-    budgeroNote: '168 currencies, any country',
-    pocketguardNote: 'US and Canada focused',
+    budgeroNote: t('comparisonData_168_currencies_any_country'),
+    pocketguardNote: t('comparisonData_us_and_canada_focused'),
   },
 ];
 
@@ -125,6 +131,7 @@ export default async function PocketGuardAlternativePage(
 
   setRequestLocale(locale);
   const t = await getTranslations('pocketguard_alternative');
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',

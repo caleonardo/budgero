@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
+import { Link } from '@/i18n/navigation';
 import { ArrowRight, Check, X, Download, Import } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +11,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Budgero vs YNAB — The Free YNAB Alternative (2026)',
-  description: `Budgero vs YNAB, compared feature by feature. The free YNAB alternative: self-host at no cost, or Cloud from ${pricing.monthly}/mo — a third of YNAB's price, tax included. Import your YNAB budget in 5 minutes.`,
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'vs_ynab' });
+  return withLocalizedUrls(locale, '/vs-ynab', {
+  title: t('meta_title'),
+  description: t('meta_description', { monthly: pricing.monthly, yearly: pricing.yearly, yearlyEquivMonthly: pricing.yearlyEquivMonthly }),
   keywords: [
     'free ynab alternative',
     'ynab free alternative',
@@ -29,79 +37,87 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/vs-ynab' },
   openGraph: {
-    title: 'Budgero vs YNAB — The Free YNAB Alternative (2026)',
-    description:
-      "Free to self-host, or Cloud at half YNAB's price. Zero-based budgeting in 168 currencies with end-to-end encryption. Import your YNAB budget in 5 minutes.",
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/vs-ynab',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Budgero vs YNAB — The Free YNAB Alternative (2026)',
-    description:
-      "Free to self-host, or Cloud at half YNAB's price. Zero-based budgeting in 168 currencies, end-to-end encrypted.",
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const comparisonData = [
-  { feature: 'Monthly price', cloud: `${pricing.monthly}/mo (${pricing.yearly}/yr)`, selfHost: 'Free forever', ynab: '$14.99/mo ($109/yr)' },
-  { feature: 'Free trial', cloud: '35 days, no credit card', selfHost: 'N/A — always free', ynab: '34 days' },
-  { feature: 'Zero-based budgeting', cloud: true, selfHost: true, ynab: true },
-  { feature: 'End-to-end encryption', cloud: 'AES-256-GCM, zero-knowledge', selfHost: 'Local encryption', ynab: false, ynabNote: 'Data stored in plaintext' },
-  { feature: 'Offline mode', cloud: true, selfHost: true, ynab: false },
-  { feature: 'Multi-currency support', cloud: '168 currencies', selfHost: '168 currencies', ynab: false, ynabNote: 'Manual workarounds only' },
-  { feature: 'Bank sync', cloud: false, selfHost: false, ynab: true, cloudNote: 'Manual entry by design', ynabNote: 'US/Canada/EU via Plaid' },
-  { feature: 'YNAB data import', cloud: true, selfHost: true, ynab: 'N/A' },
-  { feature: 'Self-hosting option', cloud: false, selfHost: true, ynab: false, cloudNote: 'Use Self-Host edition' },
-  { feature: 'Works if you cancel', cloud: 'Export anytime', selfHost: 'Your data, your server', ynab: false, ynabNote: 'Lose access to budgets' },
-  { feature: 'Mobile app', cloud: 'PWA', selfHost: 'PWA', ynab: 'Native iOS & Android' },
-  { feature: 'Shared budgets', cloud: true, selfHost: 'Via shared server', ynab: true, cloudNote: 'Encrypted shared workspaces', ynabNote: 'Up to 5 users' },
-  { feature: 'AI categorization', cloud: true, selfHost: true, ynab: false, cloudNote: 'Local LLM, optional' },
-  { feature: 'Receipt scanning', cloud: true, selfHost: true, ynab: false, cloudNote: 'AI-powered, privacy-first' },
-  { feature: 'Reports & analytics', cloud: 'Modern dashboards', selfHost: 'Modern dashboards', ynab: 'Basic reports' },
-  { feature: 'API access', cloud: true, selfHost: true, ynab: false, cloudNote: 'Push API' },
+const makeComparisonData = (t: (key: string, values?: Record<string, string | number>) => string) => [
+  { feature: t('comparisonData_monthly_price'), cloud: t('comparisonData_monthly_mo_yearly_yr', {
+    monthly: pricing.monthly,
+    yearly: pricing.yearly
+  }), selfHost: t('comparisonData_free_forever'), ynab: t('comparisonData_14_99_mo_109_yr') },
+  { feature: t('comparisonData_free_trial'), cloud: t('comparisonData_35_days_no_credit_card'), selfHost: t('comparisonData_n_a_always_free'), ynab: t('comparisonData_34_days') },
+  { feature: t('comparisonData_zero_based_budgeting'), cloud: true, selfHost: true, ynab: true },
+  { feature: t('comparisonData_end_to_end_encryption'), cloud: t('comparisonData_aes_256_gcm_zero_knowledge'), selfHost: t('comparisonData_local_encryption'), ynab: false, ynabNote: t('comparisonData_data_stored_in_plaintext') },
+  { feature: t('comparisonData_offline_mode'), cloud: true, selfHost: true, ynab: false },
+  { feature: t('comparisonData_multi_currency_support'), cloud: t('comparisonData_168_currencies'), selfHost: t('comparisonData_168_currencies'), ynab: false, ynabNote: t('comparisonData_manual_workarounds_only') },
+  { feature: t('comparisonData_bank_sync'), cloud: false, selfHost: false, ynab: true, cloudNote: t('comparisonData_manual_entry_by_design'), ynabNote: t('comparisonData_us_canada_eu_via_plaid') },
+  { feature: t('comparisonData_ynab_data_import'), cloud: true, selfHost: true, ynab: 'N/A' },
+  { feature: t('comparisonData_self_hosting_option'), cloud: false, selfHost: true, ynab: false, cloudNote: t('comparisonData_use_self_host_edition') },
+  { feature: t('comparisonData_works_if_you_cancel'), cloud: t('comparisonData_export_anytime'), selfHost: t('comparisonData_your_data_your_server'), ynab: false, ynabNote: t('comparisonData_lose_access_to_budgets') },
+  { feature: t('comparisonData_mobile_app'), cloud: 'PWA', selfHost: 'PWA', ynab: t('comparisonData_native_ios_android') },
+  { feature: t('comparisonData_shared_budgets'), cloud: true, selfHost: t('comparisonData_via_shared_server'), ynab: true, cloudNote: t('comparisonData_encrypted_shared_workspaces'), ynabNote: t('comparisonData_up_to_5_users') },
+  { feature: t('comparisonData_ai_categorization'), cloud: true, selfHost: true, ynab: false, cloudNote: t('comparisonData_local_llm_optional') },
+  { feature: t('comparisonData_receipt_scanning'), cloud: true, selfHost: true, ynab: false, cloudNote: t('comparisonData_ai_powered_privacy_first') },
+  { feature: t('comparisonData_reports_analytics'), cloud: t('comparisonData_modern_dashboards'), selfHost: t('comparisonData_modern_dashboards'), ynab: t('comparisonData_basic_reports') },
+  { feature: t('comparisonData_api_access'), cloud: true, selfHost: true, ynab: false, cloudNote: t('comparisonData_push_api') },
 ];
 
-const faqs = [
+const makeFaqs = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    q: 'Does Budgero work outside the US?',
-    a: "Yes — that's a core reason people switch. Budgero works in every country, supports 168 currencies natively (with automatic conversion to your home currency), and the app, billing, and onboarding are all built to work without US-centric assumptions. Budgero is especially popular with users in Europe, the UK, Australia, and across Asia where YNAB's bank sync and pricing don't fit.",
+    q: t('faqs_does_budgero_work_outside_the_us'),
+    a: t('faqs_yes_that_s_a_core_reason'),
   },
   {
-    q: 'How is Budgero different from YNAB on multi-currency?',
-    a: `YNAB treats each account as a single currency and has no native way to show a unified home-currency total across accounts in different currencies. Budgero is multi-currency from the ground up: hold accounts in EUR, USD, GBP, JPY, and 164 other currencies simultaneously, with live exchange rates and a consolidated dashboard in your home currency. It is the feature most European and expat users cite as the reason they left YNAB.`,
+    q: t('faqs_how_is_budgero_different_from_ynab'),
+    a: t('faqs_ynab_treats_each_account_single_currency'),
   },
   {
-    q: 'Is there a free version of Budgero?',
-    a: `Yes — Budgero Self-Host is completely free. You run it on your own server with Docker. No trial period, no feature gating. Budgero Cloud is the same app fully managed (we handle hosting, updates, and backups) for ${pricing.monthly}/month or ${pricing.yearly}/year. Both editions include the full feature set.`,
+    q: t('faqs_is_there_a_free_version_of'),
+    a: t('faqs_yes_budgero_self_host_is_completely', {
+      monthly: pricing.monthly,
+      yearly: pricing.yearly
+    }),
   },
   {
-    q: 'Does Budgero offer discounts like YNAB student pricing?',
-    a: `No — Budgero keeps pricing simple instead. Cloud costs ${pricing.monthly}/month or ${pricing.yearly}/year, tax included, for everyone, everywhere — roughly a third of YNAB's price without any discount program. And Self-Host is entirely free.`,
+    q: t('faqs_does_budgero_offer_discounts_like_ynab'),
+    a: t('faqs_no_budgero_keeps_pricing_simple_instead', {
+      monthly: pricing.monthly,
+      yearly: pricing.yearly
+    }),
   },
   {
-    q: 'Can I import my YNAB budget into Budgero?',
-    a: 'Yes. Budgero imports YNAB export files and automatically maps your transactions, categories, groups, and accounts. The process takes about 5 minutes and preserves your full history.',
+    q: t('faqs_can_i_import_my_ynab_budget'),
+    a: t('faqs_yes_budgero_imports_ynab_export_files'),
   },
   {
-    q: 'Does Budgero connect to my bank?',
-    a: "No, and that's intentional. Bank sync requires sharing your credentials with third-party aggregators like Plaid. Budgero is manual-first: you enter transactions yourself (or scan receipts), which means your bank credentials never leave your control.",
+    q: t('faqs_does_budgero_connect_to_my_bank'),
+    a: t('faqs_no_and_that_s_intentional_bank'),
   },
   {
-    q: 'How does Budgero keep my data private?',
-    a: "Budgero uses end-to-end encryption (AES-256-GCM with PBKDF2-HMAC-SHA256 key derivation at 600,000 iterations). Your data is encrypted on your device before it's sent to our servers. We literally cannot read your budget. Even if someone breached our servers, they'd get encrypted gibberish.",
+    q: t('faqs_how_does_budgero_keep_my_data'),
+    a: t('faqs_budgero_uses_end_to_end_encryption'),
   },
   {
-    q: 'Does Budgero work offline?',
-    a: "Yes. Budgero is built as a Progressive Web App with full offline support. You can add transactions, review your budget, and make changes without an internet connection. Everything syncs automatically when you're back online.",
+    q: t('faqs_does_budgero_work_offline'),
+    a: t('faqs_yes_budgero_is_built_as_a'),
   },
   {
-    q: 'Can I budget in multiple currencies?',
-    a: 'Yes. Budgero supports 168 currencies with automatic exchange rates and a unified dashboard in your home currency. This is one of the most common reasons international users switch from YNAB.',
+    q: t('faqs_can_i_budget_in_multiple_currencies'),
+    a: t('faqs_yes_budgero_supports_168_currencies_with'),
   },
   {
-    q: 'What happens if I cancel Budgero Cloud?',
-    a: 'Your data is yours. You can export it anytime. If you cancel Cloud, you can also switch to the free Self-Host edition and keep budgeting without interruption. Unlike YNAB, canceling does not mean losing access to your data.',
+    q: t('faqs_what_happens_if_i_cancel_budgero'),
+    a: t('faqs_your_data_is_yours_you_can'),
   },
 ];
 
@@ -143,6 +159,8 @@ export default async function VsYnabPage(
 
   setRequestLocale(locale);
   const t = await getTranslations('vs_ynab');
+  const faqs = makeFaqs(t);
+  const comparisonData = makeComparisonData(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -345,29 +363,29 @@ export default async function VsYnabPage(
                 {[
                   {
                     step: '1',
-                    title: 'Export Your YNAB Data',
-                    text: 'Open YNAB, go to your budget settings, and click "Export Budget." YNAB will download a ZIP file containing your transactions, budget amounts, and account info.',
-                    tip: 'Export before your subscription ends. Once your YNAB subscription lapses, you lose access to the export feature.',
+                    title: t('migration_step1_title'),
+                    text: t('migration_step1_text'),
+                    tip: t('migration_step1_tip'),
                   },
                   {
                     step: '2',
-                    title: 'Create Your Budgero Account',
-                    text: 'Head to my.budgero.app and sign up for a free Cloud trial. No credit card required. You get 35 days to explore everything.',
+                    title: t('migration_step2_title'),
+                    text: t('migration_step2_text'),
                   },
                   {
                     step: '3',
-                    title: 'Import Your YNAB File',
-                    text: 'In Budgero, open Settings and click "Import." Drop in your YNAB export file. Budgero automatically maps your categories, groups, and accounts. You will see a preview of everything before confirming.',
+                    title: t('migration_step3_title'),
+                    text: t('migration_step3_text'),
                   },
                   {
                     step: '4',
-                    title: 'Review and Adjust',
-                    text: 'Take a few minutes to review your imported data. Budgero preserves your category structure, but you might want to tweak a few names or merge groups. Your full transaction history is there, ready to go.',
+                    title: t('migration_step4_title'),
+                    text: t('migration_step4_text'),
                   },
                   {
                     step: '5',
-                    title: 'Start Budgeting',
-                    text: 'That is it. Your entire YNAB workflow, categories, balances, transaction history, is now in Budgero with end-to-end encryption.',
+                    title: t('migration_step5_title'),
+                    text: t('migration_step5_text'),
                   },
                 ].map((item) => (
                   <div key={item.step} className="flex items-start gap-4">

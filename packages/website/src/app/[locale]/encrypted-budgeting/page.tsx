@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { withLocalizedUrls } from '@/lib/localized-metadata';
 import { ArrowRight, Check, X, Lock, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,10 +10,16 @@ import { pricing } from '@/lib/pricing';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-export const metadata: Metadata = {
-  title: 'Zero-Knowledge Encrypted Budgeting App | Budgero',
-  description:
-    'Budgero encrypts your financial data on your device before sync using AES-256-GCM. We cannot read your budget. Zero-knowledge privacy by design.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'encrypted_budgeting' });
+  return withLocalizedUrls(locale, '/encrypted-budgeting', {
+  title: t('meta_title'),
+  description: t('meta_description'),
   keywords: [
     'encrypted budgeting app',
     'private budgeting app',
@@ -25,48 +32,48 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/encrypted-budgeting' },
   openGraph: {
-    title: 'Zero-Knowledge Encrypted Budgeting App | Budgero',
-    description:
-      'Budgero encrypts your financial data on your device before sync using AES-256-GCM. We cannot read your budget.',
+    title: t('meta_title'),
+    description: t('og_description'),
     url: 'https://budgero.app/encrypted-budgeting',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Zero-Knowledge Encrypted Budgeting App | Budgero',
-    description: 'Your budget is encrypted before it leaves your device. We cannot read it.',
+    title: t('meta_title'),
+    description: t('tw_description'),
   },
-};
+});
+}
 
-const privacyComparison = [
+const makePrivacyComparison = (t: (key: string, values?: Record<string, string | number>) => string) => [
   {
-    feature: 'Data encrypted at rest on server',
+    feature: t('privacyComparison_data_encrypted_at_rest_on_server'),
     budgero: 'Zero-knowledge',
     ynab: 'Standard',
     monarch: 'Standard',
   },
   {
-    feature: 'Provider can read your data',
+    feature: t('privacyComparison_provider_can_read_your_data'),
     budgero: false,
     ynab: true,
     monarch: true,
   },
   {
-    feature: 'Encryption method',
-    budgero: 'AES-256-GCM (client-side)',
-    ynab: 'TLS + server-side',
-    monarch: 'TLS + server-side',
+    feature: t('privacyComparison_encryption_method'),
+    budgero: t('privacyComparison_aes_256_gcm_client_side'),
+    ynab: t('privacyComparison_tls_server_side'),
+    monarch: t('privacyComparison_tls_server_side'),
   },
   {
-    feature: 'Bank connection required',
+    feature: t('privacyComparison_bank_connection_required'),
     budgero: false,
     ynab: false,
     monarch: true,
-    budgeroNote: 'By design',
+    budgeroNote: t('privacyComparison_by_design'),
     ynabNote: 'Optional',
   },
   {
-    feature: 'Self-host option',
+    feature: t('privacyComparison_self_host_option'),
     budgero: true,
     ynab: false,
     monarch: false,
@@ -88,6 +95,7 @@ export default async function EncryptedBudgetingPage(
 
   setRequestLocale(locale);
   const t = await getTranslations('encrypted_budgeting');
+  const privacyComparison = makePrivacyComparison(t);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
