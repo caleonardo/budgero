@@ -2,7 +2,12 @@
   "$schema": "./glossary.schema.json",
   "version": 1,
   "sourceLocale": "en",
-  "targetLocales": ["de", "fr", "es", "nl"],
+  "targetLocales": [
+    "de",
+    "fr",
+    "es",
+    "nl"
+  ],
   "statusLegend": {
     "proposed": "LLM-proposed, NOT verified by a native speaker. Do not ship.",
     "reviewed": "A native speaker has read and corrected it.",
@@ -1390,6 +1395,37 @@
           "value": "Multivaluta",
           "status": "locked",
           "note": ""
+        }
+      }
+    },
+    {
+      "id": "audit_log",
+      "term": "Audit Log",
+      "partOfSpeech": "noun",
+      "definition": "The chronological history of changes made in a budget.",
+      "context": "Settings nav item, audit log page, toasts referencing it.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Änderungsprotokoll",
+          "status": "locked",
+          "note": "Native term preferred over the 'Audit-Log' anglicism for a consumer app; matches fr/es which also went native."
+        },
+        "fr": {
+          "value": "Journal d'audit",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Registro de auditoría",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Auditlog",
+          "status": "locked",
+          "note": "Standard Dutch software term; kept deliberately."
         }
       }
     }

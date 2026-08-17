@@ -3132,11 +3132,11 @@ msgstr "Bild anhängen"
 #: src/pages/settings/AuditLogPage.tsx
 #: src/shared/model/nav-registry.ts
 msgid "Audit Log"
-msgstr "Audit-Log"
+msgstr "Änderungsprotokoll"
 
 #: src/pages/settings/AuditLogPage.tsx
 msgid "Audit log cleared"
-msgstr "Audit-Log geleert"
+msgstr "Änderungsprotokoll geleert"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Australian Dollar"
@@ -4059,7 +4059,7 @@ msgstr "Chats"
 
 #: src/pages/settings/push-api/usePushApiState.ts
 msgid "Check Audit Log for error details"
-msgstr "Prüfe das Audit-Log auf Fehlerdetails"
+msgstr "Prüfe das Änderungsprotokoll auf Fehlerdetails"
 
 #: src/pages/admin/AdminDashboard.tsx
 msgid "Check server logs. Re-sending is safe — delivered users are skipped."
@@ -4208,7 +4208,7 @@ msgstr "Alle leeren"
 
 #: src/pages/settings/AuditLogPage.tsx
 msgid "Clear audit log?"
-msgstr "Audit-Log löschen?"
+msgstr "Änderungsprotokoll löschen?"
 
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
 msgid "Clear default budget"
@@ -7968,7 +7968,7 @@ msgstr "Admin-Panel wird geladen..."
 
 #: src/pages/settings/AuditLogPage.tsx
 msgid "Loading audit log..."
-msgstr "Audit-Log wird geladen …"
+msgstr "Änderungsprotokoll wird geladen …"
 
 #: src/app/startup/reducer.ts
 msgid "Loading Budgero…"
