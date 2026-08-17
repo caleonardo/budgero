@@ -163,7 +163,7 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
         />
       }
       heroClassName={trendTextClass(slack)}
-      subtitle="What you assigned vs what actually happened — only possible because you budget"
+      subtitle={t`What you assigned vs what actually happened — only possible because you budget`}
       insights={<InsightStrip insights={insights} />}
       legend={
         <LegendChips

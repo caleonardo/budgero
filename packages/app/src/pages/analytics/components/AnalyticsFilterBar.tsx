@@ -77,7 +77,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
         <SelectContent>
           {(Object.keys(PERIOD_LABELS) as PeriodKey[]).map((key) => (
             <SelectItem key={key} value={key}>
-              {PERIOD_LABELS[key]}
+              {t(PERIOD_LABELS[key])}
             </SelectItem>
           ))}
         </SelectContent>
@@ -117,15 +117,15 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
         hasItems={data.accounts.length > 0}
         buttonLabel={
           selections.accountIds.length === 0
-            ? 'All accounts'
+            ? t`All accounts`
             : `${selections.accountIds.length} account${selections.accountIds.length > 1 ? 's' : ''}`
         }
         triggerWidthClassName="w-[150px]"
         contentClassName="w-[240px]"
         listClassName="max-h-[280px]"
-        searchPlaceholder="Search accounts…"
+        searchPlaceholder={t`Search accounts…`}
         emptyText={t`No accounts found.`}
-        allOptionLabel="All accounts"
+        allOptionLabel={t`All accounts`}
         allOptionValue="all-accounts"
       />
 
@@ -141,15 +141,15 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             hasItems={data.categories.length > 0}
             buttonLabel={
               selections.categoryIds.length === 0
-                ? 'All categories'
+                ? t`All categories`
                 : `${selections.categoryIds.length} categor${selections.categoryIds.length > 1 ? 'ies' : 'y'}`
             }
             triggerWidthClassName="w-[150px]"
             contentClassName="w-[260px]"
             listClassName="max-h-[280px]"
-            searchPlaceholder="Search categories…"
+            searchPlaceholder={t`Search categories…`}
             emptyText={t`No categories found.`}
-            allOptionLabel="All categories"
+            allOptionLabel={t`All categories`}
             allOptionValue="all-categories"
           />
           <MultiSelectFilterControl
@@ -162,15 +162,15 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             hasItems={payeeItems.length > 0}
             buttonLabel={
               selections.payees.length === 0
-                ? 'All payees'
+                ? t`All payees`
                 : `${selections.payees.length} payee${selections.payees.length > 1 ? 's' : ''}`
             }
             triggerWidthClassName="w-[140px]"
             contentClassName="w-[240px]"
             listClassName="max-h-[280px]"
-            searchPlaceholder="Search payees…"
+            searchPlaceholder={t`Search payees…`}
             emptyText={t`No payees found.`}
-            allOptionLabel="All payees"
+            allOptionLabel={t`All payees`}
             allOptionValue="all-payees"
           />
           <MultiSelectFilterControl
@@ -183,15 +183,15 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             hasItems={data.labels.length > 0}
             buttonLabel={
               selections.labelIds.length === 0
-                ? 'All labels'
+                ? t`All labels`
                 : `${selections.labelIds.length} label${selections.labelIds.length > 1 ? 's' : ''}`
             }
             triggerWidthClassName="w-[130px]"
             contentClassName="w-[220px]"
             listClassName="max-h-[280px]"
-            searchPlaceholder="Search labels…"
+            searchPlaceholder={t`Search labels…`}
             emptyText={t`No labels found.`}
-            allOptionLabel="All labels"
+            allOptionLabel={t`All labels`}
             allOptionValue="all-labels"
           />
         </>

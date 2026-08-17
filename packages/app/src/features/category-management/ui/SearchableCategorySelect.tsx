@@ -419,7 +419,7 @@ export function SearchableCategorySelect({
                 </div>
               </CommandEmpty>
               {includeReadyToAssign && (!onlyPositiveAvailable || readyToAssignAmount > 0) && (
-                <CommandGroup heading="General">
+                <CommandGroup heading={t`General`}>
                   <CommandItem
                     value={readyToAssignLabel.toLowerCase()}
                     onSelect={() => {

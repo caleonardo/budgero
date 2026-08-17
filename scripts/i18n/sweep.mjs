@@ -27,6 +27,8 @@ const allowlist = existsSync(ALLOWLIST_PATH)
   ? JSON.parse(readFileSync(ALLOWLIST_PATH, 'utf8')).entries ?? []
   : [];
 const fileFullyAllowed = (file) => allowlist.some((a) => a.file === file && a.text === '*');
+const textAllowed = (file, text) =>
+  allowlist.some((a) => a.file === file && (a.text === '*' || a.text === text));
 
 const FIX = process.argv.includes('--fix');
 const takeList = (flag) => {
@@ -49,12 +51,14 @@ const OBJ_KEYS = new Set([
   'label', 'title', 'description', 'placeholder', 'tooltip', 'heading',
   'subtitle', 'subheading', 'text', 'cta', 'message', 'summary', 'hint',
   'caption', 'emptyText', 'confirmText', 'cancelText', 'successMessage',
+  'question', 'buttonLabel', 'allOptionLabel', 'searchPlaceholder',
   'errorMessage', 'helperText', 'empty', 'loadingText', 'badge', 'name',
 ]);
 const ARRAY_KEYS = new Set(['takeaways', 'tips', 'bullets', 'features', 'steps']);
 const ATTRS = new Set([
   'placeholder', 'title', 'aria-label', 'label', 'alt', 'description',
-  'emptyText', 'confirmText', 'cancelText', 'tooltip',
+  'emptyText', 'confirmText', 'cancelText', 'tooltip', 'buttonLabel',
+  'allOptionLabel', 'searchPlaceholder', 'question', 'heading', 'subtitle',
 ]);
 const MACHINE_ATTRS = new Set([
   'className', 'class', 'id', 'htmlFor', 'key', 'variant', 'size', 'value',
@@ -478,6 +482,7 @@ function sweepFile(file, report) {
   const wrapModuleLeaf = (path) => {
     if (!FIX || !MODULES || fileFullyAllowed(file)) return false;
     const node = path.node;
+    if (isStr(node) && textAllowed(file, node.value)) return false;
     // Top-level data must defer resolution (msg descriptor); strings built
     // inside functions resolve at call time, after the locale is active.
     const tag = insideAnyFunction(path) ? 't' : 'msg';

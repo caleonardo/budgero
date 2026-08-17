@@ -155,8 +155,8 @@ export function FlowReport({ data }: FlowReportProps) {
       }
       subtitle={
         savingsRate === null
-          ? 'Every stream from income to destination'
-          : `Income → spending; ${savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`}`
+          ? t`Every stream from income to destination`
+          : t`Income → spending; ${savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`}`
       }
       chart={<EChart option={option} ariaLabel="Income to spending flow" className="h-[440px]" />}
       isLoading={data.isLoading}

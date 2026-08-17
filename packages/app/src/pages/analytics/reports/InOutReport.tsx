@@ -248,10 +248,10 @@ export function InOutReport({ data, months }: InOutReportProps) {
       heroClassName={trendTextClass(totalNet)}
       subtitle={
         savingsRate === null
-          ? 'Do we live within our means?'
+          ? t`Do we live within our means?`
           : savingsRate >= 0
-            ? `Keeping ${savingsRate.toFixed(0)}% of income${target !== null ? ` (target ${target}%)` : ''}`
-            : `Spending ${Math.abs(savingsRate).toFixed(0)}% more than income`
+            ? t`Keeping ${savingsRate.toFixed(0)}% of income${target !== null ? ` (target ${target}%)` : ''}`
+            : t`Spending ${Math.abs(savingsRate).toFixed(0)}% more than income`
       }
       controls={
         <>

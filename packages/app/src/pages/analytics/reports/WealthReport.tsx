@@ -353,7 +353,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           '—'
         )
       }
-      subtitle="What you own, what you owe, and where it's heading"
+      subtitle={t`What you own, what you owe, and where it's heading`}
       controls={
         <ModeToggle
           value={mode}

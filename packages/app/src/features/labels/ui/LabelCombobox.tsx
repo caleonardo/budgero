@@ -131,7 +131,7 @@ export function LabelCombobox({
             </CommandEmpty>
 
             {allowClear && (
-              <CommandGroup heading="Actions">
+              <CommandGroup heading={t`Actions`}>
                 <CommandItem
                   value="__clear_label__"
                   onSelect={() => handleSelect(null)}
@@ -151,7 +151,7 @@ export function LabelCombobox({
               </CommandGroup>
             )}
 
-            <CommandGroup heading="Labels">
+            <CommandGroup heading={t`Labels`}>
               {filteredLabels.map((label) => (
                 <CommandItem
                   key={label.ID}

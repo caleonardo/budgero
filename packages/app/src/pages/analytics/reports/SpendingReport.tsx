@@ -265,7 +265,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
           rounding="integer"
         />
       }
-      subtitle="Where the money goes"
+      subtitle={t`Where the money goes`}
       controls={
         <>
           <ModeToggle

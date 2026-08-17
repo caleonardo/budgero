@@ -116,8 +116,14 @@ export function DevSimulateRateMoveButton() {
 
       toast.success(t`Simulated a market move`, {
         description: plural(moved, {
-          one: `# rate shifted, ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
-          other: `# rates shifted, ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
+          one: plural(revalued, {
+            one: `# rate shifted, # account revalued.`,
+            other: `# rate shifted, # accounts revalued.`
+          }),
+          other: plural(revalued, {
+            one: `# rates shifted, # account revalued.`,
+            other: `# rates shifted, # accounts revalued.`
+          }),
         }),
       });
     } catch (err) {

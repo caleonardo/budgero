@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import type { MessageDescriptor } from '@lingui/core';
 import { useCallback, useMemo, useState } from 'react';
 import { getTodayISO } from '@shared/lib/date-utils';
 import { monthKeysInRange, shiftMonthKey, type AnalyticsFilters } from './analytics-model';
@@ -13,14 +15,14 @@ export type ReportKey =
 
 export type PeriodKey = '3m' | '6m' | '12m' | '24m' | 'ytd' | 'all' | 'custom';
 
-export const PERIOD_LABELS: Record<PeriodKey, string> = {
-  '3m': 'Last 3 months',
-  '6m': 'Last 6 months',
-  '12m': 'Last 12 months',
-  '24m': 'Last 24 months',
-  ytd: 'Year to date',
-  all: 'All time',
-  custom: 'Custom range',
+export const PERIOD_LABELS: Record<PeriodKey, MessageDescriptor> = {
+  '3m': msg`Last 3 months`,
+  '6m': msg`Last 6 months`,
+  '12m': msg`Last 12 months`,
+  '24m': msg`Last 24 months`,
+  ytd: msg`Year to date`,
+  all: msg`All time`,
+  custom: msg`Custom range`,
 };
 
 export interface AnalyticsSelections {

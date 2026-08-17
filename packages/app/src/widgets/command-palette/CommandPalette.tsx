@@ -413,7 +413,7 @@ export function CommandPalette() {
           </CommandEmpty>
 
           {/* Quick Actions */}
-          <CommandGroup heading="Quick Actions">
+          <CommandGroup heading={t`Quick Actions`}>
             <CommandItem
               onSelect={() => {
                 setCommandPaletteOpen(false);
@@ -433,7 +433,7 @@ export function CommandPalette() {
           <CommandSeparator />
 
           {/* Main Pages */}
-          <CommandGroup heading="Pages">
+          <CommandGroup heading={t`Pages`}>
             <CommandItem onSelect={() => handleNavigation('/dashboard')}>
               <Home className="mr-2 h-4 w-4" />
               <span>
@@ -482,7 +482,7 @@ export function CommandPalette() {
 
           {/* Settings Pages — sourced from the shared nav registry so routes/icons/labels
               stay in sync with the sidebar and mobile nav. */}
-          <CommandGroup heading="Settings">
+          <CommandGroup heading={t`Settings`}>
             <CommandItem onSelect={() => handleNavigation('/settings/appearance')}>
               <Palette className="mr-2 h-4 w-4" />
               <span>
@@ -531,7 +531,7 @@ export function CommandPalette() {
           {/* Categories */}
           {categories.length > 0 && (
             <>
-              <CommandGroup heading="Categories">
+              <CommandGroup heading={t`Categories`}>
                 {displayedCategories.map((category) => (
                   <CommandItem
                     key={category.ID}
@@ -561,7 +561,7 @@ export function CommandPalette() {
 
           {/* Accounts */}
           {accounts.length > 0 && (
-            <CommandGroup heading="Accounts">
+            <CommandGroup heading={t`Accounts`}>
               {displayedAccounts.map((account) => (
                 <CommandItem
                   key={account.ID}
@@ -591,7 +591,7 @@ export function CommandPalette() {
           {displayedTransactions.length > 0 && (
             <>
               <CommandSeparator />
-              <CommandGroup heading="Recent Transactions">
+              <CommandGroup heading={t`Recent Transactions`}>
                 {displayedTransactions.map((transaction) => {
                   const rawAmount =
                     transaction.InflowConverted > 0

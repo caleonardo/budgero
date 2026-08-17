@@ -121,7 +121,7 @@ export function PayeeCombobox({
                 : t`Type to search payees.`}
             </CommandEmpty>
             {(normalizedSearch && !hasExactMatch) || (allowClear && normalizedValue) ? (
-              <CommandGroup heading="Actions">
+              <CommandGroup heading={t`Actions`}>
                 {normalizedSearch && !hasExactMatch && (
                   <CommandItem
                     value={`__create__::${normalizedSearch}`}
@@ -148,7 +148,7 @@ export function PayeeCombobox({
                 )}
               </CommandGroup>
             ) : null}
-            <CommandGroup heading="Payees">
+            <CommandGroup heading={t`Payees`}>
               {existingPayees.map((payee) => (
                 <CommandItem
                   key={payee}

@@ -476,8 +476,8 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
       heroClassName={trendTextClass(chartedEnd)}
       subtitle={
         scenario.breakMonthKey
-          ? `This scenario breaks in ${shortMonthLabel(scenario.breakMonthKey)}${breakBeyondChart ? ' (beyond the charted window)' : ''}`
-          : `Balance after ${payload.horizon} months under this scenario`
+          ? t`This scenario breaks in ${shortMonthLabel(scenario.breakMonthKey)}${breakBeyondChart ? ' (beyond the charted window)' : ''}`
+          : t`Balance after ${payload.horizon} months under this scenario`
       }
       controls={
         <>

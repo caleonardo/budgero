@@ -240,7 +240,7 @@ export function WarrantyFormDialog({
                       <Trans>No transactions found.</Trans>
                     </CommandEmpty>
                     {form.transactionId && (
-                      <CommandGroup heading="Actions">
+                      <CommandGroup heading={t`Actions`}>
                         <CommandItem
                           value="__clear__"
                           onSelect={() => {
@@ -255,7 +255,7 @@ export function WarrantyFormDialog({
                         </CommandItem>
                       </CommandGroup>
                     )}
-                    <CommandGroup heading="Transactions">
+                    <CommandGroup heading={t`Transactions`}>
                       {recentTransactions.map((tx) => {
                         const label = formatTxLabel(tx);
                         const isSelected = form.transactionId === String(tx.ID);

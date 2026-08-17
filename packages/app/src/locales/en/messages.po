@@ -678,11 +678,9 @@ msgstr "{matchedCount, plural, one {# transaction updated.} other {# transaction
 msgid "{matchedCount, plural, one {Updated # transaction across this budget.} other {Updated # transactions across this budget.}}"
 msgstr "{matchedCount, plural, one {Updated # transaction across this budget.} other {Updated # transactions across this budget.}}"
 
-#. placeholder {0}: revalued !== 1 ? 's' : ''
-#. placeholder {1}: revalued !== 1 ? 's' : ''
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
-msgid "{moved, plural, one {# rate shifted, {revalued} account{0} revalued.} other {# rates shifted, {revalued} account{1} revalued.}}"
-msgstr "{moved, plural, one {# rate shifted, {revalued} account{0} revalued.} other {# rates shifted, {revalued} account{1} revalued.}}"
+msgid "{moved, plural, one {{revalued, plural, one {# rate shifted, # account revalued.} other {# rate shifted, # accounts revalued.}}} other {{revalued, plural, one {# rates shifted, # account revalued.} other {# rates shifted, # accounts revalued.}}}}"
+msgstr "{moved, plural, one {{revalued, plural, one {# rate shifted, # account revalued.} other {# rate shifted, # accounts revalued.}}} other {{revalued, plural, one {# rates shifted, # account revalued.} other {# rates shifted, # accounts revalued.}}}}"
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 msgid "{name} has been added successfully."
@@ -2274,6 +2272,7 @@ msgstr "Account<0/>"
 
 #: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
+#: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/pages/accounts/AccountsPage.tsx
 #: src/pages/admin/SelfHostAdminUsers.tsx
 #: src/pages/settings/push-api/IdReferencePanel.tsx
@@ -2319,6 +2318,8 @@ msgid "Action undone"
 msgstr "Action undone"
 
 #: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
+#: src/features/labels/ui/LabelCombobox.tsx
+#: src/features/payees/ui/PayeeCombobox.tsx
 #: src/features/rules/ui/rule-editor/RuleActionsEditor.tsx
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 #: src/pages/admin/admin-users/UsersTable.tsx
@@ -2327,6 +2328,7 @@ msgstr "Action undone"
 #: src/pages/settings/AuditLogPage.tsx
 #: src/pages/settings/ImportsPage.tsx
 #: src/pages/settings/subscription/InvoicesTable.tsx
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
 #: src/pages/warranties/components/WarrantyTable.tsx
 msgid "Actions"
 msgstr "Actions"
@@ -2600,6 +2602,10 @@ msgstr "All {0} series visible"
 msgid "ALL 5 SEATS FILLED"
 msgstr "ALL 5 SEATS FILLED"
 
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "All accounts"
+msgstr "All accounts"
+
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/settings/AppearancePage.tsx
 msgid "All Accounts"
@@ -2612,6 +2618,10 @@ msgstr "All AI processing happens on your local network. No financial data is se
 #: src/features/budget-planning/ui/assign-dropdown/AssignQuickActions.tsx
 msgid "All assignments already zero"
 msgstr "All assignments already zero"
+
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "All categories"
+msgstr "All categories"
 
 #: src/features/budget-planning/ui/SearchAndFilterControls.tsx
 msgid "All Categories"
@@ -2642,9 +2652,17 @@ msgstr "All goals are fully funded!"
 msgid "All goals funded"
 msgstr "All goals funded"
 
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "All labels"
+msgstr "All labels"
+
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 msgid "All on-budget accounts"
 msgstr "All on-budget accounts"
+
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "All payees"
+msgstr "All payees"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 msgid "All set - nothing scheduled for this account right now."
@@ -2655,6 +2673,7 @@ msgid "all time"
 msgstr "all time"
 
 #: src/pages/accounts/components/ValueChangeStat.tsx
+#: src/pages/analytics/analytics-state.ts
 msgid "All time"
 msgstr "All time"
 
@@ -2759,6 +2778,10 @@ msgstr "Also add the reverse rate{0}"
 #: src/shared/lib/analytics/klaro-config.ts
 msgid "Always on"
 msgstr "Always on"
+
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Am I growing?"
+msgstr "Am I growing?"
 
 #: src/features/debt/ui/PayoffPlanSheet.tsx
 msgid "Amortization Table"
@@ -3304,6 +3327,11 @@ msgstr "Badge Icon"
 msgid "Balance"
 msgstr "Balance"
 
+#. placeholder {0}: payload.horizon
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Balance after {0} months under this scenario"
+msgstr "Balance after {0} months under this scenario"
+
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Balance owed"
 msgstr "Balance owed"
@@ -3771,7 +3799,6 @@ msgstr "Canadian Dollar"
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 #: src/features/subscription/ui/ExportDataCard.tsx
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
-#: src/features/transactions/ui/add-transaction/TransactionFormActions.tsx
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 #: src/pages/admin/admin-users/ActionDialog.tsx
@@ -3859,6 +3886,7 @@ msgstr "Cash spending:"
 
 #: src/pages/analytics/reports/SpendingReport.tsx
 #: src/pages/settings/push-api/IdReferencePanel.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
 msgid "Categories"
 msgstr "Categories"
 
@@ -5024,6 +5052,10 @@ msgstr "Custom cadence"
 msgid "Custom Dashboards"
 msgstr "Custom Dashboards"
 
+#: src/pages/analytics/analytics-state.ts
+msgid "Custom range"
+msgstr "Custom range"
+
 #: src/pages/custom-dashboards/components/AddWidgetDialog.tsx
 msgid "Custom widget title (optional)"
 msgstr "Custom widget title (optional)"
@@ -5455,6 +5487,10 @@ msgstr "Destinations"
 msgid "Details"
 msgstr "Details"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Did the budget hold?"
+msgstr "Did the budget hold?"
+
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 msgid "Difference"
 msgstr "Difference"
@@ -5518,6 +5554,10 @@ msgstr "Display the floating chat button"
 #: src/shared/ui/sidebar.tsx
 msgid "Displays the mobile sidebar."
 msgstr "Displays the mobile sidebar."
+
+#: src/pages/analytics/reports/InOutReport.tsx
+msgid "Do we live within our means?"
+msgstr "Do we live within our means?"
 
 #: src/features/ai/ui/AICategorizeDialog.tsx
 #: src/features/ai/ui/receipt-scanner/ScanProgress.tsx
@@ -6040,6 +6080,10 @@ msgstr "Every 2 weeks"
 msgid "Every 6 months"
 msgstr "Every 6 months"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Every category, every month"
+msgstr "Every category, every month"
+
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Every coin now has a place to land."
 msgstr "Every coin now has a place to land."
@@ -6055,6 +6099,10 @@ msgstr "Every dollar gets a job"
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 msgid "Every month"
 msgstr "Every month"
+
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "Every stream from income to destination"
+msgstr "Every stream from income to destination"
 
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 msgid "Every week"
@@ -6781,6 +6829,10 @@ msgstr "Garden & Outdoor"
 msgid "Gas"
 msgstr "Gas"
 
+#: src/features/category-management/ui/SearchableCategorySelect.tsx
+msgid "General"
+msgstr "General"
+
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
 msgid "Generate a fresh invite secret. Invites expire automatically after {DEFAULT_INVITE_EXPIRY_DAYS}days. You can use up to 5 collaborator seats across all of your owned workspaces, counting accepted members and pending invites together."
 msgstr "Generate a fresh invite secret. Invites expire automatically after {DEFAULT_INVITE_EXPIRY_DAYS}days. You can use up to 5 collaborator seats across all of your owned workspaces, counting accepted members and pending invites together."
@@ -7088,6 +7140,10 @@ msgstr "How do I invite someone?"
 msgid "HOW DO YOU WANT TO SAVE?"
 msgstr "HOW DO YOU WANT TO SAVE?"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "How does it move?"
+msgstr "How does it move?"
+
 #: src/app/startup/screens.tsx
 msgid "How is this different from my login?"
 msgstr "How is this different from my login?"
@@ -7311,6 +7367,11 @@ msgstr "Income"
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 msgid "Income / deposit"
 msgstr "Income / deposit"
+
+#. placeholder {0}: savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "Income → spending; {0}"
+msgstr "Income → spending; {0}"
 
 #: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
 msgid "Income and assignments accumulate across all time, so this figure is the same in every month."
@@ -7574,6 +7635,12 @@ msgstr "Keep in memory only (recommended)"
 msgid "Keep Subscription"
 msgstr "Keep Subscription"
 
+#. placeholder {0}: savingsRate.toFixed(0)
+#. placeholder {1}: target !== null ? ` (target ${target}%)` : ''
+#: src/pages/analytics/reports/InOutReport.tsx
+msgid "Keeping {0}% of income{1}"
+msgstr "Keeping {0}% of income{1}"
+
 #: src/pages/settings/push-api/EncryptionInfoPanel.tsx
 msgid "Key Source"
 msgstr "Key Source"
@@ -7623,6 +7690,7 @@ msgstr "Label: {raw}"
 msgid "Label<0/>"
 msgstr "Label<0/>"
 
+#: src/features/labels/ui/LabelCombobox.tsx
 #: src/pages/analytics/components/AnalyticsFilterBar.tsx
 #: src/pages/analytics/reports/SpendingReport.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
@@ -7638,9 +7706,25 @@ msgstr "Labels ({count})"
 msgid "Language & money"
 msgstr "Language & money"
 
+#: src/pages/analytics/analytics-state.ts
+msgid "Last 12 months"
+msgstr "Last 12 months"
+
+#: src/pages/analytics/analytics-state.ts
+msgid "Last 24 months"
+msgstr "Last 24 months"
+
+#: src/pages/analytics/analytics-state.ts
+msgid "Last 3 months"
+msgstr "Last 3 months"
+
 #: src/pages/accounts/components/ValueChangeStat.tsx
 msgid "Last 30 days"
 msgstr "Last 30 days"
+
+#: src/pages/analytics/analytics-state.ts
+msgid "Last 6 months"
+msgstr "Last 6 months"
 
 #: src/pages/admin/admin-users/user-details/ActivityTab.tsx
 msgid "Last Active"
@@ -9833,6 +9917,10 @@ msgstr "Page {0}/{1}"
 msgid "Page {0}of {totalPages}"
 msgstr "Page {0}of {totalPages}"
 
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Pages"
+msgstr "Pages"
+
 #. placeholder {0}: formatAmount(Math.abs(item.available))
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Paid {0}more than set aside"
@@ -9948,6 +10036,7 @@ msgstr "Payee:"
 msgid "Payee<0/>"
 msgstr "Payee<0/>"
 
+#: src/features/payees/ui/PayeeCombobox.tsx
 #: src/pages/analytics/components/AnalyticsFilterBar.tsx
 #: src/pages/analytics/reports/SpendingReport.tsx
 #: src/pages/settings/push-api/IdReferencePanel.tsx
@@ -10656,6 +10745,7 @@ msgstr "Queue Status"
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 #: src/pages/admin/AdminDashboard.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
 msgid "Quick Actions"
 msgstr "Quick Actions"
 
@@ -10798,6 +10888,7 @@ msgid "Recent transactions"
 msgstr "Recent transactions"
 
 #: src/pages/admin/admin-users/user-details/BillingTab.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
 msgid "Recent Transactions"
 msgstr "Recent Transactions"
 
@@ -11756,6 +11847,7 @@ msgstr "Search accounts..."
 
 #: src/app/layout/desktop-shell/AccountsList.tsx
 #: src/pages/accounts/AccountsPage.tsx
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
 msgid "Search accounts…"
 msgstr "Search accounts…"
 
@@ -11775,6 +11867,10 @@ msgstr "Search categories across all months..."
 msgid "Search categories..."
 msgstr "Search categories..."
 
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "Search categories…"
+msgstr "Search categories…"
+
 #: src/features/category-management/ui/SearchableCategorySelect.tsx
 msgid "Search category..."
 msgstr "Search category..."
@@ -11791,11 +11887,16 @@ msgstr "Search engine (Google, etc.)"
 msgid "Search labels..."
 msgstr "Search labels..."
 
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "Search labels…"
+msgstr "Search labels…"
+
 #: src/pages/settings/ai/ModelSelectionSection.tsx
 msgid "Search models..."
 msgstr "Search models..."
 
 #: src/features/payees/ui/PayeeCombobox.tsx
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
 msgid "Search payees…"
 msgstr "Search payees…"
 
@@ -12294,6 +12395,7 @@ msgstr "Set up recurring transactions to automatically create entries on a sched
 
 #: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
 #: src/widgets/navigation/MobileBottomNav.tsx
 msgid "Settings"
 msgstr "Settings"
@@ -12610,6 +12712,11 @@ msgstr "Speech Model"
 #: src/widgets/dashboard/CashflowTrendCard.tsx
 msgid "Spending"
 msgstr "Spending"
+
+#. placeholder {0}: Math.abs(savingsRate).toFixed(0)
+#: src/pages/analytics/reports/InOutReport.tsx
+msgid "Spending {0}% more than income"
+msgstr "Spending {0}% more than income"
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Spending & Assignments History"
@@ -13461,6 +13568,12 @@ msgstr "This rule and its history will be removed. Recent runs can still be undo
 msgid "This run has been undone. Transactions were restored to their prior values."
 msgstr "This run has been undone. Transactions were restored to their prior values."
 
+#. placeholder {0}: shortMonthLabel(scenario.breakMonthKey)
+#. placeholder {1}: breakBeyondChart ? ' (beyond the charted window)' : ''
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "This scenario breaks in {0}{1}"
+msgstr "This scenario breaks in {0}{1}"
+
 #: src/pages/settings/components/WorkspaceRow.tsx
 msgid "This shared workspace is locked until the owner renews their plan."
 msgstr "This shared workspace is locked until the owner renews their plan."
@@ -13867,6 +13980,7 @@ msgstr "Transaction with splits added"
 
 #: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
 #: src/pages/settings/ImportsPage.tsx
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
 msgid "Transactions"
 msgstr "Transactions"
 
@@ -14782,6 +14896,10 @@ msgstr "What does Ready to Assign mean?"
 msgid "What happens if I forget it?"
 msgstr "What happens if I forget it?"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "What if?"
+msgstr "What if?"
+
 #: src/app/startup/screens.tsx
 msgid "What is a workspace?"
 msgstr "What is a workspace?"
@@ -14798,9 +14916,17 @@ msgstr "What this means"
 msgid "What we collect"
 msgstr "What we collect"
 
+#: src/pages/analytics/reports/PlanRealityReport.tsx
+msgid "What you assigned vs what actually happened — only possible because you budget"
+msgstr "What you assigned vs what actually happened — only possible because you budget"
+
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "What you can still do"
 msgstr "What you can still do"
+
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "What you own, what you owe, and where it's heading"
+msgstr "What you own, what you owe, and where it's heading"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "When a recurring item is almost due, it will appear here so you can mark it ready."
@@ -14830,9 +14956,17 @@ msgstr "When you add a transaction for a payee you've used before, the category 
 msgid "Where do you keep your money?"
 msgstr "Where do you keep your money?"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Where does it go?"
+msgstr "Where does it go?"
+
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Where money goes"
 msgstr "Where money goes"
+
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "Where the money goes"
+msgstr "Where the money goes"
 
 #: src/pages/analytics/reports/PlanRealityReport.tsx
 msgid "Where the plan leaks"
@@ -14873,6 +15007,10 @@ msgstr "Width +"
 #: src/features/import/ui/steps/configure/FormattingTab.tsx
 msgid "With your current settings:"
 msgstr "With your current settings:"
+
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Within our means?"
+msgstr "Within our means?"
 
 #: src/pages/onboarding/OnboardingFlow.tsx
 msgid "Working…"
@@ -14967,6 +15105,10 @@ msgstr "X-Axis"
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
 msgid "Y-Axis"
 msgstr "Y-Axis"
+
+#: src/pages/analytics/analytics-state.ts
+msgid "Year to date"
+msgstr "Year to date"
 
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 #: src/pages/settings/subscription/PlanSelection.tsx

@@ -85,6 +85,11 @@
       "file": "src/shared/hooks/useUserPreferences.ts",
       "text": "*",
       "reason": "mutation audit meta labels are stored in the DB — locale-stable like sibling op slugs"
+    },
+    {
+      "file": "src/shared/ui/sql-code-mirror-editor.tsx",
+      "text": "ui-monospace, SFMono-Regular, \"SF Mono\", Consolas, \"Liberation Mono\", Menlo, monospace",
+      "reason": "CSS font stack"
     }
   ]
 }

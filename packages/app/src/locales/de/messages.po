@@ -1,15 +1,5 @@
 msgid ""
-msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language: \n"
-"Language-Team: \n"
-"Content-Type: \n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+msgstr "Project-Id-Version: \nReport-Msgid-Bugs-To: \nPOT-Creation-Date: \nPO-Revision-Date: \nLast-Translator: \nLanguage: \nLanguage-Team: \nContent-Type: \nContent-Transfer-Encoding: \nPlural-Forms: \n"
 
 #: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
 msgid " — cover it to avoid creating debt."
@@ -676,11 +666,9 @@ msgstr "{matchedCount, plural, one {# Transaktion aktualisiert.} other {# Transa
 msgid "{matchedCount, plural, one {Updated # transaction across this budget.} other {Updated # transactions across this budget.}}"
 msgstr "{matchedCount, plural, one {# Transaktion in diesem Budget aktualisiert.} other {# Transaktionen in diesem Budget aktualisiert.}}"
 
-#. placeholder {0}: revalued !== 1 ? 's' : ''
-#. placeholder {1}: revalued !== 1 ? 's' : ''
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
-msgid "{moved, plural, one {# rate shifted, {revalued} account{0} revalued.} other {# rates shifted, {revalued} account{1} revalued.}}"
-msgstr "{moved, plural, one {# Kurs verschoben, {revalued} Konto{0} neu bewertet.} other {# Kurse verschoben, {revalued} Konto{1} neu bewertet.}}"
+msgid "{moved, plural, one {{revalued, plural, one {# rate shifted, # account revalued.} other {# rate shifted, # accounts revalued.}}} other {{revalued, plural, one {# rates shifted, # account revalued.} other {# rates shifted, # accounts revalued.}}}}"
+msgstr "{moved, plural, one {{revalued, plural, one {# Kurs geändert, # Konto neu bewertet.} other {# Kurs geändert, # Konten neu bewertet.}}} other {{revalued, plural, one {# Kurse geändert, # Konto neu bewertet.} other {# Kurse geändert, # Konten neu bewertet.}}}}"
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 msgid "{name} has been added successfully."
@@ -2019,12 +2007,8 @@ msgid "1 month"
 msgstr "1 Monat"
 
 #: src/shared/hooks/usePWA.ts
-msgid "1. Tap the Share icon (square with arrow)\n"
-"2. Choose \"Add to Home Screen\"\n"
-"3. Confirm the name and tap Add"
-msgstr "1. Tippe auf das Teilen-Symbol (Quadrat mit Pfeil)\n"
-"2. Wähle \"Zum Home-Bildschirm hinzufügen\"\n"
-"3. Bestätige den Namen und tippe auf Hinzufügen"
+msgid "1. Tap the Share icon (square with arrow)\n2. Choose \"Add to Home Screen\"\n3. Confirm the name and tap Add"
+msgstr "1. Tippe auf das Teilen-Symbol (Quadrat mit Pfeil)\n2. Wähle \"Zum Home-Bildschirm hinzufügen\"\n3. Bestätige den Namen und tippe auf Hinzufügen"
 
 #: src/pages/admin/StickinessAnalyticsSection.tsx
 msgid "10–20% — typical SaaS"
@@ -2272,6 +2256,7 @@ msgstr "Konto<0/>"
 
 #: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
+#: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/pages/accounts/AccountsPage.tsx
 #: src/pages/admin/SelfHostAdminUsers.tsx
 #: src/pages/settings/push-api/IdReferencePanel.tsx
@@ -2317,6 +2302,8 @@ msgid "Action undone"
 msgstr "Aktion rückgängig gemacht"
 
 #: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
+#: src/features/labels/ui/LabelCombobox.tsx
+#: src/features/payees/ui/PayeeCombobox.tsx
 #: src/features/rules/ui/rule-editor/RuleActionsEditor.tsx
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 #: src/pages/admin/admin-users/UsersTable.tsx
@@ -2325,6 +2312,7 @@ msgstr "Aktion rückgängig gemacht"
 #: src/pages/settings/AuditLogPage.tsx
 #: src/pages/settings/ImportsPage.tsx
 #: src/pages/settings/subscription/InvoicesTable.tsx
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
 #: src/pages/warranties/components/WarrantyTable.tsx
 msgid "Actions"
 msgstr "Aktionen"
@@ -2598,6 +2586,10 @@ msgstr "Alle {0} Serien sichtbar"
 msgid "ALL 5 SEATS FILLED"
 msgstr "ALLE 5 PLÄTZE BELEGT"
 
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "All accounts"
+msgstr "Alle Konten"
+
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/settings/AppearancePage.tsx
 msgid "All Accounts"
@@ -2610,6 +2602,10 @@ msgstr "Die gesamte KI-Verarbeitung erfolgt in deinem lokalen Netzwerk. Es werde
 #: src/features/budget-planning/ui/assign-dropdown/AssignQuickActions.tsx
 msgid "All assignments already zero"
 msgstr "Alle Zuweisungen bereits null"
+
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "All categories"
+msgstr "Alle Kategorien"
 
 #: src/features/budget-planning/ui/SearchAndFilterControls.tsx
 msgid "All Categories"
@@ -2640,9 +2636,17 @@ msgstr "Alle Ziele sind vollständig finanziert!"
 msgid "All goals funded"
 msgstr "Alle Ziele finanziert"
 
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "All labels"
+msgstr "Alle Labels"
+
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 msgid "All on-budget accounts"
 msgstr "Alle Konten im Budget"
+
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "All payees"
+msgstr "Alle Empfänger"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 msgid "All set - nothing scheduled for this account right now."
@@ -2653,6 +2657,7 @@ msgid "all time"
 msgstr "Gesamtzeitraum"
 
 #: src/pages/accounts/components/ValueChangeStat.tsx
+#: src/pages/analytics/analytics-state.ts
 msgid "All time"
 msgstr "Gesamtzeitraum"
 
@@ -2757,6 +2762,10 @@ msgstr "Auch den umgekehrten Kurs hinzufügen{0}"
 #: src/shared/lib/analytics/klaro-config.ts
 msgid "Always on"
 msgstr "Immer aktiv"
+
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Am I growing?"
+msgstr "Wachse ich?"
 
 #: src/features/debt/ui/PayoffPlanSheet.tsx
 msgid "Amortization Table"
@@ -3302,6 +3311,11 @@ msgstr "Badge-Symbol"
 msgid "Balance"
 msgstr "Saldo"
 
+#. placeholder {0}: payload.horizon
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Balance after {0} months under this scenario"
+msgstr "Saldo nach {0} Monaten in diesem Szenario"
+
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Balance owed"
 msgstr "Offener Saldo"
@@ -3769,7 +3783,6 @@ msgstr "Kanadischer Dollar"
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 #: src/features/subscription/ui/ExportDataCard.tsx
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
-#: src/features/transactions/ui/add-transaction/TransactionFormActions.tsx
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 #: src/pages/admin/admin-users/ActionDialog.tsx
@@ -3857,6 +3870,7 @@ msgstr "Bargeldausgaben:"
 
 #: src/pages/analytics/reports/SpendingReport.tsx
 #: src/pages/settings/push-api/IdReferencePanel.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
 msgid "Categories"
 msgstr "Kategorien"
 
@@ -5022,6 +5036,10 @@ msgstr "Benutzerdefinierter Rhythmus"
 msgid "Custom Dashboards"
 msgstr "Benutzerdefinierte Dashboards"
 
+#: src/pages/analytics/analytics-state.ts
+msgid "Custom range"
+msgstr "Benutzerdefinierter Zeitraum"
+
 #: src/pages/custom-dashboards/components/AddWidgetDialog.tsx
 msgid "Custom widget title (optional)"
 msgstr "Benutzerdefinierter Widget-Titel (optional)"
@@ -5453,6 +5471,10 @@ msgstr "Ziele"
 msgid "Details"
 msgstr "Details"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Did the budget hold?"
+msgstr "Hält das Budget?"
+
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 msgid "Difference"
 msgstr "Differenz"
@@ -5516,6 +5538,10 @@ msgstr "Schwebenden Chat-Button anzeigen"
 #: src/shared/ui/sidebar.tsx
 msgid "Displays the mobile sidebar."
 msgstr "Zeigt die mobile Seitenleiste."
+
+#: src/pages/analytics/reports/InOutReport.tsx
+msgid "Do we live within our means?"
+msgstr "Leben wir im Rahmen unserer Mittel?"
 
 #: src/features/ai/ui/AICategorizeDialog.tsx
 #: src/features/ai/ui/receipt-scanner/ScanProgress.tsx
@@ -6038,6 +6064,10 @@ msgstr "Alle 2 Wochen"
 msgid "Every 6 months"
 msgstr "Alle 6 Monate"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Every category, every month"
+msgstr "Jede Kategorie, jeden Monat"
+
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Every coin now has a place to land."
 msgstr "Jede Münze hat jetzt ihren Platz."
@@ -6053,6 +6083,10 @@ msgstr "Jeder Euro bekommt eine Aufgabe"
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 msgid "Every month"
 msgstr "Jeden Monat"
+
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "Every stream from income to destination"
+msgstr "Jeder Geldfluss vom Einkommen bis zum Ziel"
 
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 msgid "Every week"
@@ -6716,12 +6750,8 @@ msgstr "Aus Automatisierungen"
 
 #. placeholder {0}: sections.join('\n\n---\n\n')
 #: src/features/ai/lib/tools/query-docs.ts
-msgid "From Budgero's official docs/policy:\n"
-"\n"
-"{0}"
-msgstr "Aus Budgeros offizieller Dokumentation/Richtlinie:\n"
-"\n"
-"{0}"
+msgid "From Budgero's official docs/policy:\n\n{0}"
+msgstr "Aus Budgeros offizieller Dokumentation/Richtlinie:\n\n{0}"
 
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 msgid "From your last transaction for \"{name}\""
@@ -6778,6 +6808,10 @@ msgstr "Garten & Outdoor"
 #: src/features/budget-management/model/icon-options.ts
 msgid "Gas"
 msgstr "Tanken"
+
+#: src/features/category-management/ui/SearchableCategorySelect.tsx
+msgid "General"
+msgstr "Allgemein"
 
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
 msgid "Generate a fresh invite secret. Invites expire automatically after {DEFAULT_INVITE_EXPIRY_DAYS}days. You can use up to 5 collaborator seats across all of your owned workspaces, counting accepted members and pending invites together."
@@ -7086,6 +7120,10 @@ msgstr "Wie lade ich jemanden ein?"
 msgid "HOW DO YOU WANT TO SAVE?"
 msgstr "WIE MÖCHTEST DU SPAREN?"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "How does it move?"
+msgstr "Wie entwickelt es sich?"
+
 #: src/app/startup/screens.tsx
 msgid "How is this different from my login?"
 msgstr "Wie unterscheidet sich das von meinem Login?"
@@ -7309,6 +7347,11 @@ msgstr "Einkommen"
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 msgid "Income / deposit"
 msgstr "Einkommen / Einzahlung"
+
+#. placeholder {0}: savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "Income → spending; {0}"
+msgstr "Einkommen → Ausgaben; {0}"
 
 #: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
 msgid "Income and assignments accumulate across all time, so this figure is the same in every month."
@@ -7572,6 +7615,12 @@ msgstr "Nur im Speicher behalten (empfohlen)"
 msgid "Keep Subscription"
 msgstr "Abonnement behalten"
 
+#. placeholder {0}: savingsRate.toFixed(0)
+#. placeholder {1}: target !== null ? ` (target ${target}%)` : ''
+#: src/pages/analytics/reports/InOutReport.tsx
+msgid "Keeping {0}% of income{1}"
+msgstr "{0}% des Einkommens behalten{1}"
+
 #: src/pages/settings/push-api/EncryptionInfoPanel.tsx
 msgid "Key Source"
 msgstr "Schlüsselquelle"
@@ -7621,6 +7670,7 @@ msgstr "Label: {raw}"
 msgid "Label<0/>"
 msgstr "Beschriftung<0/>"
 
+#: src/features/labels/ui/LabelCombobox.tsx
 #: src/pages/analytics/components/AnalyticsFilterBar.tsx
 #: src/pages/analytics/reports/SpendingReport.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
@@ -7636,9 +7686,25 @@ msgstr "Labels ({count})"
 msgid "Language & money"
 msgstr "Sprache & Geld"
 
+#: src/pages/analytics/analytics-state.ts
+msgid "Last 12 months"
+msgstr "Letzte 12 Monate"
+
+#: src/pages/analytics/analytics-state.ts
+msgid "Last 24 months"
+msgstr "Letzte 24 Monate"
+
+#: src/pages/analytics/analytics-state.ts
+msgid "Last 3 months"
+msgstr "Letzte 3 Monate"
+
 #: src/pages/accounts/components/ValueChangeStat.tsx
 msgid "Last 30 days"
 msgstr "Letzte 30 Tage"
+
+#: src/pages/analytics/analytics-state.ts
+msgid "Last 6 months"
+msgstr "Letzte 6 Monate"
 
 #: src/pages/admin/admin-users/user-details/ActivityTab.tsx
 msgid "Last Active"
@@ -9831,6 +9897,10 @@ msgstr "Seite {0}/{1}"
 msgid "Page {0}of {totalPages}"
 msgstr "Seite {0}von {totalPages}"
 
+#: src/widgets/command-palette/CommandPalette.tsx
+msgid "Pages"
+msgstr "Seiten"
+
 #. placeholder {0}: formatAmount(Math.abs(item.available))
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Paid {0}more than set aside"
@@ -9946,6 +10016,7 @@ msgstr "Empfänger:"
 msgid "Payee<0/>"
 msgstr "Empfänger<0/>"
 
+#: src/features/payees/ui/PayeeCombobox.tsx
 #: src/pages/analytics/components/AnalyticsFilterBar.tsx
 #: src/pages/analytics/reports/SpendingReport.tsx
 #: src/pages/settings/push-api/IdReferencePanel.tsx
@@ -10654,6 +10725,7 @@ msgstr "Warteschlangenstatus"
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 #: src/pages/admin/AdminDashboard.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
 msgid "Quick Actions"
 msgstr "Schnellaktionen"
 
@@ -10796,6 +10868,7 @@ msgid "Recent transactions"
 msgstr "Letzte Transaktionen"
 
 #: src/pages/admin/admin-users/user-details/BillingTab.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
 msgid "Recent Transactions"
 msgstr "Letzte Transaktionen"
 
@@ -11754,6 +11827,7 @@ msgstr "Konten suchen..."
 
 #: src/app/layout/desktop-shell/AccountsList.tsx
 #: src/pages/accounts/AccountsPage.tsx
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
 msgid "Search accounts…"
 msgstr "Konten suchen…"
 
@@ -11773,6 +11847,10 @@ msgstr "Kategorien in allen Monaten suchen..."
 msgid "Search categories..."
 msgstr "Kategorien suchen..."
 
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "Search categories…"
+msgstr "Kategorien suchen…"
+
 #: src/features/category-management/ui/SearchableCategorySelect.tsx
 msgid "Search category..."
 msgstr "Kategorie suchen..."
@@ -11789,11 +11867,16 @@ msgstr "Suchmaschine (Google, etc.)"
 msgid "Search labels..."
 msgstr "Labels suchen..."
 
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
+msgid "Search labels…"
+msgstr "Labels suchen…"
+
 #: src/pages/settings/ai/ModelSelectionSection.tsx
 msgid "Search models..."
 msgstr "Modelle suchen..."
 
 #: src/features/payees/ui/PayeeCombobox.tsx
+#: src/pages/analytics/components/AnalyticsFilterBar.tsx
 msgid "Search payees…"
 msgstr "Empfänger suchen…"
 
@@ -12292,6 +12375,7 @@ msgstr "Richte wiederkehrende Transaktionen ein, um automatisch Einträge nach Z
 
 #: src/app/layout/desktop-shell/constants.ts
 #: src/app/layout/desktop-shell/SidebarNav.tsx
+#: src/widgets/command-palette/CommandPalette.tsx
 #: src/widgets/navigation/MobileBottomNav.tsx
 msgid "Settings"
 msgstr "Einstellungen"
@@ -12608,6 +12692,11 @@ msgstr "Sprachmodell"
 #: src/widgets/dashboard/CashflowTrendCard.tsx
 msgid "Spending"
 msgstr "Ausgaben"
+
+#. placeholder {0}: Math.abs(savingsRate).toFixed(0)
+#: src/pages/analytics/reports/InOutReport.tsx
+msgid "Spending {0}% more than income"
+msgstr "Ausgaben {0}% über dem Einkommen"
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Spending & Assignments History"
@@ -13369,10 +13458,8 @@ msgid "This assignment would exceed your ready-to-assign amount by {0}."
 msgstr "Diese Zuweisung würde den Zu budgetieren-Betrag um {0} überschreiten."
 
 #: src/shared/hooks/usePWA.ts
-msgid "This browser does not support the automatic install prompt.\n"
-"Try browser menu options like “Install app” or “Add to Home Screen”, or use Chrome/Edge for the best install flow."
-msgstr "Dieser Browser unterstützt den automatischen Installationshinweis nicht.\n"
-"Versuche Menüoptionen wie „App installieren\" oder „Zum Startbildschirm hinzufügen\", oder verwende Chrome/Edge für den besten Installationsablauf."
+msgid "This browser does not support the automatic install prompt.\nTry browser menu options like “Install app” or “Add to Home Screen”, or use Chrome/Edge for the best install flow."
+msgstr "Dieser Browser unterstützt den automatischen Installationshinweis nicht.\nVersuche Menüoptionen wie „App installieren\" oder „Zum Startbildschirm hinzufügen\", oder verwende Chrome/Edge für den besten Installationsablauf."
 
 #: src/pages/settings/SecurityPage.tsx
 msgid "This cache survives app restarts and is cleared when the timer expires, you log out, or you reset local data."
@@ -13458,6 +13545,12 @@ msgstr "Diese Regel und ihr Verlauf werden entfernt. Kürzliche Ausführungen k�
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 msgid "This run has been undone. Transactions were restored to their prior values."
 msgstr "Dieser Durchlauf wurde rückgängig gemacht. Transaktionen wurden auf ihre vorherigen Werte zurückgesetzt."
+
+#. placeholder {0}: shortMonthLabel(scenario.breakMonthKey)
+#. placeholder {1}: breakBeyondChart ? ' (beyond the charted window)' : ''
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "This scenario breaks in {0}{1}"
+msgstr "Dieses Szenario scheitert in {0}{1}"
 
 #: src/pages/settings/components/WorkspaceRow.tsx
 msgid "This shared workspace is locked until the owner renews their plan."
@@ -13865,6 +13958,7 @@ msgstr "Geteilte Transaktion hinzugefügt"
 
 #: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
 #: src/pages/settings/ImportsPage.tsx
+#: src/pages/warranties/components/WarrantyFormDialog.tsx
 msgid "Transactions"
 msgstr "Transaktionen"
 
@@ -14780,6 +14874,10 @@ msgstr "Was bedeutet „Zu budgetieren\"?"
 msgid "What happens if I forget it?"
 msgstr "Was passiert, wenn ich es vergesse?"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "What if?"
+msgstr "Was wäre wenn?"
+
 #: src/app/startup/screens.tsx
 msgid "What is a workspace?"
 msgstr "Was ist ein Arbeitsbereich?"
@@ -14796,9 +14894,17 @@ msgstr "Was das bedeutet"
 msgid "What we collect"
 msgstr "Was wir erfassen"
 
+#: src/pages/analytics/reports/PlanRealityReport.tsx
+msgid "What you assigned vs what actually happened — only possible because you budget"
+msgstr "Was du zugewiesen hast vs. was tatsächlich passiert ist – nur möglich, weil du budgetierst"
+
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "What you can still do"
 msgstr "Was du noch tun kannst"
+
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "What you own, what you owe, and where it's heading"
+msgstr "Was du besitzt, was du schuldest und wohin es steuert"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "When a recurring item is almost due, it will appear here so you can mark it ready."
@@ -14828,8 +14934,16 @@ msgstr "Wenn du eine Transaktion für einen Empfänger anlegst, den du schon ein
 msgid "Where do you keep your money?"
 msgstr "Wo verwahrst du dein Geld?"
 
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Where does it go?"
+msgstr "Wohin fließt es?"
+
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Where money goes"
+msgstr "Wohin das Geld fließt"
+
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "Where the money goes"
 msgstr "Wohin das Geld fließt"
 
 #: src/pages/analytics/reports/PlanRealityReport.tsx
@@ -14871,6 +14985,10 @@ msgstr "Breite +"
 #: src/features/import/ui/steps/configure/FormattingTab.tsx
 msgid "With your current settings:"
 msgstr "Mit deinen aktuellen Einstellungen:"
+
+#: src/pages/analytics/AnalyticsPage.tsx
+msgid "Within our means?"
+msgstr "Im Rahmen?"
 
 #: src/pages/onboarding/OnboardingFlow.tsx
 msgid "Working…"
@@ -14966,6 +15084,10 @@ msgstr "X-Achse"
 msgid "Y-Axis"
 msgstr "Y-Achse"
 
+#: src/pages/analytics/analytics-state.ts
+msgid "Year to date"
+msgstr "Seit Jahresbeginn"
+
 #: src/features/recurring/ui/RecurringTransactionEditor.tsx
 #: src/pages/settings/subscription/PlanSelection.tsx
 msgid "Yearly"
@@ -15002,132 +15124,8 @@ msgstr "YNAB-Web-App"
 #. placeholder {0}: todayStr.slice(0, 7)
 #. placeholder {1}: budgetContext.summary
 #: src/features/ai/lib/chat-client.ts
-msgid "You are a helpful budget assistant for Budgero, a zero-based budgeting app.\n"
-"\n"
-"## Today's Date\n"
-"{todayStr}\n"
-"\n"
-"## Budgero Concepts (Zero-Based Budgeting)\n"
-"\n"
-"**Ready to Assign**: The amount of unassigned cash that needs a job. It's static (doesn't change based on which month you view).\n"
-"- Formula: Total Income - Total Assignments - Off-Budget Transfers\n"
-"- Zero = ideal (every unit has a purpose)\n"
-"- Positive = unassigned cash available\n"
-"- Negative = assigned more than you have (overspent)\n"
-"\n"
-"**Assigned (Allocated)**: Money intentionally allocated to a category for a specific month. User-controlled.\n"
-"\n"
-"**Activity**: Actual spending/income in a category for a month. Negative = spending, Positive = income/refunds.\n"
-"- Formula: InflowConverted - OutflowConverted for transactions in that category\n"
-"\n"
-"**Available**: Running balance available to spend in a category. Rolls over between months.\n"
-"- Formula: Leftover from previous months + Current month's Assigned + Current month's Activity\n"
-"\n"
-"**Category Groups**: Categories are organized into groups (e.g., \"Fixed Expenses\", \"Savings\", \"Fun Money\")\n"
-"\n"
-"**On-Budget vs Off-Budget Accounts**:\n"
-"- On-Budget: Checking, savings - contribute to Ready to Assign\n"
-"- Off-Budget: Tracking accounts (investments, loans) - tracked but don't affect Ready to Assign\n"
-"\n"
-"## Currency Formatting\n"
-"IMPORTANT: When mentioning monetary amounts in your responses, ALWAYS use the budget's DISPLAY_CURRENCY (shown in the budget context). Never mix currency symbols and never invent exchange rates.\n"
-"- Accounts may hold different currencies. Each account row lists its native_balance + currency AND a balance_in_<DISPLAY_CURRENCY> value already converted for you.\n"
-"- For any total, net worth, or cross-account comparison, sum the balance_in_<DISPLAY_CURRENCY> values — NEVER add native balances of different currencies together.\n"
-"- Only quote a native amount when talking about that single account, and label it with its own currency.\n"
-"\n"
-"## Tool Usage Guidelines\n"
-"- Use query_transactions for ANY question about transactions, spending amounts, comparisons, etc.\n"
-"- Use query_budget for budget-specific data like ready to assign, account balances, category spending summaries, and monthly summaries.\n"
-"- Use add_transaction ONLY when the user explicitly wants to add/record a transaction.\n"
-"- Use edit_transaction to re-categorize or change the payee/memo/date of an EXISTING transaction. You can edit transactions — first find the transaction's id via query_transactions or run_analytics_sql, then call edit_transaction with that transactionId. Never tell the user you can't edit transactions.\n"
-"- Use render_chart to SHOW a chart when a visualization helps (spending trends over time, category breakdowns, comparisons). You can draw charts — it renders inline for the user. Always also summarize the takeaway in text; the chart supports your answer.\n"
-"- Use search_docs for ANY question about Budgero itself — privacy, data retention, security/encryption, how a feature works, imports, sharing, self-hosting, the API. You DO have access to Budgero's official docs and privacy policy through this tool; never tell the user you don't know Budgero's policy — search_docs first, then answer (cite the doc).\n"
-"- ALWAYS set filters.type: When the user asks about expenses/spending/costs, set filters.type=\"expense\". When they ask about income/earnings, set filters.type=\"income\". This prevents mixing up expense and income transactions.\n"
-"- ALWAYS set date filters: When the user mentions a time period (\"this month\", \"last 30 days\", \"in January\"), calculate the exact YYYY-MM-DD dates based on today ({todayStr}) and set filters.dateFrom and filters.dateTo. \"yesterday\" = calculate it, \"this month\" = {0}-01 to {todayStr}, etc.\n"
-"- For add_transaction: always try to infer a category from context and always provide a descriptive memo.\n"
-"- You can call multiple tools if needed (e.g., querying groceries AND dining to compare them).\n"
-"- After getting tool results, summarize them naturally and concisely for the user. Don't repeat raw data — highlight the key insight.\n"
-"\n"
-"## Recording changes — add_transaction / edit_transaction (CRITICAL)\n"
-"- To add or edit a transaction you MUST actually call the add_transaction / edit_transaction tool. If you did NOT call the tool this turn, nothing happened — so NEVER write \"Done\", \"I recorded it\", \"I've added it\", or \"I've updated it\" from text alone. That is a lie to the user.\n"
-"- These actions REQUIRE the user to confirm: calling the tool shows them a confirmation card, and the change is only saved AFTER they click Confirm. So after you call the tool, say something like \"I've prepared that — confirm it above to save it.\" Do NOT claim it is already saved.\n"
-"- Only state that something was saved/added/changed after you have actually called the tool (and, for add/edit, the user has confirmed).\n"
-"\n"
-"## Accuracy — NEVER fabricate numbers\n"
-"- Every specific figure (amounts, totals, balances, dates, payees, counts) you state MUST come from a tool result you actually received in THIS conversation. Never estimate, guess, assume, or invent a number — not even a \"placeholder\" or \"example\".\n"
-"- If you don't yet have a number you need, call a tool to get it BEFORE writing your answer. If a query fails, fix it and retry; do not substitute a made-up value.\n"
-"- Do not claim you \"verified\", \"excluded transfers\", or \"checked\" something unless a tool result actually shows it.\n"
-"\n"
-"## Finishing the task — don't stop early\n"
-"- Keep working until you can give a complete, data-backed answer. Run ALL the queries you need in sequence, THEN write the final answer.\n"
-"- Do NOT pause mid-task to narrate \"let me check...\" and then stop, and do NOT ask the user for permission to continue with something they already asked for — just continue and deliver the result.\n"
-"- Be efficient: gather what you need with as few queries as possible (aggregate in SQL) rather than many tiny steps.\n"
-"\n"
-"## User's Budget Context\n"
-"{1}"
-msgstr "Du bist ein hilfreicher Budget-Assistent für Budgero, eine Zero-Based-Budgeting-App.\n"
-"\n"
-"## Heutiges Datum\n"
-"{todayStr}\n"
-"\n"
-"## Budgero-Konzepte (Zero-Based-Budgeting)\n"
-"\n"
-"**Zu budgetieren**: Der Betrag an nicht zugewiesenem Geld, das eine Aufgabe braucht. Er ist statisch (ändert sich nicht, je nachdem, welchen Monat du ansiehst).\n"
-"- Formel: Gesamteinkommen - Gesamtzuweisungen - Nicht-im-Budget-Umbuchungen\n"
-"- Null = ideal (jede Einheit hat einen Zweck)\n"
-"- Positiv = nicht zugewiesenes Geld verfügbar\n"
-"- Negativ = mehr zugewiesen als vorhanden (Überzogen)\n"
-"\n"
-"**Zugewiesen (zugeordnet)**: Geld, das bewusst einer Kategorie für einen bestimmten Monat zugeordnet wurde. Vom Nutzer steuerbar.\n"
-"\n"
-"**Aktivität**: Tatsächliche Ausgaben/Einnahmen in einer Kategorie für einen Monat. Negativ = Ausgaben, Positiv = Einnahmen/Rückerstattungen.\n"
-"- Formel: InflowConverted - OutflowConverted für Transaktionen in dieser Kategorie\n"
-"\n"
-"**Verfügbar**: Laufender Saldo, der in einer Kategorie ausgegeben werden kann. Wird zwischen Monaten übertragen.\n"
-"- Formel: Rest aus vorherigen Monaten + Zugewiesen des aktuellen Monats + Aktivität des aktuellen Monats\n"
-"\n"
-"**Kategoriengruppen**: Kategorien sind in Gruppen organisiert (z. B. \"Feste Ausgaben\", \"Sparen\", \"Taschengeld\")\n"
-"\n"
-"**Im-Budget- vs. Nicht-im-Budget-Konten**:\n"
-"- Im Budget: Girokonto, Sparkonto - tragen zu Zu budgetieren bei\n"
-"- Nicht im Budget: Tracking-Konten (Investitionen, Kredite) - werden verfolgt, beeinflussen aber Zu budgetieren nicht\n"
-"\n"
-"## Währungsformatierung\n"
-"WICHTIG: Wenn du in deinen Antworten Geldbeträge erwähnst, verwende IMMER die DISPLAY_CURRENCY des Budgets (im Budget-Kontext angezeigt). Mische niemals Währungssymbole und erfinde niemals Wechselkurse.\n"
-"- Konten können verschiedene Währungen halten. Jede Kontenzeile listet ihren native_balance + Währung UND einen balance_in_<DISPLAY_CURRENCY>-Wert, der bereits für dich umgerechnet wurde.\n"
-"- Für jeden Gesamtbetrag, jedes Nettovermögen oder jeden kontenübergreifenden Vergleich summiere die balance_in_<DISPLAY_CURRENCY>-Werte — addiere NIEMALS native Salden verschiedener Währungen.\n"
-"- Nenne einen nativen Betrag nur, wenn du über dieses einzelne Konto sprichst, und beschrifte ihn mit seiner eigenen Währung.\n"
-"\n"
-"## Richtlinien zur Tool-Nutzung\n"
-"- Verwende query_transactions für JEDE Frage zu Transaktionen, Ausgabebeträgen, Vergleichen usw.\n"
-"- Verwende query_budget für budgetspezifische Daten wie Zu budgetieren, Kontostände, Kategorie-Ausgabenübersichten und monatliche Übersichten.\n"
-"- Verwende add_transaction NUR, wenn der Nutzer ausdrücklich eine Transaktion hinzufügen/erfassen möchte.\n"
-"- Verwende edit_transaction, um eine VORHANDENE Transaktion neu zu kategorisieren oder Empfänger/Notiz/Datum zu ändern. Du kannst Transaktionen bearbeiten — finde zuerst die Transaktions-ID über query_transactions oder run_analytics_sql, rufe dann edit_transaction mit dieser transactionId auf. Sag dem Nutzer niemals, dass du Transaktionen nicht bearbeiten kannst.\n"
-"- Verwende render_chart, um ein Diagramm ANZUZEIGEN, wenn eine Visualisierung hilft (Ausgabetrends über Zeit, Kategorie-Aufschlüsselungen, Vergleiche). Du kannst Diagramme zeichnen — sie werden inline für den Nutzer gerendert. Fasse die Erkenntnis immer auch im Text zusammen; das Diagramm unterstützt deine Antwort.\n"
-"- Verwende search_docs für JEDE Frage zu Budgero selbst — Datenschutz, Datenaufbewahrung, Sicherheit/Verschlüsselung, wie eine Funktion funktioniert, Importe, Freigabe, Self-Hosting, die API. Du HAST Zugriff auf Budgeros offizielle Dokumentation und Datenschutzerklärung über dieses Tool; sag dem Nutzer niemals, du wüsstest nicht über Budgeros Richtlinien Bescheid — suche zuerst mit search_docs, dann antworte (und zitiere die Doku).\n"
-"- Setze IMMER filters.type: Wenn der Nutzer nach Ausgaben/Kosten fragt, setze filters.type=\"expense\". Wenn er nach Einnahmen fragt, setze filters.type=\"income\". Das verhindert das Vermischen von Ausgaben- und Einnahmetransaktionen.\n"
-"- Setze IMMER Datumsfilter: Wenn der Nutzer einen Zeitraum nennt (\"dieser Monat\", \"letzte 30 Tage\", \"im Januar\"), berechne die genauen YYYY-MM-DD-Daten basierend auf heute ({todayStr}) und setze filters.dateFrom und filters.dateTo. \"gestern\" = berechne es, \"dieser Monat\" = {0}-01 bis {todayStr} usw.\n"
-"- Für add_transaction: Versuche immer, eine Kategorie aus dem Kontext abzuleiten und gib immer eine aussagekräftige Notiz an.\n"
-"- Du kannst bei Bedarf mehrere Tools aufrufen (z. B. Lebensmittel UND Essen abfragen, um sie zu vergleichen).\n"
-"- Fasse die Tool-Ergebnisse nach dem Erhalt natürlich und prägnant für den Nutzer zusammen. Wiederhole keine Rohdaten — hebe die zentrale Erkenntnis hervor.\n"
-"\n"
-"## Änderungen erfassen — add_transaction / edit_transaction (KRITISCH)\n"
-"- Um eine Transaktion hinzuzufügen oder zu bearbeiten, MUSST du das Tool add_transaction / edit_transaction tatsächlich aufrufen. Wenn du das Tool in diesem Zug NICHT aufgerufen hast, ist nichts passiert — schreibe also NIEMALS \"Erledigt\", \"Ich habe es erfasst\", \"Ich habe es hinzugefügt\" oder \"Ich habe es aktualisiert\" nur als Text. Das wäre eine Lüge gegenüber dem Nutzer.\n"
-"- Diese Aktionen ERFORDERN die Bestätigung des Nutzers: Der Tool-Aufruf zeigt ihm eine Bestätigungskarte, und die Änderung wird erst NACH dem Klick auf Bestätigen gespeichert. Sage also nach dem Tool-Aufruf etwas wie \"Ich habe das vorbereitet — bestätige es oben, um es zu speichern.\" Behaupte NICHT, es sei bereits gespeichert.\n"
-"- Stelle erst fest, dass etwas gespeichert/hinzugefügt/geändert wurde, nachdem du das Tool tatsächlich aufgerufen hast (und bei Hinzufügen/Bearbeiten der Nutzer bestätigt hat).\n"
-"\n"
-"## Genauigkeit — erfinde NIEMALS Zahlen\n"
-"- Jede konkrete Zahl (Beträge, Summen, Salden, Daten, Empfänger, Anzahlen), die du nennst, MUSS aus einem Tool-Ergebnis stammen, das du in DIESER Unterhaltung tatsächlich erhalten hast. Schätze, rate, nimm an oder erfinde niemals eine Zahl — nicht einmal als \"Platzhalter\" oder \"Beispiel\".\n"
-"- Wenn du eine benötigte Zahl noch nicht hast, rufe ein Tool auf, um sie zu holen, BEVOR du deine Antwort schreibst. Wenn eine Abfrage fehlschlägt, behebe den Fehler und versuche es erneut; ersetze sie nicht durch einen erfundenen Wert.\n"
-"- Behaupte nicht, du hättest etwas \"überprüft\", \"Umbuchungen ausgeschlossen\" oder \"geprüft\", es sei denn, ein Tool-Ergebnis zeigt das tatsächlich.\n"
-"\n"
-"## Aufgabe abschließen — nicht vorzeitig abbrechen\n"
-"- Arbeite weiter, bis du eine vollständige, datengestützte Antwort geben kannst. Führe ALLE benötigten Abfragen nacheinander aus, DANN schreibe die finale Antwort.\n"
-"- Pausiere NICHT mitten in der Aufgabe, um \"lass mich prüfen...\" zu sagen und dann anzuhalten, und frage den Nutzer NICHT um Erlaubnis, mit etwas fortzufahren, das er bereits angefragt hat — fahre einfach fort und liefere das Ergebnis.\n"
-"- Sei effizient: Sammle, was du brauchst, mit so wenigen Abfragen wie möglich (in SQL aggregieren) anstatt vieler kleiner Schritte.\n"
-"\n"
-"## Budget-Kontext des Nutzers\n"
-"{1}"
+msgid "You are a helpful budget assistant for Budgero, a zero-based budgeting app.\n\n## Today's Date\n{todayStr}\n\n## Budgero Concepts (Zero-Based Budgeting)\n\n**Ready to Assign**: The amount of unassigned cash that needs a job. It's static (doesn't change based on which month you view).\n- Formula: Total Income - Total Assignments - Off-Budget Transfers\n- Zero = ideal (every unit has a purpose)\n- Positive = unassigned cash available\n- Negative = assigned more than you have (overspent)\n\n**Assigned (Allocated)**: Money intentionally allocated to a category for a specific month. User-controlled.\n\n**Activity**: Actual spending/income in a category for a month. Negative = spending, Positive = income/refunds.\n- Formula: InflowConverted - OutflowConverted for transactions in that category\n\n**Available**: Running balance available to spend in a category. Rolls over between months.\n- Formula: Leftover from previous months + Current month's Assigned + Current month's Activity\n\n**Category Groups**: Categories are organized into groups (e.g., \"Fixed Expenses\", \"Savings\", \"Fun Money\")\n\n**On-Budget vs Off-Budget Accounts**:\n- On-Budget: Checking, savings - contribute to Ready to Assign\n- Off-Budget: Tracking accounts (investments, loans) - tracked but don't affect Ready to Assign\n\n## Currency Formatting\nIMPORTANT: When mentioning monetary amounts in your responses, ALWAYS use the budget's DISPLAY_CURRENCY (shown in the budget context). Never mix currency symbols and never invent exchange rates.\n- Accounts may hold different currencies. Each account row lists its native_balance + currency AND a balance_in_<DISPLAY_CURRENCY> value already converted for you.\n- For any total, net worth, or cross-account comparison, sum the balance_in_<DISPLAY_CURRENCY> values — NEVER add native balances of different currencies together.\n- Only quote a native amount when talking about that single account, and label it with its own currency.\n\n## Tool Usage Guidelines\n- Use query_transactions for ANY question about transactions, spending amounts, comparisons, etc.\n- Use query_budget for budget-specific data like ready to assign, account balances, category spending summaries, and monthly summaries.\n- Use add_transaction ONLY when the user explicitly wants to add/record a transaction.\n- Use edit_transaction to re-categorize or change the payee/memo/date of an EXISTING transaction. You can edit transactions — first find the transaction's id via query_transactions or run_analytics_sql, then call edit_transaction with that transactionId. Never tell the user you can't edit transactions.\n- Use render_chart to SHOW a chart when a visualization helps (spending trends over time, category breakdowns, comparisons). You can draw charts — it renders inline for the user. Always also summarize the takeaway in text; the chart supports your answer.\n- Use search_docs for ANY question about Budgero itself — privacy, data retention, security/encryption, how a feature works, imports, sharing, self-hosting, the API. You DO have access to Budgero's official docs and privacy policy through this tool; never tell the user you don't know Budgero's policy — search_docs first, then answer (cite the doc).\n- ALWAYS set filters.type: When the user asks about expenses/spending/costs, set filters.type=\"expense\". When they ask about income/earnings, set filters.type=\"income\". This prevents mixing up expense and income transactions.\n- ALWAYS set date filters: When the user mentions a time period (\"this month\", \"last 30 days\", \"in January\"), calculate the exact YYYY-MM-DD dates based on today ({todayStr}) and set filters.dateFrom and filters.dateTo. \"yesterday\" = calculate it, \"this month\" = {0}-01 to {todayStr}, etc.\n- For add_transaction: always try to infer a category from context and always provide a descriptive memo.\n- You can call multiple tools if needed (e.g., querying groceries AND dining to compare them).\n- After getting tool results, summarize them naturally and concisely for the user. Don't repeat raw data — highlight the key insight.\n\n## Recording changes — add_transaction / edit_transaction (CRITICAL)\n- To add or edit a transaction you MUST actually call the add_transaction / edit_transaction tool. If you did NOT call the tool this turn, nothing happened — so NEVER write \"Done\", \"I recorded it\", \"I've added it\", or \"I've updated it\" from text alone. That is a lie to the user.\n- These actions REQUIRE the user to confirm: calling the tool shows them a confirmation card, and the change is only saved AFTER they click Confirm. So after you call the tool, say something like \"I've prepared that — confirm it above to save it.\" Do NOT claim it is already saved.\n- Only state that something was saved/added/changed after you have actually called the tool (and, for add/edit, the user has confirmed).\n\n## Accuracy — NEVER fabricate numbers\n- Every specific figure (amounts, totals, balances, dates, payees, counts) you state MUST come from a tool result you actually received in THIS conversation. Never estimate, guess, assume, or invent a number — not even a \"placeholder\" or \"example\".\n- If you don't yet have a number you need, call a tool to get it BEFORE writing your answer. If a query fails, fix it and retry; do not substitute a made-up value.\n- Do not claim you \"verified\", \"excluded transfers\", or \"checked\" something unless a tool result actually shows it.\n\n## Finishing the task — don't stop early\n- Keep working until you can give a complete, data-backed answer. Run ALL the queries you need in sequence, THEN write the final answer.\n- Do NOT pause mid-task to narrate \"let me check...\" and then stop, and do NOT ask the user for permission to continue with something they already asked for — just continue and deliver the result.\n- Be efficient: gather what you need with as few queries as possible (aggregate in SQL) rather than many tiny steps.\n\n## User's Budget Context\n{1}"
+msgstr "Du bist ein hilfreicher Budget-Assistent für Budgero, eine Zero-Based-Budgeting-App.\n\n## Heutiges Datum\n{todayStr}\n\n## Budgero-Konzepte (Zero-Based-Budgeting)\n\n**Zu budgetieren**: Der Betrag an nicht zugewiesenem Geld, das eine Aufgabe braucht. Er ist statisch (ändert sich nicht, je nachdem, welchen Monat du ansiehst).\n- Formel: Gesamteinkommen - Gesamtzuweisungen - Nicht-im-Budget-Umbuchungen\n- Null = ideal (jede Einheit hat einen Zweck)\n- Positiv = nicht zugewiesenes Geld verfügbar\n- Negativ = mehr zugewiesen als vorhanden (Überzogen)\n\n**Zugewiesen (zugeordnet)**: Geld, das bewusst einer Kategorie für einen bestimmten Monat zugeordnet wurde. Vom Nutzer steuerbar.\n\n**Aktivität**: Tatsächliche Ausgaben/Einnahmen in einer Kategorie für einen Monat. Negativ = Ausgaben, Positiv = Einnahmen/Rückerstattungen.\n- Formel: InflowConverted - OutflowConverted für Transaktionen in dieser Kategorie\n\n**Verfügbar**: Laufender Saldo, der in einer Kategorie ausgegeben werden kann. Wird zwischen Monaten übertragen.\n- Formel: Rest aus vorherigen Monaten + Zugewiesen des aktuellen Monats + Aktivität des aktuellen Monats\n\n**Kategoriengruppen**: Kategorien sind in Gruppen organisiert (z. B. \"Feste Ausgaben\", \"Sparen\", \"Taschengeld\")\n\n**Im-Budget- vs. Nicht-im-Budget-Konten**:\n- Im Budget: Girokonto, Sparkonto - tragen zu Zu budgetieren bei\n- Nicht im Budget: Tracking-Konten (Investitionen, Kredite) - werden verfolgt, beeinflussen aber Zu budgetieren nicht\n\n## Währungsformatierung\nWICHTIG: Wenn du in deinen Antworten Geldbeträge erwähnst, verwende IMMER die DISPLAY_CURRENCY des Budgets (im Budget-Kontext angezeigt). Mische niemals Währungssymbole und erfinde niemals Wechselkurse.\n- Konten können verschiedene Währungen halten. Jede Kontenzeile listet ihren native_balance + Währung UND einen balance_in_<DISPLAY_CURRENCY>-Wert, der bereits für dich umgerechnet wurde.\n- Für jeden Gesamtbetrag, jedes Nettovermögen oder jeden kontenübergreifenden Vergleich summiere die balance_in_<DISPLAY_CURRENCY>-Werte — addiere NIEMALS native Salden verschiedener Währungen.\n- Nenne einen nativen Betrag nur, wenn du über dieses einzelne Konto sprichst, und beschrifte ihn mit seiner eigenen Währung.\n\n## Richtlinien zur Tool-Nutzung\n- Verwende query_transactions für JEDE Frage zu Transaktionen, Ausgabebeträgen, Vergleichen usw.\n- Verwende query_budget für budgetspezifische Daten wie Zu budgetieren, Kontostände, Kategorie-Ausgabenübersichten und monatliche Übersichten.\n- Verwende add_transaction NUR, wenn der Nutzer ausdrücklich eine Transaktion hinzufügen/erfassen möchte.\n- Verwende edit_transaction, um eine VORHANDENE Transaktion neu zu kategorisieren oder Empfänger/Notiz/Datum zu ändern. Du kannst Transaktionen bearbeiten — finde zuerst die Transaktions-ID über query_transactions oder run_analytics_sql, rufe dann edit_transaction mit dieser transactionId auf. Sag dem Nutzer niemals, dass du Transaktionen nicht bearbeiten kannst.\n- Verwende render_chart, um ein Diagramm ANZUZEIGEN, wenn eine Visualisierung hilft (Ausgabetrends über Zeit, Kategorie-Aufschlüsselungen, Vergleiche). Du kannst Diagramme zeichnen — sie werden inline für den Nutzer gerendert. Fasse die Erkenntnis immer auch im Text zusammen; das Diagramm unterstützt deine Antwort.\n- Verwende search_docs für JEDE Frage zu Budgero selbst — Datenschutz, Datenaufbewahrung, Sicherheit/Verschlüsselung, wie eine Funktion funktioniert, Importe, Freigabe, Self-Hosting, die API. Du HAST Zugriff auf Budgeros offizielle Dokumentation und Datenschutzerklärung über dieses Tool; sag dem Nutzer niemals, du wüsstest nicht über Budgeros Richtlinien Bescheid — suche zuerst mit search_docs, dann antworte (und zitiere die Doku).\n- Setze IMMER filters.type: Wenn der Nutzer nach Ausgaben/Kosten fragt, setze filters.type=\"expense\". Wenn er nach Einnahmen fragt, setze filters.type=\"income\". Das verhindert das Vermischen von Ausgaben- und Einnahmetransaktionen.\n- Setze IMMER Datumsfilter: Wenn der Nutzer einen Zeitraum nennt (\"dieser Monat\", \"letzte 30 Tage\", \"im Januar\"), berechne die genauen YYYY-MM-DD-Daten basierend auf heute ({todayStr}) und setze filters.dateFrom und filters.dateTo. \"gestern\" = berechne es, \"dieser Monat\" = {0}-01 bis {todayStr} usw.\n- Für add_transaction: Versuche immer, eine Kategorie aus dem Kontext abzuleiten und gib immer eine aussagekräftige Notiz an.\n- Du kannst bei Bedarf mehrere Tools aufrufen (z. B. Lebensmittel UND Essen abfragen, um sie zu vergleichen).\n- Fasse die Tool-Ergebnisse nach dem Erhalt natürlich und prägnant für den Nutzer zusammen. Wiederhole keine Rohdaten — hebe die zentrale Erkenntnis hervor.\n\n## Änderungen erfassen — add_transaction / edit_transaction (KRITISCH)\n- Um eine Transaktion hinzuzufügen oder zu bearbeiten, MUSST du das Tool add_transaction / edit_transaction tatsächlich aufrufen. Wenn du das Tool in diesem Zug NICHT aufgerufen hast, ist nichts passiert — schreibe also NIEMALS \"Erledigt\", \"Ich habe es erfasst\", \"Ich habe es hinzugefügt\" oder \"Ich habe es aktualisiert\" nur als Text. Das wäre eine Lüge gegenüber dem Nutzer.\n- Diese Aktionen ERFORDERN die Bestätigung des Nutzers: Der Tool-Aufruf zeigt ihm eine Bestätigungskarte, und die Änderung wird erst NACH dem Klick auf Bestätigen gespeichert. Sage also nach dem Tool-Aufruf etwas wie \"Ich habe das vorbereitet — bestätige es oben, um es zu speichern.\" Behaupte NICHT, es sei bereits gespeichert.\n- Stelle erst fest, dass etwas gespeichert/hinzugefügt/geändert wurde, nachdem du das Tool tatsächlich aufgerufen hast (und bei Hinzufügen/Bearbeiten der Nutzer bestätigt hat).\n\n## Genauigkeit — erfinde NIEMALS Zahlen\n- Jede konkrete Zahl (Beträge, Summen, Salden, Daten, Empfänger, Anzahlen), die du nennst, MUSS aus einem Tool-Ergebnis stammen, das du in DIESER Unterhaltung tatsächlich erhalten hast. Schätze, rate, nimm an oder erfinde niemals eine Zahl — nicht einmal als \"Platzhalter\" oder \"Beispiel\".\n- Wenn du eine benötigte Zahl noch nicht hast, rufe ein Tool auf, um sie zu holen, BEVOR du deine Antwort schreibst. Wenn eine Abfrage fehlschlägt, behebe den Fehler und versuche es erneut; ersetze sie nicht durch einen erfundenen Wert.\n- Behaupte nicht, du hättest etwas \"überprüft\", \"Umbuchungen ausgeschlossen\" oder \"geprüft\", es sei denn, ein Tool-Ergebnis zeigt das tatsächlich.\n\n## Aufgabe abschließen — nicht vorzeitig abbrechen\n- Arbeite weiter, bis du eine vollständige, datengestützte Antwort geben kannst. Führe ALLE benötigten Abfragen nacheinander aus, DANN schreibe die finale Antwort.\n- Pausiere NICHT mitten in der Aufgabe, um \"lass mich prüfen...\" zu sagen und dann anzuhalten, und frage den Nutzer NICHT um Erlaubnis, mit etwas fortzufahren, das er bereits angefragt hat — fahre einfach fort und liefere das Ergebnis.\n- Sei effizient: Sammle, was du brauchst, mit so wenigen Abfragen wie möglich (in SQL aggregieren) anstatt vieler kleiner Schritte.\n\n## Budget-Kontext des Nutzers\n{1}"
 
 #. placeholder {0}: selectedFile?.name
 #: src/pages/settings/DataManagementPage.tsx

@@ -385,7 +385,7 @@ export function IncomeExpenseByGroupChart() {
                       </Trans>
                     </CommandItem>
                     {onBudgetAccounts.length > 0 && (
-                      <CommandGroup heading="Accounts">
+                      <CommandGroup heading={t`Accounts`}>
                         {onBudgetAccounts.map((account) => {
                           const isSelected = selectedAccountIds.includes(account.ID);
                           return (

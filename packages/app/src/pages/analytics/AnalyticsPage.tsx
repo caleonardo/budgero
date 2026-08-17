@@ -40,18 +40,18 @@ export default function AnalyticsPage() {
    * than naming a chart type.
    */
   const REPORTS: { key: ReportKey; label: string; question: string; icon: LucideIcon }[] = [
-    { key: 'wealth', label: t`Wealth`, question: 'Am I growing?', icon: Landmark },
-    { key: 'spending', label: t`Spending`, question: 'Where does it go?', icon: Tag },
-    { key: 'in-out', label: t`In vs Out`, question: 'Within our means?', icon: ArrowLeftRight },
+    { key: 'wealth', label: t`Wealth`, question: t`Am I growing?`, icon: Landmark },
+    { key: 'spending', label: t`Spending`, question: t`Where does it go?`, icon: Tag },
+    { key: 'in-out', label: t`In vs Out`, question: t`Within our means?`, icon: ArrowLeftRight },
     {
       key: 'plan',
       label: t`Plan vs Reality`,
-      question: 'Did the budget hold?',
+      question: t`Did the budget hold?`,
       icon: ClipboardCheck,
     },
-    { key: 'money-map', label: t`Money Map`, question: 'How does it move?', icon: Waypoints },
-    { key: 'scenario', label: t`Scenario`, question: 'What if?', icon: FlaskConical },
-    { key: 'ledger', label: t`Ledger`, question: 'Every category, every month', icon: Table2 },
+    { key: 'money-map', label: t`Money Map`, question: t`How does it move?`, icon: Waypoints },
+    { key: 'scenario', label: t`Scenario`, question: t`What if?`, icon: FlaskConical },
+    { key: 'ledger', label: t`Ledger`, question: t`Every category, every month`, icon: Table2 },
   ];
 
   const [report, setReport] = useState<ReportKey>('wealth');
