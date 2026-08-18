@@ -1,4 +1,3 @@
-import { formatDistanceToNow, parseISO } from 'date-fns';
 import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
@@ -15,6 +14,7 @@ import {
 } from '@shared/ui/alert-dialog';
 import { Loader2, Sparkles } from 'lucide-react';
 import type { RecurringOccurrenceWithTemplate } from '@budgero/core/browser';
+import { formatDueLabel } from '@shared/lib/date-utils';
 import { formatRecurringAmount } from './format-recurring-amount';
 
 interface RecurringOccurrenceCardProps {
@@ -46,8 +46,7 @@ export function RecurringOccurrenceCard({
 }: RecurringOccurrenceCardProps) {
   const { template } = occurrence;
   const amountDisplay = formatRecurringAmount(template, localizer);
-  const dueDate = parseISO(occurrence.dueDate);
-  const dueLabel = formatDistanceToNow(dueDate, { addSuffix: true });
+  const dueLabel = formatDueLabel(occurrence.dueDate);
 
   return (
     <Card className="relative">

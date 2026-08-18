@@ -469,8 +469,10 @@ export class RecurringTransactionService {
       fields.push('Amount = ?');
       params.push(patch.amount);
     }
+    let scheduleChanged = false;
     if (patch.schedule) {
       const normalized = normalizeSchedule(patch.schedule as RecurringSchedule);
+      scheduleChanged = JSON.stringify(normalized) !== JSON.stringify(existing.schedule);
       fields.push('ScheduleJSON = ?');
       params.push(JSON.stringify(normalized));
     }
@@ -497,6 +499,18 @@ export class RecurringTransactionService {
     );
     if (!result.changes) {
       throw new NotFoundError('RecurringTransaction', id);
+    }
+
+    if (scheduleChanged) {
+      // Pending occurrences were materialized from the old rhythm; drop them
+      // so the new schedule is regenerated from scratch. Posted (ready) and
+      // skipped occurrences are history and stay untouched.
+      run(
+        this.db,
+        `DELETE FROM recurring_transaction_occurrences
+          WHERE RecurringTransactionID = ? AND Status = 'scheduled'`,
+        id
+      );
     }
 
     const updated = this.getRecurringTransaction(id, { includeInactive: true });
@@ -967,15 +981,25 @@ export class RecurringTransactionService {
       template.id
     );
 
+    // Always walk the rhythm from the schedule's start date so the generated
+    // dates follow the *current* schedule (start date, unit, interval). When
+    // occurrences already exist we skip past the newest one; for an unchanged
+    // schedule this yields exactly the same dates as continuing from it.
+    nextDate = parseDate(schedule.startDate, 'schedule.startDate');
+    let iterations = 0;
     if (lastRow?.DueDate) {
       const lastDate = parseDate(lastRow.DueDate, 'occurrence.DueDate');
-      nextDate = addInterval(lastDate, schedule);
-    } else {
-      nextDate = parseDate(schedule.startDate, 'schedule.startDate');
+      while (nextDate <= lastDate) {
+        const candidate = addInterval(nextDate, schedule);
+        if (candidate.getTime() === nextDate.getTime()) return;
+        nextDate = candidate;
+        iterations += 1;
+        if (iterations > MAX_GENERATED_OCCURRENCES * 100) return;
+      }
+      iterations = 0;
     }
 
     const threshold = backfillThreshold();
-    let iterations = 0;
 
     // Fast-forward to avoid generating deep history
     while (nextDate < threshold) {

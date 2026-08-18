@@ -319,3 +319,24 @@ export function formatShortDate(
     year: showYear ? 'numeric' : undefined,
   });
 }
+
+/**
+ * Human label for a due date given as a `YYYY-MM-DD` key, at *day*
+ * granularity: "today", "tomorrow", "in 3 days", "yesterday", "5 days ago".
+ *
+ * `formatDistanceToNow(parseISO(key))` measures from local midnight, so an
+ * occurrence due today reads as "18 hours ago" by the evening — this helper
+ * compares calendar days instead. Falls back to the raw key when unparsable.
+ */
+export function formatDueLabel(dateKey: string, now: Date = new Date()): string {
+  const due = parseDateKey(dateKey);
+  if (!due) return dateKey;
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfDue = new Date(due.getFullYear(), due.getMonth(), due.getDate());
+  const days = Math.round((startOfDue.getTime() - startOfToday.getTime()) / 86_400_000);
+  if (days === 0) return 'today';
+  if (days === 1) return 'tomorrow';
+  if (days === -1) return 'yesterday';
+  if (days > 1) return `in ${days} days`;
+  return `${-days} days ago`;
+}

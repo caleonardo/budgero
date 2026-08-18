@@ -12,9 +12,9 @@ import {
   Loader2,
   Repeat,
 } from 'lucide-react';
-import { format, formatDistanceToNow, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { cn } from '@shared/lib/utils';
-import { getTodayISO } from '@shared/lib/date-utils';
+import { formatDueLabel, getTodayISO } from '@shared/lib/date-utils';
 import { asMilli, formatMilli } from '@shared/lib/currency/milli';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 
@@ -246,8 +246,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                   formatter,
                   asMilli(occurrenceAmount(template))
                 )}`;
-                const dueDate = parseISO(occurrence.dueDate);
-                const dueLabel = formatDistanceToNow(dueDate, { addSuffix: true });
+                const dueLabel = formatDueLabel(occurrence.dueDate);
                 const isOverdue = occurrence.dueDate < todayKey;
                 const busy = processingOccurrenceId === occurrence.id;
 
@@ -359,7 +358,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                   formatter,
                   asMilli(Math.abs(amountValue || 0))
                 )}`;
-                const dueLabel = formatDistanceToNow(parsedDate, { addSuffix: true });
+                const dueLabel = formatDueLabel(format(parsedDate, 'yyyy-MM-dd'));
 
                 return (
                   <div

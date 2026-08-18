@@ -1,4 +1,3 @@
-import { formatDistanceToNow, parseISO } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
@@ -17,6 +16,7 @@ import {
 import { CalendarDays, Clock, Loader2, Pencil, Sparkles, Trash2 } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import type { RecurringTransaction, RecurringOccurrenceWithTemplate } from '@budgero/core/browser';
+import { formatDueLabel } from '@shared/lib/date-utils';
 import { formatRecurringAmount } from './format-recurring-amount';
 
 function frequencyLabelFor(schedule: RecurringTransaction['schedule']): string {
@@ -70,9 +70,7 @@ export function RecurringTemplateCard({
   onEdit,
   onDelete,
 }: RecurringTemplateCardProps) {
-  const dueLabel = nextOccurrence
-    ? formatDistanceToNow(parseISO(nextOccurrence.dueDate), { addSuffix: true })
-    : 'No upcoming dates';
+  const dueLabel = nextOccurrence ? formatDueLabel(nextOccurrence.dueDate) : 'No upcoming dates';
   const amountDisplay = formatRecurringAmount(template, localizer);
   const frequencyLabel = frequencyLabelFor(template.schedule);
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isFutureDate, formatDateISO } from './date-utils';
+import { isFutureDate, formatDateISO, formatDueLabel } from './date-utils';
 
 function isoOffsetDays(days: number): string {
   const d = new Date();
@@ -30,5 +30,17 @@ describe('isFutureDate', () => {
     expect(isFutureDate(null)).toBe(false);
     expect(isFutureDate('')).toBe(false);
     expect(isFutureDate('not-a-date')).toBe(false);
+  });
+});
+
+describe('formatDueLabel', () => {
+  const now = new Date(2026, 7, 18, 18, 30); // Aug 18 2026, evening local time
+  it('labels by calendar day, not elapsed hours', () => {
+    expect(formatDueLabel('2026-08-18', now)).toBe('today');
+    expect(formatDueLabel('2026-08-19', now)).toBe('tomorrow');
+    expect(formatDueLabel('2026-08-17', now)).toBe('yesterday');
+    expect(formatDueLabel('2026-08-21', now)).toBe('in 3 days');
+    expect(formatDueLabel('2026-08-10', now)).toBe('8 days ago');
+    expect(formatDueLabel('garbage', now)).toBe('garbage');
   });
 });
