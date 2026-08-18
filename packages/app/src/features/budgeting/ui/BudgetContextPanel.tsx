@@ -20,7 +20,11 @@ import {
 } from '@entities/budget/api/useMonthlyBudget';
 import { useSpendingTotalsByPeriod } from '@features/analytics/api/useAnalyticsQueries';
 import { useTransactionsByCategoryAndMonth } from '@entities/transaction/api/useTransactions';
-import { useGoalsByCategories, useCycleFinancialsForGoals } from '@entities/goal/api/useGoals';
+import {
+  useGoals,
+  useGoalsByCategories,
+  useCycleFinancialsForGoals,
+} from '@entities/goal/api/useGoals';
 import {
   format,
   eachMonthOfInterval,
@@ -40,6 +44,8 @@ import {
   calculateOverfundedCategories,
 } from '@features/budget-planning/ui/assign-dropdown/assign-dropdown.utils';
 import type { GetMonthlyBudgetRow } from '@budgero/core/browser';
+import { ZERO_MILLI } from '@shared/lib/currency/milli';
+import { roundMilli } from '@shared/lib/currency/round-amount';
 import { GoalSection } from '@features/goal-management/ui/GoalSection';
 import {
   Loader2,
@@ -167,8 +173,43 @@ export function BudgetContextPanel({
     (g) => g.CategoryID === selectedCategory?.categoryId && g.Type === 'monthly'
   )?.Target;
 
+  // All goals of the budget, for the underfunded total in the Summary card.
+  const { data: allGoals = [] } = useGoals(budgetId);
+
   // Yearly/target-date goals need assignment history for cycle-aware progress
-  const { data: cycleFinancials } = useCycleFinancialsForGoals(categoryGoals, currentMonth);
+  const { data: cycleFinancials } = useCycleFinancialsForGoals(allGoals, currentMonth);
+
+  // Total still needed this month across the goals of the rows in scope
+  // (the selection, or every category). Same maths as the assign dropdown's
+  // "Fund underfunded goals" so the two surfaces always agree.
+  const underfundedSummary = useMemo(() => {
+    if (!allGoals.length || !selectedRows.length) return { total: ZERO_MILLI, count: 0 };
+    const currencyCode = globalLocalizer.resolvedOptions().currency ?? 'USD';
+    const idSet = new Set(selectedRows.map((row) => row.categoryId));
+    const goalsInScope = allGoals.filter((goal) => idSet.has(goal.CategoryID));
+    if (!goalsInScope.length) return { total: ZERO_MILLI, count: 0 };
+    const rowData = selectedRows.map(
+      (row) =>
+        ({
+          CategoryID: row.categoryId,
+          Category: row.name,
+          Assigned: row.assigned,
+          Activity: row.activity,
+          Available: row.available,
+        }) as GetMonthlyBudgetRow
+    );
+    const underfunded = calculateUnderfundedGoals(
+      goalsInScope,
+      rowData,
+      currencyCode,
+      currentMonth,
+      cycleFinancials
+    );
+    return {
+      total: roundMilli(underfunded.reduce((sum, g) => sum + g.needed, 0)),
+      count: underfunded.length,
+    };
+  }, [allGoals, selectedRows, globalLocalizer, currentMonth, cycleFinancials]);
 
   // Goal-based quick actions for a single selected category. Reuses the same
   // underfunded/overfunded math as the assign dropdown so both surfaces agree.
@@ -598,6 +639,25 @@ export function BudgetContextPanel({
             Available
           </span>
           <span className="font-medium">{formatAmount(summaryTotals.available)}</span>
+        </div>
+        <div className="flex items-center justify-between" data-testid="summary-underfunded-goals">
+          <span className="flex items-center gap-2 text-muted-foreground">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-500/10 text-amber-500">
+              <Target className="h-3.5 w-3.5" />
+            </span>
+            Underfunded goals
+            {underfundedSummary.count > 0 && (
+              <span className="text-xs text-muted-foreground/70">· {underfundedSummary.count}</span>
+            )}
+          </span>
+          <span
+            className={cn(
+              'font-medium',
+              underfundedSummary.total > 0 && 'text-amber-600 dark:text-amber-400'
+            )}
+          >
+            {formatAmount(underfundedSummary.total)}
+          </span>
         </div>
       </CardContent>
     </Card>
