@@ -5,7 +5,7 @@
  * activity click, and move money functionality.
  */
 
-import { useId, useState, useMemo, type MouseEvent } from 'react';
+import { useId, useState, useMemo, useRef, type MouseEvent } from 'react';
 import { MoreVertical, ExternalLink, EyeOff } from 'lucide-react';
 import { TableRow, TableCell } from '@shared/ui/table';
 import { Button } from '@shared/ui/button';
@@ -47,6 +47,7 @@ export function DesktopBudgetCategoryRow({
   selectable,
 }: DesktopBudgetCategoryRowProps) {
   const moveAmountInputId = useId();
+  const checkboxShiftRef = useRef(false);
   const [movePopoverOpen, setMovePopoverOpen] = useState(false);
   const [moveAmount, setMoveAmount] = useState<string>('');
   const [moveTarget, setMoveTarget] = useState<number | null>(null);
@@ -135,6 +136,11 @@ export function DesktopBudgetCategoryRow({
         isDragging && 'opacity-60',
         isOver && 'ring-2 ring-primary/50'
       )}
+      onMouseDown={(event) => {
+        // Shift-click extends the selection; stop the browser from also
+        // painting a text-selection range across the rows.
+        if (selectable && event.shiftKey) event.preventDefault();
+      }}
       onClick={(event) => {
         if (!selectable || !onSelect) return;
         if (isEditingAllocated) return;
@@ -154,16 +160,23 @@ export function DesktopBudgetCategoryRow({
             <div
               role="presentation"
               onClick={(e) => e.stopPropagation()}
-              onMouseDown={(e) => e.stopPropagation()}
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                // Radix Checkbox's onCheckedChange has no event, so remember
+                // the modifier state here: shift → range-select, else toggle.
+                checkboxShiftRef.current = e.shiftKey;
+              }}
             >
               <Checkbox
                 checked={isSelected}
                 onCheckedChange={() => {
                   if (!onSelect) return;
+                  const shiftKey = checkboxShiftRef.current;
+                  checkboxShiftRef.current = false;
                   const syntheticEvent = {
-                    shiftKey: false,
-                    ctrlKey: true,
-                    metaKey: true,
+                    shiftKey,
+                    ctrlKey: !shiftKey,
+                    metaKey: !shiftKey,
                     preventDefault() {
                       /* synthetic event stub */
                     },
