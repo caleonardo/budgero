@@ -16,10 +16,37 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.9.3',
+    date: 'August 18, 2026',
+    summary:
+      "Changing a recurring transaction's cadence now reschedules its upcoming occurrences, and sidebar sections can be collapsed.",
+    isLatest: true,
+    items: [
+      {
+        type: 'fixed',
+        title: 'Recurring cadence changes reschedule upcoming occurrences',
+        description:
+          'Editing a recurring transaction from monthly to quarterly (or any other cadence) kept the previously generated upcoming dates and only added new ones after them. Pending occurrences are now regenerated from the new schedule; already posted or skipped ones are left untouched.',
+      },
+      {
+        type: 'fixed',
+        title: 'Due dates are labelled by day',
+        description:
+          'An occurrence due today no longer shows as "18 hours ago" by the evening. Due labels now read today, tomorrow, in N days, or N days ago.',
+      },
+      {
+        type: 'fixed',
+        title: 'Sidebar sections stay collapsed',
+        description:
+          'Collapsing Accounts, Reports, or Settings in the desktop sidebar while on one of its pages immediately re-expanded it. Sections now only auto-open when you navigate into them.',
+      },
+    ],
+  },
+  {
     version: 'v1.9.2',
     date: 'August 16, 2026',
     summary: '"Set memo" automation rules now work, and rule runs can be undone one after another.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'fixed',
