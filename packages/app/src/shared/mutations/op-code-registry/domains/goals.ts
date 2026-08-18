@@ -45,7 +45,8 @@ export const goalOps = {
         args.endDate as string,
         (args.purpose as GoalPurpose | undefined) || GoalPurpose.SPENDING,
         args.recurring as boolean | undefined,
-        readCycleMonths(args.cycleMonths)
+        readCycleMonths(args.cycleMonths),
+        (args.startDate as string | null | undefined) ?? null
       );
     },
     invalidates: [

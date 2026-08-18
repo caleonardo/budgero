@@ -83,14 +83,14 @@ describe('computeCycle — anchored grid', () => {
   });
 
   it('keeps the anchor day and clamps to shorter months (Jan 31 → Apr 30, Jul 31)', () => {
-    const g = goal({ TargetDate: '2026-01-31', CycleMonths: 3 });
+    const g = goal({ StartDate: '2025-01-01', TargetDate: '2026-01-31', CycleMonths: 3 });
     expect(cycle(g, '2026-04').target).toBe('2026-04-30');
     expect(cycle(g, '2026-07').target).toBe('2026-07-31'); // anchor day preserved, not 30
     expect(cycle(g, '2026-02').target).toBe('2026-04-30');
   });
 
   it('Feb 29 anchor: Feb 28 in common years, Feb 29 in leap years', () => {
-    const g = goal({ TargetDate: '2028-02-29', CycleMonths: 12 });
+    const g = goal({ StartDate: '2025-01-01', TargetDate: '2028-02-29', CycleMonths: 12 });
     expect(cycle(g, '2029-01').target).toBe('2029-02-28');
     expect(cycle(g, '2029-01').end).toBe('2029-02');
     expect(cycle(g, '2032-01').target).toBe('2032-02-29');
@@ -106,8 +106,8 @@ describe('computeCycle — anchored grid', () => {
     });
   });
 
-  it('viewing before the target: grid tiles backwards (interim cycle)', () => {
-    const g = goal({ TargetDate: '2027-03-31', CycleMonths: 12 });
+  it('viewing before the target: grid tiles backwards (interim cycle), never before the start month', () => {
+    const g = goal({ StartDate: '2025-01-15', TargetDate: '2027-03-31', CycleMonths: 12 });
     expect(cycle(g, '2025-07')).toEqual({
       start: '2025-04',
       end: '2026-03',
@@ -120,6 +120,45 @@ describe('computeCycle — anchored grid', () => {
       target: '2027-03-31',
       n: 12,
     });
+    // Months before the goal existed show the first cycle, not a phantom earlier one.
+    const periodic = goal({ StartDate: '2026-10-01', TargetDate: '2026-12-31', CycleMonths: 3 });
+    expect(cycle(periodic, '2026-08')).toEqual({
+      start: '2026-10',
+      end: '2026-12',
+      target: '2026-12-31',
+      n: 3,
+    });
+    expect(cycle(periodic, '2026-10')).toEqual({
+      start: '2026-10',
+      end: '2026-12',
+      target: '2026-12-31',
+      n: 3,
+    });
+    expect(cycle(periodic, '2027-01')).toEqual({
+      start: '2027-01',
+      end: '2027-03',
+      target: '2027-03-31',
+      n: 3,
+    });
+  });
+
+  it('periodic goal created today: first cycle starts this month and paces over N months', () => {
+    // UI derives TargetDate = last day of (start month + N − 1)
+    const g = goal({
+      StartDate: '2026-08-18',
+      TargetDate: '2026-10-31',
+      CycleMonths: 3,
+      Target: 300_000,
+    });
+    expect(cycle(g, '2026-08')).toEqual({
+      start: '2026-08',
+      end: '2026-10',
+      target: '2026-10-31',
+      n: 3,
+    });
+    const result = GoalCalculations.calculateProgress(g, finances(), '2026-08');
+    expect(result.timeMetrics?.monthsRemaining).toBe(3);
+    expect(result.monthlyTarget).toBe(100_000);
   });
 
   it('boundaries: month == target month, and far-future months terminate', () => {
@@ -147,7 +186,7 @@ describe('computeCycle — anchored grid', () => {
   it('parses ISO-timestamp target dates in local time (month and day)', () => {
     // Local Jan 1 stored as an instant; the anchor month must be January locally.
     const iso = new Date(2027, 0, 1).toISOString();
-    const g = goal({ TargetDate: iso, CycleMonths: 3 });
+    const g = goal({ StartDate: '2025-01-01', TargetDate: iso, CycleMonths: 3 });
     expect(cycle(g, '2027-01')).toEqual({
       start: '2026-11',
       end: '2027-01',
@@ -398,6 +437,29 @@ describe('GoalService persistence of CycleMonths', () => {
     );
     expect(services().goals.getGoalByCategoryID(cat).CycleMonths).toBeNull();
     expect(services().goals.getGoalByCategoryID(cat).Recurring).toBeFalsy();
+
+    // start date can be moved; omitted keeps it
+    services().goals.updateGoal(
+      cat,
+      2000,
+      GoalType.TARGET_DATE,
+      '2026-12-31',
+      GoalPurpose.SAVINGS,
+      true,
+      3,
+      '2026-09-01'
+    );
+    expect(services().goals.getGoalByCategoryID(cat).StartDate).toBe('2026-09-01');
+    services().goals.updateGoal(
+      cat,
+      2000,
+      GoalType.TARGET_DATE,
+      '2026-12-31',
+      GoalPurpose.SAVINGS,
+      true,
+      3
+    );
+    expect(services().goals.getGoalByCategoryID(cat).StartDate).toBe('2026-09-01');
 
     for (const bad of [0, 1, 121, 2.5]) {
       expect(() =>

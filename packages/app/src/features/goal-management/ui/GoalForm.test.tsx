@@ -26,6 +26,14 @@ const yearlyGoal: Goal = {
   CycleMonths: null,
 };
 
+const quarterlyGoal: Goal = {
+  ...yearlyGoal,
+  ID: 8,
+  StartDate: '2026-08-18',
+  TargetDate: '2026-10-31',
+  CycleMonths: 3,
+};
+
 function renderForm(goal: Goal | null, onSave = vi.fn().mockResolvedValue(undefined)) {
   render(
     <GoalForm
@@ -42,56 +50,84 @@ function renderForm(goal: Goal | null, onSave = vi.fn().mockResolvedValue(undefi
   return onSave;
 }
 
-async function pickRepeat(user: ReturnType<typeof userEvent.setup>, optionName: RegExp) {
-  await user.click(screen.getByTestId('goal-repeat-select'));
-  await user.click(await screen.findByRole('option', { name: optionName }));
-}
+const submit = (user: ReturnType<typeof userEvent.setup>) =>
+  user.click(screen.getByRole('button', { name: /save|update|create/i }));
 
-describe('GoalForm repeats control', () => {
-  it('pre-fills Yearly for a legacy recurring goal and can switch to Quarterly', async () => {
+const localToday = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+describe('GoalForm — yearly presets', () => {
+  it('pre-fills "Every year" for a legacy recurring goal and can switch to Never', async () => {
     const user = userEvent.setup();
     const onSave = renderForm(yearlyGoal);
-    expect(screen.getByTestId('goal-repeat-select')).toHaveTextContent('Yearly');
+    expect(screen.getByTestId('goal-repeat-select')).toHaveTextContent('Every year');
+    expect(screen.getByTestId('goal-cycle-preview')).toHaveTextContent('Jan 2026 – Dec 2026');
 
-    await pickRepeat(user, /quarterly/i);
-    // Live preview from the core cycle function: viewing Aug 2026 with a Dec 31 anchor
-    expect(screen.getByTestId('goal-cycle-preview')).toHaveTextContent('Jul 2026 – Sep 2026');
-    expect(screen.getByTestId('goal-cycle-preview')).toHaveTextContent('September 30th, 2026');
-
-    await user.click(screen.getByRole('button', { name: /save|update|create/i }));
+    await user.click(screen.getByTestId('goal-repeat-select'));
+    await user.click(await screen.findByRole('option', { name: /never/i }));
+    expect(screen.queryByTestId('goal-cycle-preview')).not.toBeInTheDocument();
+    await submit(user);
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
-    expect(onSave.mock.calls[0][0]).toMatchObject({ Recurring: true, CycleMonths: 3 });
+    expect(onSave.mock.calls[0][0]).toMatchObject({ Recurring: false, CycleMonths: null });
+  });
+});
+
+describe('GoalForm — periodic presets', () => {
+  it('a quarterly goal opens on the periodic preset with its start date and cadence', () => {
+    renderForm(quarterlyGoal);
+    expect(screen.getByText('Periodic Allocation Target')).toBeInTheDocument();
+    expect(screen.getByTestId('goal-period-select')).toHaveTextContent('Quarter');
+    expect(screen.getByTestId('goal-period-start')).toHaveTextContent('August 18th, 2026');
+    // First cycle = start month + 3 months, viewed in Aug 2026
+    expect(screen.getByTestId('goal-cycle-preview')).toHaveTextContent('Aug 2026 – Oct 2026');
+    expect(screen.getByTestId('goal-cycle-preview')).toHaveTextContent('October 31st, 2026');
   });
 
-  it('custom cadence: blocks invalid values and submits a valid one', async () => {
+  it('creating a periodic goal derives the target date from start + cadence and saves cadence', async () => {
     const user = userEvent.setup();
-    const onSave = renderForm(yearlyGoal);
-    await pickRepeat(user, /every n months/i);
-    const input = await screen.findByTestId('goal-repeat-custom-input');
+    const onSave = renderForm(null);
+    await user.click(screen.getByText('Periodic Allocation Target'));
+    // Amount (calculator cell: click the display, type, commit with Enter)
+    await user.click(screen.getByText('Enter amount'));
+    await user.keyboard('300{Enter}');
+    // Cadence → 6 months
+    await user.click(screen.getByTestId('goal-period-select'));
+    await user.click(await screen.findByRole('option', { name: /6 months/i }));
+    expect(screen.getByTestId('goal-cycle-preview')).toHaveTextContent('Repeats every 6 months');
 
+    await submit(user);
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    const saved = onSave.mock.calls[0][0] as Partial<Goal>;
+    expect(saved).toMatchObject({
+      Type: GoalType.TARGET_DATE,
+      Recurring: true,
+      CycleMonths: 6,
+      StartDate: localToday(),
+    });
+    // Target date = last day of (start month + 5)
+    const start = new Date();
+    const expectedEnd = new Date(start.getFullYear(), start.getMonth() + 6, 0);
+    expect(new Date(saved.TargetDate as string).getTime()).toBe(expectedEnd.getTime());
+  });
+
+  it('custom cadence: native validation blocks < 2, valid value is saved', async () => {
+    const user = userEvent.setup();
+    const onSave = renderForm(quarterlyGoal);
+    await user.click(screen.getByTestId('goal-period-select'));
+    await user.click(await screen.findByRole('option', { name: /n months/i }));
+    const input = await screen.findByTestId('goal-repeat-custom-input');
     await user.type(input, '1');
-    // Native constraint validation (min=2) blocks the submit before our handler.
     expect((input as HTMLInputElement).validity.valid).toBe(false);
-    await user.click(screen.getByRole('button', { name: /save|update|create/i }));
+    await submit(user);
     expect(onSave).not.toHaveBeenCalled();
-    expect(screen.queryByTestId('goal-cycle-preview')).not.toBeInTheDocument();
 
     await user.clear(input);
     await user.type(input, '4');
     expect(screen.getByTestId('goal-cycle-preview')).toHaveTextContent('Repeats every 4 months');
-    await user.click(screen.getByRole('button', { name: /save|update|create/i }));
+    await submit(user);
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
     expect(onSave.mock.calls[0][0]).toMatchObject({ Recurring: true, CycleMonths: 4 });
-  });
-
-  it('Never → Recurring false and CycleMonths null', async () => {
-    const user = userEvent.setup();
-    const onSave = renderForm({ ...yearlyGoal, CycleMonths: 6 });
-    expect(screen.getByTestId('goal-repeat-select')).toHaveTextContent('Every 6 months');
-    await pickRepeat(user, /never/i);
-    expect(screen.queryByTestId('goal-cycle-preview')).not.toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: /save|update|create/i }));
-    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
-    expect(onSave.mock.calls[0][0]).toMatchObject({ Recurring: false, CycleMonths: null });
   });
 });

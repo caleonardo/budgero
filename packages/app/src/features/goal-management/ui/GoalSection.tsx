@@ -80,6 +80,7 @@ export function GoalSection({
           targetDate: goalData.TargetDate || new Date().toISOString(),
           recurring: goalData.Recurring,
           cycleMonths: goalData.CycleMonths,
+          startDate: goalData.StartDate,
           budgetId,
         });
       } else {

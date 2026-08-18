@@ -176,6 +176,8 @@ export type UpdateGoalInput = {
    * to leave the stored value untouched (e.g. non-date presets).
    */
   cycleMonths?: number | null;
+  /** New start date (YYYY-MM-DD); omit to keep the stored one. */
+  startDate?: string | null;
   budgetId: number; // Added for invalidation
 };
 
@@ -194,6 +196,7 @@ export function useUpdateGoal() {
           endDate: input.targetDate,
           recurring: input.recurring,
           cycleMonths: input.cycleMonths,
+          startDate: input.startDate ?? null,
           budgetId: input.budgetId,
         },
         meta: { label: 'useUpdateGoal' },

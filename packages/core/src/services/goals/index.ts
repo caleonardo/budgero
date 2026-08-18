@@ -147,13 +147,15 @@ export class GoalService {
     targetDate: string,
     purpose?: GoalPurpose,
     recurring?: boolean,
-    cycleMonths?: number | null
+    cycleMonths?: number | null,
+    /** New start date (YYYY-MM-DD); omitted/null keeps the stored one. */
+    startDate?: string | null
   ): void {
     // Get current goal
     const currentGoal = this.getGoalByCategoryID(categoryId);
     const nextRecurring = recurring ?? !!currentGoal.Recurring;
 
-    // Call update with SQL parameter order: type, purpose, target, target_date, recurring, cycle, category_id
+    // Call update with SQL parameter order: type, purpose, target, target_date, recurring, cycle, start, category_id
     this.queries.updateGoal(
       goalType,
       target,
@@ -161,7 +163,8 @@ export class GoalService {
       categoryId,
       purpose ?? currentGoal.Purpose,
       nextRecurring,
-      normalizeCycleMonths(nextRecurring, cycleMonths, currentGoal.CycleMonths ?? null)
+      normalizeCycleMonths(nextRecurring, cycleMonths, currentGoal.CycleMonths ?? null),
+      startDate ?? null
     );
   }
 

@@ -8,6 +8,8 @@ import {
   Trash2,
   TrendingUp,
   PiggyBank,
+  Repeat,
+  RefreshCw,
   Calendar,
   AlertCircle,
   CheckCircle2,
@@ -264,6 +266,7 @@ export function GoalCard({
     );
   }
 
+  const isPeriodic = cycleMonths !== null && cycleMonths !== 12;
   const getGoalTypeLabel = () => {
     switch (goal.Type) {
       case 'monthly':
@@ -271,9 +274,9 @@ export function GoalCard({
       case 'monthly-savings':
         return 'Monthly Allocation Target';
       case 'target-date':
-        return 'Yearly Allocation Target';
+        return isPeriodic ? 'Periodic Allocation Target' : 'Yearly Allocation Target';
       case 'yearly':
-        return 'Yearly Available Target';
+        return isPeriodic ? 'Periodic Available Target' : 'Yearly Available Target';
       default:
         return 'Goal';
     }
@@ -286,9 +289,9 @@ export function GoalCard({
       case 'monthly-savings':
         return <ArrowUpFromLine className="h-4 w-4" />;
       case 'target-date':
-        return <CalendarClock className="h-4 w-4" />;
+        return isPeriodic ? <Repeat className="h-4 w-4" /> : <CalendarClock className="h-4 w-4" />;
       case 'yearly':
-        return <PiggyBank className="h-4 w-4" />;
+        return isPeriodic ? <RefreshCw className="h-4 w-4" /> : <PiggyBank className="h-4 w-4" />;
       default:
         return <Target className="h-4 w-4" />;
     }

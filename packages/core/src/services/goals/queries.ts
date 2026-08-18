@@ -97,13 +97,15 @@ export class GoalQueries {
     categoryId: number,
     purpose: GoalPurpose = GoalPurpose.SPENDING,
     recurring = false,
-    cycleMonths: number | null = null
+    cycleMonths: number | null = null,
+    startDate: string | null = null
   ): void {
     run(
       this.db,
       `
       UPDATE goals
-      SET Type = ?, Purpose = ?, Target = ?, TargetDate = ?, Recurring = ?, CycleMonths = ?
+      SET Type = ?, Purpose = ?, Target = ?, TargetDate = ?, Recurring = ?, CycleMonths = ?,
+          StartDate = COALESCE(?, StartDate)
       WHERE CategoryID = ?
     `,
       type,
@@ -112,6 +114,7 @@ export class GoalQueries {
       targetDate,
       recurring ? 1 : 0,
       cycleMonths ?? null,
+      startDate ?? null,
       categoryId
     );
   }

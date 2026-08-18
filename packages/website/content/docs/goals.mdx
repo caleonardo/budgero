@@ -60,14 +60,18 @@ Each type calculates differently — and the differences are deliberate:
 
 ## Repeating goals
 
-The two dated types — **Yearly spending** and **Target date savings** — can repeat. Set **Repeats** in the goal editor to **Yearly**, **Every 6 months**, **Quarterly**, or **Every N months** (any whole number from 2 to 120), and a fresh cycle starts automatically after each target date: car registration every year, a tax instalment every quarter, insurance every six months.
+Two kinds of goal repeat, and they're set up differently because they answer different questions.
 
-How the cycles work:
+**Yearly goals** (Yearly spending / Target date savings) are about a specific date: car registration on March 31st, the holiday in August. Pick the target date, and switch **Repeats** to *Every year* if the same thing comes around annually — the next cycle starts automatically the month after the target date, ending on the same date a year later.
 
-- The **target date is the anchor**. Cycles run back-to-back from it, N months long, and end on the same day of the month (clamped in shorter months — a Jan 31 anchor gives Apr 30, Jul 31, Oct 31). Progress, pace and "needed this month" are computed for the cycle you're looking at, and the editor shows the current cycle and its target date while you're setting it up.
-- The **goal amount is per cycle**: a quarterly goal of €300 asks for €300 every quarter, not €1,200 spread over the year.
-- **Yearly spending** carries the available balance across cycles — money you didn't spend last quarter still counts. **Target date savings** counts only what you assigned inside the current cycle, so each cycle starts from zero.
-- Changing the cadence re-tiles the cycles from the target date; the current cycle changes immediately, so check the preview line before saving.
+**Periodic goals** (Periodic Allocation Target / Periodic Available Target) are about a rhythm rather than a date: a quarterly tax instalment, insurance every six months, a subscription billed every four months. You choose the cadence — **Quarter**, **6 months**, or **any N months** (2–120) — and a **start date** (today by default). The first cycle starts in the start month and runs for the cadence length; the target date is derived for you (the last day of that cycle) and every following cycle simply continues the rhythm.
+
+How the cycles behave:
+
+- The **goal amount is per cycle**: a quarterly goal of €300 asks for €300 every quarter, spread evenly across the months of that quarter — creating a quarterly goal today asks for a third of it this month, not the whole amount.
+- The editor shows the **current cycle and its target date** while you set the goal up, using the exact same maths as the goal card.
+- **Available targets** carry the balance across cycles — money you didn't spend last quarter still counts. **Allocation targets** count only what you assign inside the current cycle, so each cycle starts from zero.
+- Cycle end dates keep the day of the month, clamped in shorter months (an anchor on the 31st gives Apr 30, Jun 30, and so on).
 
 ## Reading goal status
 

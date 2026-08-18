@@ -613,8 +613,15 @@ export class GoalCalculations {
     const [curYear, curMonth] = currentMonth.split('-').map(Number);
     const currentIndex = curYear * 12 + (curMonth - 1);
 
-    // Smallest k with anchor + k·N >= current (k may be negative).
-    const k = Math.ceil((currentIndex - anchorIndex) / cycleMonths);
+    // Smallest k with anchor + k·N >= current (k may be negative — the grid
+    // tiles backwards too), but never a phantom cycle before the goal's start
+    // month: viewing months before StartDate shows the first cycle instead.
+    let k = Math.ceil((currentIndex - anchorIndex) / cycleMonths);
+    const start = parseDateOnlyLocal(goal.StartDate);
+    if (start) {
+      const startIndex = start.getFullYear() * 12 + start.getMonth();
+      if (currentIndex < startIndex) k = Math.max(k, 0);
+    }
     const endIndex = anchorIndex + k * cycleMonths;
     const startIndex = endIndex - (cycleMonths - 1);
 

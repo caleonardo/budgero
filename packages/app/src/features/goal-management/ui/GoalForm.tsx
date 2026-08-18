@@ -16,6 +16,8 @@ import {
   CalendarClock,
   PiggyBank,
   ChevronRight,
+  Repeat,
+  RefreshCw,
 } from 'lucide-react';
 import { Input } from '@shared/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
@@ -61,7 +63,9 @@ type GoalPreset =
   | 'monthly-available'
   | 'monthly-allocation'
   | 'yearly-allocation'
-  | 'yearly-available';
+  | 'yearly-available'
+  | 'periodic-allocation'
+  | 'periodic-available';
 
 const GOAL_PRESETS: {
   key: GoalPreset;
@@ -71,7 +75,10 @@ const GOAL_PRESETS: {
   title: string;
   subtitle: string;
   buildExample: (amount: string, date: string) => string;
+  /** Yearly presets: pick a target date (optionally repeating every year). */
   needsDate: boolean;
+  /** Periodic presets: pick a start date + cadence; the target date is derived. */
+  periodic?: boolean;
 }[] = [
   {
     key: 'monthly-available',
@@ -113,18 +120,57 @@ const GOAL_PRESETS: {
     buildExample: (amount, date) => `e.g. Car registration — need ${amount} ready by ${date}`,
     needsDate: true,
   },
+  {
+    key: 'periodic-allocation',
+    type: GoalType.TARGET_DATE,
+    purpose: GoalPurpose.SAVINGS,
+    icon: <Repeat className="h-5 w-5" />,
+    title: 'Periodic Allocation Target',
+    subtitle: 'Allocate a total amount every few months, cycle after cycle',
+    buildExample: (amount) => `e.g. Quarterly tax — allocate ${amount} every 3 months`,
+    needsDate: false,
+    periodic: true,
+  },
+  {
+    key: 'periodic-available',
+    type: GoalType.YEARLY,
+    purpose: GoalPurpose.SPENDING,
+    icon: <RefreshCw className="h-5 w-5" />,
+    title: 'Periodic Available Target',
+    subtitle: 'Have an amount available at the end of every period',
+    buildExample: (amount) => `e.g. Insurance — have ${amount} ready every 6 months`,
+    needsDate: false,
+    periodic: true,
+  },
 ];
 
 function presetFromGoal(goal: Goal): GoalPreset {
   if (goal.Type === GoalType.MONTHLY) return 'monthly-available';
   if (goal.Type === GoalType.MONTHLY_SAVINGS) return 'monthly-allocation';
-  if (goal.Type === GoalType.TARGET_DATE) return 'yearly-allocation';
-  if (goal.Type === GoalType.YEARLY) return 'yearly-available';
+  const cycle = getCycleMonths(goal);
+  const periodic = cycle !== null && cycle !== 12;
+  if (goal.Type === GoalType.TARGET_DATE)
+    return periodic ? 'periodic-allocation' : 'yearly-allocation';
+  if (goal.Type === GoalType.YEARLY) return periodic ? 'periodic-available' : 'yearly-available';
   return 'monthly-available';
 }
 
-type RepeatMode = 'never' | '12' | '6' | '3' | 'custom';
-const REPEAT_PRESETS = [12, 6, 3];
+/** Cadence for periodic presets: quarterly | every 6 months | custom N. */
+type PeriodMode = '3' | '6' | 'custom';
+const PERIOD_PRESETS = [3, 6];
+
+function parseGoalDate(value: string | undefined): Date | null {
+  if (!value) return null;
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (dateOnly) return new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]));
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** Last day of the month that is `months - 1` months after `start`'s month. */
+function endOfPeriod(start: Date, months: number): Date {
+  return new Date(start.getFullYear(), start.getMonth() + months, 0);
+}
 
 export function GoalForm({
   goal,
@@ -153,24 +199,47 @@ export function GoalForm({
     return date;
   });
   const [dateOpen, setDateOpen] = useState(false);
-  // "Repeats" control: never | 12 | 6 | 3 | custom (free number of months)
   const initialCycle = goal ? getCycleMonths(goal) : null;
-  const [repeatMode, setRepeatMode] = useState<RepeatMode>(() => {
-    if (initialCycle === null) return 'never';
-    return REPEAT_PRESETS.includes(initialCycle) ? (String(initialCycle) as RepeatMode) : 'custom';
+  // Yearly presets: repeat every year or not at all.
+  const [repeatsYearly, setRepeatsYearly] = useState(initialCycle === 12);
+  // Periodic presets: start date + cadence (quarterly | 6 months | custom N).
+  const [periodStart, setPeriodStart] = useState<Date>(
+    () => parseGoalDate(goal?.StartDate) ?? new Date()
+  );
+  const [periodStartOpen, setPeriodStartOpen] = useState(false);
+  const [periodMode, setPeriodMode] = useState<PeriodMode>(() => {
+    if (initialCycle === null || initialCycle === 12) return '3';
+    return PERIOD_PRESETS.includes(initialCycle) ? (String(initialCycle) as PeriodMode) : 'custom';
   });
   const [customCycleMonths, setCustomCycleMonths] = useState<string>(() =>
-    initialCycle !== null && !REPEAT_PRESETS.includes(initialCycle) ? String(initialCycle) : ''
+    initialCycle !== null && initialCycle !== 12 && !PERIOD_PRESETS.includes(initialCycle)
+      ? String(initialCycle)
+      : ''
   );
   const [errors, setErrors] = useState<string[]>([]);
 
-  const recurring = repeatMode !== 'never';
+  const activePreset = GOAL_PRESETS.find((p) => p.key === selectedPreset) ?? GOAL_PRESETS[0];
+  const isPeriodic = !!activePreset.periodic;
+
+  // Effective recurring/cadence for the active preset.
+  const recurring = isPeriodic || (activePreset.needsDate && repeatsYearly);
   const cycleMonths: number | null = !recurring
     ? null
-    : repeatMode === 'custom'
-      ? Number(customCycleMonths)
-      : Number(repeatMode);
+    : isPeriodic
+      ? periodMode === 'custom'
+        ? Number(customCycleMonths)
+        : Number(periodMode)
+      : 12;
   const cycleMonthsValid = !recurring || isValidCycleMonths(cycleMonths);
+  // Periodic goals: the target date is the end of the first cycle.
+  const derivedTargetDate = useMemo(
+    () => (isPeriodic && cycleMonthsValid ? endOfPeriod(periodStart, cycleMonths ?? 3) : null),
+    [isPeriodic, cycleMonthsValid, periodStart, cycleMonths]
+  );
+  const effectiveTargetDate = isPeriodic ? (derivedTargetDate ?? targetDate) : targetDate;
+  const effectiveStartDate = isPeriodic
+    ? format(periodStart, 'yyyy-MM-dd')
+    : goal?.StartDate || `${currentMonth}-01`;
 
   // Live preview of the cycle the progress maths will use, from the same core
   // function, so the editor and the card can never disagree.
@@ -183,8 +252,8 @@ export function GoalForm({
         Purpose: GoalPurpose.SAVINGS,
         CategoryID: categoryId,
         Target: ZERO_MILLI,
-        StartDate: goal?.StartDate || `${currentMonth}-01`,
-        TargetDate: targetDate.toISOString(),
+        StartDate: effectiveStartDate,
+        TargetDate: effectiveTargetDate.toISOString(),
         Recurring: true,
         CycleMonths: cycleMonths,
       },
@@ -196,9 +265,16 @@ export function GoalForm({
       rangeLabel: `${label(c.cycleStart)} – ${label(c.cycleEnd)}`,
       targetDate: c.cycleTargetDate,
     };
-  }, [recurring, cycleMonthsValid, cycleMonths, targetDate, currentMonth, goal, categoryId]);
-
-  const activePreset = GOAL_PRESETS.find((p) => p.key === selectedPreset) ?? GOAL_PRESETS[0];
+  }, [
+    recurring,
+    cycleMonthsValid,
+    cycleMonths,
+    effectiveTargetDate,
+    effectiveStartDate,
+    currentMonth,
+    goal,
+    categoryId,
+  ]);
 
   const handlePresetChange = (key: GoalPreset) => {
     setSelectedPreset(key);
@@ -211,18 +287,14 @@ export function GoalForm({
       Purpose: activePreset.purpose,
       Target: target,
       CategoryID: categoryId,
-      StartDate: `${currentMonth}-01`,
-      TargetDate: activePreset.needsDate ? targetDate.toISOString() : undefined,
-      Recurring: activePreset.needsDate ? recurring : false,
-      CycleMonths: activePreset.needsDate && recurring ? cycleMonths : null,
+      StartDate: effectiveStartDate,
+      TargetDate:
+        activePreset.needsDate || isPeriodic ? effectiveTargetDate.toISOString() : undefined,
+      Recurring: recurring,
+      CycleMonths: recurring ? cycleMonths : null,
     });
     const allErrors = [...validationResult.errors];
-    if (
-      activePreset.needsDate &&
-      recurring &&
-      !cycleMonthsValid &&
-      !allErrors.includes(GOAL_CYCLE_MONTHS_ERROR)
-    ) {
+    if (recurring && !cycleMonthsValid && !allErrors.includes(GOAL_CYCLE_MONTHS_ERROR)) {
       allErrors.push(GOAL_CYCLE_MONTHS_ERROR);
     }
     setErrors(allErrors);
@@ -239,12 +311,12 @@ export function GoalForm({
       Purpose: preset.purpose,
       CategoryID: categoryId,
       Target: target,
-      StartDate: goal?.StartDate || `${currentMonth}-01`,
+      StartDate: effectiveStartDate,
       BudgetID: budgetId,
     };
 
-    if (preset.needsDate) {
-      goalData.TargetDate = targetDate.toISOString();
+    if (preset.needsDate || isPeriodic) {
+      goalData.TargetDate = effectiveTargetDate.toISOString();
       goalData.Recurring = recurring;
       goalData.CycleMonths = recurring ? cycleMonths : null;
     } else {
@@ -361,6 +433,10 @@ export function GoalForm({
                 'The total amount to allocate across the period. Monthly target is calculated automatically.'}
               {selectedPreset === 'yearly-available' &&
                 'The amount you need available in this category by the target date.'}
+              {selectedPreset === 'periodic-allocation' &&
+                'The total to allocate in each cycle. Monthly target is calculated automatically.'}
+              {selectedPreset === 'periodic-available' &&
+                'The amount you need available by the end of each cycle.'}
             </p>
           </div>
 
@@ -398,54 +474,112 @@ export function GoalForm({
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground">
                   Repeats
                 </Label>
-                <div className="flex flex-wrap items-center gap-2">
-                  <Select
-                    value={repeatMode}
-                    onValueChange={(value) => setRepeatMode(value as RepeatMode)}
+                <Select
+                  value={repeatsYearly ? '12' : 'never'}
+                  onValueChange={(value) => setRepeatsYearly(value === '12')}
+                >
+                  <SelectTrigger
+                    className="w-full min-w-0 sm:w-56"
+                    data-testid="goal-repeat-select"
                   >
-                    <SelectTrigger
-                      className="w-full min-w-0 sm:w-56"
-                      data-testid="goal-repeat-select"
-                    >
-                      <SelectValue placeholder="Never" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="never">Never</SelectItem>
-                      <SelectItem value="12">Yearly</SelectItem>
-                      <SelectItem value="6">Every 6 months</SelectItem>
-                      <SelectItem value="3">Quarterly</SelectItem>
-                      <SelectItem value="custom">Every N months…</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {repeatMode === 'custom' && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">Every</span>
-                      <Input
-                        type="number"
-                        inputMode="numeric"
-                        min={MIN_GOAL_CYCLE_MONTHS}
-                        max={MAX_GOAL_CYCLE_MONTHS}
-                        step={1}
-                        required
-                        value={customCycleMonths}
-                        onChange={(e) => setCustomCycleMonths(e.target.value)}
-                        className="w-20"
-                        aria-label="Repeat every N months"
-                        data-testid="goal-repeat-custom-input"
-                      />
-                      <span className="text-sm text-muted-foreground">months</span>
-                    </div>
-                  )}
-                </div>
-                {recurring && cycleMonthsValid && cyclePreview && (
+                    <SelectValue placeholder="Never" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="never">Never</SelectItem>
+                    <SelectItem value="12">Every year</SelectItem>
+                  </SelectContent>
+                </Select>
+                {repeatsYearly && cyclePreview && (
                   <p className="text-xs text-muted-foreground" data-testid="goal-cycle-preview">
-                    Repeats {describeGoalCycle(cycleMonths as number)}. Current cycle:{' '}
-                    {cyclePreview.rangeLabel} · this cycle&apos;s target{' '}
-                    {format(cyclePreview.targetDate, 'PPP')}. Cycles are counted from the target
-                    date; the goal amount applies to each cycle.
+                    Repeats yearly. Current cycle: {cyclePreview.rangeLabel} · this cycle&apos;s
+                    target {format(cyclePreview.targetDate, 'PPP')}. Cycles are counted from the
+                    target date; the goal amount applies to each cycle.
                   </p>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* ── Periodic goals: start date + cadence ── */}
+          {isPeriodic && (
+            <div className="space-y-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+                    Repeats every
+                  </Label>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Select
+                      value={periodMode}
+                      onValueChange={(value) => setPeriodMode(value as PeriodMode)}
+                    >
+                      <SelectTrigger className="w-full min-w-0" data-testid="goal-period-select">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="3">Quarter (3 months)</SelectItem>
+                        <SelectItem value="6">6 months</SelectItem>
+                        <SelectItem value="custom">N months…</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {periodMode === 'custom' && (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          inputMode="numeric"
+                          min={MIN_GOAL_CYCLE_MONTHS}
+                          max={MAX_GOAL_CYCLE_MONTHS}
+                          step={1}
+                          required
+                          value={customCycleMonths}
+                          onChange={(e) => setCustomCycleMonths(e.target.value)}
+                          className="w-20"
+                          aria-label="Repeat every N months"
+                          data-testid="goal-repeat-custom-input"
+                        />
+                        <span className="text-sm text-muted-foreground">months</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+                    Starting
+                  </Label>
+                  <Popover open={periodStartOpen} onOpenChange={setPeriodStartOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal"
+                        data-testid="goal-period-start"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {format(periodStart, 'PPP')}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 max-h-[70vh] overflow-y-auto" modal>
+                      <MonthYearCalendar
+                        selected={periodStart}
+                        onSelect={(date) => {
+                          if (date) {
+                            setPeriodStart(date);
+                            setPeriodStartOpen(false);
+                          }
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+              {cycleMonthsValid && cyclePreview && (
+                <p className="text-xs text-muted-foreground" data-testid="goal-cycle-preview">
+                  Repeats {describeGoalCycle(cycleMonths as number)} from{' '}
+                  {format(periodStart, 'MMM yyyy')}. Current cycle: {cyclePreview.rangeLabel} · this
+                  cycle&apos;s target {format(cyclePreview.targetDate, 'PPP')}. The goal amount
+                  applies to each cycle.
+                </p>
+              )}
             </div>
           )}
 
