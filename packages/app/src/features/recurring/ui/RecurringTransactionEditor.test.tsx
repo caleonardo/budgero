@@ -92,6 +92,8 @@ describe('RecurringTransactionEditor (mobile) cadence', () => {
       startDate: expect.any(String),
       intervalUnit: 'month',
       intervalCount: 3,
+      endDate: null,
+      occurrenceCount: null,
     });
     const today = new Date();
     const iso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
@@ -112,5 +114,21 @@ describe('RecurringTransactionEditor (mobile) cadence', () => {
       }
     });
     expect(values.schedule.intervalCount).toBe(3);
+  });
+
+  it('submits occurrenceCount when ending after N occurrences', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(<Harness onSubmit={onSubmit} />);
+    const values = await fillAndSubmit(user, onSubmit, async () => {
+      await user.click(screen.getByTestId('recurring-end-mode-select'));
+      await user.click(await screen.findByRole('option', { name: /after n occurrences/i }));
+      // Submit is blocked until a count is entered
+      expect(screen.getByTestId('recurring-submit')).toBeDisabled();
+      await user.type(await screen.findByTestId('recurring-occurrence-count-input'), '12');
+      expect(screen.getByTestId('recurring-submit')).toBeEnabled();
+    });
+    expect(values.schedule.occurrenceCount).toBe(12);
+    expect(values.schedule.endDate).toBeNull();
   });
 });

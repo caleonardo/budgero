@@ -118,3 +118,94 @@ describe('RecurringTransactionService schedule changes', () => {
     }
   });
 });
+
+describe('RecurringTransactionService series limits', () => {
+  it('stops after occurrenceCount, counting from the start date', async () => {
+    const { services, budgetId, account, categoryId } = await setup();
+    const today = new Date();
+    const start = isoDate(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1)));
+
+    const template = await services.recurring.createRecurringTransaction({
+      budgetId,
+      accountId: account.ID,
+      categoryId,
+      name: 'Loan',
+      amount: 250,
+      direction: 'outflow',
+      schedule: { startDate: start, intervalUnit: 'month', intervalCount: 1, occurrenceCount: 3 },
+    });
+    expect(template.schedule.occurrenceCount).toBe(3);
+
+    const dates = services.recurring
+      .listOccurrences(budgetId)
+      .map((o) => o.dueDate)
+      .sort();
+    expect(dates).toHaveLength(3);
+    expect(dates[0]).toBe(start);
+    expect(monthDiff(dates[0], dates[2])).toBe(2);
+
+    // Skipping one and regenerating must not add a 4th.
+    const first = services.recurring.listOccurrences(budgetId, { status: 'scheduled' })[0];
+    await services.recurring.skipOccurrence(first.id);
+    services.recurring.ensureOccurrencesThrough(
+      budgetId,
+      isoDate(new Date(Date.UTC(today.getUTCFullYear() + 1, 0, 1)))
+    );
+    expect(services.recurring.listOccurrences(budgetId)).toHaveLength(3);
+  });
+
+  it('stops at endDate and shrinks a series when the end is edited earlier', async () => {
+    const { services, budgetId, account, categoryId } = await setup();
+    const today = new Date();
+    const start = isoDate(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1)));
+    const endMonth = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 4, 1));
+    const end = isoDate(endMonth);
+
+    const template = await services.recurring.createRecurringTransaction({
+      budgetId,
+      accountId: account.ID,
+      categoryId,
+      name: 'Course',
+      amount: 90,
+      direction: 'outflow',
+      schedule: { startDate: start, intervalUnit: 'month', intervalCount: 1, endDate: end },
+    });
+    expect(services.recurring.listOccurrences(budgetId)).toHaveLength(5);
+
+    await services.recurring.updateRecurringTransaction(template.id, {
+      schedule: { startDate: start, intervalUnit: 'month', intervalCount: 1, occurrenceCount: 2 },
+    });
+    const dates = services.recurring
+      .listOccurrences(budgetId)
+      .map((o) => o.dueDate)
+      .sort();
+    expect(dates).toEqual([
+      start,
+      isoDate(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 1, 1))),
+    ]);
+  });
+
+  it('rejects an end date before the start and a non-positive count', async () => {
+    const { services, budgetId, account, categoryId } = await setup();
+    const base = {
+      budgetId,
+      accountId: account.ID,
+      categoryId,
+      name: 'Bad',
+      amount: 1,
+      direction: 'outflow' as const,
+    };
+    await expect(
+      services.recurring.createRecurringTransaction({
+        ...base,
+        schedule: { startDate: '2026-09-01', intervalUnit: 'month', endDate: '2026-08-01' },
+      })
+    ).rejects.toThrow(/End date/);
+    await expect(
+      services.recurring.createRecurringTransaction({
+        ...base,
+        schedule: { startDate: '2026-09-01', intervalUnit: 'month', occurrenceCount: 0 },
+      })
+    ).rejects.toThrow(/Occurrence count/);
+  });
+});

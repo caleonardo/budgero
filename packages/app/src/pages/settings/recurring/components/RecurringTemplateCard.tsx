@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@shared/ui/alert-dialog';
-import { CalendarDays, Clock, Loader2, Pencil, Sparkles, Trash2 } from 'lucide-react';
+import { CalendarDays, Clock, Flag, Loader2, Pencil, Sparkles, Trash2 } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import type { RecurringTransaction, RecurringOccurrenceWithTemplate } from '@budgero/core/browser';
 import { formatDueLabel } from '@shared/lib/date-utils';
@@ -41,6 +41,16 @@ function frequencyLabelFor(schedule: RecurringTransaction['schedule']): string {
     default:
       return 'Custom cadence';
   }
+}
+
+function endLabelFor(schedule: RecurringTransaction['schedule']): string | null {
+  const count = schedule.occurrenceCount ?? null;
+  const countLabel = count ? `after ${count} ${count === 1 ? 'occurrence' : 'occurrences'}` : null;
+  const dateLabel = schedule.endDate ? `on ${schedule.endDate}` : null;
+  if (countLabel && dateLabel) return `Ends ${countLabel} or ${dateLabel}`;
+  if (countLabel) return `Ends ${countLabel}`;
+  if (dateLabel) return `Ends ${dateLabel}`;
+  return null;
 }
 
 interface RecurringTemplateCardProps {
@@ -73,6 +83,7 @@ export function RecurringTemplateCard({
   const dueLabel = nextOccurrence ? formatDueLabel(nextOccurrence.dueDate) : 'No upcoming dates';
   const amountDisplay = formatRecurringAmount(template, localizer);
   const frequencyLabel = frequencyLabelFor(template.schedule);
+  const endLabel = endLabelFor(template.schedule);
 
   return (
     <Card
@@ -112,6 +123,11 @@ export function RecurringTemplateCard({
           <span className="flex items-center gap-1">
             <CalendarDays className="h-3.5 w-3.5" /> Started {template.schedule.startDate}
           </span>
+          {endLabel && (
+            <span className="flex items-center gap-1">
+              <Flag className="h-3.5 w-3.5" /> {endLabel}
+            </span>
+          )}
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" /> Next due {dueLabel}
           </span>

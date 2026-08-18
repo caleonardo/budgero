@@ -53,6 +53,9 @@ interface RecurringFormValues {
   categoryId: string;
   frequency: string;
   startDate: string;
+  endMode: 'never' | 'date' | 'count';
+  endDate: string;
+  occurrenceCount: string;
   notifyDaysBefore: string;
   active: boolean;
 }
@@ -108,13 +111,20 @@ function scheduleToFrequency(schedule: RecurringSchedule): string {
   return key;
 }
 
-function frequencyToSchedule(value: string, startDate: string): RecurringSchedule {
+function frequencyToSchedule(
+  value: string,
+  startDate: string,
+  end: { mode: RecurringFormValues['endMode']; endDate: string; occurrenceCount: string }
+): RecurringSchedule {
   const [unit, countRaw] = value.split(':');
   const intervalCount = Math.max(1, Number(countRaw || '1'));
+  const parsedCount = Math.trunc(Number(end.occurrenceCount));
   return {
     startDate,
     intervalUnit: (unit as RecurringSchedule['intervalUnit']) ?? 'month',
     intervalCount,
+    endDate: end.mode === 'date' && end.endDate ? end.endDate : null,
+    occurrenceCount: end.mode === 'count' && parsedCount > 0 ? parsedCount : null,
   };
 }
 
@@ -156,6 +166,9 @@ function defaultFormValues(): RecurringFormValues {
     categoryId: '',
     frequency: 'month:1',
     startDate: today,
+    endMode: 'never',
+    endDate: '',
+    occurrenceCount: '',
     notifyDaysBefore: '0',
     active: true,
   };
@@ -176,6 +189,7 @@ export function RecurringTransactionEditor({
   const plainNumberFormatter = usePlainNumberFormatter(globalLocalizer);
   const [formValues, setFormValues] = useState<RecurringFormValues>(defaultFormValues);
   const [startDateOpen, setStartDateOpen] = useState(false);
+  const [endDateOpen, setEndDateOpen] = useState(false);
 
   // Initialize form when dialog opens - defer to avoid synchronous cascade
   useEffect(() => {
@@ -206,6 +220,9 @@ export function RecurringTransactionEditor({
             : base.categoryId,
         frequency: schedule ? scheduleToFrequency(schedule) : base.frequency,
         startDate: schedule?.startDate ?? base.startDate,
+        endMode: schedule?.occurrenceCount ? 'count' : schedule?.endDate ? 'date' : 'never',
+        endDate: schedule?.endDate ?? '',
+        occurrenceCount: schedule?.occurrenceCount ? String(schedule.occurrenceCount) : '',
         notifyDaysBefore:
           initialValues?.notifyDaysBefore !== undefined
             ? String(initialValues.notifyDaysBefore)
@@ -219,7 +236,10 @@ export function RecurringTransactionEditor({
   // Close date picker when dialog closes - defer to avoid synchronous cascade
   useEffect(() => {
     if (!open) {
-      const id = requestAnimationFrame(() => setStartDateOpen(false));
+      const id = requestAnimationFrame(() => {
+        setStartDateOpen(false);
+        setEndDateOpen(false);
+      });
       return () => cancelAnimationFrame(id);
     }
   }, [open]);
@@ -262,6 +282,27 @@ export function RecurringTransactionEditor({
     setStartDateOpen(false);
   };
 
+  const selectedEndDate = useMemo(() => {
+    if (!formValues.endDate) return null;
+    const [year, month, day] = formValues.endDate.split('-').map(Number);
+    if (!year || !month || !day) return null;
+    const date = new Date(year, month - 1, day);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }, [formValues.endDate]);
+
+  const endDateLabel = selectedEndDate ? format(selectedEndDate, 'PPP') : 'Pick a date';
+  const minEndDate = selectedStartDate ?? minSelectableDate;
+
+  const handleEndDateSelect = (date?: Date) => {
+    if (!date) return;
+    const normalized = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    normalized.setHours(0, 0, 0, 0);
+    const next = normalized < minEndDate ? new Date(minEndDate) : normalized;
+    setFormValues((prev) => ({ ...prev, endDate: format(next, 'yyyy-MM-dd') }));
+    setEndDateOpen(false);
+  };
+
   const isTransfer = formValues.type === 'transfer';
 
   // A category on a transfer is only meaningful when money leaves the budget
@@ -275,6 +316,11 @@ export function RecurringTransactionEditor({
     Boolean(sourceAccount?.OnBudget) &&
     destinationAccount !== undefined &&
     !destinationAccount.OnBudget;
+
+  const endConditionValid =
+    formValues.endMode === 'never' ||
+    (formValues.endMode === 'date' && Boolean(formValues.endDate)) ||
+    (formValues.endMode === 'count' && Math.trunc(Number(formValues.occurrenceCount)) > 0);
 
   const handleSubmit = async () => {
     const amount = Number(formValues.amount);
@@ -298,7 +344,11 @@ export function RecurringTransactionEditor({
       accountId,
       toAccountId,
       categoryId,
-      schedule: frequencyToSchedule(formValues.frequency, formValues.startDate),
+      schedule: frequencyToSchedule(formValues.frequency, formValues.startDate, {
+        mode: formValues.endMode,
+        endDate: formValues.endDate,
+        occurrenceCount: formValues.occurrenceCount,
+      }),
       notifyDaysBefore,
       active: formValues.active,
     });
@@ -501,6 +551,80 @@ export function RecurringTransactionEditor({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Ends" className="min-w-0 space-y-2">
+            <Select
+              value={formValues.endMode}
+              onValueChange={(value) =>
+                setFormValues((prev) => ({
+                  ...prev,
+                  endMode: value as RecurringFormValues['endMode'],
+                }))
+              }
+            >
+              <SelectTrigger className="w-full min-w-0" data-testid="recurring-end-mode-select">
+                <SelectValue placeholder="Never" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="never">Never</SelectItem>
+                <SelectItem value="date">On a date</SelectItem>
+                <SelectItem value="count">After N occurrences</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+          {formValues.endMode === 'date' && (
+            <Field
+              label="Last occurrence on or before"
+              htmlFor="rt-end"
+              className="min-w-0 space-y-2"
+            >
+              <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    id="rt-end"
+                    type="button"
+                    className="w-full justify-start gap-2 text-left font-normal"
+                  >
+                    <CalendarIcon className="h-4 w-4 opacity-70" />
+                    {endDateLabel}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start" modal>
+                  <MonthYearCalendar
+                    selected={selectedEndDate ?? undefined}
+                    onSelect={handleEndDateSelect}
+                    defaultMonth={selectedEndDate ?? minEndDate}
+                    disabled={{ before: minEndDate }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </Field>
+          )}
+          {formValues.endMode === 'count' && (
+            <Field
+              label="Number of occurrences"
+              htmlFor="rt-count"
+              className="min-w-0 space-y-2"
+              hint="Counted from the first occurrence, including ones already posted or skipped."
+            >
+              <Input
+                id="rt-count"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                step={1}
+                value={formValues.occurrenceCount}
+                onChange={(event) =>
+                  setFormValues((prev) => ({ ...prev, occurrenceCount: event.target.value }))
+                }
+                placeholder="e.g. 12"
+                data-testid="recurring-occurrence-count-input"
+              />
+            </Field>
+          )}
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="Notify me"
             htmlFor="rt-notify"
@@ -560,7 +684,7 @@ export function RecurringTransactionEditor({
       </Button>
       <Button
         onClick={handleSubmit}
-        disabled={isSubmitting || (isTransfer && !formValues.toAccountId)}
+        disabled={isSubmitting || (isTransfer && !formValues.toAccountId) || !endConditionValid}
         className="w-full sm:w-auto"
         data-testid="recurring-submit"
       >

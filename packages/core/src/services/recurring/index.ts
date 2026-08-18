@@ -215,8 +215,24 @@ function normalizeSchedule(schedule: RecurringSchedule): RecurringSchedule {
 
   if (schedule.endDate) {
     normalized.endDate = getUTCDateString(parseDate(schedule.endDate, 'schedule.endDate'));
+    if (normalized.endDate < normalized.startDate) {
+      throw new ValidationError('End date must be on or after the start date', 'schedule.endDate');
+    }
   } else {
     normalized.endDate = null;
+  }
+
+  if (schedule.occurrenceCount != null) {
+    const count = Number(schedule.occurrenceCount);
+    if (!Number.isFinite(count) || Math.trunc(count) < 1) {
+      throw new ValidationError(
+        'Occurrence count must be a positive whole number',
+        'schedule.occurrenceCount'
+      );
+    }
+    normalized.occurrenceCount = Math.trunc(count);
+  } else {
+    normalized.occurrenceCount = null;
   }
 
   return normalized;
@@ -986,6 +1002,10 @@ export class RecurringTransactionService {
     // occurrences already exist we skip past the newest one; for an unchanged
     // schedule this yields exactly the same dates as continuing from it.
     nextDate = parseDate(schedule.startDate, 'schedule.startDate');
+    // Position of `nextDate` in the series (0 = start date). Drives the
+    // occurrenceCount limit, so it must count skipped-over history too.
+    let seriesIndex = 0;
+    const maxCount = schedule.occurrenceCount ?? null;
     let iterations = 0;
     if (lastRow?.DueDate) {
       const lastDate = parseDate(lastRow.DueDate, 'occurrence.DueDate');
@@ -993,6 +1013,7 @@ export class RecurringTransactionService {
         const candidate = addInterval(nextDate, schedule);
         if (candidate.getTime() === nextDate.getTime()) return;
         nextDate = candidate;
+        seriesIndex += 1;
         iterations += 1;
         if (iterations > MAX_GENERATED_OCCURRENCES * 100) return;
       }
@@ -1006,8 +1027,12 @@ export class RecurringTransactionService {
       const candidate = addInterval(nextDate, schedule);
       if (candidate.getTime() === nextDate.getTime()) break;
       nextDate = candidate;
+      seriesIndex += 1;
       iterations += 1;
       if (endDate && nextDate > endDate) {
+        return;
+      }
+      if (maxCount !== null && seriesIndex >= maxCount) {
         return;
       }
       if (iterations > MAX_GENERATED_OCCURRENCES) {
@@ -1028,6 +1053,9 @@ export class RecurringTransactionService {
       if (endDate && nextDate > endDate) {
         break;
       }
+      if (maxCount !== null && seriesIndex >= maxCount) {
+        break;
+      }
       if (nextDate > horizon) {
         break;
       }
@@ -1037,6 +1065,7 @@ export class RecurringTransactionService {
         break;
       }
       nextDate = candidate;
+      seriesIndex += 1;
       iterations += 1;
     }
 

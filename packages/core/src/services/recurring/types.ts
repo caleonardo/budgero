@@ -8,7 +8,14 @@ export interface RecurringSchedule {
   startDate: string;
   intervalUnit: RecurringIntervalUnit;
   intervalCount?: number; // defaults to 1
+  /** Last day an occurrence may fall on (inclusive). Null/undefined = no end date. */
   endDate?: string | null;
+  /**
+   * Total number of occurrences in the series, counted from startDate and
+   * including posted/skipped ones. Null/undefined = unlimited. May be
+   * combined with endDate; whichever ends the series first wins.
+   */
+  occurrenceCount?: number | null;
   metadata?: {
     anchorDay?: number;
     anchorMonth?: number;
