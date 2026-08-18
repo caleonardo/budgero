@@ -25,6 +25,7 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@features/budget-planning/lib/dnd-modifiers';
 import { cn } from '@shared/lib/utils';
+import { useShowGroupPercent } from '@shared/hooks/useUserPreferences';
 import { BudgetRow } from '../lib/budget-transforms';
 import { DraggableCategoryGroupRow } from './DraggableCategoryGroupRow';
 import { DraggableCategoryRow } from './DraggableCategoryRow';
@@ -107,6 +108,7 @@ export function DraggableBudgetTable({
   disableSelection = false,
   mobileLayout = 'cards',
 }: DraggableBudgetTableProps) {
+  const { data: showGroupPercent = false } = useShowGroupPercent();
   const isTableLayout = mobileLayout === 'table';
   const isCompactLayout = mobileLayout === 'compact';
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -298,6 +300,7 @@ export function DraggableBudgetTable({
         data={data}
         collapsedGroups={collapsedGroups}
         groupTotals={groupTotals}
+        showGroupPercent={showGroupPercent}
         onToggleGroup={onToggleGroup}
         onAddCategory={onAddCategory}
         onUpdateGroup={onUpdateGroup}
@@ -348,6 +351,7 @@ export function DraggableBudgetTable({
           isDeleting: isDeletingGroup,
           layoutVariant: rowLayoutVariant,
           mobileLayout,
+          showGroupPercent,
         };
         return sortable ? (
           <DraggableCategoryGroupRow

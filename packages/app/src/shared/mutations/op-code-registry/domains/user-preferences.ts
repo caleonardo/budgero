@@ -25,4 +25,15 @@ export const userPreferenceOps = {
     },
     invalidates: [['suggestCategoryFromPayee'], ['userPreferences']],
   },
+  'userPreferences.setShowGroupPercent': {
+    execute: async (args) => {
+      const services = S() as { userMeta?: { setShowGroupPercent(value: boolean): void } };
+      if (!services.userMeta) {
+        throw new Error('userMeta service not available');
+      }
+      services.userMeta.setShowGroupPercent(args.value as boolean);
+      return { success: true };
+    },
+    invalidates: [['showGroupPercent'], ['userPreferences']],
+  },
 } satisfies Record<string, OpCodeEntry>;

@@ -30,6 +30,11 @@ export interface BudgetRow {
   categoryGroupId?: number;
   goalStatus?: 'funded' | 'offtrack' | 'none';
   goal?: Goal;
+  /**
+   * Group rows only: this group's share (0–1) of everything assigned in the
+   * month across all groups. Undefined when nothing is assigned.
+   */
+  assignedShare?: number;
   /** For CC Payment categories: breakdown of where funding came from */
   fundingBreakdown?: FundingSource[];
   /** For CC Payment categories: total funded from spending categories */

@@ -20,6 +20,7 @@ interface DraggableCategoryGroupRowProps {
   isOver?: boolean;
   layoutVariant?: 'default' | 'desktop-compact';
   mobileLayout?: 'cards' | 'compact' | 'table';
+  showGroupPercent?: boolean;
 }
 
 export function DraggableCategoryGroupRow({
@@ -37,6 +38,7 @@ export function DraggableCategoryGroupRow({
   isOver = false,
   layoutVariant = 'default',
   mobileLayout = 'cards',
+  showGroupPercent = false,
 }: DraggableCategoryGroupRowProps) {
   const {
     attributes,
@@ -86,6 +88,7 @@ export function DraggableCategoryGroupRow({
           isDeleting={isDeleting}
           layoutVariant={layoutVariant}
           mobileLayout={mobileLayout}
+          showGroupPercent={showGroupPercent}
         />
       </div>
     </div>

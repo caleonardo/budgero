@@ -6,6 +6,7 @@ import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 interface UserMetaService {
   getAllowOverAssignment(): Promise<boolean> | boolean;
   getSuggestCategoryFromPayee?(): Promise<boolean> | boolean;
+  getShowGroupPercent?(): Promise<boolean> | boolean;
 }
 
 /** Runtime services with userMeta */
@@ -128,6 +129,58 @@ export function useAllowOverAssignmentPreference() {
     isError: queryRest.isError,
     error: queryRest.error,
     updateAllowOverAssignment: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+  };
+}
+
+/**
+ * Whether category group rows on the Planning page show their share of the
+ * month's total assigned amount. Off by default.
+ */
+export function useShowGroupPercent() {
+  const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
+  const spaceKey = spaceId ?? 'global';
+
+  return useQuery<boolean>({
+    queryKey: ['showGroupPercent', spaceKey],
+    queryFn: async () => {
+      const services = runtime.services() as ServicesWithUserMeta;
+      if (services?.userMeta?.getShowGroupPercent) {
+        const result = await services.userMeta.getShowGroupPercent();
+        return result ?? false;
+      }
+      return false;
+    },
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+}
+
+function useUpdateShowGroupPercent() {
+  const runtime = useRuntime();
+
+  return useMutation<void, Error, boolean>({
+    mutationFn: async (value: boolean) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'userPreferences.setShowGroupPercent',
+        payload: { value },
+        meta: { label: 'Update category group percentages setting' },
+      });
+    },
+  });
+}
+
+/** Query + mutation pair for the category group percentages setting. */
+export function useShowGroupPercentPreference() {
+  const { data: showGroupPercent = false, ...queryRest } = useShowGroupPercent();
+  const updateMutation = useUpdateShowGroupPercent();
+
+  return {
+    showGroupPercent,
+    isLoading: queryRest.isLoading,
+    updateShowGroupPercent: updateMutation.mutate,
     isUpdating: updateMutation.isPending,
   };
 }

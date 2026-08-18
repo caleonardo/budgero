@@ -288,15 +288,23 @@ export function useBudgetTableState({
       }
     });
 
+    // Share of the month's total assigned per group, from the UNFILTERED rows
+    // so a search or filter doesn't change what a group's percentage means.
+    const assignedByGroup = new Map<string, number>();
+    let totalAssigned = 0;
+    transformedRows.forEach((row) => {
+      if (row.isGroup || !row.parentId) return;
+      assignedByGroup.set(row.parentId, (assignedByGroup.get(row.parentId) ?? 0) + row.assigned);
+      totalAssigned += row.assigned;
+    });
+
     return hiddenFiltered
       .map((row) => {
-        if (row.isGroup && groupTotals.has(row.id)) {
-          const totals = groupTotals.get(row.id);
-          if (totals) {
-            return { ...row, ...totals };
-          }
-        }
-        return row;
+        if (!row.isGroup) return row;
+        const assignedShare =
+          totalAssigned > 0 ? (assignedByGroup.get(row.id) ?? 0) / totalAssigned : undefined;
+        const totals = groupTotals.get(row.id);
+        return { ...row, ...(totals ?? {}), assignedShare };
       })
       .filter((row) => {
         if (row.isGroup) return true;

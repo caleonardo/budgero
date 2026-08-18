@@ -36,6 +36,14 @@ export class UserMetaService {
     this.queries.setSuggestCategoryFromPayee(value);
   }
 
+  getShowGroupPercent(): boolean {
+    return this.queries.getShowGroupPercent();
+  }
+
+  setShowGroupPercent(value: boolean): void {
+    this.queries.setShowGroupPercent(value);
+  }
+
   getRateCacheRetentionDays(): number {
     return this.queries.getRateCacheRetentionDays();
   }

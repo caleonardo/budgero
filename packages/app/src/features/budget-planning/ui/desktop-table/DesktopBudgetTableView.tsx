@@ -20,6 +20,7 @@ import type { DesktopBudgetTableViewProps } from './types';
 
 export function DesktopBudgetTableView({
   data,
+  showGroupPercent = false,
   collapsedGroups,
   groupTotals,
   onToggleGroup,
@@ -92,6 +93,7 @@ export function DesktopBudgetTableView({
               const groupProps = {
                 row: item,
                 totals: groupTotals.get(item.id),
+                showGroupPercent,
                 isCollapsed: collapsedGroups.has(item.id),
                 onToggle: () => onToggleGroup(item.id),
                 onAddCategory,
@@ -102,11 +104,7 @@ export function DesktopBudgetTableView({
                 isDeleting: isDeletingGroup,
               };
               return sortable ? (
-                <SortableDesktopBudgetGroupRow
-                  key={item.id}
-                  {...groupProps}
-                  overId={overId}
-                />
+                <SortableDesktopBudgetGroupRow key={item.id} {...groupProps} overId={overId} />
               ) : (
                 <DesktopBudgetGroupRow key={item.id} {...groupProps} />
               );
@@ -127,11 +125,7 @@ export function DesktopBudgetTableView({
               selectable: !disableSelection,
             };
             return sortable ? (
-              <SortableDesktopBudgetCategoryRow
-                key={item.id}
-                {...categoryProps}
-                overId={overId}
-              />
+              <SortableDesktopBudgetCategoryRow key={item.id} {...categoryProps} overId={overId} />
             ) : (
               <DesktopBudgetCategoryRow key={item.id} {...categoryProps} />
             );

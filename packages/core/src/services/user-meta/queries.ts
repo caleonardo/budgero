@@ -73,6 +73,22 @@ export class UserMetaQueries {
     run(this.db, `UPDATE user_meta SET SuggestCategoryFromPayee = ? WHERE ID = 1`, value ? 1 : 0);
   }
 
+  /** Show each category group's share of the month's total assigned. Off by default. */
+  getShowGroupPercent(): boolean {
+    this.ensureRow();
+    const row = getRow<{ ShowGroupPercent: boolean | number | null }>(
+      this.db,
+      `SELECT ShowGroupPercent FROM user_meta WHERE ID = 1`
+    );
+    if (!row || row.ShowGroupPercent == null) return false;
+    return row.ShowGroupPercent === true || row.ShowGroupPercent === 1;
+  }
+
+  setShowGroupPercent(value: boolean): void {
+    this.ensureRow();
+    run(this.db, `UPDATE user_meta SET ShowGroupPercent = ? WHERE ID = 1`, value ? 1 : 0);
+  }
+
   setLastBackup(timestamp: string): void {
     this.ensureRow();
     run(

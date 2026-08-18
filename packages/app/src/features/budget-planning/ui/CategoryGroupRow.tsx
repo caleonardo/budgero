@@ -6,6 +6,7 @@ import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMas
 import { AnimatedNumber } from '@shared/ui/animated-number';
 import { GroupNameEditPopover } from './GroupNameEditPopover';
 import { AddCategoryButton } from './AddCategoryButton';
+import { GroupShareBadge } from './GroupShareBadge';
 
 interface CategoryGroupRowProps {
   item: BudgetRow;
@@ -19,6 +20,8 @@ interface CategoryGroupRowProps {
   isDeleting?: boolean;
   layoutVariant?: 'default' | 'desktop-compact';
   mobileLayout?: 'cards' | 'compact' | 'table';
+  /** Show the group's share of the month's total assigned next to its allocated total. */
+  showGroupPercent?: boolean;
 }
 
 export function CategoryGroupRow({
@@ -33,6 +36,7 @@ export function CategoryGroupRow({
   isDeleting = false,
   layoutVariant = 'default',
   mobileLayout = 'cards',
+  showGroupPercent = false,
 }: CategoryGroupRowProps) {
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
@@ -41,6 +45,7 @@ export function CategoryGroupRow({
   const isTableLayout = mobileLayout === 'table';
   const isCompactLayout = mobileLayout === 'compact';
   const formatAmount = useFormatMaskedMilli(globalLocalizer);
+  const shareBadge = showGroupPercent ? <GroupShareBadge share={item.assignedShare} /> : null;
 
   const handleSave = async () => {
     if (groupId !== null) {
@@ -83,7 +88,8 @@ export function CategoryGroupRow({
 
             <GroupNameEditPopover {...editPopoverProps}>
               <span className="flex cursor-pointer items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground truncate">
-                {item.name}
+                <span className="truncate">{item.name}</span>
+                {shareBadge}
               </span>
             </GroupNameEditPopover>
 
@@ -121,7 +127,8 @@ export function CategoryGroupRow({
   const groupNameTrigger = (
     <span className="flex cursor-pointer items-center gap-2 text-xs font-semibold uppercase tracking-wide truncate max-w-[60vw] sm:text-sm md:max-w-none">
       <Layers className="h-3.5 w-3.5" />
-      {item.name}
+      <span className="truncate">{item.name}</span>
+      {shareBadge}
     </span>
   );
 

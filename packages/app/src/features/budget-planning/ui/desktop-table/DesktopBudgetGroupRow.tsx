@@ -14,6 +14,7 @@ import { GroupNameEditPopover } from '@features/budget-planning/ui/GroupNameEdit
 import { AddCategoryButton } from '@features/budget-planning/ui/AddCategoryButton';
 import { useSortableDragHandle } from './useSortableDragHandle';
 import type { DesktopBudgetGroupRowProps } from './types';
+import { GroupShareBadge } from '../GroupShareBadge';
 
 export function DesktopBudgetGroupRow({
   row,
@@ -27,6 +28,7 @@ export function DesktopBudgetGroupRow({
   isUpdating,
   isDeleting,
   dragHandleProps,
+  showGroupPercent = false,
 }: DesktopBudgetGroupRowProps) {
   const [editingOpen, setEditingOpen] = useState(false);
   const [editingName, setEditingName] = useState(row.name);
@@ -114,6 +116,7 @@ export function DesktopBudgetGroupRow({
                 <Layers className="h-3.5 w-3.5" />
               </span>
               <span className="truncate">{row.name}</span>
+              {showGroupPercent ? <GroupShareBadge share={row.assignedShare} /> : null}
             </button>
           </GroupNameEditPopover>
           {groupId !== null && (

@@ -2,9 +2,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shar
 import { Switch } from '@shared/ui/switch';
 import { Label } from '@shared/ui/label';
 import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group';
-import { AlertTriangle, SlidersHorizontal, Wallet } from 'lucide-react';
+import { AlertTriangle, Percent, SlidersHorizontal, Wallet } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAllowOverAssignmentPreference } from '@shared/hooks/useUserPreferences';
+import {
+  useAllowOverAssignmentPreference,
+  useShowGroupPercentPreference,
+} from '@shared/hooks/useUserPreferences';
 import { useBudgets, useUpdateBudgetRtaMode } from '@entities/budget/api/useBudgets';
 import { useUiStore } from '@shared/store/useUiStore';
 import { cn } from '@shared/lib/utils';
@@ -117,6 +120,46 @@ function RtaModeCard() {
   );
 }
 
+function GroupPercentCard() {
+  const { showGroupPercent, isLoading, updateShowGroupPercent, isUpdating } =
+    useShowGroupPercentPreference();
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Percent className="h-5 w-5" />
+          Category Group Percentages
+        </CardTitle>
+        <CardDescription>
+          See how your month&apos;s budget is split across category groups, e.g. Needs 50% / Wants
+          30% / Savings 20%.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <Label htmlFor="show-group-percent" className="font-medium">
+              Show percentage of assigned on group rows
+            </Label>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Each category group on the Planning page shows its share of everything assigned in the
+              selected month, next to its allocated total.
+            </p>
+          </div>
+          <Switch
+            id="show-group-percent"
+            checked={showGroupPercent}
+            onCheckedChange={(checked) => updateShowGroupPercent(checked)}
+            disabled={isLoading || isUpdating}
+            className={cn(isUpdating && 'opacity-50 cursor-not-allowed')}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function BudgetSettingsPage() {
   const { allowOverAssignment, isLoading, updateAllowOverAssignment, isUpdating } =
     useAllowOverAssignmentPreference();
@@ -133,6 +176,8 @@ export default function BudgetSettingsPage() {
       />
 
       <RtaModeCard />
+
+      <GroupPercentCard />
 
       <Card>
         <CardHeader>

@@ -25,6 +25,7 @@ export interface DesktopBudgetGroupRowProps {
   isUpdating: boolean;
   isDeleting: boolean;
   dragHandleProps?: DragHandleProps;
+  showGroupPercent?: boolean;
 }
 
 export interface DesktopBudgetCategoryRowProps {
@@ -46,6 +47,7 @@ export interface DesktopBudgetCategoryRowProps {
 
 export interface DesktopBudgetTableViewProps {
   data: BudgetRow[];
+  showGroupPercent?: boolean;
   collapsedGroups: Set<string>;
   groupTotals: Map<string, { assigned: number; activity: number; available: number }>;
   onToggleGroup: (groupId: string) => void;
