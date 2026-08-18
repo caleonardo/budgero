@@ -16,11 +16,56 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.10.0',
+    date: 'August 18, 2026',
+    summary:
+      'Periodic goals (quarterly, every N months), recurring transactions that end, category-group budget shares, and more.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Periodic goals: quarterly, every 6 months, or every N months',
+        description:
+          'Two new goal types — Periodic Allocation Target and Periodic Available Target — repeat on a rhythm you choose (a quarter, 6 months, or any 2–120 months) from a start date, with the goal amount applying to each cycle. The editor previews the current cycle and its target date. Yearly goals keep their target date and can repeat every year as before.',
+      },
+      {
+        type: 'new',
+        title: 'Recurring transactions can end',
+        description:
+          'A recurring transaction can now stop on a date or after a set number of occurrences — handy for loans, instalment plans and fixed-term subscriptions.',
+      },
+      {
+        type: 'new',
+        title: 'Category group percentages',
+        description:
+          "Turn on Settings → Budget Settings → Category Group Percentages to see each group's share of everything assigned in the month next to its name (Needs 50% / Wants 30% / Savings 20%).",
+      },
+      {
+        type: 'new',
+        title: 'Underfunded goals total in the budget context panel',
+        description:
+          'The Summary card now shows how much your goals still need this month, for the selected categories or the whole budget.',
+      },
+      {
+        type: 'improved',
+        title: 'Goal progress is cycle-aware everywhere',
+        description:
+          'The budget table, mobile category headers and the dashboard glance now measure recurring and target-date goals over their full cycle, matching the goal card. Assignment history is no longer capped at 12 months. Two long-standing yearly-cycle bugs are fixed: target dates on the 31st produced 11-month cycles, and Feb 29 targets rolled into March.',
+      },
+      {
+        type: 'fixed',
+        title: 'Shift-click multi-select in the desktop budget table',
+        description:
+          'Holding Shift while ticking category checkboxes now selects the whole range; shift-clicking rows no longer smears a text selection across the table.',
+      },
+    ],
+  },
+  {
     version: 'v1.9.3',
     date: 'August 18, 2026',
     summary:
       "Changing a recurring transaction's cadence now reschedules its upcoming occurrences, and sidebar sections can be collapsed.",
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'fixed',
