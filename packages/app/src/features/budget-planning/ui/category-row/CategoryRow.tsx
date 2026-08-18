@@ -55,6 +55,7 @@ export function CategoryRow({
     assigned: item.assigned,
     activity: item.activity,
     goal: item.goal ?? null,
+    goalProgress: item.goalProgress ?? null,
     globalLocalizer,
     currentMonth,
     onMoveMoney,

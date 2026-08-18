@@ -62,6 +62,10 @@ export function DesktopBudgetCategoryRow({
 
   const goalProgress = useMemo(() => {
     if (!row.goal) return null;
+    // Prefer the cycle-aware progress computed by the row transform (it has the
+    // assignment history recurring/target-date goals need); fall back to a
+    // single-month computation only when the transform didn't provide one.
+    if (row.goalProgress) return row.goalProgress;
 
     const currencyCode = globalLocalizer?.resolvedOptions().currency;
     const finances: CategoryFinancials = {
@@ -72,7 +76,15 @@ export function DesktopBudgetCategoryRow({
     };
 
     return GoalCalculations.calculateProgress(row.goal, finances, currentMonth);
-  }, [row.goal, row.available, row.assigned, row.activity, globalLocalizer, currentMonth]);
+  }, [
+    row.goal,
+    row.goalProgress,
+    row.available,
+    row.assigned,
+    row.activity,
+    globalLocalizer,
+    currentMonth,
+  ]);
 
   const availableSignClass = useMemo(() => {
     // Negative always takes precedence - always red

@@ -5,6 +5,7 @@ import {
   type DebtSource,
   type Goal,
   type CategoryFinancials,
+  type GoalProgress,
 } from '@budgero/core/browser';
 import { ZERO_MILLI, type MilliUnits } from '@shared/lib/currency/milli';
 
@@ -30,6 +31,12 @@ export interface BudgetRow {
   categoryGroupId?: number;
   goalStatus?: 'funded' | 'offtrack' | 'none';
   goal?: Goal;
+  /**
+   * Cycle-aware progress for the row's goal (computed with the assignment
+   * history the yearly/target-date calculators need). Row consumers should
+   * prefer this over recomputing from the single month's numbers.
+   */
+  goalProgress?: GoalProgress;
   /**
    * Group rows only: this group's share (0–1) of everything assigned in the
    * month across all groups. Undefined when nothing is assigned.
@@ -59,9 +66,10 @@ function computeGoalStatus(
   row: GetMonthlyBudgetRow,
   goal: Goal | undefined,
   currentMonth: string,
-  cycleFinancials?: CycleFinancialsMap
-): 'funded' | 'offtrack' | 'none' {
-  if (!goal) return 'none';
+  cycleFinancials?: CycleFinancialsMap,
+  currencyCode?: string
+): { status: 'funded' | 'offtrack' | 'none'; progress?: GoalProgress } {
+  if (!goal) return { status: 'none' };
   const cycle = cycleFinancials?.[goal.CategoryID];
   const progress = GoalCalculations.calculateProgress(
     goal,
@@ -69,12 +77,13 @@ function computeGoalStatus(
       available: row.Available || 0,
       assigned: row.Assigned || 0,
       activity: row.Activity || 0,
+      currencyCode,
       historicalAssignments: cycle?.historicalAssignments,
       plannedAssignments: cycle?.plannedAssignments,
     },
     currentMonth
   );
-  return progress.isOnTrack || progress.isFunded ? 'funded' : 'offtrack';
+  return { status: progress.isOnTrack || progress.isFunded ? 'funded' : 'offtrack', progress };
 }
 
 /**
@@ -84,7 +93,9 @@ export function transformBudgetRows(
   rows: GetMonthlyBudgetRow[],
   goalsData: Goal[],
   currentMonth: string,
-  cycleFinancials?: CycleFinancialsMap
+  cycleFinancials?: CycleFinancialsMap,
+  /** Budget currency; only affects the formatted strings inside goalProgress. */
+  currencyCode?: string
 ): BudgetRow[] {
   if (!Array.isArray(rows)) {
     return [];
@@ -135,7 +146,13 @@ export function transformBudgetRows(
       }
 
       const goal = goalMap.get(item.CategoryID);
-      const goalStatus = computeGoalStatus(item, goal, currentMonth, cycleFinancials);
+      const { status: goalStatus, progress: goalProgress } = computeGoalStatus(
+        item,
+        goal,
+        currentMonth,
+        cycleFinancials,
+        currencyCode
+      );
 
       result.push({
         id: `${groupKey}--${item.Category}`,
@@ -150,6 +167,7 @@ export function transformBudgetRows(
         categoryGroupId: item.CategoryGroupID,
         goal,
         goalStatus,
+        goalProgress,
         fundingBreakdown: item.fundingBreakdown,
         totalFunded: item.totalFunded,
         cardBalance: item.cardBalance,

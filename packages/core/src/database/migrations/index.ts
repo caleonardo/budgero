@@ -47,6 +47,7 @@ import { migration046 } from './046-daily-currency-rates-and-rate-cache-settings
 import { migration047 } from './047-add-account-revaluations-table.js';
 import { migration048 } from './048-add-rtamode-to-budgets.js';
 import { migration049 } from './049-add-showgrouppercent-flag-to-user-meta.js';
+import { migration050 } from './050-add-cyclemonths-column-to-goals-table.js';
 
 import type { Migration } from '../migrations.js';
 
@@ -101,4 +102,5 @@ export const migrations: Migration[] = [
   migration047,
   migration048,
   migration049,
+  migration050,
 ];

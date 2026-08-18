@@ -2,6 +2,15 @@ import { GoalPurpose, type GoalType } from '@budgero/core/browser';
 import { asMilli } from '@budgero/core/browser';
 import { S, type OpCodeEntry } from '../shared';
 
+function readCycleMonths(value: unknown): number | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null) return null;
+  const n = Number(value);
+  // A garbled value in a replayed payload must not fail the whole mutation:
+  // treat it as "not specified" and let the service keep/default.
+  return Number.isFinite(n) ? n : undefined;
+}
+
 export const goalOps = {
   'goals.create': {
     execute: async (args) => {
@@ -12,7 +21,10 @@ export const goalOps = {
         args.startDate as string,
         args.endDate as string,
         (args.purpose as GoalPurpose | undefined) || GoalPurpose.SPENDING,
-        (args.recurring as boolean | undefined) ?? false
+        (args.recurring as boolean | undefined) ?? false,
+        // undefined = not specified (older payloads); null = explicit default.
+        // Never Number() this: Number(null) === 0 would fail validation.
+        readCycleMonths(args.cycleMonths)
       );
     },
     invalidates: [
@@ -32,7 +44,8 @@ export const goalOps = {
         args.goalType as GoalType,
         args.endDate as string,
         (args.purpose as GoalPurpose | undefined) || GoalPurpose.SPENDING,
-        args.recurring as boolean | undefined
+        args.recurring as boolean | undefined,
+        readCycleMonths(args.cycleMonths)
       );
     },
     invalidates: [

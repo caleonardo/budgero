@@ -8,7 +8,7 @@ import {
   useTotalAssignedForBudgetPace,
   useReadyToAssign,
 } from '@entities/budget/api/useMonthlyBudget';
-import { useGoals } from '@entities/goal/api/useGoals';
+import { useGoals, useCycleFinancialsForGoals } from '@entities/goal/api/useGoals';
 import { format, parseISO, startOfMonth, endOfMonth, differenceInDays } from 'date-fns';
 import { Progress } from '@shared/ui/progress';
 import { TrendingDown, Target, Calendar, PiggyBank, Info } from 'lucide-react';
@@ -38,6 +38,9 @@ export function AtAGlance() {
   const { data: monthTx = [] } = useAllAccountsMonthlyTransactions(budgetId, currentMonthString);
   const { data: budgetRows = [] } = useMonthlyBudget(currentMonthString, budgetId);
   const { data: goals = [] } = useGoals(budgetId);
+  // Assignment history/planned amounts so recurring & target-date goals are
+  // measured over their cycle, not just this month.
+  const { data: cycleFinancials } = useCycleFinancialsForGoals(goals, currentMonthString);
   const { data: assignedForMonth = 0 } = useTotalAssignedForBudgetPace(
     [currentMonthString],
     budgetId
@@ -75,11 +78,14 @@ export function AtAGlance() {
     .map((g: Goal) => {
       const row = budgetRows.find((r: GetMonthlyBudgetRow) => r.CategoryID === g.CategoryID);
       if (!row) return null;
+      const cycle = cycleFinancials?.[g.CategoryID];
       const finances: CategoryFinancials = {
         available: Number(row?.Available || 0),
         assigned: Number(row?.Assigned || 0),
         activity: Number(row?.Activity || 0),
         currencyCode,
+        historicalAssignments: cycle?.historicalAssignments,
+        plannedAssignments: cycle?.plannedAssignments,
       };
       const progress = GoalCalculations.calculateProgress(g ?? null, finances, currentMonthString);
       return {

@@ -98,8 +98,8 @@ export function useBudgetTableState({
   const { data: cycleFinancials } = useCycleFinancialsForGoals(goals, currentMonth);
 
   const transformedRows = useMemo(() => {
-    return transformBudgetRows(rawRows, goals || [], currentMonth, cycleFinancials);
-  }, [rawRows, goals, currentMonth, cycleFinancials]);
+    return transformBudgetRows(rawRows, goals || [], currentMonth, cycleFinancials, currencyCode);
+  }, [rawRows, goals, currentMonth, cycleFinancials, currencyCode]);
 
   const groupIds = useMemo(() => {
     return new Set(transformedRows.filter((row) => row.isGroup).map((row) => row.id));

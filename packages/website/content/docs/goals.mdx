@@ -54,9 +54,20 @@ Choosing between them comes down to one question: is the number about *this mont
 Each type calculates differently — and the differences are deliberate:
 
 - **Monthly spending** wants a full tank at the start of each month. Needed = target − what's effectively available. Spending during the month doesn't count against your progress; only assignment matters. Leftover rolls into next month, so a quiet month means you assign less the next.
-- **Yearly spending** spreads the annual target across the year and checks you against the pro-rata pace, so a big purchase in March doesn't show as failure — it shows as spending the plan.
+- **Yearly spending** spreads the target across the period (a year by default, or whatever cadence you set for a repeating goal) and checks you against the pro-rata pace, so a big purchase in March doesn't show as failure — it shows as spending the plan.
 - **Monthly savings** is the simplest: needed = monthly target − assigned this month. Activity is irrelevant; this goal is purely about the habit of putting money in.
 - **Target date** divides what's still missing by the months remaining. Fall behind in March and April's required amount rises automatically — the deadline doesn't move, so the monthly ask does.
+
+## Repeating goals
+
+The two dated types — **Yearly spending** and **Target date savings** — can repeat. Set **Repeats** in the goal editor to **Yearly**, **Every 6 months**, **Quarterly**, or **Every N months** (any whole number from 2 to 120), and a fresh cycle starts automatically after each target date: car registration every year, a tax instalment every quarter, insurance every six months.
+
+How the cycles work:
+
+- The **target date is the anchor**. Cycles run back-to-back from it, N months long, and end on the same day of the month (clamped in shorter months — a Jan 31 anchor gives Apr 30, Jul 31, Oct 31). Progress, pace and "needed this month" are computed for the cycle you're looking at, and the editor shows the current cycle and its target date while you're setting it up.
+- The **goal amount is per cycle**: a quarterly goal of €300 asks for €300 every quarter, not €1,200 spread over the year.
+- **Yearly spending** carries the available balance across cycles — money you didn't spend last quarter still counts. **Target date savings** counts only what you assigned inside the current cycle, so each cycle starts from zero.
+- Changing the cadence re-tiles the cycles from the target date; the current cycle changes immediately, so check the preview line before saving.
 
 ## Reading goal status
 

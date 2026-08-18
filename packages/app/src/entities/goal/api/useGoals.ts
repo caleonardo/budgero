@@ -32,6 +32,8 @@ export type CreateGoalInput = {
   startDate: string;
   targetDate: string;
   recurring?: boolean;
+  /** Cadence in months for recurring goals; null/undefined = yearly default. */
+  cycleMonths?: number | null;
   budgetId: number; // Added for invalidation
 };
 
@@ -65,6 +67,7 @@ export function useCreateGoal() {
           startDate: input.startDate,
           endDate: input.targetDate,
           recurring: input.recurring ?? false,
+          cycleMonths: input.cycleMonths ?? null,
           budgetId: input.budgetId,
         },
         meta: { label: 'useCreateGoal' },
@@ -168,6 +171,11 @@ export type UpdateGoalInput = {
   purpose?: GoalPurpose;
   targetDate: string;
   recurring?: boolean;
+  /**
+   * Cadence in months. `null` clears to the yearly default; omit (undefined)
+   * to leave the stored value untouched (e.g. non-date presets).
+   */
+  cycleMonths?: number | null;
   budgetId: number; // Added for invalidation
 };
 
@@ -185,6 +193,7 @@ export function useUpdateGoal() {
           purpose: input.purpose || GoalPurpose.SPENDING,
           endDate: input.targetDate,
           recurring: input.recurring,
+          cycleMonths: input.cycleMonths,
           budgetId: input.budgetId,
         },
         meta: { label: 'useUpdateGoal' },

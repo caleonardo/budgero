@@ -58,7 +58,9 @@ const TARGET_DATE = new Date(2026, 11, 31);
 const START_DATE = new Date(2026, 0, 15);
 
 // Recurring scenarios: target date 2026-03-31 has passed by July 2026, so the
-// cycle advances to 2027-03-31 with a 2026-05 … 2027-03 window (9 months left).
+// cycle advances to 2027-03-31 with a 2026-04 … 2027-03 window (9 months left).
+// (Before the month-index rewrite of computeCycle, `Date.setMonth` overflowed
+// "Apr 31" to May 1 and these windows were 11 months long — 2026-05 … 2027-03.)
 const RECURRING_TARGET = (() => {
   const d = new Date(2026, 2, 31);
   d.setFullYear(2027);
@@ -365,31 +367,32 @@ describe('Yearly allocation goal (savings, target-date)', () => {
       finances({
         assigned: 40000,
         historicalAssignments: [
-          { month: '2026-04', amount: 500000 }, // outside the advanced cycle
+          { month: '2026-03', amount: 500000 }, // previous cycle — excluded
+          { month: '2026-04', amount: 100000 }, // first month of the advanced cycle
           { month: '2026-05', amount: 100000 },
           { month: '2026-06', amount: 100000 },
         ],
       }),
       MONTH
     );
-    const monthlyTarget = centPace(1000000 / 9);
+    const monthlyTarget = centPace(900000 / 9);
     expect(result).toEqual({
       percentage: (40000 / monthlyTarget) * 100,
-      amountSaved: 240000,
-      amountNeeded: 960000,
+      amountSaved: 340000,
+      amountNeeded: 860000,
       monthlyTarget,
       overfundedAmount: 0,
       isFunded: false,
       isOnTrack: false,
-      status: 'at-risk',
+      status: 'behind',
       statusMessage: `Allocate ${usd(monthlyTarget - 40000)} more this month`,
       recommendation: `Allocate ${usd(monthlyTarget - 40000)} more to complete this month's target`,
       breakdown: {
         title: 'Recurring Yearly Allocation Target',
         items: [
           { label: 'Goal Amount', value: 1200000, description: 'Total to allocate' },
-          { label: 'Total Allocated', value: 240000, description: 'Sum of assignments in cycle' },
-          { label: 'Still Needed', value: 960000, description: 'Remaining to allocate' },
+          { label: 'Total Allocated', value: 340000, description: 'Sum of assignments in cycle' },
+          { label: 'Still Needed', value: 860000, description: 'Remaining to allocate' },
           { label: 'Allocated This Month', value: 40000, description: 'Current progress' },
           {
             label: 'Monthly Pace',
@@ -404,10 +407,10 @@ describe('Yearly allocation goal (savings, target-date)', () => {
         ],
         explanation: [
           `Target: allocate ${usd(1200000)} by ${RECURRING_TARGET.toLocaleDateString()}`,
-          `Allocated so far: ${usd(240000)} of ${usd(1200000)} (20%)`,
+          `Allocated so far: ${usd(340000)} of ${usd(1200000)} (28%)`,
           'Tracks total assignments — spending does not affect progress',
           '9 months remaining',
-          'Cycle: 2026-05 to 2027-03',
+          'Cycle: 2026-04 to 2027-03',
         ],
       },
       timeMetrics: {
@@ -776,7 +779,7 @@ describe('Yearly available goal (spending, yearly with target date)', () => {
           `Progress: ${usd(300000)} of ${usd(2400000)} (13%)`,
           'Tracks the actual balance — spending reduces progress',
           '9 months remaining',
-          'Cycle: 2026-05 to 2027-03',
+          'Cycle: 2026-04 to 2027-03',
         ],
       },
       timeMetrics: {

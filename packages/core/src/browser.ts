@@ -133,6 +133,13 @@ export {
   GoalType,
   getValidTypesForPurpose,
   requiresTargetDate,
+  getCycleMonths,
+  describeGoalCycle,
+  isValidCycleMonths,
+  DEFAULT_GOAL_CYCLE_MONTHS,
+  MIN_GOAL_CYCLE_MONTHS,
+  MAX_GOAL_CYCLE_MONTHS,
+  GOAL_CYCLE_MONTHS_ERROR,
   GoalCalculations,
 } from './services/goals/index.js';
 export type {

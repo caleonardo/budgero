@@ -79,6 +79,7 @@ export function GoalSection({
           purpose: goalData.Purpose ?? GoalPurpose.SAVINGS,
           targetDate: goalData.TargetDate || new Date().toISOString(),
           recurring: goalData.Recurring,
+          cycleMonths: goalData.CycleMonths,
           budgetId,
         });
       } else {
@@ -90,6 +91,7 @@ export function GoalSection({
           startDate: goalData.StartDate ?? new Date().toISOString(),
           targetDate: goalData.TargetDate || new Date().toISOString(),
           recurring: goalData.Recurring,
+          cycleMonths: goalData.CycleMonths,
           budgetId,
         });
       }

@@ -20,13 +20,14 @@ export class GoalQueries {
     startDate: string,
     targetDate: string,
     purpose: GoalPurpose = GoalPurpose.SPENDING,
-    recurring = false
+    recurring = false,
+    cycleMonths: number | null = null
   ): number {
     const result = run(
       this.db,
       `
-      INSERT INTO goals (Type, Purpose, CategoryID, Target, StartDate, TargetDate, Recurring)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO goals (Type, Purpose, CategoryID, Target, StartDate, TargetDate, Recurring, CycleMonths)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `,
       type,
       purpose,
@@ -34,7 +35,9 @@ export class GoalQueries {
       target,
       startDate,
       targetDate,
-      recurring ? 1 : 0
+      recurring ? 1 : 0,
+      // Never bind undefined — sql.js throws on unknown bind types.
+      cycleMonths ?? null
     );
     return Number(result.lastInsertRowid);
   }
@@ -93,13 +96,14 @@ export class GoalQueries {
     targetDate: string,
     categoryId: number,
     purpose: GoalPurpose = GoalPurpose.SPENDING,
-    recurring = false
+    recurring = false,
+    cycleMonths: number | null = null
   ): void {
     run(
       this.db,
       `
       UPDATE goals
-      SET Type = ?, Purpose = ?, Target = ?, TargetDate = ?, Recurring = ?
+      SET Type = ?, Purpose = ?, Target = ?, TargetDate = ?, Recurring = ?, CycleMonths = ?
       WHERE CategoryID = ?
     `,
       type,
@@ -107,6 +111,7 @@ export class GoalQueries {
       target,
       targetDate,
       recurring ? 1 : 0,
+      cycleMonths ?? null,
       categoryId
     );
   }
@@ -130,7 +135,9 @@ export class GoalQueries {
   getHistoricalAssignments(
     categoryId: number,
     beforeMonth: string,
-    limit = 12
+    // Rows, not months (≈ one row per assigned month). Generous default so
+    // long-running goals and multi-year cycles are never silently truncated.
+    limit = 240
   ): MonthlyAssignment[] {
     const result = allRows<MonthlyAssignment>(
       this.db,

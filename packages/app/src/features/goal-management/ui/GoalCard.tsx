@@ -27,6 +27,8 @@ import {
   type CategoryFinancials,
   type GoalProgress,
   GoalCalculations,
+  getCycleMonths,
+  describeGoalCycle,
 } from '@budgero/core/browser';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { AnimatedNumber } from '@shared/ui/animated-number';
@@ -236,6 +238,8 @@ export function GoalCard({
 
   // Use GoalCalculations for pure calculations without database access
   const progress = GoalCalculations.calculateProgress(goal, finances, currentMonth);
+  const cycleMonths = goal ? getCycleMonths(goal) : null;
+  const cadenceLabel = cycleMonths === null ? null : describeGoalCycle(cycleMonths);
   const roundedPercentage = Math.round(progress.percentage);
 
   if (!goal) {
@@ -303,12 +307,13 @@ export function GoalCard({
           <div className="flex items-center gap-1 text-[11px] leading-tight font-medium md:text-xs md:flex-grow md:min-w-0 md:order-1">
             {getGoalTypeIcon()}
             <span className="truncate">{getGoalTypeLabel()}</span>
-            {!!goal.Recurring && (
+            {cadenceLabel && (
               <Badge
                 variant="outline"
                 className="hidden text-[9px] uppercase tracking-wide md:inline-flex"
+                title={`Repeats ${cadenceLabel}`}
               >
-                Recurring
+                {cadenceLabel}
               </Badge>
             )}
           </div>
@@ -357,9 +362,9 @@ export function GoalCard({
             <CardTitle className="text-lg flex items-center gap-2">
               {getGoalTypeIcon()}
               {getGoalTypeLabel()}
-              {!!goal.Recurring && (
+              {cadenceLabel && (
                 <Badge variant="outline" className="text-[9px] uppercase tracking-wide">
-                  Recurring
+                  Repeats {cadenceLabel}
                 </Badge>
               )}
             </CardTitle>

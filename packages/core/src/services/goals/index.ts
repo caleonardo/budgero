@@ -1,8 +1,14 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import type { MilliUnits } from '../../money/index.js';
 import { getLocalDateString } from '../../utils/date.js';
-import { NotFoundError } from '../../types/index.js';
-import { Goal, GoalType, GoalPurpose } from './types.js';
+import { NotFoundError, ValidationError } from '../../types/index.js';
+import {
+  Goal,
+  GoalType,
+  GoalPurpose,
+  GOAL_CYCLE_MONTHS_ERROR,
+  isValidCycleMonths,
+} from './types.js';
 import { GoalQueries } from './queries.js';
 import {
   GoalCalculations,
@@ -26,6 +32,13 @@ export {
   GoalPurpose,
   getValidTypesForPurpose,
   requiresTargetDate,
+  getCycleMonths,
+  describeGoalCycle,
+  isValidCycleMonths,
+  DEFAULT_GOAL_CYCLE_MONTHS,
+  MIN_GOAL_CYCLE_MONTHS,
+  MAX_GOAL_CYCLE_MONTHS,
+  GOAL_CYCLE_MONTHS_ERROR,
 } from './types.js';
 
 export type {
@@ -40,6 +53,27 @@ export type {
 
 // Export GoalCalculations for pure calculations without database access
 export { GoalCalculations } from './calculations.js';
+
+/**
+ * Resolve the CycleMonths value to store.
+ * - Not recurring → always null (cadence is meaningless).
+ * - `undefined` (key absent, e.g. an older client's payload) → keep the stored value.
+ * - `null` (explicit clear) → null, which reads back as the yearly default.
+ * - A number → must be a valid cadence, else ValidationError.
+ */
+function normalizeCycleMonths(
+  recurring: boolean,
+  cycleMonths: number | null | undefined,
+  stored: number | null
+): number | null {
+  if (!recurring) return null;
+  if (cycleMonths === undefined) return stored;
+  if (cycleMonths === null) return null;
+  if (!isValidCycleMonths(cycleMonths)) {
+    throw new ValidationError(GOAL_CYCLE_MONTHS_ERROR, 'CycleMonths');
+  }
+  return cycleMonths;
+}
 
 export class GoalService {
   private queries: GoalQueries;
@@ -58,7 +92,8 @@ export class GoalService {
     startDate: string,
     targetDate: string,
     purpose: GoalPurpose = GoalPurpose.SPENDING,
-    recurring = false
+    recurring = false,
+    cycleMonths?: number | null
   ): number {
     return this.queries.createGoal(
       goalType,
@@ -67,7 +102,8 @@ export class GoalService {
       startDate,
       targetDate,
       purpose,
-      recurring
+      recurring,
+      normalizeCycleMonths(recurring, cycleMonths, null)
     );
   }
 
@@ -110,19 +146,22 @@ export class GoalService {
     goalType: GoalType,
     targetDate: string,
     purpose?: GoalPurpose,
-    recurring?: boolean
+    recurring?: boolean,
+    cycleMonths?: number | null
   ): void {
     // Get current goal
     const currentGoal = this.getGoalByCategoryID(categoryId);
+    const nextRecurring = recurring ?? !!currentGoal.Recurring;
 
-    // Call update with SQL parameter order: type, purpose, target, target_date, recurring, category_id
+    // Call update with SQL parameter order: type, purpose, target, target_date, recurring, cycle, category_id
     this.queries.updateGoal(
       goalType,
       target,
       targetDate,
       categoryId,
       purpose ?? currentGoal.Purpose,
-      recurring ?? !!currentGoal.Recurring
+      nextRecurring,
+      normalizeCycleMonths(nextRecurring, cycleMonths, currentGoal.CycleMonths ?? null)
     );
   }
 
@@ -199,12 +238,10 @@ export class GoalService {
     currentMonth: string,
     budgetRow?: GetMonthlyBudgetRow
   ): CategoryFinancials {
-    // Get historical data (up to 12 months back)
-    const historicalAssignments = this.queries.getHistoricalAssignments(
-      categoryId,
-      currentMonth,
-      12
-    );
+    // Full assignment history (≈ one row per assigned month). Long-running
+    // and multi-year-cycle goals need more than a year of it; the query
+    // default caps at 240 rows.
+    const historicalAssignments = this.queries.getHistoricalAssignments(categoryId, currentMonth);
 
     // Get historical activity (spending/income)
     const historicalActivity = this.queries.getHistoricalActivity(categoryId, currentMonth, 12);

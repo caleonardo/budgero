@@ -1,4 +1,12 @@
-import { Goal, GoalType, GoalPurpose } from './types.js';
+import {
+  Goal,
+  GoalType,
+  GoalPurpose,
+  getCycleMonths,
+  describeGoalCycle,
+  isValidCycleMonths,
+  GOAL_CYCLE_MONTHS_ERROR,
+} from './types.js';
 import { getLocalDateString, parseDateOnlyLocal } from '../../utils/date.js';
 import { MILLIS_PER_CENT } from '../../money/index.js';
 
@@ -559,37 +567,74 @@ export class GoalCalculations {
 
   /**
    * Compute the current cycle boundaries for a target-date goal.
-   * For recurring goals, advances the target date by years until it covers currentMonth.
+   *
+   * Non-recurring: one cycle, [StartDate month .. TargetDate month].
+   *
+   * Recurring: cycles of `cycleMonths` (default 12) are tiled in BOTH
+   * directions from the target date, which acts as the cadence anchor —
+   * exactly like a recurring transaction's start date. The current cycle is
+   * the one containing `currentMonth`: its end `E` is the smallest grid month
+   * `T + k·N` (k any integer) with `E >= currentMonth`, and the window is
+   * `[E − (N−1) .. E]`. StartDate is not used for recurring goals.
+   *
+   * The cycle target *date* keeps the target's day-of-month, clamped to the
+   * length of the cycle-end month (Jan 31 → Apr 30, Feb 29 → Feb 28). All
+   * arithmetic is on month indexes — never `Date.setMonth`, which overflows
+   * (Mar 31 − 1 year + 1 month used to land on May 1 and shrink the window
+   * to 11 months).
+   *
+   * Public so the goal editor can preview the exact same cycle the progress
+   * calculation will use.
    */
-  private static computeCycle(
+  static computeCycle(
     goal: Goal,
     currentMonth: string
-  ): { cycleStart: string; cycleEnd: string; cycleTargetDate: Date } {
+  ): { cycleStart: string; cycleEnd: string; cycleTargetDate: Date; cycleMonths: number | null } {
     const targetDate = this.parseTargetDate(goal.TargetDate, currentMonth);
-    const isRecurring = !!goal.Recurring;
+    const cycleMonths = getCycleMonths(goal);
 
-    if (!isRecurring) {
+    if (cycleMonths === null) {
       const startMonth = goal.StartDate.substring(0, 7);
       const endMonth = this.dateToMonth(targetDate);
-      return { cycleStart: startMonth, cycleEnd: endMonth, cycleTargetDate: targetDate };
+      return {
+        cycleStart: startMonth,
+        cycleEnd: endMonth,
+        cycleTargetDate: targetDate,
+        cycleMonths,
+      };
     }
 
-    // Recurring: advance target date by years until its month >= currentMonth
-    const cycleTargetDate = new Date(targetDate);
-    while (this.dateToMonth(cycleTargetDate) < currentMonth) {
-      cycleTargetDate.setFullYear(cycleTargetDate.getFullYear() + 1);
-    }
+    // Local calendar fields of the (locally parsed) target date.
+    const anchorYear = targetDate.getFullYear();
+    const anchorMonth = targetDate.getMonth(); // 0-based
+    const anchorDay = targetDate.getDate();
+    const anchorIndex = anchorYear * 12 + anchorMonth;
 
-    // Cycle start: previous cycle's target date + 1 month
-    // This gives a full ~12 month window regardless of when the goal was created
-    const cycleStartDate = new Date(cycleTargetDate);
-    cycleStartDate.setFullYear(cycleStartDate.getFullYear() - 1);
-    cycleStartDate.setMonth(cycleStartDate.getMonth() + 1);
+    const [curYear, curMonth] = currentMonth.split('-').map(Number);
+    const currentIndex = curYear * 12 + (curMonth - 1);
 
-    const cycleStart = this.dateToMonth(cycleStartDate);
-    const cycleEnd = this.dateToMonth(cycleTargetDate);
+    // Smallest k with anchor + k·N >= current (k may be negative).
+    const k = Math.ceil((currentIndex - anchorIndex) / cycleMonths);
+    const endIndex = anchorIndex + k * cycleMonths;
+    const startIndex = endIndex - (cycleMonths - 1);
 
-    return { cycleStart, cycleEnd, cycleTargetDate };
+    const endYear = Math.floor(endIndex / 12);
+    const endMonth0 = endIndex - endYear * 12;
+    const daysInEndMonth = new Date(endYear, endMonth0 + 1, 0).getDate();
+    const cycleTargetDate = new Date(endYear, endMonth0, Math.min(anchorDay, daysInEndMonth));
+
+    return {
+      cycleStart: this.monthIndexToKey(startIndex),
+      cycleEnd: this.monthIndexToKey(endIndex),
+      cycleTargetDate,
+      cycleMonths,
+    };
+  }
+
+  private static monthIndexToKey(index: number): string {
+    const year = Math.floor(index / 12);
+    const month = index - year * 12 + 1;
+    return `${year}-${String(month).padStart(2, '0')}`;
   }
 
   /**
@@ -732,7 +777,10 @@ export class GoalCalculations {
     const target = goal.Target;
     const currentMonthAssigned = finances.assigned || 0;
 
-    const { cycleStart, cycleEnd, cycleTargetDate } = this.computeCycle(goal, currentMonth);
+    const { cycleStart, cycleEnd, cycleTargetDate, cycleMonths } = this.computeCycle(
+      goal,
+      currentMonth
+    );
 
     const metricValue = args.metric({ cycleStart, cycleEnd });
 
@@ -906,7 +954,11 @@ export class GoalCalculations {
     }
 
     if (isRecurring) {
-      breakdown.explanation.push(`Cycle: ${cycleStart} to ${cycleEnd}`);
+      breakdown.explanation.push(
+        cycleMonths === 12
+          ? `Cycle: ${cycleStart} to ${cycleEnd}`
+          : `Cycle: ${cycleStart} to ${cycleEnd} (repeats ${describeGoalCycle(cycleMonths ?? 12)})`
+      );
     }
 
     return {
@@ -1052,6 +1104,10 @@ export class GoalCalculations {
       ) {
         errors.push('Invalid type for savings goal');
       }
+    }
+
+    if (goal.Recurring && goal.CycleMonths != null && !isValidCycleMonths(goal.CycleMonths)) {
+      errors.push(GOAL_CYCLE_MONTHS_ERROR);
     }
 
     if ((goal.Type === GoalType.TARGET_DATE || goal.Type === GoalType.YEARLY) && !goal.TargetDate) {

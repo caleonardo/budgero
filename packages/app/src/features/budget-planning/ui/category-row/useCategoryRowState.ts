@@ -1,7 +1,12 @@
 import { useRef, useState, type MouseEvent, type PointerEvent } from 'react';
 import { useUiStore } from '@shared/store/useUiStore';
 import { ZERO_MILLI, type MilliUnits } from '@shared/lib/currency/milli';
-import { GoalCalculations, type CategoryFinancials, type Goal } from '@budgero/core/browser';
+import {
+  GoalCalculations,
+  type CategoryFinancials,
+  type Goal,
+  type GoalProgress,
+} from '@budgero/core/browser';
 import { isInteractiveTarget, isMoveValid, isWithinSelectHandle } from './category-row.utils';
 
 export interface UseCategoryRowStateParams {
@@ -10,6 +15,8 @@ export interface UseCategoryRowStateParams {
   assigned: MilliUnits;
   activity: MilliUnits;
   goal: Goal | null;
+  /** Cycle-aware progress from the row transform, when available. */
+  goalProgress?: GoalProgress | null;
   globalLocalizer: Intl.NumberFormat;
   currentMonth: string;
   onMoveMoney?: (sourceCategoryId: number, amount: number, target: number | 'rta') => Promise<void>;
@@ -48,6 +55,7 @@ export function useCategoryRowState({
   assigned,
   activity,
   goal,
+  goalProgress,
   globalLocalizer,
   currentMonth,
   onMoveMoney,
@@ -65,7 +73,8 @@ export function useCategoryRowState({
       activity,
       currencyCode,
     };
-    const computed = GoalCalculations.calculateProgress(goal, finances, currentMonth);
+    const computed =
+      goalProgress ?? GoalCalculations.calculateProgress(goal, finances, currentMonth);
     headerGoalProgressValue = Math.min(100, Math.max(0, computed.percentage));
     headerGoalPercent = Math.round(computed.percentage);
   }
