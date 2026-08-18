@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLogout } from '@entities/user/api/useAuth';
 import { useCustomDashboards } from '@features/custom-dashboards/api/useCustomDashboards';
@@ -85,28 +85,28 @@ export function useSidebarNavState(): UseSidebarNavStateReturn {
   const isReportsActive = location.pathname.startsWith('/reports');
   const isSettingsActive = location.pathname.startsWith('/settings');
 
-  // Auto-open dropdowns when navigating to their sections
+  // Auto-open a section's dropdown when navigating INTO that section (not on
+  // every route change within it, and never in response to a manual collapse —
+  // the open flags are deliberately not dependencies here).
+  const activeSection = isAccountsActive
+    ? 'accounts'
+    : isReportsActive
+      ? 'reports'
+      : isSettingsActive
+        ? 'settings'
+        : null;
+  const previousSectionRef = useRef<typeof activeSection>(null);
   useEffect(() => {
+    if (activeSection === previousSectionRef.current) return;
+    previousSectionRef.current = activeSection;
     // Defer state updates to avoid synchronous cascade
     const id = requestAnimationFrame(() => {
-      if (isAccountsActive && !accountsOpen) {
-        setAccountsOpen(true);
-      } else if (isReportsActive && !reportsOpen) {
-        setReportsOpen(true);
-      } else if (isSettingsActive && !settingsOpen) {
-        setSettingsOpen(true);
-      }
+      if (activeSection === 'accounts') setAccountsOpen(true);
+      else if (activeSection === 'reports') setReportsOpen(true);
+      else if (activeSection === 'settings') setSettingsOpen(true);
     });
     return () => cancelAnimationFrame(id);
-  }, [
-    location.pathname,
-    isAccountsActive,
-    isReportsActive,
-    isSettingsActive,
-    accountsOpen,
-    reportsOpen,
-    settingsOpen,
-  ]);
+  }, [activeSection]);
 
   return {
     state: {
