@@ -34,7 +34,7 @@ export function CodeBlock(props: React.HTMLAttributes<HTMLPreElement>) {
   const childrenArray = React.Children.toArray(props.children);
   const codeEl = childrenArray.find(
     (c) => React.isValidElement(c) && (c as any).type === 'code'
-  ) as React.ReactElement | undefined;
+  ) as React.ReactElement<Record<string, any>> | undefined;
   const codeText = codeEl ? getText(codeEl.props.children) : getText(props.children);
   const preLangData = (props as any)?.['data-language'] || (props as any)?.['data-lang'];
   const preLangFromClass = props.className?.match(/language-([\w-]+)/)?.[1];
