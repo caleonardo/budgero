@@ -16,11 +16,43 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.10.1',
+    date: 'August 19, 2026',
+    summary:
+      'Monthly Ready to Assign now accounts for money assigned in future months, YNAB imports recognise credit cards, and dependency security updates.',
+    isLatest: true,
+    items: [
+      {
+        type: 'improved',
+        title: 'Monthly Ready to Assign deducts future assignments (YNAB-style)',
+        description:
+          'In Monthly mode, money already assigned in later months is now subtracted from the month you are viewing, so assigning ahead no longer leaves an inflated Ready to Assign behind. Like YNAB, the deduction is capped at what the month has left over: earlier months bottom out at zero, and any shortfall shows in the month where it was assigned. The Ready to Assign breakdown shows the new "Assigned in future months" line.',
+      },
+      {
+        type: 'fixed',
+        title: 'YNAB import creates credit cards as credit accounts',
+        description:
+          'Accounts listed under YNAB\'s "Credit Card Payments" group are now imported as credit cards, linked to their payment category instead of a duplicate, and their opening debt stays out of Ready to Assign, matching YNAB.',
+      },
+      {
+        type: 'fixed',
+        title: 'Long YNAB export file names no longer overflow the import form',
+        description: 'The chosen file name wraps instead of pushing the form wider than the dialog.',
+      },
+      {
+        type: 'improved',
+        title: 'Security dependency updates',
+        description:
+          'Updated frontend and server dependencies (including Next.js, PDF.js, Vitest and the Go toolchain/base images) to patch published security advisories.',
+      },
+    ],
+  },
+  {
     version: 'v1.10.0',
     date: 'August 18, 2026',
     summary:
       'Periodic goals (quarterly, every N months), recurring transactions that end, category-group budget shares, and more.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
