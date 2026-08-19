@@ -112,12 +112,12 @@ export function YnabImportTab({
             variant="outline"
             disabled={isImporting}
             onClick={() => fileInputRef.current?.click()}
-            className="h-8 sm:h-9 text-xs sm:text-sm"
+            className="h-8 sm:h-9 shrink-0 text-xs sm:text-sm"
           >
             <Upload className="h-4 w-4" />
             Choose file
           </Button>
-          <span className="truncate text-xs sm:text-sm text-muted-foreground">
+          <span className="min-w-0 break-words text-xs sm:text-sm text-muted-foreground">
             {file ? file.name : 'No file chosen'}
           </span>
         </div>
