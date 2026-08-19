@@ -414,3 +414,46 @@ describe('YNAB import date-order detection', () => {
     expect(dates).toEqual(['2025-01-25', '2025-02-03']);
   });
 });
+
+describe('YNABImportService — credit cards', () => {
+  it('imports accounts listed under "Credit Card Payments" as credit cards, without duplicate categories', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    const { ServiceManager } = await import('../src');
+    const sm = new ServiceManager();
+    await sm.initialize(adapter as any);
+    const services = sm.getServices();
+    const importer = new YNABImportService(adapter);
+    const fileBuffer = readFileSync(join(__dirname, 'test-data', 'ynab_credit_cards.zip'));
+    const budgetId = await importer.importYNABFromZip(fileBuffer, {
+      budgetName: 'Credit Cards',
+      currency: 'USD',
+      numberFormat: '123,456.78',
+      badgeIcon: 'HelpCircle',
+    });
+
+    const accounts = services.accounts.listAccounts(budgetId);
+    const byName = Object.fromEntries(accounts.map((a: any) => [a.Name, a]));
+    expect(byName['Checking'].Type).toBe('Checking');
+    expect(byName['Cash'].Type).toBe('Checking');
+    expect(byName['Test Card'].Type).toBe('Credit');
+    expect(byName['Debt Card'].Type).toBe('Credit');
+
+    // Exactly one CC Payment category per card, linked from the account metadata.
+    const ccGroup = services.categories.getCategoryGroupByName('Credit Card Payments', budgetId);
+    const ccCategories = services.categories
+      .getAllCategories(budgetId)
+      .filter((c: any) => c.CategoryGroupID === ccGroup!.ID)
+      .map((c: any) => c.Name)
+      .sort();
+    expect(ccCategories).toEqual(['Debt Card', 'Test Card']);
+    const debtMeta = JSON.parse(byName['Debt Card'].Metadata || '{}');
+    expect(typeof debtMeta.cc_payment_category_id).toBe('number');
+
+    // The Debt Card's $200 opening debt stays out of Ready to Assign, like YNAB.
+    services.budgets.updateRtaMode(budgetId, 'monthly');
+    for (const month of ['2026-07', '2026-08', '2026-09', '2026-10']) {
+      expect(services.monthlyBudgets.getReadyToAssign(budgetId, month)).toBe(0);
+    }
+    expect(byName['Debt Card'].BalanceNative).toBe(-200_000);
+  });
+});

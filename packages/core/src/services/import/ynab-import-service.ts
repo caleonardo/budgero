@@ -4,6 +4,7 @@ import { fromDecimal, ZERO_MILLI } from '../../money/index.js';
 import { BudgetService } from '../budgets/index.js';
 import { CategoryService } from '../categories/index.js';
 import { AccountService } from '../accounts/index.js';
+import { isCreditAccountType } from '../accounts/types.js';
 import { MonthlyBudgetService } from '../monthly-budgets/index.js';
 import { TransactionService } from '../transactions/index.js';
 import { ensureCategoryWithGroup } from '../transactions/category-helpers.js';
@@ -128,7 +129,7 @@ export class YNABImportService {
     }
 
     debugLog('Creating accounts...');
-    const accounts = await this.createAccounts(budgetId, registerRows, config.currency);
+    const accounts = await this.createAccounts(budgetId, registerRows, budgetRows, config.currency);
     debugLog(`Created ${Object.keys(accounts).length} accounts`);
 
     debugLog('Importing assignments...');
@@ -253,13 +254,30 @@ export class YNABImportService {
     return categories;
   }
 
+  /**
+   * Account names that YNAB treats as credit cards. The export carries no
+   * account types, but every credit card gets a same-named category in the
+   * "Credit Card Payments" group of the plan file.
+   */
+  private creditCardAccountNames(budgetRows: YNABBudgetRow[]): Set<string> {
+    const names = new Set<string>();
+    for (const row of budgetRows) {
+      if (row.CategoryGroup?.trim().toLowerCase() === 'credit card payments' && row.Category) {
+        names.add(row.Category.trim());
+      }
+    }
+    return names;
+  }
+
   private async createAccounts(
     budgetId: number,
     registerRows: YNABRegisterRow[],
+    budgetRows: YNABBudgetRow[],
     currency: string
   ): Promise<Record<string, number>> {
     const accounts: Record<string, number> = {};
     const uniqueAccounts = new Set<string>();
+    const creditCards = this.creditCardAccountNames(budgetRows);
 
     for (let i = 0; i < registerRows.length; i++) {
       const row = registerRows[i];
@@ -276,14 +294,18 @@ export class YNABImportService {
     debugLog(`Found ${uniqueAccounts.size} unique accounts from ${registerRows.length} rows`);
 
     for (const accountName of uniqueAccounts) {
+      const isCreditCard = creditCards.has(accountName);
       const account = await this.accountService.createAccount(
         accountName,
         budgetId,
-        'Checking',
+        isCreditCard ? 'Credit' : 'Checking',
         currency,
         ZERO_MILLI
       );
       accounts[accountName] = account.ID;
+      if (isCreditCard) {
+        debugLog(`Account '${accountName}' imported as a credit card`);
+      }
     }
 
     return accounts;
@@ -371,6 +393,18 @@ export class YNABImportService {
   ): Promise<void> {
     const incomeCategoryId = categories['Income'];
     const uncategorizedCategoryId = categories['Uncategorized'];
+    const transfersCategoryId = ensureCategoryWithGroup(
+      this.categoryService,
+      budgetId,
+      'Transfers',
+      'Transfers',
+      ''
+    );
+    const creditCardAccountIds = new Set(
+      Object.values(accounts).filter((id) =>
+        isCreditAccountType(this.accountService.getAccount(id).Type)
+      )
+    );
 
     // Sort transactions chronologically (oldest first)
     const sortedRows = [...registerRows].sort((a, b) => {
@@ -440,6 +474,12 @@ export class YNABImportService {
       if (payeeLower.includes('starting balance')) {
         memo = 'Starting Balance';
         payee = 'Budgero';
+        // A credit card's opening balance is existing debt, not budget money:
+        // YNAB leaves it out of Ready to Assign, and so does Budgero (credit
+        // opening balances use the Transfers category). Keep that parity here.
+        if (creditCardAccountIds.has(accountId)) {
+          categoryId = transfersCategoryId;
+        }
       } else if (payeeLower.includes('reconciliation balance adjustment')) {
         payee = 'Budgero';
       }

@@ -191,19 +191,10 @@ export class AccountService {
     let ccPaymentCategoryId: number | undefined;
 
     if (isCreditCard) {
-      const ccPaymentsGroupId = ensureCategoryGroup(
-        this.categoryService,
-        budgetId,
-        'Credit Card Payments'
-      );
-
-      // Create per-card payment category (e.g., "Chase CC")
-      ccPaymentCategoryId = this.categoryService.addCategory(
-        ccPaymentsGroupId,
-        budgetId,
-        name, // Use account name for the category
-        ''
-      );
+      // Per-card payment category (e.g., "Chase CC"), named after the account.
+      // Reuses a same-named category already in the group (e.g. one imported
+      // from YNAB) instead of creating a duplicate.
+      ccPaymentCategoryId = this.reattachOrCreateCategory(budgetId, 'Credit Card Payments', name);
 
       const updatedMetadata = {
         ...(metadata || {}),
