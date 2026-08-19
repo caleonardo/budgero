@@ -51,7 +51,7 @@ RUN pnpm --filter @budgero/core build
 RUN pnpm --filter @budgero/app exec vite build
 
 # Go builder stage
-FROM golang:1.26.4-alpine AS go-builder
+FROM golang:1.26.6-alpine AS go-builder
 
 # Install build dependencies
 RUN apk upgrade --no-cache && apk add --no-cache git
@@ -78,7 +78,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o budgero-server ./cmd/saas
 
 # Final stage - minimal runtime image
-FROM alpine:3.21
+FROM alpine:3.24
 
 # Install ca-certificates for HTTPS requests and wget for health checks
 # Note: apk upgrade ensures we get the latest security patches (e.g., busybox CVEs)

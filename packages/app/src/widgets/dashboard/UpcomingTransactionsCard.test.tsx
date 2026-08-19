@@ -13,7 +13,7 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-const mockOccurrences = vi.fn<[], unknown[]>(() => []);
+const mockOccurrences = vi.fn<() => unknown[]>(() => []);
 vi.mock('@entities/recurring/api/useRecurringTransactions', () => ({
   useRecurringOccurrences: () => ({
     data: mockOccurrences(),
@@ -21,7 +21,7 @@ vi.mock('@entities/recurring/api/useRecurringTransactions', () => ({
   }),
 }));
 
-const mockTransactions = vi.fn<[], unknown[]>(() => []);
+const mockTransactions = vi.fn<() => unknown[]>(() => []);
 vi.mock('@entities/transaction/api/queries', () => ({
   useAllTransactionsDetailed: () => ({
     data: mockTransactions(),

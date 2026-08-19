@@ -44,7 +44,7 @@ RUN VITE_SELF_HOSTABLE=true pnpm --filter @budgero/app exec vite build
 ### Stage 2: Build Go Server
 # --platform=$BUILDPLATFORM + GOOS/GOARCH: Go cross-compiles natively, so the
 # compiler never runs under QEMU even when targeting another architecture.
-FROM --platform=$BUILDPLATFORM golang:1.26.4-alpine AS server-builder
+FROM --platform=$BUILDPLATFORM golang:1.26.6-alpine AS server-builder
 
 WORKDIR /app
 
@@ -71,7 +71,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 
 ### Stage 3: Runtime
-FROM alpine:3.21 AS runtime
+FROM alpine:3.24 AS runtime
 
 # Note: apk upgrade ensures we get the latest security patches (e.g., busybox CVEs)
 RUN apk upgrade --no-cache && apk add --no-cache ca-certificates tzdata
