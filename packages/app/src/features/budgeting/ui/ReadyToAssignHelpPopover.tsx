@@ -97,12 +97,21 @@ export function ReadyToAssignHelpPopover({
                 mask={mask}
               />
               <MathRow
-                label="Assigned to categories"
+                label={isMonthly ? 'Assigned through this month' : 'Assigned to categories'}
                 value={breakdown.assignments}
                 localizer={globalLocalizer}
                 mask={mask}
                 sign="−"
               />
+              {isMonthly && breakdown.futureAssignments !== 0 && (
+                <MathRow
+                  label="Assigned in future months"
+                  value={breakdown.futureAssignments}
+                  localizer={globalLocalizer}
+                  mask={mask}
+                  sign="−"
+                />
+              )}
               {breakdown.offBudgetTransfers !== 0 && (
                 <MathRow
                   label="Transfers off budget"
@@ -152,7 +161,7 @@ export function ReadyToAssignHelpPopover({
 
             <p className="mt-2 text-muted-foreground">
               {isMonthly
-                ? 'Income counts as it arrives and last month’s overspending is pulled from this month (YNAB-style).'
+                ? 'Income counts as it arrives, money assigned in future months is already spoken for, and last month’s overspending is pulled from this month (YNAB-style).'
                 : 'Income and assignments accumulate across all time, so this figure is the same in every month.'}
             </p>
             <p className="mt-2 text-muted-foreground">

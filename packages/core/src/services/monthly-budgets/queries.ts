@@ -368,6 +368,7 @@ export class MonthlyBudgetQueries {
       month: asOfDate,
       income: asMilli(incomeResult.total_income),
       assignments: asMilli(assignmentsResult.total_assignments),
+      futureAssignments: asMilli(0),
       offBudgetTransfers: asMilli(totalOffBudgetTransfers),
       inBudgetTransfers: asMilli(totalInBudgetTransfers),
       revaluations: asMilli(totalRevaluations),
@@ -389,11 +390,15 @@ export class MonthlyBudgetQueries {
   /**
    * ReadyToAssignMonthly - YNAB-style Ready to Assign for a single month.
    *
-   * Counts income and assignments only up to and including `month`, then
-   * subtracts prior-month cash overspending (each overspent category's negative
-   * cash balance is pulled from Ready to Assign the month after it happens,
-   * rather than carried inside the category). Credit-card overspending is left
-   * to the CC Payment system and never deducted here.
+   * Counts income and assignments only up to and including `month`, subtracts
+   * prior-month cash overspending (each overspent category's negative cash
+   * balance is pulled from Ready to Assign the month after it happens, rather
+   * than carried inside the category), then deducts money already assigned in
+   * future months — but only up to what is left over, so assigning ahead drives
+   * an earlier month to zero rather than negative (YNAB's "Assigned in Future").
+   * Any excess shows up as negative Ready to Assign in the month it was assigned.
+   * Credit-card overspending is left to the CC Payment system and never
+   * deducted here.
    */
   readyToAssignMonthly(budgetId: number, month: string): ReadyToAssignBreakdown {
     const income =
@@ -419,6 +424,14 @@ export class MonthlyBudgetQueries {
       getRow<{ total: number }>(
         this.db,
         `SELECT IFNULL(SUM(Amount), 0) as total FROM assignments WHERE BudgetID = ?1 AND Month <= ?2`,
+        budgetId,
+        month
+      )?.total ?? 0;
+
+    const totalFutureAssignments =
+      getRow<{ total: number }>(
+        this.db,
+        `SELECT IFNULL(SUM(Amount), 0) as total FROM assignments WHERE BudgetID = ?1 AND Month > ?2`,
         budgetId,
         month
       )?.total ?? 0;
@@ -496,17 +509,21 @@ export class MonthlyBudgetQueries {
 
     const { priorCashOverspend } = this.computeMonthlyRollforward(budgetId, month);
 
-    const readyToAssign =
+    const leftover =
       income -
       assignments -
       offBudgetTransfers +
       inBudgetTransfers +
       revaluations -
       priorCashOverspend;
+    // Future assignments can only consume what this month has left over.
+    const futureAssignments = Math.min(totalFutureAssignments, Math.max(0, leftover));
+    const readyToAssign = leftover - futureAssignments;
 
     debugLog(`Ready to Assign (monthly, through ${month}):`);
     debugLog(`  Income: ${income.toLocaleString()}`);
     debugLog(`  Assignments: ${assignments.toLocaleString()}`);
+    debugLog(`  Future assignments: ${futureAssignments.toLocaleString()}`);
     debugLog(`  Off-budget transfers: ${offBudgetTransfers.toLocaleString()}`);
     debugLog(`  On-budget transfers: ${inBudgetTransfers.toLocaleString()}`);
     debugLog(`  Prior cash overspend: ${priorCashOverspend.toLocaleString()}`);
@@ -517,6 +534,7 @@ export class MonthlyBudgetQueries {
       month,
       income: asMilli(income),
       assignments: asMilli(assignments),
+      futureAssignments: asMilli(futureAssignments),
       offBudgetTransfers: asMilli(offBudgetTransfers),
       inBudgetTransfers: asMilli(inBudgetTransfers),
       revaluations: asMilli(revaluations),

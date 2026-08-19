@@ -95,6 +95,110 @@ describe('Ready to Assign — monthly (YNAB-style) mode', () => {
     expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2024-02')).toBe(asMilli(1000));
   });
 
+  it('deducts future-month assignments, capped at what the month has left over (YNAB-style)', async () => {
+    const { services, budgetId, incomeId, food } = await setup();
+    services.budgets.updateRtaMode(budgetId, 'monthly');
+    const checking = await services.accounts.createAccount(
+      'Checking',
+      budgetId,
+      'checking',
+      'USD',
+      0
+    );
+    await services.transactions.addTransaction(
+      asMilli(1000),
+      0,
+      checking.ID,
+      incomeId,
+      budgetId,
+      '2024-01-05',
+      'pay'
+    );
+    services.monthlyBudgets.upsertMonthlyAssignment(food, asMilli(100), '2024-01', budgetId);
+    services.monthlyBudgets.upsertMonthlyAssignment(food, asMilli(200), '2024-02', budgetId);
+    services.monthlyBudgets.upsertMonthlyAssignment(food, asMilli(300), '2024-04', budgetId);
+
+    // January: 1000 income − 100 this month − 500 assigned ahead.
+    const jan = services.monthlyBudgets.getReadyToAssignBreakdown(budgetId, '2024-01');
+    expect(jan.assignments).toBe(asMilli(100));
+    expect(jan.futureAssignments).toBe(asMilli(500));
+    expect(jan.readyToAssign).toBe(asMilli(400));
+    expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2024-03')).toBe(asMilli(400));
+    expect(
+      services.monthlyBudgets.getReadyToAssignBreakdown(budgetId, '2024-04').futureAssignments
+    ).toBe(asMilli(0));
+
+    // Assign more ahead than January has left: January bottoms out at zero
+    // and the excess shows up in the month it was assigned.
+    services.monthlyBudgets.upsertMonthlyAssignment(food, asMilli(1000), '2024-04', budgetId);
+    const janCapped = services.monthlyBudgets.getReadyToAssignBreakdown(budgetId, '2024-01');
+    expect(janCapped.futureAssignments).toBe(asMilli(900));
+    expect(janCapped.readyToAssign).toBe(asMilli(0));
+    expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2024-03')).toBe(asMilli(0));
+    expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2024-04')).toBe(asMilli(-300));
+
+    // Cumulative mode never reports future assignments separately.
+    services.budgets.updateRtaMode(budgetId, 'cumulative');
+    expect(
+      services.monthlyBudgets.getReadyToAssignBreakdown(budgetId, '2024-01').futureAssignments
+    ).toBe(asMilli(0));
+  });
+
+  it('matches YNAB: future income funds future assignments without going negative earlier', async () => {
+    // Mirrors a real YNAB export: Jul income 1150, Aug income 1000, Jul cash
+    // overspend 150, assigned Jul 100 / Aug 1380 / Sep 20 / Oct 500 → RTA 0 everywhere.
+    const { services, budgetId, incomeId, food } = await setup();
+    services.budgets.updateRtaMode(budgetId, 'monthly');
+    const checking = await services.accounts.createAccount(
+      'Checking',
+      budgetId,
+      'checking',
+      'USD',
+      0
+    );
+    await services.transactions.addTransaction(
+      asMilli(1150),
+      0,
+      checking.ID,
+      incomeId,
+      budgetId,
+      '2026-07-01',
+      'pay'
+    );
+    await services.transactions.addTransaction(
+      0,
+      asMilli(250),
+      checking.ID,
+      food,
+      budgetId,
+      '2026-07-15',
+      'groceries'
+    );
+    await services.transactions.addTransaction(
+      asMilli(1000),
+      0,
+      checking.ID,
+      incomeId,
+      budgetId,
+      '2026-08-19',
+      'pay'
+    );
+    services.monthlyBudgets.upsertMonthlyAssignment(food, asMilli(100), '2026-07', budgetId);
+    services.monthlyBudgets.upsertMonthlyAssignment(food, asMilli(1380), '2026-08', budgetId);
+    services.monthlyBudgets.upsertMonthlyAssignment(food, asMilli(20), '2026-09', budgetId);
+    services.monthlyBudgets.upsertMonthlyAssignment(food, asMilli(500), '2026-10', budgetId);
+
+    const jul = services.monthlyBudgets.getReadyToAssignBreakdown(budgetId, '2026-07');
+    expect(jul.futureAssignments).toBe(asMilli(1050));
+    expect(jul.readyToAssign).toBe(asMilli(0));
+    const aug = services.monthlyBudgets.getReadyToAssignBreakdown(budgetId, '2026-08');
+    expect(aug.priorCashOverspend).toBe(asMilli(150));
+    expect(aug.futureAssignments).toBe(asMilli(520));
+    expect(aug.readyToAssign).toBe(asMilli(0));
+    expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2026-09')).toBe(asMilli(0));
+    expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2026-10')).toBe(asMilli(0));
+  });
+
   it('pulls prior-month cash overspending out of Ready to Assign and resets the category', async () => {
     const { services, budgetId, incomeId, food } = await setup();
     services.budgets.updateRtaMode(budgetId, 'monthly');

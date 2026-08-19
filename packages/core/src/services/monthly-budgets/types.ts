@@ -8,14 +8,21 @@ import type { RtaMode } from '../budgets/types.js';
 
 /**
  * ReadyToAssignBreakdown - the component figures behind the Ready to Assign
- * number, so the UI can always show the full math. `priorCashOverspend` and
- * `month` are only meaningful in 'monthly' mode.
+ * number, so the UI can always show the full math. `futureAssignments`,
+ * `priorCashOverspend` and `month` are only meaningful in 'monthly' mode
+ * (`assignments` covers every month in cumulative mode).
  */
 export interface ReadyToAssignBreakdown {
   mode: RtaMode;
   month: string;
   income: MilliUnits;
+  /** Assigned through `month` (monthly) or across all time (cumulative). */
   assignments: MilliUnits;
+  /**
+   * Assigned in months after `month` and deducted here — capped at what this
+   * month has left over, so it can zero Ready to Assign but not push it negative.
+   */
+  futureAssignments: MilliUnits;
   offBudgetTransfers: MilliUnits;
   inBudgetTransfers: MilliUnits;
   revaluations: MilliUnits;

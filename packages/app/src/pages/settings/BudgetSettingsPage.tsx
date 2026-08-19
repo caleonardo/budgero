@@ -26,7 +26,7 @@ const RTA_OPTIONS: { value: RtaMode; title: string; blurb: string }[] = [
     value: 'monthly',
     title: 'Monthly',
     blurb:
-      'Ready to Assign reflects money received through the month you are viewing, and a category’s overspending is pulled out of the next month’s Ready to Assign instead of carrying inside the category. This matches what people moving from YNAB expect.',
+      'Ready to Assign reflects money received through the month you are viewing, minus anything already assigned in future months, and a category’s overspending is pulled out of the next month’s Ready to Assign instead of carrying inside the category. This matches what people moving from YNAB expect.',
   },
 ];
 
@@ -110,8 +110,9 @@ function RtaModeCard() {
             </li>
             <li>
               <strong className="text-foreground">Monthly</strong> is best if you’re coming from
-              YNAB or want each month to stand on its own — income counts as it arrives, and last
-              month’s overspending reduces this month’s Ready to Assign.
+              YNAB or want each month to stand on its own — income counts as it arrives, money
+              assigned in future months is already spoken for, and last month’s overspending reduces
+              this month’s Ready to Assign.
             </li>
           </ul>
         </div>
