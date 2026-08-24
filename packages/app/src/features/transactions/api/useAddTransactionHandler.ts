@@ -33,7 +33,8 @@ export function useAddTransactionHandler({ onDialogClose }: UseAddTransactionHan
       accountId: number,
       labelId: number | null,
       transferId: string | null,
-      keepDialogOpen?: boolean
+      keepDialogOpen?: boolean,
+      exchangeRateOverride?: number | null
     ): Promise<number> => {
       const categoryObject = categories.find((cat) => cat.Name === category);
       const categoryId = categoryObject?.ID || 0;
@@ -58,6 +59,7 @@ export function useAddTransactionHandler({ onDialogClose }: UseAddTransactionHan
         memo,
         payee,
         transferId,
+        exchangeRateOverride,
       });
 
       // Only close dialog if not keeping it open for "Add Another"

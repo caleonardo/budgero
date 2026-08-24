@@ -37,7 +37,8 @@ export interface AddTransactionFormProps {
     accountId: number,
     labelId: number | null,
     transferId: string | null,
-    keepDialogOpen?: boolean
+    keepDialogOpen?: boolean,
+    exchangeRateOverride?: number | null
   ) => Promise<number>;
   onCancel: () => void;
 }
@@ -72,6 +73,8 @@ export function AddTransactionForm({
     payeeCategoryApplied,
     payeeCategorySource,
     resolvedRate,
+    receivedAmount,
+    setReceivedAmount,
     handleSubmit,
   } = useAddTransactionForm({
     budgetId,
@@ -248,6 +251,8 @@ export function AddTransactionForm({
         toAccount={toAccount}
         canUseCurrencyApi={canUseCurrencyApi}
         exchangeRate={resolvedRate}
+        receivedAmount={receivedAmount}
+        onReceivedAmountChange={setReceivedAmount}
         payee={form.payee}
         onPayeeChange={form.setPayee}
         selectedLabelId={form.selectedLabelId}

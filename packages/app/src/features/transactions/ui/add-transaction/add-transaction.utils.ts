@@ -5,9 +5,80 @@
  */
 
 import { format } from 'date-fns';
+import { scaledToDecimal } from '@budgero/core/browser';
 
 import { formatNativeAmount } from '@entities/currency/lib/currency-utils';
 import type { TransactionType } from '@features/transactions/api/useTransactionForm';
+
+export interface TransferRateOverrides {
+  sourceRateOverride: number | null;
+  destinationRateOverride: number | null;
+}
+
+/** Direct source-to-destination rate implied by the two exact native amounts. */
+export function calculateImpliedTransferRate(params: {
+  sourceAmount: number;
+  receivedAmount: number;
+  sourceCurrency: string;
+  destinationCurrency: string;
+}): number | null {
+  const { sourceAmount, receivedAmount, sourceCurrency, destinationCurrency } = params;
+  const source = scaledToDecimal(sourceAmount, sourceCurrency);
+  const received = scaledToDecimal(receivedAmount, destinationCurrency);
+  return source > 0 && received > 0 ? received / source : null;
+}
+
+/**
+ * Pin one transfer leg so the exact source and received amounts represent the
+ * same value in the budget currency. Rates stored on transactions always run
+ * from the account currency to the budget currency.
+ */
+export function calculateTransferRateOverrides(params: {
+  sourceAmount: number;
+  receivedAmount: number;
+  sourceCurrency: string;
+  destinationCurrency: string;
+  budgetCurrency: string;
+  sourceToBudgetRate?: number | null;
+}): TransferRateOverrides {
+  const {
+    sourceAmount,
+    receivedAmount,
+    sourceCurrency,
+    destinationCurrency,
+    budgetCurrency,
+    sourceToBudgetRate,
+  } = params;
+  const empty = { sourceRateOverride: null, destinationRateOverride: null };
+  if (sourceAmount <= 0 || receivedAmount <= 0 || sourceCurrency === destinationCurrency) {
+    return empty;
+  }
+
+  const impliedRate = calculateImpliedTransferRate({
+    sourceAmount,
+    receivedAmount,
+    sourceCurrency,
+    destinationCurrency,
+  });
+  if (!impliedRate) return empty;
+
+  if (destinationCurrency === budgetCurrency) {
+    return { sourceRateOverride: impliedRate, destinationRateOverride: null };
+  }
+
+  const sourceToBudget =
+    sourceCurrency === budgetCurrency
+      ? 1
+      : sourceToBudgetRate && sourceToBudgetRate > 0
+        ? sourceToBudgetRate
+        : null;
+  if (sourceToBudget === null) return empty;
+
+  return {
+    sourceRateOverride: null,
+    destinationRateOverride: sourceToBudget / impliedRate,
+  };
+}
 
 /**
  * Converts amount to inflow/outflow based on transaction type.

@@ -66,6 +66,50 @@ describe('CurrencyService custom date-range rates', () => {
   });
 });
 
+describe('Transaction exchange-rate overrides', () => {
+  it('pins the rate while creating an exact received transfer amount', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    const sm = new ServiceManager();
+    await sm.initialize(adapter as DatabaseAdapter);
+    const { budgets, accounts, categories, transactions } = sm.getServices();
+
+    const budgetId = await budgets.createBudget({
+      name: 'Transfer',
+      display_currency: 'USD',
+      badge_icon: 'dollar',
+      number_format: '123,456.78',
+      create_default_categories: true,
+    });
+    const eur = await accounts.createAccount('EUR', budgetId, 'checking', 'EUR', 0);
+    const transferCategory = categories
+      .getAllCategories(budgetId)
+      .find((category) => category.Name === 'Transfers');
+    if (!transferCategory) throw new Error('Transfers category missing');
+
+    const rate = 1_000 / 900;
+    const transactionId = await transactions.addTransaction(
+      900_000,
+      0,
+      eur.ID,
+      transferCategory.ID,
+      budgetId,
+      '2026-08-20',
+      'Exact transfer',
+      'transfer-1',
+      '',
+      null,
+      rate
+    );
+
+    const transaction = transactions.getTransactionByID(transactionId);
+    expect(transaction.InflowNative).toBe(900_000);
+    expect(transaction.InflowConverted).toBe(1_000_000);
+    expect(transaction.ExchangeRate).toBeCloseTo(rate, 10);
+    expect(transaction.ExchangeRateOverride).toBeTruthy();
+    expect(transaction.ConversionPending).toBeFalsy();
+  });
+});
+
 describe('CurrencyService addCustomRate alsoReverse', () => {
   it('stores both directions as explicit rows when requested', async () => {
     const adapter = await NodeSqlJsAdapter.create();

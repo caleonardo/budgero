@@ -40,6 +40,8 @@ export type AddTransactionInput = {
   memo: string;
   payee?: string;
   transferId: string;
+  /** Account-to-budget rate pinned on creation. */
+  exchangeRateOverride?: number | null;
 };
 
 export function useAddTransaction() {
@@ -65,6 +67,7 @@ export function useAddTransaction() {
           memo: input.memo,
           payee: input.payee,
           transferId: input.transferId,
+          exchangeRateOverride: input.exchangeRateOverride ?? null,
         },
         meta: { label: 'useAddTransaction' },
       });

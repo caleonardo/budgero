@@ -92,7 +92,8 @@ export class TransactionService {
     memo: string,
     transferId = '',
     payee?: string,
-    labelId?: number | null
+    labelId?: number | null,
+    exchangeRateOverride?: number | null
   ): Promise<number> {
     debugLog('🔵 TransactionService.addTransaction called with:', {
       inflowOriginal,
@@ -105,6 +106,7 @@ export class TransactionService {
       transferId,
       payee,
       labelId,
+      exchangeRateOverride,
     });
 
     const { account, budget } = this.queries.getAccountAndBudget(accountId, budgetId);
@@ -113,15 +115,26 @@ export class TransactionService {
     let inflowConverted: MilliUnits = inflowOriginal;
     let outflowConverted: MilliUnits = outflowOriginal;
     let resolvedExchangeRate: number | null = null;
+    const pinnedExchangeRate =
+      typeof exchangeRateOverride === 'number' &&
+      Number.isFinite(exchangeRateOverride) &&
+      exchangeRateOverride > 0
+        ? exchangeRateOverride
+        : null;
+    const usesPinnedExchangeRate =
+      pinnedExchangeRate !== null &&
+      Boolean(account && budget && account.Currency !== budget.DisplayCurrency);
 
     if (account && budget && account.Currency !== budget.DisplayCurrency) {
       // Use full resolution chain: custom date-range → official → manual → fallback → 1:1
-      let rate = await this.currencyService.resolveRate(
-        account.Currency,
-        budget.DisplayCurrency,
-        date,
-        budgetId
-      );
+      let rate =
+        pinnedExchangeRate ??
+        (await this.currencyService.resolveRate(
+          account.Currency,
+          budget.DisplayCurrency,
+          date,
+          budgetId
+        ));
 
       if (!rate) {
         // Crypto never falls back to 1:1 — a BTC transaction converted at
@@ -147,7 +160,12 @@ export class TransactionService {
 
     // Capture whether we need to mark this row pending (manual/adjacent/1:1)
     let markPending = false;
-    if (account && budget && account.Currency !== budget.DisplayCurrency) {
+    if (
+      account &&
+      budget &&
+      account.Currency !== budget.DisplayCurrency &&
+      !usesPinnedExchangeRate
+    ) {
       const official = await this.currencyService.getLocalRate(
         account.Currency,
         budget.DisplayCurrency,
@@ -433,7 +451,8 @@ export class TransactionService {
         newBalanceOriginal,
         transferId || null,
         resolvedExchangeRate,
-        normalizedLabelId
+        normalizedLabelId,
+        usesPinnedExchangeRate
       );
 
       // If rate was manual/adjacent/1:1, mark pending for later recalc

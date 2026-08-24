@@ -98,7 +98,8 @@ export const transactionOps = {
         args.memo as string,
         (args.transferId as string | undefined) || '',
         (args.payee as string | undefined) ?? '',
-        (args.labelId as number | null | undefined) ?? null
+        (args.labelId as number | null | undefined) ?? null,
+        typeof args.exchangeRateOverride === 'number' ? (args.exchangeRateOverride as number) : null
       );
     },
     invalidates: [...TRANSACTION_INVALIDATION_KEYS],

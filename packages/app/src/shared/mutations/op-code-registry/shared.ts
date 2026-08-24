@@ -59,6 +59,8 @@ export interface TransactionSnapshot {
   /** Legacy pre-045 payload name for OutflowNative. */
   OutflowOriginal?: number;
   outflowOriginal?: number;
+  ExchangeRate?: number | null;
+  ExchangeRateOverride?: boolean;
   CategoryID?: number;
   LabelID?: number | null;
   category_id?: number;
@@ -132,6 +134,7 @@ export function transactionSnapshotToAddOp(snapshot: TransactionSnapshot): OpCal
       memo: snapshot.Memo ?? snapshot.memo ?? '',
       payee: snapshot.Payee ?? snapshot.payee ?? '',
       transferId: snapshot.TransferID ?? snapshot.transfer_id ?? snapshot.transferId ?? undefined,
+      exchangeRateOverride: snapshot.ExchangeRateOverride ? snapshot.ExchangeRate : null,
     },
   };
 }

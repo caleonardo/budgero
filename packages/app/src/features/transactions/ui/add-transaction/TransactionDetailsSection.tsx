@@ -83,6 +83,8 @@ interface TransactionDetailsSectionProps {
   toAccount: Account | null;
   canUseCurrencyApi: boolean;
   exchangeRate?: number | null;
+  receivedAmount: number | null;
+  onReceivedAmountChange: (amount: number | null) => void;
 
   // Off-budget transfer (allows category selection)
   isOffBudgetTransfer: boolean;
@@ -145,6 +147,8 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
   toAccount,
   canUseCurrencyApi,
   exchangeRate,
+  receivedAmount,
+  onReceivedAmountChange,
   payee,
   onPayeeChange,
   selectedLabelId,
@@ -238,6 +242,10 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
           toCurrency={toAccount?.Currency || ''}
           canUseCurrencyApi={canUseCurrencyApi}
           exchangeRate={exchangeRate}
+          receivedAmount={receivedAmount}
+          onReceivedAmountChange={onReceivedAmountChange}
+          onEditingChange={onAmountEditingChange}
+          localizer={globalLocalizer}
         />
       )}
 

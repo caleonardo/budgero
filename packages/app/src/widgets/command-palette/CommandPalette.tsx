@@ -314,7 +314,9 @@ export function CommandPalette() {
     inflow: number,
     accountId: number,
     labelId: number | null,
-    transferId: string | null
+    transferId: string | null,
+    keepDialogOpen?: boolean,
+    exchangeRateOverride?: number | null
   ): Promise<number> => {
     const categoryObject = categories.find((cat) => cat.Name === category);
     const categoryId = categoryObject?.ID || 0;
@@ -334,9 +336,10 @@ export function CommandPalette() {
       memo,
       payee,
       transferId: transferId || '',
+      exchangeRateOverride,
     });
 
-    setShowTransactionDialog(false);
+    if (!keepDialogOpen) setShowTransactionDialog(false);
     return id;
   };
 
