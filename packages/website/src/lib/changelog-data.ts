@@ -16,11 +16,38 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.11.0',
+    date: 'August 24, 2026',
+    summary:
+      'Category balances are visible while selecting categories, transfers can record the received amount, and archived accounts are included in reports.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Category balances in category selectors',
+        description:
+          "Category selectors now show each category's available balance for the current month, including while creating regular and split transactions.",
+      },
+      {
+        type: 'new',
+        title: 'Received amounts for cross-currency transfers',
+        description:
+          'Cross-currency transfers can now record the amount received in the destination account, with Budgero deriving and saving the implied exchange rate.',
+      },
+      {
+        type: 'fixed',
+        title: 'Archived accounts included in prebuilt reports',
+        description:
+          'Transactions from archived accounts are now included in prebuilt reports and statistics, so historical income and spending remain accurate.',
+      },
+    ],
+  },
+  {
     version: 'v1.10.1',
     date: 'August 19, 2026',
     summary:
       'Monthly Ready to Assign now accounts for money assigned in future months, YNAB imports recognise credit cards, and dependency security updates.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'improved',
