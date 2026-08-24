@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { Account } from '@budgero/core/browser';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useAllTransactionsAnalytics } from '@entities/transaction/api/queries';
 import { useAccounts } from '@entities/account/api/useAccounts';
@@ -27,6 +28,25 @@ export interface AnalyticsData {
   categoryGroups: { id: number; name: string }[];
   labels: { id: number; name: string; color: string }[];
   payees: string[];
+}
+
+/**
+ * Adapt every account whose history still belongs to the budget. Archived
+ * accounts are intentionally included: archiving hides an account from daily
+ * navigation and transaction-entry pickers, but must not erase it from
+ * historical reports.
+ */
+export function adaptAnalyticsAccounts(rawAccounts: Account[]): AnalyticsAccount[] {
+  return rawAccounts
+    .filter((account) => !account.Deleted)
+    .map((account) => ({
+      id: account.ID,
+      name: account.Name,
+      type: account.Type,
+      onBudget: account.OnBudget,
+      isLiability: isLiabilityType(account.Type),
+      currentBalance: account.BalanceConverted ?? account.BalanceNative ?? 0,
+    }));
 }
 
 export function useAnalyticsData(filters: AnalyticsFilters): AnalyticsData {
@@ -59,20 +79,7 @@ export function useAnalyticsData(filters: AnalyticsFilters): AnalyticsData {
     );
   }, [categories, categoryGroups]);
 
-  const accounts = useMemo<AnalyticsAccount[]>(
-    () =>
-      (rawAccounts ?? [])
-        .filter((account) => !account.Deleted && !account.Archived)
-        .map((account) => ({
-          id: account.ID,
-          name: account.Name,
-          type: account.Type,
-          onBudget: account.OnBudget,
-          isLiability: isLiabilityType(account.Type),
-          currentBalance: account.BalanceConverted ?? account.BalanceNative ?? 0,
-        })),
-    [rawAccounts]
-  );
+  const accounts = useMemo(() => adaptAnalyticsAccounts(rawAccounts ?? []), [rawAccounts]);
 
   const onBudgetAccountIds = useMemo(
     () => new Set(accounts.filter((account) => account.onBudget).map((account) => account.id)),
