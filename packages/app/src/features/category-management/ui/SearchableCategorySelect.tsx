@@ -21,6 +21,7 @@ import {
 import { useIsMobile } from '@shared/hooks/useIsMobile';
 import { useMonthlyBudget, useReadyToAssign } from '@entities/budget/api/useMonthlyBudget';
 import { useUiStore } from '@shared/store/useUiStore';
+import { getTodayISO } from '@shared/lib/date-utils';
 import type { VirtualElement } from '@floating-ui/react';
 import type { Category } from '@budgero/core/browser';
 import { asMilli, formatMilli } from '@shared/lib/currency/milli';
@@ -36,8 +37,8 @@ interface SearchableCategorySelectProps {
   includeReadyToAssign?: boolean; // Inject special RTA option at top
   readyToAssignLabel?: string; // Custom label for RTA
   excludeCategoryId?: number; // Optionally filter a category (e.g., source)
-  showAvailableForMonth?: boolean; // Show "Available" for the effective month next to each category
-  month?: string; // Override month (defaults to UI currentMonth)
+  showAvailableForMonth?: boolean; // Show "Available" next to each category (defaults to true)
+  month?: string; // Override month (defaults to today's calendar month)
   onlyPositiveAvailable?: boolean; // Only list categories with available > 0 (e.g., cover sources)
 }
 
@@ -51,7 +52,7 @@ export function SearchableCategorySelect({
   includeReadyToAssign = false,
   readyToAssignLabel = 'Ready To Assign',
   excludeCategoryId,
-  showAvailableForMonth = false,
+  showAvailableForMonth = true,
   month,
   onlyPositiveAvailable = false,
 }: SearchableCategorySelectProps) {
@@ -90,8 +91,7 @@ export function SearchableCategorySelect({
   const headerAnchorRef = React.useRef<VirtualElement | null>(null);
   const [, forceVirtualAnchorUpdate] = React.useReducer((count: number) => count + 1, 0);
 
-  const uiMonth = useUiStore((s) => s.currentMonth);
-  const effectiveMonth = month || uiMonth;
+  const effectiveMonth = month || getTodayISO().slice(0, 7);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
   const { data: monthlyRows = [] } = useMonthlyBudget(effectiveMonth, budgetId);
   const availableByCategory = React.useMemo(() => {
