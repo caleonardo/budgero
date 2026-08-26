@@ -92,26 +92,30 @@ export class MutationExecutor {
     if (shouldInvalidate && invalidates) {
       const qc = this.deps.getQueryClient();
       if (qc) {
+        const invalidationCalls = new Map<
+          string,
+          { queryKey?: string[]; predicate?: (q: { queryKey: unknown[] }) => boolean }
+        >();
         for (const key of invalidates) {
+          if (key.length === 0) continue;
           const spaceAwareKey = this.ensureSpaceAwareKey(key, activeSpaceId);
-          if (key.includes('*')) {
+          if (key.includes('*') || key.length === 1) {
             const base = key[0];
-            await qc.invalidateQueries({
+            invalidationCalls.set(`root:${base}`, {
               predicate: (q) => Array.isArray(q.queryKey) && q.queryKey[0] === base,
             });
-            const spaceBase = spaceAwareKey[0];
-            if (spaceBase !== base) {
-              await qc.invalidateQueries({
-                predicate: (q) => Array.isArray(q.queryKey) && q.queryKey[0] === spaceBase,
-              });
-            }
           } else {
-            await qc.invalidateQueries({ queryKey: key });
-            if (!this.keysEqual(key, spaceAwareKey)) {
-              await qc.invalidateQueries({ queryKey: spaceAwareKey });
+            invalidationCalls.set(`key:${JSON.stringify(key)}`, { queryKey: key });
+            if (!this.isKeyPrefix(key, spaceAwareKey)) {
+              invalidationCalls.set(`key:${JSON.stringify(spaceAwareKey)}`, {
+                queryKey: spaceAwareKey,
+              });
             }
           }
         }
+        await Promise.all(
+          [...invalidationCalls.values()].map((options) => qc.invalidateQueries(options))
+        );
       }
     }
 
@@ -219,6 +223,14 @@ export class MutationExecutor {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i += 1) {
       if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
+
+  private isKeyPrefix(prefix: string[], key: string[]): boolean {
+    if (prefix.length > key.length) return false;
+    for (let index = 0; index < prefix.length; index += 1) {
+      if (prefix[index] !== key[index]) return false;
     }
     return true;
   }

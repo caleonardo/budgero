@@ -85,6 +85,30 @@ describe('MutationExecutor', () => {
     expect(invalidateQueries).not.toHaveBeenCalled();
   });
 
+  it('deduplicates overlapping invalidations and starts them in parallel', async () => {
+    const { deps, invalidateQueries } = createDeps();
+    deps.getInvalidatesForOp.mockReturnValue([
+      ['monthlyBudget'],
+      ['monthlyBudget', '*'],
+      ['readyToAssign'],
+      ['readyToAssign', '*'],
+    ]);
+    const resolvers: (() => void)[] = [];
+    invalidateQueries.mockImplementation(
+      () => new Promise<void>((resolve) => resolvers.push(resolve))
+    );
+    const executor = new MutationExecutor(deps as never);
+
+    const execution = executor.execute({
+      op: 'monthlyBudgets.batchUpsertAssignments',
+      payload: { budgetId: 2 },
+    });
+
+    await vi.waitFor(() => expect(invalidateQueries).toHaveBeenCalledTimes(2));
+    resolvers.forEach((resolve) => resolve());
+    await execution;
+  });
+
   it('rejects budget edits for non-owner local mutators', async () => {
     const { deps } = createDeps();
     deps.getSpaceRole.mockReturnValue('viewer');
