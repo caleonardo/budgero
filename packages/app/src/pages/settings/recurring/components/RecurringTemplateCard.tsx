@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shar
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
 import { Separator } from '@shared/ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui/tooltip';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -87,11 +88,14 @@ export function RecurringTemplateCard({
 
   return (
     <Card
-      className={cn('relative transition-shadow hover:shadow-md', !template.active && 'opacity-75')}
+      className={cn(
+        'relative min-w-0 overflow-hidden transition-shadow hover:shadow-md',
+        !template.active && 'opacity-75'
+      )}
     >
       <CardHeader className="space-y-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-1">
+          <div className="min-w-0 flex-1 space-y-1">
             <CardTitle className="text-xl font-semibold flex items-center gap-2">
               {template.name}
               <Badge variant={template.direction === 'inflow' ? 'default' : 'secondary'}>
@@ -102,9 +106,24 @@ export function RecurringTemplateCard({
                     : 'Bill'}
               </Badge>
             </CardTitle>
-            <CardDescription>{template.memo || 'No memo provided'}</CardDescription>
+            {template.memo ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CardDescription className="truncate">{template.memo}</CardDescription>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  align="start"
+                  className="max-w-sm whitespace-pre-wrap break-words text-sm"
+                >
+                  {template.memo}
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <CardDescription>No memo provided</CardDescription>
+            )}
           </div>
-          <div className="mt-1 flex flex-wrap items-center gap-3 self-end sm:mt-0 sm:justify-end sm:self-auto">
+          <div className="mt-1 flex shrink-0 flex-wrap items-center gap-3 self-end sm:mt-0 sm:justify-end sm:self-auto">
             <Badge variant="outline">{amountDisplay}</Badge>
             <Button
               variant="ghost"
