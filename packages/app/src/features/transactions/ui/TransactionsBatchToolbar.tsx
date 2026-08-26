@@ -15,7 +15,7 @@ import {
 } from '@shared/ui/dropdown-menu';
 import { useUiStore } from '@shared/store/useUiStore';
 import {
-  useDeleteTransaction,
+  useDeleteTransactions,
   useMoveTransactionToNewCategory,
   useMoveTransactionToNewAccount,
   useTransactions,
@@ -58,14 +58,18 @@ export function TransactionsBatchToolbar({
   const { data: accountsData } = useActiveAccounts(selectedBudget?.ID || 0);
 
   const queryClient = useQueryClient();
-  const deleteTransactionMutation = useDeleteTransaction();
+  const deleteTransactionsMutation = useDeleteTransactions();
   const moveToNewCategoryMutation = useMoveTransactionToNewCategory();
   const moveToNewAccountMutation = useMoveTransactionToNewAccount();
   const updateTransactionColumnMutation = useUpdateTransactionColumn();
 
   const { data: allTransactions = [] } = useTransactions(selectedAccount?.ID || 0);
 
-  const selectedTransactions = allTransactions.filter((t) => selectedRowIds.includes(t.ID));
+  const selectedRowIdSet = React.useMemo(() => new Set(selectedRowIds), [selectedRowIds]);
+  const selectedTransactions = React.useMemo(
+    () => allTransactions.filter((transaction) => selectedRowIdSet.has(transaction.ID)),
+    [allTransactions, selectedRowIdSet]
+  );
   const singleSelectedTransaction =
     selectedTransactions.length === 1 ? selectedTransactions[0] : null;
   const canCreateRecurring = Boolean(onCreateRecurring && singleSelectedTransaction);
@@ -77,18 +81,7 @@ export function TransactionsBatchToolbar({
 
   const handleDelete = React.useCallback(async () => {
     try {
-      // Delete selected transactions - core will handle transfer pairs automatically.
-      // Suppress per-item invalidation; invalidate once after the whole batch.
-      await Promise.all(
-        selectedRowIds.map((id) =>
-          deleteTransactionMutation.mutateAsync({
-            transactionId: id,
-            accountId: selectedAccount?.ID || 0,
-            skipInvalidate: true,
-          })
-        )
-      );
-      applyOpInvalidations(queryClient, 'transactions.delete');
+      await deleteTransactionsMutation.mutateAsync({ transactionIds: selectedRowIds });
 
       const count = selectedRowIds.length;
       toast.success(`${count} transaction${count === 1 ? '' : 's'} deleted`, {
@@ -100,7 +93,7 @@ export function TransactionsBatchToolbar({
       console.error('Error deleting transactions:', error);
       toastError('Failed to delete transactions', error, 'Please try again.');
     }
-  }, [selectedRowIds, selectedAccount, deleteTransactionMutation, clearSelection, queryClient]);
+  }, [selectedRowIds, deleteTransactionsMutation, clearSelection]);
 
   async function handleBatchEdits() {
     setWorking(true);
@@ -326,10 +319,10 @@ export function TransactionsBatchToolbar({
           variant="destructive"
           size="sm"
           onClick={handleDelete}
-          disabled={working || deleteTransactionMutation.isPending}
+          disabled={working || deleteTransactionsMutation.isPending}
           className="h-8 px-2"
         >
-          {deleteTransactionMutation.isPending ? (
+          {deleteTransactionsMutation.isPending ? (
             <Loader2 className="h-3 w-3 animate-spin" />
           ) : (
             <Trash2 className="h-3 w-3" />

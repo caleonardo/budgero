@@ -40,6 +40,16 @@ const TX_ROW_COLUMNS = `
         t.ExchangeRateOverride,
         t.TransferID`;
 
+const SQLITE_BIND_CHUNK_SIZE = 500;
+
+function chunkValues<T>(values: T[]): T[][] {
+  const chunks: T[][] = [];
+  for (let index = 0; index < values.length; index += SQLITE_BIND_CHUNK_SIZE) {
+    chunks.push(values.slice(index, index + SQLITE_BIND_CHUNK_SIZE));
+  }
+  return chunks;
+}
+
 /**
  * Excludes transactions that have split rows (those are queried through their
  * splits instead). Expects `t` as the transactions alias; the subquery uses
@@ -579,60 +589,93 @@ export class TransactionQueries {
    * This is needed after updating transactions to ensure balance consistency
    */
   recalculateBalances(accountId: number): void {
-    // Get all transactions for the account ordered by date and ID
-    const transactions = allRows<{
-      ID: number;
-      InflowConverted: number;
-      OutflowConverted: number;
-      InflowNative: number;
-      OutflowNative: number;
-    }>(
-      this.db,
-      `
-      SELECT ID, InflowConverted, OutflowConverted, InflowNative, OutflowNative
-      FROM transactions 
-      WHERE AccountID = ?
-      ORDER BY Date ASC, ID ASC
-    `,
-      accountId
-    );
+    this.recalculateBalancesForAccounts([accountId]);
+  }
 
-    let runningBalance = 0;
-    let runningBalanceOriginal = 0;
+  /**
+   * Recalculate running and account balances for several accounts in set-based SQL.
+   */
+  recalculateBalancesForAccounts(accountIds: number[]): void {
+    const ids = [...new Set(accountIds.filter((id) => Number.isInteger(id) && id > 0))];
 
-    const updateStmt = this.db.prepare(`
-      UPDATE transactions 
-      SET RunningBalanceConverted = ?, RunningBalanceNative = ?
-      WHERE ID = ?
-    `);
+    for (const chunk of chunkValues(ids)) {
+      const placeholders = chunk.map(() => '?').join(', ');
 
-    for (const tx of transactions) {
-      runningBalance += (tx.InflowConverted ?? 0) - (tx.OutflowConverted ?? 0);
-      runningBalanceOriginal += (tx.InflowNative ?? 0) - (tx.OutflowNative ?? 0);
-      updateStmt.run(runningBalance, runningBalanceOriginal, tx.ID);
+      run(
+        this.db,
+        `
+        WITH balances AS MATERIALIZED (
+          SELECT
+            ID,
+            SUM(COALESCE(InflowConverted, 0) - COALESCE(OutflowConverted, 0)) OVER (
+              PARTITION BY AccountID
+              ORDER BY Date ASC, ID ASC
+              ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            ) AS RunningConverted,
+            SUM(COALESCE(InflowNative, 0) - COALESCE(OutflowNative, 0)) OVER (
+              PARTITION BY AccountID
+              ORDER BY Date ASC, ID ASC
+              ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            ) AS RunningNative
+          FROM transactions
+          WHERE AccountID IN (${placeholders})
+        )
+        UPDATE transactions
+        SET RunningBalanceConverted = balances.RunningConverted,
+            RunningBalanceNative = balances.RunningNative
+        FROM balances
+        WHERE transactions.ID = balances.ID
+      `,
+        ...chunk
+      );
+
+      run(
+        this.db,
+        `
+        UPDATE accounts
+        SET BalanceNative = COALESCE((
+              SELECT SUM(COALESCE(t.InflowNative, 0) - COALESCE(t.OutflowNative, 0))
+              FROM transactions t
+              WHERE t.AccountID = accounts.ID
+            ), 0),
+            BalanceConverted = COALESCE((
+              SELECT SUM(COALESCE(t.InflowConverted, 0) - COALESCE(t.OutflowConverted, 0))
+              FROM transactions t
+              WHERE t.AccountID = accounts.ID
+            ), 0) + COALESCE((
+              SELECT SUM(r.DeltaConverted)
+              FROM account_revaluations r
+              WHERE r.AccountID = accounts.ID
+            ), 0)
+        WHERE ID IN (${placeholders})
+      `,
+        ...chunk
+      );
     }
+  }
 
-    updateStmt.finalize();
+  getTransactionsByIDs(ids: number[]): Transaction[] {
+    const normalized = [...new Set(ids.filter((id) => Number.isInteger(id) && id > 0))];
+    return chunkValues(normalized).flatMap((chunk) => {
+      const placeholders = chunk.map(() => '?').join(', ');
+      return allRows<Transaction>(
+        this.db,
+        `SELECT * FROM transactions WHERE ID IN (${placeholders})`,
+        ...chunk
+      );
+    });
+  }
 
-    // BalanceConverted = Σ converted transactions + Σ journaled revaluation
-    // deltas — a full recompute must not wipe rate true-ups.
-    run(
-      this.db,
-      `
-      UPDATE accounts
-      SET BalanceNative = ?,
-          BalanceConverted = ? + (
-            SELECT COALESCE(SUM(DeltaConverted), 0)
-            FROM account_revaluations
-            WHERE AccountID = ?
-          )
-      WHERE ID = ?
-    `,
-      runningBalanceOriginal,
-      runningBalance,
-      accountId,
-      accountId
-    );
+  getTransactionsByTransferIDs(transferIds: string[]): Transaction[] {
+    const normalized = [...new Set(transferIds.filter(Boolean))];
+    return chunkValues(normalized).flatMap((chunk) => {
+      const placeholders = chunk.map(() => '?').join(', ');
+      return allRows<Transaction>(
+        this.db,
+        `SELECT * FROM transactions WHERE TransferID IN (${placeholders})`,
+        ...chunk
+      );
+    });
   }
 
   /**
@@ -648,6 +691,14 @@ export class TransactionQueries {
     `,
       id
     );
+  }
+
+  deleteTransactions(ids: number[]): void {
+    const normalized = [...new Set(ids.filter((id) => Number.isInteger(id) && id > 0))];
+    for (const chunk of chunkValues(normalized)) {
+      const placeholders = chunk.map(() => '?').join(', ');
+      run(this.db, `DELETE FROM transactions WHERE ID IN (${placeholders})`, ...chunk);
+    }
   }
 
   /**

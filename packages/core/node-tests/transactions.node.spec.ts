@@ -586,6 +586,55 @@ describe('Transactions (Node/sql.js)', () => {
       expect(() => services.transactions.getTransactionByID(txnId)).toThrow();
     });
 
+    it('should delete transactions and transfer counterparts in one batch', async () => {
+      const today = getLocalDateString();
+      const savings = await services.accounts.createAccount(
+        'Batch Savings',
+        budgetId,
+        'savings',
+        'USD',
+        2000
+      );
+      const transferId = 'batch-delete-transfer';
+      const checkingSide = await services.transactions.addTransaction(
+        0,
+        300,
+        accountId,
+        categoryId,
+        budgetId,
+        today,
+        'Transfer out',
+        transferId
+      );
+      const savingsSide = await services.transactions.addTransaction(
+        300,
+        0,
+        savings.ID,
+        categoryId,
+        budgetId,
+        today,
+        'Transfer in',
+        transferId
+      );
+      const retained = await services.transactions.addTransaction(
+        0,
+        125,
+        accountId,
+        categoryId,
+        budgetId,
+        today,
+        'Retained'
+      );
+
+      services.transactions.deleteTransactions([checkingSide]);
+
+      expect(() => services.transactions.getTransactionByID(checkingSide)).toThrow();
+      expect(() => services.transactions.getTransactionByID(savingsSide)).toThrow();
+      expect(services.transactions.getTransactionByID(retained).RunningBalanceNative).toBe(4875);
+      expect(services.accounts.getAccount(accountId).BalanceNative).toBe(4875);
+      expect(services.accounts.getAccount(savings.ID).BalanceNative).toBe(2000);
+    });
+
     it('should move transaction to new category', async () => {
       const today = getLocalDateString();
       const categoryGroupId = services.categories.addCategoryGroup('New Group', budgetId);

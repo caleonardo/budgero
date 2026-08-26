@@ -775,6 +775,39 @@ export class TransactionService {
   }
 
   /**
+   * Resolve selected transactions and any transfer counterparts that must be
+   * deleted with them. Exposed so mutation undo can capture the same set.
+   */
+  getTransactionsForDelete(ids: number[]): Transaction[] {
+    const selected = this.queries.getTransactionsByIDs(ids);
+    const transferIds = selected
+      .map((transaction) => transaction.TransferID)
+      .filter((transferId): transferId is string => Boolean(transferId));
+    const transferTransactions = this.queries.getTransactionsByTransferIDs(transferIds);
+
+    return [
+      ...new Map([...selected, ...transferTransactions].map((item) => [item.ID, item])).values(),
+    ];
+  }
+
+  /**
+   * Delete a selection atomically, expanding transfer pairs once and
+   * recalculating each affected account once.
+   */
+  deleteTransactions(ids: number[]): void {
+    const transactions = this.getTransactionsForDelete(ids);
+    if (transactions.length === 0) return;
+
+    const transactionIds = transactions.map((transaction) => transaction.ID);
+    const accountIds = [...new Set(transactions.map((transaction) => transaction.AccountID))];
+
+    this.db.transaction(() => {
+      this.queries.deleteTransactions(transactionIds);
+      this.queries.recalculateBalancesForAccounts(accountIds);
+    });
+  }
+
+  /**
    * MoveTransactionToNewAccount - Moves a transaction between accounts with balance recalculation
    * Note: This may require re-conversion if the new account has a different currency
    */

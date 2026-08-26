@@ -192,6 +192,57 @@ export const transactionOps = {
     },
   },
 
+  'transactions.deleteBatch': {
+    execute: async (args) => {
+      const ids = Array.isArray(args.ids) ? args.ids.map(Number) : [];
+      return await S().transactions!.deleteTransactions(ids);
+    },
+    invalidates: TX_WRITE_INVALIDATION_KEYS,
+    undo: {
+      capture: async (args) => {
+        const ids = Array.isArray(args.ids) ? args.ids.map(Number) : [];
+        return { snapshots: await S().transactions!.getTransactionsForDelete(ids) };
+      },
+      build: (_args, _result, before) => {
+        const beforeState = before as { snapshots?: TransactionSnapshot[] } | undefined;
+        const snapshots = beforeState?.snapshots || [];
+        if (!snapshots.length) return [];
+        return [
+          {
+            op: 'transactions.restoreBatch',
+            args: { snapshots: sortTransactionSnapshots(snapshots) },
+          },
+        ];
+      },
+    },
+  },
+
+  'transactions.restoreBatch': {
+    execute: async (args) => {
+      const snapshots = Array.isArray(args.snapshots)
+        ? sortTransactionSnapshots(args.snapshots as TransactionSnapshot[])
+        : [];
+
+      for (const snapshot of snapshots) {
+        const addArgs = transactionSnapshotToAddOp(snapshot).args;
+        await S().transactions!.addTransaction(
+          asMilli(Number(addArgs.inflow ?? 0)),
+          asMilli(Number(addArgs.outflow ?? 0)),
+          Number(addArgs.accountId),
+          Number(addArgs.categoryId),
+          Number(addArgs.budgetId),
+          String(addArgs.date ?? ''),
+          String(addArgs.memo ?? ''),
+          String(addArgs.transferId ?? ''),
+          String(addArgs.payee ?? ''),
+          addArgs.labelId == null ? null : Number(addArgs.labelId),
+          typeof addArgs.exchangeRateOverride === 'number' ? addArgs.exchangeRateOverride : null
+        );
+      }
+    },
+    invalidates: TX_WRITE_INVALIDATION_KEYS,
+  },
+
   // useMoveTransactionToNewCategory
   'transactions.moveToNewCategory': {
     execute: async (args) => {
