@@ -16,11 +16,32 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.11.1',
+    date: 'August 26, 2026',
+    summary:
+      'Split transactions now work correctly across currencies, alongside an Echo server security update.',
+    isLatest: true,
+    items: [
+      {
+        type: 'fixed',
+        title: 'Split transactions in foreign-currency accounts',
+        description:
+          "Split amounts now use the account's currency while editing and save both native and budget-converted values. Foreign-currency splits reconcile exactly, remain editable in either currency view, and no longer leave an unsplit parent transaction behind if saving fails.",
+      },
+      {
+        type: 'improved',
+        title: 'Echo server security update',
+        description:
+          'Updated the Echo server framework to patch the encoded-path-separator vulnerability in its static-file handling.',
+      },
+    ],
+  },
+  {
     version: 'v1.11.0',
     date: 'August 24, 2026',
     summary:
       'Category balances are visible while selecting categories, transfers can record the received amount, and archived accounts are included in reports.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
