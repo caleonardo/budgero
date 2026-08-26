@@ -215,9 +215,11 @@ export const TransactionRow = React.memo(function TransactionRow({
         <TableCell className="max-w-[200px]">
           <span className="px-2 text-xs xl:text-sm">{transaction.Payee}</span>
         </TableCell>
-        <TableCell className="max-w-[180px]">
-          <span className="px-2 text-xs text-muted-foreground">—</span>
-        </TableCell>
+        {showLabelColumn && (
+          <TableCell className="max-w-[180px]">
+            <span className="px-2 text-xs text-muted-foreground">—</span>
+          </TableCell>
+        )}
         <TableCell className="max-w-[240px]">
           <span className="px-2 text-xs xl:text-sm">{transaction.Category}</span>
         </TableCell>
