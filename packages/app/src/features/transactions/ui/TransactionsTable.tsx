@@ -241,29 +241,23 @@ export function TransactionsTable({
     handleSelectCategory,
   } = useTransactionSearch(categoryNames, labelNames, onDateRangeChange);
 
-  const { filteredData, paginatedData } = React.useMemo(() => {
-    const filtered = filterTransactions(
-      rawData,
-      parsedQuery,
-      showOnlyUncategorized,
-      getPrimaryInflow,
-      getPrimaryOutflow
-    );
+  const filteredData = React.useMemo(
+    () =>
+      filterTransactions(
+        rawData,
+        parsedQuery,
+        showOnlyUncategorized,
+        getPrimaryInflow,
+        getPrimaryOutflow
+      ),
+    [rawData, parsedQuery, showOnlyUncategorized, getPrimaryInflow, getPrimaryOutflow]
+  );
 
+  const paginatedData = React.useMemo(() => {
     const startIndex = page * pageSize;
     const endIndex = startIndex + pageSize;
-    const paginated = filtered.slice(startIndex, endIndex);
-
-    return { filteredData: filtered, paginatedData: paginated };
-  }, [
-    rawData,
-    parsedQuery,
-    page,
-    pageSize,
-    showOnlyUncategorized,
-    getPrimaryInflow,
-    getPrimaryOutflow,
-  ]);
+    return filteredData.slice(startIndex, endIndex);
+  }, [filteredData, page, pageSize]);
 
   // Report filtered stats to parent when filtered data changes
   const lastFilteredStatsRef = React.useRef<FilteredStats | null>(null);
@@ -293,6 +287,7 @@ export function TransactionsTable({
 
   // If a selectedTransactionId exists, automatically jump to the page that contains it
   React.useEffect(() => {
+    if (!isMobile) return;
     const raw = localStorage.getItem('selectedTransactionId');
     if (!raw) return;
     const id = parseInt(raw);
@@ -303,7 +298,7 @@ export function TransactionsTable({
       if (targetPage !== page) setPage(targetPage);
       // Once page aligns, let AccountPage handle the scroll/highlight removal
     }
-  }, [filteredData, page, pageSize]);
+  }, [filteredData, isMobile, page, pageSize]);
 
   // Calculate stats for current mobile page and notify parent
   const lastMobileStatsRef = React.useRef<{
@@ -463,8 +458,6 @@ export function TransactionsTable({
           <DesktopTransactionTable
             transactions={filteredData}
             rowSelection={rowSelection}
-            page={page}
-            pageSize={pageSize}
             isPending={updateTransactionColumnMutation.isPending}
             pendingId={updateTransactionColumnMutation.variables?.transactionId}
             accountLocalizer={accountLocalizer}
@@ -493,20 +486,7 @@ export function TransactionsTable({
             }
             editorDirectories={editorDirectories}
             budgetId={budgetId}
-            hasNextPage={hasNextPage}
-            hasPreviousPage={hasPreviousPage}
-            onNextPage={() => {
-              if (hasNextPage) {
-                setPage((p) => p + 1);
-              }
-            }}
-            onPreviousPage={() => {
-              if (hasPreviousPage) {
-                setPage((p) => Math.max(0, p - 1));
-              }
-            }}
-            currentPage={page}
-            totalPages={totalPages}
+            scrollResetKey={`${searchQuery}:${showOnlyUncategorized}`}
           />
         )}
       </div>

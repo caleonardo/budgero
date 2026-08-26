@@ -28,7 +28,7 @@ export const TransactionTableHeader = React.memo(function TransactionTableHeader
   onResize,
 }: TransactionTableHeaderProps) {
   return (
-    <TableHeader>
+    <TableHeader className="sticky top-0 z-20 bg-background shadow-[0_1px_0_hsl(var(--border))]">
       <TableRow>
         <TableHead style={{ width: columnWidths.checkbox }} className="relative group">
           <div className="flex items-center justify-center">

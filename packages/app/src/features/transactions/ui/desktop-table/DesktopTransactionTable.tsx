@@ -1,21 +1,19 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { Table } from '@shared/ui/table';
 import { TransactionTableHeader } from './TransactionTableHeader';
 import { TransactionTableBody } from './TransactionTableBody';
-import { TransactionTableFooter } from './TransactionTableFooter';
 import { SplitDetailsDialog } from './SplitDetailsDialog';
 import { useColumnResize } from './useColumnResize';
 import type {
   TransactionEditableColumn,
   TransactionEditorDirectories,
 } from './transaction-editor-types';
+import { useVirtualizedTransactionRows } from './useVirtualizedTransactionRows';
 
 export interface DesktopTransactionTableProps {
   transactions: GetTransactionsByAccountRow[];
   rowSelection: Record<string, boolean>;
-  page: number;
-  pageSize: number;
   isPending: boolean;
   pendingId?: number;
   accountLocalizer: Intl.NumberFormat;
@@ -48,19 +46,12 @@ export interface DesktopTransactionTableProps {
   showExchangeRateColumn?: boolean;
   editorDirectories: TransactionEditorDirectories;
   budgetId: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  onNextPage: () => void;
-  onPreviousPage: () => void;
-  currentPage: number;
-  totalPages: number;
+  scrollResetKey: string;
 }
 
 export function DesktopTransactionTable({
   transactions,
   rowSelection,
-  page,
-  pageSize,
   isPending,
   pendingId,
   accountLocalizer,
@@ -80,12 +71,7 @@ export function DesktopTransactionTable({
   showExchangeRateColumn = false,
   editorDirectories,
   budgetId,
-  hasNextPage,
-  hasPreviousPage,
-  onNextPage,
-  onPreviousPage,
-  currentPage,
-  totalPages,
+  scrollResetKey,
 }: DesktopTransactionTableProps) {
   const [splitDialogState, setSplitDialogState] = useState<{
     transaction: GetTransactionsByAccountRow;
@@ -111,35 +97,69 @@ export function DesktopTransactionTable({
     showLabelColumn
   );
 
-  const paginatedTransactions = useMemo(() => {
-    const startIndex = page * pageSize;
-    const endIndex = startIndex + pageSize;
-    return transactions.slice(startIndex, endIndex);
-  }, [transactions, page, pageSize]);
+  const {
+    viewportRef,
+    handleScroll,
+    scrollToIndex,
+    visibleItems,
+    startIndex,
+    topSpacerHeight,
+    bottomSpacerHeight,
+  } = useVirtualizedTransactionRows(transactions);
 
-  const pageTransactionIds = useMemo(
-    () => paginatedTransactions.map((transaction) => transaction.ID.toString()),
-    [paginatedTransactions]
+  const transactionIds = useMemo(
+    () => transactions.map((transaction) => transaction.ID.toString()),
+    [transactions]
   );
 
-  const selectedPageCount = useMemo(() => {
-    return pageTransactionIds.reduce(
+  const selectedCount = useMemo(() => {
+    return transactionIds.reduce(
       (count, id) => count + (rowSelection[id] || rowSelection[Number(id)] ? 1 : 0),
       0
     );
-  }, [pageTransactionIds, rowSelection]);
+  }, [transactionIds, rowSelection]);
 
-  const allPageRowsSelected =
-    pageTransactionIds.length > 0 && selectedPageCount === pageTransactionIds.length;
-  const somePageRowsSelected = selectedPageCount > 0 && !allPageRowsSelected;
+  const allRowsSelected = transactionIds.length > 0 && selectedCount === transactionIds.length;
+  const someRowsSelected = selectedCount > 0 && !allRowsSelected;
 
-  const handleToggleSelectPage = useCallback(
+  const handleToggleSelectAll = useCallback(
     (checked: boolean) => {
-      if (pageTransactionIds.length === 0) return;
-      onSelectionChange(pageTransactionIds[0], checked, pageTransactionIds);
+      if (transactionIds.length === 0) return;
+      onSelectionChange(transactionIds[0], checked, transactionIds);
     },
-    [onSelectionChange, pageTransactionIds]
+    [onSelectionChange, transactionIds]
   );
+
+  const handleViewportScroll = useCallback<React.UIEventHandler<HTMLDivElement>>(
+    (event) => {
+      handleDeactivateCell();
+      handleScroll(event);
+    },
+    [handleDeactivateCell, handleScroll]
+  );
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => scrollToIndex(0));
+    return () => cancelAnimationFrame(frame);
+  }, [scrollResetKey, scrollToIndex]);
+
+  useEffect(() => {
+    const rawId = localStorage.getItem('selectedTransactionId');
+    if (!rawId) return;
+    const selectedId = Number.parseInt(rawId, 10);
+    if (!Number.isFinite(selectedId)) return;
+    const index = transactions.findIndex((transaction) => transaction.ID === selectedId);
+    if (index < 0) return;
+    const frame = requestAnimationFrame(() => scrollToIndex(index));
+    return () => cancelAnimationFrame(frame);
+  }, [scrollToIndex, transactions]);
+
+  const columnCount =
+    8 +
+    (hideAccountColumn ? 0 : 1) +
+    (showLabelColumn ? 1 : 0) +
+    (showExchangeRateColumn ? 1 : 0) +
+    (showBalanceColumn ? 1 : 0);
 
   const handleSplitView = useCallback((transaction: GetTransactionsByAccountRow) => {
     setSplitDialogState({ transaction });
@@ -150,7 +170,7 @@ export function DesktopTransactionTable({
   }, []);
 
   // Empty state
-  if (paginatedTransactions.length === 0) {
+  if (transactions.length === 0) {
     return (
       <div className="hidden sm:flex flex-col items-center justify-center py-16 border rounded-md border-dashed text-muted-foreground">
         <p className="text-lg font-medium mb-2">No transactions found</p>
@@ -164,21 +184,31 @@ export function DesktopTransactionTable({
   return (
     <>
       <div className="hidden sm:flex flex-col gap-3">
-        <div className="rounded-md border bg-background overflow-x-auto">
-          <Table style={{ minWidth: totalWidth, tableLayout: 'fixed' }}>
+        <div className="overflow-hidden rounded-md border bg-background">
+          <Table
+            containerRef={viewportRef}
+            containerClassName="max-h-[70vh] overflow-auto overscroll-contain"
+            containerProps={{ onScroll: handleViewportScroll }}
+            style={{ minWidth: totalWidth, tableLayout: 'fixed' }}
+          >
             <TransactionTableHeader
               hideAccountColumn={hideAccountColumn}
               showBalanceColumn={showBalanceColumn}
               showLabelColumn={showLabelColumn}
               showExchangeRateColumn={showExchangeRateColumn}
-              allPageRowsSelected={allPageRowsSelected}
-              somePageRowsSelected={somePageRowsSelected}
-              onToggleSelectPage={handleToggleSelectPage}
+              allPageRowsSelected={allRowsSelected}
+              somePageRowsSelected={someRowsSelected}
+              onToggleSelectPage={handleToggleSelectAll}
               columnWidths={columnWidths}
               onResize={handleResize}
             />
             <TransactionTableBody
-              transactions={paginatedTransactions}
+              transactions={visibleItems}
+              selectionTransactions={transactions}
+              rowOffset={startIndex}
+              topSpacerHeight={topSpacerHeight}
+              bottomSpacerHeight={bottomSpacerHeight}
+              columnCount={columnCount}
               rowSelection={rowSelection}
               isPending={isPending}
               pendingId={pendingId}
@@ -207,15 +237,6 @@ export function DesktopTransactionTable({
             />
           </Table>
         </div>
-
-        <TransactionTableFooter
-          currentPage={currentPage}
-          totalPages={totalPages}
-          hasNextPage={hasNextPage}
-          hasPreviousPage={hasPreviousPage}
-          onNextPage={onNextPage}
-          onPreviousPage={onPreviousPage}
-        />
       </div>
 
       <SplitDetailsDialog

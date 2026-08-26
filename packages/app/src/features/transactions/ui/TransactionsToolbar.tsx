@@ -255,22 +255,24 @@ export function TransactionsToolbar({
           </Button>
         )}
 
-        {/* Page size selector */}
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs text-muted-foreground">Rows:</span>
-          <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-            <SelectTrigger size="sm" className="h-8 w-[84px] text-xs" aria-label="Rows per page">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PAGE_SIZE_OPTIONS.map((size) => (
-                <SelectItem key={size} value={String(size)} className="text-xs">
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Mobile cards retain paging; the desktop register is virtualized. */}
+        {isMobile && (
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">Rows:</span>
+            <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
+              <SelectTrigger size="sm" className="h-8 w-[84px] text-xs" aria-label="Rows per page">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <SelectItem key={size} value={String(size)} className="text-xs">
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         {/* Uncategorized filter toggle: only show on account page context and when any
             uncategorized exist (or the now-empty filter is still active and needs clearing) */}

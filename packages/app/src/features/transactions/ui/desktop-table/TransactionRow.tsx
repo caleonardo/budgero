@@ -245,7 +245,7 @@ export const TransactionRow = React.memo(function TransactionRow({
     const inflowValue = getPrimaryInflow(transaction) || 0;
     const outflowValue = getPrimaryOutflow(transaction) || 0;
     return (
-      <TableRow className="bg-primary/[0.04]">
+      <TableRow id={`transaction-${transaction.ID}`} className="h-16 bg-primary/[0.04]">
         <TableCell className="text-center">
           <div className="flex items-center justify-center">
             <Checkbox disabled aria-label="Projected transactions cannot be selected" />
@@ -307,7 +307,9 @@ export const TransactionRow = React.memo(function TransactionRow({
 
   return (
     <TableRow
+      id={`transaction-${transaction.ID}`}
       className={cn(
+        'h-16',
         isRowPending && 'opacity-70',
         isSelected && 'bg-primary/5 data-[state=selected]:bg-primary/5'
       )}

@@ -9,6 +9,11 @@ import type {
 
 interface TransactionTableBodyProps {
   transactions: GetTransactionsByAccountRow[];
+  selectionTransactions?: GetTransactionsByAccountRow[];
+  rowOffset?: number;
+  topSpacerHeight?: number;
+  bottomSpacerHeight?: number;
+  columnCount?: number;
   rowSelection: Record<string, boolean>;
   isPending: boolean;
   pendingId?: number;
@@ -47,6 +52,11 @@ interface TransactionTableBodyProps {
 
 export const TransactionTableBody = React.memo(function TransactionTableBody({
   transactions,
+  selectionTransactions = transactions,
+  rowOffset = 0,
+  topSpacerHeight = 0,
+  bottomSpacerHeight = 0,
+  columnCount = 1,
   rowSelection,
   isPending,
   pendingId,
@@ -99,7 +109,7 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
       if (isShift && lastSelectedIndexRef.current !== null) {
         const start = Math.min(lastSelectedIndexRef.current, rowIndex);
         const end = Math.max(lastSelectedIndexRef.current, rowIndex);
-        const rangeIds = transactions.slice(start, end + 1).map((t) => t.ID.toString());
+        const rangeIds = selectionTransactions.slice(start, end + 1).map((t) => t.ID.toString());
         onSelectionChange(idStr, shouldSelect, rangeIds, shouldReplaceWithRange);
       } else {
         onSelectionChange(idStr, shouldSelect, undefined, shouldReplaceSelection);
@@ -111,11 +121,18 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
         lastSelectedIndexRef.current = null;
       }
     },
-    [transactions, onSelectionChange]
+    [selectionTransactions, onSelectionChange]
   );
 
   return (
     <TableBody>
+      {topSpacerHeight > 0 && (
+        <tr aria-hidden="true">
+          <td colSpan={columnCount} style={{ height: topSpacerHeight, padding: 0, border: 0 }}>
+            <span className="sr-only">Rows above the visible area</span>
+          </td>
+        </tr>
+      )}
       {transactions.map((transaction, rowIndex) => {
         const idStr = transaction.ID.toString();
         const isSelected = Boolean(rowSelection[idStr]);
@@ -147,7 +164,7 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
             getSecondaryOutflow={getSecondaryOutflow}
             onCellCommit={onCellCommit}
             onCheckboxPointerDown={handleCheckboxPointerDown}
-            rowIndex={rowIndex}
+            rowIndex={rowOffset + rowIndex}
             onCheckboxChange={handleCheckboxChange}
             onSplitView={onSplitView}
             onSplitCreate={onSplitCreate}
@@ -156,6 +173,13 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
           />
         );
       })}
+      {bottomSpacerHeight > 0 && (
+        <tr aria-hidden="true">
+          <td colSpan={columnCount} style={{ height: bottomSpacerHeight, padding: 0, border: 0 }}>
+            <span className="sr-only">Rows below the visible area</span>
+          </td>
+        </tr>
+      )}
     </TableBody>
   );
 });
