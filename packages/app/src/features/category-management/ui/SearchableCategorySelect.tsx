@@ -355,12 +355,17 @@ export function SearchableCategorySelect({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              'w-[200px] justify-between',
+              'min-w-0 w-[200px] max-w-full justify-between overflow-hidden',
               !currentSelectedCategoryName && 'text-muted-foreground',
               triggerClassName
             )}
           >
-            <span className="truncate">{currentSelectedCategoryName || placeholder}</span>
+            <span
+              className="min-w-0 flex-1 truncate text-left"
+              title={currentSelectedCategoryName || placeholder}
+            >
+              {currentSelectedCategoryName || placeholder}
+            </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>

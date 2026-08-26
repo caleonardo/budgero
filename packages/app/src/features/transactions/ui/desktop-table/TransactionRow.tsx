@@ -328,7 +328,7 @@ export const TransactionRow = React.memo(function TransactionRow({
       )}
 
       {/* Category */}
-      <TableCell className="max-w-[240px]">
+      <TableCell className="max-w-[240px] overflow-hidden">
         {isSplitCategory ? (
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary">Split</Badge>
@@ -345,12 +345,12 @@ export const TransactionRow = React.memo(function TransactionRow({
             </Button>
           </div>
         ) : (
-          <div className="flex items-center gap-2">
-            <div className="flex-1 [&>div]:w-full text-xs xl:text-sm">
+          <div className="flex min-w-0 items-center gap-2 overflow-hidden">
+            <div className="min-w-0 flex-1 overflow-hidden text-xs [&>div]:min-w-0 [&>div]:w-full xl:text-sm">
               <CategorySelectCell
                 categoryID={transaction.CategoryID || 0}
                 onCommit={(newVal) => onCellCommit(transaction.ID, 'CategoryID', newVal)}
-                triggerClassName="h-8 w-full text-xs xl:text-sm px-2"
+                triggerClassName="h-8 min-w-0 w-full max-w-full overflow-hidden px-2 text-xs xl:text-sm"
               />
             </div>
             {hasAmount && !isTransfer && (
