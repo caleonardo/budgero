@@ -199,8 +199,13 @@ export const TransactionRow = React.memo(function TransactionRow({
         <TableCell>
           <span className="px-2 text-xs xl:text-sm text-muted-foreground">{transaction.Date}</span>
         </TableCell>
-        <TableCell className="max-w-[220px]">
-          <span className="px-2 text-xs xl:text-sm">{transaction.Memo}</span>
+        <TableCell className="max-w-[220px] overflow-hidden">
+          <span
+            className="block w-full truncate px-2 text-xs xl:text-sm"
+            title={transaction.Memo || undefined}
+          >
+            {transaction.Memo}
+          </span>
         </TableCell>
         {!hideAccountColumn && (
           <TableCell className="max-w-[200px]">
