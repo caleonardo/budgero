@@ -177,7 +177,7 @@ export function TransactionsTable({
     handleCellCommit,
     handleAddTransaction,
     selectedRowIds,
-  } = useTransactionTable(initialData);
+  } = useTransactionTable(initialData, transactionCurrencyDisplay);
 
   const selectedAccountIdForForm = preselectedAccountId ?? selectedAccount?.ID;
   const budgetId = selectedAccount?.BudgetID || selectedBudget?.ID || 0;

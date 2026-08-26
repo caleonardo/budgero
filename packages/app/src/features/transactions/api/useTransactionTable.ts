@@ -5,7 +5,10 @@ import { type TransactionColumnName as DbTransactionColumn } from '@entities/tra
 import { useTransactionCellCommit } from './useTransactionCellCommit';
 import { useAddTransactionHandler } from './useAddTransactionHandler';
 
-export function useTransactionTable(initialData: GetTransactionsByAccountRow[]) {
+export function useTransactionTable(
+  initialData: GetTransactionsByAccountRow[],
+  transactionCurrencyDisplay: 'budget' | 'account'
+) {
   const [data, setData] = React.useState<GetTransactionsByAccountRow[]>(() => initialData);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [rowSelection, setRowSelection] = React.useState<Record<number, boolean>>({});
@@ -14,8 +17,6 @@ export function useTransactionTable(initialData: GetTransactionsByAccountRow[]) 
   const selectedAccount = useUiStore((state) => state.selectedAccount);
   const accountLocalizer = useUiStore((state) => state.accountLocalizer);
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
-  const transactionCurrencyDisplay = useUiStore((state) => state.transactionCurrencyDisplay);
-
   // Shared add-transaction logic (same hook used by mobile layouts)
   const { handleAddTransaction, addTransactionMutation } = useAddTransactionHandler({
     onDialogClose: useCallback(() => setOpenDialog(false), []),
