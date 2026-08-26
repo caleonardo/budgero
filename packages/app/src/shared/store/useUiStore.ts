@@ -7,7 +7,10 @@ import { subDays } from 'date-fns';
 import { persistUserPreferencesPatch } from '@shared/lib/user-preferences-sync';
 import { getMonthKey } from '@shared/lib/date-utils';
 
-function buildCurrencyLocalizer(currency: string, number_format: string): Intl.NumberFormat | null {
+export function buildCurrencyLocalizer(
+  currency: string,
+  number_format: string
+): Intl.NumberFormat | null {
   const settings = getFormatOptionFromLabel(number_format);
   if (!settings) {
     return null;

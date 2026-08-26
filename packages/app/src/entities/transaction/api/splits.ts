@@ -14,6 +14,8 @@ import type { TransactionSplit } from '@budgero/core/browser';
 export type UpsertSplitsInput = {
   transactionId: number;
   type: 'inflow' | 'outflow';
+  /** Currency represented by `splits[].amount`. Defaults to budget currency. */
+  amountCurrency?: 'converted' | 'native';
   splits: {
     category_id?: number | null;
     transfer_account_id?: number | null;
@@ -26,16 +28,16 @@ export type UpsertSplitsInput = {
 export function useUpsertSplits() {
   const runtime = useRuntime();
   return useMutation<void, Error, UpsertSplitsInput>({
-    mutationFn: async ({ transactionId, splits, type }) => {
+    mutationFn: async ({ transactionId, splits, type, amountCurrency = 'converted' }) => {
       // Convert positive amount to inflow/outflow shape expected by backend
       const prepared = splits.map((s, idx) => ({
         category_id: s.category_id ?? null,
         transfer_account_id: s.transfer_account_id ?? null,
         memo: s.memo ?? '',
-        inflow: type === 'inflow' ? s.amount : 0,
-        outflow: type === 'outflow' ? s.amount : 0,
-        inflow_original: null,
-        outflow_original: null,
+        inflow: amountCurrency === 'converted' && type === 'inflow' ? s.amount : 0,
+        outflow: amountCurrency === 'converted' && type === 'outflow' ? s.amount : 0,
+        inflow_original: amountCurrency === 'native' && type === 'inflow' ? s.amount : null,
+        outflow_original: amountCurrency === 'native' && type === 'outflow' ? s.amount : null,
         order_index: s.order_index ?? idx,
       }));
       await executeSpaceMutation<void>(runtime, {

@@ -30,6 +30,11 @@ import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { asMilli } from '@shared/lib/currency/milli';
 import { withEditPrecision } from '@shared/lib/number-format';
 import type { SplitLine } from './useMobileTransactionCardState';
+import {
+  extractSplitAmount,
+  isSplitIncomeAmount,
+  type SplitLike,
+} from '../desktop-table/table-utils';
 
 /** Combined split type supporting both TransactionSplit and SplitLine properties */
 interface SplitDisplayItem {
@@ -48,8 +53,10 @@ interface SplitDisplayItem {
   amount?: number;
   inflow?: number;
   InflowConverted?: number;
+  InflowNative?: number | null;
   outflow?: number;
   OutflowConverted?: number;
+  OutflowNative?: number | null;
 }
 
 interface TransactionCardDetailsProps {
@@ -439,11 +446,10 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                           <CalculatorCell
                             value={asMilli(
                               s.amount ??
-                                s.inflow ??
-                                s.InflowConverted ??
-                                s.outflow ??
-                                s.OutflowConverted ??
-                                0
+                                extractSplitAmount(
+                                  s as SplitLike,
+                                  transactionCurrencyDisplay === 'account' ? 'native' : 'converted'
+                                )
                             )}
                             onCommit={(val) => onUpdateSplitLine(idx, { amount: val })}
                             formatter={(val) => editFormatter.format(val)}
@@ -457,10 +463,14 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                           />
                         ) : (
                           (() => {
-                            const outflowAmount = s.outflow ?? s.OutflowConverted ?? 0;
-                            const inflowAmount = s.inflow ?? s.InflowConverted ?? 0;
-                            const isOutflow = outflowAmount > 0 && outflowAmount >= inflowAmount;
-                            const absoluteAmount = isOutflow ? outflowAmount : inflowAmount;
+                            const isOutflow = !isSplitIncomeAmount(
+                              s as SplitLike,
+                              getPrimaryInflow(transaction) > 0
+                            );
+                            const absoluteAmount = extractSplitAmount(
+                              s as SplitLike,
+                              transactionCurrencyDisplay === 'account' ? 'native' : 'converted'
+                            );
                             const symbol = isOutflow ? '-' : '+';
                             const amountClass = isOutflow ? 'text-destructive' : 'text-success';
                             return (

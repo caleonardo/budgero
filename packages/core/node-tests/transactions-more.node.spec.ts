@@ -310,6 +310,72 @@ describe('Transactions (additional coverage)', () => {
     expect(mirrors.c).toBe(1);
   });
 
+  it('stores account-currency split lines and reconciles their converted values exactly', async () => {
+    const adapter: DatabaseAdapter = await NodeSqlJsAdapter.create();
+    const sm = new ServiceManager();
+    await sm.initialize(adapter);
+    const services: Services = sm.getServices();
+
+    const budgetId = await services.budgets.createBudget({
+      name: 'Multi-currency splits',
+      display_currency: 'USD',
+      badge_icon: 'dollar',
+      number_format: '123,456.78',
+      create_default_categories: true,
+    });
+    const account = await services.accounts.createAccount(
+      'Euro account',
+      budgetId,
+      'checking',
+      'EUR',
+      0
+    );
+    const category = services.categories
+      .getAllCategories(budgetId)
+      .find((candidate: Category) => candidate.Name !== 'Income')!;
+    const date = '2024-02-06';
+    await services.currency.saveRate('EUR', 'USD', 1.333, date, budgetId);
+
+    const parentId = await services.transactions.addTransaction(
+      0,
+      100_001,
+      account.ID,
+      category.ID,
+      budgetId,
+      date,
+      'Foreign split'
+    );
+
+    await services.splits.upsertSplits(parentId, [
+      {
+        CategoryID: category.ID,
+        Memo: 'First',
+        InflowConverted: 0,
+        OutflowConverted: 0,
+        InflowNative: null,
+        OutflowNative: 50_000,
+        OrderIndex: 0,
+      },
+      {
+        CategoryID: category.ID,
+        Memo: 'Second',
+        InflowConverted: 0,
+        OutflowConverted: 0,
+        InflowNative: null,
+        OutflowNative: 50_001,
+        OrderIndex: 1,
+      },
+    ]);
+
+    const parent = services.transactions.getTransactionByID(parentId);
+    const stored = services.splits.getSplits(parentId);
+    expect(stored.map((split) => split.OutflowNative)).toEqual([50_000, 50_001]);
+    expect(stored.reduce((sum, split) => sum + split.OutflowConverted, 0)).toBe(
+      parent.OutflowConverted
+    );
+    expect(stored.every((split) => split.OutflowConverted > 0)).toBe(true);
+  });
+
   it('getAllTransactionsAnalytics expands split parents into split lines', async () => {
     const adapter: DatabaseAdapter = await NodeSqlJsAdapter.create();
     const sm = new ServiceManager();

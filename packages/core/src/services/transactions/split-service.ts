@@ -46,11 +46,61 @@ export class SplitService {
       throw new Error('Transfer transactions cannot be split.');
     }
 
-    // Compute parent net in account currency
+    // Converted values drive budgeting and are therefore the reconciliation
+    // anchor. Editors working in an account register may instead submit native
+    // values; project those onto the parent's exact stored conversion so line
+    // rounding can never make an otherwise balanced split fail.
     const parentNet = (parent.InflowConverted || 0) - (parent.OutflowConverted || 0);
+    const parentNativeNet =
+      (parent.InflowNative ?? parent.InflowConverted ?? 0) -
+      (parent.OutflowNative ?? parent.OutflowConverted ?? 0);
+    let preparedSplits = splits.map((split) => ({ ...split }));
+    const hasNativeAmounts =
+      preparedSplits.length > 0 &&
+      preparedSplits.every((split) => split.InflowNative != null || split.OutflowNative != null);
+
+    if (hasNativeAmounts) {
+      const nativeNets = preparedSplits.map(
+        (split) => (split.InflowNative ?? 0) - (split.OutflowNative ?? 0)
+      );
+      const splitsNativeNet = nativeNets.reduce((sum, amount) => sum + amount, 0);
+
+      if (splitsNativeNet !== parentNativeNet) {
+        throw new Error(
+          `Split amounts must sum to parent total. Remaining: ${toDecimal(asMilli(parentNativeNet - splitsNativeNet))}`
+        );
+      }
+
+      if (parentNativeNet !== 0) {
+        const convertedNets = nativeNets.map((amount) =>
+          Math.round((amount * parentNet) / parentNativeNet)
+        );
+        const convertedTotal = convertedNets.reduce((sum, amount) => sum + amount, 0);
+        const remainder = parentNet - convertedTotal;
+
+        if (remainder !== 0) {
+          let remainderIndex = 0;
+          for (let index = 1; index < nativeNets.length; index++) {
+            if (Math.abs(nativeNets[index]) > Math.abs(nativeNets[remainderIndex])) {
+              remainderIndex = index;
+            }
+          }
+          convertedNets[remainderIndex] += remainder;
+        }
+
+        preparedSplits = preparedSplits.map((split, index) => {
+          const convertedNet = asMilli(convertedNets[index]);
+          return {
+            ...split,
+            InflowConverted: convertedNet > 0 ? convertedNet : ZERO_MILLI,
+            OutflowConverted: convertedNet < 0 ? asMilli(-Number(convertedNet)) : ZERO_MILLI,
+          };
+        });
+      }
+    }
 
     let splitsNet = 0;
-    for (const s of splits) {
+    for (const s of preparedSplits) {
       // Basic validation: exactly one of CategoryID or TransferAccountID may be set
       const hasCat = s.CategoryID != null && s.CategoryID !== undefined;
       const hasTransfer = s.TransferAccountID != null && s.TransferAccountID !== undefined;
@@ -67,6 +117,39 @@ export class SplitService {
       throw new Error(
         `Split amounts must sum to parent total. Remaining: ${toDecimal(asMilli(parentNet - splitsNet))}`
       );
+    }
+
+    // Budget-currency editors use the inverse projection so every newly saved
+    // split set has both representations, including rows created by older UI
+    // paths that only knew about converted amounts.
+    if (!hasNativeAmounts && parentNet !== 0) {
+      const convertedNets = preparedSplits.map(
+        (split) => (split.InflowConverted ?? 0) - (split.OutflowConverted ?? 0)
+      );
+      const nativeNets = convertedNets.map((amount) =>
+        Math.round((amount * parentNativeNet) / parentNet)
+      );
+      const nativeTotal = nativeNets.reduce((sum, amount) => sum + amount, 0);
+      const remainder = parentNativeNet - nativeTotal;
+
+      if (remainder !== 0) {
+        let remainderIndex = 0;
+        for (let index = 1; index < convertedNets.length; index++) {
+          if (Math.abs(convertedNets[index]) > Math.abs(convertedNets[remainderIndex])) {
+            remainderIndex = index;
+          }
+        }
+        nativeNets[remainderIndex] += remainder;
+      }
+
+      preparedSplits = preparedSplits.map((split, index) => {
+        const nativeNet = asMilli(nativeNets[index]);
+        return {
+          ...split,
+          InflowNative: nativeNet > 0 ? nativeNet : ZERO_MILLI,
+          OutflowNative: nativeNet < 0 ? asMilli(-Number(nativeNet)) : ZERO_MILLI,
+        };
+      });
     }
 
     // Upsert atomically: delete old, insert new
@@ -87,7 +170,7 @@ export class SplitService {
     const preparedMirrors: PreparedMirror[] = [];
 
     if (sourceAcc && budget) {
-      for (const s of splits) {
+      for (const s of preparedSplits) {
         if (!s.TransferAccountID) continue;
 
         const targetAccount = getRow<{ ID: number; Currency: string }>(
@@ -141,7 +224,7 @@ export class SplitService {
       // 1) Replace existing splits
       this.queries.deleteSplitsForTransaction(transactionId);
       let orderIndex = 0;
-      for (const s of splits) {
+      for (const s of preparedSplits) {
         const row: Omit<TransactionSplit, 'ID'> = {
           TransactionID: transactionId,
           CategoryID: s.CategoryID ?? null,

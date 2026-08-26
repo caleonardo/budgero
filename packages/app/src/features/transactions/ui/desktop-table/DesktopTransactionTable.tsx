@@ -200,8 +200,8 @@ export function DesktopTransactionTable({
         transaction={splitDialogState?.transaction ?? null}
         startInEditMode={Boolean(splitDialogState?.startEditing)}
         onClose={() => setSplitDialogState(null)}
-        globalLocalizer={globalLocalizer}
         currentFormatter={currentFormatter}
+        transactionCurrencyDisplay={transactionCurrencyDisplay}
         getPrimaryInflow={getPrimaryInflow}
         getPrimaryOutflow={getPrimaryOutflow}
         budgetId={budgetId}

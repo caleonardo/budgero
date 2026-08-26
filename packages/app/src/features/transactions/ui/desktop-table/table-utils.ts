@@ -19,10 +19,21 @@ export type SplitLike =
 /**
  * Extract amount from a split, handling both camelCase and PascalCase properties
  */
-export const extractSplitAmount = (split: SplitLike): number => {
+export const extractSplitAmount = (
+  split: SplitLike,
+  amountCurrency: 'converted' | 'native' = 'converted'
+): number => {
   const s = split as Record<string, unknown>;
-  const outflow = Number(s.outflow ?? s.OutflowConverted ?? 0);
-  const inflow = Number(s.inflow ?? s.InflowConverted ?? 0);
+  const outflow = Number(
+    amountCurrency === 'native'
+      ? (s.OutflowNative ?? s.outflow_original ?? s.outflow ?? s.OutflowConverted ?? 0)
+      : (s.outflow ?? s.OutflowConverted ?? 0)
+  );
+  const inflow = Number(
+    amountCurrency === 'native'
+      ? (s.InflowNative ?? s.inflow_original ?? s.inflow ?? s.InflowConverted ?? 0)
+      : (s.inflow ?? s.InflowConverted ?? 0)
+  );
   if (outflow !== 0) return Math.abs(outflow);
   if (inflow !== 0) return Math.abs(inflow);
   return Math.abs(Number(s.amount ?? s.Amount ?? 0));
@@ -33,7 +44,8 @@ export const extractSplitAmount = (split: SplitLike): number => {
  */
 export const toEditableSplit = (
   split: SplitLike,
-  idx: number
+  idx: number,
+  amountCurrency: 'converted' | 'native' = 'converted'
 ): {
   id: string;
   category_id: number | null;
@@ -47,7 +59,7 @@ export const toEditableSplit = (
     category_id: (s.category_id ?? s.CategoryID ?? null) as number | null,
     transfer_account_id: (s.transfer_account_id ?? s.TransferAccountID ?? null) as number | null,
     memo: String(s.memo ?? s.Memo ?? ''),
-    amount: extractSplitAmount(split),
+    amount: extractSplitAmount(split, amountCurrency),
   };
 };
 

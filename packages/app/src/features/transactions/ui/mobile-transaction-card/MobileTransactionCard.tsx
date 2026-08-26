@@ -110,6 +110,7 @@ export const MobileTransactionCard = React.memo(function MobileTransactionCard({
     getPrimaryOutflow,
     forceExpand,
     forceLoadSplits,
+    amountCurrency: transactionCurrencyDisplay === 'account' ? 'native' : 'converted',
   });
 
   const isCurrentlyPending = isPending && pendingId === transaction.ID;

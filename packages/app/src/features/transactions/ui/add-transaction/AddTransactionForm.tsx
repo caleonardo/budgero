@@ -69,6 +69,7 @@ export function AddTransactionForm({
     canUseCurrencyApi,
     selectedBudget,
     globalLocalizer,
+    splitLocalizer,
     autofillAppliedFields,
     payeeCategoryApplied,
     payeeCategorySource,
@@ -278,7 +279,7 @@ export function AddTransactionForm({
         onSplitLinesChange={setSplitLines}
         remaining={remaining}
         parentAmount={parentSigned}
-        formatter={globalLocalizer}
+        formatter={splitLocalizer}
       />
 
       <TransactionFormActions

@@ -36,8 +36,8 @@ interface SplitDetailsDialogProps {
   transaction: GetTransactionsByAccountRow | null;
   startInEditMode?: boolean;
   onClose: () => void;
-  globalLocalizer: Intl.NumberFormat;
   currentFormatter: Intl.NumberFormat;
+  transactionCurrencyDisplay: 'budget' | 'account';
   getPrimaryInflow: (transaction: GetTransactionsByAccountRow) => number;
   getPrimaryOutflow: (transaction: GetTransactionsByAccountRow) => number;
   budgetId: number;
@@ -47,8 +47,8 @@ export function SplitDetailsDialog({
   transaction,
   startInEditMode = false,
   onClose,
-  globalLocalizer,
   currentFormatter,
+  transactionCurrencyDisplay,
   getPrimaryInflow,
   getPrimaryOutflow,
   budgetId,
@@ -56,8 +56,8 @@ export function SplitDetailsDialog({
   const open = Boolean(transaction);
   const transactionId = transaction ? transaction.ID : null;
   // Edit surfaces must show real cents even under a zero-decimal display format.
-  const editGlobalLocalizer = withEditPrecision(globalLocalizer);
   const editFormatter = withEditPrecision(currentFormatter);
+  const amountCurrency = transactionCurrencyDisplay === 'account' ? 'native' : 'converted';
   const { data: splits = [], isLoading } = useTransactionSplits(transactionId);
   const upsertSplits = useUpsertSplits();
   const clearSplits = useClearSplits();
@@ -98,11 +98,11 @@ export function SplitDetailsDialog({
       if (splits.length > 0) {
         setEditSplits(
           splits.map((split, idx) => {
-            const editable = toEditableSplit(split as SplitLike, idx);
+            const editable = toEditableSplit(split as SplitLike, idx, amountCurrency);
             return {
               ...editable,
               id: editable.id || createLineId(),
-              amount: extractSplitAmount(split as SplitLike),
+              amount: extractSplitAmount(split as SplitLike, amountCurrency),
             };
           })
         );
@@ -112,7 +112,16 @@ export function SplitDetailsDialog({
       hasBootstrappedEdit.current = true;
     });
     return () => cancelAnimationFrame(id);
-  }, [open, transaction, startInEditMode, editSplits, splits, isLoading, createLineId]);
+  }, [
+    open,
+    transaction,
+    startInEditMode,
+    editSplits,
+    splits,
+    isLoading,
+    createLineId,
+    amountCurrency,
+  ]);
 
   const totalAmount = useMemo(() => {
     if (!transaction) return 0;
@@ -128,7 +137,7 @@ export function SplitDetailsDialog({
   const formatSplitAmount = (split: SplitLike | null | undefined) => {
     if (!split || typeof split !== 'object') return currentFormatter.format(0);
     // Split amounts are stored milliunits.
-    const value = extractSplitAmount(split);
+    const value = extractSplitAmount(split, amountCurrency);
     const prefix = value === 0 ? '' : isSplitIncomeAmount(split, isIncome) ? '+' : '-';
     return `${prefix}${formatMilli(currentFormatter, asMilli(value))}`;
   };
@@ -157,11 +166,11 @@ export function SplitDetailsDialog({
     setEditTotal(null);
     setEditSplits(
       (splits.length ? splits : []).map((split, idx) => {
-        const editable = toEditableSplit(split as SplitLike, idx);
+        const editable = toEditableSplit(split as SplitLike, idx, amountCurrency);
         return {
           ...editable,
           id: editable.id || createLineId(),
-          amount: extractSplitAmount(split as SplitLike),
+          amount: extractSplitAmount(split as SplitLike, amountCurrency),
         };
       })
     );
@@ -210,12 +219,23 @@ export function SplitDetailsDialog({
     // first — the splits service requires splits to sum to the parent total.
     // Both sides are exact integer milliunits.
     const currentParentAmount = isIncome
-      ? transaction.InflowConverted || 0
-      : transaction.OutflowConverted || 0;
+      ? amountCurrency === 'native'
+        ? (transaction.InflowNative ?? transaction.InflowConverted ?? 0)
+        : transaction.InflowConverted || 0
+      : amountCurrency === 'native'
+        ? (transaction.OutflowNative ?? transaction.OutflowConverted ?? 0)
+        : transaction.OutflowConverted || 0;
     if (targetTotal !== currentParentAmount) {
       await updateTransactionColumn.mutateAsync({
         transactionId: transaction.ID,
-        column: isIncome ? 'InflowConverted' : 'OutflowConverted',
+        column:
+          amountCurrency === 'native'
+            ? isIncome
+              ? 'InflowNative'
+              : 'OutflowNative'
+            : isIncome
+              ? 'InflowConverted'
+              : 'OutflowConverted',
         value: targetTotal,
         accountId:
           (transaction as GetTransactionsByAccountRow & { AccountID?: number }).AccountID ?? 0,
@@ -234,6 +254,7 @@ export function SplitDetailsDialog({
       transactionId: transaction.ID,
       splits: prepared,
       type,
+      amountCurrency,
     });
     setEditSplits(null);
     setEditTotal(null);
@@ -269,8 +290,8 @@ export function SplitDetailsDialog({
                     <CalculatorCell
                       value={asMilli(targetTotal)}
                       onCommit={(val) => setEditTotal(Math.abs(val) || 0)}
-                      formatter={(val) => editGlobalLocalizer.format(val)}
-                      localizer={globalLocalizer}
+                      formatter={(val) => editFormatter.format(val)}
+                      localizer={currentFormatter}
                       inputAlign="left"
                       placeholder="0.00"
                       className="min-w-[120px]"
@@ -283,7 +304,7 @@ export function SplitDetailsDialog({
                     className={cn('font-semibold', isIncome ? 'text-green-600' : 'text-red-600')}
                   >
                     {isIncome ? '+' : '-'}
-                    {formatMilli(globalLocalizer, asMilli(parentTotal))}
+                    {formatMilli(currentFormatter, asMilli(parentTotal))}
                   </div>
                 )}
               </div>
@@ -317,14 +338,14 @@ export function SplitDetailsDialog({
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-xs text-primary">
                 <span>
                   {remaining >= 0 ? 'Remaining' : 'Over by'}{' '}
-                  <strong>{formatMilli(editGlobalLocalizer, asMilli(Math.abs(remaining)))}</strong>
+                  <strong>{formatMilli(editFormatter, asMilli(Math.abs(remaining)))}</strong>
                 </span>
                 <span>
                   Total:{' '}
                   <strong className={remaining === 0 ? 'text-green-600' : 'text-red-600'}>
-                    {formatMilli(editGlobalLocalizer, asMilli(draftTotal))}
+                    {formatMilli(editFormatter, asMilli(draftTotal))}
                   </strong>{' '}
-                  / {formatMilli(editGlobalLocalizer, asMilli(targetTotal))}
+                  / {formatMilli(editFormatter, asMilli(targetTotal))}
                 </span>
               </div>
             )}
@@ -481,7 +502,7 @@ export function SplitDetailsDialog({
                   Add split line
                 </Button>
                 <span className="text-xs text-muted-foreground">
-                  Splits must total {formatMilli(editGlobalLocalizer, asMilli(targetTotal))}.
+                  Splits must total {formatMilli(editFormatter, asMilli(targetTotal))}.
                 </span>
               </div>
             )}

@@ -6,6 +6,7 @@ import {
   useClearSplits,
   useUpdateTransactionColumn,
 } from '@entities/transaction/api/useTransactions';
+import { extractSplitAmount } from '../desktop-table/table-utils';
 
 export interface SplitLine {
   id?: number;
@@ -22,6 +23,7 @@ interface UseMobileTransactionCardStateProps {
   getPrimaryOutflow: (transaction: GetTransactionsByAccountRow) => number;
   forceExpand?: boolean;
   forceLoadSplits?: boolean;
+  amountCurrency: 'converted' | 'native';
 }
 
 export function useMobileTransactionCardState({
@@ -30,6 +32,7 @@ export function useMobileTransactionCardState({
   getPrimaryOutflow,
   forceExpand = false,
   forceLoadSplits = false,
+  amountCurrency,
 }: UseMobileTransactionCardStateProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [editSplits, setEditSplits] = useState<SplitLine[] | null>(null);
@@ -60,14 +63,13 @@ export function useMobileTransactionCardState({
     // If we have splits loaded, calculate total from them (more accurate)
     if (splits.length > 0) {
       return splits.reduce((sum, s) => {
-        const val = s.InflowConverted > 0 ? s.InflowConverted : s.OutflowConverted;
-        return sum + (Number(val) || 0);
+        return sum + extractSplitAmount(s, amountCurrency);
       }, 0);
     }
     return getPrimaryInflow(transaction) > 0
       ? getPrimaryInflow(transaction)
       : getPrimaryOutflow(transaction);
-  }, [splits, transaction, getPrimaryInflow, getPrimaryOutflow]);
+  }, [splits, transaction, getPrimaryInflow, getPrimaryOutflow, amountCurrency]);
 
   // The total the splits must add up to — editable while in edit mode
   const splitTarget = editTotal ?? parentSplitTarget;
@@ -116,7 +118,7 @@ export function useMobileTransactionCardState({
         category_id: s.CategoryID ?? null,
         transfer_account_id: s.TransferAccountID ?? null,
         memo: s.Memo ?? '',
-        amount: s.InflowConverted > 0 ? s.InflowConverted : s.OutflowConverted,
+        amount: extractSplitAmount(s, amountCurrency),
       }))
     );
   };
@@ -171,12 +173,23 @@ export function useMobileTransactionCardState({
     // The parent transaction's inflow/outflow must match the split total for backend validation.
     // Both sides are exact integer milliunits.
     const currentParentAmount = isInflowType
-      ? transaction.InflowConverted || 0
-      : transaction.OutflowConverted || 0;
+      ? amountCurrency === 'native'
+        ? (transaction.InflowNative ?? transaction.InflowConverted ?? 0)
+        : transaction.InflowConverted || 0
+      : amountCurrency === 'native'
+        ? (transaction.OutflowNative ?? transaction.OutflowConverted ?? 0)
+        : transaction.OutflowConverted || 0;
 
     if (currentParentAmount !== newTotal) {
       // Update parent transaction amount before saving splits
-      const column = isInflowType ? 'InflowConverted' : 'OutflowConverted';
+      const column =
+        amountCurrency === 'native'
+          ? isInflowType
+            ? 'InflowNative'
+            : 'OutflowNative'
+          : isInflowType
+            ? 'InflowConverted'
+            : 'OutflowConverted';
       await updateTransactionColumn.mutateAsync({
         transactionId: transaction.ID,
         column,
@@ -190,6 +203,7 @@ export function useMobileTransactionCardState({
       transactionId: transaction.ID,
       splits: prepared,
       type: type as 'inflow' | 'outflow',
+      amountCurrency,
     });
     setEditTotal(null);
     setEditSplits(null);
@@ -201,11 +215,10 @@ export function useMobileTransactionCardState({
       return splitTarget - total;
     }
     const total = splits.reduce((s, l) => {
-      const val = l.InflowConverted > 0 ? l.InflowConverted : l.OutflowConverted;
-      return s + (Number(val) || 0);
+      return s + extractSplitAmount(l, amountCurrency);
     }, 0);
     return parentSplitTarget - total;
-  }, [editSplits, splits, parentSplitTarget, splitTarget]);
+  }, [editSplits, splits, parentSplitTarget, splitTarget, amountCurrency]);
 
   return {
     // Expansion state

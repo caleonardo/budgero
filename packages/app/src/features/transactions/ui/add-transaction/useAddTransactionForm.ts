@@ -11,9 +11,9 @@ import { toast } from 'sonner';
 import { useConnectivity } from '@shared/hooks/useConnectivity';
 import { useTransactionForm } from '@features/transactions/api/useTransactionForm';
 import { getExchangeRate, getLocalOrManualRate } from '@entities/currency/lib/currency-utils';
-import { useUiStore } from '@shared/store/useUiStore';
+import { buildCurrencyLocalizer, useUiStore } from '@shared/store/useUiStore';
 import { useCategories } from '@entities/category/api/useCategories';
-import { useUpsertSplits } from '@entities/transaction/api/useTransactions';
+import { useDeleteTransaction, useUpsertSplits } from '@entities/transaction/api/useTransactions';
 import { useActiveAccounts } from '@entities/account/api/useActiveAccounts';
 import { asMilli, convertScaled } from '@budgero/core/browser';
 import { useAutofillIntegration } from './useAutofillIntegration';
@@ -57,6 +57,7 @@ export function useAddTransactionForm({
   onCancel,
 }: UseAddTransactionFormOptions) {
   const upsertSplits = useUpsertSplits();
+  const deleteTransaction = useDeleteTransaction();
   const form = useTransactionForm({ selectedAccountId });
 
   // Destructure setters for use in effects (stable references)
@@ -106,6 +107,13 @@ export function useAddTransactionForm({
   // legacy account has an empty Currency — fall back to the budget's display
   // currency, never a hardcoded USD.
   const currencyCode = selectedAccount?.Currency || selectedBudget?.DisplayCurrency || 'USD';
+  const splitLocalizer = React.useMemo(
+    () =>
+      (selectedBudget?.NumberFormat
+        ? buildCurrencyLocalizer(currencyCode, selectedBudget.NumberFormat)
+        : null) ?? globalLocalizer,
+    [currencyCode, globalLocalizer, selectedBudget?.NumberFormat]
+  );
 
   const needsCurrencyConversion = React.useMemo(() => {
     if (!form.isTransfer) return false;
@@ -555,19 +563,6 @@ export function useAddTransactionForm({
       }
 
       const accountId = parseInt(form.selectedFromAccount);
-      const transactionId = await onAddTransaction(
-        form.transactionDate,
-        finalCategory,
-        form.memo,
-        form.payee,
-        outflow,
-        inflow,
-        accountId,
-        form.selectedLabelId,
-        null,
-        addAnother
-      );
-
       const uncategorized = categories.find((c) => c.Name === 'Uncategorized');
       const uncategorizedId = uncategorized?.ID ?? null;
 
@@ -589,11 +584,27 @@ export function useAddTransactionForm({
         order_index: idx,
       }));
 
+      let transactionId: number | null = null;
       try {
+        // Keep the dialog open until the parent and its split lines are both stored.
+        transactionId = await onAddTransaction(
+          form.transactionDate,
+          finalCategory,
+          form.memo,
+          form.payee,
+          outflow,
+          inflow,
+          accountId,
+          form.selectedLabelId,
+          null,
+          true
+        );
+
         await upsertSplits.mutateAsync({
           transactionId,
           splits: prepared,
           type: form.isInflow ? 'inflow' : 'outflow',
+          amountCurrency: 'native',
         });
 
         // Log autofill rule applications (if any were applied before split mode)
@@ -608,12 +619,24 @@ export function useAddTransactionForm({
 
         if (addAnother) {
           resetFormFields();
+        } else {
+          onCancel();
         }
         toast.success('Transaction with splits added', {
           description: 'Transaction saved successfully.',
         });
       } catch (e) {
         console.error('Failed to save splits', e);
+        if (transactionId !== null) {
+          try {
+            await deleteTransaction.mutateAsync({ transactionId, accountId });
+          } catch (rollbackError) {
+            console.error('Failed to roll back split parent transaction', rollbackError);
+          }
+        }
+        toast.error('Failed to save split transaction', {
+          description: e instanceof Error ? e.message : 'Please try again.',
+        });
       }
     },
     [
@@ -628,11 +651,13 @@ export function useAddTransactionForm({
       remaining,
       onAddTransaction,
       upsertSplits,
+      deleteTransaction,
       resetFormFields,
       logAutofillApplications,
       autofillAppliedSuggestions,
       isOffBudgetTransfer,
       receivedAmount,
+      onCancel,
     ]
   );
 
@@ -669,6 +694,7 @@ export function useAddTransactionForm({
     canUseCurrencyApi,
     selectedBudget,
     globalLocalizer,
+    splitLocalizer,
     resolvedRate,
     receivedAmount,
     setReceivedAmount,
