@@ -8,7 +8,7 @@ import type { CategoryGroup, Category } from '@budgero/core/browser';
 /**
  * Fetch all category groups for a given budget.
  */
-export function useCategoryGroups(budgetId: number) {
+export function useCategoryGroups(budgetId: number, enabled = true) {
   const runtime = useRuntime();
   const spaceId = useActiveSpaceId();
   const spaceKey = resolveSpaceKey(spaceId);
@@ -22,7 +22,7 @@ export function useCategoryGroups(budgetId: number) {
       const data = services.categories.getAllCategoryGroups(budgetId);
       return data;
     },
-    enabled: Boolean(spaceId) && budgetId > 0,
+    enabled: enabled && Boolean(spaceId) && budgetId > 0,
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
   });
@@ -31,7 +31,7 @@ export function useCategoryGroups(budgetId: number) {
 /**
  * Fetch all categories for a given budget.
  */
-export function useCategories(budgetId: number) {
+export function useCategories(budgetId: number, enabled = true) {
   const runtime = useRuntime();
   const spaceId = useActiveSpaceId();
   const spaceKey = resolveSpaceKey(spaceId);
@@ -45,7 +45,7 @@ export function useCategories(budgetId: number) {
       const data = services.categories.getAllCategories(budgetId);
       return data;
     },
-    enabled: Boolean(spaceId) && budgetId > 0,
+    enabled: enabled && Boolean(spaceId) && budgetId > 0,
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
   });

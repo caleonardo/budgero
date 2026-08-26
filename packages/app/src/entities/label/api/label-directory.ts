@@ -5,12 +5,13 @@ import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 import { resolveSpaceKey } from '@shared/lib/query-utils';
 import type { LabelListItem } from '@budgero/core/browser';
 
-export function useLabelDirectory(budgetId: number | null | undefined) {
+export function useLabelDirectory(budgetId: number | null | undefined, queryEnabled = true) {
   const runtime = useRuntime();
   const spaceId = useActiveSpaceId();
   const spaceKey = resolveSpaceKey(spaceId);
   const normalizedBudgetId = typeof budgetId === 'number' ? budgetId : null;
-  const enabled = Boolean(spaceId) && Boolean(normalizedBudgetId && normalizedBudgetId > 0);
+  const enabled =
+    queryEnabled && Boolean(spaceId) && Boolean(normalizedBudgetId && normalizedBudgetId > 0);
 
   return useQuery<LabelListItem[]>({
     queryKey: ['labelDirectory', spaceKey, normalizedBudgetId],

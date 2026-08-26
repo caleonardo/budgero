@@ -6,6 +6,10 @@ import { TransactionTableBody } from './TransactionTableBody';
 import { TransactionTableFooter } from './TransactionTableFooter';
 import { SplitDetailsDialog } from './SplitDetailsDialog';
 import { useColumnResize } from './useColumnResize';
+import type {
+  TransactionEditableColumn,
+  TransactionEditorDirectories,
+} from './transaction-editor-types';
 
 export interface DesktopTransactionTableProps {
   transactions: GetTransactionsByAccountRow[];
@@ -42,6 +46,7 @@ export interface DesktopTransactionTableProps {
   showLabelColumn?: boolean;
   /** Show optional Exchange Rate column (for foreign-currency accounts). */
   showExchangeRateColumn?: boolean;
+  editorDirectories: TransactionEditorDirectories;
   budgetId: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
@@ -73,6 +78,7 @@ export function DesktopTransactionTable({
   showBalanceColumn = false,
   showLabelColumn = true,
   showExchangeRateColumn = false,
+  editorDirectories,
   budgetId,
   hasNextPage,
   hasPreviousPage,
@@ -85,6 +91,18 @@ export function DesktopTransactionTable({
     transaction: GetTransactionsByAccountRow;
     startEditing?: boolean;
   } | null>(null);
+  const [editingCell, setEditingCell] = useState<{
+    transactionId: number;
+    column: TransactionEditableColumn;
+  } | null>(null);
+
+  const handleActivateCell = useCallback(
+    (transactionId: number, column: TransactionEditableColumn) => {
+      setEditingCell({ transactionId, column });
+    },
+    []
+  );
+  const handleDeactivateCell = useCallback(() => setEditingCell(null), []);
 
   const { columnWidths, handleResize, totalWidth } = useColumnResize(
     hideAccountColumn,
@@ -123,13 +141,13 @@ export function DesktopTransactionTable({
     [onSelectionChange, pageTransactionIds]
   );
 
-  const handleSplitView = (transaction: GetTransactionsByAccountRow) => {
+  const handleSplitView = useCallback((transaction: GetTransactionsByAccountRow) => {
     setSplitDialogState({ transaction });
-  };
+  }, []);
 
-  const handleSplitCreate = (transaction: GetTransactionsByAccountRow) => {
+  const handleSplitCreate = useCallback((transaction: GetTransactionsByAccountRow) => {
     setSplitDialogState({ transaction, startEditing: true });
-  };
+  }, []);
 
   // Empty state
   if (paginatedTransactions.length === 0) {
@@ -170,6 +188,8 @@ export function DesktopTransactionTable({
               showBalanceColumn={showBalanceColumn}
               showLabelColumn={showLabelColumn}
               showExchangeRateColumn={showExchangeRateColumn}
+              editorDirectories={editorDirectories}
+              editingCell={editingCell}
               currentFormatter={currentFormatter}
               accountLocalizer={accountLocalizer}
               globalLocalizer={globalLocalizer}
@@ -182,6 +202,8 @@ export function DesktopTransactionTable({
               onSelectionChange={onSelectionChange}
               onSplitView={handleSplitView}
               onSplitCreate={handleSplitCreate}
+              onActivateCell={handleActivateCell}
+              onDeactivateCell={handleDeactivateCell}
             />
           </Table>
         </div>

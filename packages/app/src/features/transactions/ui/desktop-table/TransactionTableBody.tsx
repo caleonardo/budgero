@@ -2,6 +2,10 @@ import React, { useCallback, useRef } from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { TableBody } from '@shared/ui/table';
 import { TransactionRow } from './TransactionRow';
+import type {
+  TransactionEditableColumn,
+  TransactionEditorDirectories,
+} from './transaction-editor-types';
 
 interface TransactionTableBodyProps {
   transactions: GetTransactionsByAccountRow[];
@@ -14,6 +18,8 @@ interface TransactionTableBodyProps {
   showBalanceColumn?: boolean;
   showLabelColumn?: boolean;
   showExchangeRateColumn?: boolean;
+  editorDirectories: TransactionEditorDirectories;
+  editingCell: { transactionId: number; column: TransactionEditableColumn } | null;
   currentFormatter: Intl.NumberFormat;
   accountLocalizer: Intl.NumberFormat;
   globalLocalizer: Intl.NumberFormat;
@@ -35,6 +41,8 @@ interface TransactionTableBodyProps {
   ) => void;
   onSplitView: (transaction: GetTransactionsByAccountRow) => void;
   onSplitCreate: (transaction: GetTransactionsByAccountRow) => void;
+  onActivateCell: (transactionId: number, column: TransactionEditableColumn) => void;
+  onDeactivateCell: () => void;
 }
 
 export const TransactionTableBody = React.memo(function TransactionTableBody({
@@ -48,6 +56,8 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
   showBalanceColumn = false,
   showLabelColumn = true,
   showExchangeRateColumn = false,
+  editorDirectories,
+  editingCell,
   currentFormatter,
   accountLocalizer,
   globalLocalizer,
@@ -60,6 +70,8 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
   onSelectionChange,
   onSplitView,
   onSplitCreate,
+  onActivateCell,
+  onDeactivateCell,
 }: TransactionTableBodyProps) {
   const lastSelectedIndexRef = useRef<number | null>(null);
   const shiftPressedRef = useRef(false);
@@ -121,6 +133,10 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
             showBalanceColumn={showBalanceColumn}
             showLabelColumn={showLabelColumn}
             showExchangeRateColumn={showExchangeRateColumn}
+            editorDirectories={editorDirectories}
+            editingColumn={
+              editingCell?.transactionId === transaction.ID ? editingCell.column : null
+            }
             currentFormatter={currentFormatter}
             accountLocalizer={accountLocalizer}
             globalLocalizer={globalLocalizer}
@@ -131,9 +147,12 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
             getSecondaryOutflow={getSecondaryOutflow}
             onCellCommit={onCellCommit}
             onCheckboxPointerDown={handleCheckboxPointerDown}
-            onCheckboxChange={(checked) => handleCheckboxChange(transaction, rowIndex, checked)}
+            rowIndex={rowIndex}
+            onCheckboxChange={handleCheckboxChange}
             onSplitView={onSplitView}
             onSplitCreate={onSplitCreate}
+            onActivateCell={onActivateCell}
+            onDeactivateCell={onDeactivateCell}
           />
         );
       })}

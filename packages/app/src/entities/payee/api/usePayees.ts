@@ -7,12 +7,13 @@ import { resolveSpaceKey } from '@shared/lib/query-utils';
  * Returns the list of distinct payees for the given budget.
  * Payees are derived from transactions and cached per space/budget combination.
  */
-export function usePayees(budgetId: number | null | undefined) {
+export function usePayees(budgetId: number | null | undefined, queryEnabled = true) {
   const runtime = useRuntime();
   const spaceId = useActiveSpaceId();
   const spaceKey = resolveSpaceKey(spaceId);
   const normalizedBudgetId = typeof budgetId === 'number' ? budgetId : null;
-  const enabled = Boolean(spaceId) && Boolean(normalizedBudgetId && normalizedBudgetId > 0);
+  const enabled =
+    queryEnabled && Boolean(spaceId) && Boolean(normalizedBudgetId && normalizedBudgetId > 0);
 
   const query = useQuery<string[]>({
     queryKey: ['payees', spaceKey, normalizedBudgetId],

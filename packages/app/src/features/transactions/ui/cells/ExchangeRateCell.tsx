@@ -14,6 +14,8 @@ interface ExchangeRateCellProps {
   className?: string;
   displayClassName?: string;
   inputClassName?: string;
+  autoFocus?: boolean;
+  onEditingChange?: (editing: boolean) => void;
 }
 
 /**
@@ -30,17 +32,23 @@ export function ExchangeRateCell({
   className,
   displayClassName,
   inputClassName,
+  autoFocus = false,
+  onEditingChange,
 }: ExchangeRateCellProps) {
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [text, setText] = React.useState('');
+  const [isEditing, setIsEditing] = React.useState(autoFocus);
+  const [text, setText] = React.useState(() =>
+    autoFocus && value ? String(Number(value.toFixed(EXCHANGE_RATE_PRECISION))) : ''
+  );
 
   const startEditing = () => {
     setText(value ? String(Number(value.toFixed(EXCHANGE_RATE_PRECISION))) : '');
     setIsEditing(true);
+    onEditingChange?.(true);
   };
 
   const commit = () => {
     setIsEditing(false);
+    onEditingChange?.(false);
     const parsed = parseFloat(text.replace(',', '.'));
     if (Number.isFinite(parsed) && parsed >= 0 && parsed !== value) {
       onCommit(Number(parsed.toFixed(EXCHANGE_RATE_PRECISION)));
@@ -49,6 +57,7 @@ export function ExchangeRateCell({
 
   const cancel = () => {
     setIsEditing(false);
+    onEditingChange?.(false);
     setText('');
   };
 

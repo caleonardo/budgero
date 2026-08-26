@@ -4,8 +4,8 @@ import { useLabelDirectory } from './label-directory';
 
 const EMPTY_LABELS: LabelListItem[] = [];
 
-export function useLabels(budgetId: number | null | undefined) {
-  const query = useLabelDirectory(budgetId);
+export function useLabels(budgetId: number | null | undefined, enabled = true) {
+  const query = useLabelDirectory(budgetId, enabled);
   const labels = query.data ?? EMPTY_LABELS;
 
   const byId = useMemo(() => {

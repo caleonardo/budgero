@@ -9,10 +9,10 @@ import { useUiStore } from '@shared/store/useUiStore';
 /**
  * Fetch all accounts for a given budget.
  */
-export function useAccounts(budgetId: number) {
+export function useAccounts(budgetId: number, enabled = true) {
   return useSpaceQuery<Account[]>({
     key: ['accounts', budgetId],
-    enabled: Boolean(budgetId),
+    enabled: enabled && Boolean(budgetId),
     queryFn: (services) => services.accounts.listAccounts(budgetId),
   });
 }

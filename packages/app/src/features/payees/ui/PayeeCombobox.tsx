@@ -13,6 +13,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
 import { usePayees } from '@entities/payee/api/usePayees';
 
+const EMPTY_PAYEES: string[] = [];
+
 export interface PayeeComboboxProps {
   budgetId: number;
   value: string | null | undefined;
@@ -22,6 +24,9 @@ export interface PayeeComboboxProps {
   popoverContentClassName?: string;
   disabled?: boolean;
   allowClear?: boolean;
+  payees?: string[];
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 /**
@@ -37,10 +42,19 @@ export function PayeeCombobox({
   popoverContentClassName,
   disabled = false,
   allowClear = true,
+  payees: providedPayees,
+  defaultOpen = false,
+  onOpenChange,
 }: PayeeComboboxProps) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(defaultOpen);
   const [search, setSearch] = React.useState('');
-  const { data: payees = [], isFetching } = usePayees(budgetId);
+  const payeesQuery = usePayees(budgetId, providedPayees === undefined);
+  const payees = providedPayees ?? payeesQuery.data ?? EMPTY_PAYEES;
+  const isFetching = providedPayees === undefined && payeesQuery.isFetching;
+
+  React.useEffect(() => {
+    onOpenChange?.(open);
+  }, [onOpenChange, open]);
 
   const normalizedValue = (value ?? '').trim();
   const normalizedSearch = search.trim();

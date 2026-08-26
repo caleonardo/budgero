@@ -22,6 +22,34 @@ import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { asMilli } from '@shared/lib/currency/milli';
 import { getRunningBalance } from '@features/transactions/lib/running-balance';
+import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
+import type {
+  TransactionEditableColumn,
+  TransactionEditorDirectories,
+} from './transaction-editor-types';
+
+interface CellDisplayButtonProps {
+  value: React.ReactNode;
+  title: string;
+  onClick: () => void;
+  className?: string;
+}
+
+function CellDisplayButton({ value, title, onClick, className }: CellDisplayButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={cn(
+        'h-8 w-full min-w-0 truncate rounded-md px-2 text-left text-xs transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring xl:text-sm',
+        className
+      )}
+    >
+      {value}
+    </button>
+  );
+}
 
 interface TransactionRowProps {
   transaction: GetTransactionsByAccountRow;
@@ -33,6 +61,8 @@ interface TransactionRowProps {
   showBalanceColumn?: boolean;
   showLabelColumn?: boolean;
   showExchangeRateColumn?: boolean;
+  editorDirectories: TransactionEditorDirectories;
+  editingColumn: TransactionEditableColumn | null;
   currentFormatter: Intl.NumberFormat;
   accountLocalizer: Intl.NumberFormat;
   globalLocalizer: Intl.NumberFormat;
@@ -47,9 +77,16 @@ interface TransactionRowProps {
     newVal: string | number | Date | null
   ) => void;
   onCheckboxPointerDown: (e: { shiftKey: boolean; metaKey?: boolean; ctrlKey?: boolean }) => void;
-  onCheckboxChange: (checked: boolean) => void;
+  rowIndex: number;
+  onCheckboxChange: (
+    transaction: GetTransactionsByAccountRow,
+    rowIndex: number,
+    checked: boolean
+  ) => void;
   onSplitView: (transaction: GetTransactionsByAccountRow) => void;
   onSplitCreate: (transaction: GetTransactionsByAccountRow) => void;
+  onActivateCell: (transactionId: number, column: TransactionEditableColumn) => void;
+  onDeactivateCell: () => void;
 }
 
 export const TransactionRow = React.memo(function TransactionRow({
@@ -62,6 +99,8 @@ export const TransactionRow = React.memo(function TransactionRow({
   showBalanceColumn = false,
   showLabelColumn = true,
   showExchangeRateColumn = false,
+  editorDirectories,
+  editingColumn,
   currentFormatter,
   accountLocalizer,
   globalLocalizer,
@@ -72,9 +111,12 @@ export const TransactionRow = React.memo(function TransactionRow({
   getSecondaryOutflow,
   onCellCommit,
   onCheckboxPointerDown,
+  rowIndex,
   onCheckboxChange,
   onSplitView,
   onSplitCreate,
+  onActivateCell,
+  onDeactivateCell,
 }: TransactionRowProps) {
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const selectedAccount = useUiStore((state) => state.selectedAccount);
@@ -91,6 +133,8 @@ export const TransactionRow = React.memo(function TransactionRow({
   const hasAmount = getPrimaryInflow(transaction) !== 0 || getPrimaryOutflow(transaction) !== 0;
   // Transfers move money between your own accounts and cannot be split.
   const isTransfer = !!transaction.TransferID && transaction.TransferID.trim() !== '';
+  const activateCell = (column: TransactionEditableColumn) =>
+    onActivateCell(transaction.ID, column);
 
   const renderBalanceCell = () => {
     const numValue = getRunningBalance(transaction, transactionCurrencyDisplay);
@@ -152,7 +196,7 @@ export const TransactionRow = React.memo(function TransactionRow({
               </p>
             </PopoverContent>
           </Popover>
-        ) : (
+        ) : editingColumn === kind ? (
           <CalculatorCell
             value={asMilli(getPrimary(transaction) || 0)}
             currencyCode={editCurrencyCode}
@@ -167,6 +211,17 @@ export const TransactionRow = React.memo(function TransactionRow({
             displayClassName={colorClass}
             inputClassName="text-right"
             useFormatterForDisplay
+            autoFocus
+            onEditingChange={(editing) => {
+              if (!editing) onDeactivateCell();
+            }}
+          />
+        ) : (
+          <CellDisplayButton
+            value={formatAmount(currentFormatter, getPrimary(transaction) || 0)}
+            title={`Edit ${kind}`}
+            onClick={() => activateCell(kind)}
+            className={cn('text-right font-medium font-mono', colorClass)}
           />
         )}
         {!hideSecondaryAmounts && (
@@ -263,7 +318,7 @@ export const TransactionRow = React.memo(function TransactionRow({
           <Checkbox
             checked={isSelected}
             onPointerDown={onCheckboxPointerDown}
-            onCheckedChange={(checked) => onCheckboxChange(checked === true)}
+            onCheckedChange={(checked) => onCheckboxChange(transaction, rowIndex, checked === true)}
             aria-label={`Select transaction ${transaction.Memo || transaction.ID}`}
           />
         </div>
@@ -271,59 +326,115 @@ export const TransactionRow = React.memo(function TransactionRow({
 
       {/* Date */}
       <TableCell>
-        <DatePickerCell
-          value={transaction.Date}
-          onCommit={(newVal) => onCellCommit(transaction.ID, 'Date', newVal)}
-        />
+        {editingColumn === 'date' ? (
+          <DatePickerCell
+            value={transaction.Date}
+            onCommit={(newVal) => onCellCommit(transaction.ID, 'Date', newVal)}
+            defaultOpen
+            onOpenChange={(open) => {
+              if (!open) onDeactivateCell();
+            }}
+          />
+        ) : (
+          <CellDisplayButton
+            value={transaction.Date}
+            title="Edit date"
+            onClick={() => activateCell('date')}
+          />
+        )}
       </TableCell>
 
       {/* Memo */}
       <TableCell className="max-w-[220px]">
-        <EditableCell
-          value={transaction.Memo || ''}
-          onCommit={(newVal) => onCellCommit(transaction.ID, 'Memo', newVal)}
-          className="text-xs xl:text-sm"
-          displayClassName="text-xs xl:text-sm"
-          inputClassName="text-xs xl:text-sm"
-        />
+        {editingColumn === 'memo' ? (
+          <EditableCell
+            value={transaction.Memo || ''}
+            onCommit={(newVal) => onCellCommit(transaction.ID, 'Memo', newVal)}
+            inputClassName="h-8 text-xs xl:text-sm"
+            autoFocus
+            onEditingChange={(editing) => {
+              if (!editing) onDeactivateCell();
+            }}
+          />
+        ) : (
+          <CellDisplayButton
+            value={transaction.Memo || '—'}
+            title={transaction.Memo || 'Edit memo'}
+            onClick={() => activateCell('memo')}
+          />
+        )}
       </TableCell>
 
       {/* Account (optional) */}
       {!hideAccountColumn && (
         <TableCell className="max-w-[200px]">
-          <div className="text-xs xl:text-sm">
+          {editingColumn === 'account' ? (
             <AccountSelectCell
               accountName={transaction.Account}
+              accounts={editorDirectories.accounts}
               onCommit={(newVal) => onCellCommit(transaction.ID, 'AccountID', newVal)}
-              triggerClassName="h-8 text-xs xl:text-sm px-2 truncate w-full"
+              triggerClassName="h-8 w-full truncate px-2 text-xs xl:text-sm"
+              defaultOpen
+              onOpenChange={(open) => {
+                if (!open) onDeactivateCell();
+              }}
             />
-          </div>
+          ) : (
+            <CellDisplayButton
+              value={transaction.Account || '—'}
+              title={transaction.Account || 'Edit account'}
+              onClick={() => activateCell('account')}
+            />
+          )}
         </TableCell>
       )}
 
       {/* Payee */}
       <TableCell className="max-w-[200px]">
-        <div className="text-xs xl:text-sm">
+        {editingColumn === 'payee' ? (
           <PayeeSelectCell
             budgetId={budgetId}
             value={transaction.Payee ?? ''}
+            payees={editorDirectories.payees}
             onCommit={(newVal) => onCellCommit(transaction.ID, 'Payee', newVal)}
             triggerClassName="h-8 text-xs xl:text-sm px-2 truncate"
+            defaultOpen
+            onOpenChange={(open) => {
+              if (!open) onDeactivateCell();
+            }}
           />
-        </div>
+        ) : (
+          <CellDisplayButton
+            value={transaction.Payee || '—'}
+            title={transaction.Payee || 'Edit payee'}
+            onClick={() => activateCell('payee')}
+          />
+        )}
       </TableCell>
 
       {/* Label */}
       {showLabelColumn && (
         <TableCell className="max-w-[180px]">
-          <div className="text-xs xl:text-sm">
+          {editingColumn === 'label' ? (
             <LabelSelectCell
               budgetId={budgetId}
               value={transaction.LabelID ?? null}
+              labels={editorDirectories.labels}
               onCommit={(newVal) => onCellCommit(transaction.ID, 'LabelID', newVal)}
               triggerClassName="h-8 text-xs xl:text-sm px-2.5 truncate w-full rounded-full border-border/70 bg-muted/25 hover:bg-muted/45"
+              defaultOpen
+              onOpenChange={(open) => {
+                if (!open) onDeactivateCell();
+              }}
             />
-          </div>
+          ) : (
+            <CellDisplayButton
+              value={transaction.Label || 'No label'}
+              title={transaction.Label || 'Edit label'}
+              onClick={() => activateCell('label')}
+              className={transaction.Label ? undefined : 'text-muted-foreground'}
+            />
+          )}
         </TableCell>
       )}
 
@@ -347,11 +458,28 @@ export const TransactionRow = React.memo(function TransactionRow({
         ) : (
           <div className="flex min-w-0 items-center gap-2 overflow-hidden">
             <div className="min-w-0 flex-1 overflow-hidden text-xs [&>div]:min-w-0 [&>div]:w-full xl:text-sm">
-              <CategorySelectCell
-                categoryID={transaction.CategoryID || 0}
-                onCommit={(newVal) => onCellCommit(transaction.ID, 'CategoryID', newVal)}
-                triggerClassName="h-8 min-w-0 w-full max-w-full overflow-hidden px-2 text-xs xl:text-sm"
-              />
+              {editingColumn === 'category' ? (
+                <CategorySelectCell
+                  budgetId={budgetId}
+                  categoryID={transaction.CategoryID || 0}
+                  categories={editorDirectories.categories}
+                  categoryGroups={editorDirectories.categoryGroups}
+                  monthlyRows={editorDirectories.monthlyRows}
+                  readyToAssignAmount={editorDirectories.readyToAssignAmount}
+                  onCommit={(newVal) => onCellCommit(transaction.ID, 'CategoryID', newVal)}
+                  triggerClassName="h-8 min-w-0 w-full max-w-full overflow-hidden px-2 text-xs xl:text-sm"
+                  defaultOpen
+                  onOpenChange={(open) => {
+                    if (!open) onDeactivateCell();
+                  }}
+                />
+              ) : (
+                <CellDisplayButton
+                  value={transaction.Category || 'Uncategorized'}
+                  title={transaction.Category || 'Edit category'}
+                  onClick={() => activateCell('category')}
+                />
+              )}
             </div>
             {hasAmount && !isTransfer && (
               <Button
@@ -381,13 +509,24 @@ export const TransactionRow = React.memo(function TransactionRow({
         <TableCell className="text-right font-mono text-xs">
           <div className="flex items-center justify-end gap-1">
             {/* Rates are dimensionless decimals — edited outside the milliunit CalculatorCell */}
-            <ExchangeRateCell
-              value={transaction.ExchangeRate || 0}
-              onCommit={(val) => onCellCommit(transaction.ID, 'ExchangeRate', val)}
-              className="text-right text-muted-foreground"
-              displayClassName="text-muted-foreground"
-              inputClassName="h-8 text-right text-xs"
-            />
+            {editingColumn === 'exchangeRate' ? (
+              <ExchangeRateCell
+                value={transaction.ExchangeRate || 0}
+                onCommit={(val) => onCellCommit(transaction.ID, 'ExchangeRate', val)}
+                inputClassName="h-8 text-right text-xs"
+                autoFocus
+                onEditingChange={(editing) => {
+                  if (!editing) onDeactivateCell();
+                }}
+              />
+            ) : (
+              <CellDisplayButton
+                value={formatExchangeRate(transaction.ExchangeRate || 0)}
+                title="Edit exchange rate"
+                onClick={() => activateCell('exchangeRate')}
+                className="text-right font-mono text-muted-foreground"
+              />
+            )}
             {!!transaction.ExchangeRateOverride && (
               <ArrowLeftRight className="h-3 w-3 text-primary shrink-0" />
             )}

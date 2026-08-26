@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
 import { hexToRgba } from '@shared/lib/color/hex';
 import { useLabels } from '@entities/label/api/useLabels';
+import type { LabelListItem } from '@budgero/core/browser';
 
 export interface LabelComboboxProps {
   budgetId: number;
@@ -23,6 +24,9 @@ export interface LabelComboboxProps {
   popoverContentClassName?: string;
   disabled?: boolean;
   allowClear?: boolean;
+  labels?: LabelListItem[];
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function LabelCombobox({
@@ -34,10 +38,19 @@ export function LabelCombobox({
   popoverContentClassName,
   disabled = false,
   allowClear = true,
+  labels: providedLabels,
+  defaultOpen = false,
+  onOpenChange,
 }: LabelComboboxProps) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(defaultOpen);
   const [search, setSearch] = React.useState('');
-  const { labels = [], isFetching } = useLabels(budgetId);
+  const labelsQuery = useLabels(budgetId, providedLabels === undefined);
+  const labels = providedLabels ?? labelsQuery.labels;
+  const isFetching = providedLabels === undefined && labelsQuery.isFetching;
+
+  React.useEffect(() => {
+    onOpenChange?.(open);
+  }, [onOpenChange, open]);
 
   const selectedId =
     typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : null;

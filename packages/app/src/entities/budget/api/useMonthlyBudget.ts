@@ -14,7 +14,7 @@ import { resolveSpaceKey } from '@shared/lib/query-utils';
 /**
  * Fetch the monthly budget breakdown for a given month and budget.
  */
-export function useMonthlyBudget(month: string, budgetId: number) {
+export function useMonthlyBudget(month: string, budgetId: number, enabled = true) {
   const runtime = useRuntime();
   const spaceId = useActiveSpaceId();
   const spaceKey = resolveSpaceKey(spaceId);
@@ -28,7 +28,7 @@ export function useMonthlyBudget(month: string, budgetId: number) {
       // Don't filter out empty groups - they should be shown
       return services.monthlyBudgets.getMonthlyBudget(month, budgetId);
     },
-    enabled: Boolean(spaceId) && Boolean(month) && budgetId > 0,
+    enabled: enabled && Boolean(spaceId) && Boolean(month) && budgetId > 0,
     staleTime: 1000 * 60 * 5, // cache 5 minutes
     retry: 2, // Retry failed requests twice
     placeholderData: keepPreviousData, // Keep showing old data while fetching new month
@@ -42,10 +42,10 @@ export function useMonthlyBudget(month: string, budgetId: number) {
  * (YNAB-style) mode it is computed through `month`. Callers on the budget page
  * pass the selected month; omit it elsewhere to get the current month.
  */
-export function useReadyToAssign(budgetId: number, month?: string) {
+export function useReadyToAssign(budgetId: number, month?: string, enabled = true) {
   return useSpaceQuery<number>({
     key: ['readyToAssign', budgetId, month ?? 'current'],
-    enabled: Boolean(budgetId),
+    enabled: enabled && Boolean(budgetId),
     queryFn: (services) => services.monthlyBudgets.getReadyToAssign(budgetId, month),
     placeholderData: keepPreviousData,
   });

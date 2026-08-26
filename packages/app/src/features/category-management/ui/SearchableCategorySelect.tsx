@@ -23,9 +23,11 @@ import { useMonthlyBudget, useReadyToAssign } from '@entities/budget/api/useMont
 import { useUiStore } from '@shared/store/useUiStore';
 import { getTodayISO } from '@shared/lib/date-utils';
 import type { VirtualElement } from '@floating-ui/react';
-import type { Category } from '@budgero/core/browser';
+import type { Category, CategoryGroup, GetMonthlyBudgetRow } from '@budgero/core/browser';
 import { asMilli, formatMilli } from '@shared/lib/currency/milli';
 import { CreateCategoryDialog } from '@features/category-management/ui/CreateCategoryDialog';
+
+const EMPTY_MONTHLY_ROWS: GetMonthlyBudgetRow[] = [];
 
 interface SearchableCategorySelectProps {
   budgetId: number;
@@ -40,6 +42,12 @@ interface SearchableCategorySelectProps {
   showAvailableForMonth?: boolean; // Show "Available" next to each category (defaults to true)
   month?: string; // Override month (defaults to today's calendar month)
   onlyPositiveAvailable?: boolean; // Only list categories with available > 0 (e.g., cover sources)
+  categories?: Category[];
+  categoryGroups?: CategoryGroup[];
+  monthlyRows?: GetMonthlyBudgetRow[];
+  readyToAssignAmount?: number;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function SearchableCategorySelect({
@@ -55,8 +63,14 @@ export function SearchableCategorySelect({
   showAvailableForMonth = true,
   month,
   onlyPositiveAvailable = false,
+  categories: providedCategories,
+  categoryGroups: providedCategoryGroups,
+  monthlyRows: providedMonthlyRows,
+  readyToAssignAmount: providedReadyToAssignAmount,
+  defaultOpen = false,
+  onOpenChange,
 }: SearchableCategorySelectProps) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(defaultOpen);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
   const [pendingCategoryName, setPendingCategoryName] = React.useState('');
@@ -65,17 +79,15 @@ export function SearchableCategorySelect({
   );
   const [createError, setCreateError] = React.useState<string | null>(null);
 
-  const {
-    data: categoryGroupsData,
-    isLoading: isLoadingGroups,
-    error: errorGroups,
-  } = useCategoryGroups(budgetId);
+  const categoryGroupsQuery = useCategoryGroups(budgetId, providedCategoryGroups === undefined);
+  const categoryGroupsData = providedCategoryGroups ?? categoryGroupsQuery.data;
+  const isLoadingGroups = providedCategoryGroups === undefined && categoryGroupsQuery.isLoading;
+  const errorGroups = providedCategoryGroups === undefined ? categoryGroupsQuery.error : null;
 
-  const {
-    data: categoriesData,
-    isLoading: isLoadingCategories,
-    error: errorCategories,
-  } = useCategories(budgetId);
+  const categoriesQuery = useCategories(budgetId, providedCategories === undefined);
+  const categoriesData = providedCategories ?? categoriesQuery.data;
+  const isLoadingCategories = providedCategories === undefined && categoriesQuery.isLoading;
+  const errorCategories = providedCategories === undefined ? categoriesQuery.error : null;
   const addCategoryMutation = useAddCategory();
 
   const normalizedSearch = React.useMemo(() => searchTerm.trim().toLowerCase(), [searchTerm]);
@@ -93,7 +105,12 @@ export function SearchableCategorySelect({
 
   const effectiveMonth = month || getTodayISO().slice(0, 7);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
-  const { data: monthlyRows = [] } = useMonthlyBudget(effectiveMonth, budgetId);
+  const monthlyBudgetQuery = useMonthlyBudget(
+    effectiveMonth,
+    budgetId,
+    providedMonthlyRows === undefined
+  );
+  const monthlyRows = providedMonthlyRows ?? monthlyBudgetQuery.data ?? EMPTY_MONTHLY_ROWS;
   const availableByCategory = React.useMemo(() => {
     const map = new Map<number, number>();
     (monthlyRows || []).forEach((row) => {
@@ -101,7 +118,16 @@ export function SearchableCategorySelect({
     });
     return map;
   }, [monthlyRows]);
-  const { data: readyToAssignAmount = 0 } = useReadyToAssign(budgetId);
+  const readyToAssignQuery = useReadyToAssign(
+    budgetId,
+    undefined,
+    providedReadyToAssignAmount === undefined
+  );
+  const readyToAssignAmount = providedReadyToAssignAmount ?? readyToAssignQuery.data ?? 0;
+
+  React.useEffect(() => {
+    onOpenChange?.(open);
+  }, [onOpenChange, open]);
 
   const popoverSide = 'bottom';
   const popoverCollisionPadding = React.useMemo(() => {

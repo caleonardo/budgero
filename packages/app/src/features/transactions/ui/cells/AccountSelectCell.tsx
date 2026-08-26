@@ -2,20 +2,31 @@ import * as React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { useAccounts } from '@entities/account/api/useAccounts';
 import { useUiStore } from '@shared/store/useUiStore';
+import type { Account } from '@budgero/core/browser';
+
+const EMPTY_ACCOUNTS: Account[] = [];
 
 interface AccountSelectCellProps {
   accountName: string | null | undefined;
   onCommit: (newAccountId: number) => void;
   triggerClassName?: string;
+  accounts?: Account[];
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function AccountSelectCell({
   accountName,
   onCommit,
   triggerClassName,
+  accounts: providedAccounts,
+  defaultOpen,
+  onOpenChange,
 }: AccountSelectCellProps) {
   const { selectedBudget } = useUiStore();
-  const { data: allAccounts = [], isLoading } = useAccounts(selectedBudget?.ID || 0);
+  const accountsQuery = useAccounts(selectedBudget?.ID || 0, providedAccounts === undefined);
+  const allAccounts = providedAccounts ?? accountsQuery.data ?? EMPTY_ACCOUNTS;
+  const isLoading = providedAccounts === undefined && accountsQuery.isLoading;
   // Hide archived accounts from the picker, but keep the current selection visible if it
   // happens to be an archived account (so the cell still displays its name).
   const accounts = React.useMemo(
@@ -42,7 +53,13 @@ export function AccountSelectCell({
   };
 
   return (
-    <Select value={selectedValue} onValueChange={handleChange} disabled={isLoading}>
+    <Select
+      value={selectedValue}
+      onValueChange={handleChange}
+      disabled={isLoading}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+    >
       <SelectTrigger className={triggerClassName}>
         <SelectValue placeholder={isLoading ? 'Loading...' : 'Select account'} />
       </SelectTrigger>

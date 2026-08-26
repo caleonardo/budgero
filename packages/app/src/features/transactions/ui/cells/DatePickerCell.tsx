@@ -8,6 +8,8 @@ import { MonthYearCalendar } from '@shared/ui/MonthYearCalendar';
 interface DatePickerCellProps {
   value: string | null | undefined;
   onCommit: (newVal: string) => void;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 /**
@@ -18,11 +20,20 @@ interface DatePickerCellProps {
  * - When clicked, opens a calendar
  * - On select, calls onCommit() with the new date in "yyyy-MM-dd" format
  */
-export function DatePickerCell({ value, onCommit }: DatePickerCellProps) {
+export function DatePickerCell({
+  value,
+  onCommit,
+  defaultOpen = false,
+  onOpenChange,
+}: DatePickerCellProps) {
   const [date, setDate] = React.useState<Date | null>(() => {
     return value ? parseISO(value) : null;
   });
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(defaultOpen);
+
+  React.useEffect(() => {
+    onOpenChange?.(open);
+  }, [onOpenChange, open]);
 
   React.useEffect(() => {
     if (value) {

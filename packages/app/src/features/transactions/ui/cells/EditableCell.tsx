@@ -11,6 +11,8 @@ interface EditableCellProps {
   className?: string; // Optional wrapper class overrides
   displayClassName?: string; // Optional display-state text class
   inputClassName?: string; // Optional input class overrides
+  autoFocus?: boolean;
+  onEditingChange?: (editing: boolean) => void;
 }
 
 export function EditableCell({
@@ -21,8 +23,10 @@ export function EditableCell({
   className,
   displayClassName,
   inputClassName,
+  autoFocus = false,
+  onEditingChange,
 }: EditableCellProps) {
-  const [isEditing, setIsEditing] = React.useState(false);
+  const [isEditing, setIsEditing] = React.useState(autoFocus);
   // Internal state for the input, initialized from the prop. Input value is always string.
   const [currentValue, setCurrentValue] = React.useState(String(initialValueProp ?? ''));
 
@@ -40,6 +44,7 @@ export function EditableCell({
     // Ensure currentValue is up-to-date with prop when starting edit
     setCurrentValue(String(initialValueProp ?? ''));
     setIsEditing(true);
+    onEditingChange?.(true);
 
     // Add class to prevent layout shifts on mobile
     document.body.classList.add('input-active');
@@ -47,6 +52,7 @@ export function EditableCell({
 
   const handleCommit = () => {
     setIsEditing(false);
+    onEditingChange?.(false);
     // `currentValue` is the string from the input.
     // The parent component (useTransactionTable via onCommit) handles type conversion.
     onCommit(currentValue);
@@ -59,6 +65,7 @@ export function EditableCell({
 
   const handleCancel = () => {
     setIsEditing(false);
+    onEditingChange?.(false);
     setCurrentValue(String(initialValueProp ?? ''));
 
     // Remove class after a small delay to allow smooth transition

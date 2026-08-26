@@ -7,6 +7,9 @@ interface PayeeSelectCellProps {
   onCommit: (nextValue: string) => void;
   triggerClassName?: string;
   allowClear?: boolean;
+  payees?: string[];
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function PayeeSelectCell({
@@ -15,6 +18,9 @@ export function PayeeSelectCell({
   onCommit,
   triggerClassName,
   allowClear = true,
+  payees,
+  defaultOpen,
+  onOpenChange,
 }: PayeeSelectCellProps) {
   const [internalValue, setInternalValue] = React.useState(value ?? '');
 
@@ -37,6 +43,9 @@ export function PayeeSelectCell({
       onChange={handleChange}
       triggerClassName={triggerClassName}
       allowClear={allowClear}
+      payees={payees}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
     />
   );
 }
