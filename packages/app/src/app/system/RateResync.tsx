@@ -21,8 +21,9 @@ export function RateResync() {
     const resync = async () => {
       if (running.current) return;
       if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
-      const services = getRuntime()?.services();
-      if (!services) return;
+      const runtime = getRuntime();
+      if (!runtime) return;
+      const services = runtime.services();
       running.current = true;
       try {
         let changed = 0;
@@ -33,17 +34,22 @@ export function RateResync() {
         // journaled per account in account_revaluations.
         changed += await services.currency.revalueAccounts(budgetId);
         if (changed > 0) {
-          await queryClient.invalidateQueries({ queryKey: ['transactions'] });
-          await queryClient.invalidateQueries({ queryKey: ['allTransactions'] });
-          await queryClient.invalidateQueries({ queryKey: ['allTransactionsDetailed'] });
-          await queryClient.invalidateQueries({ queryKey: ['allTransactionsAnalytics'] });
-          await queryClient.invalidateQueries({ queryKey: ['accounts'] });
-          await queryClient.invalidateQueries({ queryKey: ['monthlyBudget'] });
-          await queryClient.invalidateQueries({ queryKey: ['readyToAssign'] });
-          await queryClient.invalidateQueries({ queryKey: ['revaluationSummary'] });
-          await queryClient.invalidateQueries({ queryKey: ['balanceByDates'] });
-          await queryClient.invalidateQueries({ queryKey: ['onBudgetBalance'] });
-          await queryClient.invalidateQueries({ queryKey: ['onBudgetBalanceByDates'] });
+          // These service calls bypass the mutation executor and therefore
+          // have no mutation-log entry or automatic local/snapshot persist.
+          await runtime.finalizeOutOfBandMutation({ uploadSnapshot: true });
+          await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['transactions'] }),
+            queryClient.invalidateQueries({ queryKey: ['allTransactions'] }),
+            queryClient.invalidateQueries({ queryKey: ['allTransactionsDetailed'] }),
+            queryClient.invalidateQueries({ queryKey: ['allTransactionsAnalytics'] }),
+            queryClient.invalidateQueries({ queryKey: ['accounts'] }),
+            queryClient.invalidateQueries({ queryKey: ['monthlyBudget'] }),
+            queryClient.invalidateQueries({ queryKey: ['readyToAssign'] }),
+            queryClient.invalidateQueries({ queryKey: ['revaluationSummary'] }),
+            queryClient.invalidateQueries({ queryKey: ['balanceByDates'] }),
+            queryClient.invalidateQueries({ queryKey: ['onBudgetBalance'] }),
+            queryClient.invalidateQueries({ queryKey: ['onBudgetBalanceByDates'] }),
+          ]);
         }
       } catch {
         // Best-effort: a failed resync retries on the next online event.

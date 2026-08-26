@@ -145,6 +145,35 @@ describe('CurrencyService addCustomRate alsoReverse', () => {
 });
 
 describe('CurrencyService daily rates', () => {
+  it('reuses a fetched historical rate instead of pruning and refetching it', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    const sm = new ServiceManager();
+    await sm.initialize(adapter as DatabaseAdapter);
+    const { budgets, currency } = sm.getServices();
+
+    const bId = await budgets.createBudget({
+      name: 'Historical',
+      display_currency: 'USD',
+      badge_icon: 'dollar',
+      number_format: '123,456.78',
+      create_default_categories: true,
+    });
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ quotes: { EURUSD: 1.2 } }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    try {
+      const date = '2020-03-17';
+      expect(await currency.getOrFetchRate('EUR', 'USD', date, bId)).toBeCloseTo(1.2, 6);
+      expect(await currency.getOrFetchRate('EUR', 'USD', date, bId)).toBeCloseTo(1.2, 6);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('serves cached rates within the 7-day fallback window, not beyond', async () => {
     const adapter = await NodeSqlJsAdapter.create();
     const sm = new ServiceManager();

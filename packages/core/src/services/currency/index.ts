@@ -368,6 +368,12 @@ export class CurrencyService {
       const data = await response.json();
       const quotes = data.quotes as Record<string, number> | undefined;
 
+      // Prune before saving so an explicitly requested historical rate is
+      // available to the caller and reusable by the rest of the current pass.
+      // Pruning after the save immediately deleted rates older than retention,
+      // leaving conversions pending and causing the same request to loop.
+      this.pruneRateCache(budgetId);
+
       for (const currency of currencies) {
         if (currency === baseCurrency) continue;
         const quoteKey = `${baseCurrency}${currency}`;
@@ -383,8 +389,6 @@ export class CurrencyService {
         currencies: currencies.length,
         rateDate,
       });
-
-      this.pruneRateCache(budgetId);
     } catch (error) {
       debugLog('Failed to fetch exchange rates', { error, level: 'error' });
       throw error;
