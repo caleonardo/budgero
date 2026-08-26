@@ -94,7 +94,7 @@ export function DashboardPageDesktop() {
             <BalanceAreaChart
               data={balanceChartDecimal}
               formatAmount={formatAmount}
-              className="h-[140px] flex-1"
+              className="h-[140px] min-w-0 flex-1 overflow-hidden"
             />
           </div>
         </CardContent>
