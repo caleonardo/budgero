@@ -50,92 +50,12 @@ export function CoverOverspendingPopover({
   triggerClassName,
   tone = 'red',
 }: CoverOverspendingPopoverProps) {
-  const amountInputId = useId();
   const [open, setOpen] = useState(false);
-  const [sourceCategoryId, setSourceCategoryId] = useState<number | null>(null);
-  // Decimal string state (raw <Input type="number">); converts to milliunits
-  // via fromDecimal exactly once, in handleCover.
-  const [amount, setAmount] = useState<string>('');
-  const [isCovering, setIsCovering] = useState(false);
-
   const formatAmount = useFormatMaskedMilli(globalLocalizer);
-
   const overspent = asMilli(Math.max(0, 0 - (available || 0)));
 
-  // Donor balances for capping; the queries are already warm from the table.
-  // Source id 0 means Ready to Assign.
-  const { data: monthlyRows = [] } = useMonthlyBudget(month, budgetId);
-  const { data: readyToAssign = 0 } = useReadyToAssign(budgetId);
-  const batchUpsertAssignments = useBatchUpsertAssignments();
-  const donorAvailableFor = useCallback(
-    (id: number) => {
-      if (id === 0) return asMilli(Math.max(0, readyToAssign));
-      const row = monthlyRows.find((r) => r.CategoryID === id);
-      return asMilli(Math.max(0, row?.Available ?? 0));
-    },
-    [monthlyRows, readyToAssign]
-  );
-  const sourceAvailable = useMemo(
-    () => (sourceCategoryId === null ? 0 : donorAvailableFor(sourceCategoryId)),
-    [donorAvailableFor, sourceCategoryId]
-  );
-
-  // Never take more than the donor has, never more than the overspending
-  const maxCover = asMilli(Math.min(overspent, sourceAvailable));
-
-  const parsedAmount = parseFloat(amount);
-  const canCover =
-    sourceCategoryId !== null &&
-    Number.isFinite(parsedAmount) &&
-    parsedAmount > 0 &&
-    fromDecimal(parsedAmount) <= maxCover &&
-    !isCovering;
-
-  const handleOpenChange = (next: boolean) => {
-    if (next) {
-      setSourceCategoryId(null);
-      setAmount(String(toDecimal(overspent)));
-    }
-    setOpen(next);
-  };
-
-  const handleSourceSelect = (id: number) => {
-    setSourceCategoryId(id);
-    setAmount(String(toDecimal(asMilli(Math.min(overspent, donorAvailableFor(id))))));
-  };
-
-  const handleCover = async () => {
-    if (!canCover || sourceCategoryId === null) return;
-    const cover = fromDecimal(parsedAmount);
-    setIsCovering(true);
-    try {
-      if (sourceCategoryId === 0) {
-        // Covering from Ready to Assign is not a category-to-category move —
-        // just assign more to the overspent category.
-        const targetAssigned = monthlyRows.find((r) => r.CategoryID === categoryId)?.Assigned ?? 0;
-        try {
-          await batchUpsertAssignments.mutateAsync([
-            { categoryId, amount: targetAssigned + cover, month, budgetId },
-          ]);
-          toast.success('Overspending covered', {
-            description: `Assigned ${formatAmount(cover)} from Ready to Assign.`,
-          });
-        } catch (error) {
-          toastError('Cover failed', error, 'Please try again.');
-          return;
-        }
-      } else {
-        // onMoveMoney validates, warns about future overspending, and toasts
-        await onMoveMoney(sourceCategoryId, cover, categoryId);
-      }
-      setOpen(false);
-    } finally {
-      setIsCovering(false);
-    }
-  };
-
   return (
-    <Popover open={open} onOpenChange={handleOpenChange}>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -156,60 +76,166 @@ export function CoverOverspendingPopover({
           />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-72 space-y-3" align={align}>
-        <div className="text-sm font-medium">Cover Overspending</div>
-        <div className="text-xs text-muted-foreground">
-          {tone === 'amber' ? 'Overspent on credit by ' : 'Overspent by '}
-          <span className={cn('font-medium', tone === 'amber' ? 'text-amber-600' : 'text-red-600')}>
-            {formatAmount(overspent)}
-          </span>
-          {tone === 'amber' && ' — cover it to avoid creating debt.'}
-        </div>
-        <div className="space-y-1">
-          {/* Caption, not a <label>: SearchableCategorySelect exposes no labelable control. */}
-          <span className="text-xs text-muted-foreground">Cover from</span>
-          <SearchableCategorySelect
-            budgetId={budgetId}
-            selectedCategoryId={sourceCategoryId}
-            onCategorySelect={handleSourceSelect}
-            placeholder="Select source category"
-            triggerClassName="justify-start h-8 w-full"
-            includeReadyToAssign
-            excludeCategoryId={categoryId}
-            showAvailableForMonth
-            onlyPositiveAvailable
-            month={month}
-          />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor={amountInputId} className="font-normal text-xs text-muted-foreground">
-            Amount
-          </Label>
-          <Input
-            id={amountInputId}
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            type="number"
-            step="0.01"
-            min="0"
-            max={String(toDecimal(maxCover))}
-            disabled={sourceCategoryId === null}
-          />
-          {sourceCategoryId !== null && (
-            <div className="text-[11px] text-muted-foreground">
-              Max {formatAmount(maxCover)} — covering never puts the source in the red
-            </div>
-          )}
-        </div>
-        <div className="flex items-center justify-end gap-2 pt-1">
-          <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button size="sm" onClick={handleCover} disabled={!canCover}>
-            {isCovering ? 'Covering…' : 'Cover'}
-          </Button>
-        </div>
-      </PopoverContent>
+      {open && (
+        <CoverOverspendingEditor
+          overspent={overspent}
+          categoryId={categoryId}
+          budgetId={budgetId}
+          month={month}
+          globalLocalizer={globalLocalizer}
+          onMoveMoney={onMoveMoney}
+          onClose={() => setOpen(false)}
+          align={align}
+          tone={tone}
+        />
+      )}
     </Popover>
+  );
+}
+
+interface CoverOverspendingEditorProps {
+  overspent: MilliUnits;
+  categoryId: number;
+  budgetId: number;
+  month: string;
+  globalLocalizer: Intl.NumberFormat;
+  onMoveMoney: CoverOverspendingPopoverProps['onMoveMoney'];
+  onClose: () => void;
+  align: NonNullable<CoverOverspendingPopoverProps['align']>;
+  tone: NonNullable<CoverOverspendingPopoverProps['tone']>;
+}
+
+/** Mount query subscriptions and mutation state only while the popover is open. */
+function CoverOverspendingEditor({
+  overspent,
+  categoryId,
+  budgetId,
+  month,
+  globalLocalizer,
+  onMoveMoney,
+  onClose,
+  align,
+  tone,
+}: CoverOverspendingEditorProps) {
+  const amountInputId = useId();
+  const [sourceCategoryId, setSourceCategoryId] = useState<number | null>(null);
+  const [amount, setAmount] = useState(() => String(toDecimal(overspent)));
+  const [isCovering, setIsCovering] = useState(false);
+  const formatAmount = useFormatMaskedMilli(globalLocalizer);
+
+  // Source id 0 means Ready to Assign. These subscriptions are deliberately
+  // absent from every closed row in the budget table.
+  const { data: monthlyRows = [] } = useMonthlyBudget(month, budgetId);
+  const { data: readyToAssign = 0 } = useReadyToAssign(budgetId);
+  const batchUpsertAssignments = useBatchUpsertAssignments();
+  const donorAvailableFor = useCallback(
+    (id: number) => {
+      if (id === 0) return asMilli(Math.max(0, readyToAssign));
+      const row = monthlyRows.find((candidate) => candidate.CategoryID === id);
+      return asMilli(Math.max(0, row?.Available ?? 0));
+    },
+    [monthlyRows, readyToAssign]
+  );
+  const sourceAvailable = useMemo(
+    () => (sourceCategoryId === null ? 0 : donorAvailableFor(sourceCategoryId)),
+    [donorAvailableFor, sourceCategoryId]
+  );
+  const maxCover = asMilli(Math.min(overspent, sourceAvailable));
+  const parsedAmount = parseFloat(amount);
+  const canCover =
+    sourceCategoryId !== null &&
+    Number.isFinite(parsedAmount) &&
+    parsedAmount > 0 &&
+    fromDecimal(parsedAmount) <= maxCover &&
+    !isCovering;
+
+  const handleSourceSelect = (id: number) => {
+    setSourceCategoryId(id);
+    setAmount(String(toDecimal(asMilli(Math.min(overspent, donorAvailableFor(id))))));
+  };
+
+  const handleCover = async () => {
+    if (!canCover || sourceCategoryId === null) return;
+    const cover = fromDecimal(parsedAmount);
+    setIsCovering(true);
+    try {
+      if (sourceCategoryId === 0) {
+        const targetAssigned =
+          monthlyRows.find((row) => row.CategoryID === categoryId)?.Assigned ?? 0;
+        try {
+          await batchUpsertAssignments.mutateAsync([
+            { categoryId, amount: targetAssigned + cover, month, budgetId },
+          ]);
+          toast.success('Overspending covered', {
+            description: `Assigned ${formatAmount(cover)} from Ready to Assign.`,
+          });
+        } catch (error) {
+          toastError('Cover failed', error, 'Please try again.');
+          return;
+        }
+      } else {
+        await onMoveMoney(sourceCategoryId, cover, categoryId);
+      }
+      onClose();
+    } finally {
+      setIsCovering(false);
+    }
+  };
+
+  return (
+    <PopoverContent className="w-72 space-y-3" align={align}>
+      <div className="text-sm font-medium">Cover Overspending</div>
+      <div className="text-xs text-muted-foreground">
+        {tone === 'amber' ? 'Overspent on credit by ' : 'Overspent by '}
+        <span className={cn('font-medium', tone === 'amber' ? 'text-amber-600' : 'text-red-600')}>
+          {formatAmount(overspent)}
+        </span>
+        {tone === 'amber' && ' — cover it to avoid creating debt.'}
+      </div>
+      <div className="space-y-1">
+        {/* Caption, not a <label>: SearchableCategorySelect exposes no labelable control. */}
+        <span className="text-xs text-muted-foreground">Cover from</span>
+        <SearchableCategorySelect
+          budgetId={budgetId}
+          selectedCategoryId={sourceCategoryId}
+          onCategorySelect={handleSourceSelect}
+          placeholder="Select source category"
+          triggerClassName="justify-start h-8 w-full"
+          includeReadyToAssign
+          excludeCategoryId={categoryId}
+          showAvailableForMonth
+          onlyPositiveAvailable
+          month={month}
+        />
+      </div>
+      <div className="space-y-1">
+        <Label htmlFor={amountInputId} className="font-normal text-xs text-muted-foreground">
+          Amount
+        </Label>
+        <Input
+          id={amountInputId}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          type="number"
+          step="0.01"
+          min="0"
+          max={String(toDecimal(maxCover))}
+          disabled={sourceCategoryId === null}
+        />
+        {sourceCategoryId !== null && (
+          <div className="text-[11px] text-muted-foreground">
+            Max {formatAmount(maxCover)} — covering never puts the source in the red
+          </div>
+        )}
+      </div>
+      <div className="flex items-center justify-end gap-2 pt-1">
+        <Button variant="ghost" size="sm" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button size="sm" onClick={handleCover} disabled={!canCover}>
+          {isCovering ? 'Covering…' : 'Cover'}
+        </Button>
+      </div>
+    </PopoverContent>
   );
 }

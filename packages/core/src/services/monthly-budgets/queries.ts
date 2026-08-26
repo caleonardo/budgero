@@ -73,6 +73,47 @@ export class MonthlyBudgetQueries {
     );
   }
 
+  getMonthlyAssignmentValues(
+    assignments: { categoryId: number; month: string; budgetId: number }[]
+  ): number[] {
+    if (assignments.length === 0) return [];
+
+    const values = new Map<string, number>();
+    const chunkSize = 250;
+    for (let index = 0; index < assignments.length; index += chunkSize) {
+      const chunk = assignments.slice(index, index + chunkSize);
+      const predicates = chunk.map(() => '(CategoryID = ? AND Month = ? AND BudgetID = ?)');
+      const params = chunk.flatMap((assignment) => [
+        assignment.categoryId,
+        assignment.month,
+        assignment.budgetId,
+      ]);
+      const rows = allRows<{
+        CategoryID: number;
+        Month: string;
+        BudgetID: number;
+        Amount: number;
+      }>(
+        this.db,
+        `
+        SELECT CategoryID, Month, BudgetID, Amount
+        FROM assignments
+        WHERE ${predicates.join(' OR ')}
+      `,
+        ...params
+      );
+
+      for (const row of rows) {
+        values.set(`${row.CategoryID}:${row.Month}:${row.BudgetID}`, row.Amount);
+      }
+    }
+
+    return assignments.map(
+      (assignment) =>
+        values.get(`${assignment.categoryId}:${assignment.month}:${assignment.budgetId}`) ?? 0
+    );
+  }
+
   /**
    * ReassignAssignment - Moves assignments from one category to another.
    * If the target category already has an assignment for the same month,
@@ -154,6 +195,48 @@ export class MonthlyBudgetQueries {
       categoryId
     );
     return result?.avg_amount || null;
+  }
+
+  getCategoryAssignmentHelpers(
+    categoryIds: number[],
+    lastMonth: string
+  ): { lastMonth: Record<number, number>; average: Record<number, number> } {
+    const ids = [...new Set(categoryIds.filter((id) => Number.isInteger(id) && id > 0))];
+    const result = {
+      lastMonth: {} as Record<number, number>,
+      average: {} as Record<number, number>,
+    };
+    for (const id of ids) {
+      result.lastMonth[id] = 0;
+      result.average[id] = 0;
+    }
+
+    const chunkSize = 500;
+    for (let index = 0; index < ids.length; index += chunkSize) {
+      const chunk = ids.slice(index, index + chunkSize);
+      const placeholders = chunk.map(() => '?').join(', ');
+      const rows = allRows<{ CategoryID: number; LastMonth: number; Average: number }>(
+        this.db,
+        `
+        SELECT
+          CategoryID,
+          COALESCE(MAX(CASE WHEN Month = ? THEN Amount END), 0) AS LastMonth,
+          COALESCE(CAST(ROUND(AVG(Amount)) AS INTEGER), 0) AS Average
+        FROM assignments
+        WHERE CategoryID IN (${placeholders})
+        GROUP BY CategoryID
+      `,
+        lastMonth,
+        ...chunk
+      );
+
+      for (const row of rows) {
+        result.lastMonth[row.CategoryID] = row.LastMonth;
+        result.average[row.CategoryID] = row.Average;
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -414,7 +497,7 @@ export class MonthlyBudgetQueries {
         AND acc.OnBudget = TRUE
         AND cg.Name = 'Income'
         AND (t.TransferID IS NULL OR t.TransferID = '')
-        AND strftime('%Y-%m', t.Date) <= ?2
+        AND t.Month <= ?2
     `,
         budgetId,
         month
@@ -450,7 +533,7 @@ export class MonthlyBudgetQueries {
         AND t.OutflowConverted > 0
         AND t.TransferID IS NOT NULL
         AND t.TransferID <> ''
-        AND strftime('%Y-%m', t.Date) <= ?2
+        AND t.Month <= ?2
         AND cg.Name = 'Transfers'
         AND EXISTS (
           SELECT 1 FROM transactions mirror
@@ -479,7 +562,7 @@ export class MonthlyBudgetQueries {
         AND t.InflowConverted > 0
         AND t.TransferID IS NOT NULL
         AND t.TransferID <> ''
-        AND strftime('%Y-%m', t.Date) <= ?2
+        AND t.Month <= ?2
         AND cg.Name = 'Transfers'
         AND EXISTS (
           SELECT 1 FROM transactions mirror
@@ -569,23 +652,23 @@ export class MonthlyBudgetQueries {
         WHERE a.BudgetID = ?1 AND a.Month <= ?2
         UNION ALL
         /* activity from split lines, partitioned by account kind */
-        SELECT s.CategoryID, strftime('%Y-%m', t.Date),
+        SELECT s.CategoryID, t.Month,
                0,
                CASE WHEN LOWER(acc.Type) = 'credit' THEN 0 ELSE s.InflowConverted - s.OutflowConverted END,
                CASE WHEN LOWER(acc.Type) = 'credit' THEN s.InflowConverted - s.OutflowConverted ELSE 0 END
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?1 AND acc.OnBudget = TRUE AND strftime('%Y-%m', t.Date) <= ?2
+        WHERE t.BudgetID = ?1 AND acc.OnBudget = TRUE AND t.Month <= ?2
         UNION ALL
         /* activity from non-split transactions, partitioned by account kind */
-        SELECT t.CategoryID, strftime('%Y-%m', t.Date),
+        SELECT t.CategoryID, t.Month,
                0,
                CASE WHEN LOWER(acc.Type) = 'credit' THEN 0 ELSE t.InflowConverted - t.OutflowConverted END,
                CASE WHEN LOWER(acc.Type) = 'credit' THEN t.InflowConverted - t.OutflowConverted ELSE 0 END
         FROM transactions t
         JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?1 AND acc.OnBudget = TRUE AND strftime('%Y-%m', t.Date) <= ?2
+        WHERE t.BudgetID = ?1 AND acc.OnBudget = TRUE AND t.Month <= ?2
           ${NO_SPLITS_FILTER}
       )
       SELECT con.CategoryID AS CategoryID, con.Month AS Month,
@@ -616,18 +699,18 @@ export class MonthlyBudgetQueries {
       `
       WITH contributions AS (
         SELECT s.CategoryID AS CategoryID, t.AccountID AS AccountID,
-               strftime('%Y-%m', t.Date) AS Month,
+               t.Month AS Month,
                s.OutflowConverted - s.InflowConverted AS Spend
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit' AND strftime('%Y-%m', t.Date) <= ?2
+        WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit' AND t.Month <= ?2
         UNION ALL
-        SELECT t.CategoryID, t.AccountID, strftime('%Y-%m', t.Date),
+        SELECT t.CategoryID, t.AccountID, t.Month,
                t.OutflowConverted - t.InflowConverted
         FROM transactions t
         JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit' AND strftime('%Y-%m', t.Date) <= ?2
+        WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit' AND t.Month <= ?2
           ${NO_SPLITS_FILTER}
       )
       SELECT con.CategoryID AS CategoryID, con.AccountID AS AccountID, con.Month AS Month,
@@ -651,14 +734,14 @@ export class MonthlyBudgetQueries {
     return allRows<{ AccountID: number; Month: string; Payments: number }>(
       this.db,
       `
-      SELECT t.AccountID AS AccountID, strftime('%Y-%m', t.Date) AS Month,
+      SELECT t.AccountID AS AccountID, t.Month AS Month,
              COALESCE(SUM(t.InflowConverted), 0) AS Payments
       FROM transactions t
       JOIN accounts acc ON acc.ID = t.AccountID
       WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit'
-        AND strftime('%Y-%m', t.Date) <= ?2
+        AND t.Month <= ?2
         AND t.TransferID IS NOT NULL AND t.TransferID != '' AND t.InflowConverted > 0
-      GROUP BY t.AccountID, strftime('%Y-%m', t.Date)
+      GROUP BY t.AccountID, t.Month
     `,
       budgetId,
       throughMonth
@@ -704,14 +787,14 @@ export class MonthlyBudgetQueries {
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?2 AND acc.OnBudget = TRUE AND strftime('%Y-%m', t.Date) = ?1
+        WHERE t.BudgetID = ?2 AND acc.OnBudget = TRUE AND t.Month = ?1
         UNION ALL
         SELECT t.CategoryID,
                CASE WHEN LOWER(acc.Type) = 'credit' THEN 0 ELSE t.InflowConverted - t.OutflowConverted END,
                CASE WHEN LOWER(acc.Type) = 'credit' THEN t.InflowConverted - t.OutflowConverted ELSE 0 END
         FROM transactions t
         JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?2 AND acc.OnBudget = TRUE AND strftime('%Y-%m', t.Date) = ?1
+        WHERE t.BudgetID = ?2 AND acc.OnBudget = TRUE AND t.Month = ?1
           ${NO_SPLITS_FILTER}
       )
       SELECT CategoryID, SUM(Cash) AS Cash, SUM(Credit) AS Credit
@@ -917,13 +1000,13 @@ export class MonthlyBudgetQueries {
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
-        WHERE strftime('%Y-%m', t.Date) = ?1 AND a.OnBudget = TRUE
+        WHERE t.BudgetID = ?2 AND t.Month = ?1 AND a.OnBudget = TRUE
         GROUP BY s.CategoryID
         UNION ALL
         SELECT t.CategoryID AS category_id, SUM(t.InflowConverted - t.OutflowConverted) AS net
         FROM transactions t
         JOIN accounts a ON a.ID = t.AccountID
-        WHERE strftime('%Y-%m', t.Date) = ?1 AND a.OnBudget = TRUE
+        WHERE t.BudgetID = ?2 AND t.Month = ?1 AND a.OnBudget = TRUE
           ${NO_SPLITS_FILTER}
         GROUP BY t.CategoryID
       ),
@@ -932,66 +1015,79 @@ export class MonthlyBudgetQueries {
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
-        WHERE strftime('%Y-%m', t.Date) < ?1 AND a.OnBudget = TRUE
+        WHERE t.BudgetID = ?2 AND t.Month < ?1 AND a.OnBudget = TRUE
         GROUP BY s.CategoryID
         UNION ALL
         SELECT t.CategoryID AS category_id, SUM(t.InflowConverted - t.OutflowConverted) AS net
         FROM transactions t
         JOIN accounts a ON a.ID = t.AccountID
-        WHERE strftime('%Y-%m', t.Date) < ?1 AND a.OnBudget = TRUE
+        WHERE t.BudgetID = ?2 AND t.Month < ?1 AND a.OnBudget = TRUE
           ${NO_SPLITS_FILTER}
         GROUP BY t.CategoryID
+      ),
+      activity_month_totals AS (
+        SELECT category_id, SUM(net) AS net
+        FROM activity_month
+        GROUP BY category_id
+      ),
+      activity_prior_totals AS (
+        SELECT category_id, SUM(net) AS net
+        FROM activity_prior
+        GROUP BY category_id
+      ),
+      transaction_counts AS (
+        SELECT t.CategoryID AS category_id, COUNT(*) AS count
+        FROM transactions t
+        WHERE t.BudgetID = ?2
+          ${NO_SPLITS_FILTER}
+        GROUP BY t.CategoryID
+        UNION ALL
+        SELECT s.CategoryID AS category_id, COUNT(*) AS count
+        FROM transaction_splits s
+        JOIN transactions t ON t.ID = s.TransactionID
+        WHERE t.BudgetID = ?2
+        GROUP BY s.CategoryID
+      ),
+      transaction_count_totals AS (
+        SELECT category_id, SUM(count) AS count
+        FROM transaction_counts
+        GROUP BY category_id
+      ),
+      assignment_totals AS (
+        SELECT
+          a.CategoryID AS category_id,
+          SUM(CASE WHEN a.Month = ?1 THEN a.Amount ELSE 0 END) AS assigned,
+          SUM(CASE WHEN a.Month < ?1 THEN a.Amount ELSE 0 END) AS assigned_prior
+        FROM assignments a
+        WHERE a.BudgetID = ?2 AND a.Month <= ?1
+        GROUP BY a.CategoryID
       )
       SELECT
         COALESCE(c.Name, '') AS Category,
         COALESCE(c.ID, -1) as CategoryID,
         cg.Name AS CategoryGroup,
         cg.ID as CategoryGroupID,
-        COALESCE((
-          SELECT COUNT(*) FROM (
-            SELECT t.id
-            FROM transactions t
-            WHERE t.CategoryID = c.ID AND NOT EXISTS (SELECT 1 FROM transaction_splits s WHERE s.TransactionID = t.ID)
-            UNION ALL
-            SELECT t2.ID
-            FROM transaction_splits s
-            JOIN transactions t2 ON t2.ID = s.TransactionID
-            WHERE s.CategoryID = c.ID
-          )
-        ), 0) AS TotalTransactionCount,
+        COALESCE(tc.count, 0) AS TotalTransactionCount,
 
         /* 1) Assigned in selected month */
-        COALESCE((
-          SELECT SUM(a.Amount)
-          FROM assignments a
-          WHERE a.CategoryID = c.ID AND a.Month = ?1
-        ), 0) AS Assigned,
+        COALESCE(at.assigned, 0) AS Assigned,
 
         /* 2) Activity in selected month (using splits) — integer milliunit sums are exact */
-        COALESCE((
-          SELECT SUM(net) FROM activity_month am WHERE am.category_id = c.id
-        ), 0) AS Activity,
+        COALESCE(am.net, 0) AS Activity,
 
         /* 3) Available = leftover from previous months + assigned - activity */
         (
-          COALESCE((
-            SELECT SUM(a_prev.Amount) FROM assignments a_prev WHERE a_prev.CategoryID = c.ID AND a_prev.Month < ?1
-          ), 0)
-          +
-          COALESCE((
-            SELECT SUM(net) FROM activity_prior ap WHERE ap.category_id = c.id
-          ), 0)
-          +
-          COALESCE((
-            SELECT SUM(a_cur.Amount) FROM assignments a_cur WHERE a_cur.CategoryID = c.ID AND a_cur.Month = ?1
-          ), 0)
-          +
-          COALESCE((
-            SELECT SUM(net) FROM activity_month am2 WHERE am2.category_id = c.id
-          ), 0)
+          COALESCE(at.assigned_prior, 0)
+          + COALESCE(ap.net, 0)
+          + COALESCE(at.assigned, 0)
+          + COALESCE(am.net, 0)
         ) AS Available
       FROM category_groups cg
       LEFT JOIN categories c ON c.CategoryGroupID = cg.ID
+      LEFT JOIN transaction_count_totals tc ON tc.category_id = c.ID
+      LEFT JOIN assignment_totals at ON at.category_id = c.ID
+      LEFT JOIN activity_month_totals am ON am.category_id = c.ID
+      LEFT JOIN activity_prior_totals ap ON ap.category_id = c.ID
       WHERE cg.Name != 'Income' and cg.Name != 'Transfers' and cg.Name != 'Uncategorized' and cg.BudgetID = ?2
       ORDER BY CASE WHEN cg.Name = 'Hidden Categories' THEN 1 ELSE 0 END, cg.Position, cg.Name, c.Position, c.Name
     `,
@@ -1156,7 +1252,7 @@ export class MonthlyBudgetQueries {
       FROM transactions t
       WHERE t.AccountID = ?
         AND t.BudgetID = ?
-        AND strftime('%Y-%m', t.Date) ${dateOp} ?
+        AND t.Month ${dateOp} ?
         AND t.TransferID IS NOT NULL
         AND t.TransferID != ''
         AND t.InflowConverted > 0
@@ -1225,7 +1321,8 @@ export class MonthlyBudgetQueries {
             JOIN transactions t ON t.ID = s.TransactionID
             JOIN accounts acc ON acc.ID = t.AccountID
             WHERE s.CategoryID = ?1
-              AND strftime('%Y-%m', t.Date) <= fm.Month
+              AND t.BudgetID = ?3
+              AND t.Month <= fm.Month
               AND acc.OnBudget = TRUE
           ), 0)
           +
@@ -1234,7 +1331,8 @@ export class MonthlyBudgetQueries {
             FROM transactions t
             JOIN accounts acc ON acc.ID = t.AccountID
             WHERE t.CategoryID = ?1
-              AND strftime('%Y-%m', t.Date) <= fm.Month
+              AND t.BudgetID = ?3
+              AND t.Month <= fm.Month
               AND acc.OnBudget = TRUE
               ${NO_SPLITS_FILTER}
           ), 0)
@@ -1290,11 +1388,11 @@ export class MonthlyBudgetQueries {
       SELECT x.CategoryID, x.AccountID, COALESCE(SUM(x.OutflowConverted), 0) as spending
       FROM (
         SELECT s.CategoryID AS CategoryID, t.AccountID AS AccountID, s.OutflowConverted AS OutflowConverted,
-               t.Date AS Date, t.BudgetID AS BudgetID
+               t.Month AS Month, t.BudgetID AS BudgetID
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         UNION ALL
-        SELECT t.CategoryID, t.AccountID, t.OutflowConverted, t.Date, t.BudgetID
+        SELECT t.CategoryID, t.AccountID, t.OutflowConverted, t.Month, t.BudgetID
         FROM transactions t
         WHERE NOT EXISTS (SELECT 1 FROM transaction_splits s2 WHERE s2.TransactionID = t.ID)
       ) x
@@ -1302,7 +1400,7 @@ export class MonthlyBudgetQueries {
       JOIN category_groups cg ON c.CategoryGroupID = cg.ID
       WHERE x.AccountID IN (${placeholders})
         AND x.BudgetID = ?
-        AND strftime('%Y-%m', x.Date) ${dateOp} ?
+        AND x.Month ${dateOp} ?
         AND x.OutflowConverted > 0
         AND cg.Name NOT IN ('Income', 'Transfers', 'Uncategorized', 'Credit Card Payments')
       GROUP BY x.CategoryID, x.AccountID
@@ -1391,9 +1489,9 @@ export class MonthlyBudgetQueries {
              COALESCE(SUM(t.InflowConverted - t.OutflowConverted), 0) AS balance
       FROM transactions t
       JOIN accounts a ON a.ID = t.AccountID
-      WHERE a.BudgetID = ?
+      WHERE t.BudgetID = ?
         AND LOWER(a.Type) = 'credit'
-        AND strftime('%Y-%m', t.Date) <= ?
+        AND t.Month <= ?
       GROUP BY t.AccountID
     `,
       budgetId,

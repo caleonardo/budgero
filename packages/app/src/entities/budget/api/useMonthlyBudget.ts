@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, useMutation, keepPreviousData, useQueryClient } from '@tanstack/react-query';
 import type {
   GetMonthlyBudgetRow,
   AssignmentsByMonthRow,
@@ -9,7 +9,7 @@ import type {
 import { useRuntime, useActiveSpaceId } from '@shared/runtime/runtime-provider';
 import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 import { useSpaceQuery } from '@shared/api/useSpaceQuery';
-import { resolveSpaceKey } from '@shared/lib/query-utils';
+import { applyOpInvalidations, resolveSpaceKey } from '@shared/lib/query-utils';
 
 /**
  * Fetch the monthly budget breakdown for a given month and budget.
@@ -189,27 +189,8 @@ export const useCategoryAssignmentHelpers = (categoryIds: number[], month: strin
   return useSpaceQuery<CategoryAssignmentHelpers>({
     key: ['categoryAssignmentHelpers', normalizedCategoryIds.join('_'), month],
     enabled: normalizedCategoryIds.length > 0 && Boolean(month),
-    queryFn: (services) => {
-      const lastMonthValues = normalizedCategoryIds.map((categoryId) =>
-        services.monthlyBudgets.getAssignedLastMonth(month, categoryId)
-      );
-
-      const averageValues = normalizedCategoryIds.map((categoryId) =>
-        services.monthlyBudgets.getAverageAssigned(categoryId)
-      );
-
-      const lastMonth: Record<number, number> = {};
-      normalizedCategoryIds.forEach((categoryId, index) => {
-        lastMonth[categoryId] = lastMonthValues[index] ?? 0;
-      });
-
-      const average: Record<number, number> = {};
-      normalizedCategoryIds.forEach((categoryId, index) => {
-        average[categoryId] = averageValues[index] ?? 0;
-      });
-
-      return { lastMonth, average };
-    },
+    queryFn: (services) =>
+      services.monthlyBudgets.getCategoryAssignmentHelpers(normalizedCategoryIds, month),
   });
 };
 
@@ -231,19 +212,102 @@ export const useTotalAssignedForBudgetPace = (months: string[], budgetId: number
  */
 export const useBatchUpsertAssignments = () => {
   const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
+  const spaceKey = resolveSpaceKey(spaceId);
+  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (
-      assignments: { categoryId: number; amount: number; month: string; budgetId: number }[]
-    ) => {
+  type BatchAssignment = {
+    categoryId: number;
+    amount: number;
+    month: string;
+    budgetId: number;
+  };
+  type OptimisticSnapshot = {
+    key: readonly unknown[];
+    data: unknown;
+  };
+
+  return useMutation<void, Error, BatchAssignment[], { snapshots: OptimisticSnapshot[] }>({
+    mutationFn: async (assignments) => {
       const mutationManager = runtime.mutationsRouter();
       await mutationManager.execute<void>({
         op: 'monthlyBudgets.batchUpsertAssignments',
         payload: {
           assignments,
         },
-        meta: { label: 'useBatchUpsertAssignments' },
+        // The cache is updated optimistically below. Recompute exact derived
+        // values after persistence without keeping the action pending on it.
+        meta: { label: 'useBatchUpsertAssignments', skipInvalidate: true },
       });
+    },
+    onMutate: async (assignments) => {
+      const groups = new Map<string, BatchAssignment[]>();
+      for (const assignment of assignments) {
+        const groupKey = `${assignment.month}:${assignment.budgetId}`;
+        const group = groups.get(groupKey) ?? [];
+        group.push(assignment);
+        groups.set(groupKey, group);
+      }
+
+      const snapshots: OptimisticSnapshot[] = [];
+      await Promise.all(
+        [...groups.values()].flatMap((group) => {
+          const { month, budgetId } = group[0];
+          return [
+            queryClient.cancelQueries({
+              queryKey: ['monthlyBudget', spaceKey, month, budgetId],
+              exact: true,
+            }),
+            queryClient.cancelQueries({
+              queryKey: ['readyToAssign', spaceKey, budgetId, month],
+              exact: true,
+            }),
+          ];
+        })
+      );
+
+      for (const group of groups.values()) {
+        const { month, budgetId } = group[0];
+        const monthlyBudgetKey = ['monthlyBudget', spaceKey, month, budgetId] as const;
+        const previousRows = queryClient.getQueryData<GetMonthlyBudgetRow[]>(monthlyBudgetKey);
+        snapshots.push({ key: monthlyBudgetKey, data: previousRows });
+
+        let assignedDelta = 0;
+        if (previousRows) {
+          const amounts = new Map(
+            group.map((assignment) => [assignment.categoryId, assignment.amount])
+          );
+          const nextRows = previousRows.map((row) => {
+            const nextAssigned = amounts.get(row.CategoryID);
+            if (nextAssigned === undefined) return row;
+            const delta = nextAssigned - row.Assigned;
+            assignedDelta += delta;
+            return {
+              ...row,
+              Assigned: nextAssigned,
+              Available: row.Available + delta,
+            };
+          });
+          queryClient.setQueryData(monthlyBudgetKey, nextRows);
+        }
+
+        const readyToAssignKey = ['readyToAssign', spaceKey, budgetId, month] as const;
+        const previousReadyToAssign = queryClient.getQueryData<number>(readyToAssignKey);
+        snapshots.push({ key: readyToAssignKey, data: previousReadyToAssign });
+        if (previousReadyToAssign !== undefined) {
+          queryClient.setQueryData(readyToAssignKey, previousReadyToAssign - assignedDelta);
+        }
+      }
+
+      return { snapshots };
+    },
+    onError: (_error, _assignments, context) => {
+      for (const snapshot of context?.snapshots ?? []) {
+        queryClient.setQueryData(snapshot.key, snapshot.data);
+      }
+    },
+    onSuccess: () => {
+      applyOpInvalidations(queryClient, 'monthlyBudgets.batchUpsertAssignments');
     },
   });
 };

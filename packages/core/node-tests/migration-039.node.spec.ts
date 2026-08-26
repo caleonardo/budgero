@@ -64,15 +64,17 @@ async function buildV38Fixture(): Promise<MigDb> {
 
 describe('migration 039: REAL money -> INTEGER milliunits', () => {
   let db: MigDb;
-  let preIndexCount: number;
+  let preIndexNames: string[];
 
   beforeAll(async () => {
     db = await buildV38Fixture();
-    preIndexCount = one(
-      db,
-      `SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL
-       AND tbl_name IN ('transactions','transaction_splits','accounts','assignments','goals','recurring_transactions','warranties')`
-    ) as number;
+    preIndexNames = (
+      db.exec(
+        `SELECT name FROM sqlite_master WHERE type='index' AND sql IS NOT NULL
+         AND tbl_name IN ('transactions','transaction_splits','accounts','assignments','goals','recurring_transactions','warranties')
+         ORDER BY name`
+      )[0]?.values ?? []
+    ).map(([name]) => String(name));
     new MigrationRunner(db).runMigrations();
   });
 
@@ -135,12 +137,14 @@ describe('migration 039: REAL money -> INTEGER milliunits', () => {
 
   it('preserves the generated Month column and explicit indexes', () => {
     expect(one(db, `SELECT Month FROM transactions WHERE ID = 1`)).toBe('2026-01');
-    const postIndexCount = one(
-      db,
-      `SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL
-       AND tbl_name IN ('transactions','transaction_splits','accounts','assignments','goals','recurring_transactions','warranties')`
-    );
-    expect(postIndexCount).toBe(preIndexCount);
+    const postIndexNames = (
+      db.exec(
+        `SELECT name FROM sqlite_master WHERE type='index' AND sql IS NOT NULL
+         AND tbl_name IN ('transactions','transaction_splits','accounts','assignments','goals','recurring_transactions','warranties')
+         ORDER BY name`
+      )[0]?.values ?? []
+    ).map(([name]) => String(name));
+    expect(postIndexNames).toEqual(expect.arrayContaining(preIndexNames));
   });
 
   it('keeps AUTOINCREMENT working after the rebuild', () => {

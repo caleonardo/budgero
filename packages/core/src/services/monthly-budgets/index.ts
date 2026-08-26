@@ -216,12 +216,41 @@ export class MonthlyBudgetService {
     return avg || 0;
   }
 
+  getCategoryAssignmentHelpers(
+    categoryIds: number[],
+    month: string
+  ): { lastMonth: Record<number, number>; average: Record<number, number> } {
+    const [yearValue, monthValue] = month.split('-').map(Number);
+    const now = new Date();
+    let year = Number.isInteger(yearValue) && yearValue > 0 ? yearValue : now.getFullYear();
+    let monthNumber =
+      Number.isInteger(monthValue) && monthValue >= 1 && monthValue <= 12
+        ? monthValue - 1
+        : now.getMonth();
+    if (monthNumber === 0) {
+      year -= 1;
+      monthNumber = 12;
+    }
+    const lastMonth = `${year}-${String(monthNumber).padStart(2, '0')}`;
+    return this.queries.getCategoryAssignmentHelpers(categoryIds, lastMonth);
+  }
+
   /**
    * GetMonthlyAssignment - Gets a specific monthly assignment
    */
   getMonthlyAssignment(categoryId: number, month: string): Assignment | null {
     const assignment = this.queries.getMonthlyAssignment(categoryId, month);
     return assignment || null;
+  }
+
+  getMonthlyAssignmentValue(categoryId: number, month: string, budgetId: number): number {
+    return this.queries.getMonthlyAssignmentValues([{ categoryId, month, budgetId }])[0] ?? 0;
+  }
+
+  getMonthlyAssignmentValues(
+    assignments: { categoryId: number; month: string; budgetId: number }[]
+  ): number[] {
+    return this.queries.getMonthlyAssignmentValues(assignments);
   }
 
   /**

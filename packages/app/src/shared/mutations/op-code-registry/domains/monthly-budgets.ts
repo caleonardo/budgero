@@ -106,6 +106,16 @@ export const monthlyBudgetOps = {
           budgetId: number;
         }
         const list = (args.assignments as AssignmentInput[]) || [];
+        const svc = S().monthlyBudgets as ExtendedMonthlyBudgetService;
+        if (typeof svc.getMonthlyAssignmentValues === 'function') {
+          const amounts = await svc.getMonthlyAssignmentValues(list);
+          return {
+            prev: list.map((assignment, index) => ({
+              ...assignment,
+              amount: Number(amounts[index]) || 0,
+            })),
+          };
+        }
         const prev: { categoryId: number; month: string; budgetId: number; amount: number }[] = [];
         for (const a of list) {
           try {

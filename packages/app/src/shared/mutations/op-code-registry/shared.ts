@@ -151,6 +151,9 @@ export interface ExtendedMonthlyBudgetService {
     month: string,
     budgetId: number
   ) => number | Promise<number>;
+  getMonthlyAssignmentValues?: (
+    assignments: { categoryId: number; month: string; budgetId: number }[]
+  ) => number[] | Promise<number[]>;
   batchUpsertMonthlyAssignments?: (
     assignments: { categoryId: number; amount: number; month: string; budgetId: number }[]
   ) => void | Promise<void>;
