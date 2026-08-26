@@ -10,7 +10,7 @@
  */
 
 import { ExternalLink } from 'lucide-react';
-import { AnimatedNumber } from '@shared/ui/animated-number';
+import { PlanningAnimatedNumber } from '@features/budget-planning/ui/PlanningNumberAnimation';
 import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMaskedMilli';
 import type { BudgetRow } from '@features/budget-planning/lib/budget-transforms';
 
@@ -46,7 +46,7 @@ export function ActivityButton({
       className={className}
     >
       {animated ? (
-        <AnimatedNumber
+        <PlanningAnimatedNumber
           value={Math.abs(item.activity)}
           formatter={formatAmount}
           className="tabular-nums"

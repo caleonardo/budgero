@@ -44,6 +44,14 @@ export class UserMetaService {
     this.queries.setShowGroupPercent(value);
   }
 
+  getPlanningNumberAnimations(): boolean {
+    return this.queries.getPlanningNumberAnimations();
+  }
+
+  setPlanningNumberAnimations(value: boolean): void {
+    this.queries.setPlanningNumberAnimations(value);
+  }
+
   getRateCacheRetentionDays(): number {
     return this.queries.getRateCacheRetentionDays();
   }

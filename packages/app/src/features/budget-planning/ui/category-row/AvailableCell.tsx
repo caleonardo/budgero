@@ -11,7 +11,7 @@
  * divergent version (goal-aware colors, uncontrolled popover, raw Input).
  */
 
-import { AnimatedNumber } from '@shared/ui/animated-number';
+import { PlanningAnimatedNumber } from '@features/budget-planning/ui/PlanningNumberAnimation';
 import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMaskedMilli';
 import type { BudgetRow } from '@features/budget-planning/lib/budget-transforms';
 import { AvailableInfoPopover } from '@features/budget-planning/ui/AvailableInfoPopover';
@@ -107,7 +107,7 @@ export function AvailableCell({
         tone={overspendTone(item)}
       />
     ) : (
-      <AnimatedNumber
+      <PlanningAnimatedNumber
         value={item.available}
         formatter={formatAmount}
         className={fallbackClassName}

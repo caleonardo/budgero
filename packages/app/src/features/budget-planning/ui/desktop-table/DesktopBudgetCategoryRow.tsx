@@ -18,7 +18,6 @@ import { cn } from '@shared/lib/utils';
 import { fromDecimal, toDecimal, ZERO_MILLI } from '@shared/lib/currency/milli';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMaskedMilli';
-import { AnimatedNumber } from '@shared/ui/animated-number';
 import { SearchableCategorySelect } from '@features/category-management/ui/SearchableCategorySelect';
 import { GoalCalculations, type CategoryFinancials } from '@budgero/core/browser';
 import { CCPaymentCoverPopover } from '@features/budget-planning/ui/category-row/CCPaymentCoverPopover';
@@ -29,6 +28,7 @@ import { AvailableInfoPopover } from '@features/budget-planning/ui/AvailableInfo
 import { getAvailableColorByGoalStatus, shouldPreventRowSelection } from './utils';
 import { useSortableDragHandle } from './useSortableDragHandle';
 import type { DesktopBudgetCategoryRowProps } from './types';
+import { PlanningAnimatedNumber } from '../PlanningNumberAnimation';
 
 export function DesktopBudgetCategoryRow({
   row,
@@ -302,7 +302,7 @@ export function DesktopBudgetCategoryRow({
             onActivityClick(row.categoryId, row.name);
           }}
         >
-          <AnimatedNumber
+          <PlanningAnimatedNumber
             value={Math.abs(row.activity)}
             formatter={formatAmount}
             className="tabular-nums"
@@ -341,7 +341,7 @@ export function DesktopBudgetCategoryRow({
                   )}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <AnimatedNumber
+                  <PlanningAnimatedNumber
                     value={row.available}
                     formatter={formatAmount}
                     className="tabular-nums"
@@ -407,7 +407,7 @@ export function DesktopBudgetCategoryRow({
               tone={overspendTone(row)}
             />
           ) : (
-            <AnimatedNumber
+            <PlanningAnimatedNumber
               value={row.available}
               formatter={formatAmount}
               className={cn(

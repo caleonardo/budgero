@@ -4,7 +4,6 @@ import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
-import { AnimatedNumber } from '@shared/ui/animated-number';
 import { cn } from '@shared/lib/utils';
 import { asMilli, fromDecimal, toDecimal, type MilliUnits } from '@shared/lib/currency/milli';
 import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMaskedMilli';
@@ -15,6 +14,7 @@ import {
   useBatchUpsertAssignments,
 } from '@entities/budget/api/useMonthlyBudget';
 import { SearchableCategorySelect } from '@features/category-management/ui/SearchableCategorySelect';
+import { PlanningAnimatedNumber } from '@features/budget-planning/ui/PlanningNumberAnimation';
 
 export interface CoverOverspendingPopoverProps {
   /** The overspent category's available balance (negative), in milliunits. */
@@ -149,7 +149,11 @@ export function CoverOverspendingPopover({
           title={tone === 'amber' ? 'Credit overspend — cover to avoid debt' : 'Cover overspending'}
           onClick={(e) => e.stopPropagation()}
         >
-          <AnimatedNumber value={available} formatter={formatAmount} className="tabular-nums" />
+          <PlanningAnimatedNumber
+            value={available}
+            formatter={formatAmount}
+            className="tabular-nums"
+          />
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-72 space-y-3" align={align}>

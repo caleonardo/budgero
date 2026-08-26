@@ -89,6 +89,22 @@ export class UserMetaQueries {
     run(this.db, `UPDATE user_meta SET ShowGroupPercent = ? WHERE ID = 1`, value ? 1 : 0);
   }
 
+  /** Animate amount changes on the Planning page. Off by default. */
+  getPlanningNumberAnimations(): boolean {
+    this.ensureRow();
+    const row = getRow<{ PlanningNumberAnimations: boolean | number | null }>(
+      this.db,
+      `SELECT PlanningNumberAnimations FROM user_meta WHERE ID = 1`
+    );
+    if (!row || row.PlanningNumberAnimations == null) return false;
+    return row.PlanningNumberAnimations === true || row.PlanningNumberAnimations === 1;
+  }
+
+  setPlanningNumberAnimations(value: boolean): void {
+    this.ensureRow();
+    run(this.db, `UPDATE user_meta SET PlanningNumberAnimations = ? WHERE ID = 1`, value ? 1 : 0);
+  }
+
   setLastBackup(timestamp: string): void {
     this.ensureRow();
     run(

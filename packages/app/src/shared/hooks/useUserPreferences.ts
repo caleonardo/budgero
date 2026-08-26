@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRuntime, useActiveSpaceId } from '@shared/runtime/runtime-provider';
 import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 
@@ -7,6 +7,7 @@ interface UserMetaService {
   getAllowOverAssignment(): Promise<boolean> | boolean;
   getSuggestCategoryFromPayee?(): Promise<boolean> | boolean;
   getShowGroupPercent?(): Promise<boolean> | boolean;
+  getPlanningNumberAnimations?(): Promise<boolean> | boolean;
 }
 
 /** Runtime services with userMeta */
@@ -181,6 +182,67 @@ export function useShowGroupPercentPreference() {
     showGroupPercent,
     isLoading: queryRest.isLoading,
     updateShowGroupPercent: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+  };
+}
+
+/** Whether amount changes on the Planning page animate. Off by default. */
+export function usePlanningNumberAnimations() {
+  const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
+  const spaceKey = spaceId ?? 'global';
+
+  return useQuery<boolean>({
+    queryKey: ['planningNumberAnimations', spaceKey],
+    queryFn: async () => {
+      const services = runtime.services() as ServicesWithUserMeta;
+      if (services?.userMeta?.getPlanningNumberAnimations) {
+        const result = await services.userMeta.getPlanningNumberAnimations();
+        return result ?? false;
+      }
+      return false;
+    },
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+}
+
+function useUpdatePlanningNumberAnimations() {
+  const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
+  const queryClient = useQueryClient();
+  const queryKey = ['planningNumberAnimations', spaceId ?? 'global'] as const;
+
+  return useMutation<void, Error, boolean, { previous: boolean | undefined }>({
+    mutationFn: async (value: boolean) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'userPreferences.setPlanningNumberAnimations',
+        payload: { value },
+        meta: { label: 'Update planning number animations setting' },
+      });
+    },
+    onMutate: async (value) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<boolean>(queryKey);
+      queryClient.setQueryData(queryKey, value);
+      return { previous };
+    },
+    onError: (_error, _value, context) => {
+      queryClient.setQueryData(queryKey, context?.previous ?? false);
+    },
+  });
+}
+
+/** Query + mutation pair for Planning-page number animations. */
+export function usePlanningNumberAnimationsPreference() {
+  const { data: planningNumberAnimations = false, ...queryRest } = usePlanningNumberAnimations();
+  const updateMutation = useUpdatePlanningNumberAnimations();
+
+  return {
+    planningNumberAnimations,
+    isLoading: queryRest.isLoading,
+    updatePlanningNumberAnimations: updateMutation.mutate,
     isUpdating: updateMutation.isPending,
   };
 }

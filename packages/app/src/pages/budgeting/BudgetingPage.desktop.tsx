@@ -17,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@shared/ui/input';
 import { ReadyToAssignHelpPopover } from '@features/budgeting/ui/ReadyToAssignHelpPopover';
 import { useFormatMaskedAmount } from '@shared/lib/privacy/useMaskedLocalizer';
-import { AnimatedNumber } from '@shared/ui/animated-number';
+import { PlanningAnimatedNumber } from '@features/budget-planning/ui/PlanningNumberAnimation';
 import MonthPickerPopover from '@shared/ui/MonthPickerPopover';
 import { useFocusCategoryFromNavState } from '@shared/hooks/useFocusCategoryFromNavState';
 import { useClearCategorySelectionOnMount } from '@shared/hooks/useClearCategorySelectionOnMount';
@@ -341,7 +341,7 @@ export function BudgetingPageDesktop() {
                       align="center"
                     />
                   </div>
-                  <AnimatedNumber
+                  <PlanningAnimatedNumber
                     value={readyToAssign}
                     formatter={formatMilliAmount}
                     className="text-lg font-semibold tabular-nums"

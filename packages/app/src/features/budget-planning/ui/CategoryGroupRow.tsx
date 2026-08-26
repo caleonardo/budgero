@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import { BudgetRow } from '@features/budget-planning/lib/budget-transforms';
 import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMaskedMilli';
-import { AnimatedNumber } from '@shared/ui/animated-number';
+import { PlanningAnimatedNumber } from './PlanningNumberAnimation';
 import { GroupNameEditPopover } from './GroupNameEditPopover';
 import { AddCategoryButton } from './AddCategoryButton';
 import { GroupShareBadge } from './GroupShareBadge';
@@ -107,7 +107,7 @@ export function CategoryGroupRow({
 
           {/* Allocated total column */}
           <div className="text-right text-[11px] font-semibold text-muted-foreground whitespace-nowrap tabular-nums">
-            <AnimatedNumber value={item.assigned} formatter={formatAmount} />
+            <PlanningAnimatedNumber value={item.assigned} formatter={formatAmount} />
           </div>
 
           {/* Available total column */}
@@ -117,7 +117,7 @@ export function CategoryGroupRow({
               item.available < 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'
             )}
           >
-            <AnimatedNumber value={item.available} formatter={formatAmount} />
+            <PlanningAnimatedNumber value={item.available} formatter={formatAmount} />
           </div>
         </div>
       </div>
@@ -162,7 +162,7 @@ export function CategoryGroupRow({
               )}
             </div>
             <div className="text-right text-xs lg:text-sm font-semibold">
-              <AnimatedNumber value={item.assigned} formatter={formatAmount} />
+              <PlanningAnimatedNumber value={item.assigned} formatter={formatAmount} />
             </div>
             <div
               className={cn(
@@ -174,7 +174,7 @@ export function CategoryGroupRow({
                     : 'text-muted-foreground'
               )}
             >
-              <AnimatedNumber value={Math.abs(item.activity)} formatter={formatAmount} />
+              <PlanningAnimatedNumber value={Math.abs(item.activity)} formatter={formatAmount} />
             </div>
             <div
               className={cn(
@@ -184,7 +184,7 @@ export function CategoryGroupRow({
                   : 'text-foreground dark:text-white'
               )}
             >
-              <AnimatedNumber value={item.available} formatter={formatAmount} />
+              <PlanningAnimatedNumber value={item.available} formatter={formatAmount} />
             </div>
           </div>
         ) : (
@@ -220,7 +220,7 @@ export function CategoryGroupRow({
                 Allocated
               </span>
               <span className="truncate text-xs font-semibold text-foreground dark:text-white text-right md:text-center lg:text-sm">
-                <AnimatedNumber value={item.assigned} formatter={formatAmount} />
+                <PlanningAnimatedNumber value={item.assigned} formatter={formatAmount} />
               </span>
             </div>
             {!isCompactLayout && (
@@ -238,7 +238,10 @@ export function CategoryGroupRow({
                         : 'text-muted-foreground'
                   )}
                 >
-                  <AnimatedNumber value={Math.abs(item.activity)} formatter={formatAmount} />
+                  <PlanningAnimatedNumber
+                    value={Math.abs(item.activity)}
+                    formatter={formatAmount}
+                  />
                 </span>
               </div>
             )}
@@ -254,7 +257,7 @@ export function CategoryGroupRow({
                     : 'text-foreground dark:text-white'
                 )}
               >
-                <AnimatedNumber value={item.available} formatter={formatAmount} />
+                <PlanningAnimatedNumber value={item.available} formatter={formatAmount} />
               </span>
             </div>
           </div>
@@ -268,7 +271,7 @@ export function CategoryGroupRow({
               Allocated
             </span>
             <span className="text-sm font-semibold text-foreground">
-              <AnimatedNumber value={item.assigned} formatter={formatAmount} />
+              <PlanningAnimatedNumber value={item.assigned} formatter={formatAmount} />
             </span>
           </div>
           {!isCompactLayout && (
@@ -286,7 +289,7 @@ export function CategoryGroupRow({
                       : 'text-muted-foreground'
                 )}
               >
-                <AnimatedNumber value={Math.abs(item.activity)} formatter={formatAmount} />
+                <PlanningAnimatedNumber value={Math.abs(item.activity)} formatter={formatAmount} />
               </span>
             </div>
           )}
@@ -300,7 +303,7 @@ export function CategoryGroupRow({
                 item.available < 0 ? 'text-destructive' : 'text-foreground'
               )}
             >
-              <AnimatedNumber value={item.available} formatter={formatAmount} />
+              <PlanningAnimatedNumber value={item.available} formatter={formatAmount} />
             </span>
           </div>
         </div>

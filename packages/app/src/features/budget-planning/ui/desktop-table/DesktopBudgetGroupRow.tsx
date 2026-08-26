@@ -9,12 +9,12 @@ import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
 import { TableRow, TableCell } from '@shared/ui/table';
 import { cn } from '@shared/lib/utils';
 import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMaskedMilli';
-import { AnimatedNumber } from '@shared/ui/animated-number';
 import { GroupNameEditPopover } from '@features/budget-planning/ui/GroupNameEditPopover';
 import { AddCategoryButton } from '@features/budget-planning/ui/AddCategoryButton';
 import { useSortableDragHandle } from './useSortableDragHandle';
 import type { DesktopBudgetGroupRowProps } from './types';
 import { GroupShareBadge } from '../GroupShareBadge';
+import { PlanningAnimatedNumber } from '../PlanningNumberAnimation';
 
 export function DesktopBudgetGroupRow({
   row,
@@ -130,7 +130,11 @@ export function DesktopBudgetGroupRow({
         </div>
       </TableCell>
       <TableCell className="text-right font-mono text-sm font-semibold">
-        <AnimatedNumber value={totalsAssigned} formatter={formatAmount} className="tabular-nums" />
+        <PlanningAnimatedNumber
+          value={totalsAssigned}
+          formatter={formatAmount}
+          className="tabular-nums"
+        />
       </TableCell>
       <TableCell
         className={cn(
@@ -142,7 +146,7 @@ export function DesktopBudgetGroupRow({
               : 'text-muted-foreground'
         )}
       >
-        <AnimatedNumber
+        <PlanningAnimatedNumber
           value={Math.abs(totalsActivity)}
           formatter={formatAmount}
           className="tabular-nums"
@@ -154,7 +158,11 @@ export function DesktopBudgetGroupRow({
           totalsAvailable < 0 ? 'text-red-600' : 'text-foreground'
         )}
       >
-        <AnimatedNumber value={totalsAvailable} formatter={formatAmount} className="tabular-nums" />
+        <PlanningAnimatedNumber
+          value={totalsAvailable}
+          formatter={formatAmount}
+          className="tabular-nums"
+        />
       </TableCell>
     </TableRow>
   );

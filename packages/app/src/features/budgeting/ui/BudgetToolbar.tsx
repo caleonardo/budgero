@@ -8,7 +8,7 @@ import { Button } from '@shared/ui/button';
 import { cn } from '@shared/lib/utils';
 import type { ReactNode } from 'react';
 import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMaskedMilli';
-import { AnimatedNumber } from '@shared/ui/animated-number';
+import { PlanningAnimatedNumber } from '@features/budget-planning/ui/PlanningNumberAnimation';
 
 interface BudgetToolbarProps {
   readyToAssign: number;
@@ -103,7 +103,7 @@ export function BudgetToolbar({
             )}
           >
             <span className="text-muted-foreground shrink-0">RTA</span>
-            <AnimatedNumber
+            <PlanningAnimatedNumber
               value={readyToAssign}
               formatter={formatAmount}
               className={cn('font-semibold shrink-0 tabular-nums', rtaTone.value)}
@@ -206,7 +206,7 @@ export function BudgetToolbar({
                     triggerClassName="h-3.5 w-3.5 text-muted-foreground/60"
                   />
                 </div>
-                <AnimatedNumber
+                <PlanningAnimatedNumber
                   value={readyToAssign}
                   formatter={formatAmount}
                   className={cn(

@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shar
 import { Label } from '@shared/ui/label';
 import { ThemeSwitch } from '@shared/ui/theme-switch';
 import { Separator } from '@shared/ui/separator';
-import { Palette, Download, Home, Smartphone } from 'lucide-react';
+import { Palette, Download, Home, Smartphone, Activity } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { usePWA } from '@shared/hooks/usePWA';
 import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group';
@@ -19,6 +19,7 @@ import { useThemePreset } from '@shared/contexts/ThemePresetContext';
 import { BudgetTableSkeleton } from '@features/budget-planning/ui/BudgetTableSkeleton';
 import { AccountOrderCard } from '@features/account-management/ui/AccountOrderCard';
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
+import { usePlanningNumberAnimationsPreference } from '@shared/hooks/useUserPreferences';
 
 export default function AppearancePage() {
   const { installApp, installSupport, installInstructions, canInstall } = usePWA();
@@ -33,6 +34,11 @@ export default function AppearancePage() {
   const setCompactMobileLayout = useUiStore((state) => state.setCompactMobileLayout);
   const mobileBudgetLayout = useUiStore((state) => state.mobileBudgetLayout);
   const setMobileBudgetLayout = useUiStore((state) => state.setMobileBudgetLayout);
+  const {
+    planningNumberAnimations,
+    updatePlanningNumberAnimations,
+    isUpdating: isUpdatingPlanningNumberAnimations,
+  } = usePlanningNumberAnimationsPreference();
 
   const handleHomePageChange = (value: string) => {
     const page = value as HomePageOption;
@@ -164,6 +170,32 @@ export default function AppearancePage() {
               theme to choose a custom font.
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Activity className="h-5 w-5" />
+            Motion
+          </CardTitle>
+          <CardDescription>Control interface animations.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="planning-number-animations">Animate planning amounts</Label>
+              <p className="text-sm text-muted-foreground">
+                Animate amount changes on the Planning page.
+              </p>
+            </div>
+            <Switch
+              id="planning-number-animations"
+              checked={planningNumberAnimations}
+              onCheckedChange={updatePlanningNumberAnimations}
+              disabled={isUpdatingPlanningNumberAnimations}
+            />
+          </div>
         </CardContent>
       </Card>
 

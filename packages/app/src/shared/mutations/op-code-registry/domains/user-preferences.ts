@@ -36,4 +36,17 @@ export const userPreferenceOps = {
     },
     invalidates: [['showGroupPercent'], ['userPreferences']],
   },
+  'userPreferences.setPlanningNumberAnimations': {
+    execute: async (args) => {
+      const services = S() as {
+        userMeta?: { setPlanningNumberAnimations(value: boolean): void };
+      };
+      if (!services.userMeta) {
+        throw new Error('userMeta service not available');
+      }
+      services.userMeta.setPlanningNumberAnimations(args.value as boolean);
+      return { success: true };
+    },
+    invalidates: [['planningNumberAnimations'], ['userPreferences']],
+  },
 } satisfies Record<string, OpCodeEntry>;
