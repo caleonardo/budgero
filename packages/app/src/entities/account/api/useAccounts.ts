@@ -91,7 +91,10 @@ export type EditAccountInput = {
   oldCurrency?: string; // For detecting currency changes
   metadata?: Record<string, unknown>;
   onBudget?: boolean;
+  currencyChangeMode?: AccountCurrencyChangeMode;
 };
+
+export type AccountCurrencyChangeMode = 'convert' | 'reinterpret';
 export function useEditAccount() {
   const qc = useQueryClient();
   const { setCurrencyConversion, resetCurrencyConversion } = useUiStore.getState();
@@ -107,6 +110,7 @@ export function useEditAccount() {
       oldCurrency,
       metadata,
       onBudget,
+      currencyChangeMode,
     }) => {
       const isCurrencyChanging = oldCurrency && oldCurrency !== currency;
 
@@ -128,6 +132,7 @@ export function useEditAccount() {
             budgetId: budget_id,
             metadata: metadata || undefined,
             onBudget,
+            currencyChangeMode,
           },
           meta: { label: 'useEditAccount' },
         });

@@ -21,6 +21,7 @@ import {
   useEditAccount,
   useDeleteAccount,
   useSetAccountArchived,
+  type AccountCurrencyChangeMode,
 } from '@entities/account/api/useAccounts';
 import { useTransactions } from '@entities/transaction/api/useTransactions';
 import { CurrencySelector } from '@features/currencies/ui/CurrencySelector';
@@ -29,7 +30,6 @@ import { fromDecimal, toDecimal, type MilliUnits } from '@shared/lib/currency/mi
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { DatePickerButton } from '@shared/ui/DatePickerButton';
 import { parseISO, differenceInMonths } from 'date-fns';
-import { ConfirmDialog } from '@shared/ui/confirm-dialog';
 import { getAccountTypesByBudgetType, isLiabilityType } from '@entities/account/model/accountTypes';
 import { useUiStore } from '@shared/store/useUiStore';
 import { usePlainNumberFormatter } from '@shared/hooks/useNumberFormatter';
@@ -37,6 +37,7 @@ import { toastError } from '@shared/lib/errors';
 import { OnBudgetToggle } from './OnBudgetToggle';
 import { ArchiveAccountDialog } from './ArchiveAccountDialog';
 import { LiabilityNumberCell } from './LiabilityNumberCell';
+import { AccountCurrencyChangeDialog } from './AccountCurrencyChangeDialog';
 
 interface EditAccountDialogProps {
   selectedAccount: Account | null;
@@ -69,6 +70,7 @@ interface EditAccountPayload {
   oldCurrency: string;
   metadata?: Record<string, unknown>;
   onBudget: boolean;
+  currencyChangeMode?: AccountCurrencyChangeMode;
 }
 
 export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDialogProps) {
@@ -76,6 +78,8 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [pendingEdit, setPendingEdit] = useState<EditAccountPayload | null>(null);
+  const [currencyChangeMode, setCurrencyChangeMode] =
+    useState<AccountCurrencyChangeMode>('convert');
 
   const selectedBudget = useUiStore((state) => state.selectedBudget);
 
@@ -206,6 +210,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
 
       const isCurrencyChanging = selectedAccount.Currency !== targetCurrency;
       if (isCurrencyChanging) {
+        setCurrencyChangeMode('convert');
         setPendingEdit(payload);
         setConfirmOpen(true);
         return;
@@ -227,19 +232,22 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
 
   const proceedCurrencyChange = () => {
     if (pendingEdit) {
-      editAccountMutation.mutate(pendingEdit, {
-        onSuccess: () => {
-          toast.success('Account updated', {
-            description: 'Account currency has been changed successfully.',
-          });
-          setPendingEdit(null);
-          setConfirmOpen(false);
-          setOpen(false);
-        },
-        onError: (error) => {
-          toastError('Failed to update account currency', error, 'Please try again.');
-        },
-      });
+      editAccountMutation.mutate(
+        { ...pendingEdit, currencyChangeMode },
+        {
+          onSuccess: () => {
+            toast.success('Account updated', {
+              description: 'Account currency has been changed successfully.',
+            });
+            setPendingEdit(null);
+            setConfirmOpen(false);
+            setOpen(false);
+          },
+          onError: (error) => {
+            toastError('Failed to update account currency', error, 'Please try again.');
+          },
+        }
+      );
     }
   };
 
@@ -507,20 +515,16 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
         </DialogContent>
       </Dialog>
       {/* Confirmation dialog for currency change */}
-      <ConfirmDialog
+      <AccountCurrencyChangeDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Change account currency?"
-        description={
-          <>
-            This will convert all original transaction amounts from {selectedAccount?.Currency} to{' '}
-            {currency} using month-specific exchange rates, then recalculate running balances and
-            the account balance. Cached conversions and analytics will be cleared and recomputed.
-            You can switch back later, but values may not match the previous state exactly due to
-            exchange-rate differences and rounding.
-          </>
-        }
-        confirmText="Continue"
+        accountName={selectedAccount?.Name || 'this account'}
+        oldCurrency={selectedAccount?.Currency || ''}
+        newCurrency={currency}
+        mode={currencyChangeMode}
+        onModeChange={setCurrencyChangeMode}
+        hasLinkedTransfers={Boolean(transactions?.some((transaction) => transaction.TransferID))}
+        isLoading={editAccountMutation.isPending}
         onConfirm={proceedCurrencyChange}
       />
       {selectedAccount && (

@@ -34,7 +34,8 @@ export const accountOps = {
         args.type as string,
         args.currency as string,
         (args.metadata as Record<string, unknown>) || undefined,
-        args.onBudget as boolean | undefined
+        args.onBudget as boolean | undefined,
+        args.currencyChangeMode === 'reinterpret' ? 'reinterpret' : 'convert'
       );
     },
     invalidates: [

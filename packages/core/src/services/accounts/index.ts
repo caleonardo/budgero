@@ -310,7 +310,8 @@ export class AccountService {
     accType: string,
     currency: string,
     metadata?: Record<string, unknown>,
-    onBudget?: boolean
+    onBudget?: boolean,
+    currencyChangeMode: 'convert' | 'reinterpret' = 'convert'
   ): Promise<void> {
     const originalAccount = this.getAccount(id);
 
@@ -326,7 +327,8 @@ export class AccountService {
         id,
         originalAccount.BudgetID,
         finalCurrency,
-        originalAccount.Currency
+        originalAccount.Currency,
+        currencyChangeMode
       );
     }
 

@@ -973,16 +973,18 @@ export class CurrencyService {
     accountId: number,
     budgetId: number,
     newCurrency: string,
-    oldCurrency: string
+    oldCurrency: string,
+    mode: 'convert' | 'reinterpret' = 'convert'
   ): Promise<void> {
     debugLog(`Handling account currency change from ${oldCurrency} to ${newCurrency}`, {
       accountId,
+      mode,
       level: 'info',
     });
 
-    // 1. Convert ORIGINAL amounts to the new currency so the numbers reflect the new unit
-    // This updates inflow_original, outflow_original, running_balance_original and the account balance
-    // using month-specific exchange rates.
+    // 1. Establish native amounts in the new currency. Convert mode preserves
+    // economic value; reinterpret mode preserves the entered numbers and only
+    // changes which currency unit those numbers represent.
     try {
       // Get all transactions ordered by date for stable running balances
       const transactions = allRows<{
@@ -1004,10 +1006,6 @@ export class CurrencyService {
 
       let runningBalanceOriginal = 0;
       for (const tx of transactions) {
-        // Get or fetch rate old -> new for the tx date
-        const rate = await this.getOrFetchRate(oldCurrency, newCurrency, tx.date, budgetId);
-        const effectiveRate = rate || 1; // fallback to 1 to avoid NaN
-
         // Some legacy rows may have NULL original amounts; fall back to converted values
         // which are currently in the OLD currency at this point in time.
         const baseInflow =
@@ -1033,8 +1031,18 @@ export class CurrencyService {
                 return row?.OutflowConverted || 0;
               })();
 
-        const inflowNew = convertScaled(baseInflow, effectiveRate, oldCurrency, newCurrency);
-        const outflowNew = convertScaled(baseOutflow, effectiveRate, oldCurrency, newCurrency);
+        // A 1:1 conversion preserves the human-readable number while adapting
+        // storage scales (for example fiat milliunits versus crypto sat-scale).
+        let inflowNew = convertScaled(baseInflow, 1, oldCurrency, newCurrency);
+        let outflowNew = convertScaled(baseOutflow, 1, oldCurrency, newCurrency);
+        if (mode === 'convert') {
+          // Get or fetch rate old -> new for the transaction date. Falling
+          // back to 1 matches the established missing-rate behavior.
+          const rate = await this.getOrFetchRate(oldCurrency, newCurrency, tx.date, budgetId);
+          const effectiveRate = rate || 1;
+          inflowNew = convertScaled(baseInflow, effectiveRate, oldCurrency, newCurrency);
+          outflowNew = convertScaled(baseOutflow, effectiveRate, oldCurrency, newCurrency);
+        }
         runningBalanceOriginal += inflowNew - outflowNew;
 
         run(

@@ -23,6 +23,8 @@ interface ConfirmDialogProps {
   title: ReactNode;
   /** Omit to render a title-only dialog (no description element). */
   description?: ReactNode;
+  /** Optional interactive content rendered between the header and footer. */
+  children?: ReactNode;
   /** Optional icon rendered before the title. */
   icon?: ReactNode;
   confirmText?: ReactNode;
@@ -46,6 +48,7 @@ export function ConfirmDialog({
   trigger,
   title,
   description,
+  children,
   icon,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
@@ -85,6 +88,7 @@ export function ConfirmDialog({
             <AlertDialogDescription>{description}</AlertDialogDescription>
           )}
         </AlertDialogHeader>
+        {children}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>{cancelText}</AlertDialogCancel>
           <AlertDialogAction
