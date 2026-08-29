@@ -92,6 +92,8 @@ export interface TransactionRowWithColumns {
   AccountID: number;
   InflowNative?: number;
   OutflowNative?: number;
+  ExchangeRate?: number | null;
+  ExchangeRateOverride?: boolean | number;
   TransferID?: string;
   ReconciledAt?: string | null;
   LabelID?: number | null;

@@ -637,6 +637,15 @@ describe('Transactions (additional coverage)', () => {
     const outgoing = services.transactions.getTransactionByID(outLeg);
     expect(outgoing.OutflowConverted).toBeCloseTo(240000, 6);
     expect(outgoing.OutflowNative).toBeCloseTo(240000, 6);
+
+    // Undo restores both the prior rate and its non-override status. The
+    // optional flag is supplied by the mutation replay layer.
+    await services.transactions.updateTransactionColumn(inLeg, 'ExchangeRate', 100, false);
+    incoming = services.transactions.getTransactionByID(inLeg);
+    expect(incoming.InflowConverted).toBeCloseTo(240000, 6);
+    expect(incoming.InflowNative).toBeCloseTo(2400, 6);
+    expect(incoming.ExchangeRate).toBeCloseTo(100, 6);
+    expect(!!incoming.ExchangeRateOverride).toBe(false);
   });
 
   it('syncing a transfer leg preserves a manual rate override on the partner leg', async () => {

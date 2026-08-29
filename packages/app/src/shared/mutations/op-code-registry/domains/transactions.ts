@@ -185,7 +185,8 @@ export const transactionOps = {
       return await S().transactions!.updateTransactionColumn(
         args.id as number,
         args.columnName as string,
-        args.newValue as string | number | null
+        args.newValue as string | number | null,
+        typeof args.exchangeRateOverride === 'boolean' ? args.exchangeRateOverride : undefined
       );
     },
     invalidates: [...TX_WRITE_INVALIDATION_KEYS, ['payees'], ['payees', '*']],
@@ -197,18 +198,33 @@ export const transactionOps = {
         )) as unknown as TransactionRowWithColumns;
         const col = args.columnName as string;
         const oldValue = tx[col];
-        return { oldValue };
+        const oldExchangeRateOverride =
+          col.toLowerCase().replace(/_/g, '') === 'exchangerate'
+            ? Boolean(tx.ExchangeRateOverride)
+            : undefined;
+        return { oldValue, oldExchangeRateOverride };
       },
-      build: (args, _result, before) => [
-        {
-          op: 'transactions.updateColumn',
-          args: {
-            id: args.id,
-            columnName: args.columnName,
-            newValue: (before as { oldValue?: string | number | null } | undefined)?.oldValue,
+      build: (args, _result, before) => {
+        const previous = before as
+          | {
+              oldValue?: string | number | null;
+              oldExchangeRateOverride?: boolean;
+            }
+          | undefined;
+        return [
+          {
+            op: 'transactions.updateColumn',
+            args: {
+              id: args.id,
+              columnName: args.columnName,
+              newValue: previous?.oldValue,
+              ...(typeof previous?.oldExchangeRateOverride === 'boolean'
+                ? { exchangeRateOverride: previous.oldExchangeRateOverride }
+                : {}),
+            },
           },
-        },
-      ],
+        ];
+      },
     },
   },
 

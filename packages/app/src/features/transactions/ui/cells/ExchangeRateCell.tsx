@@ -36,12 +36,12 @@ export function ExchangeRateCell({
   onEditingChange,
 }: ExchangeRateCellProps) {
   const [isEditing, setIsEditing] = React.useState(autoFocus);
-  const [text, setText] = React.useState(() =>
-    autoFocus && value ? String(Number(value.toFixed(EXCHANGE_RATE_PRECISION))) : ''
-  );
+  const [text, setText] = React.useState(() => (autoFocus && value ? String(value) : ''));
 
   const startEditing = () => {
-    setText(value ? String(Number(value.toFixed(EXCHANGE_RATE_PRECISION))) : '');
+    // Keep the stored precision while editing. Formatting to the input's
+    // commit precision here makes a focus/blur cycle look like a real edit.
+    setText(value ? String(value) : '');
     setIsEditing(true);
     onEditingChange?.(true);
   };

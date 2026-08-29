@@ -1286,7 +1286,8 @@ export class TransactionService {
   async updateTransactionColumn(
     transactionId: number,
     columnName: string,
-    newValue: string | number | null
+    newValue: string | number | null,
+    exchangeRateOverride?: boolean
   ): Promise<void> {
     const transaction = this.getTransactionByID(transactionId);
     const col = columnName.toLowerCase().replace(/_/g, '');
@@ -1407,8 +1408,9 @@ export class TransactionService {
         break;
       case 'exchangerate': {
         const newRate = newValue as number;
-        // Set the rate and mark as manual override
-        this.queries.setExchangeRate(transactionId, newRate, true);
+        // User edits are manual overrides by default. Undo/redo can pass the
+        // previously captured flag so restoring a market rate does not pin it.
+        this.queries.setExchangeRate(transactionId, newRate, exchangeRateOverride ?? true);
 
         const tx = this.getTransactionByID(transactionId);
         const { account: rateAccount, budget: rateBudget } = this.queries.getAccountAndBudget(
