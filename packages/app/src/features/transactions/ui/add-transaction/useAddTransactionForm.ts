@@ -16,6 +16,8 @@ import { useCategories } from '@entities/category/api/useCategories';
 import { useDeleteTransaction, useUpsertSplits } from '@entities/transaction/api/useTransactions';
 import { useActiveAccounts } from '@entities/account/api/useActiveAccounts';
 import { asMilli, convertScaled } from '@budgero/core/browser';
+import type { AddTransferRequest } from '@features/transactions/api/useAddTransactionHandler';
+import type { AddTransferResult } from '@entities/transaction/api/useTransactions';
 import { useAutofillIntegration } from './useAutofillIntegration';
 
 import type { SplitLine } from '../form';
@@ -47,6 +49,7 @@ export interface UseAddTransactionFormOptions {
     keepDialogOpen?: boolean,
     exchangeRateOverride?: number | null
   ) => Promise<number>;
+  onAddTransfer: (request: AddTransferRequest) => Promise<AddTransferResult>;
   onCancel: () => void;
 }
 
@@ -54,6 +57,7 @@ export function useAddTransactionForm({
   budgetId,
   selectedAccountId,
   onAddTransaction,
+  onAddTransfer,
   onCancel,
 }: UseAddTransactionFormOptions) {
   const upsertSplits = useUpsertSplits();
@@ -448,33 +452,27 @@ export function useAddTransactionForm({
               ? form.selectedCategory || 'Transfers'
               : 'Transfers';
 
-            await onAddTransaction(
-              form.transactionDate,
-              sourceCategory,
-              transferMemo,
-              outboundPayee,
-              amt,
-              0,
-              parseInt(form.selectedFromAccount),
-              form.selectedLabelId,
+            await onAddTransfer({
+              date: form.transactionDate,
               transferId,
-              addAnother,
-              sourceRateOverride
-            );
-
-            await onAddTransaction(
-              form.transactionDate,
-              'Transfers',
-              transferMemo,
-              inboundPayee,
-              0,
-              inflowAmount,
-              parseInt(form.selectedToAccount),
-              form.selectedLabelId,
-              transferId,
-              addAnother,
-              destinationRateOverride
-            );
+              memo: transferMemo,
+              labelId: form.selectedLabelId,
+              source: {
+                category: sourceCategory,
+                payee: outboundPayee,
+                amount: amt,
+                accountId: parseInt(form.selectedFromAccount),
+                exchangeRateOverride: sourceRateOverride,
+              },
+              destination: {
+                category: 'Transfers',
+                payee: inboundPayee,
+                amount: inflowAmount,
+                accountId: parseInt(form.selectedToAccount),
+                exchangeRateOverride: destinationRateOverride,
+              },
+              keepDialogOpen: addAnother,
+            });
 
             form.persistLastUsed('transfer', {
               payee: form.payee,
@@ -650,6 +648,7 @@ export function useAddTransactionForm({
       canUseCurrencyApi,
       remaining,
       onAddTransaction,
+      onAddTransfer,
       upsertSplits,
       deleteTransaction,
       resetFormFields,

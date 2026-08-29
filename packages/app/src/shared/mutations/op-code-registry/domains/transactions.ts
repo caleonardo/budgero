@@ -85,23 +85,25 @@ const TX_MOVE_INVALIDATION_KEYS: string[][] = [
   ['labelDirectory', '*'],
 ];
 
+async function addTransactionFromArgs(args: Record<string, unknown>): Promise<number> {
+  return await S().transactions!.addTransaction(
+    asMilli(Number(args.inflow ?? 0)),
+    asMilli(Number(args.outflow ?? 0)),
+    args.accountId as number,
+    args.categoryId as number,
+    args.budgetId as number,
+    args.date as string,
+    args.memo as string,
+    (args.transferId as string | undefined) || '',
+    (args.payee as string | undefined) ?? '',
+    (args.labelId as number | null | undefined) ?? null,
+    typeof args.exchangeRateOverride === 'number' ? (args.exchangeRateOverride as number) : null
+  );
+}
+
 export const transactionOps = {
   'transactions.add': {
-    execute: async (args) => {
-      return await S().transactions!.addTransaction(
-        asMilli(Number(args.inflow ?? 0)),
-        asMilli(Number(args.outflow ?? 0)),
-        args.accountId as number,
-        args.categoryId as number,
-        args.budgetId as number,
-        args.date as string,
-        args.memo as string,
-        (args.transferId as string | undefined) || '',
-        (args.payee as string | undefined) ?? '',
-        (args.labelId as number | null | undefined) ?? null,
-        typeof args.exchangeRateOverride === 'number' ? (args.exchangeRateOverride as number) : null
-      );
-    },
+    execute: addTransactionFromArgs,
     invalidates: [...TRANSACTION_INVALIDATION_KEYS],
     undo: {
       // add -> delete the created transaction
@@ -121,6 +123,60 @@ export const transactionOps = {
         return sortTransactionSnapshots(snaps).map(transactionSnapshotToAddOp);
       },
     },
+  },
+
+  'transactions.addTransfer': {
+    execute: async (args) => {
+      const budgetId = args.budgetId as number;
+      const transferId = args.transferId as string;
+      const source = args.source as Record<string, unknown>;
+      const destination = args.destination as Record<string, unknown>;
+
+      let sourceId: number | null = null;
+      try {
+        sourceId = await addTransactionFromArgs({ ...source, budgetId, transferId });
+        const destinationId = await addTransactionFromArgs({
+          ...destination,
+          budgetId,
+          transferId,
+        });
+        return { sourceId, destinationId };
+      } catch (error) {
+        // addTransaction commits each leg independently. Compensate if the
+        // second leg fails so callers never observe a half-created transfer.
+        if (sourceId !== null) {
+          try {
+            await S().transactions!.deleteTransaction(sourceId);
+          } catch {
+            // Preserve the original creation error. The rollback path is best-effort.
+          }
+        }
+        throw error;
+      }
+    },
+    invalidates: [...TRANSACTION_INVALIDATION_KEYS],
+    undo: {
+      // Use the stable TransferID because redo creates new database row IDs.
+      build: (args) => {
+        const { transferId } = args;
+        return typeof transferId === 'string' && transferId
+          ? [{ op: 'transactions.deleteTransfer', args: { transferId } }]
+          : [];
+      },
+    },
+  },
+
+  'transactions.deleteTransfer': {
+    execute: async (args) => {
+      const transferId = args.transferId as string;
+      const transactions = await S().transactions!.getTransactionsByTransferID(transferId);
+      const [first] = transactions;
+      if (!first) return;
+      // TransactionService.deleteTransaction removes every row with the same TransferID
+      // while applying the normal balance and running-balance adjustments.
+      await S().transactions!.deleteTransaction(first.ID);
+    },
+    invalidates: TX_WRITE_INVALIDATION_KEYS,
   },
 
   // useUpdateTransactionColumn

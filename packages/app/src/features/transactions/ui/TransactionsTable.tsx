@@ -176,6 +176,7 @@ export function TransactionsTable({
     toggleRowSelection,
     handleCellCommit,
     handleAddTransaction,
+    handleAddTransfer,
     selectedRowIds,
   } = useTransactionTable(initialData, transactionCurrencyDisplay);
 
@@ -407,6 +408,7 @@ export function TransactionsTable({
         <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <AddTransactionForm
             onAddTransaction={handleAddTransaction}
+            onAddTransfer={handleAddTransfer}
             onCancel={() => setOpenDialog(false)}
             budgetId={budgetId}
             selectedAccountId={selectedAccountIdForForm}

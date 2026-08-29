@@ -18,9 +18,10 @@ export function useTransactionTable(
   const accountLocalizer = useUiStore((state) => state.accountLocalizer);
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
   // Shared add-transaction logic (same hook used by mobile layouts)
-  const { handleAddTransaction, addTransactionMutation } = useAddTransactionHandler({
-    onDialogClose: useCallback(() => setOpenDialog(false), []),
-  });
+  const { handleAddTransaction, handleAddTransfer, addTransactionMutation } =
+    useAddTransactionHandler({
+      onDialogClose: useCallback(() => setOpenDialog(false), []),
+    });
   const cellCommit = useTransactionCellCommit();
 
   // Effect to update data when initialData changes
@@ -95,6 +96,7 @@ export function useTransactionTable(
     toggleRowSelection,
     handleCellCommit,
     handleAddTransaction,
+    handleAddTransfer,
     selectedRowIds,
   };
 }

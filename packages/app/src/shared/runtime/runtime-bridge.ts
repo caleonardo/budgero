@@ -218,6 +218,9 @@ export function createRuntimeDeps(): RuntimeCoordinatorDeps {
               case 'transactions.add':
                 trackTransactionLogged();
                 break;
+              case 'transactions.addTransfer':
+                trackTransactionLogged();
+                break;
               case 'transactions.updateColumn':
                 trackTransactionEdited();
                 break;

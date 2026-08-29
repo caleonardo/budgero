@@ -45,6 +45,20 @@ export type AddTransactionInput = {
   exchangeRateOverride?: number | null;
 };
 
+export type AddTransferLegInput = Omit<AddTransactionInput, 'budgetId' | 'transferId'>;
+
+export type AddTransferInput = {
+  budgetId: number;
+  transferId: string;
+  source: AddTransferLegInput;
+  destination: AddTransferLegInput;
+};
+
+export type AddTransferResult = {
+  sourceId: number;
+  destinationId: number;
+};
+
 export function useAddTransaction() {
   const { showTransferLoading, hideTransferLoading } = useLoading();
   const runtime = useRuntime();
@@ -81,6 +95,35 @@ export function useAddTransaction() {
     onError: (error, vars) => {
       if (vars.transferId) hideTransferLoading();
       console.error('Transaction failed:', error);
+    },
+  });
+}
+
+/**
+ * Add both linked legs of a transfer as one mutation/undo item.
+ */
+export function useAddTransfer() {
+  const { showTransferLoading, hideTransferLoading } = useLoading();
+  const runtime = useRuntime();
+
+  return useMutation<AddTransferResult, Error, AddTransferInput>({
+    mutationFn: async (input) => {
+      showTransferLoading();
+      return executeSpaceMutation<AddTransferResult>(runtime, {
+        op: 'transactions.addTransfer',
+        payload: {
+          budgetId: input.budgetId,
+          transferId: input.transferId,
+          source: input.source,
+          destination: input.destination,
+        },
+        meta: { label: 'useAddTransfer' },
+      });
+    },
+    onSuccess: () => hideTransferLoading(),
+    onError: (error) => {
+      hideTransferLoading();
+      console.error('Transfer failed:', error);
     },
   });
 }

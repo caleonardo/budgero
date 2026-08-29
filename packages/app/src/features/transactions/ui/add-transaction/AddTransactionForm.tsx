@@ -16,6 +16,8 @@ import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { DialogHeader, DialogTitle, DialogDescription } from '@shared/ui/dialog';
 import { AddAccountDialog } from '@features/account-management/ui/AddAccountDialog';
+import type { AddTransferRequest } from '@features/transactions/api/useAddTransactionHandler';
+import type { AddTransferResult } from '@entities/transaction/api/useTransactions';
 import { getCurrentDate } from './add-transaction.utils';
 
 import { TransactionFormHeader } from './TransactionFormHeader';
@@ -40,6 +42,7 @@ export interface AddTransactionFormProps {
     keepDialogOpen?: boolean,
     exchangeRateOverride?: number | null
   ) => Promise<number>;
+  onAddTransfer: (request: AddTransferRequest) => Promise<AddTransferResult>;
   onCancel: () => void;
 }
 
@@ -47,6 +50,7 @@ export function AddTransactionForm({
   budgetId,
   selectedAccountId,
   onAddTransaction,
+  onAddTransfer,
   onCancel,
 }: AddTransactionFormProps) {
   const {
@@ -81,6 +85,7 @@ export function AddTransactionForm({
     budgetId,
     selectedAccountId,
     onAddTransaction,
+    onAddTransfer,
     onCancel,
   });
 

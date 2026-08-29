@@ -53,7 +53,7 @@ export function MobileBottomNav() {
   const { data: accountsData = [] } = useAccounts(selectedBudget?.ID || 0);
   const { data: uncategorizedData } = useUncategorizedTransactions(selectedBudget?.ID || 0);
   const [addTransactionOpen, setAddTransactionOpen] = useState(false);
-  const { handleAddTransaction } = useAddTransactionHandler({
+  const { handleAddTransaction, handleAddTransfer } = useAddTransactionHandler({
     onDialogClose: () => setAddTransactionOpen(false),
   });
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -370,6 +370,7 @@ export function MobileBottomNav() {
                 <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                   <AddTransactionForm
                     onAddTransaction={handleAddTransaction}
+                    onAddTransfer={handleAddTransfer}
                     onCancel={() => setAddTransactionOpen(false)}
                     budgetId={selectedBudget?.ID || 0}
                     selectedAccountId={defaultAccountId}

@@ -5,11 +5,37 @@
 
 import { useCallback } from 'react';
 import { useUiStore } from '@shared/store/useUiStore';
-import { useAddTransaction } from '@entities/transaction/api/useTransactions';
+import {
+  useAddTransaction,
+  useAddTransfer,
+  type AddTransferResult,
+} from '@entities/transaction/api/useTransactions';
 import { useCategories } from '@entities/category/api/useCategories';
 
 interface UseAddTransactionHandlerOptions {
   onDialogClose: () => void;
+}
+
+export interface AddTransferRequest {
+  date: Date | null;
+  transferId: string;
+  memo: string;
+  labelId: number | null;
+  source: {
+    category: string;
+    payee: string;
+    amount: number;
+    accountId: number;
+    exchangeRateOverride?: number | null;
+  };
+  destination: {
+    category: string;
+    payee: string;
+    amount: number;
+    accountId: number;
+    exchangeRateOverride?: number | null;
+  };
+  keepDialogOpen?: boolean;
 }
 
 export function useAddTransactionHandler({ onDialogClose }: UseAddTransactionHandlerOptions) {
@@ -21,6 +47,7 @@ export function useAddTransactionHandler({ onDialogClose }: UseAddTransactionHan
   );
 
   const addTransactionMutation = useAddTransaction();
+  const addTransferMutation = useAddTransfer();
 
   const handleAddTransaction = useCallback(
     async (
@@ -71,9 +98,55 @@ export function useAddTransactionHandler({ onDialogClose }: UseAddTransactionHan
     [categories, selectedAccount, selectedBudget, addTransactionMutation, onDialogClose]
   );
 
+  const handleAddTransfer = useCallback(
+    async (request: AddTransferRequest): Promise<AddTransferResult> => {
+      const sourceCategoryId =
+        categories.find((category) => category.Name === request.source.category)?.ID || 0;
+      const destinationCategoryId =
+        categories.find((category) => category.Name === request.destination.category)?.ID || 0;
+      const transactionDate = request.date
+        ? request.date.toLocaleDateString('en-CA')
+        : new Date().toLocaleDateString('en-CA');
+      const budgetId = selectedAccount?.BudgetID || selectedBudget?.ID || 0;
+
+      const result = await addTransferMutation.mutateAsync({
+        budgetId,
+        transferId: request.transferId,
+        source: {
+          inflow: 0,
+          outflow: request.source.amount,
+          accountId: request.source.accountId,
+          categoryId: sourceCategoryId,
+          labelId: request.labelId,
+          date: transactionDate,
+          memo: request.memo,
+          payee: request.source.payee,
+          exchangeRateOverride: request.source.exchangeRateOverride,
+        },
+        destination: {
+          inflow: request.destination.amount,
+          outflow: 0,
+          accountId: request.destination.accountId,
+          categoryId: destinationCategoryId,
+          labelId: request.labelId,
+          date: transactionDate,
+          memo: request.memo,
+          payee: request.destination.payee,
+          exchangeRateOverride: request.destination.exchangeRateOverride,
+        },
+      });
+
+      if (!request.keepDialogOpen) onDialogClose();
+      return result;
+    },
+    [categories, selectedAccount, selectedBudget, addTransferMutation, onDialogClose]
+  );
+
   return {
     handleAddTransaction,
+    handleAddTransfer,
     addTransactionMutation,
+    addTransferMutation,
     categories,
   };
 }

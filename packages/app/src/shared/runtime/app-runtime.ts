@@ -553,19 +553,24 @@ export class AppRuntime {
   ): Promise<void> {
     if (!isMutator) return;
     const isTransactionAdd = spec.op === 'transactions.add';
+    const isTransferAdd = spec.op === 'transactions.addTransfer';
     const isRecurringReady = spec.op === 'recurring.markReady';
 
-    if (!isTransactionAdd && !isRecurringReady) return;
+    if (!isTransactionAdd && !isTransferAdd && !isRecurringReady) return;
 
-    let transactionId: number | null = null;
+    let transactionIds: number[] = [];
     let budgetId: number | null = null;
 
     if (isTransactionAdd) {
-      transactionId = Number(result);
+      transactionIds = [Number(result)];
+      budgetId = Number((spec.payload as PayloadWithBudgetId)?.budgetId);
+    } else if (isTransferAdd) {
+      const transfer = result as { sourceId?: unknown; destinationId?: unknown };
+      transactionIds = [Number(transfer?.sourceId), Number(transfer?.destinationId)];
       budgetId = Number((spec.payload as PayloadWithBudgetId)?.budgetId);
     } else if (isRecurringReady) {
       const ready = result as MarkOccurrenceReadyResult;
-      transactionId = Number(ready?.transactionId);
+      transactionIds = [Number(ready?.transactionId)];
       budgetId = Number(
         ready?.occurrence?.template?.budgetId ?? ready?.occurrence?.budgetId ?? undefined
       );
@@ -574,7 +579,8 @@ export class AppRuntime {
       }
     }
 
-    if (!Number.isFinite(transactionId) || budgetId === null || !Number.isFinite(budgetId)) {
+    transactionIds = transactionIds.filter(Number.isFinite);
+    if (transactionIds.length === 0 || budgetId === null || !Number.isFinite(budgetId)) {
       return;
     }
 
@@ -600,26 +606,28 @@ export class AppRuntime {
 
       const invalidates = getInvalidatesForOp('rules.execute');
 
-      for (const rule of continuousRules) {
-        try {
-          await this.executeMutation({
-            op: 'rules.execute',
-            payload: {
-              ruleId: rule.id,
-              options: {
-                trigger: 'continuous',
-                transactionIds: [transactionId],
+      for (const transactionId of transactionIds) {
+        for (const rule of continuousRules) {
+          try {
+            await this.executeMutation({
+              op: 'rules.execute',
+              payload: {
+                ruleId: rule.id,
+                options: {
+                  trigger: 'continuous',
+                  transactionIds: [transactionId],
+                },
               },
-            },
-            invalidates,
-            meta: { skipUndo: true, forceInvalidate: true },
-          });
-        } catch (error) {
-          console.warn('[AppRuntime] Failed to run continuous rule', {
-            ruleId: rule.id,
-            transactionId,
-            error,
-          });
+              invalidates,
+              meta: { skipUndo: true, forceInvalidate: true },
+            });
+          } catch (error) {
+            console.warn('[AppRuntime] Failed to run continuous rule', {
+              ruleId: rule.id,
+              transactionId,
+              error,
+            });
+          }
         }
       }
     } catch (error) {

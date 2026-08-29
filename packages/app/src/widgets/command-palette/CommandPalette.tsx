@@ -42,7 +42,12 @@ import { useAccounts } from '@entities/account/api/useAccounts';
 import { useUiStore } from '@shared/store/useUiStore';
 import { Dialog, DialogContent } from '@shared/ui/dialog';
 import { AddTransactionForm } from '@features/transactions/ui/add-transaction';
-import { useAddTransaction, useAllTransactions } from '@entities/transaction/api/useTransactions';
+import {
+  useAddTransaction,
+  useAddTransfer,
+  useAllTransactions,
+} from '@entities/transaction/api/useTransactions';
+import type { AddTransferRequest } from '@features/transactions/api/useAddTransactionHandler';
 import { useTransactionCellCommit } from '@features/transactions/api/useTransactionCellCommit';
 import { type TransactionColumnName as DbTransactionColumn } from '@entities/transaction/api/mutations';
 import { TransactionQuickViewDialog } from '@features/transactions/ui/TransactionQuickViewDialog';
@@ -84,6 +89,7 @@ export function CommandPalette() {
   const { data: accounts = [] } = useAccounts(budgetId);
   const { data: allTransactions = [] } = useAllTransactions(budgetId);
   const addTransactionMutation = useAddTransaction();
+  const addTransferMutation = useAddTransfer();
   const cellCommit = useTransactionCellCommit();
 
   React.useEffect(() => {
@@ -341,6 +347,46 @@ export function CommandPalette() {
 
     if (!keepDialogOpen) setShowTransactionDialog(false);
     return id;
+  };
+
+  const handleAddTransfer = async (request: AddTransferRequest) => {
+    const sourceCategoryId =
+      categories.find((category) => category.Name === request.source.category)?.ID || 0;
+    const destinationCategoryId =
+      categories.find((category) => category.Name === request.destination.category)?.ID || 0;
+    const transactionDate = request.date
+      ? request.date.toLocaleDateString('en-CA')
+      : new Date().toLocaleDateString('en-CA');
+
+    const result = await addTransferMutation.mutateAsync({
+      budgetId,
+      transferId: request.transferId,
+      source: {
+        inflow: 0,
+        outflow: request.source.amount,
+        accountId: request.source.accountId,
+        categoryId: sourceCategoryId,
+        labelId: request.labelId,
+        date: transactionDate,
+        memo: request.memo,
+        payee: request.source.payee,
+        exchangeRateOverride: request.source.exchangeRateOverride,
+      },
+      destination: {
+        inflow: request.destination.amount,
+        outflow: 0,
+        accountId: request.destination.accountId,
+        categoryId: destinationCategoryId,
+        labelId: request.labelId,
+        date: transactionDate,
+        memo: request.memo,
+        payee: request.destination.payee,
+        exchangeRateOverride: request.destination.exchangeRateOverride,
+      },
+    });
+
+    if (!request.keepDialogOpen) setShowTransactionDialog(false);
+    return result;
   };
 
   const isSearching = searchValue.length > 0;
@@ -614,6 +660,7 @@ export function CommandPalette() {
           <AddTransactionForm
             budgetId={budgetId}
             onAddTransaction={handleAddTransaction}
+            onAddTransfer={handleAddTransfer}
             onCancel={() => setShowTransactionDialog(false)}
           />
         </DialogContent>
