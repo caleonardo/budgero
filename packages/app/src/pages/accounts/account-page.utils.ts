@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import type { DateRange } from 'react-day-picker';
-import type { Category } from '@budgero/core/browser';
+import type { Account, Category } from '@budgero/core/browser';
 
 // Account business calculations now live in core (services/accounts/account-calcs).
 export {
@@ -35,4 +35,16 @@ export function buildCategoriesMap(categories: Category[]): Map<number, string> 
     map.set(cat.ID, cat.Name);
   }
   return map;
+}
+
+/**
+ * The account query is authoritative. A refetch may return an updated object
+ * for the same account ID (for example after changing its currency), and the
+ * shared UI store must receive that object so account-scoped formatters update.
+ */
+export function shouldSyncSelectedAccount(
+  queriedAccount: Account | null,
+  storedAccount: Account | null
+): queriedAccount is Account {
+  return queriedAccount !== null && queriedAccount !== storedAccount;
 }

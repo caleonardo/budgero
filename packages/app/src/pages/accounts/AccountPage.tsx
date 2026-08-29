@@ -41,6 +41,7 @@ import {
   computeLiabilityInfo,
   convertLiabilityInfoToBudgetCurrency,
   calculateTransactionStats,
+  shouldSyncSelectedAccount,
 } from './account-page.utils';
 import { AccountHeader } from './components/AccountHeader';
 import { FlowStat } from './components/FlowStat';
@@ -294,10 +295,10 @@ export default function AccountPage() {
   }, [registerRows, mobilePageStats, transactionCurrencyDisplay, filteredStats]);
 
   useEffect(() => {
-    if (!isNaN(numericId) && selectedAccount && currentStoreAccount?.ID !== selectedAccount.ID) {
+    if (!isNaN(numericId) && shouldSyncSelectedAccount(selectedAccount, currentStoreAccount)) {
       setSelectedAccount(selectedAccount);
     }
-  }, [numericId, selectedAccount, currentStoreAccount?.ID, setSelectedAccount]);
+  }, [numericId, selectedAccount, currentStoreAccount, setSelectedAccount]);
 
   useJumpToTransaction(transactionsData.length);
 
