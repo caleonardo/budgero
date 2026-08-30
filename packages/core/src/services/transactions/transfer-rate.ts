@@ -29,6 +29,7 @@ export interface TransferRateDetails {
   budgetCurrency: string;
   source: {
     transactionId: number;
+    date: string;
     accountId: number;
     accountName: string;
     currency: string;
@@ -39,6 +40,7 @@ export interface TransferRateDetails {
   };
   destination: {
     transactionId: number;
+    date: string;
     accountId: number;
     accountName: string;
     currency: string;
@@ -115,6 +117,7 @@ export function getTransferRateDetails(
     budgetCurrency: source.BudgetCurrency,
     source: {
       transactionId: source.ID,
+      date: source.Date,
       accountId: source.AccountID,
       accountName: source.AccountName,
       currency: source.AccountCurrency,
@@ -125,6 +128,7 @@ export function getTransferRateDetails(
     },
     destination: {
       transactionId: destination.ID,
+      date: destination.Date,
       accountId: destination.AccountID,
       accountName: destination.AccountName,
       currency: destination.AccountCurrency,
@@ -189,6 +193,7 @@ export async function applyTransferRate(
 
   const resolveBudgetRate = async (
     currency: string,
+    date: string,
     currentRate: number | null,
     nativeAmount: number,
     budgetAmount: number,
@@ -197,12 +202,7 @@ export async function applyTransferRate(
     if (currency === current.budgetCurrency) return 1;
     if ((preserveCurrentOverride || !options.refreshBudgetRates) && currentRate) return currentRate;
 
-    const resolved = await resolveRate(
-      currency,
-      current.budgetCurrency,
-      current.date,
-      current.budgetId
-    );
+    const resolved = await resolveRate(currency, current.budgetCurrency, date, current.budgetId);
     if (resolved) return resolved;
     if (currentRate) return currentRate;
     return rateFromAmounts(nativeAmount, budgetAmount, currency, current.budgetCurrency);
@@ -216,6 +216,7 @@ export async function applyTransferRate(
   );
   const sourceBudgetRate = await resolveBudgetRate(
     current.source.currency,
+    current.source.date,
     current.source.budgetRate,
     current.source.amount,
     current.source.budgetAmount,
@@ -223,6 +224,7 @@ export async function applyTransferRate(
   );
   const destinationBudgetRate = await resolveBudgetRate(
     current.destination.currency,
+    current.destination.date,
     current.destination.budgetRate,
     current.destination.amount,
     current.destination.budgetAmount,

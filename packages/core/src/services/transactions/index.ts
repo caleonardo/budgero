@@ -682,7 +682,7 @@ export class TransactionService {
     // Recalculate balances to ensure both converted and original running balances are consistent
     this.queries.recalculateBalances(accountId);
 
-    await this.syncTransferPartner(id);
+    await this.syncTransferPartnerAmounts(id);
   }
 
   /**
@@ -1002,7 +1002,7 @@ export class TransactionService {
       if (markPendingMove) this.queries.setConversionPending(tx.ID, true);
     });
 
-    await this.syncTransferPartner(transactionId);
+    await this.syncTransferPartnerAmounts(transactionId);
   }
 
   /**
@@ -1056,14 +1056,14 @@ export class TransactionService {
   }
 
   /**
-   * Synchronize the partner transaction for a transfer (two-leg transfers only).
-   * Mirrors date, memo, and amounts to the counterpart leg.
+   * Synchronize the partner amount for a transfer (two-leg transfers only).
    * - Partner converted amounts are mirrored (inflow <-> outflow) in budget currency.
-   * - Partner originals are recalculated using current month rates for partner account currency.
+   * - Partner originals are recalculated using the partner leg's own date and account currency.
+   * - Date, memo, payee, label, and category remain specific to each leg.
    * - Recalculates partner account balances to keep running balances consistent.
    * Skips if there are not exactly two transactions for the TransferID (e.g., split mirrors).
    */
-  private async syncTransferPartner(transactionId: number): Promise<void> {
+  private async syncTransferPartnerAmounts(transactionId: number): Promise<void> {
     let main: Transaction;
     try {
       main = this.getTransactionByID(transactionId);
@@ -1119,14 +1119,14 @@ export class TransactionService {
           pInflowConverted,
           budget.DisplayCurrency,
           partnerAcc.Currency,
-          main.Date,
+          partner.Date,
           main.BudgetID
         );
         pOutflowOriginal = await this.currencyService.convertAmount(
           pOutflowConverted,
           budget.DisplayCurrency,
           partnerAcc.Currency,
-          main.Date,
+          partner.Date,
           main.BudgetID
         );
       }
@@ -1141,9 +1141,9 @@ export class TransactionService {
         pOutflowConverted,
         partner.CategoryID,
         partner.AccountID,
-        main.Date,
-        main.Memo,
-        main.Payee ?? null
+        partner.Date,
+        partner.Memo,
+        partner.Payee ?? null
       );
       this.queries.recalculateBalances(partner.AccountID);
     });
@@ -1311,7 +1311,7 @@ export class TransactionService {
 
     this.queries.recalculateBalances(accountId);
 
-    await this.syncTransferPartner(transactionId);
+    await this.syncTransferPartnerAmounts(transactionId);
   }
 
   /**
@@ -1407,40 +1407,31 @@ export class TransactionService {
         break;
       }
       case 'date':
-        await this.updateTransaction(
-          transactionId,
-          transaction.InflowNative ?? transaction.InflowConverted ?? 0,
-          transaction.OutflowNative ?? transaction.OutflowConverted ?? 0,
-          transaction.AccountID,
-          transaction.CategoryID,
-          newValue as string,
-          transaction.Memo ?? ''
-        );
+        if (transaction.TransferID) {
+          this.queries.updateTransactionDate(transactionId, newValue as string);
+          this.queries.recalculateBalances(transaction.AccountID);
+        } else {
+          await this.updateTransaction(
+            transactionId,
+            transaction.InflowNative ?? transaction.InflowConverted ?? 0,
+            transaction.OutflowNative ?? transaction.OutflowConverted ?? 0,
+            transaction.AccountID,
+            transaction.CategoryID,
+            newValue as string,
+            transaction.Memo ?? ''
+          );
+        }
         break;
       case 'memo':
-        await this.updateTransaction(
-          transactionId,
-          transaction.InflowNative ?? transaction.InflowConverted ?? 0,
-          transaction.OutflowNative ?? transaction.OutflowConverted ?? 0,
-          transaction.AccountID,
-          transaction.CategoryID,
-          transaction.Date,
-          newValue as string
-        );
+        this.queries.updateTransactionMemo(transactionId, newValue as string);
         break;
       case 'payee':
         if (typeof newValue === 'string' && newValue.trim()) {
           this.queries.insertPayee(transaction.BudgetID, newValue.trim());
         }
-        await this.updateTransaction(
+        this.queries.updateTransactionPayee(
           transactionId,
-          transaction.InflowNative ?? transaction.InflowConverted ?? 0,
-          transaction.OutflowNative ?? transaction.OutflowConverted ?? 0,
-          transaction.AccountID,
-          transaction.CategoryID,
-          transaction.Date,
-          transaction.Memo ?? '',
-          typeof newValue === 'string' ? newValue : String(newValue ?? '')
+          typeof newValue === 'string' ? newValue.trim() || null : null
         );
         break;
       case 'accountid':

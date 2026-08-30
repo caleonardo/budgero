@@ -165,8 +165,8 @@ describe('Multi-currency updateTransactionColumn preserves amounts', () => {
   });
 });
 
-describe('Transfer partner sync (date/memo/amount)', () => {
-  it('mirrors date, memo and amounts for simple two-leg transfers (multi-currency)', async () => {
+describe('Transfer partner sync', () => {
+  it('keeps leg metadata independent while syncing multi-currency amounts', async () => {
     const adapter = await NodeSqlJsAdapter.create();
     const sm = new ServiceManager();
     await sm.initialize(adapter);
@@ -201,7 +201,9 @@ describe('Transfer partner sync (date/memo/amount)', () => {
     const dateA = `${month}-10`;
     const dateB = `${month}-11`;
     const EURUSD = 1.2; // 1 EUR = 1.2 USD
+    const EURUSD_ON_DESTINATION_DATE = 1.25;
     await services.currency.saveRate('EUR', 'USD', EURUSD, dateA, budgetId);
+    await services.currency.saveRate('EUR', 'USD', EURUSD_ON_DESTINATION_DATE, dateB, budgetId);
 
     // Create a paired transfer: USD outflow $100, EUR inflow €(100 / 1.2)
     const transferId = 'tr_sync_1';
@@ -214,6 +216,9 @@ describe('Transfer partner sync (date/memo/amount)', () => {
       throw new Error('Expected non-income category to exist');
     }
     const catId = nonIncomeCategory.ID;
+    const sourceLabelId = services.labels.addLabel(budgetId, 'Source', '#1155cc');
+    const destinationLabelId = services.labels.addLabel(budgetId, 'Destination', '#22aa44');
+    const editedSourceLabelId = services.labels.addLabel(budgetId, 'Edited source', '#cc5511');
 
     const usdTx = await services.transactions.addTransaction(
       0,
@@ -223,7 +228,9 @@ describe('Transfer partner sync (date/memo/amount)', () => {
       budgetId,
       dateA,
       'xfer out',
-      transferId
+      transferId,
+      'EUR account',
+      sourceLabelId
     );
 
     const eurTx = await services.transactions.addTransaction(
@@ -234,7 +241,9 @@ describe('Transfer partner sync (date/memo/amount)', () => {
       budgetId,
       dateA,
       'xfer in',
-      transferId
+      transferId,
+      'USD account',
+      destinationLabelId
     );
 
     // Sanity: amounts are mirrored at creation
@@ -244,36 +253,43 @@ describe('Transfer partner sync (date/memo/amount)', () => {
     expect(b.InflowConverted).toBeCloseTo(usdOutflow, 6);
     expect(b.InflowNative).toBeCloseTo(eurInflowOriginal, 6);
 
-    // 1) Update USD memo; partner memo should mirror
+    // Leg metadata is independent: editing one side must not rewrite the other.
     await services.transactions.updateTransactionColumn(usdTx, 'Memo', 'updated memo');
-    a = services.transactions.getTransactionByID(usdTx);
-    b = services.transactions.getTransactionByID(eurTx);
-    expect(a.Memo).toBe('updated memo');
-    expect(b.Memo).toBe('updated memo');
-
-    // 2) Update EUR date; USD date should mirror
+    await services.transactions.updateTransactionColumn(usdTx, 'Payee', 'Updated payee');
+    await services.transactions.updateTransactionColumn(usdTx, 'LabelID', editedSourceLabelId);
     await services.transactions.updateTransactionColumn(eurTx, 'Date', dateB);
     a = services.transactions.getTransactionByID(usdTx);
     b = services.transactions.getTransactionByID(eurTx);
-    expect(a.Date).toBe(dateB);
+    expect(a.Memo).toBe('updated memo');
+    expect(a.Payee).toBe('Updated payee');
+    expect(a.LabelID).toBe(editedSourceLabelId);
+    expect(a.Date).toBe(dateA);
+    expect(b.Memo).toBe('xfer in');
+    expect(b.Payee).toBe('USD account');
+    expect(b.LabelID).toBe(destinationLabelId);
     expect(b.Date).toBe(dateB);
 
-    // 3) Update USD converted amount (budget currency): OutflowConverted 150 USD
+    // Amount edits remain linked, using the partner leg's own date for its valuation.
     await services.transactions.updateTransactionColumn(usdTx, 'OutflowConverted', 150);
     a = services.transactions.getTransactionByID(usdTx);
     b = services.transactions.getTransactionByID(eurTx);
-    // USD side reflects 150 outflow
     expect(a.OutflowConverted).toBeCloseTo(150, 6);
-    // EUR partner mirrors converted inflow 150 and recalculates originals (≈ 125 EUR)
     expect(b.InflowConverted).toBeCloseTo(150, 6);
-    expect(b.InflowNative).toBeCloseTo(150 / EURUSD, 6);
+    expect(b.InflowNative).toBeCloseTo(150 / EURUSD_ON_DESTINATION_DATE, 6);
+    expect(b.Memo).toBe('xfer in');
+    expect(b.Payee).toBe('USD account');
+    expect(b.LabelID).toBe(destinationLabelId);
+    expect(b.Date).toBe(dateB);
 
-    // 4) Update EUR original amount: set inflow_original to 200 EUR -> partner should mirror 240 USD outflow
+    // Editing the destination native amount still updates the linked source amount.
     await services.transactions.updateTransactionColumn(eurTx, 'InflowNative', 200);
     a = services.transactions.getTransactionByID(usdTx);
     b = services.transactions.getTransactionByID(eurTx);
-    // EUR side converted inflow becomes 240 USD, partner USD outflow becomes 240
-    expect(b.InflowConverted).toBeCloseTo(200 * EURUSD, 6);
-    expect(a.OutflowConverted).toBeCloseTo(200 * EURUSD, 6);
+    expect(b.InflowConverted).toBeCloseTo(200 * EURUSD_ON_DESTINATION_DATE, 6);
+    expect(a.OutflowConverted).toBeCloseTo(200 * EURUSD_ON_DESTINATION_DATE, 6);
+    expect(a.Memo).toBe('updated memo');
+    expect(a.Payee).toBe('Updated payee');
+    expect(a.LabelID).toBe(editedSourceLabelId);
+    expect(a.Date).toBe(dateA);
   });
 });

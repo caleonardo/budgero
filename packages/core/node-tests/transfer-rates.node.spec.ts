@@ -76,6 +76,61 @@ describe('direct transfer rates', () => {
     expect(updated.hasRateOverride).toBe(true);
   });
 
+  it("resolves each budget valuation using that leg's own date", async () => {
+    const adapter: DatabaseAdapter = await NodeSqlJsAdapter.create();
+    const manager = new ServiceManager();
+    await manager.initialize(adapter);
+    const services = manager.getServices();
+    const budgetId = await services.budgets.createBudget({
+      name: 'Settlement dates',
+      display_currency: 'USD',
+      badge_icon: 'dollar',
+      number_format: '123,456.78',
+      create_default_categories: true,
+    });
+    const rsd = await services.accounts.createAccount('RSD', budgetId, 'checking', 'RSD', 0);
+    const eur = await services.accounts.createAccount('EUR', budgetId, 'checking', 'EUR', 0);
+    const sourceDate = '2026-08-29';
+    const destinationDate = '2026-08-30';
+    const transferId = 'different-settlement-dates';
+
+    await services.currency.saveRate('RSD', 'USD', 0.01, sourceDate, budgetId);
+    await services.currency.saveRate('EUR', 'USD', 1.25, sourceDate, budgetId);
+    await services.currency.saveRate('EUR', 'USD', 1.5, destinationDate, budgetId);
+    await services.transactions.addTransaction(
+      0,
+      25_000,
+      rsd.ID,
+      0,
+      budgetId,
+      sourceDate,
+      'Sent',
+      transferId
+    );
+    await services.transactions.addTransaction(
+      200,
+      0,
+      eur.ID,
+      0,
+      budgetId,
+      destinationDate,
+      'Received',
+      transferId
+    );
+
+    adapter
+      .prepare('UPDATE transactions SET ExchangeRate = 1 WHERE TransferID = ?')
+      .run(transferId);
+
+    const updated = await services.transactions.updateTransferRate(transferId, 0.01);
+    expect(updated.source.date).toBe(sourceDate);
+    expect(updated.destination.date).toBe(destinationDate);
+    expect(updated.source.budgetRate).toBeCloseTo(0.01, 10);
+    expect(updated.destination.budgetRate).toBeCloseTo(1.5, 10);
+    expect(updated.source.budgetAmount).toBe(250);
+    expect(updated.destination.budgetAmount).toBe(375);
+  });
+
   it('automatically reapplies a custom foreign-to-foreign rate to an unpinned transfer', async () => {
     const { services, budgetId, transferId } = await createForeignTransferFixture();
 

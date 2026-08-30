@@ -1207,6 +1207,18 @@ export class TransactionQueries {
     return result?.changes ?? 0;
   }
 
+  updateTransactionMemo(transactionId: number, memo: string): void {
+    run(this.db, `UPDATE transactions SET Memo = ? WHERE ID = ?`, memo, transactionId);
+  }
+
+  updateTransactionPayee(transactionId: number, payee: string | null): void {
+    run(this.db, `UPDATE transactions SET Payee = ? WHERE ID = ?`, payee, transactionId);
+  }
+
+  updateTransactionDate(transactionId: number, date: string): void {
+    run(this.db, `UPDATE transactions SET Date = ? WHERE ID = ?`, date, transactionId);
+  }
+
   /**
    * MarkTransactionsAsReconciled - Marks all transactions up to a date as reconciled
    * SQL: UPDATE transactions SET Reconciled = TRUE WHERE AccountID = ? AND Date <= ?
