@@ -1383,6 +1383,11 @@ export class TransactionService {
         );
         break;
       case 'categoryid':
+        if (this.queries.isOnBudgetToOnBudgetTransfer(transactionId)) {
+          throw new ValidationError(
+            'On-budget transfer categories are managed automatically and cannot be recategorized'
+          );
+        }
         this.moveTransactionToNewCategory(transactionId, parseInt(newValue as string));
         break;
       case 'labelid': {

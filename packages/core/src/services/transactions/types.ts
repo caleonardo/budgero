@@ -24,6 +24,8 @@ export interface Transaction {
   OutflowNative?: MilliUnits;
   ExchangeRate?: number | null;
   ExchangeRateOverride?: boolean;
+  AccountOnBudget?: boolean;
+  TransferAccountOnBudget?: boolean | null;
   RunningBalanceConverted: MilliUnits;
   RunningBalanceNative?: MilliUnits;
   BudgetID: number;
@@ -58,6 +60,8 @@ export interface GetTransactionsByAccountRow {
   OutflowNative?: MilliUnits;
   ExchangeRate?: number | null;
   ExchangeRateOverride?: boolean;
+  AccountOnBudget?: boolean;
+  TransferAccountOnBudget?: boolean | null;
   RunningBalanceConverted: MilliUnits | null;
   RunningBalanceNative?: MilliUnits | null;
   TransferID?: string;
@@ -87,6 +91,8 @@ export interface GetTransactionsByAccountAndMonthRow {
   OutflowNative?: MilliUnits;
   ExchangeRate?: number | null;
   ExchangeRateOverride?: boolean;
+  AccountOnBudget?: boolean;
+  TransferAccountOnBudget?: boolean | null;
   RunningBalanceConverted: MilliUnits | null;
   RunningBalanceNative?: MilliUnits | null;
   TransferID?: string;

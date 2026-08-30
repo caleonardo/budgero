@@ -125,6 +125,8 @@ export const SwipeRow = memo(function SwipeRow({
   const handlers = useSwipeable({
     onSwiping: (event) => {
       if (event.dir !== 'Left' && event.dir !== 'Right') return;
+      if (event.deltaX > 0 && !onLeftAction) return;
+      if (event.deltaX < 0 && !onRightAction) return;
 
       const absX = Math.abs(event.deltaX);
       const absY = Math.abs(event.deltaY);

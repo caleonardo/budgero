@@ -22,6 +22,7 @@ import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { asMilli } from '@shared/lib/currency/milli';
 import { getRunningBalance } from '@features/transactions/lib/running-balance';
+import { hasReadOnlyTransferCategory } from '@features/transactions/lib/transfer-category';
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { TransferRateDialog } from '@features/transactions/ui/transfer-rate/TransferRateDialog';
 import type {
@@ -135,6 +136,7 @@ export const TransactionRow = React.memo(function TransactionRow({
   const hasAmount = getPrimaryInflow(transaction) !== 0 || getPrimaryOutflow(transaction) !== 0;
   // Transfers move money between your own accounts and cannot be split.
   const isTransfer = !!transaction.TransferID && transaction.TransferID.trim() !== '';
+  const isTransferCategoryReadOnly = hasReadOnlyTransferCategory(transaction);
   const activateCell = (column: TransactionEditableColumn) =>
     onActivateCell(transaction.ID, column);
 
@@ -462,7 +464,14 @@ export const TransactionRow = React.memo(function TransactionRow({
         ) : (
           <div className="flex min-w-0 items-center gap-2 overflow-hidden">
             <div className="min-w-0 flex-1 overflow-hidden text-xs [&>div]:min-w-0 [&>div]:w-full xl:text-sm">
-              {editingColumn === 'category' ? (
+              {isTransferCategoryReadOnly ? (
+                <div
+                  className="h-8 min-w-0 w-full truncate rounded-md bg-muted/30 px-2 py-1.5 text-muted-foreground"
+                  title="Category is set automatically for on-budget transfers"
+                >
+                  {transaction.Category || 'Transfers'}
+                </div>
+              ) : editingColumn === 'category' ? (
                 <CategorySelectCell
                   budgetId={budgetId}
                   categoryID={transaction.CategoryID || 0}

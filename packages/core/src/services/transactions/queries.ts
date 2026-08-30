@@ -14,8 +14,8 @@ import type { Budget } from '../budgets/types.js';
 
 /**
  * Shared column list for the detailed transaction-row SELECTs.
- * Expects aliases: t = transactions, c = categories, l = labels.
- * Callers that also join accounts append `a.Name as Account`.
+ * Expects aliases: t = transactions, c = categories, l = labels, a = accounts.
+ * Callers that expose the account name append `a.Name as Account`.
  */
 const TX_ROW_COLUMNS = `
         t.ID,
@@ -38,7 +38,17 @@ const TX_ROW_COLUMNS = `
         t.RunningBalanceNative,
         t.ExchangeRate,
         t.ExchangeRateOverride,
-        t.TransferID`;
+        t.TransferID,
+        a.OnBudget AS AccountOnBudget,
+        CASE WHEN t.TransferID IS NOT NULL AND t.TransferID != '' THEN
+          (SELECT partner_account.OnBudget
+             FROM transactions transfer_partner
+             JOIN accounts partner_account ON partner_account.ID = transfer_partner.AccountID
+            WHERE transfer_partner.TransferID = t.TransferID
+              AND transfer_partner.ID != t.ID
+            ORDER BY transfer_partner.ID
+            LIMIT 1)
+        ELSE NULL END AS TransferAccountOnBudget`;
 
 const SQLITE_BIND_CHUNK_SIZE = 500;
 
@@ -301,7 +311,7 @@ export class TransactionQueries {
    * SQL: Complex JOIN with categories and category_groups
    */
   getTransactionsByAccount(accountId: number): GetTransactionsByAccountRow[] {
-    // Note: no accounts join here, so no `a.Name as Account` column.
+    // The accounts join supplies budget state but this view does not expose its name.
     return allRows<GetTransactionsByAccountRow>(
       this.db,
       `
@@ -309,6 +319,7 @@ export class TransactionQueries {
       FROM transactions t
       LEFT JOIN categories c ON t.CategoryID = c.ID
       LEFT JOIN labels l ON t.LabelID = l.ID
+      LEFT JOIN accounts a ON t.AccountID = a.ID
       WHERE t.AccountID = ?
       ORDER BY t.Date DESC, t.ID DESC
     `,
@@ -766,6 +777,26 @@ export class TransactionQueries {
     `,
       transferId
     );
+  }
+
+  isOnBudgetToOnBudgetTransfer(transactionId: number): boolean {
+    const row = getRow<{ LegCount: number; OnBudgetLegCount: number }>(
+      this.db,
+      `
+      SELECT
+        COUNT(*) AS LegCount,
+        SUM(CASE WHEN a.OnBudget = 1 THEN 1 ELSE 0 END) AS OnBudgetLegCount
+      FROM transactions transfer_leg
+      JOIN accounts a ON a.ID = transfer_leg.AccountID
+      WHERE transfer_leg.TransferID = (
+        SELECT TransferID FROM transactions WHERE ID = ?
+      )
+        AND transfer_leg.TransferID IS NOT NULL
+        AND transfer_leg.TransferID != ''
+    `,
+      transactionId
+    );
+    return Number(row?.LegCount) === 2 && Number(row?.OnBudgetLegCount) === 2;
   }
 
   /**

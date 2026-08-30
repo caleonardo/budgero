@@ -5,6 +5,7 @@ import { CalendarClock } from 'lucide-react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
+import { hasReadOnlyTransferCategory } from '@features/transactions/lib/transfer-category';
 import { useMobileTransactionCardState } from './useMobileTransactionCardState';
 import { TransactionCardHeader } from './TransactionCardHeader';
 import { TransactionCardAmounts } from './TransactionCardAmounts';
@@ -114,6 +115,7 @@ export const MobileTransactionCard = React.memo(function MobileTransactionCard({
   });
 
   const isCurrentlyPending = isPending && pendingId === transaction.ID;
+  const isCategoryReadOnly = readOnlyCategory || hasReadOnlyTransferCategory(transaction);
 
   // Projected recurring occurrences are read-only forecasts: render a compact
   // card with no selection, editing, or expansion.
@@ -231,7 +233,7 @@ export const MobileTransactionCard = React.memo(function MobileTransactionCard({
             hideAccountColumn={hideAccountColumn}
             hideSecondaryAmounts={hideSecondaryAmounts}
             displayCategoryOverride={displayCategoryOverride}
-            readOnlyCategory={readOnlyCategory}
+            readOnlyCategory={isCategoryReadOnly}
             splits={splits}
             splitsLoading={splitsLoading}
             editSplits={editSplits}

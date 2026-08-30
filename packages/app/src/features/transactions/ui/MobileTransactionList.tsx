@@ -14,6 +14,7 @@ import { useDeleteTransaction } from '@entities/transaction/api/useTransactions'
 import { useTransactionCellCommit } from '@features/transactions/api/useTransactionCellCommit';
 import { cn } from '@shared/lib/utils';
 import { toastError } from '@shared/lib/errors';
+import { hasReadOnlyTransferCategory } from '@features/transactions/lib/transfer-category';
 
 interface MobileTransactionListProps {
   transactions: GetTransactionsByAccountRow[];
@@ -172,6 +173,7 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
                   const isSelected = rowSelection[transaction.ID.toString()] || false;
                   const forceExpand = selectedTransactionId === transaction.ID;
                   const isFutureTransaction = isFutureDate(transaction.Date);
+                  const isTransferCategoryReadOnly = hasReadOnlyTransferCategory(transaction);
 
                   return (
                     <SwipeRow
@@ -182,10 +184,14 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
                         setActiveTransaction(transaction);
                         setConfirmDeleteOpen(true);
                       }}
-                      onLeftAction={() => {
-                        setActiveTransaction(transaction);
-                        setRecatOpen(true);
-                      }}
+                      onLeftAction={
+                        isTransferCategoryReadOnly
+                          ? undefined
+                          : () => {
+                              setActiveTransaction(transaction);
+                              setRecatOpen(true);
+                            }
+                      }
                     >
                       <MobileTransactionCard
                         transaction={transaction}
