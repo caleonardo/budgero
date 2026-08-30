@@ -482,6 +482,7 @@ export function RecurringTransactionsSection() {
         open={editorOpen}
         mode={editorMode}
         onOpenChange={handleEditorOpenChange}
+        budgetId={budgetId}
         accounts={accounts.filter((a) => !a.Archived)}
         categories={categories}
         initialValues={editorInitialValues}

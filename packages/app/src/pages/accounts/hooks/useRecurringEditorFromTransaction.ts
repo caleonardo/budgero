@@ -1,14 +1,79 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
+import type { GetTransactionsByAccountRow, Transaction } from '@budgero/core/browser';
 import type {
   RecurringTransactionEditorProps,
   RecurringTransactionEditorSubmit,
 } from '@features/recurring/ui/RecurringTransactionEditor';
 import { useCreateRecurringTransaction } from '@entities/recurring/api/useRecurringTransactions';
+import { useRuntime } from '@shared/runtime/runtime-provider';
 import { getTodayISO } from '@shared/lib/date-utils';
 import { asMilli } from '@shared/lib/currency/milli';
 import { getErrorMessage } from '@shared/lib/errors';
+
+type RecurringEditorInitialValues = RecurringTransactionEditorProps['initialValues'];
+
+function nativeOutflow(transaction: GetTransactionsByAccountRow | Transaction): number {
+  return transaction.OutflowNative ?? transaction.OutflowConverted;
+}
+
+function nativeInflow(transaction: GetTransactionsByAccountRow | Transaction): number {
+  return transaction.InflowNative ?? transaction.InflowConverted;
+}
+
+function scheduleFrom(date: string) {
+  return {
+    startDate: date || getTodayISO(),
+    intervalUnit: 'month' as const,
+    intervalCount: 1,
+  };
+}
+
+export function recurringInitialValuesFromTransaction(
+  transaction: GetTransactionsByAccountRow,
+  fallbackAccountId?: number,
+  transferLegs?: Transaction[]
+): RecurringEditorInitialValues | null {
+  if (transaction.TransferID) {
+    // A standard transfer must have exactly one source and one destination.
+    // Split-transfer groups can contain more legs and recurring splits are not
+    // represented by the current template model, so do not flatten them.
+    if (transferLegs?.length !== 2) return null;
+
+    const source = transferLegs.find((leg) => nativeOutflow(leg) > 0);
+    const destination = transferLegs.find((leg) => leg.ID !== source?.ID && nativeInflow(leg) > 0);
+    if (!source || !destination || source.AccountID === destination.AccountID) return null;
+
+    return {
+      name: source.Payee || source.Memo || 'Recurring transfer',
+      memo: source.Memo || '',
+      amount: asMilli(Math.abs(nativeOutflow(source))),
+      direction: 'outflow',
+      accountId: source.AccountID,
+      toAccountId: destination.AccountID,
+      categoryId: source.CategoryID ?? null,
+      schedule: scheduleFrom(source.Date),
+      notifyDaysBefore: 0,
+      active: true,
+    };
+  }
+
+  const outflow = nativeOutflow(transaction);
+  const inflow = nativeInflow(transaction);
+  const direction = outflow > 0 ? 'outflow' : 'inflow';
+
+  return {
+    name: transaction.Payee || transaction.Memo || 'Recurring transaction',
+    memo: transaction.Memo || '',
+    amount: asMilli(Math.abs(direction === 'outflow' ? outflow : inflow)),
+    direction,
+    accountId: fallbackAccountId ?? transaction.AccountID ?? null,
+    categoryId: transaction.CategoryID ?? null,
+    schedule: scheduleFrom(transaction.Date),
+    notifyDaysBefore: 0,
+    active: true,
+  };
+}
 
 /**
  * Shared "create recurring transaction from an existing transaction" editor
@@ -25,34 +90,34 @@ export function useRecurringEditorFromTransaction({
   budgetId: number;
   accountId?: number;
 }) {
+  const runtime = useRuntime();
   const createRecurring = useCreateRecurringTransaction();
   const [open, setOpen] = useState(false);
   const [initialValues, setInitialValues] =
     useState<RecurringTransactionEditorProps['initialValues']>();
 
-  const openFromTransaction = (transaction: GetTransactionsByAccountRow) => {
-    const direction = transaction.OutflowConverted > 0 ? 'outflow' : 'inflow';
-    const rawAmount =
-      direction === 'outflow' ? transaction.OutflowConverted : transaction.InflowConverted;
-    const startDate = transaction.Date || getTodayISO();
+  const openFromTransaction = async (transaction: GetTransactionsByAccountRow) => {
+    try {
+      const transferLegs = transaction.TransferID
+        ? await runtime.services().transactions.getTransactionsByTransferID(transaction.TransferID)
+        : undefined;
+      const values = recurringInitialValuesFromTransaction(transaction, accountId, transferLegs);
 
-    setInitialValues({
-      name: transaction.Memo || 'Recurring transaction',
-      memo: transaction.Memo || '',
-      // OutflowConverted/InflowConverted are stored milliunits; Math.abs drops the brand only.
-      amount: asMilli(Math.abs(rawAmount)),
-      direction,
-      accountId: accountId ?? transaction.AccountID ?? null,
-      categoryId: transaction.CategoryID ?? null,
-      schedule: {
-        startDate,
-        intervalUnit: 'month',
-        intervalCount: 1,
-      },
-      notifyDaysBefore: 0,
-      active: true,
-    });
-    setOpen(true);
+      if (!values) {
+        toast.error('Unable to create recurring transfer', {
+          description:
+            'The selected transfer does not have one source and one destination. Recurring split transfers are not supported yet.',
+        });
+        return;
+      }
+
+      setInitialValues(values);
+      setOpen(true);
+    } catch (error) {
+      toast.error('Unable to load transfer', {
+        description: getErrorMessage(error, 'The paired transfer transaction could not be loaded.'),
+      });
+    }
   };
 
   const handleSubmit = async (values: RecurringTransactionEditorSubmit) => {

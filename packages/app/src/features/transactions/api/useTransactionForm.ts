@@ -10,6 +10,19 @@ import type { MilliUnits } from '@shared/lib/currency/milli';
 
 export type TransactionType = 'inflow' | 'outflow' | 'transfer';
 
+export interface TransactionFormInitialValues {
+  transactionType?: TransactionType;
+  transactionDate?: Date | null;
+  selectedCategory?: string;
+  memo?: string;
+  payee?: string;
+  selectedLabelId?: number | null;
+  amount?: MilliUnits | null;
+  selectedFromAccount?: string;
+  selectedToAccount?: string;
+  rememberLast?: boolean;
+}
+
 export interface LastUsedFields {
   category?: string;
   payee?: string;
@@ -122,21 +135,30 @@ export function mergeLastUsedFields(base: LastUsedFields, fields: LastUsedFields
   return next;
 }
 
-const createInitialState = (selectedAccountId?: number): TransactionFormState => ({
-  transactionType: 'outflow',
-  transactionDate: new Date(),
-  selectedCategory: '',
-  memo: '',
-  payee: '',
-  selectedLabelId: null,
-  amount: null,
+const createInitialState = ({
+  selectedAccountId,
+  initialValues,
+}: {
+  selectedAccountId?: number;
+  initialValues?: TransactionFormInitialValues;
+} = {}): TransactionFormState => ({
+  transactionType: initialValues?.transactionType ?? 'outflow',
+  transactionDate:
+    initialValues && 'transactionDate' in initialValues
+      ? (initialValues.transactionDate ?? null)
+      : new Date(),
+  selectedCategory: initialValues?.selectedCategory ?? '',
+  memo: initialValues?.memo ?? '',
+  payee: initialValues?.payee ?? '',
+  selectedLabelId: initialValues?.selectedLabelId ?? null,
+  amount: initialValues?.amount ?? null,
   amountTouched: false,
-  selectedFromAccount: selectedAccountId?.toString() || '',
-  selectedToAccount: '',
+  selectedFromAccount: initialValues?.selectedFromAccount ?? selectedAccountId?.toString() ?? '',
+  selectedToAccount: initialValues?.selectedToAccount ?? '',
   amountInputNonce: 0,
   isAmountEditing: false,
   amountFocusSignal: 0,
-  rememberLast: true,
+  rememberLast: initialValues?.rememberLast ?? true,
   lastUsed: {
     inflow: {},
     outflow: {},
@@ -257,14 +279,19 @@ function transactionFormReducer(
 
 interface UseTransactionFormOptions {
   selectedAccountId?: number;
+  initialValues?: TransactionFormInitialValues;
+  disableLastUsed?: boolean;
 }
 
 export function useTransactionForm(options: UseTransactionFormOptions = {}) {
-  const { selectedAccountId } = options;
+  const { selectedAccountId, initialValues, disableLastUsed = false } = options;
 
   const [state, dispatch] = useReducer(
     transactionFormReducer,
-    selectedAccountId,
+    {
+      selectedAccountId,
+      initialValues,
+    },
     createInitialState
   );
 
@@ -275,6 +302,8 @@ export function useTransactionForm(options: UseTransactionFormOptions = {}) {
   useEffect(() => {
     if (hasHydratedRef.current) return;
     hasHydratedRef.current = true;
+
+    if (disableLastUsed) return;
 
     if (typeof window === 'undefined') return;
 
@@ -298,7 +327,7 @@ export function useTransactionForm(options: UseTransactionFormOptions = {}) {
     } catch (e) {
       console.warn('Failed to load last-used transaction defaults', e);
     }
-  }, [state.lastUsed, state.transactionType, state.selectedFromAccount]);
+  }, [disableLastUsed, state.lastUsed, state.transactionType, state.selectedFromAccount]);
 
   const setTransactionType = useCallback((value: TransactionType) => {
     dispatch({ type: 'SET_TRANSACTION_TYPE', value });

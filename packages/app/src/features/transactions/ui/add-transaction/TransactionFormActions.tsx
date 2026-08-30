@@ -19,6 +19,8 @@ interface TransactionFormActionsProps {
   isTransfer: boolean;
   isInflow: boolean;
   isOutflow: boolean;
+  recurringMode?: 'create' | 'edit' | null;
+  isSubmitting?: boolean;
 }
 
 export const TransactionFormActions = React.memo(function TransactionFormActions({
@@ -28,6 +30,8 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   isTransfer,
   isInflow,
   isOutflow,
+  recurringMode = null,
+  isSubmitting = false,
 }: TransactionFormActionsProps) {
   const submitButtonClassName = React.useMemo(() => {
     const base = 'h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial transition-colors';
@@ -41,7 +45,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   }, [isInflow, isOutflow]);
 
   const submitButtonLabel = React.useMemo(() => {
-    if (isCalculatingTransfer) {
+    if (isCalculatingTransfer || isSubmitting) {
       return (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -49,11 +53,17 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
         </>
       );
     }
+    if (recurringMode === 'edit') {
+      return 'Save recurring transaction';
+    }
+    if (recurringMode === 'create') {
+      return 'Create recurring transaction';
+    }
     if (isTransfer) {
       return 'Add Transfer';
     }
     return `Add ${isInflow ? 'Income' : 'Expense'}`;
-  }, [isCalculatingTransfer, isTransfer, isInflow]);
+  }, [isCalculatingTransfer, isSubmitting, recurringMode, isTransfer, isInflow]);
 
   return (
     <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between gap-2 sm:gap-3">
@@ -71,17 +81,19 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
         </span>
       </div>
       <div className="flex gap-2 order-1 sm:order-2">
+        {!recurringMode && (
+          <Button
+            onClick={onQuickAdd}
+            disabled={isCalculatingTransfer || isSubmitting}
+            variant="outline"
+            type="button"
+            className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
+          >
+            Quick Add
+          </Button>
+        )}
         <Button
-          onClick={onQuickAdd}
-          disabled={isCalculatingTransfer}
-          variant="outline"
-          type="button"
-          className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
-        >
-          Quick Add
-        </Button>
-        <Button
-          disabled={isCalculatingTransfer}
+          disabled={isCalculatingTransfer || isSubmitting}
           type="submit"
           className={submitButtonClassName}
           data-testid="add-transaction-submit"

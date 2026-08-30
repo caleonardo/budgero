@@ -9,7 +9,10 @@ import * as React from 'react';
 import { toast } from 'sonner';
 
 import { useConnectivity } from '@shared/hooks/useConnectivity';
-import { useTransactionForm } from '@features/transactions/api/useTransactionForm';
+import {
+  useTransactionForm,
+  type TransactionFormInitialValues,
+} from '@features/transactions/api/useTransactionForm';
 import { getExchangeRate, getLocalOrManualRate } from '@entities/currency/lib/currency-utils';
 import { buildCurrencyLocalizer, useUiStore } from '@shared/store/useUiStore';
 import { useCategories } from '@entities/category/api/useCategories';
@@ -51,6 +54,10 @@ export interface UseAddTransactionFormOptions {
   ) => Promise<number>;
   onAddTransfer: (request: AddTransferRequest) => Promise<AddTransferResult>;
   onCancel: () => void;
+  initialValues?: TransactionFormInitialValues;
+  disableLastUsed?: boolean;
+  disableAutofill?: boolean;
+  disableCurrencyConversion?: boolean;
 }
 
 export function useAddTransactionForm({
@@ -59,10 +66,14 @@ export function useAddTransactionForm({
   onAddTransaction,
   onAddTransfer,
   onCancel,
+  initialValues,
+  disableLastUsed = false,
+  disableAutofill = false,
+  disableCurrencyConversion = false,
 }: UseAddTransactionFormOptions) {
   const upsertSplits = useUpsertSplits();
   const deleteTransaction = useDeleteTransaction();
-  const form = useTransactionForm({ selectedAccountId });
+  const form = useTransactionForm({ selectedAccountId, initialValues, disableLastUsed });
 
   // Destructure setters for use in effects (stable references)
   const {
@@ -120,10 +131,11 @@ export function useAddTransactionForm({
   );
 
   const needsCurrencyConversion = React.useMemo(() => {
+    if (disableCurrencyConversion) return false;
     if (!form.isTransfer) return false;
     if (!selectedAccount || !toAccount) return false;
     return selectedAccount.Currency !== toAccount.Currency;
-  }, [form.isTransfer, selectedAccount, toAccount]);
+  }, [disableCurrencyConversion, form.isTransfer, selectedAccount, toAccount]);
 
   React.useEffect(() => {
     setReceivedAmount(null);
@@ -332,7 +344,14 @@ export function useAddTransactionForm({
     logAutofillApplications,
     payeeCategoryApplied,
     payeeCategorySource,
-  } = useAutofillIntegration({ form, categories, budgetId, selectedBudget, isSplit });
+  } = useAutofillIntegration({
+    form,
+    categories,
+    budgetId,
+    selectedBudget,
+    isSplit,
+    disabled: disableAutofill,
+  });
 
   // Reset form for "Add Another"
   const resetFormFields = React.useCallback(() => {

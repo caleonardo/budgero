@@ -85,6 +85,7 @@ interface TransactionDetailsSectionProps {
   exchangeRate?: number | null;
   receivedAmount: number | null;
   onReceivedAmountChange: (amount: number | null) => void;
+  showCurrencyConversion?: boolean;
 
   // Off-budget transfer (allows category selection)
   isOffBudgetTransfer: boolean;
@@ -96,6 +97,7 @@ interface TransactionDetailsSectionProps {
   // Label
   selectedLabelId: number | null;
   onLabelChange: (labelId: number | null) => void;
+  showLabel?: boolean;
 
   // Category
   selectedCategory: string;
@@ -149,10 +151,12 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
   exchangeRate,
   receivedAmount,
   onReceivedAmountChange,
+  showCurrencyConversion = true,
   payee,
   onPayeeChange,
   selectedLabelId,
   onLabelChange,
+  showLabel = true,
   selectedCategory,
   onCategoryChange,
   categories,
@@ -233,7 +237,7 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
         />
       )}
 
-      {needsCurrencyConversion && isTransfer && (
+      {showCurrencyConversion && needsCurrencyConversion && isTransfer && (
         <CurrencyConversionNotice
           amount={amount ?? 0}
           convertedAmount={convertedAmount}
@@ -272,20 +276,22 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
       </div>
 
       {/* Label Selector */}
-      <div className="space-y-1.5 sm:space-y-2" data-testid="transaction-label-field">
-        <div className="flex items-center gap-2">
-          <Tags className="h-4 w-4 text-muted-foreground" />
-          <div className="flex-1">
-            <LabelCombobox
-              budgetId={budgetId}
-              value={selectedLabelId}
-              onChange={onLabelChange}
-              placeholder="No label"
-              triggerClassName="h-8 sm:h-10 rounded-full border-border/70 bg-muted/20 hover:bg-muted/40"
-            />
+      {showLabel && (
+        <div className="space-y-1.5 sm:space-y-2" data-testid="transaction-label-field">
+          <div className="flex items-center gap-2">
+            <Tags className="h-4 w-4 text-muted-foreground" />
+            <div className="flex-1">
+              <LabelCombobox
+                budgetId={budgetId}
+                value={selectedLabelId}
+                onChange={onLabelChange}
+                placeholder="No label"
+                triggerClassName="h-8 sm:h-10 rounded-full border-border/70 bg-muted/20 hover:bg-muted/40"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Category Selector - show for non-transfers OR off-budget transfers */}
       {(!isTransfer || isOffBudgetTransfer) && !isSplit && (

@@ -550,6 +550,7 @@ export default function AccountPage() {
         open={recurringEditor.open}
         mode="create"
         onOpenChange={recurringEditor.setOpen}
+        budgetId={selectedAccount?.BudgetID || selectedBudget?.ID || 0}
         accounts={accounts.filter((a) => !a.Archived)}
         categories={categories}
         initialValues={recurringEditor.initialValues}

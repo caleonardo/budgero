@@ -217,6 +217,7 @@ export default function AllTransactionsPage() {
         open={recurringEditor.open}
         mode="create"
         onOpenChange={recurringEditor.setOpen}
+        budgetId={selectedBudget?.ID || 0}
         accounts={accounts.filter((a) => !a.Archived)}
         categories={categories}
         initialValues={recurringEditor.initialValues}

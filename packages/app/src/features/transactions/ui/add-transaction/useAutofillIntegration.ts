@@ -70,6 +70,7 @@ export interface UseAutofillIntegrationOptions {
   selectedBudget: Budget | null;
   /** Only autofill for regular (non-transfer, non-split) transactions. */
   isSplit: boolean;
+  disabled?: boolean;
 }
 
 export function useAutofillIntegration({
@@ -78,6 +79,7 @@ export function useAutofillIntegration({
   budgetId,
   selectedBudget,
   isSplit,
+  disabled = false,
 }: UseAutofillIntegrationOptions) {
   const runtime = useRuntime();
   const { setPayee, setCategory, setFromAccount } = form;
@@ -119,7 +121,7 @@ export function useAutofillIntegration({
     clearAppliedField: clearAutofillAppliedField,
   } = useAutofillRules(autofillContext, autofillCurrentValues, {
     budgetId: budgetId ?? null,
-    enabled: !form.isTransfer && !isSplit, // Only autofill for regular transactions
+    enabled: !disabled && !form.isTransfer && !isSplit, // Only autofill for regular transactions
   });
 
   // Track when user changes an auto-filled field (refs must be before effects that use them)
@@ -191,7 +193,7 @@ export function useAutofillIntegration({
     return () => clearTimeout(timer);
   }, [normalizedPayee]);
 
-  const payeeMemoryEnabled = suggestCategoryFromPayee && !form.isTransfer && !isSplit;
+  const payeeMemoryEnabled = !disabled && suggestCategoryFromPayee && !form.isTransfer && !isSplit;
 
   const { data: payeeCategoryMemory } = usePayeeCategoryMemory(budgetId, debouncedPayee, {
     enabled: payeeMemoryEnabled,
