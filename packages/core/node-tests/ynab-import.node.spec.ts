@@ -7,6 +7,7 @@ import { NodeSqlJsAdapter, YNABImportService, BudgetService } from '../src';
 // @ts-expect-error ESM import.meta.url is not recognized by TypeScript in CommonJS context
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const TEST_SPACE_ID = 'space_ynab_import';
 
 describe('YNABImportService', () => {
   let adapter: NodeSqlJsAdapter;
@@ -27,6 +28,7 @@ describe('YNABImportService', () => {
 
     // Import the YNAB data with config - ONLY ONCE
     importedBudgetId = await ynabImportService.importYNABFromZip(fileBuffer, {
+      spaceId: TEST_SPACE_ID,
       budgetName: 'Test YNAB Import',
       currency: 'USD',
       numberFormat: '$1,097',
@@ -41,6 +43,8 @@ describe('YNABImportService', () => {
     expect(importedBudget).toBeDefined();
     expect(importedBudget?.Name).toBe('Test YNAB Import');
     expect(importedBudget?.DisplayCurrency).toBe('USD');
+    expect(importedBudget?.SpaceID).toBe(TEST_SPACE_ID);
+    expect(budgetsServices.getAllBudgets(TEST_SPACE_ID)).toContainEqual(importedBudget);
   });
 
   it('should default imported budgets to monthly Ready to Assign', () => {
@@ -218,6 +222,7 @@ for (const testCase of sharedImportCases) {
       const fileBuffer = readFileSync(testFilePath);
 
       importedBudgetId = await ynabImportService.importYNABFromZip(fileBuffer, {
+        spaceId: TEST_SPACE_ID,
         budgetName: testCase.budgetName,
         currency: testCase.currency,
         numberFormat: testCase.numberFormat,
@@ -408,6 +413,7 @@ describe('YNAB import date-order detection', () => {
     try {
       const service = new YNABImportService(adapter);
       const budgetId = await service.importYNABFromZip(zipData, {
+        spaceId: TEST_SPACE_ID,
         budgetName: 'Date Order Test',
         currency: 'USD',
         numberFormat: '123,456.78',
@@ -457,6 +463,7 @@ describe('YNABImportService — credit cards', () => {
     const importer = new YNABImportService(adapter);
     const fileBuffer = readFileSync(join(__dirname, 'test-data', 'ynab_credit_cards.zip'));
     const budgetId = await importer.importYNABFromZip(fileBuffer, {
+      spaceId: TEST_SPACE_ID,
       budgetName: 'Credit Cards',
       currency: 'USD',
       numberFormat: '123,456.78',
@@ -546,6 +553,7 @@ describe('YNABImportService — migration edge cases', () => {
     try {
       const importer = new YNABImportService(adapter);
       const result = await importer.importYNABFromZipWithSummary(zip, {
+        spaceId: TEST_SPACE_ID,
         budgetName: 'Edge Cases',
         currency: 'USD',
         numberFormat: '123,456.78',

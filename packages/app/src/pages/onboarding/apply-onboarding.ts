@@ -225,6 +225,7 @@ export async function runOnboardingApply(
       }
       const importService = new YNABImportService(db as unknown as DatabaseAdapter);
       const importResult = await importService.importYNABFromZipWithSummary(state.ynabFile.bytes, {
+        spaceId,
         budgetName: state.budgetName.trim() || 'My budget',
         currency: state.currency,
         numberFormat: '$1,096.56',

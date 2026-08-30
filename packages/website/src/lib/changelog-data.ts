@@ -16,11 +16,38 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.11.3',
+    date: 'August 30, 2026',
+    summary:
+      'YNAB imports preserve more source data, split lines support payees, and reports sync with stable identifiers.',
+    isLatest: true,
+    items: [
+      {
+        type: 'improved',
+        title: 'Preview and verify YNAB imports',
+        description:
+          'Budgero now inspects YNAB exports before importing, showing account, category, register-row, and split-transaction counts. Missing Plan.csv categories are created from the register, complete split sequences remain split transactions, likely credit cards are recognized, and imported budgets use monthly Ready to Assign and open immediately after onboarding.',
+      },
+      {
+        type: 'new',
+        title: 'Set payees on individual split lines',
+        description:
+          'Each line of a split transaction can now keep its own payee. Split editors and transaction details show those payees, and transaction queries and analytics use the split-level value where appropriate.',
+      },
+      {
+        type: 'fixed',
+        title: 'Keep report identifiers stable during sync',
+        description:
+          'Report and chart identifiers are now generated before mutations are synchronized, so creating, duplicating, and adding charts produces the same records on every device instead of triggering repeated catch-up snapshot recovery.',
+      },
+    ],
+  },
+  {
     version: 'v1.11.2',
     date: 'August 30, 2026',
     summary:
       'Recurring transactions now share the standard transaction form, while transfers, currency corrections, and large ledgers are more reliable.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',

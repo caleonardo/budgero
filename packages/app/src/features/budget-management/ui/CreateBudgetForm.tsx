@@ -141,10 +141,15 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       }
 
       const importService = new YNABImportService(dbAdapter as unknown as DatabaseAdapter);
+      const activeSpaceId = runtime.getActiveSpaceId();
+      if (!activeSpaceId) {
+        throw new Error('No active workspace selected');
+      }
 
       const arrayBuffer = await file.arrayBuffer();
 
       const config: YNABImportConfig = {
+        spaceId: activeSpaceId,
         budgetName: budgetName.trim(),
         currency,
         numberFormat,
@@ -169,16 +174,13 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         // Don't fail the import if upload fails - data is saved locally
       }
 
-      const activeSpaceId = runtime.getActiveSpaceId();
-      if (activeSpaceId) {
-        syncBudgetStateFromRuntime({
-          runtime,
-          queryClient,
-          spaceId: activeSpaceId,
-          preferredBudgetId: budgetId,
-        });
-        await queryClient.invalidateQueries({ queryKey: getBudgetsQueryKey(activeSpaceId) });
-      }
+      syncBudgetStateFromRuntime({
+        runtime,
+        queryClient,
+        spaceId: activeSpaceId,
+        preferredBudgetId: budgetId,
+      });
+      await queryClient.invalidateQueries({ queryKey: getBudgetsQueryKey(activeSpaceId) });
 
       await queryClient.invalidateQueries({ queryKey: ['categories'] });
       await queryClient.invalidateQueries({ queryKey: ['accounts'] });

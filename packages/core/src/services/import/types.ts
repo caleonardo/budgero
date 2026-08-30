@@ -7,6 +7,7 @@ export interface ImportProgress {
 }
 
 export interface YNABImportConfig {
+  spaceId: string;
   budgetName: string;
   currency: string;
   numberFormat: string;

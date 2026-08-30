@@ -304,6 +304,7 @@ export class YNABImportService {
     // Create budget WITHOUT default categories since we're importing our own
     debugLog('Creating budget...');
     const budgetId = await this.budgetService.createBudget({
+      space_id: config.spaceId,
       name: config.budgetName,
       display_currency: config.currency,
       badge_icon: config.badgeIcon,
