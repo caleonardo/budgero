@@ -3,11 +3,12 @@
  */
 
 import type { ChangeEvent, RefObject } from 'react';
+import type { YNABImportPreview } from '@budgero/core/browser';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
 import { Field } from '@shared/ui/field';
-import { Loader2, Upload } from 'lucide-react';
+import { AlertTriangle, Loader2, Upload } from 'lucide-react';
 import { CurrencySelector } from '@features/currencies/ui/CurrencySelector';
 import { IconPicker } from '@features/budget-management/ui/IconPicker';
 import { FormatSelector } from '@features/budget-management/ui/FormatSelector';
@@ -25,6 +26,8 @@ interface YnabImportTabProps {
   fileInputRef: RefObject<HTMLInputElement | null>;
   file: File | null;
   onFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  preview: YNABImportPreview | null;
+  isInspecting: boolean;
   isImporting: boolean;
   onReset: () => void;
   onImport: () => void;
@@ -42,6 +45,8 @@ export function YnabImportTab({
   fileInputRef,
   file,
   onFileChange,
+  preview,
+  isInspecting,
   isImporting,
   onReset,
   onImport,
@@ -103,14 +108,14 @@ export function YnabImportTab({
           type="file"
           accept=".zip"
           onChange={onFileChange}
-          disabled={isImporting}
+          disabled={isImporting || isInspecting}
           className="sr-only"
         />
         <div className="flex items-center gap-3">
           <Button
             type="button"
             variant="outline"
-            disabled={isImporting}
+            disabled={isImporting || isInspecting}
             onClick={() => fileInputRef.current?.click()}
             className="h-8 sm:h-9 shrink-0 text-xs sm:text-sm"
           >
@@ -121,6 +126,67 @@ export function YnabImportTab({
             {file ? file.name : 'No file chosen'}
           </span>
         </div>
+        {isInspecting && (
+          <div className="flex items-center gap-2 rounded-md border bg-muted/30 p-3 text-xs text-muted-foreground">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            Inspecting accounts, categories, and split transactions…
+          </div>
+        )}
+        {preview && (
+          <div className="space-y-3 rounded-md border bg-muted/20 p-3 text-xs">
+            <p className="font-medium text-foreground">Detected in this export</p>
+            <p className="text-muted-foreground">
+              {preview.accountCount.toLocaleString()}{' '}
+              {preview.accountCount === 1 ? 'account' : 'accounts'} ·{' '}
+              {preview.categoryCount.toLocaleString()}{' '}
+              {preview.categoryCount === 1 ? 'category' : 'categories'} ·{' '}
+              {preview.registerRowCount.toLocaleString()} register{' '}
+              {preview.registerRowCount === 1 ? 'row' : 'rows'}
+            </p>
+
+            <div className="flex items-start gap-2 rounded-md border border-amber-300/70 bg-amber-50 p-2.5 text-amber-950 dark:border-amber-900/70 dark:bg-amber-950/30 dark:text-amber-100">
+              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <div>
+                <p className="font-medium">Review account types after import</p>
+                <p className="mt-0.5 text-[11px] opacity-90">
+                  YNAB does not reliably export account types. Budgero recognizes credit cards where
+                  possible and imports other accounts as Checking, so verify every account before
+                  budgeting.
+                </p>
+              </div>
+            </div>
+
+            {preview.missingCategories.length > 0 && (
+              <div className="rounded-md border border-amber-300/70 bg-amber-50 p-2.5 text-amber-950 dark:border-amber-900/70 dark:bg-amber-950/30 dark:text-amber-100">
+                <p className="font-medium">
+                  {preview.missingCategories.length} register categor
+                  {preview.missingCategories.length === 1 ? 'y is' : 'ies are'} missing from
+                  Plan.csv
+                </p>
+                <p className="mt-1 text-[11px] opacity-90">
+                  Budgero will create{' '}
+                  {preview.missingCategories
+                    .map((category) => `${category.categoryGroup} › ${category.category}`)
+                    .join(', ')}
+                  .
+                </p>
+              </div>
+            )}
+
+            {preview.splitTransactions.length > 0 && (
+              <div className="rounded-md border p-2.5">
+                <p className="font-medium text-foreground">
+                  {preview.splitTransactions.length} split transaction
+                  {preview.splitTransactions.length === 1 ? '' : 's'} detected
+                </p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  Budgero will import complete Split (1/n)…Split (n/n) sequences as split
+                  transactions automatically.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
         <YnabExportGuide />
       </div>
 
@@ -130,7 +196,7 @@ export function YnabImportTab({
             type="button"
             variant="outline"
             onClick={onReset}
-            disabled={isImporting}
+            disabled={isImporting || isInspecting}
             className="flex-1 h-8 sm:h-9"
           >
             Reset
@@ -139,7 +205,7 @@ export function YnabImportTab({
           <Button
             type="button"
             onClick={onImport}
-            disabled={!file || !budgetName.trim() || isImporting}
+            disabled={!file || !budgetName.trim() || isImporting || isInspecting || !preview}
             className="flex-1 h-8 sm:h-9"
           >
             {isImporting ? (

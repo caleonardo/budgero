@@ -92,10 +92,10 @@ export function YnabExportGuide() {
       <AccordionItem value="limitations">
         <AccordionTrigger className="text-xs sm:text-sm">Import limitations</AccordionTrigger>
         <AccordionContent className="text-xs sm:text-sm text-muted-foreground">
-          YNAB exports do not include goals or account types, so every account arrives as an
-          on-budget Checking account. After the import, edit each account to set its real type
-          (savings, credit card, …) and set up goals manually. See the {FULL_GUIDE_LINK} for the
-          complete post-import checklist.
+          YNAB exports do not include goals and do not reliably include account types. Budgero
+          recognizes credit cards where possible and imports other accounts as on-budget Checking.
+          After the import, verify every account type and set up goals manually. See the{' '}
+          {FULL_GUIDE_LINK} for the complete post-import checklist.
         </AccordionContent>
       </AccordionItem>
     </Accordion>

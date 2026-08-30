@@ -1,5 +1,5 @@
 import { YNABRegisterRow, YNABBudgetRow } from './types.js';
-import { parseCSVLine } from './parsing.js';
+import { detectDelimiter, parseCSVRecords } from './parsing.js';
 
 import { createLogger } from '../../logger.js';
 
@@ -61,17 +61,15 @@ export class CSVParser {
       debugLog('DEBUG: Removed BOM from CSV data');
     }
 
-    const sampleSize = Math.min(500, csvString.length);
-    const firstLine = csvString.substring(0, sampleSize);
-    const delimiter = firstLine.split('\t').length > firstLine.split(',').length ? '\t' : ',';
+    const delimiter = detectDelimiter(csvString.substring(0, Math.min(2_000, csvString.length)));
     debugLog(`DEBUG: Using ${delimiter === '\t' ? 'tab' : 'comma'} delimiter`);
 
-    const lines = csvString.split(/\r?\n/);
-    if (lines.length === 0) {
+    const records = parseCSVRecords(csvString, delimiter);
+    if (records.length === 0) {
       throw new Error('Empty CSV file');
     }
 
-    const headers = parseCSVLine(lines[0], delimiter);
+    const headers = records[0];
     const headerMap = new Map<string, number>();
     debugLog('DEBUG: CSV headers:', headers.join(', '));
 
@@ -81,10 +79,8 @@ export class CSVParser {
     });
 
     const rows: T[] = [];
-    for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-
-      const fields = parseCSVLine(lines[i], delimiter);
+    for (let i = 1; i < records.length; i++) {
+      const fields = records[i];
       if (fields.length === 0) continue;
 
       rows.push(mapRow((fieldName) => this.getCSVField(fields, headerMap, fieldName)));

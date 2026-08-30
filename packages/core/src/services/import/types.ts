@@ -13,6 +13,39 @@ export interface YNABImportConfig {
   badgeIcon: string;
 }
 
+export interface YNABImportCategorySummary {
+  categoryGroup: string;
+  category: string;
+  transactionCount: number;
+}
+
+export interface YNABSplitTransactionSummary {
+  account: string;
+  date: string;
+  payees: string[];
+  partCount: number;
+}
+
+export interface YNABImportPreview {
+  registerRowCount: number;
+  accountCount: number;
+  categoryCount: number;
+  missingCategories: YNABImportCategorySummary[];
+  splitTransactions: YNABSplitTransactionSummary[];
+}
+
+export interface YNABImportSummary {
+  registerRowsImported: number;
+  transactionsCreated: number;
+  missingCategoriesCreated: YNABImportCategorySummary[];
+  splitTransactionsImported: number;
+}
+
+export interface YNABImportResult {
+  budgetId: number;
+  summary: YNABImportSummary;
+}
+
 export interface YNABRegisterRow {
   Account: string;
   Flag: string;

@@ -6,6 +6,7 @@ import {
   parseAmount,
   parseAmountDetailed,
   parseCSVLine,
+  parseCSVRecords,
   parseDate,
   parseDateDetailed,
   parseDelimitedText,
@@ -39,6 +40,23 @@ describe('import utils delimiter parsing', () => {
   it('ignores delimiter-like characters inside quotes while detecting', () => {
     const sample = 'Date;Memo;Amount\n2024-01-01;"Paid, in cash";-3,50';
     expect(detectDelimiter(sample)).toBe(';');
+  });
+
+  it('parses quoted multiline fields as one logical record', () => {
+    const records = parseCSVRecords(
+      'Date,Memo,Amount\r\n2026-08-30,"First line\r\nSecond ""quoted"" line",12.34\r\n'
+    );
+
+    expect(records).toEqual([
+      ['Date', 'Memo', 'Amount'],
+      ['2026-08-30', 'First line\nSecond "quoted" line', '12.34'],
+    ]);
+  });
+
+  it('rejects an unterminated multiline field instead of fabricating rows', () => {
+    expect(() => parseCSVRecords('Date,Memo\n2026-08-30,"unfinished')).toThrow(
+      'unterminated quoted field'
+    );
   });
 });
 
@@ -84,6 +102,21 @@ describe('parseDelimitedText', () => {
     expect(parsed.rows).toEqual([
       { Date: '2024-01-01', Payee: 'Coffee', Amount: '' },
       { Date: '2024-01-02', Payee: 'Salary', Amount: '1000,00' },
+    ]);
+  });
+
+  it('preserves multiline memos in parsed row objects', () => {
+    const parsed = parseDelimitedText(
+      'Date,Payee,Memo,Amount\n2026-08-30,Cafe,"First line\nSecond line",-12.34'
+    );
+
+    expect(parsed.rows).toEqual([
+      {
+        Date: '2026-08-30',
+        Payee: 'Cafe',
+        Memo: 'First line\nSecond line',
+        Amount: '-12.34',
+      },
     ]);
   });
 

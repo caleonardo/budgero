@@ -3,10 +3,17 @@ import { Title, type StepProps } from './shared';
 
 interface YnabStepProps extends StepProps {
   onFileSelected: (file: File) => Promise<void> | void;
+  isInspecting: boolean;
 }
 
-export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSelected }) => {
+export const YnabImportStep: React.FC<YnabStepProps> = ({
+  cur,
+  state,
+  onFileSelected,
+  isInspecting,
+}) => {
   const file = state.ynabFile;
+  const preview = state.ynabPreview;
   const inputRef = React.useRef<HTMLInputElement | null>(null);
 
   return (
@@ -43,6 +50,7 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
         // fully keyboard-accessible "Browse files" button inside.
         <div
           role="presentation"
+          aria-busy={isInspecting}
           onClick={() => inputRef.current?.click()}
           onDragOver={(e) => {
             e.preventDefault();
@@ -50,7 +58,7 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
           onDrop={(e) => {
             e.preventDefault();
             const f = e.dataTransfer.files?.[0];
-            if (f) void onFileSelected(f);
+            if (f && !isInspecting) void onFileSelected(f);
           }}
           style={{
             marginTop: 12,
@@ -63,7 +71,7 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
         >
           <div style={{ fontSize: 32, marginBottom: 8 }}>☁</div>
           <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>
-            Drop your YNAB export here
+            {isInspecting ? 'Inspecting your YNAB export…' : 'Drop your YNAB export here'}
           </div>
           <div style={{ fontSize: 11, color: '#393939', lineHeight: 1.5 }}>
             In YNAB: <em>File › Export Budget</em>. Drop the .zip here —<br />
@@ -71,6 +79,7 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
           </div>
           <button
             type="button"
+            disabled={isInspecting}
             onClick={(e) => {
               e.stopPropagation();
               inputRef.current?.click();
@@ -86,12 +95,13 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
               cursor: 'pointer',
             }}
           >
-            BROWSE FILES
+            {isInspecting ? 'INSPECTING…' : 'BROWSE FILES'}
           </button>
           <input
             ref={inputRef}
             type="file"
             accept=".zip,application/zip"
+            disabled={isInspecting}
             style={{ display: 'none' }}
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -138,6 +148,73 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
               ✓ READY
             </div>
           </div>
+          {preview && (
+            <div
+              style={{
+                padding: 12,
+                display: 'grid',
+                gap: 10,
+                border: '1px dashed rgba(57,57,57,0.35)',
+                background: '#fffdf8',
+                fontSize: 11,
+                color: '#393939',
+                lineHeight: 1.5,
+              }}
+            >
+              <div>
+                <span style={{ fontWeight: 700, color: '#141414' }}>Detected in this export:</span>{' '}
+                {preview.accountCount.toLocaleString()}{' '}
+                {preview.accountCount === 1 ? 'account' : 'accounts'} ·{' '}
+                {preview.categoryCount.toLocaleString()}{' '}
+                {preview.categoryCount === 1 ? 'category' : 'categories'} ·{' '}
+                {preview.registerRowCount.toLocaleString()} register{' '}
+                {preview.registerRowCount === 1 ? 'row' : 'rows'}
+              </div>
+
+              <div
+                style={{
+                  padding: 9,
+                  border: '1px solid rgba(198, 137, 44, 0.5)',
+                  background: 'rgba(255, 240, 190, 0.35)',
+                }}
+              >
+                <span style={{ fontWeight: 700, color: '#141414' }}>
+                  Review account types after import.
+                </span>{' '}
+                YNAB does not reliably export account types. Budgero recognizes credit cards where
+                possible and imports other accounts as Checking, so verify every account before
+                budgeting.
+              </div>
+
+              {preview.missingCategories.length > 0 && (
+                <div style={{ padding: 9, border: '1px solid rgba(198,57,44,0.35)' }}>
+                  <span style={{ fontWeight: 700, color: '#141414' }}>
+                    Categories missing from Plan.csv:
+                  </span>{' '}
+                  {preview.missingCategories
+                    .map((category) => `${category.categoryGroup} › ${category.category}`)
+                    .join(', ')}
+                  . Budgero will create them and report them when the import finishes.
+                </div>
+              )}
+
+              {preview.splitTransactions.length > 0 && (
+                <div
+                  style={{
+                    padding: 9,
+                    border: '1px solid rgba(57,57,57,0.35)',
+                  }}
+                >
+                  <span style={{ display: 'block', fontWeight: 700, color: '#141414' }}>
+                    {preview.splitTransactions.length} split transaction
+                    {preview.splitTransactions.length === 1 ? '' : 's'} detected
+                  </span>
+                  Complete contiguous Split (1/n)…Split (n/n) sequences will be imported as split
+                  transactions automatically.
+                </div>
+              )}
+            </div>
+          )}
           <div
             style={{
               padding: 10,
@@ -148,9 +225,8 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({ cur, state, onFileSele
             }}
           >
             <span style={{ fontWeight: 700, color: '#141414' }}>Heads up:</span> YNAB’s “Age of
-            Money”, scheduled transactions, goals, and account types don’t carry over — accounts
-            arrive as Checking, so review their types after the import. Everything else does —
-            accounts, categories, assignments, and transaction history.
+            Money”, scheduled transactions, and goals don’t carry over. Accounts, categories,
+            assignments, and transaction history do.
           </div>
         </div>
       )}

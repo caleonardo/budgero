@@ -224,12 +224,30 @@ export async function runOnboardingApply(
         throw new Error('Database not ready — try again in a moment.');
       }
       const importService = new YNABImportService(db as unknown as DatabaseAdapter);
-      budgetId = await importService.importYNABFromZip(state.ynabFile.bytes, {
+      const importResult = await importService.importYNABFromZipWithSummary(state.ynabFile.bytes, {
         budgetName: state.budgetName.trim() || 'My budget',
         currency: state.currency,
         numberFormat: '$1,096.56',
         badgeIcon: '💰',
       });
+      budgetId = importResult.budgetId;
+
+      const createdCategories = importResult.summary.missingCategoriesCreated.map(
+        (category) => `${category.categoryGroup} › ${category.category}`
+      );
+      const summaryParts: string[] = [];
+      if (createdCategories.length > 0) {
+        summaryParts.push(
+          `Created ${createdCategories.length} categor${createdCategories.length === 1 ? 'y' : 'ies'} missing from Plan.csv: ${createdCategories.join(', ')}.`
+        );
+      }
+      if (importResult.summary.splitTransactionsImported > 0) {
+        summaryParts.push(
+          `Imported ${importResult.summary.splitTransactionsImported} split transaction${importResult.summary.splitTransactionsImported === 1 ? '' : 's'}.`
+        );
+      }
+      summaryParts.push('Review imported account types before budgeting.');
+      toast.success('YNAB import complete', { description: summaryParts.join(' ') });
     } else {
       const result = await runtime.mutationsRouter().execute<number>({
         op: 'budgets.create',

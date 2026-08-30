@@ -18,6 +18,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { YNABImportService } from '@budgero/core/browser';
 import { useRuntime } from '@shared/runtime/runtime-provider';
 import { useLogout, useProfile, useUpdateOnboarding } from '@entities/user/api/useAuth';
 import { useThemePreset } from '@shared/contexts/ThemePresetContext';
@@ -86,6 +87,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const [stepIndex, setStepIndex] = useState(0);
   const [applyStatus, setApplyStatus] = useState<'idle' | 'running' | 'error'>('idle');
   const [applyError, setApplyError] = useState<string | null>(null);
+  const [isInspectingYnab, setIsInspectingYnab] = useState(false);
 
   const set = useCallback((patch: Partial<OnboardingFormState>) => {
     setState((s) => ({ ...s, ...patch }));
@@ -161,19 +163,25 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
 
   const handleYnabFile = useCallback(
     async (file: File) => {
+      setIsInspectingYnab(true);
+      set({ ynabFile: null, ynabPreview: null });
       try {
         const bytes = await file.arrayBuffer();
+        const preview = await YNABImportService.inspectYNABZip(bytes);
         set({
           ynabFile: {
             name: file.name,
             size: formatFileSize(file.size),
             bytes,
           },
+          ynabPreview: preview,
           budgetName: state.budgetName || file.name.replace(/\.(zip|json)$/i, ''),
         });
       } catch (err) {
         console.error('[Onboarding] Failed to read YNAB file', err);
         toast.error('Could not read that file — try the raw YNAB export .zip.');
+      } finally {
+        setIsInspectingYnab(false);
       }
     },
     [set, state.budgetName]
@@ -342,7 +350,13 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         {curId === 'workspace' && <WorkspaceStep cur={cur} state={state} set={set} />}
         {curId === 'share' && <ShareStep cur={cur} state={state} set={set} />}
         {curId === 'ynab_import' && (
-          <YnabImportStep cur={cur} state={state} set={set} onFileSelected={handleYnabFile} />
+          <YnabImportStep
+            cur={cur}
+            state={state}
+            set={set}
+            onFileSelected={handleYnabFile}
+            isInspecting={isInspectingYnab}
+          />
         )}
         {curId === 'accounts' && <AccountsStep cur={cur} state={state} set={set} />}
         {curId === 'categories' && <CategoriesStep cur={cur} state={state} set={set} />}

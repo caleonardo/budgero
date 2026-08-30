@@ -611,21 +611,95 @@ export function parseCSVLine(line: string, delimiter = ','): string[] {
 }
 
 /**
+ * Parse complete delimited records, preserving newlines inside quoted fields.
+ *
+ * Splitting the input on `\n` before parsing is not CSV-safe: RFC-style CSV
+ * permits a quoted memo to contain CRLF/newline characters. YNAB uses that
+ * representation for multiline memos, so records must be tokenized across
+ * the complete file rather than one physical line at a time.
+ */
+export function parseCSVRecords(text: string, delimiter = ','): string[][] {
+  const records: string[][] = [];
+  let record: string[] = [];
+  let field = '';
+  let inQuotes = false;
+
+  const pushField = () => {
+    record.push(field.trim());
+    field = '';
+  };
+
+  const pushRecord = () => {
+    pushField();
+    if (record.some((value) => value.length > 0)) {
+      records.push(record);
+    }
+    record = [];
+  };
+
+  for (let index = 0; index < text.length; index++) {
+    const char = text[index];
+
+    if (char === '"') {
+      if (inQuotes && text[index + 1] === '"') {
+        field += '"';
+        index++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (!inQuotes && char === delimiter) {
+      pushField();
+      continue;
+    }
+
+    if (char === '\r' || char === '\n') {
+      const isCrLf = char === '\r' && text[index + 1] === '\n';
+      if (inQuotes) {
+        field += '\n';
+      } else {
+        pushRecord();
+      }
+      if (isCrLf) index++;
+      continue;
+    }
+
+    field += char;
+  }
+
+  if (inQuotes) {
+    throw new Error('Malformed delimited file: unterminated quoted field');
+  }
+
+  if (field.length > 0 || record.length > 0) {
+    pushRecord();
+  }
+
+  return records;
+}
+
+/**
  * Parse delimited plain text into headers/rows for import preview and processing.
  */
 export function parseDelimitedText(text: string, skipRows = 0): ParsedDelimitedText {
-  const lines = text.split(/\r?\n/).filter((line) => line.trim());
+  const physicalLines = text.split(/\r?\n/).filter((line) => line.trim());
 
-  if (lines.length <= skipRows) {
+  if (physicalLines.length <= skipRows) {
     throw new Error('No data rows found after skipping specified rows');
   }
 
-  const headerLine = lines[skipRows];
-  const sample = lines.slice(skipRows, skipRows + 5).join('\n');
+  const sample = physicalLines.slice(skipRows, skipRows + 5).join('\n');
   const delimiter = detectDelimiter(sample);
-  const headers = parseCSVLine(headerLine, delimiter);
-  const rows = lines.slice(skipRows + 1).map((line) => {
-    const fields = parseCSVLine(line, delimiter);
+  const records = parseCSVRecords(text, delimiter);
+
+  if (records.length <= skipRows) {
+    throw new Error('No data rows found after skipping specified rows');
+  }
+
+  const headers = records[skipRows];
+  const rows = records.slice(skipRows + 1).map((fields) => {
     const row: Record<string, string> = {};
     headers.forEach((header, index) => {
       row[header] = fields[index] || '';

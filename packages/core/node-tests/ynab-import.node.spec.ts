@@ -43,6 +43,10 @@ describe('YNABImportService', () => {
     expect(importedBudget?.DisplayCurrency).toBe('USD');
   });
 
+  it('should default imported budgets to monthly Ready to Assign', () => {
+    expect(budgetsServices.getRtaMode(importedBudgetId)).toBe('monthly');
+  });
+
   it('should have total assignments of 36866410 milliunits', () => {
     const stmt = adapter.prepare(`
       SELECT COALESCE(SUM(Amount), 0) as total
@@ -183,7 +187,7 @@ const SHARED_EXPECTATIONS = {
   assignmentsTotal: 6682116000,
   categoryGroups: 13,
   categories: 49,
-  transactions: 1008,
+  transactions: 1006,
   accounts: 7,
   septemberInflow: 458161550,
   septemberOutflow: 604032530,
@@ -280,6 +284,34 @@ for (const testCase of sharedImportCases) {
       stmt.finalize();
 
       expect(result.count).toBe(SHARED_EXPECTATIONS.transactions);
+    });
+
+    it('should model complete exported split rows as one split transaction', () => {
+      const parents = adapter
+        .prepare(
+          `SELECT ID, Memo, Payee
+           FROM transactions
+           WHERE BudgetId = ? AND Memo = 'Imported YNAB split'`
+        )
+        .all(importedBudgetId) as { ID: number; Memo: string; Payee: string | null }[];
+
+      expect(parents).toHaveLength(2);
+      expect(parents).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ Memo: 'Imported YNAB split', Payee: null }),
+        ])
+      );
+
+      const splitCount = adapter
+        .prepare(
+          `SELECT COUNT(*) AS count
+           FROM transaction_splits s
+           JOIN transactions t ON t.ID = s.TransactionID
+           WHERE t.BudgetID = ? AND t.Memo = 'Imported YNAB split'`
+        )
+        .get(importedBudgetId) as { count: number };
+
+      expect(splitCount.count).toBe(4);
     });
 
     it('should have imported accounts', () => {
@@ -455,5 +487,175 @@ describe('YNABImportService — credit cards', () => {
       expect(services.monthlyBudgets.getReadyToAssign(budgetId, month)).toBe(0);
     }
     expect(byName['Debt Card'].BalanceNative).toBe(-200_000);
+  });
+});
+
+describe('YNABImportService — migration edge cases', () => {
+  async function createEdgeCaseExport(): Promise<Uint8Array> {
+    const JSZip = (await import('jszip')).default;
+    const registerCsv = [
+      '\uFEFF"Account","Flag","Date","Payee","Category Group/Category","Category Group","Category","Memo","Outflow","Inflow","Cleared"',
+      '"Checking","","2026-08-30","Notes Payee","Archive: Missing From Plan","Archive","Missing From Plan","First line, with comma\nSecond ""quoted"" line\nThird line ✅","$12.34","$0.00","Cleared"',
+      '"Checking","","2026-08-30","Grocer","Everyday: Food","Everyday","Food","Split (1/3): Food part","$20.00","$0.00","Cleared"',
+      '"Checking","","2026-08-30","Transit","Everyday: Transport","Everyday","Transport","Split (2/3): Transport part","$30.25","$0.00","Cleared"',
+      '"Checking","","2026-08-30","Home Store","Everyday: Household","Everyday","Household","Split (3/3): Household part","$73.20","$0.00","Cleared"',
+    ].join('\r\n');
+    const planCsv = [
+      '\uFEFF"Month","Category Group/Category","Category Group","Category","Assigned","Activity","Available"',
+      '"Aug 2026","Everyday: Food","Everyday","Food","$0.00","$0.00","$0.00"',
+      '"Aug 2026","Everyday: Transport","Everyday","Transport","$0.00","$0.00","$0.00"',
+      '"Aug 2026","Everyday: Household","Everyday","Household","$0.00","$0.00","$0.00"',
+    ].join('\r\n');
+
+    const zip = new JSZip();
+    zip.file('Edge Cases - Register.csv', registerCsv);
+    zip.file('Edge Cases - Plan.csv', planCsv);
+    return zip.generateAsync({ type: 'uint8array' });
+  }
+
+  it('previews multiline rows, missing categories, and complete split groups', async () => {
+    const zip = await createEdgeCaseExport();
+    const preview = await YNABImportService.inspectYNABZip(zip);
+
+    expect(preview).toEqual({
+      registerRowCount: 4,
+      accountCount: 1,
+      categoryCount: 4,
+      missingCategories: [
+        {
+          categoryGroup: 'Archive',
+          category: 'Missing From Plan',
+          transactionCount: 1,
+        },
+      ],
+      splitTransactions: [
+        {
+          account: 'Checking',
+          date: '2026-08-30',
+          payees: ['Grocer', 'Transit', 'Home Store'],
+          partCount: 3,
+        },
+      ],
+    });
+  });
+
+  it('preserves multiline memos, creates missing categories, and imports splits automatically', async () => {
+    const zip = await createEdgeCaseExport();
+    const adapter = await NodeSqlJsAdapter.create();
+
+    try {
+      const importer = new YNABImportService(adapter);
+      const result = await importer.importYNABFromZipWithSummary(zip, {
+        budgetName: 'Edge Cases',
+        currency: 'USD',
+        numberFormat: '123,456.78',
+        badgeIcon: 'HelpCircle',
+      });
+
+      expect(result.summary).toEqual({
+        registerRowsImported: 4,
+        transactionsCreated: 2,
+        missingCategoriesCreated: [
+          {
+            categoryGroup: 'Archive',
+            category: 'Missing From Plan',
+            transactionCount: 1,
+          },
+        ],
+        splitTransactionsImported: 1,
+      });
+
+      const transactions = adapter
+        .prepare(
+          `SELECT t.ID, t.Memo, t.Payee, c.Name AS Category
+           FROM transactions t
+           JOIN categories c ON c.ID = t.CategoryID
+           WHERE t.BudgetID = ?
+           ORDER BY t.ID`
+        )
+        .all(result.budgetId) as {
+        ID: number;
+        Memo: string;
+        Payee: string | null;
+        Category: string;
+      }[];
+
+      expect(transactions).toHaveLength(2);
+      expect(transactions[0]).toMatchObject({
+        Memo: 'First line, with comma\nSecond "quoted" line\nThird line ✅',
+        Payee: 'Notes Payee',
+        Category: 'Missing From Plan',
+      });
+      expect(transactions[1]).toMatchObject({
+        Memo: 'Imported YNAB split',
+        Payee: null,
+      });
+
+      const splitRows = adapter
+        .prepare(
+          `SELECT s.Memo, s.Payee, s.OutflowNative, s.OrderIndex, c.Name AS Category
+           FROM transaction_splits s
+           JOIN categories c ON c.ID = s.CategoryID
+           WHERE s.TransactionID = ?
+           ORDER BY s.OrderIndex`
+        )
+        .all(transactions[1].ID) as {
+        Memo: string;
+        Payee: string;
+        OutflowNative: number;
+        OrderIndex: number;
+        Category: string;
+      }[];
+
+      expect(splitRows).toEqual([
+        {
+          Memo: 'Food part',
+          Payee: 'Grocer',
+          OutflowNative: 20_000,
+          OrderIndex: 0,
+          Category: 'Food',
+        },
+        {
+          Memo: 'Transport part',
+          Payee: 'Transit',
+          OutflowNative: 30_250,
+          OrderIndex: 1,
+          Category: 'Transport',
+        },
+        {
+          Memo: 'Household part',
+          Payee: 'Home Store',
+          OutflowNative: 73_200,
+          OrderIndex: 2,
+          Category: 'Household',
+        },
+      ]);
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('does not detect incomplete or non-contiguous split markers as a split transaction', async () => {
+    const JSZip = (await import('jszip')).default;
+    const registerCsv = [
+      '"Account","Date","Payee","Category Group/Category","Category Group","Category","Memo","Outflow","Inflow"',
+      '"Checking","2026-08-30","Split Store","Everyday: Food","Everyday","Food","Split (1/2): Food part","$20.00","$0.00"',
+      '"Checking","2026-08-30","Another Payee","Everyday: Food","Everyday","Food","Ordinary row","$5.00","$0.00"',
+      '"Checking","2026-08-30","Split Store","Everyday: Transport","Everyday","Transport","Split (2/2): Transport part","$30.00","$0.00"',
+    ].join('\r\n');
+    const planCsv = [
+      '"Month","Category Group/Category","Category Group","Category","Assigned","Activity","Available"',
+      '"Aug 2026","Everyday: Food","Everyday","Food","$0.00","$0.00","$0.00"',
+      '"Aug 2026","Everyday: Transport","Everyday","Transport","$0.00","$0.00","$0.00"',
+    ].join('\r\n');
+    const zip = new JSZip();
+    zip.file('Incomplete - Register.csv', registerCsv);
+    zip.file('Incomplete - Plan.csv', planCsv);
+
+    const preview = await YNABImportService.inspectYNABZip(
+      await zip.generateAsync({ type: 'uint8array' })
+    );
+
+    expect(preview.splitTransactions).toEqual([]);
   });
 });

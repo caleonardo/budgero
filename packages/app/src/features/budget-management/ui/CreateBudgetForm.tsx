@@ -9,7 +9,7 @@ import { useUiStore } from '@shared/store/useUiStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { Upload, Plus, HardDrive } from 'lucide-react';
 import { useRuntime } from '@shared/runtime/runtime-provider';
-import type { YNABImportConfig, DatabaseAdapter } from '@budgero/core/browser';
+import type { YNABImportConfig, YNABImportPreview, DatabaseAdapter } from '@budgero/core/browser';
 import { YNABImportService } from '@budgero/core/browser';
 import { useUpdateOnboarding } from '@entities/user/api/useAuth';
 import { getBudgetsQueryKey, syncBudgetStateFromRuntime } from '@shared/runtime/budget-gate';
@@ -49,6 +49,8 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   const [importBadgeIcon, setImportBadgeIcon] = useState<string>('💰');
   const [file, setFile] = useState<File | null>(null);
   const [isImporting, setIsImporting] = useState<boolean>(false);
+  const [isInspectingYnab, setIsInspectingYnab] = useState(false);
+  const [ynabPreview, setYnabPreview] = useState<YNABImportPreview | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Budgero backup import state
@@ -65,6 +67,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
     setName('');
     setBudgetName('');
     setFile(null);
+    setYnabPreview(null);
     setCoreFile(null);
     setCoreStatus(null);
     if (fileInputRef.current) {
@@ -101,9 +104,23 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   };
 
   // YNAB import
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+    setYnabPreview(null);
+    setIsInspectingYnab(true);
+
+    try {
+      const preview = await YNABImportService.inspectYNABZip(await selectedFile.arrayBuffer());
+      setYnabPreview(preview);
+    } catch (error) {
+      setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      toast.error(getErrorMessage(error, 'Could not inspect this YNAB export.'));
+    } finally {
+      setIsInspectingYnab(false);
     }
   };
 
@@ -134,7 +151,8 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         badgeIcon: importBadgeIcon,
       };
 
-      const budgetId = await importService.importYNABFromZip(arrayBuffer, config);
+      const result = await importService.importYNABFromZipWithSummary(arrayBuffer, config);
+      const { budgetId } = result;
       trackBudgetCreated();
       trackImportedFromYnab();
 
@@ -168,12 +186,31 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       await queryClient.invalidateQueries({ queryKey: ['assignments'] });
       await queryClient.invalidateQueries({ queryKey: ['monthly-budgets'] });
 
+      const categoryNames = result.summary.missingCategoriesCreated.map(
+        (category) => `${category.categoryGroup} › ${category.category}`
+      );
+      const summaryParts: string[] = [];
+      if (categoryNames.length > 0) {
+        summaryParts.push(
+          `Created ${categoryNames.length} categor${categoryNames.length === 1 ? 'y' : 'ies'} missing from Plan.csv: ${categoryNames.join(', ')}.`
+        );
+      }
+      if (result.summary.splitTransactionsImported > 0) {
+        summaryParts.push(
+          `Imported ${result.summary.splitTransactionsImported} split transaction${result.summary.splitTransactionsImported === 1 ? '' : 's'}.`
+        );
+      }
+      summaryParts.push('Review imported account types before budgeting.');
+      toast.success(`Successfully imported YNAB budget "${budgetName}"!`, {
+        description: summaryParts.join(' ') || undefined,
+      });
+
       if (onCreated) {
         onCreated(budgetId);
         resetForm();
       } else {
-        toast.success(`Successfully imported YNAB budget "${budgetName}"!`);
         setFile(null);
+        setYnabPreview(null);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
@@ -402,6 +439,8 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
             fileInputRef={fileInputRef}
             file={file}
             onFileChange={handleFileChange}
+            preview={ynabPreview}
+            isInspecting={isInspectingYnab}
             isImporting={isImporting}
             onReset={resetForm}
             onImport={handleImport}

@@ -15,7 +15,7 @@ Switching budgeting apps shouldn't mean abandoning years of history. Budgero rea
 
 In YNAB, open your budget settings and choose **Export Budget**. You'll get a ZIP file containing two CSVs — your transaction register and your budget (plan) file. Budgero accepts the ZIP as-is; no unpacking or editing needed.
 
-**Set your formats before exporting.** YNAB writes the CSVs in whatever display format your plan settings use, and ambiguous formats are the number-one cause of broken imports (dates like `01/05/2025` can mean January 5 *or* May 1). In the YNAB web app, open **Plan Settings** and set:
+**Set your formats before exporting.** YNAB writes the CSVs in whatever display format your plan settings use, and ambiguous formats are the number-one cause of broken imports (dates like `01/05/2025` can mean January 5 _or_ May 1). In the YNAB web app, open **Plan Settings** and set:
 
 - **Date Format** to `2025-12-30` (ISO — unambiguous)
 - **Number Format** to `123,456.78`
@@ -44,12 +44,20 @@ Do this **while your YNAB subscription is active**. Export access normally goes 
     <tr>
       <td>Category groups &amp; categories</td>
       <td>✓</td>
-      <td>Full hierarchy preserved</td>
+      <td>Full hierarchy preserved; register-only categories are created and reported</td>
     </tr>
     <tr>
       <td>Transactions</td>
       <td>✓</td>
-      <td>Dates, payees, memos, amounts — complete history</td>
+      <td>Dates, payees, multiline memos, amounts — complete history</td>
+    </tr>
+    <tr>
+      <td>Split transactions</td>
+      <td>✓</td>
+      <td>
+        Complete exported split groups import automatically; line categories, payees, memos,
+        amounts, and order are preserved
+      </td>
     </tr>
     <tr>
       <td>Transfers</td>
@@ -86,11 +94,13 @@ Do this **while your YNAB subscription is active**. Export access normally goes 
 
 YNAB's special plumbing is translated rather than copied: inflows to **"Inflow: Ready to Assign"** are mapped into Budgero's **Income** category, so your income history feeds [Ready to Assign](/docs/ready-to-assign) correctly from the first sync.
 
+Imported budgets also start with the **Monthly** Ready to Assign calculation, which most closely matches YNAB's month-by-month behavior. You can switch calculation modes at any time under **Settings › Budgeting Settings** without changing transactions or assignments.
+
 ## Running the import
 
 1. During onboarding (or from Settings if your budget already exists), choose **Import from YNAB**.
-2. Drop in the ZIP. Budgero parses both files and shows a preview — accounts found, categories mapped, transaction counts.
-3. Confirm. Import typically completes in under a minute even for decade-old budgets.
+2. Drop in the ZIP. Budgero parses both files and shows a preview — accounts, categories, register rows, categories missing from `Plan.csv`, and complete split groups.
+3. Review the preview, especially the account-type warning, then confirm. Complete split groups import automatically as Budgero split transactions. When the import finishes, Budgero reports any register-only categories it created and how many split transactions it imported. Import typically completes in under a minute even for decade-old budgets.
 
 If you import during onboarding, Budgero skips the setup steps the import already covered — you won't be asked to create accounts and categories you just brought with you.
 
@@ -98,7 +108,7 @@ If you import during onboarding, Budgero skips the setup steps the import alread
 
 Three things deserve ten minutes of attention after any import:
 
-1. **Review account types.** Imported accounts arrive as Checking by default, because YNAB's export doesn't say what kind of account each one is. Reassign your credit cards, savings, and cash accounts to their proper [account types](/docs/accounts) — this matters most for credit cards, since Budgero's debt handling activates per account type.
+1. **Review account types.** YNAB's export doesn't reliably say what kind of account each one is. Budgero recognizes credit cards where possible and imports other accounts as Checking, so verify every account and reassign savings, cash, loans, and any missed credit cards to their proper [account types](/docs/accounts). This matters most for credit cards, since Budgero's debt handling activates per account type.
 2. **Link your debt categories.** YNAB's credit card payment categories arrive as ordinary categories. Once you've set an account's type to Credit Card, connect it per the [Debt tracking guide](/docs/debt-tracking) so payments stay budget-neutral.
 3. **Rebuild goals.** Your YNAB targets didn't survive the trip — YNAB doesn't export them. Recreating them in Budgero takes a few minutes and the [Goals guide](/docs/goals) maps YNAB's target types to Budgero's four goal types almost one-to-one.
 
@@ -108,9 +118,9 @@ Finally, reconcile each account against your bank once (see [Accounts](/docs/acc
 
 The most common post-import surprises, in order:
 
-- **Ready to Assign doesn't match what YNAB showed** — usually not an error. Budgero calculates [Ready to Assign](/docs/ready-to-assign) differently from YNAB: it's one static, all-time number (total income minus total assignments), not a figure that shifts with the month you're viewing. We think that's easier to reason about, but it means the two apps will legitimately disagree right after import. If the number still looks off once you account for that, check for an account whose type needs correcting or a transfer YNAB recorded one-sided — reconciling each account surfaces these fast.
+- **Ready to Assign doesn't match what YNAB showed** — imported budgets use Budgero's **Monthly** calculation by default because it most closely matches YNAB, but differences can still surface when account types or transfers need correcting. Verify imported account types and reconcile each account first. You can inspect or change the calculation under **Settings › Budgeting Settings**; switching modes changes only the calculation, never your data.
 - **Dates or amounts look wrong** — almost always an export-format issue. Re-export from YNAB with Date Format `2025-12-30`, Number Format `123,456.78`, and Currency Placement "Don't Show" (see above), then import into a fresh budget.
-- **Duplicate-looking transactions** — YNAB split transactions export as multiple rows; check the memos before deleting anything.
+- **Duplicate-looking transactions** — complete contiguous `Split (1/n)` through `Split (n/n)` groups import automatically as one split transaction. Incomplete or ambiguous groups remain separate transactions so Budgero does not combine unrelated rows.
 - **Currency questions** — YNAB budgets are single-currency, so everything imports in that currency. If you're switching to a multi-currency setup, see [Budget currency](/docs/budget-currency) before changing anything.
 
 Your YNAB data stays untouched by all of this — the import only reads the export file, so you can re-run it into a fresh budget if you ever want a clean second attempt.
