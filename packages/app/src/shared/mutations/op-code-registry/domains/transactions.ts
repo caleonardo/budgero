@@ -166,6 +166,60 @@ export const transactionOps = {
     },
   },
 
+  'transactions.updateTransferRate': {
+    execute: async (args) => {
+      return await S().transactions!.updateTransferRate(
+        args.transferId as string,
+        args.rate as number,
+        typeof args.transferRateOverride === 'boolean'
+          ? args.transferRateOverride
+          : typeof args.manualOverride === 'boolean'
+            ? args.manualOverride
+            : true,
+        typeof args.sourceRateOverride === 'boolean' ? args.sourceRateOverride : undefined,
+        typeof args.destinationRateOverride === 'boolean' ? args.destinationRateOverride : undefined
+      );
+    },
+    invalidates: [...TRANSACTION_INVALIDATION_KEYS],
+    undo: {
+      capture: async (args) => {
+        const details = await S().transactions!.getTransferRateDetails(args.transferId as string);
+        return details
+          ? {
+              rate: details.rate,
+              transferRateOverride: details.transferRateOverride,
+              sourceRateOverride: details.source.rateOverride,
+              destinationRateOverride: details.destination.rateOverride,
+            }
+          : undefined;
+      },
+      build: (args, _result, before) => {
+        const previous = before as
+          | {
+              rate?: number;
+              transferRateOverride?: boolean;
+              sourceRateOverride?: boolean;
+              destinationRateOverride?: boolean;
+            }
+          | undefined;
+        return typeof previous?.rate === 'number'
+          ? [
+              {
+                op: 'transactions.updateTransferRate',
+                args: {
+                  transferId: args.transferId,
+                  rate: previous.rate,
+                  transferRateOverride: previous.transferRateOverride ?? false,
+                  sourceRateOverride: previous.sourceRateOverride ?? false,
+                  destinationRateOverride: previous.destinationRateOverride ?? false,
+                },
+              },
+            ]
+          : [];
+      },
+    },
+  },
+
   'transactions.deleteTransfer': {
     execute: async (args) => {
       const transferId = args.transferId as string;

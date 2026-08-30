@@ -125,6 +125,7 @@ export type {
   ComputeAutofillOptions,
 } from './services/rules/index.js';
 export type * from './services/transactions/types.js';
+export type { TransferRateDetails } from './services/transactions/transfer-rate.js';
 export type * from './services/warranties/types.js';
 
 // Goal enums and pure calculations (values, browser-safe)

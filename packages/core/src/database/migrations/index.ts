@@ -50,6 +50,7 @@ import { migration049 } from './049-add-showgrouppercent-flag-to-user-meta.js';
 import { migration050 } from './050-add-cyclemonths-column-to-goals-table.js';
 import { migration053 } from './053-add-planning-number-animations-preference.js';
 import { migration054 } from './054-add-budget-month-transaction-indexes.js';
+import { migration055 } from './055-add-transfer-rate-override-to-transactions.js';
 
 import type { Migration } from '../migrations.js';
 
@@ -107,4 +108,5 @@ export const migrations: Migration[] = [
   migration050,
   migration053,
   migration054,
+  migration055,
 ];

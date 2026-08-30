@@ -23,6 +23,7 @@ import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { asMilli } from '@shared/lib/currency/milli';
 import { getRunningBalance } from '@features/transactions/lib/running-balance';
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
+import { TransferRateDialog } from '@features/transactions/ui/transfer-rate/TransferRateDialog';
 import type {
   TransactionEditableColumn,
   TransactionEditorDirectories,
@@ -120,6 +121,7 @@ export const TransactionRow = React.memo(function TransactionRow({
 }: TransactionRowProps) {
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const selectedAccount = useUiStore((state) => state.selectedAccount);
+  const selectedBudget = useUiStore((state) => state.selectedBudget);
   // In account display mode the cell edits the NATIVE amount, whose storage
   // scale follows the account currency (crypto = sats, not milliunits).
   const editCurrencyCode =
@@ -496,6 +498,9 @@ export const TransactionRow = React.memo(function TransactionRow({
                 Split
               </Button>
             )}
+            {isTransfer && transaction.TransferID && (
+              <TransferRateDialog transferId={transaction.TransferID} compact />
+            )}
           </div>
         )}
       </TableCell>
@@ -524,7 +529,7 @@ export const TransactionRow = React.memo(function TransactionRow({
             ) : (
               <CellDisplayButton
                 value={formatExchangeRate(transaction.ExchangeRate || 0)}
-                title="Edit exchange rate"
+                title={`Edit budget rate${selectedAccount?.Currency && selectedBudget?.DisplayCurrency ? `: 1 ${selectedAccount.Currency} in ${selectedBudget.DisplayCurrency}` : ''}`}
                 onClick={() => activateCell('exchangeRate')}
                 className="text-right font-mono text-muted-foreground"
               />

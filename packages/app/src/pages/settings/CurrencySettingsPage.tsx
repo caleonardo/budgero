@@ -453,7 +453,7 @@ export default function CurrencySettingsPage() {
           endDate: endDateStr,
           budgetId,
         });
-        const count = (result as { recalculatedCount?: number })?.recalculatedCount ?? 0;
+        const count = result.recalculated;
         toast.success('Rate updated', {
           description:
             count > 0
@@ -470,7 +470,7 @@ export default function CurrencySettingsPage() {
           budgetId,
           alsoReverse: formData.alsoReverse,
         });
-        const count = (result as { recalculatedCount?: number })?.recalculatedCount ?? 0;
+        const count = result.recalculated;
         toast.success('Rate added', {
           description:
             count > 0
@@ -492,7 +492,7 @@ export default function CurrencySettingsPage() {
         id: deleteTarget.ID,
         budgetId,
       });
-      const count = (result as { recalculatedCount?: number })?.recalculatedCount ?? 0;
+      const count = result.recalculated;
       toast.success('Rate deleted', {
         description:
           count > 0

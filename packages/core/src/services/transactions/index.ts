@@ -22,6 +22,11 @@ import { createLogger } from '../../logger.js';
 import { asMilli, ZERO_MILLI, type MilliUnits } from '../../money/index.js';
 import { convertScaled, isCryptoCurrency } from '../../currencies/index.js';
 import { getLocalDateString } from '../../utils/date.js';
+import {
+  applyTransferRate as applyDirectTransferRate,
+  getTransferRateDetails as loadTransferRateDetails,
+  type TransferRateDetails,
+} from './transfer-rate.js';
 
 export type {
   Transaction,
@@ -33,6 +38,7 @@ export type {
   PayeeListItem,
   LabelListItem,
 } from './types.js';
+export type { TransferRateDetails } from './transfer-rate.js';
 const debugLog = createLogger('services:transactions');
 
 /**
@@ -1018,6 +1024,35 @@ export class TransactionService {
    */
   getTransactionsByTransferID(transferId: string): Transaction[] {
     return this.queries.getTransactionsByTransferID(transferId);
+  }
+
+  getTransferRateDetails(transferId: string): TransferRateDetails | null {
+    return loadTransferRateDetails(this.db, transferId);
+  }
+
+  async updateTransferRate(
+    transferId: string,
+    rate: number,
+    transferRateOverride = true,
+    sourceRateOverride?: boolean,
+    destinationRateOverride?: boolean
+  ): Promise<TransferRateDetails> {
+    const current = loadTransferRateDetails(this.db, transferId);
+    if (!current) throw new ValidationError('A transfer rate requires exactly two linked legs');
+
+    return applyDirectTransferRate(
+      this.db,
+      transferId,
+      rate,
+      (fromCurrency, toCurrency, date, budgetId) =>
+        this.currencyService.resolveRate(fromCurrency, toCurrency, date, budgetId),
+      {
+        sourceOverride: sourceRateOverride ?? current.source.rateOverride,
+        destinationOverride: destinationRateOverride ?? current.destination.rateOverride,
+        transferOverride: transferRateOverride,
+        refreshBudgetRates: true,
+      }
+    );
   }
 
   /**

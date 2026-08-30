@@ -29,6 +29,7 @@ import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { asMilli } from '@shared/lib/currency/milli';
 import { withEditPrecision } from '@shared/lib/number-format';
+import { TransferRateDialog } from '@features/transactions/ui/transfer-rate/TransferRateDialog';
 import type { SplitLine } from './useMobileTransactionCardState';
 import {
   extractSplitAmount,
@@ -535,12 +536,19 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
           </div>
         </div>
 
-        {/* Exchange Rate Field - shown for foreign-currency transactions */}
+        {transaction.TransferID && (
+          <div>
+            <TransferRateDialog transferId={transaction.TransferID} />
+          </div>
+        )}
+
+        {/* Budget Rate Field - shown for foreign-currency transactions */}
         {transaction.ExchangeRate != null && (
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <ArrowLeftRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <div className="flex-1 min-w-0">
+                <p className="mb-1 text-xs text-muted-foreground">Budget rate</p>
                 <div className="flex items-center gap-2">
                   <div className="[&>div]:w-full flex-1">
                     {/* Rates are dimensionless decimals — edited outside the milliunit CalculatorCell */}

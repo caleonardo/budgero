@@ -128,6 +128,24 @@ export function useAddTransfer() {
   });
 }
 
+export type UpdateTransferRateInput = {
+  transferId: string;
+  rate: number;
+};
+
+export function useUpdateTransferRate() {
+  const runtime = useRuntime();
+  return useMutation<void, Error, UpdateTransferRateInput>({
+    mutationFn: async ({ transferId, rate }) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'transactions.updateTransferRate',
+        payload: { transferId, rate, transferRateOverride: true },
+        meta: { label: 'useUpdateTransferRate' },
+      });
+    },
+  });
+}
+
 /**
  * Update a transaction column.
  */

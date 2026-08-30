@@ -9,6 +9,7 @@ import type {
   GetTransactionsByAccountAndMonthRow,
   GetTransactionsByCategoryAndMonthRow,
   GetAllTransactions,
+  TransferRateDetails,
 } from '@budgero/core/browser';
 
 /**
@@ -155,5 +156,14 @@ export function useAllTransactionsAnalytics(budgetId: number) {
     key: ['allTransactionsAnalytics', budgetId],
     enabled: Boolean(budgetId),
     queryFn: (services) => services.transactions.getAllTransactionsAnalytics(budgetId),
+  });
+}
+
+export function useTransferRateDetails(transferId: string | null) {
+  return useSpaceQuery<TransferRateDetails | null>({
+    key: ['transferRateDetails', transferId ?? 'none'],
+    enabled: Boolean(transferId),
+    queryFn: (services) =>
+      transferId ? services.transactions.getTransferRateDetails(transferId) : null,
   });
 }

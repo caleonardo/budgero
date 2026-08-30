@@ -5,6 +5,11 @@ import { CustomCurrencyRate } from './types.js';
 import { TransactionQueries } from '../transactions/queries.js';
 import { CurrencyQueries } from './queries.js';
 import { UserMetaQueries } from '../user-meta/queries.js';
+import {
+  applyTransferRate,
+  getTransferIdsForCurrencyPair,
+  getTransferRateDetails,
+} from '../transactions/transfer-rate.js';
 
 import { createLogger } from '../../logger.js';
 import { getRow, allRows, run } from '../../database/sql.js';
@@ -716,15 +721,9 @@ export class CurrencyService {
       endDate,
       budgetId
     );
-    const reverseRecalculated = alsoReverse
-      ? await this.recalculateTransactionsForDateRange(
-          toCurrency,
-          fromCurrency,
-          startDate,
-          endDate,
-          budgetId
-        )
-      : 0;
+    // Reciprocal lookup is automatic, so recalculating the reverse row would
+    // visit the same transactions/transfers a second time.
+    const reverseRecalculated = 0;
     await this.revalueAccounts(budgetId);
     return { id, reverseId, recalculated: recalculated + reverseRecalculated };
   }
@@ -795,6 +794,23 @@ export class CurrencyService {
     const displayCurrency = this.getBudgetDisplayCurrency(budgetId);
     if (!displayCurrency) return 0;
 
+    const matchingTransferIds = new Set(
+      getTransferIdsForCurrencyPair(this.db, fromCurrency, toCurrency, startDate, endDate, budgetId)
+    );
+
+    // A custom pair between two non-budget currencies applies to the direct
+    // conversion performed by linked transfers. Ordinary transactions only
+    // convert account→budget and therefore cannot consume this pair.
+    if (fromCurrency !== displayCurrency && toCurrency !== displayCurrency) {
+      return this.recalculateTransfersForDateRange(
+        fromCurrency,
+        toCurrency,
+        startDate,
+        endDate,
+        budgetId
+      );
+    }
+
     // Determine which currency is the account currency and which is the budget currency
     // fromCurrency/toCurrency in the custom rate may be in either order
     const accountCurrency = fromCurrency === displayCurrency ? toCurrency : fromCurrency;
@@ -811,6 +827,11 @@ export class CurrencyService {
     const affectedAccounts = new Set<number>();
 
     for (const tx of txs) {
+      // Matching transfers are recalculated atomically below so the custom
+      // direct rate updates the received native amount as well as both budget
+      // valuations. Do not independently rewrite one of their legs here.
+      if (tx.TransferID && matchingTransferIds.has(tx.TransferID)) continue;
+
       const rate = await this.resolveRate(accountCurrency, displayCurrency, tx.Date, budgetId);
       if (!rate) continue;
 
@@ -849,7 +870,65 @@ export class CurrencyService {
       this.transactionQueries.recalculateBalances(accountId);
     }
 
-    return count;
+    const transferCount = await this.recalculateTransfersForDateRange(
+      fromCurrency,
+      toCurrency,
+      startDate,
+      endDate,
+      budgetId
+    );
+
+    return count + transferCount;
+  }
+
+  private async recalculateTransfersForDateRange(
+    fromCurrency: string,
+    toCurrency: string,
+    startDate: string,
+    endDate: string | null,
+    budgetId: number
+  ): Promise<number> {
+    const transferIds = getTransferIdsForCurrencyPair(
+      this.db,
+      fromCurrency,
+      toCurrency,
+      startDate,
+      endDate,
+      budgetId
+    );
+    let recalculated = 0;
+
+    for (const transferId of transferIds) {
+      const details = getTransferRateDetails(this.db, transferId);
+      // A manual override on either leg protects the linked transfer as one
+      // accounting operation. Custom rates only replace fetched rates.
+      if (!details || details.hasRateOverride) continue;
+
+      const directRate = await this.resolveRate(
+        details.source.currency,
+        details.destination.currency,
+        details.date,
+        details.budgetId
+      );
+      if (!directRate) continue;
+
+      await applyTransferRate(
+        this.db,
+        transferId,
+        directRate,
+        (sourceCurrency, destinationCurrency, date, resolvedBudgetId) =>
+          this.resolveRate(sourceCurrency, destinationCurrency, date, resolvedBudgetId),
+        {
+          sourceOverride: false,
+          destinationOverride: false,
+          transferOverride: false,
+          refreshBudgetRates: true,
+        }
+      );
+      recalculated += 2;
+    }
+
+    return recalculated;
   }
 
   /**

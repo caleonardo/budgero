@@ -81,7 +81,7 @@ export const TransactionTableHeader = React.memo(function TransactionTableHeader
             style={{ width: columnWidths.exchangeRate }}
             className="text-right relative group"
           >
-            Rate
+            Budget rate
             <ResizeHandle column="exchangeRate" onResize={onResize} />
           </TableHead>
         )}

@@ -361,6 +361,7 @@ export class CurrencyQueries {
     OutflowNative: number;
     InflowConverted: number;
     OutflowConverted: number;
+    TransferID: string | null;
   }[] {
     const endDateClause = endDate ? `AND t.Date <= ?` : '';
     const params: (string | number)[] = [accountCurrency, budgetId, startDate];
@@ -373,10 +374,12 @@ export class CurrencyQueries {
       OutflowNative: number;
       InflowConverted: number;
       OutflowConverted: number;
+      TransferID: string | null;
     }>(
       this.db,
       `
-      SELECT t.ID, t.Date, t.AccountID, t.InflowNative, t.OutflowNative, t.InflowConverted, t.OutflowConverted
+      SELECT t.ID, t.Date, t.AccountID, t.InflowNative, t.OutflowNative,
+             t.InflowConverted, t.OutflowConverted, t.TransferID
       FROM transactions t
       JOIN accounts a ON t.AccountID = a.ID
       WHERE a.Currency = ?
