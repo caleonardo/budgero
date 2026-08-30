@@ -1009,6 +1009,14 @@ export class TransactionService {
    * MoveTransactionToNewCategory - Changes the category of a transaction
    */
   moveTransactionToNewCategory(transactionId: number, categoryId: number): void {
+    const transaction = this.getTransactionByID(transactionId);
+    if (transaction.TransferID) {
+      const group = this.getTransactionsByTransferID(transaction.TransferID);
+      if (group.length === 2) {
+        this.queries.recategorizeTransfer(transaction.TransferID, categoryId);
+        return;
+      }
+    }
     this.queries.recategorizeTransaction(transactionId, categoryId);
   }
 
@@ -1059,7 +1067,8 @@ export class TransactionService {
    * Synchronize the partner amount for a transfer (two-leg transfers only).
    * - Partner converted amounts are mirrored (inflow <-> outflow) in budget currency.
    * - Partner originals are recalculated using the partner leg's own date and account currency.
-   * - Date, memo, payee, label, and category remain specific to each leg.
+   * - Date, memo, payee, and label remain specific to each leg. Category
+   *   edits are synchronized separately by moveTransactionToNewCategory.
    * - Recalculates partner account balances to keep running balances consistent.
    * Skips if there are not exactly two transactions for the TransferID (e.g., split mirrors).
    */

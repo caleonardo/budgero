@@ -746,6 +746,20 @@ export class TransactionQueries {
     );
   }
 
+  /** Keep the shared category invariant for a simple linked transfer. */
+  recategorizeTransfer(transferId: string, categoryId: number): void {
+    run(
+      this.db,
+      `
+      UPDATE transactions
+      SET CategoryID = ?
+      WHERE TransferID = ?
+    `,
+      categoryId,
+      transferId
+    );
+  }
+
   /**
    * ReassignTransactionCategories - Moves all transactions from one category to another
    * SQL: UPDATE transactions SET category_id = ? WHERE category_id = ?

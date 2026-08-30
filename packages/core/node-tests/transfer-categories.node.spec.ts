@@ -115,7 +115,7 @@ describe('transfer category editing', () => {
       'Transfer to tracking',
       transferId
     );
-    await services.transactions.addTransaction(
+    const destinationTransactionId = await services.transactions.addTransaction(
       10_000,
       0,
       tracking.ID,
@@ -138,6 +138,65 @@ describe('transfer category editing', () => {
       spendingCategoryId
     );
     expect(services.transactions.getTransactionByID(sourceTransactionId).CategoryID).toBe(
+      spendingCategoryId
+    );
+    expect(services.transactions.getTransactionByID(destinationTransactionId).CategoryID).toBe(
+      spendingCategoryId
+    );
+
+    await services.transactions.updateTransactionColumn(
+      destinationTransactionId,
+      'CategoryID',
+      transfers.ID
+    );
+    expect(services.transactions.getTransactionByID(sourceTransactionId).CategoryID).toBe(
+      transfers.ID
+    );
+    expect(services.transactions.getTransactionByID(destinationTransactionId).CategoryID).toBe(
+      transfers.ID
+    );
+  });
+
+  it('mirrors category edits after one on-budget transfer leg moves off budget', async () => {
+    const { services, budgetId, source, destination, tracking, transfers, spendingCategoryId } =
+      await createFixture();
+    const transferId = 'moved-tracking-transfer';
+    const sourceTransactionId = await services.transactions.addTransaction(
+      0,
+      10_000,
+      source.ID,
+      transfers.ID,
+      budgetId,
+      '2026-08-30',
+      'Source leg',
+      transferId
+    );
+    const destinationTransactionId = await services.transactions.addTransaction(
+      10_000,
+      0,
+      destination.ID,
+      transfers.ID,
+      budgetId,
+      '2026-08-30',
+      'Destination leg',
+      transferId
+    );
+
+    await services.transactions.updateTransactionColumn(
+      destinationTransactionId,
+      'AccountID',
+      tracking.ID
+    );
+    await services.transactions.updateTransactionColumn(
+      sourceTransactionId,
+      'CategoryID',
+      spendingCategoryId
+    );
+
+    expect(services.transactions.getTransactionByID(sourceTransactionId).CategoryID).toBe(
+      spendingCategoryId
+    );
+    expect(services.transactions.getTransactionByID(destinationTransactionId).CategoryID).toBe(
       spendingCategoryId
     );
   });
