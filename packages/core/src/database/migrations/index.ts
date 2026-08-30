@@ -52,6 +52,7 @@ import { migration053 } from './053-add-planning-number-animations-preference.js
 import { migration054 } from './054-add-budget-month-transaction-indexes.js';
 import { migration055 } from './055-add-transfer-rate-override-to-transactions.js';
 import { migration056 } from './056-index-transactions-transfer-id.js';
+import { migration057 } from './057-add-payee-to-transaction-splits.js';
 
 import type { Migration } from '../migrations.js';
 
@@ -111,4 +112,5 @@ export const migrations: Migration[] = [
   migration054,
   migration055,
   migration056,
+  migration057,
 ];

@@ -147,6 +147,8 @@ export interface TransactionSplit {
   CategoryID?: number | null;
   TransferAccountID?: number | null;
   Memo: string;
+  /** Empty means inherit the parent transaction payee. */
+  Payee?: string;
   InflowConverted: MilliUnits;
   OutflowConverted: MilliUnits;
   InflowNative?: MilliUnits | null;

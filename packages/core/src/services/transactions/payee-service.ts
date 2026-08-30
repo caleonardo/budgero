@@ -98,8 +98,8 @@ export class PayeeService {
   }
 
   /**
-   * Delete several payees at once, clearing each from the transactions that
-   * reference it.
+   * Delete several payees at once, clearing each from parent transactions and
+   * split lines that reference it.
    *
    * One database transaction for the whole batch: deleting N payees one call
    * at a time would leave the directory half-emptied if the tab closed or a

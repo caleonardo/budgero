@@ -13,6 +13,7 @@ export interface SplitLine {
   category_id: number | null;
   transfer_account_id?: number | null;
   memo: string;
+  payee: string;
   /** Positive amount in integer milliunits. */
   amount: number;
 }
@@ -118,6 +119,7 @@ export function useMobileTransactionCardState({
         category_id: s.CategoryID ?? null,
         transfer_account_id: s.TransferAccountID ?? null,
         memo: s.Memo ?? '',
+        payee: s.Payee ?? '',
         amount: extractSplitAmount(s, amountCurrency),
       }))
     );
@@ -126,7 +128,7 @@ export function useMobileTransactionCardState({
   const addSplitLine = () => {
     setEditSplits((prev) => [
       ...(prev || []),
-      { id: undefined, category_id: null, memo: '', amount: 0 },
+      { id: undefined, category_id: null, memo: '', payee: '', amount: 0 },
     ]);
   };
 
@@ -156,6 +158,7 @@ export function useMobileTransactionCardState({
       category_id: l.category_id ?? null,
       transfer_account_id: l.transfer_account_id ?? null,
       memo: l.memo ?? '',
+      payee: l.payee ?? '',
       amount: Number(l.amount) || 0,
       order_index: idx,
     }));

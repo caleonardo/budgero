@@ -16,6 +16,7 @@ export interface NormalizedSplit {
   CategoryID: number | null;
   TransferAccountID: number | null;
   Memo: string;
+  Payee: string;
   InflowConverted: MilliUnits;
   OutflowConverted: MilliUnits;
   InflowNative: MilliUnits | null;

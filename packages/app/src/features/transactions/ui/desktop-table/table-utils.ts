@@ -11,6 +11,7 @@ export type SplitLike =
       category_id?: number | null;
       transfer_account_id?: number | null;
       memo?: string;
+      payee?: string;
       inflow?: number;
       outflow?: number;
       amount?: number;
@@ -51,6 +52,7 @@ export const toEditableSplit = (
   category_id: number | null;
   transfer_account_id: number | null;
   memo: string;
+  payee: string;
   amount: number;
 } => {
   const s = split as Record<string, unknown>;
@@ -59,6 +61,7 @@ export const toEditableSplit = (
     category_id: (s.category_id ?? s.CategoryID ?? null) as number | null,
     transfer_account_id: (s.transfer_account_id ?? s.TransferAccountID ?? null) as number | null,
     memo: String(s.memo ?? s.Memo ?? ''),
+    payee: String(s.payee ?? s.Payee ?? ''),
     amount: extractSplitAmount(split, amountCurrency),
   };
 };
@@ -71,6 +74,7 @@ export interface EditableSplit {
   category_id: number | null;
   transfer_account_id: number | null;
   memo: string;
+  payee: string;
   amount: number;
 }
 

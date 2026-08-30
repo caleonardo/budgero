@@ -7,6 +7,7 @@ const split: TransactionSplit = {
   TransactionID: 2,
   CategoryID: 3,
   Memo: '',
+  Payee: 'Split shop',
   InflowConverted: asMilli(0),
   OutflowConverted: asMilli(110_000),
   InflowNative: asMilli(0),
@@ -17,7 +18,10 @@ const split: TransactionSplit = {
 describe('split amount currency selection', () => {
   it('uses converted amounts in budget-currency mode', () => {
     expect(extractSplitAmount(split, 'converted')).toBe(110_000);
-    expect(toEditableSplit(split, 0, 'converted').amount).toBe(110_000);
+    expect(toEditableSplit(split, 0, 'converted')).toMatchObject({
+      amount: 110_000,
+      payee: 'Split shop',
+    });
   });
 
   it('uses native amounts in account-currency mode', () => {

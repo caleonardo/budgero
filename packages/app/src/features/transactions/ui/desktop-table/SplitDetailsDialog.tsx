@@ -19,6 +19,7 @@ import {
 import { Separator } from '@shared/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { SearchableCategorySelect } from '@features/category-management/ui/SearchableCategorySelect';
+import { PayeeSelectCell } from '@features/transactions/ui/cells/PayeeSelectCell';
 import { Plus, Trash2 } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import { asMilli, formatMilli } from '@shared/lib/currency/milli';
@@ -184,6 +185,7 @@ export function SplitDetailsDialog({
         category_id: null,
         transfer_account_id: null,
         memo: '',
+        payee: '',
         amount: 0,
       },
     ]);
@@ -191,7 +193,12 @@ export function SplitDetailsDialog({
 
   const handleUpdateSplit = (
     id: string,
-    patch: Partial<{ memo: string; amount: number; category_id: number | null }>
+    patch: Partial<{
+      memo: string;
+      payee: string;
+      amount: number;
+      category_id: number | null;
+    }>
   ) => {
     setEditSplits(
       (prev) => prev?.map((line) => (line.id === id ? { ...line, ...patch } : line)) ?? null
@@ -247,6 +254,7 @@ export function SplitDetailsDialog({
       category_id: line.category_id ?? null,
       transfer_account_id: line.transfer_account_id ?? null,
       memo: line.memo ?? '',
+      payee: line.payee ?? '',
       amount: Number(line.amount) || 0,
       order_index: idx,
     }));
@@ -267,7 +275,7 @@ export function SplitDetailsDialog({
         if (!next) onClose();
       }}
     >
-      <DialogContent style={{ width: '800px', maxWidth: '90vw' }}>
+      <DialogContent style={{ width: '1000px', maxWidth: '94vw' }}>
         <DialogHeader>
           <DialogTitle>Split details</DialogTitle>
           <DialogDescription className="truncate max-w-full" title={transaction?.Memo || ''}>
@@ -365,6 +373,7 @@ export function SplitDetailsDialog({
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-[200px]">Category / Transfer</TableHead>
+                      <TableHead className="w-[180px]">Payee</TableHead>
                       <TableHead>Memo</TableHead>
                       <TableHead className="text-right w-[120px]">Amount</TableHead>
                       {editSplits && <TableHead className="w-[50px]" />}
@@ -419,6 +428,20 @@ export function SplitDetailsDialog({
                               <p className="text-[11px] text-muted-foreground">
                                 Editing transfer splits is not supported.
                               </p>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {editSplits ? (
+                              <PayeeSelectCell
+                                budgetId={budgetId}
+                                value={(editable as EditableSplit)?.payee ?? ''}
+                                onCommit={(payee) =>
+                                  handleUpdateSplit((editable as EditableSplit).id, { payee })
+                                }
+                                triggerClassName="h-8 w-full"
+                              />
+                            ) : (
+                              String(s.payee || s.Payee || transaction?.Payee || '-')
                             )}
                           </TableCell>
                           <TableCell className="text-xs text-muted-foreground">

@@ -51,6 +51,8 @@ interface SplitDisplayItem {
   TransferAccountName?: string;
   memo?: string;
   Memo?: string;
+  payee?: string;
+  Payee?: string;
   amount?: number;
   inflow?: number;
   InflowConverted?: number;
@@ -423,6 +425,21 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                           >
                             Remove
                           </Button>
+                        )}
+                      </div>
+
+                      <div>
+                        {editSplits ? (
+                          <PayeeSelectCell
+                            budgetId={selectedBudgetId || budgetId}
+                            value={s.payee ?? s.Payee ?? ''}
+                            onCommit={(payee) => onUpdateSplitLine(idx, { payee })}
+                            triggerClassName="h-8 w-full"
+                          />
+                        ) : (
+                          <span className="text-xs text-muted-foreground block truncate">
+                            {s.payee || s.Payee || transaction.Payee || 'No payee'}
+                          </span>
                         )}
                       </div>
 

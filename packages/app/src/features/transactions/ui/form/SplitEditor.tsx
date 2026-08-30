@@ -9,12 +9,14 @@ import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { CalculatorCell } from '@shared/ui/calculator-cell';
 import { SearchableCategorySelect } from '@features/category-management/ui/SearchableCategorySelect';
+import { PayeeSelectCell } from '@features/transactions/ui/cells/PayeeSelectCell';
 import { asMilli, formatMilli, ZERO_MILLI, type MilliUnits } from '@shared/lib/currency/milli';
 
 export interface SplitLine {
   id: string;
   categoryId?: number | null;
   memo?: string;
+  payee?: string;
   /** Positive amount in integer milliunits. */
   amount: MilliUnits;
   transferAccountId?: number | null;
@@ -54,7 +56,7 @@ export function SplitEditor({
   const addLine = () => {
     onSplitLinesChange([
       ...splitLines,
-      { id: crypto.randomUUID(), categoryId: undefined, memo: '', amount: ZERO_MILLI },
+      { id: crypto.randomUUID(), categoryId: undefined, memo: '', payee: '', amount: ZERO_MILLI },
     ]);
   };
 
@@ -67,6 +69,7 @@ export function SplitEditor({
           id: crypto.randomUUID(),
           amount: asMilli(Math.abs(parentAmount)),
           memo: '',
+          payee: '',
           categoryId: undefined,
         },
       ]);
@@ -115,6 +118,14 @@ export function SplitEditor({
                   placeholder="Category"
                   triggerClassName="w-full h-8 sm:h-9"
                   popoverContentClassName="w-[320px] max-w-[90vw]"
+                />
+              </div>
+              <div>
+                <PayeeSelectCell
+                  budgetId={budgetId}
+                  value={line.payee || ''}
+                  onCommit={(payee) => updateLine(line.id, { payee })}
+                  triggerClassName="w-full h-8 sm:h-9"
                 />
               </div>
               <div>

@@ -349,7 +349,7 @@ export class AnalyticsQueries {
     const query = `
       WITH base AS (
         SELECT
-          COALESCE(NULLIF(TRIM(t.Payee), ''), '(No payee)') AS Payee,
+          COALESCE(NULLIF(TRIM(s.Payee), ''), NULLIF(TRIM(t.Payee), ''), '(No payee)') AS Payee,
           s.OutflowConverted AS OutflowConverted,
           cg.Name AS GroupName
         FROM transaction_splits s

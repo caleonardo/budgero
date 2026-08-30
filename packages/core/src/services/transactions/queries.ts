@@ -231,8 +231,9 @@ export class TransactionQueries {
 
   /**
    * GetAllTransactionsAnalytics - Budget-wide rows with split parents expanded
-   * into their split lines (category and amounts from the split; date, account,
-   * payee, and label from the parent). Transfer split lines carry the same
+   * into their split lines (category, payee, and amounts from the split; date,
+   * account, and label from the parent). Blank split payees inherit the parent.
+   * Transfer split lines carry the same
    * synthetic TransferID as their mirror rows so both sides read as a transfer.
    * For aggregation views — registers keep getAllTransactionsDetailed.
    */
@@ -249,7 +250,7 @@ export class TransactionQueries {
         l.Name as Label,
         l.Color as LabelColor,
         COALESCE(s.Memo, t.Memo) as Memo,
-        t.Payee,
+        COALESCE(NULLIF(s.Payee, ''), t.Payee) AS Payee,
         t.Reconciled,
         s.InflowConverted,
         s.OutflowConverted,
@@ -843,7 +844,7 @@ export class TransactionQueries {
           t.ID,
           t.Date,
           COALESCE(s.Memo, t.Memo) as Memo,
-          t.Payee as Payee,
+          COALESCE(NULLIF(s.Payee, ''), t.Payee) as Payee,
           t.LabelID as LabelID,
           l.Name as Label,
           l.Color as LabelColor,
@@ -932,7 +933,7 @@ export class TransactionQueries {
           t.ID,
           t.Date,
           COALESCE(s.Memo, t.Memo) AS Memo,
-          t.Payee AS Payee,
+          COALESCE(NULLIF(s.Payee, ''), t.Payee) AS Payee,
           t.LabelID AS LabelID,
           l.Name AS Label,
           l.Color AS LabelColor,
@@ -1049,7 +1050,7 @@ export class TransactionQueries {
    * usable history.
    *
    * Deliberately narrow about what counts as "history":
-   *  - splits have no single category, so split parents are excluded
+   *  - a split line counts only when it has its own payee and category
    *  - transfers aren't spending, so they're excluded
    *  - "Uncategorized" means the user never chose, so it isn't a memory
    * Payee matching is case-insensitive, matching how the payee directory
@@ -1062,19 +1063,33 @@ export class TransactionQueries {
     const row = getRow<{ CategoryID: number; CategoryName: string; Date: string }>(
       this.db,
       `
-      SELECT t.CategoryID AS CategoryID, c.Name AS CategoryName, t.Date AS Date
-      FROM transactions t
-      JOIN categories c ON c.ID = t.CategoryID
-      WHERE t.BudgetID = ?
-        AND t.Payee = ? COLLATE NOCASE
-        AND t.CategoryID IS NOT NULL
-        AND t.CategoryID > 0
+      SELECT history.CategoryID, c.Name AS CategoryName, history.Date
+      FROM (
+        SELECT t.CategoryID, t.Date, t.ID AS TransactionID, 0 AS SplitOrder
+        FROM transactions t
+        WHERE t.BudgetID = ?
+          AND t.Payee = ? COLLATE NOCASE
+          AND (t.TransferID IS NULL OR t.TransferID = '')
+          ${NO_SPLITS_FILTER}
+
+        UNION ALL
+
+        SELECT s.CategoryID, t.Date, t.ID AS TransactionID, s.OrderIndex AS SplitOrder
+        FROM transaction_splits s
+        JOIN transactions t ON t.ID = s.TransactionID
+        WHERE t.BudgetID = ?
+          AND s.Payee = ? COLLATE NOCASE
+          AND (s.TransferAccountID IS NULL OR s.TransferAccountID = 0)
+      ) history
+      JOIN categories c ON c.ID = history.CategoryID
+      WHERE history.CategoryID IS NOT NULL
+        AND history.CategoryID > 0
         AND c.Name <> 'Uncategorized'
-        AND (t.TransferID IS NULL OR t.TransferID = '')
-        ${NO_SPLITS_FILTER}
-      ORDER BY t.Date DESC, t.ID DESC
+      ORDER BY history.Date DESC, history.TransactionID DESC, history.SplitOrder DESC
       LIMIT 1
     `,
+      budgetId,
+      payee,
       budgetId,
       payee
     );
@@ -1085,20 +1100,42 @@ export class TransactionQueries {
     return allRows<{ Name: string; UsageCount: number }>(
       this.db,
       `
-      SELECT Payee as Name, COUNT(*) as UsageCount
-      FROM transactions
-      WHERE BudgetID = ?
-        AND Payee IS NOT NULL
-        AND TRIM(Payee) <> ''
-      GROUP BY Payee
-      ORDER BY Payee COLLATE NOCASE
+      SELECT Name, SUM(UsageCount) AS UsageCount
+      FROM (
+        SELECT Payee AS Name, COUNT(*) AS UsageCount
+        FROM transactions
+        WHERE BudgetID = ?
+          AND Payee IS NOT NULL
+          AND TRIM(Payee) <> ''
+          AND NOT EXISTS (
+            SELECT 1
+            FROM transaction_splits s
+            WHERE s.TransactionID = transactions.ID
+              AND s.Payee IS NOT NULL
+              AND TRIM(s.Payee) <> ''
+          )
+        GROUP BY Payee
+
+        UNION ALL
+
+        SELECT s.Payee AS Name, COUNT(*) AS UsageCount
+        FROM transaction_splits s
+        JOIN transactions t ON t.ID = s.TransactionID
+        WHERE t.BudgetID = ?
+          AND s.Payee IS NOT NULL
+          AND TRIM(s.Payee) <> ''
+        GROUP BY s.Payee
+      ) usage
+      GROUP BY Name COLLATE NOCASE
+      ORDER BY Name COLLATE NOCASE
     `,
+      budgetId,
       budgetId
     );
   }
 
   updatePayeeValue(budgetId: number, oldName: string, newName: string | null): number {
-    const result = run(
+    const transactions = run(
       this.db,
       `
       UPDATE transactions
@@ -1109,7 +1146,19 @@ export class TransactionQueries {
       budgetId,
       oldName
     );
-    return result?.changes ?? 0;
+    const splits = run(
+      this.db,
+      `
+      UPDATE transaction_splits
+      SET Payee = ?
+      WHERE TransactionID IN (SELECT ID FROM transactions WHERE BudgetID = ?)
+        AND Payee = ?
+    `,
+      newName,
+      budgetId,
+      oldName
+    );
+    return (transactions?.changes ?? 0) + (splits?.changes ?? 0);
   }
 
   listLabelsWithUsage(budgetId: number): LabelListItem[] {
@@ -1279,14 +1328,15 @@ export class TransactionQueries {
       this.db,
       `
       INSERT INTO transaction_splits (
-        TransactionID, CategoryID, TransferAccountID, Memo,
+        TransactionID, CategoryID, TransferAccountID, Memo, Payee,
         InflowConverted, OutflowConverted, InflowNative, OutflowNative, PairID, OrderIndex
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       split.TransactionID,
       split.CategoryID ?? null,
       split.TransferAccountID ?? null,
       split.Memo,
+      split.Payee ?? '',
       split.InflowConverted,
       split.OutflowConverted,
       split.InflowNative ?? null,

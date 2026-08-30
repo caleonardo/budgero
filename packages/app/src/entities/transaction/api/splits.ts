@@ -20,6 +20,7 @@ export type UpsertSplitsInput = {
     category_id?: number | null;
     transfer_account_id?: number | null;
     memo?: string;
+    payee?: string;
     amount: number; // POSITIVE
     order_index?: number;
   }[];
@@ -34,6 +35,7 @@ export function useUpsertSplits() {
         category_id: s.category_id ?? null,
         transfer_account_id: s.transfer_account_id ?? null,
         memo: s.memo ?? '',
+        payee: s.payee ?? '',
         inflow: amountCurrency === 'converted' && type === 'inflow' ? s.amount : 0,
         outflow: amountCurrency === 'converted' && type === 'outflow' ? s.amount : 0,
         inflow_original: amountCurrency === 'native' && type === 'inflow' ? s.amount : null,

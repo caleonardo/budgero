@@ -597,6 +597,7 @@ export function useAddTransactionForm({
         category_id: l.categoryId ?? (l.transferAccountId ? null : uncategorizedId),
         transfer_account_id: l.transferAccountId ?? null,
         memo: l.memo ?? '',
+        payee: l.payee ?? '',
         amount: l.amount,
         order_index: idx,
       }));

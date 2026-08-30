@@ -54,7 +54,10 @@ export class SplitService {
     const parentNativeNet =
       (parent.InflowNative ?? parent.InflowConverted ?? 0) -
       (parent.OutflowNative ?? parent.OutflowConverted ?? 0);
-    let preparedSplits = splits.map((split) => ({ ...split }));
+    let preparedSplits = splits.map((split) => ({
+      ...split,
+      Payee: (split.Payee ?? '').trim(),
+    }));
     const hasNativeAmounts =
       preparedSplits.length > 0 &&
       preparedSplits.every((split) => split.InflowNative != null || split.OutflowNative != null);
@@ -162,6 +165,7 @@ export class SplitService {
     type PreparedMirror = {
       targetAccountId: number;
       memo: string;
+      payee: string;
       inflowOriginal: MilliUnits;
       outflowOriginal: MilliUnits;
       inflowConverted: MilliUnits;
@@ -212,6 +216,7 @@ export class SplitService {
         preparedMirrors.push({
           targetAccountId: targetAccount.ID,
           memo: s.Memo ?? parent.Memo ?? '',
+          payee: s.Payee || parent.Payee || '',
           inflowOriginal: mirrorInflowOriginal,
           outflowOriginal: mirrorOutflowOriginal,
           inflowConverted: mirrorInflowConverted,
@@ -230,6 +235,7 @@ export class SplitService {
           CategoryID: s.CategoryID ?? null,
           TransferAccountID: s.TransferAccountID ?? null,
           Memo: s.Memo ?? parent.Memo ?? '',
+          Payee: s.Payee ?? '',
           InflowConverted: s.InflowConverted ?? 0,
           OutflowConverted: s.OutflowConverted ?? 0,
           InflowNative: s.InflowNative ?? null,
@@ -238,6 +244,7 @@ export class SplitService {
           OrderIndex: s.OrderIndex ?? orderIndex,
         };
         this.queries.insertSplitLine(row);
+        if (row.Payee) this.queries.insertPayee(parent.BudgetID, row.Payee);
         orderIndex++;
       }
 
@@ -272,7 +279,7 @@ export class SplitService {
           pm.targetAccountId,
           parent.Date,
           pm.memo,
-          parent.Payee ?? null,
+          pm.payee || null,
           parent.BudgetID,
           newBalanceConverted,
           newBalanceOriginal,

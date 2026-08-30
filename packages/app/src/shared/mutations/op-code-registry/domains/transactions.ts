@@ -476,6 +476,7 @@ export const transactionOps = {
               | number
               | null,
             Memo: String(s.Memo ?? s.memo ?? ''),
+            Payee: String(s.Payee ?? s.payee ?? ''),
             InflowConverted: asMilli(Number(s.InflowConverted ?? s.Inflow ?? s.inflow ?? 0)),
             OutflowConverted: asMilli(Number(s.OutflowConverted ?? s.Outflow ?? s.outflow ?? 0)),
             InflowNative: inflowOriginal == null ? null : asMilli(Number(inflowOriginal)),
