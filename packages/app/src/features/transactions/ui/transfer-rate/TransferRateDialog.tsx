@@ -21,6 +21,7 @@ interface TransferRateDialogProps {
 export function TransferRateDialog({ transferId, compact = false }: TransferRateDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [rateText, setRateText] = React.useState('');
+  const [rateDirty, setRateDirty] = React.useState(false);
   const initializedTransfer = React.useRef<string | null>(null);
   const { data: details, isLoading } = useTransferRateDetails(open ? transferId : null);
   const updateRate = useUpdateTransferRate();
@@ -29,11 +30,12 @@ export function TransferRateDialog({ transferId, compact = false }: TransferRate
     if (!open) {
       initializedTransfer.current = null;
       setRateText('');
-    } else if (details && initializedTransfer.current !== details.transferId) {
+      setRateDirty(false);
+    } else if (details && (initializedTransfer.current !== details.transferId || !rateDirty)) {
       initializedTransfer.current = details.transferId;
       setRateText(String(details.rate));
     }
-  }, [details, open]);
+  }, [details, open, rateDirty]);
 
   const parsedRate = Number.parseFloat(rateText.replace(',', '.'));
   const validRate = Number.isFinite(parsedRate) && parsedRate > 0;
@@ -113,7 +115,10 @@ export function TransferRateDialog({ transferId, compact = false }: TransferRate
                   type="text"
                   inputMode="decimal"
                   value={rateText}
-                  onChange={(event) => setRateText(event.target.value)}
+                  onChange={(event) => {
+                    setRateDirty(true);
+                    setRateText(event.target.value);
+                  }}
                   className="font-mono"
                   aria-invalid={!validRate}
                   disabled={!isCrossCurrency}

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransferRateDialog } from './TransferRateDialog';
 
-const mocks = vi.hoisted(() => ({ update: vi.fn() }));
+const mocks = vi.hoisted(() => ({ update: vi.fn(), rate: 117 }));
 
 vi.mock('@entities/transaction/api/useTransactions', () => ({
   useTransferRateDetails: () => ({
@@ -32,7 +32,7 @@ vi.mock('@entities/transaction/api/useTransactions', () => ({
         budgetRate: 0.0098290598,
         rateOverride: false,
       },
-      rate: 117,
+      rate: mocks.rate,
       transferRateOverride: false,
       hasRateOverride: false,
     },
@@ -42,7 +42,10 @@ vi.mock('@entities/transaction/api/useTransactions', () => ({
 }));
 
 describe('TransferRateDialog', () => {
-  beforeEach(() => mocks.update.mockReset().mockResolvedValue(undefined));
+  beforeEach(() => {
+    mocks.rate = 117;
+    mocks.update.mockReset().mockResolvedValue(undefined);
+  });
 
   it('distinguishes the direct transfer rate from both budget rates and edits it', async () => {
     const user = userEvent.setup();
@@ -61,5 +64,24 @@ describe('TransferRateDialog', () => {
     await user.click(screen.getByRole('button', { name: 'Save rate' }));
 
     expect(mocks.update).toHaveBeenCalledWith({ transferId: 'transfer-1', rate: 118.25 });
+  });
+
+  it('refreshes the field after undo without replacing an in-progress edit', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<TransferRateDialog transferId="transfer-1" />);
+
+    await user.click(screen.getByRole('button', { name: /transfer rate/i }));
+    const input = screen.getByLabelText('1 EUR equals');
+    expect(input).toHaveValue('117');
+
+    mocks.rate = 116;
+    rerender(<TransferRateDialog transferId="transfer-1" />);
+    expect(input).toHaveValue('116');
+
+    await user.clear(input);
+    await user.type(input, '115');
+    mocks.rate = 114;
+    rerender(<TransferRateDialog transferId="transfer-1" />);
+    expect(input).toHaveValue('115');
   });
 });
