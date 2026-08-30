@@ -7,7 +7,11 @@
  */
 
 import { getRuntime } from '@shared/runtime/global';
-import { type MilliUnits, ChartConfiguration } from '@budgero/core/browser';
+import {
+  type MilliUnits,
+  type ChartConfiguration,
+  type SaveReportInput,
+} from '@budgero/core/browser';
 
 /**
  * Split transaction entry shape (normalized to PascalCase)
@@ -238,6 +242,7 @@ export const RECURRING_OCCURRENCE_INVALIDATIONS: string[][] = [
 
 export type ReportChart = ChartConfiguration;
 export type NewReportChart = Omit<ChartConfiguration, 'id'>;
+export type ReportSaveInput = SaveReportInput;
 
 export interface OpCodeEntry {
   execute: (args: Record<string, unknown>) => Promise<unknown>;

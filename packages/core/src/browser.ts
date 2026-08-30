@@ -67,6 +67,8 @@ export * from './types/index.js';
 export type {
   UnifiedReport,
   ChartConfiguration,
+  NewChartConfiguration,
+  SaveReportInput,
   UnifiedReportService,
 } from './services/reports/index.js';
 export type { ScenarioRecord, SaveScenarioInput } from './services/scenarios/index.js';

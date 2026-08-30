@@ -41,9 +41,16 @@ export interface UnifiedReport {
   isFavorite?: boolean;
 }
 
+export type NewChartConfiguration = Omit<ChartConfiguration, 'id'> & { id?: string };
+
+export type SaveReportInput = Omit<UnifiedReport, 'id' | 'createdAt' | 'updatedAt' | 'charts'> & {
+  id?: string;
+  charts?: NewChartConfiguration[];
+};
+
 export interface UnifiedReportService {
   // Core CRUD operations
-  saveReport(data: Omit<UnifiedReport, 'id' | 'createdAt' | 'updatedAt'>): UnifiedReport;
+  saveReport(data: SaveReportInput): UnifiedReport;
   getReports(): UnifiedReport[];
   getReport(id: string): UnifiedReport | null;
   updateReport(
@@ -53,7 +60,7 @@ export interface UnifiedReportService {
   deleteReport(id: string): void;
 
   // Chart management within reports
-  addChartToReport(reportId: string, chart: Omit<ChartConfiguration, 'id'>): UnifiedReport;
+  addChartToReport(reportId: string, chart: NewChartConfiguration): UnifiedReport;
   updateChartInReport(
     reportId: string,
     chartId: string,
@@ -73,7 +80,7 @@ export class DatabaseUnifiedReportService implements UnifiedReportService {
     this.db = db;
   }
 
-  saveReport(data: Omit<UnifiedReport, 'id' | 'createdAt' | 'updatedAt'>): UnifiedReport {
+  saveReport(data: SaveReportInput): UnifiedReport {
     const existing = getRow(
       this.db,
       `SELECT ID FROM saved_reports WHERE Name = ?`,
@@ -86,7 +93,7 @@ export class DatabaseUnifiedReportService implements UnifiedReportService {
       );
     }
 
-    const id = globalThis.crypto.randomUUID();
+    const id = data.id ?? globalThis.crypto.randomUUID();
     const now = new Date().toISOString();
 
     const report: UnifiedReport = {
@@ -94,7 +101,10 @@ export class DatabaseUnifiedReportService implements UnifiedReportService {
       name: data.name.trim(),
       description: data.description?.trim(),
       query: data.query,
-      charts: data.charts || [],
+      charts: (data.charts || []).map((chart) => ({
+        ...chart,
+        id: chart.id ?? globalThis.crypto.randomUUID(),
+      })),
       createdAt: now,
       updatedAt: now,
       tags: data.tags || [],
@@ -235,15 +245,15 @@ export class DatabaseUnifiedReportService implements UnifiedReportService {
     run(this.db, `DELETE FROM saved_reports WHERE ID = ?`, id);
   }
 
-  addChartToReport(reportId: string, chart: Omit<ChartConfiguration, 'id'>): UnifiedReport {
+  addChartToReport(reportId: string, chart: NewChartConfiguration): UnifiedReport {
     const report = this.getReport(reportId);
     if (!report) {
       throw new Error('Report not found');
     }
 
     const newChart: ChartConfiguration = {
-      id: globalThis.crypto.randomUUID(),
       ...chart,
+      id: chart.id ?? globalThis.crypto.randomUUID(),
     };
 
     const updatedCharts = [...report.charts, newChart];

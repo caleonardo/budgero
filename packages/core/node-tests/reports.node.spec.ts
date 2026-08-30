@@ -3,6 +3,39 @@ import { NodeSqlJsAdapter, DatabaseAdapter } from '../src';
 import { DatabaseUnifiedReportService, ChartConfiguration } from '../src/services/reports/index.js';
 
 describe('UnifiedReportService', () => {
+  it('preserves report and chart IDs supplied by mutation payloads', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    const svc = new DatabaseUnifiedReportService(adapter as DatabaseAdapter);
+
+    const created = svc.saveReport({
+      id: 'report-from-mutation',
+      name: 'Synced report',
+      query: 'SELECT 1',
+      charts: [
+        {
+          id: 'chart-from-mutation',
+          chartType: 'bar',
+          xAxisColumn: 'x',
+          yAxisColumn: 'y',
+          aggregateFunction: 'SUM',
+        },
+      ],
+    });
+
+    expect(created.id).toBe('report-from-mutation');
+    expect(created.charts[0]?.id).toBe('chart-from-mutation');
+
+    const withChart = svc.addChartToReport(created.id, {
+      id: 'added-chart-from-mutation',
+      chartType: 'line',
+      xAxisColumn: 'x',
+      yAxisColumn: 'y',
+      aggregateFunction: 'SUM',
+    });
+
+    expect(withChart.charts[1]?.id).toBe('added-chart-from-mutation');
+  });
+
   it('CRUD + charts + duplication + favorites', async () => {
     const adapter = await NodeSqlJsAdapter.create();
     const svc = new DatabaseUnifiedReportService(adapter as DatabaseAdapter);

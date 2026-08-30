@@ -1,16 +1,20 @@
-import { S, type NewReportChart, type OpCodeEntry, type ReportChart } from '../shared';
+import {
+  S,
+  type NewReportChart,
+  type OpCodeEntry,
+  type ReportChart,
+  type ReportSaveInput,
+} from '../shared';
 
 export const reportOps = {
   'reports.create': {
     execute: async (args) => {
       return await S().reports!.saveReport({
+        id: args.id as string | undefined,
         name: args.name as string,
         description: args.description as string | undefined,
         query: args.query as string,
-        charts: ((args.charts as NewReportChart[] | undefined) || []).map((c) => ({
-          ...c,
-          id: crypto.randomUUID(),
-        })),
+        charts: args.charts as ReportChart[] | undefined,
         tags: args.tags as string[] | undefined,
         isFavorite: args.isFavorite as boolean | undefined,
       });
@@ -54,7 +58,7 @@ export const reportOps = {
     execute: async (args) => {
       return await S().reports!.addChartToReport(
         args.reportId as string,
-        args.chart as NewReportChart
+        args.chart as NewReportChart & { id?: string }
       );
     },
     invalidates: [['reports'], ['report', '*']],
@@ -86,6 +90,13 @@ export const reportOps = {
   // useDuplicateReport
   'reports.duplicate': {
     execute: async (args) => {
+      const newReport = args.newReport as ReportSaveInput | undefined;
+      if (newReport) {
+        return await S().reports!.saveReport(newReport);
+      }
+
+      // Compatibility for mutations queued by clients before report IDs were
+      // generated at the mutation boundary.
       return await S().reports!.duplicateReport(args.id as string, args.newName as string);
     },
     invalidates: [['reports']],

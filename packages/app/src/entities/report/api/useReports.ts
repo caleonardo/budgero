@@ -6,6 +6,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRuntime } from '@shared/runtime/runtime-provider';
 import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 import type { UnifiedReport, ChartConfiguration } from '@budgero/core/browser';
+import {
+  prepareAddReportChartMutation,
+  prepareCreateReportMutation,
+  prepareDuplicateReportMutation,
+  type AddReportChartData,
+  type CreateReportData,
+  type DuplicateReportData,
+} from './reportMutationPayloads';
 
 /**
  * Get all reports
@@ -27,20 +35,11 @@ export function useReports() {
 export function useCreateReport() {
   const runtime = useRuntime();
 
-  type CreateReportData = {
-    name: string;
-    description?: string;
-    query: string;
-    charts?: Omit<ChartConfiguration, 'id'>[];
-    tags?: string[];
-    isFavorite?: boolean;
-  };
-
   return useMutation<UnifiedReport, Error, CreateReportData>({
     mutationFn: async (data: CreateReportData) => {
       return executeSpaceMutation<UnifiedReport>(runtime, {
         op: 'reports.create',
-        payload: data,
+        payload: prepareCreateReportMutation(data),
         meta: { label: 'useCreateReport' },
       });
     },
@@ -130,16 +129,11 @@ export function useToggleReportFavorite() {
 export function useAddChartToReport() {
   const runtime = useRuntime();
 
-  type AddChartData = {
-    reportId: string;
-    chart: Omit<ChartConfiguration, 'id'>;
-  };
-
-  return useMutation<UnifiedReport, Error, AddChartData>({
-    mutationFn: async (data: AddChartData) => {
+  return useMutation<UnifiedReport, Error, AddReportChartData>({
+    mutationFn: async (data: AddReportChartData) => {
       return executeSpaceMutation<UnifiedReport>(runtime, {
         op: 'reports.addChart',
-        payload: data,
+        payload: prepareAddReportChartMutation(data),
         meta: { label: 'useAddChartToReport' },
       });
     },
@@ -197,16 +191,16 @@ export function useRemoveChartFromReport() {
 export function useDuplicateReport() {
   const runtime = useRuntime();
 
-  type DuplicateReportData = {
-    id: string;
-    newName: string;
-  };
-
   return useMutation<UnifiedReport, Error, DuplicateReportData>({
     mutationFn: async (data: DuplicateReportData) => {
+      const source = runtime.services().reports.getReport(data.id);
+      if (!source) {
+        throw new Error('Report not found');
+      }
+
       return executeSpaceMutation<UnifiedReport>(runtime, {
         op: 'reports.duplicate',
-        payload: data,
+        payload: prepareDuplicateReportMutation(data, source),
         meta: { label: 'useDuplicateReport' },
       });
     },
