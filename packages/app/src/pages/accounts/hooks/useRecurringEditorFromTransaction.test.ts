@@ -1,44 +1,58 @@
 import { asMilli, type GetTransactionsByAccountRow, type Transaction } from '@budgero/core/browser';
 import { recurringInitialValuesFromTransaction } from './useRecurringEditorFromTransaction';
 
-const sourceLeg = {
+type TransactionRowFixture = Transaction & GetTransactionsByAccountRow;
+
+function transactionRow(overrides: Partial<TransactionRowFixture> = {}): TransactionRowFixture {
+  return {
+    ID: 1,
+    CategoryID: 4,
+    Category: 'Transfers',
+    AccountID: 1,
+    Date: '2026-08-30',
+    Month: '2026-08',
+    Memo: '',
+    Reconciled: false,
+    InflowConverted: asMilli(0),
+    OutflowConverted: asMilli(0),
+    RunningBalanceConverted: asMilli(0),
+    BudgetID: 42,
+    ...overrides,
+  };
+}
+
+const sourceLeg = transactionRow({
   ID: 10,
   TransferID: 'transfer-1',
   AccountID: 1,
-  CategoryID: 4,
   Date: '2026-08-29',
   Memo: 'Move savings',
   Payee: 'Savings transfer',
-  InflowConverted: asMilli(0),
   OutflowConverted: asMilli(9_000),
   InflowNative: asMilli(0),
   OutflowNative: asMilli(10_000),
-} as Transaction;
+});
 
-const destinationLeg = {
+const destinationLeg = transactionRow({
   ID: 11,
   TransferID: 'transfer-1',
   AccountID: 2,
-  CategoryID: 4,
-  Date: '2026-08-30',
   Memo: 'Received savings',
   Payee: 'Incoming transfer',
   InflowConverted: asMilli(9_000),
-  OutflowConverted: asMilli(0),
   InflowNative: asMilli(117_000),
   OutflowNative: asMilli(0),
-} as Transaction;
+});
 
 describe('recurringInitialValuesFromTransaction', () => {
   it.each([
     ['source', sourceLeg],
     ['destination', destinationLeg],
   ])('reconstructs the same recurring transfer from the %s leg', (_name, selectedLeg) => {
-    const values = recurringInitialValuesFromTransaction(
-      selectedLeg as GetTransactionsByAccountRow,
-      selectedLeg.AccountID,
-      [sourceLeg, destinationLeg]
-    );
+    const values = recurringInitialValuesFromTransaction(selectedLeg, selectedLeg.AccountID, [
+      sourceLeg,
+      destinationLeg,
+    ]);
 
     expect(values).toMatchObject({
       direction: 'outflow',
@@ -52,11 +66,7 @@ describe('recurringInitialValuesFromTransaction', () => {
   });
 
   it('does not flatten malformed or split transfer groups', () => {
-    expect(
-      recurringInitialValuesFromTransaction(destinationLeg as GetTransactionsByAccountRow, 2, [
-        destinationLeg,
-      ])
-    ).toBeNull();
+    expect(recurringInitialValuesFromTransaction(destinationLeg, 2, [destinationLeg])).toBeNull();
   });
 
   it('keeps ordinary transactions as inflow or outflow templates', () => {
@@ -65,7 +75,7 @@ describe('recurringInitialValuesFromTransaction', () => {
         ...destinationLeg,
         TransferID: undefined,
         Payee: 'Employer',
-      } as GetTransactionsByAccountRow,
+      },
       2
     );
 
