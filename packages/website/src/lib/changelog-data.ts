@@ -16,11 +16,56 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.11.2',
+    date: 'August 30, 2026',
+    summary:
+      'Recurring transactions now share the standard transaction form, while transfers, currency corrections, and large ledgers are more reliable.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Create recurring transactions from the standard form',
+        description:
+          'The transaction form now includes a Make recurring switch with cadence, end, reminder, and status settings. Creating or editing recurring transactions uses the same familiar layout, and starting from either leg of a transfer preserves the complete transfer.',
+      },
+      {
+        type: 'improved',
+        title: 'Inspect and edit cross-currency transfer rates',
+        description:
+          'Transfers now expose their direct account-to-account rate separately from each account\'s budget valuation. Editing the direct rate updates the received amount, custom rates take precedence over fetched rates, and transaction-level overrides remain the highest priority.',
+      },
+      {
+        type: 'fixed',
+        title: 'Reliable transfer editing and undo history',
+        description:
+          'Undo and redo restore both transfer legs, rate changes refresh correctly after undo, and editing a rate no longer marks unrelated budget rates as overridden. Dates, memos, and labels stay independent per leg, while categories remain synchronized and on-budget transfers stay categorized as Transfers.',
+      },
+      {
+        type: 'new',
+        title: 'Choose how an account currency correction is applied',
+        description:
+          'When correcting an account created in the wrong currency, you can either convert its historical amounts or reinterpret the existing numbers as the new currency. Account currency labels now refresh immediately after the change.',
+      },
+      {
+        type: 'improved',
+        title: 'Faster large transaction histories and planning',
+        description:
+          'Desktop transaction lists are virtualized, table editors load only when needed, and balance, planning, and cache updates are batched more efficiently. Currency-rate fetching also avoids repeated work, improving responsiveness for large budgets.',
+      },
+      {
+        type: 'fixed',
+        title: 'Long transaction text stays readable',
+        description:
+          'Long memos and category names are now contained in transaction, projected, upcoming, and recurring views instead of overlapping nearby amounts and controls.',
+      },
+    ],
+  },
+  {
     version: 'v1.11.1',
     date: 'August 26, 2026',
     summary:
       'Split transactions now work correctly across currencies, alongside an Echo server security update.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'fixed',
