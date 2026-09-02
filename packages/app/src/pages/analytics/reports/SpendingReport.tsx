@@ -46,7 +46,8 @@ interface SpendingReportProps {
 /**
  * Spending: one report for "where does it go" — over time (stacked months)
  * or as a share of the period (donut/rose/columns/treemap), across any
- * dimension. The side panel always carries the full ranked list.
+ * dimension. The chart and side panel fold long tails into Other, then expand
+ * the hidden entries together when that bucket is selected.
  */
 export function SpendingReport({ data, months }: SpendingReportProps) {
   const [view, setView] = useState<SpendingView>('time');
@@ -61,9 +62,17 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
     [data.txns, dim, data.onBudgetAccountIds]
   );
   const folded = useMemo(() => foldTopN(totals, MAX_SLICES), [totals]);
+  const showingOther = otherOpen && Boolean(folded.other);
   const trendSeries = useMemo(
-    () => buildTrendSeries(data.txns, months, dim, data.onBudgetAccountIds, MAX_SLICES),
-    [data.txns, months, dim, data.onBudgetAccountIds]
+    () =>
+      buildTrendSeries(
+        data.txns,
+        months,
+        dim,
+        data.onBudgetAccountIds,
+        showingOther ? Math.max(totals.length, MAX_SLICES) : MAX_SLICES
+      ),
+    [data.txns, months, dim, data.onBudgetAccountIds, showingOther, totals.length]
   );
 
   const coloredTrend = useMemo(
@@ -79,7 +88,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
   );
 
   const slices = useMemo(() => {
-    const rows = folded.other ? [...folded.top, folded.other] : folded.top;
+    const rows = showingOther ? totals : folded.other ? [...folded.top, folded.other] : folded.top;
     const foldedCount = totals.length - folded.top.length;
     return rows.map((row, index) => ({
       ...row,
@@ -89,34 +98,34 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
           ? palette.chrome.other
           : (row.ownColor ?? palette.series[index % palette.series.length]),
     }));
-  }, [folded, totals, palette]);
+  }, [folded, totals, palette, showingOther]);
 
-  const panelRows = useMemo(
+  const expandedPanelRows = useMemo(
     () =>
       totals.map((row, index) => ({
         ...row,
-        color:
-          index < MAX_SLICES
-            ? (row.ownColor ?? palette.series[index % palette.series.length])
-            : palette.chrome.other,
+        color: row.ownColor ?? palette.series[index % palette.series.length],
       })),
     [totals, palette]
   );
-  const foldedPanelRows = useMemo(
-    () =>
-      totals.slice(folded.top.length).map((row, index) => ({
-        ...row,
-        color: row.ownColor ?? palette.series[(folded.top.length + index) % palette.series.length],
-      })),
-    [totals, folded.top.length, palette]
-  );
+  const collapsedPanelRows = useMemo(() => {
+    const rows = folded.other ? [...folded.top, folded.other] : folded.top;
+    const foldedCount = totals.length - folded.top.length;
+    return rows.map((row, index) => ({
+      ...row,
+      name: row.key === 'other' ? `Other (${foldedCount} more) — inspect` : row.name,
+      color:
+        row.key === 'other'
+          ? palette.chrome.other
+          : (row.ownColor ?? palette.series[index % palette.series.length]),
+    }));
+  }, [folded, totals.length, palette]);
 
   const total = folded.grandTotal;
   const monthCount = Math.max(1, months.length);
   const isEmpty = total <= 0;
-  const top = panelRows[0];
-  const showingOther = otherOpen && Boolean(folded.other);
-  const visiblePanelRows = showingOther ? foldedPanelRows : panelRows;
+  const top = expandedPanelRows[0];
+  const visiblePanelRows = showingOther ? expandedPanelRows : collapsedPanelRows;
   const visiblePanelTop = visiblePanelRows[0];
 
   const insights = useMemo(
@@ -350,7 +359,13 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
             <StatTile
               label={DIM_LABELS[dim]}
               value={String(totals.length)}
-              detail={folded.other ? `top ${MAX_SLICES} charted` : undefined}
+              detail={
+                folded.other
+                  ? showingOther
+                    ? 'all charted'
+                    : `top ${MAX_SLICES} + Other`
+                  : undefined
+              }
             />
           </div>
           {dim === 'label' ? (
@@ -358,45 +373,37 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
               A transaction with several labels counts in full under each, so labels can overlap.
             </p>
           ) : null}
-          {folded.other ? (
-            showingOther ? (
-              <button
-                type="button"
-                onClick={() => setOtherOpen(false)}
-                className="mt-4 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                ← Back to all {DIM_LABELS[dim].toLowerCase()}
-              </button>
-            ) : (
-              <div className="mt-3 rounded-lg border border-dashed border-border/70 px-2">
-                <ProportionRow
-                  color={palette.chrome.other}
-                  name={`Other (${foldedPanelRows.length} more) — inspect`}
-                  value={money.amount(folded.other.total)}
-                  fraction={top && top.total > 0 ? folded.other.total / top.total : 0}
-                  onClick={() => setOtherOpen(true)}
-                  expanded={false}
-                />
-              </div>
-            )
+          {showingOther ? (
+            <button
+              type="button"
+              onClick={() => setOtherOpen(false)}
+              className="mt-4 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              ← Collapse Other
+            </button>
           ) : null}
           <PanelSectionTitle>
-            {showingOther ? `Inside Other · ${DIM_LABELS[dim]}` : DIM_LABELS[dim]}
+            {showingOther ? `${DIM_LABELS[dim]} · Other expanded` : DIM_LABELS[dim]}
           </PanelSectionTitle>
           <div className="max-h-[420px] overflow-y-auto pr-1">
-            {visiblePanelRows.map((row) => (
-              <ProportionRow
-                key={row.key}
-                color={row.color}
-                name={row.name}
-                value={money.amount(row.total)}
-                fraction={
-                  visiblePanelTop && visiblePanelTop.total > 0
-                    ? row.total / visiblePanelTop.total
-                    : 0
-                }
-              />
-            ))}
+            {visiblePanelRows.map((row) => {
+              const isOther = row.key === 'other';
+              return (
+                <ProportionRow
+                  key={row.key}
+                  color={row.color}
+                  name={row.name}
+                  value={money.amount(row.total)}
+                  fraction={
+                    visiblePanelTop && visiblePanelTop.total > 0
+                      ? row.total / visiblePanelTop.total
+                      : 0
+                  }
+                  onClick={isOther ? () => setOtherOpen(true) : undefined}
+                  expanded={isOther ? false : undefined}
+                />
+              );
+            })}
           </div>
         </>
       }

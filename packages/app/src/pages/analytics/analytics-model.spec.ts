@@ -296,10 +296,32 @@ describe('buildFlowGraph', () => {
     expect(graph.links).toContainEqual({ source: 'From savings', target: 'Income', value: 50_000 });
     const groupNames = graph.nodes.filter((n) => n.slot === 'group').map((n) => n.name);
     expect(groupNames).toEqual(['G1', 'Other spending']);
-    expect(graph.foldedSpendingGroups).toEqual([
+    expect(graph.foldedDestinations).toEqual([
       { name: 'G2', value: 50_000 },
       { name: 'G3', value: 40_000 },
     ]);
+  });
+
+  it('can route spending to detailed categories instead of groups', () => {
+    const txns = [
+      txn({
+        isIncome: true,
+        groupName: 'Income',
+        category: 'Salary',
+        inflow: 500_000,
+      }),
+      txn({ groupName: 'Fixed', category: 'Housing', outflow: 200_000 }),
+      txn({ groupName: 'Fixed', category: 'Energy', outflow: 75_000 }),
+      txn({ groupName: 'Variable', category: 'Groceries', outflow: 100_000 }),
+    ];
+
+    const graph = buildFlowGraph(txns, ON_BUDGET, 8, 'category');
+    const destinations = graph.nodes
+      .filter((node) => node.slot === 'group')
+      .map((node) => node.name);
+
+    expect(destinations).toEqual(['Housing', 'Groceries', 'Energy']);
+    expect(graph.totalSpending).toBe(375_000);
   });
 });
 

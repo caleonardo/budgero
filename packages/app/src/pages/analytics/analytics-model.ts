@@ -385,23 +385,26 @@ export interface FlowGraph {
   links: SankeyLink[];
   totalIncome: number;
   totalSpending: number;
-  /** Original destination groups collapsed into the synthetic Other node. */
-  foldedSpendingGroups: { name: string; value: number }[];
+  /** Original groups/categories collapsed into the synthetic Other node. */
+  foldedDestinations: { name: string; value: number }[];
 }
 
+export type FlowSpendingDimension = 'group' | 'category';
+
 /**
- * Income categories → Income → category groups → (Saved / From savings).
- * Group count is capped; the rest folds into "Other". Node names are
+ * Income categories → Income → spending groups/categories → (Saved / From savings).
+ * Destination count is capped; the rest folds into "Other". Node names are
  * disambiguated with suffix markers when an income category collides with a
  * group name (ECharts sankey requires unique node names).
  */
 export function buildFlowGraph(
   txns: AnalyticsTxn[],
   onBudgetAccountIds: Set<number>,
-  maxGroups: number
+  maxDestinations: number,
+  spendingDimension: FlowSpendingDimension = 'group'
 ): FlowGraph {
   const incomeBySource = new Map<string, number>();
-  const spendingByGroup = new Map<string, number>();
+  const spendingByDestination = new Map<string, number>();
   for (const txn of txns) {
     if (isNeutralTransfer(txn) || !onBudgetAccountIds.has(txn.accountId)) continue;
     if (txn.isIncome) {
@@ -409,28 +412,33 @@ export function buildFlowGraph(
       const amount = txn.inflow - txn.outflow;
       incomeBySource.set(name, (incomeBySource.get(name) ?? 0) + amount);
     } else {
-      const name = txn.groupName || 'Ungrouped';
+      const name =
+        spendingDimension === 'category'
+          ? txn.category || 'Uncategorized'
+          : txn.groupName || 'Ungrouped';
       const amount = txn.outflow - txn.inflow;
-      spendingByGroup.set(name, (spendingByGroup.get(name) ?? 0) + amount);
+      spendingByDestination.set(name, (spendingByDestination.get(name) ?? 0) + amount);
     }
   }
 
   const incomeSources = [...incomeBySource.entries()]
     .filter(([, value]) => value > 0)
     .sort((a, b) => b[1] - a[1]);
-  let groups = [...spendingByGroup.entries()]
+  let destinations = [...spendingByDestination.entries()]
     .filter(([, value]) => value > 0)
     .sort((a, b) => b[1] - a[1]);
-  let foldedSpendingGroups: FlowGraph['foldedSpendingGroups'] = [];
-  if (groups.length > maxGroups) {
-    const kept = groups.slice(0, maxGroups - 1);
-    foldedSpendingGroups = groups.slice(maxGroups - 1).map(([name, value]) => ({ name, value }));
-    const foldedTotal = foldedSpendingGroups.reduce((sum, group) => sum + group.value, 0);
-    groups = [...kept, ['Other spending', foldedTotal]];
+  let foldedDestinations: FlowGraph['foldedDestinations'] = [];
+  if (destinations.length > maxDestinations) {
+    const kept = destinations.slice(0, maxDestinations - 1);
+    foldedDestinations = destinations
+      .slice(maxDestinations - 1)
+      .map(([name, value]) => ({ name, value }));
+    const foldedTotal = foldedDestinations.reduce((sum, destination) => sum + destination.value, 0);
+    destinations = [...kept, ['Other spending', foldedTotal]];
   }
 
   const totalIncome = incomeSources.reduce((sum, [, value]) => sum + value, 0);
-  const totalSpending = groups.reduce((sum, [, value]) => sum + value, 0);
+  const totalSpending = destinations.reduce((sum, [, value]) => sum + value, 0);
 
   const HUB = 'Income';
   const nodes: SankeyNode[] = [];
@@ -449,7 +457,7 @@ export function buildFlowGraph(
     nodes.push({ name, slot: 'income' });
     links.push({ source: name, target: HUB, value });
   }
-  for (const [rawName, value] of groups) {
+  for (const [rawName, value] of destinations) {
     const name = uniqueName(rawName);
     nodes.push({ name, slot: 'group' });
     links.push({ source: HUB, target: name, value });
@@ -465,7 +473,7 @@ export function buildFlowGraph(
     links.push({ source: name, target: HUB, value: -net });
   }
 
-  return { nodes, links, totalIncome, totalSpending, foldedSpendingGroups };
+  return { nodes, links, totalIncome, totalSpending, foldedDestinations };
 }
 
 // ---------------------------------------------------------------------------

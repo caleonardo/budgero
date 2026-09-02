@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
+import { Layers3, Tags } from 'lucide-react';
 import { trendTextClass } from '@shared/lib/amount-color';
 import { EChart } from '@shared/ui/echart';
 import { AnimatedNumber } from '@shared/ui/animated-number';
-import { buildFlowGraph } from '../analytics-model';
+import { buildFlowGraph, type FlowSpendingDimension } from '../analytics-model';
 import type { AnalyticsData } from '../useAnalyticsData';
 import {
   tooltipBase,
@@ -11,23 +12,32 @@ import {
   useMoneyFormatters,
   usePalette,
 } from '../components/chart-utils';
-import { ReportShell } from '../components/ReportShell';
+import { ModeToggle, ReportShell } from '../components/ReportShell';
 import { PanelSectionTitle, ProportionRow, StatTile } from '../components/panels';
 
-const MAX_GROUPS = 8;
+const MAX_DESTINATIONS = 8;
 
 interface FlowReportProps {
   data: AnalyticsData;
 }
 
 export function FlowReport({ data }: FlowReportProps) {
-  const [otherOpen, setOtherOpen] = useState(false);
+  const [dimension, setDimension] = useState<FlowSpendingDimension>('group');
+  const [otherExpanded, setOtherExpanded] = useState(false);
   const palette = usePalette();
   const money = useMoneyFormatters();
 
+  const collapsedGraph = useMemo(
+    () => buildFlowGraph(data.txns, data.onBudgetAccountIds, MAX_DESTINATIONS, dimension),
+    [data.txns, data.onBudgetAccountIds, dimension]
+  );
+  const showingOther = otherExpanded && collapsedGraph.foldedDestinations.length > 0;
   const graph = useMemo(
-    () => buildFlowGraph(data.txns, data.onBudgetAccountIds, MAX_GROUPS),
-    [data.txns, data.onBudgetAccountIds]
+    () =>
+      showingOther
+        ? buildFlowGraph(data.txns, data.onBudgetAccountIds, Number.MAX_SAFE_INTEGER, dimension)
+        : collapsedGraph,
+    [data.txns, data.onBudgetAccountIds, dimension, collapsedGraph, showingOther]
   );
 
   const net = graph.totalIncome - graph.totalSpending;
@@ -39,7 +49,7 @@ export function FlowReport({ data }: FlowReportProps) {
   const nodeColors = useMemo(() => {
     const colors = new Map<string, string>();
     let incomeIndex = 0;
-    let groupIndex = 0;
+    let destinationIndex = 0;
     for (const node of graph.nodes) {
       switch (node.slot) {
         case 'hub':
@@ -54,7 +64,12 @@ export function FlowReport({ data }: FlowReportProps) {
           );
           break;
         case 'group':
-          colors.set(node.name, palette.series[groupIndex++ % palette.series.length]);
+          colors.set(
+            node.name,
+            node.name.trim() === 'Other spending'
+              ? palette.chrome.other
+              : palette.series[destinationIndex++ % palette.series.length]
+          );
           break;
         case 'result':
           colors.set(node.name, palette.flow.positive);
@@ -128,7 +143,7 @@ export function FlowReport({ data }: FlowReportProps) {
     };
   }, [graph, nodeColors, palette, money]);
 
-  const groupRows = useMemo(() => {
+  const destinationRows = useMemo(() => {
     const rows = graph.links
       .filter((link) => link.source === 'Income')
       .map((link) => ({
@@ -140,8 +155,8 @@ export function FlowReport({ data }: FlowReportProps) {
     return rows;
   }, [graph.links, nodeColors, palette]);
 
-  const largest = groupRows[0];
-  const largestFoldedGroup = graph.foldedSpendingGroups[0];
+  const largest = destinationRows[0];
+  const dimensionLabel = dimension === 'group' ? 'groups' : 'categories';
 
   return (
     <ReportShell
@@ -155,8 +170,22 @@ export function FlowReport({ data }: FlowReportProps) {
       }
       subtitle={
         savingsRate === null
-          ? 'Every stream from income to destination'
-          : `Income → spending; ${savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`}`
+          ? `Every stream from income to ${dimensionLabel}`
+          : `Income → ${dimensionLabel}; ${savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`}`
+      }
+      controls={
+        <ModeToggle
+          value={dimension}
+          onChange={(nextDimension) => {
+            setDimension(nextDimension);
+            setOtherExpanded(false);
+          }}
+          ariaLabel="Money Map spending detail"
+          options={[
+            { value: 'group', label: 'Groups', icon: Layers3 },
+            { value: 'category', label: 'Categories', icon: Tags },
+          ]}
+        />
       }
       chart={
         <EChart
@@ -165,7 +194,7 @@ export function FlowReport({ data }: FlowReportProps) {
           className="h-[440px]"
           onMarkClick={(mark) => {
             if (mark.name?.trim() === 'Other spending') {
-              setOtherOpen((open) => !open);
+              setOtherExpanded(true);
             }
           }}
         />
@@ -195,45 +224,36 @@ export function FlowReport({ data }: FlowReportProps) {
               valueClassName={savingsRate !== null ? trendTextClass(savingsRate) : undefined}
             />
           </div>
-          <PanelSectionTitle>Destinations</PanelSectionTitle>
+          {showingOther ? (
+            <button
+              type="button"
+              onClick={() => setOtherExpanded(false)}
+              className="mt-4 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              ← Collapse Other
+            </button>
+          ) : null}
+          <PanelSectionTitle>
+            {dimension === 'group' ? 'Destination groups' : 'Destination categories'}
+            {showingOther ? ' · Other expanded' : ''}
+          </PanelSectionTitle>
           <div>
-            {groupRows.map((row) => {
+            {destinationRows.map((row) => {
               const isOther = row.name === 'Other spending';
               return (
-                <div key={row.name}>
-                  <ProportionRow
-                    color={row.color}
-                    name={
-                      isOther
-                        ? `Other spending (${graph.foldedSpendingGroups.length} groups) — ${otherOpen ? 'collapse' : 'inspect'}`
-                        : row.name
-                    }
-                    value={money.amount(row.value)}
-                    fraction={largest && largest.value > 0 ? row.value / largest.value : 0}
-                    onClick={isOther ? () => setOtherOpen((open) => !open) : undefined}
-                    expanded={isOther ? otherOpen : undefined}
-                  />
-                  {isOther && otherOpen ? (
-                    <div className="mb-2 ml-4 border-l border-dashed border-border pl-3">
-                      <p className="py-1 text-xs text-muted-foreground">
-                        Included in Other spending
-                      </p>
-                      {graph.foldedSpendingGroups.map((group, index) => (
-                        <ProportionRow
-                          key={group.name}
-                          color={palette.series[(MAX_GROUPS - 1 + index) % palette.series.length]}
-                          name={group.name}
-                          value={money.amount(group.value)}
-                          fraction={
-                            largestFoldedGroup && largestFoldedGroup.value > 0
-                              ? group.value / largestFoldedGroup.value
-                              : 0
-                          }
-                        />
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
+                <ProportionRow
+                  key={row.name}
+                  color={row.color}
+                  name={
+                    isOther
+                      ? `Other spending (${collapsedGraph.foldedDestinations.length} ${dimensionLabel}) — inspect`
+                      : row.name
+                  }
+                  value={money.amount(row.value)}
+                  fraction={largest && largest.value > 0 ? row.value / largest.value : 0}
+                  onClick={isOther ? () => setOtherExpanded(true) : undefined}
+                  expanded={isOther ? false : undefined}
+                />
               );
             })}
           </div>
