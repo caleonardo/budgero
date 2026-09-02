@@ -1,6 +1,10 @@
 import { DatabaseAdapter } from '../../database/index.js';
 import { asMilli, type MilliUnits } from '../../money/index.js';
-import { convertScaled, getCurrencyScale } from '../../currencies/index.js';
+import {
+  assertValidExchangeRate,
+  convertScaled,
+  getCurrencyScale,
+} from '../../currencies/index.js';
 import { CustomCurrencyRate } from './types.js';
 import { TransactionQueries } from '../transactions/queries.js';
 import { CurrencyQueries } from './queries.js';
@@ -168,6 +172,7 @@ export class CurrencyService {
     rateDate: string,
     budgetId: number
   ): void {
+    assertValidExchangeRate(rate);
     const now = new Date().toISOString();
     this.queries.upsertCurrencyRate(fromCurrency, toCurrency, rate, rateDate, now, budgetId);
   }
@@ -215,6 +220,7 @@ export class CurrencyService {
 
   /** Save/get manual (user-supplied) rates for offline usage. */
   saveManualRate(fromCurrency: string, toCurrency: string, rate: number, budgetId: number): void {
+    assertValidExchangeRate(rate);
     const now = new Date().toISOString();
     // Save both direct and reciprocal to simplify lookups
     this.queries.upsertManualCurrencyRate(fromCurrency, toCurrency, rate, now, budgetId);
@@ -695,6 +701,7 @@ export class CurrencyService {
      * editable and listed. */
     alsoReverse = false
   ): Promise<{ id: number; reverseId: number | null; recalculated: number }> {
+    assertValidExchangeRate(rate);
     const id = this.queries.insertCustomCurrencyRate(
       fromCurrency,
       toCurrency,

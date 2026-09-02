@@ -20,7 +20,11 @@ import {
 
 import { createLogger } from '../../logger.js';
 import { asMilli, ZERO_MILLI, type MilliUnits } from '../../money/index.js';
-import { convertScaled, isCryptoCurrency } from '../../currencies/index.js';
+import {
+  assertValidExchangeRate,
+  convertScaled,
+  isCryptoCurrency,
+} from '../../currencies/index.js';
 import { getLocalDateString } from '../../utils/date.js';
 import {
   applyTransferRate as applyDirectTransferRate,
@@ -1447,10 +1451,9 @@ export class TransactionService {
         await this.moveTransactionToNewAccount(transactionId, newValue as number);
         break;
       case 'exchangerate': {
-        const newRate = newValue as number;
-        // User edits are manual overrides by default. Undo/redo can pass the
-        // previously captured flag so restoring a market rate does not pin it.
-        this.queries.setExchangeRate(transactionId, newRate, exchangeRateOverride ?? true);
+        const newRate = Number(newValue);
+        assertValidExchangeRate(newRate);
+        const overrideFlag = (exchangeRateOverride ?? true) ? 1 : 0;
 
         const tx = this.getTransactionByID(transactionId);
         const { account: rateAccount, budget: rateBudget } = this.queries.getAccountAndBudget(
@@ -1476,15 +1479,25 @@ export class TransactionService {
             ? convertScaled(outflowConverted, 1 / newRate, budgetCurrency, accountCurrency)
             : outflowConverted;
 
-          run(
-            this.db,
-            `
-            UPDATE transactions SET InflowNative = ?, OutflowNative = ? WHERE ID = ?
-          `,
-            newInflowOriginal,
-            newOutflowOriginal,
-            transactionId
-          );
+          this.db.transaction(() => {
+            run(
+              this.db,
+              `
+              UPDATE transactions
+              SET InflowNative = ?, OutflowNative = ?,
+                  ExchangeRate = ?, ExchangeRateOverride = ?
+              WHERE ID = ?
+            `,
+              newInflowOriginal,
+              newOutflowOriginal,
+              newRate,
+              overrideFlag,
+              transactionId
+            );
+            if (!this.accountHasUnsafeTransactionAmounts(tx.AccountID)) {
+              this.queries.recalculateBalances(tx.AccountID);
+            }
+          });
         } else {
           // Regular transaction: the original (account-currency) amount is ground truth, so
           // overriding the rate re-derives the budget-currency converted amount.
@@ -1493,23 +1506,64 @@ export class TransactionService {
           const newInflow = convertScaled(inflowOrig, newRate, accountCurrency, budgetCurrency);
           const newOutflow = convertScaled(outflowOrig, newRate, accountCurrency, budgetCurrency);
 
-          run(
-            this.db,
-            `
-            UPDATE transactions SET InflowConverted = ?, OutflowConverted = ? WHERE ID = ?
-          `,
-            newInflow,
-            newOutflow,
-            transactionId
-          );
+          this.db.transaction(() => {
+            run(
+              this.db,
+              `
+              UPDATE transactions
+              SET InflowConverted = ?, OutflowConverted = ?,
+                  ExchangeRate = ?, ExchangeRateOverride = ?
+              WHERE ID = ?
+            `,
+              newInflow,
+              newOutflow,
+              newRate,
+              overrideFlag,
+              transactionId
+            );
+            if (!this.accountHasUnsafeTransactionAmounts(tx.AccountID)) {
+              this.queries.recalculateBalances(tx.AccountID);
+            }
+          });
         }
-
-        this.queries.recalculateBalances(tx.AccountID);
         break;
       }
       default:
         throw new ValidationError(`Unsupported column: ${columnName}`);
     }
+  }
+
+  /**
+   * Existing databases may contain more than one corrupt conversion. Allow
+   * each offending rate to be repaired independently; balances are rebuilt
+   * automatically as soon as the final unsafe source/converted amount is gone.
+   */
+  private accountHasUnsafeTransactionAmounts(accountId: number): boolean {
+    const max = Number.MAX_SAFE_INTEGER;
+    const result = getRow<{ count: number }>(
+      this.db,
+      `
+      SELECT COUNT(*) AS count
+      FROM transactions
+      WHERE AccountID = ?
+        AND (
+          typeof(InflowConverted) <> 'integer' OR InflowConverted > ? OR InflowConverted < ? OR
+          typeof(OutflowConverted) <> 'integer' OR OutflowConverted > ? OR OutflowConverted < ? OR
+          (InflowNative IS NOT NULL AND (typeof(InflowNative) <> 'integer' OR InflowNative > ? OR InflowNative < ?)) OR
+          (OutflowNative IS NOT NULL AND (typeof(OutflowNative) <> 'integer' OR OutflowNative > ? OR OutflowNative < ?))
+        )
+    `,
+      accountId,
+      max,
+      -max,
+      max,
+      -max,
+      max,
+      -max,
+      max,
+      -max
+    );
+    return Number(result?.count ?? 0) > 0;
   }
 
   /**

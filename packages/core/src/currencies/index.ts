@@ -9,6 +9,8 @@
  * enumerated; every unknown code is treated as fiat at the default scale.
  */
 
+import { ValidationError } from '../types/index.js';
+
 export type CurrencyKind = 'fiat' | 'crypto';
 
 export interface CurrencyInfo {
@@ -28,6 +30,24 @@ export const FIAT_SCALE = 1000;
  * safe-integer ceiling still allows ~90M whole coins — above any supply
  * that matters here. */
 export const CRYPTO_SCALE = 100_000_000;
+
+/** Largest integer storage value JavaScript can represent exactly. */
+export const MAX_SAFE_STORAGE_AMOUNT = Number.MAX_SAFE_INTEGER;
+
+/** Whether a database/domain amount preserves the exact-integer money invariant. */
+export function isSafeStorageAmount(value: number): boolean {
+  return Number.isSafeInteger(value);
+}
+
+/** Validate a dimensionless exchange rate before it participates in money arithmetic. */
+export function assertValidExchangeRate(rate: number): void {
+  if (!Number.isFinite(rate) || rate <= 0) {
+    throw new ValidationError(
+      'Exchange rate must be a finite number greater than zero.',
+      'exchangeRate'
+    );
+  }
+}
 
 /** Curated crypto set. Codes must exist in the exchange-api dataset. */
 const CRYPTO_CURRENCIES: Readonly<Record<string, string>> = {
@@ -128,10 +148,21 @@ export function convertScaled(
   fromCurrency: string,
   toCurrency: string
 ): number {
-  if (!Number.isFinite(rate)) {
-    throw new Error(`Invalid exchange rate: ${rate}`);
+  assertValidExchangeRate(rate);
+  if (!isSafeStorageAmount(amount)) {
+    throw new ValidationError(
+      'The source amount is outside the supported exact money range. Repair this transaction before converting it.',
+      'amount'
+    );
   }
-  return Math.round(
+  const converted = Math.round(
     amount * rate * (getCurrencyScale(toCurrency) / getCurrencyScale(fromCurrency))
   );
+  if (!isSafeStorageAmount(converted)) {
+    throw new ValidationError(
+      'This exchange rate would create an amount too large to store safely. Check the decimal point.',
+      'exchangeRate'
+    );
+  }
+  return converted;
 }

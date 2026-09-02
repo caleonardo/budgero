@@ -205,10 +205,10 @@ describe('Transfer partner sync', () => {
     await services.currency.saveRate('EUR', 'USD', EURUSD, dateA, budgetId);
     await services.currency.saveRate('EUR', 'USD', EURUSD_ON_DESTINATION_DATE, dateB, budgetId);
 
-    // Create a paired transfer: USD outflow $100, EUR inflow €(100 / 1.2)
+    // Create a paired transfer: USD outflow $100, stored as integer milliunits.
     const transferId = 'tr_sync_1';
-    const usdOutflow = 100;
-    const eurInflowOriginal = usdOutflow / EURUSD; // ≈ 83.3333 EUR
+    const usdOutflow = 100_000;
+    const eurInflowOriginal = Math.round(usdOutflow / EURUSD);
 
     const allCategories = services.categories.getAllCategories(budgetId);
     const nonIncomeCategory = allCategories.find((c: Category) => c.Name !== 'Income');
@@ -270,23 +270,23 @@ describe('Transfer partner sync', () => {
     expect(b.Date).toBe(dateB);
 
     // Amount edits remain linked, using the partner leg's own date for its valuation.
-    await services.transactions.updateTransactionColumn(usdTx, 'OutflowConverted', 150);
+    await services.transactions.updateTransactionColumn(usdTx, 'OutflowConverted', 150_000);
     a = services.transactions.getTransactionByID(usdTx);
     b = services.transactions.getTransactionByID(eurTx);
-    expect(a.OutflowConverted).toBeCloseTo(150, 6);
-    expect(b.InflowConverted).toBeCloseTo(150, 6);
-    expect(b.InflowNative).toBeCloseTo(150 / EURUSD_ON_DESTINATION_DATE, 6);
+    expect(a.OutflowConverted).toBe(150_000);
+    expect(b.InflowConverted).toBe(150_000);
+    expect(b.InflowNative).toBe(150_000 / EURUSD_ON_DESTINATION_DATE);
     expect(b.Memo).toBe('xfer in');
     expect(b.Payee).toBe('USD account');
     expect(b.LabelID).toBe(destinationLabelId);
     expect(b.Date).toBe(dateB);
 
     // Editing the destination native amount still updates the linked source amount.
-    await services.transactions.updateTransactionColumn(eurTx, 'InflowNative', 200);
+    await services.transactions.updateTransactionColumn(eurTx, 'InflowNative', 200_000);
     a = services.transactions.getTransactionByID(usdTx);
     b = services.transactions.getTransactionByID(eurTx);
-    expect(b.InflowConverted).toBeCloseTo(200 * EURUSD_ON_DESTINATION_DATE, 6);
-    expect(a.OutflowConverted).toBeCloseTo(200 * EURUSD_ON_DESTINATION_DATE, 6);
+    expect(b.InflowConverted).toBe(200_000 * EURUSD_ON_DESTINATION_DATE);
+    expect(a.OutflowConverted).toBe(200_000 * EURUSD_ON_DESTINATION_DATE);
     expect(a.Memo).toBe('updated memo');
     expect(a.Payee).toBe('Updated payee');
     expect(a.LabelID).toBe(editedSourceLabelId);

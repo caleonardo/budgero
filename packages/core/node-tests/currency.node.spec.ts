@@ -1,5 +1,27 @@
 import { describe, it, expect, vi } from 'vitest';
-import { NodeSqlJsAdapter, ServiceManager, DatabaseAdapter } from '../src';
+import {
+  NodeSqlJsAdapter,
+  ServiceManager,
+  DatabaseAdapter,
+  ValidationError,
+  asMilli,
+  convertScaled,
+} from '../src';
+
+describe('safe exchange-rate conversion', () => {
+  it('rejects a conversion that cannot remain an exact integer', () => {
+    expect(() => convertScaled(25_000, 1_500_386_752_667_713, 'EUR', 'USD')).toThrow(
+      ValidationError
+    );
+    expect(() => convertScaled(25_000, 1_500_386_752_667_713, 'EUR', 'USD')).toThrow(
+      'Check the decimal point'
+    );
+  });
+
+  it('accepts the precise intended fractional rate', () => {
+    expect(convertScaled(25_000, 0.01500386752667713, 'EUR', 'USD')).toBe(375);
+  });
+});
 
 describe('CurrencyService', () => {
   it('uses reciprocal local and manual rates; convertAmount falls back to manual', async () => {
@@ -107,6 +129,50 @@ describe('Transaction exchange-rate overrides', () => {
     expect(transaction.ExchangeRate).toBeCloseTo(rate, 10);
     expect(transaction.ExchangeRateOverride).toBeTruthy();
     expect(transaction.ConversionPending).toBeFalsy();
+  });
+
+  it('leaves the transaction unchanged when an edited rate would overflow', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    const sm = new ServiceManager();
+    await sm.initialize(adapter as DatabaseAdapter);
+    const { budgets, accounts, categories, transactions } = sm.getServices();
+
+    const budgetId = await budgets.createBudget({
+      name: 'Safe rates',
+      display_currency: 'USD',
+      badge_icon: 'dollar',
+      number_format: '123,456.78',
+      create_default_categories: true,
+    });
+    const eur = await accounts.createAccount('EUR', budgetId, 'checking', 'EUR', asMilli(0));
+    const category = categories
+      .getAllCategories(budgetId)
+      .find((candidate) => candidate.Name !== 'Income');
+    if (!category) throw new Error('category missing');
+
+    const transactionId = await transactions.addTransaction(
+      asMilli(25_000),
+      asMilli(0),
+      eur.ID,
+      category.ID,
+      budgetId,
+      '2026-09-02',
+      'Precise conversion',
+      undefined,
+      undefined,
+      undefined,
+      1
+    );
+    const before = transactions.getTransactionByID(transactionId);
+
+    await expect(
+      transactions.updateTransactionColumn(transactionId, 'ExchangeRate', 1_500_386_752_667_713)
+    ).rejects.toThrow('Check the decimal point');
+
+    const after = transactions.getTransactionByID(transactionId);
+    expect(after.ExchangeRate).toBe(before.ExchangeRate);
+    expect(after.InflowConverted).toBe(before.InflowConverted);
+    expect(after.OutflowConverted).toBe(before.OutflowConverted);
   });
 });
 

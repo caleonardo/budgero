@@ -68,7 +68,7 @@ describe('Transactions (Node/sql.js)', () => {
     // This is what the frontend sends when it can't resolve a category name (e.g. split parents)
     const txnId = await services.transactions.addTransaction(
       0,
-      79.2,
+      79,
       accountId,
       0,
       budgetId,
@@ -342,7 +342,7 @@ describe('Transactions (Node/sql.js)', () => {
 
       const txId = await services.transactions.addTransaction(
         0,
-        48.5,
+        49,
         accountId,
         categoryId,
         budgetId,
@@ -1391,7 +1391,7 @@ describe('Transactions (Node/sql.js)', () => {
       expect(acc2.BalanceNative).toBe(2900); // Deducted
     });
 
-    it('should have exactly zero balance after deleting all transactions (no floating point drift)', async () => {
+    it('should have exactly zero balance after deleting all integer transactions', async () => {
       // Create account with 0 initial balance
       const account = await services.accounts.createAccount(
         'Zero Balance Account',
@@ -1403,10 +1403,9 @@ describe('Transactions (Node/sql.js)', () => {
 
       const today = getLocalDateString();
 
-      // Use values that cause IEEE 754 floating point drift (0.1 + 0.2 !== 0.3)
       const txn1 = await services.transactions.addTransaction(
         0,
-        0.1,
+        100,
         account.ID,
         categoryId,
         budgetId,
@@ -1415,7 +1414,7 @@ describe('Transactions (Node/sql.js)', () => {
       );
       const txn2 = await services.transactions.addTransaction(
         0,
-        0.2,
+        200,
         account.ID,
         categoryId,
         budgetId,
@@ -1427,7 +1426,7 @@ describe('Transactions (Node/sql.js)', () => {
       services.transactions.deleteTransaction(txn1);
       services.transactions.deleteTransaction(txn2);
 
-      // Balance must be exactly 0, not -0 or a tiny floating point residual
+      // Integer storage means the balance must be exactly zero.
       const updatedAccount = services.accounts.getAccount(account.ID);
       expect(updatedAccount.BalanceNative).toBe(0);
       expect(updatedAccount.BalanceConverted).toBe(0);
