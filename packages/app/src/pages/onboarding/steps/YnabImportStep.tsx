@@ -1,6 +1,8 @@
 import React from 'react';
 import type { YNABApiPlanSnapshot, YNABApiPlanSummary } from '@budgero/core/browser';
 import { YNABApiClient } from '@budgero/core/browser';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
+import { YnabPatHelpPopover } from '@features/budget-management/ui/create-budget-form/YnabPatHelpPopover';
 import { Title, type StepProps } from './shared';
 
 interface YnabStepProps extends StepProps {
@@ -105,7 +107,10 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({
 
       {sourceMode === 'api' && !apiSnapshot && (
         <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
-          <div style={{ fontSize: 11, fontWeight: 700 }}>YNAB PERSONAL ACCESS TOKEN</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ fontSize: 11, fontWeight: 700 }}>YNAB PERSONAL ACCESS TOKEN</div>
+            <YnabPatHelpPopover className="text-[#393939] hover:bg-black/10 hover:text-[#141414]" />
+          </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <input
               id="onboarding-ynab-token"
@@ -144,19 +149,25 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({
       )}
 
       {sourceMode === 'api' && plans.length > 0 && (
-        <select
-          aria-label="YNAB plan"
+        <Select
           value={selectedPlanId}
           disabled={isConnecting}
-          onChange={(event) => void loadPlan(event.target.value)}
-          style={{ width: '100%', marginTop: 10, padding: 9, border: '1px solid #141414' }}
+          onValueChange={(planId) => void loadPlan(planId)}
         >
-          {plans.map((plan) => (
-            <option key={plan.id} value={plan.id}>
-              {plan.name}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger
+            aria-label="YNAB plan"
+            className="mt-2.5 w-full min-w-0 border-[#141414] bg-[#fbf7eb] text-[#141414]"
+          >
+            <SelectValue placeholder="Select a YNAB plan" />
+          </SelectTrigger>
+          <SelectContent>
+            {plans.map((plan) => (
+              <SelectItem key={plan.id} value={plan.id}>
+                {plan.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       )}
 
       {sourceMode === 'zip' && !file && (

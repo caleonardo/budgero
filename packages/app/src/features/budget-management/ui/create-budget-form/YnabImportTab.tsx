@@ -9,10 +9,12 @@ import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
 import { Field } from '@shared/ui/field';
 import { AlertTriangle, KeyRound, Loader2, Upload } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { CurrencySelector } from '@features/currencies/ui/CurrencySelector';
 import { IconPicker } from '@features/budget-management/ui/IconPicker';
 import { FormatSelector } from '@features/budget-management/ui/FormatSelector';
 import { YnabExportGuide } from './YnabExportGuide';
+import { YnabPatHelpPopover } from './YnabPatHelpPopover';
 
 interface YnabImportTabProps {
   sourceMode: 'api' | 'zip';
@@ -102,9 +104,12 @@ export function YnabImportTab({
       {sourceMode === 'api' && (
         <div className="space-y-3 rounded-md border p-3">
           <div className="space-y-1.5">
-            <Label htmlFor="ynabPersonalAccessToken" className="text-xs sm:text-sm">
-              YNAB personal access token
-            </Label>
+            <div className="flex items-center gap-1">
+              <Label htmlFor="ynabPersonalAccessToken" className="text-xs sm:text-sm">
+                YNAB personal access token
+              </Label>
+              <YnabPatHelpPopover />
+            </div>
             <div className="flex gap-2">
               <Input
                 id="ynabPersonalAccessToken"
@@ -137,19 +142,22 @@ export function YnabImportTab({
               <Label htmlFor="ynabPlan" className="text-xs sm:text-sm">
                 YNAB plan
               </Label>
-              <select
-                id="ynabPlan"
+              <Select
                 value={selectedPlanId}
-                onChange={(event) => onSelectedPlanChange(event.target.value)}
+                onValueChange={onSelectedPlanChange}
                 disabled={isImporting || isConnecting}
-                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
-                {plans.map((plan) => (
-                  <option key={plan.id} value={plan.id}>
-                    {plan.name}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger id="ynabPlan" size="sm" className="w-full min-w-0">
+                  <SelectValue placeholder="Select a YNAB plan" />
+                </SelectTrigger>
+                <SelectContent>
+                  {plans.map((plan) => (
+                    <SelectItem key={plan.id} value={plan.id}>
+                      {plan.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
         </div>

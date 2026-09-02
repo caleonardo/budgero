@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { YNABImportPreview } from '@budgero/core/browser';
 import { YnabImportTab } from './YnabImportTab';
 
@@ -130,8 +130,18 @@ describe('YnabImportTab', () => {
 
     expect(screen.getByLabelText('YNAB personal access token')).toHaveAttribute('type', 'password');
     expect(screen.getByText('Test plan')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'YNAB plan' }).tagName).toBe('BUTTON');
     expect(screen.getByText(/never saved to Budgero or browser storage/)).toBeInTheDocument();
     expect(screen.getByText(/Account types and on-budget status/)).toBeInTheDocument();
     expect(screen.queryByTestId('ynab-export-guide')).not.toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'How to create a YNAB personal access token' })
+    );
+    expect(screen.getByText(/open Account Settings/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Open YNAB Developer Settings/ })).toHaveAttribute(
+      'href',
+      'https://app.ynab.com/settings/developer'
+    );
   });
 });
