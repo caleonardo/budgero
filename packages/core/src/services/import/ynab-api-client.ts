@@ -15,12 +15,14 @@ interface YNABApiEnvelope<T> {
 
 export type YNABFetch = typeof fetch;
 
+const defaultFetch: YNABFetch = (input, init) => globalThis.fetch(input, init);
+
 export class YNABApiClient {
   private readonly accessToken: string;
 
   constructor(
     accessToken: string,
-    private readonly fetchImpl: YNABFetch = fetch,
+    private readonly fetchImpl: YNABFetch = defaultFetch,
     private readonly baseUrl = DEFAULT_YNAB_API_BASE_URL
   ) {
     this.accessToken = accessToken.trim();

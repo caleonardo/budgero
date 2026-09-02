@@ -251,6 +251,26 @@ describe('YNAB API import', () => {
     });
   });
 
+  it('invokes the default fetch with the browser global as its receiver', async () => {
+    const fetchMock = vi.fn(function (this: unknown) {
+      expect(this).toBe(globalThis);
+      return Promise.resolve(
+        new Response(JSON.stringify({ data: { plans: [] } }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    try {
+      await new YNABApiClient('secret-token', undefined, 'https://example.test/v1').listPlans();
+      expect(fetchMock).toHaveBeenCalledOnce();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('maps YNAB account types to Budgero account semantics', () => {
     expect(mapYNABAccountType('creditCard')).toBe('Credit');
     expect(mapYNABAccountType('mortgage')).toBe('Mortgage');
