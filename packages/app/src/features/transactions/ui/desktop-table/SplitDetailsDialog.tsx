@@ -32,6 +32,7 @@ import {
   getSplitCategoryLabel,
   isSplitIncomeAmount,
 } from './table-utils';
+import { SplitMemoText } from './SplitMemoText';
 
 interface SplitDetailsDialogProps {
   transaction: GetTransactionsByAccountRow | null;
@@ -430,7 +431,7 @@ export function SplitDetailsDialog({
                               </p>
                             )}
                           </TableCell>
-                          <TableCell className="text-xs text-muted-foreground">
+                          <TableCell className="min-w-0 whitespace-normal text-xs text-muted-foreground">
                             {editSplits ? (
                               <PayeeSelectCell
                                 budgetId={budgetId}
@@ -457,7 +458,7 @@ export function SplitDetailsDialog({
                                 }
                               />
                             ) : (
-                              String(s.memo || s.Memo || '-')
+                              <SplitMemoText memo={String(s.memo || s.Memo || '')} />
                             )}
                           </TableCell>
                           <TableCell
