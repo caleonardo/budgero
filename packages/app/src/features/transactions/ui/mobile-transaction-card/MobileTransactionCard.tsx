@@ -6,6 +6,7 @@ import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { hasReadOnlyTransferCategory } from '@features/transactions/lib/transfer-category';
+import { hasUnsafeTransactionMoney } from '@entities/transaction/lib/money-integrity';
 import { useMobileTransactionCardState } from './useMobileTransactionCardState';
 import { TransactionCardHeader } from './TransactionCardHeader';
 import { TransactionCardAmounts } from './TransactionCardAmounts';
@@ -116,6 +117,7 @@ export const MobileTransactionCard = React.memo(function MobileTransactionCard({
 
   const isCurrentlyPending = isPending && pendingId === transaction.ID;
   const isCategoryReadOnly = readOnlyCategory || hasReadOnlyTransferCategory(transaction);
+  const hasUnsafeMoney = hasUnsafeTransactionMoney(transaction);
 
   // Projected recurring occurrences are read-only forecasts: render a compact
   // card with no selection, editing, or expansion.
@@ -165,7 +167,7 @@ export const MobileTransactionCard = React.memo(function MobileTransactionCard({
       }`
     : `mb-1.5 transition-all duration-200 ${
         isCurrentlyPending ? 'opacity-70' : ''
-      } max-w-full overflow-hidden`;
+      } ${hasUnsafeMoney ? 'border-destructive/50 bg-destructive/5 ring-1 ring-destructive/20' : ''} max-w-full overflow-hidden`;
   const cardContentClassName = isPoppedOut
     ? 'p-0 max-w-full overflow-hidden'
     : 'px-3 py-2 sm:px-4 sm:py-3 max-w-full overflow-hidden';

@@ -12,7 +12,7 @@
  *    milliunits via `fromDecimal` exactly once.
  */
 
-import { toDecimal, type MilliUnits } from '@budgero/core/browser';
+import { isSafeStorageAmount, toDecimal, type MilliUnits } from '@budgero/core/browser';
 
 export { asMilli, fromDecimal, sumMilli, toDecimal, ZERO_MILLI } from '@budgero/core/browser';
 export type { MilliUnits } from '@budgero/core/browser';
@@ -23,4 +23,13 @@ export function formatMilli(
   amount: MilliUnits
 ): string {
   return localizer.format(toDecimal(amount));
+}
+
+/** Format untrusted database/query output without allowing one corrupt row to crash a page. */
+export function formatSafeMilli(
+  localizer: { format: (value: number) => string },
+  amount: number,
+  fallback = 'Invalid amount'
+): string {
+  return isSafeStorageAmount(amount) ? localizer.format(amount / 1000) : fallback;
 }

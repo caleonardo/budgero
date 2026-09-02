@@ -30,6 +30,7 @@ import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { asMilli } from '@shared/lib/currency/milli';
 import { withEditPrecision } from '@shared/lib/number-format';
 import { TransferRateDialog } from '@features/transactions/ui/transfer-rate/TransferRateDialog';
+import { validateTransactionExchangeRate } from '@features/transactions/lib/exchange-rate-validation';
 import type { SplitLine } from './useMobileTransactionCardState';
 import {
   extractSplitAmount,
@@ -140,8 +141,9 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
   onUpdateSplitLine,
   onSaveSplits,
 }: TransactionCardDetailsProps) {
-  const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const selectedAccount = useUiStore((state) => state.selectedAccount);
+  const selectedBudget = useUiStore((state) => state.selectedBudget);
+  const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   // In account display mode the cells edit the NATIVE amount, whose storage
   // scale follows the account currency (crypto = sats, not milliunits).
   const editCurrencyCode =
@@ -572,6 +574,16 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                     <ExchangeRateCell
                       value={transaction.ExchangeRate || 0}
                       onCommit={(val) => onCellCommit(transaction.ID, 'ExchangeRate', val)}
+                      validateRate={(rate) =>
+                        selectedAccount?.Currency && selectedBudget?.DisplayCurrency
+                          ? validateTransactionExchangeRate(
+                              rate,
+                              transaction,
+                              selectedAccount.Currency,
+                              selectedBudget.DisplayCurrency
+                            )
+                          : null
+                      }
                       placeholder="1.00"
                       inputClassName="h-9 text-sm font-mono"
                       className="text-left"

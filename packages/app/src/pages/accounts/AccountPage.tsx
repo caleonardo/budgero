@@ -15,18 +15,21 @@ import { useEffect, useMemo, useState } from 'react';
 import { useUiStore } from '@shared/store/useUiStore';
 import { Badge } from '@shared/ui/badge';
 import { endOfDay, isAfter } from 'date-fns';
-import { Wallet, ArrowUpRight, ArrowDownRight, CheckCircle2 } from 'lucide-react';
+import { Wallet, ArrowUpRight, ArrowDownRight, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { TooltipProvider } from '@shared/ui/tooltip';
 import { PayoffSimulator } from '@features/debt/ui/PayoffSimulator';
 import { useLoading } from '@shared/contexts/LoadingContext';
 import { RecurringTransactionEditor } from '@features/recurring/ui/RecurringTransactionEditor';
 import { getAccountTypeDefinition } from '@entities/account/model/accountTypes';
 import { formatDateISO } from '@shared/lib/date-utils';
-import { asMilli, toDecimal } from '@shared/lib/currency/milli';
+import { formatSafeMilli } from '@shared/lib/currency/milli';
 import { useFormatMaskedAmount } from '@shared/lib/privacy/useMaskedLocalizer';
 import { getErrorMessage } from '@shared/lib/errors';
 import { CenteredLoader } from '@shared/ui/CenteredLoader';
 import { toast } from 'sonner';
+import { isSafeStorageAmount } from '@budgero/core/browser';
+import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
+import { hasUnsafeTransactionMoney } from '@entities/transaction/lib/money-integrity';
 
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { AccountGlyph } from '@entities/account/ui/AccountGlyph';
@@ -145,6 +148,17 @@ export default function AccountPage() {
     () => mergeProjectedTransactions(transactionsData, allTransactionsData, projectedTransactions),
     [transactionsData, allTransactionsData, projectedTransactions]
   );
+  const unsafeTransactionCount = useMemo(
+    () => registerRows.filter(hasUnsafeTransactionMoney).length,
+    [registerRows]
+  );
+  const hasUnsafeAccountBalance = Boolean(
+    selectedAccount &&
+      [selectedAccount.BalanceNative, selectedAccount.BalanceConverted].some(
+        (value) => value != null && !isSafeStorageAmount(value)
+      )
+  );
+  const hasStoredMoneyIntegrityIssue = unsafeTransactionCount > 0 || hasUnsafeAccountBalance;
   const [processingOccurrenceId, setProcessingOccurrenceId] = useState<number | null>(null);
   const recurringEditor = useRecurringEditorFromTransaction({
     budgetId: selectedAccount?.BudgetID || selectedBudget?.ID || 0,
@@ -155,11 +169,11 @@ export default function AccountPage() {
     transactionCurrencyDisplay === 'budget' ? globalLocalizer : accountLocalizer;
   const formatAmount = useFormatMaskedAmount(currentFormatter);
   // Stored amounts are integer milliunits; convert at this display boundary.
-  const formatMilliAmount = (m: number) => formatAmount(toDecimal(asMilli(m)));
+  const formatMilliAmount = (m: number) => formatSafeMilli({ format: formatAmount }, m);
   // Revaluation deltas are budget-currency values by definition — formatting
   // them in the account currency would read as lost/gained holdings.
   const formatBudgetAmount = useFormatMaskedAmount(globalLocalizer);
-  const formatBudgetMilliAmount = (m: number) => formatBudgetAmount(toDecimal(asMilli(m)));
+  const formatBudgetMilliAmount = (m: number) => formatSafeMilli({ format: formatBudgetAmount }, m);
   const maskedFormatter = useMemo(
     () =>
       ({
@@ -174,6 +188,7 @@ export default function AccountPage() {
   );
 
   const displayLiabilityInfo = useMemo(() => {
+    if (hasStoredMoneyIntegrityIssue) return null;
     if (!liabilityInfo || !selectedAccount) return liabilityInfo;
     if (transactionCurrencyDisplay === 'budget' && selectedAccount.BalanceConverted !== undefined) {
       const conversionRate =
@@ -187,6 +202,7 @@ export default function AccountPage() {
     transactionCurrencyDisplay,
     balanceAccountToday,
     balanceConvertedToday,
+    hasStoredMoneyIntegrityIssue,
   ]);
 
   const categoriesById = useMemo(() => buildCategoriesMap(categories), [categories]);
@@ -293,6 +309,11 @@ export default function AccountPage() {
     // Fallback to calculating from the register rows (date-filtered, incl. projections)
     return calculateTransactionStats(registerRows, mobilePageStats, transactionCurrencyDisplay);
   }, [registerRows, mobilePageStats, transactionCurrencyDisplay, filteredStats]);
+  const hasMoneyIntegrityIssue =
+    hasStoredMoneyIntegrityIssue ||
+    !isSafeStorageAmount(displayBalanceToday) ||
+    !isSafeStorageAmount(transactionStats.totalInflow) ||
+    !isSafeStorageAmount(transactionStats.totalOutflow);
 
   useEffect(() => {
     if (!isNaN(numericId) && shouldSyncSelectedAccount(selectedAccount, currentStoreAccount)) {
@@ -505,6 +526,20 @@ export default function AccountPage() {
             }
           />
         </div>
+
+        {hasMoneyIntegrityIssue && (
+          <div className="px-3 pb-3 sm:px-6">
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Exchange-rate data needs attention</AlertTitle>
+              <AlertDescription>
+                {unsafeTransactionCount > 0
+                  ? `${unsafeTransactionCount} transaction${unsafeTransactionCount === 1 ? '' : 's'} contain an amount outside Budgero's exact money range. Correct the exchange rate in the highlighted row; the converted amount and account balance will then be recalculated.`
+                  : 'This account balance is outside Budgero’s exact money range. Correct the offending transaction exchange rate to recalculate it.'}
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
 
         {/* Transactions Section */}
         <div className="flex-1 sm:px-6 space-y-6">

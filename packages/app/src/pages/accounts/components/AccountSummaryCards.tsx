@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { ArrowUpRight, ArrowDownRight, CheckCircle2 } from 'lucide-react';
 import { PayoffSimulator } from '@features/debt/ui/PayoffSimulator';
-import { asMilli, formatMilli } from '@shared/lib/currency/milli';
+import { formatSafeMilli } from '@shared/lib/currency/milli';
 import type { LiabilityInfo, TransactionStats } from '../account-page.utils';
 import { FlowStat } from './FlowStat';
 
@@ -30,7 +30,7 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
         <div>
           <span className="text-xs text-muted-foreground">Balance</span>
           <p className="text-base font-bold tabular-nums text-foreground">
-            {formatMilli(formatter, asMilli(displayBalanceToday))}
+            {formatSafeMilli(formatter, displayBalanceToday)}
           </p>
         </div>
 
@@ -39,7 +39,7 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
         <FlowStat
           icon={ArrowUpRight}
           label="Inflow"
-          value={formatMilli(formatter, asMilli(transactionStats.totalInflow))}
+          value={formatSafeMilli(formatter, transactionStats.totalInflow)}
           color="success"
           tooltip={`Total inflow from recent ${transactionStats.recentCount} transactions`}
         />
@@ -47,7 +47,7 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
         <FlowStat
           icon={ArrowDownRight}
           label="Outflow"
-          value={formatMilli(formatter, asMilli(transactionStats.totalOutflow))}
+          value={formatSafeMilli(formatter, transactionStats.totalOutflow)}
           color="destructive"
           tooltip={`Total outflow from recent ${transactionStats.recentCount} transactions`}
         />

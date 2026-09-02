@@ -26,6 +26,8 @@ import { hasReadOnlyTransferCategory } from '@features/transactions/lib/transfer
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { TransferRateDialog } from '@features/transactions/ui/transfer-rate/TransferRateDialog';
 import { TransactionLabelBadge } from '@features/transactions/ui/TransactionLabelBadge';
+import { validateTransactionExchangeRate } from '@features/transactions/lib/exchange-rate-validation';
+import { hasUnsafeTransactionMoney } from '@entities/transaction/lib/money-integrity';
 import type {
   TransactionEditableColumn,
   TransactionEditorDirectories,
@@ -138,6 +140,7 @@ export const TransactionRow = React.memo(function TransactionRow({
   // Transfers move money between your own accounts and cannot be split.
   const isTransfer = !!transaction.TransferID && transaction.TransferID.trim() !== '';
   const isTransferCategoryReadOnly = hasReadOnlyTransferCategory(transaction);
+  const hasUnsafeMoney = hasUnsafeTransactionMoney(transaction);
   const activateCell = (column: TransactionEditableColumn) =>
     onActivateCell(transaction.ID, column);
 
@@ -315,6 +318,7 @@ export const TransactionRow = React.memo(function TransactionRow({
       id={`transaction-${transaction.ID}`}
       className={cn(
         'h-16',
+        hasUnsafeMoney && 'bg-destructive/10 ring-1 ring-inset ring-destructive/30',
         isRowPending && 'opacity-70',
         isSelected && 'bg-primary/5 data-[state=selected]:bg-primary/5'
       )}
@@ -539,6 +543,16 @@ export const TransactionRow = React.memo(function TransactionRow({
               <ExchangeRateCell
                 value={transaction.ExchangeRate || 0}
                 onCommit={(val) => onCellCommit(transaction.ID, 'ExchangeRate', val)}
+                validateRate={(rate) =>
+                  selectedAccount?.Currency && selectedBudget?.DisplayCurrency
+                    ? validateTransactionExchangeRate(
+                        rate,
+                        transaction,
+                        selectedAccount.Currency,
+                        selectedBudget.DisplayCurrency
+                      )
+                    : null
+                }
                 inputClassName="h-8 text-right text-xs"
                 autoFocus
                 onEditingChange={(editing) => {

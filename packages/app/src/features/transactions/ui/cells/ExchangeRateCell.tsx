@@ -2,8 +2,8 @@ import React from 'react';
 import { Input } from '@shared/ui/input';
 import { cn } from '@shared/lib/utils';
 import {
-  EXCHANGE_RATE_PRECISION,
   formatExchangeRate,
+  isUnusualExchangeRateChange,
 } from '@entities/currency/lib/exchange-rate-format';
 
 interface ExchangeRateCellProps {
@@ -16,14 +16,14 @@ interface ExchangeRateCellProps {
   inputClassName?: string;
   autoFocus?: boolean;
   onEditingChange?: (editing: boolean) => void;
+  validateRate?: (rate: number) => string | null;
 }
 
 /**
  * Inline editor for a transaction's exchange rate. Rates are dimensionless
- * decimals with up to {@link EXCHANGE_RATE_PRECISION} fraction digits, so they
- * must NOT go through CalculatorCell's integer-milliunit contract (which would
- * truncate rates like 0.008534 to 3 decimals). Plain text input, dot or comma
- * decimal separator accepted.
+ * decimals, so they must NOT go through CalculatorCell's integer-milliunit
+ * contract. Plain text input with either a dot or comma decimal separator is
+ * accepted, and parsed precision is preserved instead of rounded on commit.
  */
 export function ExchangeRateCell({
   value,
@@ -34,53 +34,117 @@ export function ExchangeRateCell({
   inputClassName,
   autoFocus = false,
   onEditingChange,
+  validateRate,
 }: ExchangeRateCellProps) {
   const [isEditing, setIsEditing] = React.useState(autoFocus);
   const [text, setText] = React.useState(() => (autoFocus && value ? String(value) : ''));
+  const [error, setError] = React.useState<string | null>(null);
+  const [pendingUnusualRate, setPendingUnusualRate] = React.useState<number | null>(null);
+  const errorId = React.useId();
 
   const startEditing = () => {
     // Keep the stored precision while editing. Formatting to the input's
     // commit precision here makes a focus/blur cycle look like a real edit.
     setText(value ? String(value) : '');
+    setError(null);
+    setPendingUnusualRate(null);
     setIsEditing(true);
     onEditingChange?.(true);
   };
 
-  const commit = () => {
+  const finishCommit = (parsed: number) => {
     setIsEditing(false);
     onEditingChange?.(false);
-    const parsed = parseFloat(text.replace(',', '.'));
-    if (Number.isFinite(parsed) && parsed >= 0 && parsed !== value) {
-      onCommit(Number(parsed.toFixed(EXCHANGE_RATE_PRECISION)));
+    setError(null);
+    setPendingUnusualRate(null);
+    if (parsed !== value) onCommit(parsed);
+  };
+
+  const commit = (confirmUnusual = false) => {
+    const parsed = Number(text.replace(',', '.'));
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      setError('Enter an exchange rate greater than zero.');
+      setPendingUnusualRate(null);
+      return;
     }
+
+    const validationError = validateRate?.(parsed) ?? null;
+    if (validationError) {
+      setError(validationError);
+      setPendingUnusualRate(null);
+      return;
+    }
+
+    if (!confirmUnusual && parsed !== value && isUnusualExchangeRateChange(value, parsed)) {
+      setPendingUnusualRate(parsed);
+      setError('This rate is over 1,000× different. Check the decimal point or confirm it.');
+      return;
+    }
+
+    finishCommit(parsed);
   };
 
   const cancel = () => {
     setIsEditing(false);
     onEditingChange?.(false);
     setText('');
+    setError(null);
+    setPendingUnusualRate(null);
   };
 
   if (isEditing) {
     return (
-      <Input
-        autoFocus
-        type="text"
-        inputMode="decimal"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onBlur={commit}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            commit();
-          } else if (e.key === 'Escape') {
-            cancel();
-          }
-        }}
-        placeholder={placeholder}
-        className={cn('font-mono', inputClassName)}
-      />
+      <div className="min-w-44">
+        <Input
+          autoFocus
+          type="text"
+          inputMode="decimal"
+          value={text}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? errorId : undefined}
+          onChange={(e) => {
+            setText(e.target.value);
+            setError(null);
+            setPendingUnusualRate(null);
+          }}
+          onBlur={() => commit(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              commit(pendingUnusualRate !== null);
+            } else if (e.key === 'Escape') {
+              cancel();
+            }
+          }}
+          placeholder={placeholder}
+          className={cn('font-mono', inputClassName)}
+        />
+        {error && (
+          <div id={errorId} className="mt-1 text-left text-[11px] leading-tight text-destructive">
+            <p>{error}</p>
+            {pendingUnusualRate !== null && (
+              <div className="mt-1 flex gap-2">
+                <button
+                  type="button"
+                  className="font-medium underline underline-offset-2"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => finishCommit(pendingUnusualRate)}
+                >
+                  Use anyway
+                </button>
+                <button
+                  type="button"
+                  className="text-muted-foreground underline underline-offset-2"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={cancel}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     );
   }
 

@@ -6,7 +6,11 @@ import {
   useUpdateTransferRate,
 } from '@entities/transaction/api/useTransactions';
 import { formatNativeAmount } from '@entities/currency/lib/currency-utils';
-import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
+import {
+  formatExchangeRate,
+  isUnusualExchangeRateChange,
+  validateExchangeRateConversions,
+} from '@entities/currency/lib/exchange-rate-format';
 import { Button } from '@shared/ui/button';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog';
 import { Input } from '@shared/ui/input';
@@ -38,7 +42,19 @@ export function TransferRateDialog({ transferId, compact = false }: TransferRate
   }, [details, open, rateDirty]);
 
   const parsedRate = Number.parseFloat(rateText.replace(',', '.'));
-  const validRate = Number.isFinite(parsedRate) && parsedRate > 0;
+  const rateSafetyError =
+    details && Number.isFinite(parsedRate) && parsedRate > 0
+      ? validateExchangeRateConversions(parsedRate, [
+          {
+            amount: details.source.amount,
+            fromCurrency: details.source.currency,
+            toCurrency: details.destination.currency,
+          },
+        ])
+      : null;
+  const validRate = Number.isFinite(parsedRate) && parsedRate > 0 && !rateSafetyError;
+  const unusualRate =
+    Boolean(details) && validRate && isUnusualExchangeRateChange(details?.rate ?? 0, parsedRate);
   const isCrossCurrency =
     Boolean(details) && details?.source.currency !== details?.destination.currency;
 
@@ -130,6 +146,13 @@ export function TransferRateDialog({ transferId, compact = false }: TransferRate
                   ? 'The sent amount stays fixed. Saving recalculates the received amount and both budget valuations atomically.'
                   : 'Both accounts use the same currency, so this transfer has no conversion rate.'}
               </p>
+              {rateSafetyError && <p className="text-xs text-destructive">{rateSafetyError}</p>}
+              {unusualRate && (
+                <p className="text-xs text-amber-600 dark:text-amber-400">
+                  This is over 1,000× different from the current rate. Check the decimal point
+                  before confirming.
+                </p>
+              )}
             </div>
 
             <div className="rounded-md border p-3 text-xs text-muted-foreground space-y-1">
