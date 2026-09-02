@@ -40,6 +40,8 @@ export interface YNABImportSummary {
   transactionsCreated: number;
   missingCategoriesCreated: YNABImportCategorySummary[];
   splitTransactionsImported: number;
+  /** Present for API imports after every imported account balance has matched YNAB. */
+  accountBalancesVerified?: number;
 }
 
 export interface YNABImportResult {
@@ -171,6 +173,8 @@ export interface YNABImportAccountSpec {
   onBudget: boolean;
   archived: boolean;
   ynabAccountId: string;
+  /** Authoritative native balance supplied by the YNAB API. */
+  expectedBalance?: number;
 }
 
 export interface YNABRegisterRow {

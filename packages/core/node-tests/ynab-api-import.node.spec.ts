@@ -318,6 +318,7 @@ describe('YNAB API import', () => {
         registerRowsImported: 6,
         transactionsCreated: 5,
         splitTransactionsImported: 1,
+        accountBalancesVerified: 2,
       });
 
       const accounts = adapter
@@ -378,6 +379,31 @@ describe('YNAB API import', () => {
         { Memo: 'Purchase', InflowNative: 0, OutflowNative: 100_000 },
         { Memo: 'Refund', InflowNative: 25_000, OutflowNative: 0 },
       ]);
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('removes the incomplete budget when an account balance does not reconcile', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const snapshot = snapshotFixture();
+      snapshot.plan.accounts[0].balance = -4_000;
+      const importer = new YNABImportService(adapter);
+
+      await expect(
+        importer.importYNABFromApiSnapshotWithSummary(snapshot, {
+          spaceId: SPACE_ID,
+          budgetName: 'Failed direct API import',
+          currency: 'USD',
+          numberFormat: '123,456.78',
+          badgeIcon: 'HelpCircle',
+        })
+      ).rejects.toThrow(
+        /account balance integrity check failed.*Checking: YNAB -4000, Budgero -5000.*incomplete budget was removed/i
+      );
+
+      expect(adapter.prepare('SELECT COUNT(*) AS Count FROM budgets').get()).toEqual({ Count: 0 });
     } finally {
       adapter.close();
     }

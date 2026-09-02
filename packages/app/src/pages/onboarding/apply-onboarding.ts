@@ -253,7 +253,13 @@ export async function runOnboardingApply(
           `Imported ${importResult.summary.splitTransactionsImported} split transaction${importResult.summary.splitTransactionsImported === 1 ? '' : 's'}.`
         );
       }
-      summaryParts.push('Review imported account types before budgeting.');
+      if (importResult.summary.accountBalancesVerified !== undefined) {
+        summaryParts.push(
+          `Verified ${importResult.summary.accountBalancesVerified} account balance${importResult.summary.accountBalancesVerified === 1 ? '' : 's'} against YNAB.`
+        );
+      } else {
+        summaryParts.push('Review imported account types before budgeting.');
+      }
       toast.success('YNAB import complete', { description: summaryParts.join(' ') });
     } else {
       const result = await runtime.mutationsRouter().execute<number>({

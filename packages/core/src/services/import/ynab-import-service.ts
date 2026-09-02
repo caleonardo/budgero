@@ -55,6 +55,13 @@ interface YNABSplitGroup {
   containsTransfer: boolean;
 }
 
+interface YNABAccountBalanceMismatch {
+  accountName: string;
+  expectedBalance: number;
+  computedBalance: number;
+  difference: number;
+}
+
 function transferCounterpartyName(row: YNABRegisterRow): string | null {
   // YNAB identifies register transfers through a synthetic payee named
   // "Transfer : <account>". Ordinary payees, categories, and memos may also
@@ -406,6 +413,12 @@ export class YNABImportService {
     );
     debugLog('Transactions imported successfully');
 
+    const accountBalancesVerified = this.verifyYNABAccountBalances(
+      budgetId,
+      accounts,
+      accountSpecs
+    );
+
     return {
       budgetId,
       summary: {
@@ -413,8 +426,55 @@ export class YNABImportService {
         transactionsCreated: transactionSummary.transactionsCreated,
         missingCategoriesCreated: preview.missingCategories,
         splitTransactionsImported: transactionSummary.splitTransactionsImported,
+        ...(accountBalancesVerified === undefined ? {} : { accountBalancesVerified }),
       },
     };
+  }
+
+  private verifyYNABAccountBalances(
+    budgetId: number,
+    accounts: Record<string, number>,
+    accountSpecs?: YNABImportAccountSpec[]
+  ): number | undefined {
+    if (!accountSpecs) return undefined;
+
+    const verifiableSpecs = accountSpecs.filter(
+      (spec): spec is YNABImportAccountSpec & { expectedBalance: number } =>
+        spec.expectedBalance !== undefined
+    );
+    const mismatches: YNABAccountBalanceMismatch[] = [];
+
+    for (const spec of verifiableSpecs) {
+      const accountId = accounts[spec.name];
+      const account =
+        accountId === undefined ? undefined : this.accountService.getAccount(accountId);
+      const computedBalance = account?.BalanceNative;
+
+      if (computedBalance === spec.expectedBalance) continue;
+
+      mismatches.push({
+        accountName: spec.name,
+        expectedBalance: spec.expectedBalance,
+        computedBalance: computedBalance ?? 0,
+        difference: (computedBalance ?? 0) - spec.expectedBalance,
+      });
+    }
+
+    if (mismatches.length > 0) {
+      const details = mismatches
+        .map(
+          ({ accountName, expectedBalance, computedBalance, difference }) =>
+            `${accountName}: YNAB ${expectedBalance}, Budgero ${computedBalance}, difference ${difference}`
+        )
+        .join('; ');
+      this.budgetService.deleteBudget(budgetId);
+      throw new Error(
+        `YNAB account balance integrity check failed for ${mismatches.length} account${mismatches.length === 1 ? '' : 's'} (${details}). The incomplete budget was removed.`
+      );
+    }
+
+    debugLog(`Verified ${verifiableSpecs.length} YNAB account balances`);
+    return verifiableSpecs.length;
   }
 
   private createCategoryStructure(

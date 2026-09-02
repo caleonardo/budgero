@@ -195,6 +195,7 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
         onBudget: account.on_budget,
         archived: account.closed,
         ynabAccountId: account.id,
+        expectedBalance: account.balance,
       })),
   };
 }

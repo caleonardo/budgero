@@ -275,7 +275,13 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
           `Imported ${result.summary.splitTransactionsImported} split transaction${result.summary.splitTransactionsImported === 1 ? '' : 's'}.`
         );
       }
-      summaryParts.push('Review imported account types before budgeting.');
+      if (result.summary.accountBalancesVerified !== undefined) {
+        summaryParts.push(
+          `Verified ${result.summary.accountBalancesVerified} account balance${result.summary.accountBalancesVerified === 1 ? '' : 's'} against YNAB.`
+        );
+      } else {
+        summaryParts.push('Review imported account types before budgeting.');
+      }
       toast.success(`Successfully imported YNAB budget "${budgetName}"!`, {
         description: summaryParts.join(' ') || undefined,
       });
