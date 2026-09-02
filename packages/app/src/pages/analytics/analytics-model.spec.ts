@@ -98,7 +98,13 @@ describe('buildMonthlyFlow', () => {
       txn({ date: '2026-05-01', isIncome: true, groupName: 'Income', inflow: 500_000 }),
       txn({ date: '2026-05-02', outflow: 120_000 }),
       txn({ date: '2026-05-03', outflow: 30_000, inflow: 10_000 }), // partial refund
-      txn({ date: '2026-05-04', outflow: 99_000, isTransfer: true }),
+      txn({
+        date: '2026-05-04',
+        outflow: 99_000,
+        isTransfer: true,
+        category: 'Transfers',
+        groupName: 'Transfers',
+      }),
       txn({ date: '2026-05-05', outflow: 77_000, accountId: 9 }), // off-budget
       txn({ date: '2026-06-01', outflow: 40_000 }),
     ];
@@ -111,6 +117,79 @@ describe('buildMonthlyFlow', () => {
     });
     expect(points[1].spending).toBe(40_000);
     expect(points[1].income).toBe(0);
+  });
+
+  it('counts categorized off-budget transfer legs as spending in every report view', () => {
+    const txns = [
+      txn({
+        date: '2026-05-01',
+        categoryId: 20,
+        category: 'Monthly Mortgage',
+        groupName: 'Housing',
+        outflow: 800_000,
+        isTransfer: true,
+      }),
+      txn({
+        date: '2026-05-01',
+        categoryId: 20,
+        category: 'Monthly Mortgage',
+        groupName: 'Housing',
+        outflow: 900_000,
+      }),
+      txn({
+        date: '2026-05-01',
+        categoryId: 20,
+        category: 'Monthly Mortgage',
+        groupName: 'Housing',
+        outflow: 300_000,
+        isTransfer: true,
+      }),
+      // The mirror legs live in the off-budget loan account and must not be
+      // counted a second time.
+      txn({
+        date: '2026-05-01',
+        accountId: 2,
+        categoryId: 30,
+        category: 'Transfers',
+        groupName: 'Transfers',
+        inflow: 1_100_000,
+        isTransfer: true,
+      }),
+      // Ordinary internal transfers remain neutral.
+      txn({
+        date: '2026-05-01',
+        categoryId: 30,
+        category: 'Transfers',
+        groupName: 'Transfers',
+        outflow: 50_000,
+        isTransfer: true,
+      }),
+    ];
+
+    expect(buildMonthlyFlow(txns, ['2026-05'], ON_BUDGET)[0].spending).toBe(2_000_000);
+    expect(buildDimensionTotals(txns, 'category', ON_BUDGET)).toMatchObject([
+      { name: 'Monthly Mortgage', total: 2_000_000 },
+    ]);
+    expect(buildTrendSeries(txns, ['2026-05'], 'category', ON_BUDGET, 5)[0].values).toEqual([
+      2_000_000,
+    ]);
+    expect(buildFlowGraph(txns, ON_BUDGET, 5).totalSpending).toBe(2_000_000);
+
+    const pivot = buildCategoryPivot(
+      txns,
+      ['2026-05'],
+      [
+        { id: 20, name: 'Monthly Mortgage', groupId: 2 },
+        { id: 30, name: 'Transfers', groupId: 3 },
+      ],
+      [
+        { id: 2, name: 'Housing' },
+        { id: 3, name: 'Transfers' },
+      ],
+      ON_BUDGET,
+      []
+    );
+    expect(pivot.grandTotal).toBe(-2_000_000);
   });
 });
 
@@ -240,7 +319,14 @@ describe('buildCategoryPivot', () => {
       txn({ date: '2026-05-02', categoryId: 2, outflow: 120_000 }),
       txn({ date: '2026-06-03', categoryId: 3, outflow: 80_000 }),
       txn({ date: '2026-05-04', categoryId: null, outflow: 10_000 }),
-      txn({ date: '2026-05-05', categoryId: 4, outflow: 99_000, isTransfer: true }),
+      txn({
+        date: '2026-05-05',
+        categoryId: 4,
+        category: 'Internal',
+        groupName: 'Transfers',
+        outflow: 99_000,
+        isTransfer: true,
+      }),
     ];
     const pivot = buildCategoryPivot(txns, months, categories, groups, ON_BUDGET, []);
     expect(pivot.groups.map((group) => group.name)).toEqual([

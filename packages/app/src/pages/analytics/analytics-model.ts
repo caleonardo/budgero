@@ -50,6 +50,17 @@ export interface AnalyticsFilters {
 export const INCOME_GROUP_NAME = 'Income';
 export const TRANSFERS_GROUP_NAME = 'Transfers';
 
+/**
+ * A linked transfer is neutral only while it uses the system Transfers group.
+ * Users can deliberately categorize the on-budget leg of a transfer to an
+ * off-budget account (for example, a mortgage principal payment). That leg is
+ * real spending and must remain in reports; its off-budget mirror is excluded
+ * separately by the account-scope check.
+ */
+function isNeutralTransfer(txn: AnalyticsTxn): boolean {
+  return txn.groupName === TRANSFERS_GROUP_NAME;
+}
+
 // ---------------------------------------------------------------------------
 // Months
 
@@ -114,7 +125,7 @@ export interface MonthlyFlowPoint {
 }
 
 /**
- * Monthly money in vs money out over on-budget accounts, excluding transfers.
+ * Monthly money in vs money out over on-budget accounts, excluding neutral transfers.
  * Income = net inflow of Income-group categories; spending = net outflow of
  * everything else (refund inflows reduce spending).
  */
@@ -126,7 +137,7 @@ export function buildMonthlyFlow(
   const byMonth = new Map<string, { income: number; spending: number }>();
   for (const key of months) byMonth.set(key, { income: 0, spending: 0 });
   for (const txn of txns) {
-    if (txn.isTransfer || !onBudgetAccountIds.has(txn.accountId)) continue;
+    if (isNeutralTransfer(txn) || !onBudgetAccountIds.has(txn.accountId)) continue;
     const bucket = byMonth.get(txn.monthKey);
     if (!bucket) continue;
     if (txn.isIncome) {
@@ -168,7 +179,7 @@ function dimensionKey(txn: AnalyticsTxn, dim: SpendingDimension): { key: string;
 }
 
 /** Spending (outflow − inflow) totals per dimension value; excludes income,
- * transfers, and off-budget accounts; drops non-positive totals. */
+ * neutral transfers, and off-budget accounts; drops non-positive totals. */
 export function buildDimensionTotals(
   txns: AnalyticsTxn[],
   dim: SpendingDimension,
@@ -176,7 +187,7 @@ export function buildDimensionTotals(
 ): DimensionTotal[] {
   const totals = new Map<string, DimensionTotal>();
   for (const txn of txns) {
-    if (txn.isTransfer || txn.isIncome || !onBudgetAccountIds.has(txn.accountId)) continue;
+    if (isNeutralTransfer(txn) || txn.isIncome || !onBudgetAccountIds.has(txn.accountId)) continue;
     if (dim === 'label' && txn.labelId === null) continue;
     const { key, name } = dimensionKey(txn, dim);
     const existing = totals.get(key);
@@ -262,7 +273,7 @@ export function buildTrendSeries(
     : null;
 
   for (const txn of txns) {
-    if (txn.isTransfer || txn.isIncome || !onBudgetAccountIds.has(txn.accountId)) continue;
+    if (isNeutralTransfer(txn) || txn.isIncome || !onBudgetAccountIds.has(txn.accountId)) continue;
     if (dim === 'label' && txn.labelId === null) continue;
     const index = monthIndex.get(txn.monthKey);
     if (index === undefined) continue;
@@ -390,7 +401,7 @@ export function buildFlowGraph(
   const incomeBySource = new Map<string, number>();
   const spendingByGroup = new Map<string, number>();
   for (const txn of txns) {
-    if (txn.isTransfer || !onBudgetAccountIds.has(txn.accountId)) continue;
+    if (isNeutralTransfer(txn) || !onBudgetAccountIds.has(txn.accountId)) continue;
     if (txn.isIncome) {
       const name = txn.category || 'Other income';
       const amount = txn.inflow - txn.outflow;
@@ -483,7 +494,7 @@ export interface CategoryPivot {
 }
 
 /**
- * Category × month net matrix over on-budget accounts, excluding transfers.
+ * Category × month net matrix over on-budget accounts, excluding neutral transfers.
  * Lists every (selected) category — zero rows included — grouped by category
  * group with the Income group first, plus an "Uncategorized" bucket when
  * uncategorized activity exists.
@@ -506,7 +517,7 @@ export function buildCategoryPivot(
   const cells = new Map<number | null, number[]>();
   let hasActivity = false;
   for (const txn of txns) {
-    if (txn.isTransfer || !onBudgetAccountIds.has(txn.accountId)) continue;
+    if (isNeutralTransfer(txn) || !onBudgetAccountIds.has(txn.accountId)) continue;
     const index = monthIndex.get(txn.monthKey);
     if (index === undefined) continue;
     const key = txn.categoryId;
