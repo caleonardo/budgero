@@ -17,8 +17,9 @@ export interface SplitLine {
   categoryId?: number | null;
   memo?: string;
   payee?: string;
-  /** Positive amount in integer milliunits. */
-  amount: MilliUnits;
+  /** Positive directional amounts in integer milliunits. */
+  inflow: MilliUnits;
+  outflow: MilliUnits;
   transferAccountId?: number | null;
 }
 
@@ -56,7 +57,14 @@ export function SplitEditor({
   const addLine = () => {
     onSplitLinesChange([
       ...splitLines,
-      { id: crypto.randomUUID(), categoryId: undefined, memo: '', payee: '', amount: ZERO_MILLI },
+      {
+        id: crypto.randomUUID(),
+        categoryId: undefined,
+        memo: '',
+        payee: '',
+        inflow: ZERO_MILLI,
+        outflow: ZERO_MILLI,
+      },
     ]);
   };
 
@@ -67,7 +75,8 @@ export function SplitEditor({
       onSplitLinesChange([
         {
           id: crypto.randomUUID(),
-          amount: asMilli(Math.abs(parentAmount)),
+          inflow: parentAmount > 0 ? asMilli(parentAmount) : ZERO_MILLI,
+          outflow: parentAmount < 0 ? asMilli(-parentAmount) : ZERO_MILLI,
           memo: '',
           payee: '',
           categoryId: undefined,
@@ -76,9 +85,15 @@ export function SplitEditor({
     } else {
       onSplitLinesChange(
         splitLines.map((l, i) =>
-          i === splitLines.length - 1
-            ? { ...l, amount: asMilli((l.amount || 0) + Math.abs(delta)) }
-            : l
+          i !== splitLines.length - 1 || delta === 0
+            ? l
+            : delta > 0
+              ? { ...l, inflow: asMilli((l.inflow || 0) + delta), outflow: ZERO_MILLI }
+              : {
+                  ...l,
+                  inflow: ZERO_MILLI,
+                  outflow: asMilli((l.outflow || 0) + Math.abs(delta)),
+                }
         )
       );
     }
@@ -136,24 +151,51 @@ export function SplitEditor({
                   className="h-8 sm:h-9"
                 />
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:items-end">
+                <div className="min-w-0 sm:flex-1">
+                  <div className="mb-1 text-[10px] text-muted-foreground">Outflow</div>
                   <CalculatorCell
-                    value={line.amount}
-                    onCommit={(val) => updateLine(line.id, { amount: val })}
+                    value={line.outflow}
+                    onCommit={(val) =>
+                      updateLine(line.id, {
+                        outflow: asMilli(Math.abs(val)),
+                        ...(val ? { inflow: ZERO_MILLI } : {}),
+                      })
+                    }
                     formatter={(val) => formatter.format(val)}
                     localizer={formatter}
-                    inputAlign="left"
+                    inputAlign="right"
                     placeholder="0.00"
                     className=""
-                    inputClassName="h-8 sm:h-9"
-                    displayClassName="bg-background border-input hover:bg-muted/40 px-2 py-1 rounded-md"
+                    inputClassName="h-8 text-right sm:h-9"
+                    displayClassName="bg-background border-input hover:bg-muted/40 px-2 py-1 rounded-md text-right text-destructive"
+                    zeroAsEmpty
+                  />
+                </div>
+                <div className="min-w-0 sm:flex-1">
+                  <div className="mb-1 text-[10px] text-muted-foreground">Inflow</div>
+                  <CalculatorCell
+                    value={line.inflow}
+                    onCommit={(val) =>
+                      updateLine(line.id, {
+                        inflow: asMilli(Math.abs(val)),
+                        ...(val ? { outflow: ZERO_MILLI } : {}),
+                      })
+                    }
+                    formatter={(val) => formatter.format(val)}
+                    localizer={formatter}
+                    inputAlign="right"
+                    placeholder="0.00"
+                    className=""
+                    inputClassName="h-8 text-right sm:h-9"
+                    displayClassName="bg-background border-input hover:bg-muted/40 px-2 py-1 rounded-md text-right text-success"
+                    zeroAsEmpty
                   />
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="whitespace-nowrap h-8"
+                  className="col-span-2 h-8 whitespace-nowrap sm:mb-0 sm:self-end"
                   type="button"
                   onClick={() => deleteLine(line.id)}
                 >

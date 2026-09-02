@@ -6,7 +6,7 @@ import { ValidationError, NotFoundError } from '../../types/index.js';
 import { safeParseJSON } from '../../utils/json.js';
 import { getLocalDateString, getUTCDateString } from '../../utils/date.js';
 import { TransactionService } from '../transactions/index.js';
-import { resolveTransferPayees } from '../transactions/transfer-payee.js';
+import { isAccountOnBudget, resolveTransferPayees } from '../transactions/transfer-payee.js';
 import { ensureTransferCategory } from '../transactions/category-helpers.js';
 import { CategoryService } from '../categories/index.js';
 import { CurrencyService } from '../currency/index.js';
@@ -339,17 +339,15 @@ export class RecurringTransactionService {
       );
     }
     const transfersCategory = ensureTransferCategory(this.categories, budgetId);
-    // A custom category is only meaningful when the money LEAVES the budget:
-    // an on-budget → off-budget transfer books as categorized spending (the
-    // posted source leg carries this category). Every other combination
-    // coerces to the Transfers category so budget math stays intact.
+    const isOnBudget = (id: number) =>
+      Number(
+        getRow<{ OnBudget: number }>(this.db, 'SELECT OnBudget FROM accounts WHERE ID = ?', id)
+          ?.OnBudget ?? 0
+      ) === 1;
+    // A custom category belongs on the on-budget leg whenever a transfer
+    // crosses the budget boundary, in either direction.
     if (requestedCategoryId != null && requestedCategoryId !== transfersCategory) {
-      const isOnBudget = (id: number) =>
-        Number(
-          getRow<{ OnBudget: number }>(this.db, 'SELECT OnBudget FROM accounts WHERE ID = ?', id)
-            ?.OnBudget ?? 0
-        ) === 1;
-      if (isOnBudget(accountId) && !isOnBudget(toAccountId)) {
+      if (isOnBudget(accountId) !== isOnBudget(toAccountId)) {
         return { direction: 'outflow', categoryId: requestedCategoryId };
       }
     }
@@ -662,8 +660,10 @@ export class RecurringTransactionService {
          r.AccountID AS AccountID,
          a.Name AS Account,
          o.BudgetID AS BudgetID,
-         r.CategoryID AS CategoryID,
-         c.Name AS Category,
+         CASE WHEN r.ToAccountID IS NOT NULL AND COALESCE(a.OnBudget, 1) = 0
+           THEN transfer_category.ID ELSE r.CategoryID END AS CategoryID,
+         CASE WHEN r.ToAccountID IS NOT NULL AND COALESCE(a.OnBudget, 1) = 0
+           THEN 'Transfers' ELSE c.Name END AS Category,
          o.DueDate AS Date,
          COALESCE(NULLIF(r.Memo, ''), r.Name) AS Memo,
          CASE
@@ -684,6 +684,8 @@ export class RecurringTransactionService {
        LEFT JOIN accounts transfer_destination ON transfer_destination.ID = r.ToAccountID
        JOIN budgets b ON b.ID = o.BudgetID
        LEFT JOIN categories c ON c.ID = r.CategoryID
+       LEFT JOIN categories transfer_category
+         ON transfer_category.BudgetID = o.BudgetID AND transfer_category.Name = 'Transfers'
        WHERE o.BudgetID = ? AND o.Status = 'scheduled' AND r.Active = 1 ${dateWhere} ${sourceAccountWhere}
        UNION ALL
        SELECT
@@ -693,8 +695,10 @@ export class RecurringTransactionService {
          r.ToAccountID AS AccountID,
          a2.Name AS Account,
          o.BudgetID AS BudgetID,
-         r.CategoryID AS CategoryID,
-         c.Name AS Category,
+         CASE WHEN COALESCE(a2.OnBudget, 1) = 0
+           THEN transfer_category.ID ELSE r.CategoryID END AS CategoryID,
+         CASE WHEN COALESCE(a2.OnBudget, 1) = 0
+           THEN 'Transfers' ELSE c.Name END AS Category,
          o.DueDate AS Date,
          COALESCE(NULLIF(r.Memo, ''), r.Name) AS Memo,
          CASE
@@ -712,6 +716,8 @@ export class RecurringTransactionService {
        JOIN accounts a2 ON a2.ID = r.ToAccountID
        JOIN budgets b ON b.ID = o.BudgetID
        LEFT JOIN categories c ON c.ID = r.CategoryID
+       LEFT JOIN categories transfer_category
+         ON transfer_category.BudgetID = o.BudgetID AND transfer_category.Name = 'Transfers'
        WHERE o.BudgetID = ? AND o.Status = 'scheduled' AND r.Active = 1
          AND r.ToAccountID IS NOT NULL ${dateWhere} ${destAccountWhere}
        ORDER BY Date ASC, OccurrenceID ASC, ID DESC`,
@@ -847,6 +853,13 @@ export class RecurringTransactionService {
     }
 
     const payees = resolveTransferPayees(source, destination);
+    const transfersCategoryId = ensureTransferCategory(this.categories, template.budgetId);
+    const sourceCategoryId = isAccountOnBudget(source)
+      ? (template.categoryId ?? transfersCategoryId)
+      : transfersCategoryId;
+    const destinationCategoryId = isAccountOnBudget(destination)
+      ? (template.categoryId ?? transfersCategoryId)
+      : transfersCategoryId;
 
     let destinationAmount = template.amount;
     if (source && source.Currency !== destination.Currency) {
@@ -866,7 +879,7 @@ export class RecurringTransactionService {
       ZERO_MILLI,
       template.amount,
       template.accountId,
-      template.categoryId ?? 0,
+      sourceCategoryId,
       template.budgetId,
       transactionDate,
       memo,
@@ -878,7 +891,7 @@ export class RecurringTransactionService {
         destinationAmount,
         ZERO_MILLI,
         destination.ID,
-        0,
+        destinationCategoryId,
         template.budgetId,
         transactionDate,
         memo,

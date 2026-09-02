@@ -49,6 +49,14 @@ interface YNABSplitGroup {
   startIndex: number;
   rows: YNABRegisterRow[];
   markers: YNABSplitMarker[];
+  containsTransfer: boolean;
+}
+
+function isTransferRow(row: YNABRegisterRow): boolean {
+  const payee = (row.Payee || '').toLowerCase();
+  const category = (row.Category || '').toLowerCase();
+  const memo = (row.Memo || '').toLowerCase();
+  return payee.includes('transfer') || category.includes('transfer') || memo.includes('transfer');
 }
 
 function categoryKey(category: YNABCategoryDescriptor): string {
@@ -140,7 +148,7 @@ function detectSplitGroups(registerRows: YNABRegisterRow[]): YNABSplitGroup[] {
         marker?.part === partIndex + 1 &&
         marker.total === firstMarker.total &&
         sameSplitContainer(registerRows[index], rows[partIndex]) &&
-        categoryDescriptor(rows[partIndex]) !== null
+        (categoryDescriptor(rows[partIndex]) !== null || isTransferRow(rows[partIndex]))
     );
 
     if (!complete) continue;
@@ -149,6 +157,7 @@ function detectSplitGroups(registerRows: YNABRegisterRow[]): YNABSplitGroup[] {
       startIndex: index,
       rows,
       markers: markers as YNABSplitMarker[],
+      containsTransfer: rows.some(isTransferRow),
     });
     index += firstMarker.total - 1;
   }
@@ -198,12 +207,14 @@ function inspectYNABRows(
     accountCount: new Set(registerRows.map((row) => row.Account.trim()).filter(Boolean)).size,
     categoryCount: exportedPlanCategoryKeys.size + missing.size,
     missingCategories: [...missing.values()],
-    splitTransactions: splitGroups.map((group) => ({
-      account: group.rows[0].Account.trim(),
-      date: group.rows[0].Date.trim(),
-      payees: distinctSplitPayees(group.rows),
-      partCount: group.rows.length,
-    })),
+    splitTransactions: splitGroups
+      .filter((group) => !group.containsTransfer)
+      .map((group) => ({
+        account: group.rows[0].Account.trim(),
+        date: group.rows[0].Date.trim(),
+        payees: distinctSplitPayees(group.rows),
+        partCount: group.rows.length,
+      })),
   };
 }
 
@@ -688,18 +699,36 @@ export class YNABImportService {
       const unit = sortedUnits[index];
 
       if (unit.kind === 'split') {
-        const created = await this.importSplitGroup(
-          budgetId,
-          unit.group,
-          accounts,
-          categories,
-          numberFormat,
-          incomeCategoryId,
-          uncategorizedCategoryId
-        );
-        if (created) {
-          transactionsCreated++;
-          splitTransactionsImported++;
+        if (unit.group.containsTransfer) {
+          for (let partIndex = 0; partIndex < unit.group.rows.length; partIndex++) {
+            const created = await this.importRegisterRow(
+              budgetId,
+              { ...unit.group.rows[partIndex], Memo: unit.group.markers[partIndex].memo },
+              unit.originalIndex + partIndex,
+              accounts,
+              categories,
+              numberFormat,
+              incomeCategoryId,
+              uncategorizedCategoryId,
+              transfersCategoryId,
+              creditCardAccountIds
+            );
+            if (created) transactionsCreated++;
+          }
+        } else {
+          const created = await this.importSplitGroup(
+            budgetId,
+            unit.group,
+            accounts,
+            categories,
+            numberFormat,
+            incomeCategoryId,
+            uncategorizedCategoryId
+          );
+          if (created) {
+            transactionsCreated++;
+            splitTransactionsImported++;
+          }
         }
       } else {
         const created = await this.importRegisterRow(
@@ -939,11 +968,7 @@ export class YNABImportService {
   }
 
   private isTransfer(row: YNABRegisterRow): boolean {
-    const payee = (row.Payee || '').toLowerCase();
-    const category = (row.Category || '').toLowerCase();
-    const memo = (row.Memo || '').toLowerCase();
-
-    return payee.includes('transfer') || category.includes('transfer') || memo.includes('transfer');
+    return isTransferRow(row);
   }
 
   /**

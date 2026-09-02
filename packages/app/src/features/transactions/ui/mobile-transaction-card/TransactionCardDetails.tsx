@@ -31,12 +31,9 @@ import { asMilli } from '@shared/lib/currency/milli';
 import { withEditPrecision } from '@shared/lib/number-format';
 import { TransferRateDialog } from '@features/transactions/ui/transfer-rate/TransferRateDialog';
 import { validateTransactionExchangeRate } from '@features/transactions/lib/exchange-rate-validation';
+import { transferHasOffBudgetLeg } from '@features/transactions/lib/transfer-category';
 import type { SplitLine } from './useMobileTransactionCardState';
-import {
-  extractSplitAmount,
-  isSplitIncomeAmount,
-  type SplitLike,
-} from '../desktop-table/table-utils';
+import { extractSplitFlows, type SplitLike } from '../desktop-table/table-utils';
 
 /** Combined split type supporting both TransactionSplit and SplitLine properties */
 interface SplitDisplayItem {
@@ -156,6 +153,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
 
   const categoryValue = displayCategoryOverride || transaction.Category;
   const isSplit = categoryValue === 'Split' || editSplits !== null;
+  const includeTransfersInCategoryPicker = transferHasOffBudgetLeg(transaction);
 
   // Hide inflow/outflow fields when transaction has splits - amounts are managed via split details
   const hasSplits = splits.length > 0;
@@ -329,6 +327,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                   <CategorySelectCell
                     categoryID={transaction.CategoryID}
                     onCommit={(newVal) => onCellCommit(transaction.ID, 'CategoryID', newVal)}
+                    includeTransfers={includeTransfersInCategoryPicker}
                   />
                 </div>
               )}
@@ -460,47 +459,54 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between text-xs text-muted-foreground gap-3">
-                        <span>Amount</span>
-                        {editSplits ? (
-                          <CalculatorCell
-                            value={asMilli(
-                              s.amount ??
-                                extractSplitAmount(
-                                  s as SplitLike,
-                                  transactionCurrencyDisplay === 'account' ? 'native' : 'converted'
-                                )
-                            )}
-                            onCommit={(val) => onUpdateSplitLine(idx, { amount: val })}
-                            formatter={(val) => editFormatter.format(val)}
-                            localizer={currentFormatter}
-                            inputAlign="right"
-                            placeholder="0.00"
-                            className="w-28"
-                            inputClassName="h-8 text-right font-mono"
-                            displayClassName="text-right font-mono"
-                            zeroAsEmpty
-                          />
-                        ) : (
-                          (() => {
-                            const isOutflow = !isSplitIncomeAmount(
-                              s as SplitLike,
-                              getPrimaryInflow(transaction) > 0
-                            );
-                            const absoluteAmount = extractSplitAmount(
-                              s as SplitLike,
-                              transactionCurrencyDisplay === 'account' ? 'native' : 'converted'
-                            );
-                            const symbol = isOutflow ? '-' : '+';
-                            const amountClass = isOutflow ? 'text-destructive' : 'text-success';
-                            return (
-                              <span className={`font-mono ${amountClass}`}>
-                                {symbol}
-                                {formatAmount(currentFormatter, absoluteAmount)}
-                              </span>
-                            );
-                          })()
-                        )}
+                      <div className="grid grid-cols-2 gap-2">
+                        {(['outflow', 'inflow'] as const).map((flow) => {
+                          const flows = extractSplitFlows(
+                            s as SplitLike,
+                            transactionCurrencyDisplay === 'account' ? 'native' : 'converted'
+                          );
+                          const value = flows[flow];
+                          return (
+                            <div key={flow} className="space-y-1">
+                              <div className="text-[10px] capitalize text-muted-foreground">
+                                {flow}
+                              </div>
+                              {editSplits ? (
+                                <CalculatorCell
+                                  value={asMilli(value)}
+                                  onCommit={(val) =>
+                                    onUpdateSplitLine(idx, {
+                                      [flow]: Math.abs(val),
+                                      ...(val
+                                        ? { [flow === 'inflow' ? 'outflow' : 'inflow']: 0 }
+                                        : {}),
+                                    })
+                                  }
+                                  formatter={(val) => editFormatter.format(val)}
+                                  localizer={currentFormatter}
+                                  inputAlign="right"
+                                  placeholder="0.00"
+                                  className="w-full"
+                                  inputClassName="h-8 text-right font-mono"
+                                  displayClassName={
+                                    flow === 'inflow'
+                                      ? 'text-right font-mono text-success'
+                                      : 'text-right font-mono text-destructive'
+                                  }
+                                  zeroAsEmpty
+                                />
+                              ) : (
+                                <div
+                                  className={`text-right font-mono ${
+                                    flow === 'inflow' ? 'text-success' : 'text-destructive'
+                                  }`}
+                                >
+                                  {value ? formatAmount(currentFormatter, value) : '—'}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )
@@ -519,7 +525,7 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
             {/* Totals */}
             {editSplits && (
               <div className="flex items-center justify-between text-xs text-muted-foreground px-2">
-                <div>Total amount</div>
+                <div>Net amount</div>
                 <CalculatorCell
                   value={asMilli(splitTarget)}
                   onCommit={(val) => onSplitTargetChange(Math.abs(val) || 0)}
@@ -535,8 +541,11 @@ export const TransactionCardDetails = React.memo(function TransactionCardDetails
             )}
             {(editSplits || splits).length > 0 && (
               <div className="flex items-center justify-between text-xs text-muted-foreground px-2">
-                <div>Remaining</div>
-                <div className="font-mono">{formatAmount(editFormatter, remainingAmount)}</div>
+                <div>Net remaining</div>
+                <div className="font-mono">
+                  {remainingAmount > 0 ? '+' : remainingAmount < 0 ? '-' : ''}
+                  {formatAmount(editFormatter, Math.abs(remainingAmount))}
+                </div>
               </div>
             )}
           </div>

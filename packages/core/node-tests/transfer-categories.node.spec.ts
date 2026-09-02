@@ -157,6 +157,37 @@ describe('transfer category editing', () => {
     );
   });
 
+  it('keeps a custom category on the on-budget leg of an incoming off-budget transfer', async () => {
+    const { services, budgetId, source, tracking, transfers, spendingCategoryId } =
+      await createFixture();
+    const transferId = 'incoming-tracking-transfer';
+    const trackingLegId = await services.transactions.addTransaction(
+      0,
+      10_000,
+      tracking.ID,
+      transfers.ID,
+      budgetId,
+      '2026-08-30',
+      'Transfer from tracking',
+      transferId
+    );
+    const budgetLegId = await services.transactions.addTransaction(
+      10_000,
+      0,
+      source.ID,
+      spendingCategoryId,
+      budgetId,
+      '2026-08-30',
+      'Transfer from tracking',
+      transferId
+    );
+
+    expect(services.transactions.getTransactionByID(trackingLegId).CategoryID).toBe(transfers.ID);
+    expect(services.transactions.getTransactionByID(budgetLegId).CategoryID).toBe(
+      spendingCategoryId
+    );
+  });
+
   it('mirrors category edits after one on-budget transfer leg moves off budget', async () => {
     const { services, budgetId, source, destination, tracking, transfers, spendingCategoryId } =
       await createFixture();

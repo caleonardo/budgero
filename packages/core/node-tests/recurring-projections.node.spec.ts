@@ -636,6 +636,43 @@ describe('Recurring transfers to off-budget accounts', () => {
     expect(destinationLeg?.Payee).toBe('Brokerage');
   });
 
+  it('posts an incoming custom category on the on-budget destination leg', async () => {
+    const { services, budgetId, account, categoryId, brokerage } = await setupWithOffBudget();
+    const today = new Date();
+
+    const template = await services.recurring.createRecurringTransaction({
+      budgetId,
+      accountId: brokerage.ID,
+      toAccountId: account.ID,
+      categoryId,
+      name: 'Brokerage withdrawal',
+      amount: 300,
+      direction: 'outflow',
+      schedule: { startDate: isoDate(today), intervalUnit: 'month', intervalCount: 1 },
+    });
+    expect(template.categoryId).toBe(categoryId);
+
+    const sourceProjection = services.recurring.listProjectedTransactions(budgetId, {
+      accountId: brokerage.ID,
+    })[0];
+    const destinationProjection = services.recurring.listProjectedTransactions(budgetId, {
+      accountId: account.ID,
+    })[0];
+    expect(sourceProjection.Category).toBe('Transfers');
+    expect(destinationProjection.Category).toBe('Utilities');
+
+    const occurrence = services.recurring.listOccurrences(budgetId, { status: 'scheduled' })[0];
+    const result = await services.recurring.markOccurrenceReady({ occurrenceId: occurrence.id });
+    const sourceLeg = services.transactions.getTransactionByID(result.transactionId);
+    const destinationLeg = services.transactions
+      .getTransactionsByAccount(account.ID)
+      .find((tx) => tx.TransferID === sourceLeg.TransferID);
+    const transfersCategory = services.categories.getCategoryByName('Transfers', budgetId);
+
+    expect(sourceLeg.CategoryID).toBe(transfersCategory?.ID);
+    expect(destinationLeg?.Category).toBe('Utilities');
+  });
+
   it('still coerces to Transfers without a custom category, and on updates that land on-budget', async () => {
     const { services, budgetId, account, brokerage } = await setupWithOffBudget();
     const savings = await services.accounts.createAccount(

@@ -90,7 +90,6 @@ interface TransactionDetailsSectionProps {
   showCurrencyConversion?: boolean;
 
   // Off-budget transfer (allows category selection)
-  isOffBudgetTransfer: boolean;
   transferInvolvesOffBudget: boolean;
 
   // Payee
@@ -144,7 +143,6 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
   accounts,
   accountsLoading,
   isTransfer,
-  isOffBudgetTransfer,
   transferInvolvesOffBudget,
   needsCurrencyConversion,
   convertedAmount,
@@ -299,8 +297,8 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
         </div>
       )}
 
-      {/* Category Selector - show for non-transfers OR off-budget transfers */}
-      {(!isTransfer || isOffBudgetTransfer) && !isSplit && (
+      {/* Category Selector - transfer categories are meaningful only when crossing the budget. */}
+      {(!isTransfer || transferInvolvesOffBudget) && !isSplit && (
         <div className="space-y-1.5 sm:space-y-2" data-testid="transaction-category-field">
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -324,10 +322,11 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
                 placeholder={categoriesLoading ? 'Loading categories...' : 'Select category'}
                 triggerClassName="w-full h-8 sm:h-10 bg-background border-input hover:bg-accent hover:text-accent-foreground transition-colors"
                 popoverContentClassName="w-[320px] max-w-[90vw]"
+                includeTransfers={transferInvolvesOffBudget}
               />
             </div>
           </div>
-          {isOffBudgetTransfer && (
+          {transferInvolvesOffBudget && (
             <p className="text-xs text-muted-foreground ml-6">
               Use &apos;Transfers&apos; to deduct from Ready to Assign, or select a category to
               treat as spending

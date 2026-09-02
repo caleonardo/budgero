@@ -103,7 +103,6 @@ export function AddTransactionForm({
     toAccount = null,
     currencyCode,
     needsCurrencyConversion,
-    isOffBudgetTransfer = false,
     transferInvolvesOffBudget = false,
     parentSigned,
     remaining,
@@ -172,7 +171,7 @@ export function AddTransactionForm({
       direction: form.isInflow ? 'inflow' : 'outflow',
       accountId: Number(form.selectedFromAccount),
       toAccountId: form.isTransfer ? Number(form.selectedToAccount) : null,
-      categoryId: form.isTransfer && !isOffBudgetTransfer ? null : (category?.ID ?? null),
+      categoryId: form.isTransfer && !transferInvolvesOffBudget ? null : (category?.ID ?? null),
       schedule: buildRecurringSchedule(form.transactionDate, recurringSettings),
       notifyDaysBefore: Math.max(0, Math.trunc(Number(recurringSettings.notifyDaysBefore) || 0)),
       active: recurringSettings.active,
@@ -204,7 +203,7 @@ export function AddTransactionForm({
     form,
     recurringSettings,
     categories,
-    isOffBudgetTransfer,
+    transferInvolvesOffBudget,
     recurring,
     createRecurring,
     budgetId,
@@ -393,7 +392,6 @@ export function AddTransactionForm({
         accounts={accounts}
         accountsLoading={accountsLoading}
         isTransfer={form.isTransfer}
-        isOffBudgetTransfer={isOffBudgetTransfer}
         transferInvolvesOffBudget={transferInvolvesOffBudget}
         needsCurrencyConversion={needsCurrencyConversion}
         convertedAmount={form.convertedAmount}

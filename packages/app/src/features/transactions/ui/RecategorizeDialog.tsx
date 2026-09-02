@@ -8,6 +8,7 @@ interface RecategorizeDialogProps {
   /** The category select is only rendered while a transaction is targeted. */
   hasTransaction: boolean;
   onCategorySelect: (categoryId: number) => void;
+  includeTransfers?: boolean;
 }
 
 /**
@@ -20,6 +21,7 @@ export function RecategorizeDialog({
   budgetId,
   hasTransaction,
   onCategorySelect,
+  includeTransfers = false,
 }: RecategorizeDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -33,6 +35,7 @@ export function RecategorizeDialog({
               onCategorySelect={onCategorySelect}
               triggerClassName="w-full"
               popoverContentClassName="w-[320px] max-w-[90vw]"
+              includeTransfers={includeTransfers}
             />
           )}
         </div>

@@ -26,6 +26,7 @@ import type { VirtualElement } from '@floating-ui/react';
 import type { Category, CategoryGroup, GetMonthlyBudgetRow } from '@budgero/core/browser';
 import { asMilli, formatMilli } from '@shared/lib/currency/milli';
 import { CreateCategoryDialog } from '@features/category-management/ui/CreateCategoryDialog';
+import { isCategoryVisibleInPicker } from './category-picker-options';
 
 const EMPTY_MONTHLY_ROWS: GetMonthlyBudgetRow[] = [];
 
@@ -48,6 +49,8 @@ interface SearchableCategorySelectProps {
   readyToAssignAmount?: number;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** System-only by default; enable only for transfers with an off-budget leg. */
+  includeTransfers?: boolean;
 }
 
 export function SearchableCategorySelect({
@@ -69,6 +72,7 @@ export function SearchableCategorySelect({
   readyToAssignAmount: providedReadyToAssignAmount,
   defaultOpen = false,
   onOpenChange,
+  includeTransfers = false,
 }: SearchableCategorySelectProps) {
   const [open, setOpen] = React.useState(defaultOpen);
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -299,6 +303,7 @@ export function SearchableCategorySelect({
       .map((group) => {
         const catsInGroup = categoriesData
           .filter((cat) => cat.CategoryGroupID === group.ID)
+          .filter((cat) => isCategoryVisibleInPicker(cat.Name, includeTransfers))
           .filter((cat) => (excludeCategoryId ? cat.ID !== excludeCategoryId : true))
           .filter((cat) =>
             onlyPositiveAvailable ? (availableByCategory.get(cat.ID) ?? 0) > 0 : true
@@ -325,6 +330,7 @@ export function SearchableCategorySelect({
   }, [
     categoriesData,
     categoryGroupsData,
+    includeTransfers,
     selectedCategoryId,
     excludeCategoryId,
     includeReadyToAssign,

@@ -27,10 +27,9 @@ import { withEditPrecision } from '@shared/lib/number-format';
 import {
   type SplitLike,
   type EditableSplit,
-  extractSplitAmount,
+  extractSplitFlows,
   toEditableSplit,
   getSplitCategoryLabel,
-  isSplitIncomeAmount,
 } from './table-utils';
 import { SplitMemoText } from './SplitMemoText';
 
@@ -104,7 +103,6 @@ export function SplitDetailsDialog({
             return {
               ...editable,
               id: editable.id || createLineId(),
-              amount: extractSplitAmount(split as SplitLike, amountCurrency),
             };
           })
         );
@@ -125,32 +123,26 @@ export function SplitDetailsDialog({
     amountCurrency,
   ]);
 
-  const totalAmount = useMemo(() => {
+  const parentNet = useMemo(() => {
     if (!transaction) return 0;
-    const inflow = getPrimaryInflow(transaction);
-    const outflow = getPrimaryOutflow(transaction);
-    return inflow > 0 ? inflow : outflow;
+    return getPrimaryInflow(transaction) - getPrimaryOutflow(transaction);
   }, [transaction, getPrimaryInflow, getPrimaryOutflow]);
 
-  const isIncome = transaction ? getPrimaryInflow(transaction) > 0 : false;
+  const isIncome = parentNet > 0;
 
   const displayedSplits = editSplits ?? splits;
 
-  const formatSplitAmount = (split: SplitLike | null | undefined) => {
-    if (!split || typeof split !== 'object') return currentFormatter.format(0);
-    // Split amounts are stored milliunits.
-    const value = extractSplitAmount(split, amountCurrency);
-    const prefix = value === 0 ? '' : isSplitIncomeAmount(split, isIncome) ? '+' : '-';
-    return `${prefix}${formatMilli(currentFormatter, asMilli(value))}`;
-  };
-
-  const parentTotal = totalAmount;
+  const parentTotal = Math.abs(parentNet);
   // The total the splits must add up to — editable while in edit mode.
   // All amounts here are exact integer milliunits.
   const targetTotal = editTotal ?? parentTotal;
-  const draftTotal =
-    editSplits?.reduce((sum, line) => sum + Math.abs(Number(line.amount) || 0), 0) ?? 0;
-  const remaining = editSplits ? targetTotal - draftTotal : 0;
+  const targetNet = (isIncome ? 1 : -1) * targetTotal;
+  const draftNet =
+    editSplits?.reduce(
+      (sum, line) => sum + (Number(line.inflow) || 0) - (Number(line.outflow) || 0),
+      0
+    ) ?? 0;
+  const remaining = editSplits ? targetNet - draftNet : 0;
   const hasExistingSplits = splits.length > 0;
   const isClearing = Boolean(editSplits && editSplits.length === 0 && hasExistingSplits);
   const canSave =
@@ -160,7 +152,11 @@ export function SplitDetailsDialog({
     !updateTransactionColumn.isPending &&
     ((editSplits.length > 0 &&
       targetTotal > 0 &&
-      editSplits.every((line) => Number(line.amount) > 0) &&
+      editSplits.every(
+        (line) =>
+          (Number(line.inflow) > 0 && Number(line.outflow) === 0) ||
+          (Number(line.outflow) > 0 && Number(line.inflow) === 0)
+      ) &&
       remaining === 0) ||
       isClearing);
 
@@ -172,7 +168,6 @@ export function SplitDetailsDialog({
         return {
           ...editable,
           id: editable.id || createLineId(),
-          amount: extractSplitAmount(split as SplitLike, amountCurrency),
         };
       })
     );
@@ -187,7 +182,8 @@ export function SplitDetailsDialog({
         transfer_account_id: null,
         memo: '',
         payee: '',
-        amount: 0,
+        inflow: 0,
+        outflow: 0,
       },
     ]);
   };
@@ -197,7 +193,8 @@ export function SplitDetailsDialog({
     patch: Partial<{
       memo: string;
       payee: string;
-      amount: number;
+      inflow: number;
+      outflow: number;
       category_id: number | null;
     }>
   ) => {
@@ -226,43 +223,45 @@ export function SplitDetailsDialog({
     // If the user edited the original amount, sync the parent transaction
     // first — the splits service requires splits to sum to the parent total.
     // Both sides are exact integer milliunits.
-    const currentParentAmount = isIncome
-      ? amountCurrency === 'native'
+    const currentParentInflow =
+      amountCurrency === 'native'
         ? (transaction.InflowNative ?? transaction.InflowConverted ?? 0)
-        : transaction.InflowConverted || 0
-      : amountCurrency === 'native'
+        : transaction.InflowConverted || 0;
+    const currentParentOutflow =
+      amountCurrency === 'native'
         ? (transaction.OutflowNative ?? transaction.OutflowConverted ?? 0)
         : transaction.OutflowConverted || 0;
-    if (targetTotal !== currentParentAmount) {
+    if (targetNet !== currentParentInflow - currentParentOutflow) {
+      const accountId =
+        (transaction as GetTransactionsByAccountRow & { AccountID?: number }).AccountID ?? 0;
+      const inflowColumn = amountCurrency === 'native' ? 'InflowNative' : 'InflowConverted';
+      const outflowColumn = amountCurrency === 'native' ? 'OutflowNative' : 'OutflowConverted';
       await updateTransactionColumn.mutateAsync({
         transactionId: transaction.ID,
-        column:
-          amountCurrency === 'native'
-            ? isIncome
-              ? 'InflowNative'
-              : 'OutflowNative'
-            : isIncome
-              ? 'InflowConverted'
-              : 'OutflowConverted',
-        value: targetTotal,
-        accountId:
-          (transaction as GetTransactionsByAccountRow & { AccountID?: number }).AccountID ?? 0,
+        column: targetNet >= 0 ? outflowColumn : inflowColumn,
+        value: 0,
+        accountId,
+      });
+      await updateTransactionColumn.mutateAsync({
+        transactionId: transaction.ID,
+        column: targetNet >= 0 ? inflowColumn : outflowColumn,
+        value: Math.abs(targetNet),
+        accountId,
       });
     }
 
-    const type = isIncome ? 'inflow' : 'outflow';
     const prepared = editSplits.map((line, idx) => ({
       category_id: line.category_id ?? null,
       transfer_account_id: line.transfer_account_id ?? null,
       memo: line.memo ?? '',
       payee: line.payee ?? '',
-      amount: Number(line.amount) || 0,
+      inflow: Number(line.inflow) || 0,
+      outflow: Number(line.outflow) || 0,
       order_index: idx,
     }));
     await upsertSplits.mutateAsync({
       transactionId: transaction.ID,
       splits: prepared,
-      type,
       amountCurrency,
     });
     setEditSplits(null);
@@ -276,7 +275,7 @@ export function SplitDetailsDialog({
         if (!next) onClose();
       }}
     >
-      <DialogContent style={{ width: '1000px', maxWidth: '94vw' }}>
+      <DialogContent style={{ width: '1100px', maxWidth: '94vw' }}>
         <DialogHeader>
           <DialogTitle>Split details</DialogTitle>
           <DialogDescription className="truncate max-w-full" title={transaction?.Memo || ''}>
@@ -346,15 +345,17 @@ export function SplitDetailsDialog({
             {editSplits && (
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-xs text-primary">
                 <span>
-                  {remaining >= 0 ? 'Remaining' : 'Over by'}{' '}
+                  Net remaining{' '}
                   <strong>{formatMilli(editFormatter, asMilli(Math.abs(remaining)))}</strong>
                 </span>
                 <span>
-                  Total:{' '}
+                  Net total:{' '}
                   <strong className={remaining === 0 ? 'text-green-600' : 'text-red-600'}>
-                    {formatMilli(editFormatter, asMilli(draftTotal))}
+                    {draftNet > 0 ? '+' : draftNet < 0 ? '-' : ''}
+                    {formatMilli(editFormatter, asMilli(Math.abs(draftNet)))}
                   </strong>{' '}
-                  / {formatMilli(editFormatter, asMilli(targetTotal))}
+                  / {targetNet > 0 ? '+' : '-'}
+                  {formatMilli(editFormatter, asMilli(targetTotal))}
                 </span>
               </div>
             )}
@@ -376,7 +377,8 @@ export function SplitDetailsDialog({
                       <TableHead className="w-[200px]">Category / Transfer</TableHead>
                       <TableHead className="w-[180px]">Payee</TableHead>
                       <TableHead>Memo</TableHead>
-                      <TableHead className="text-right w-[120px]">Amount</TableHead>
+                      <TableHead className="w-[115px] text-right">Outflow</TableHead>
+                      <TableHead className="w-[115px] text-right">Inflow</TableHead>
                       {editSplits && <TableHead className="w-[50px]" />}
                     </TableRow>
                   </TableHeader>
@@ -461,41 +463,52 @@ export function SplitDetailsDialog({
                               <SplitMemoText memo={String(s.memo || s.Memo || '')} />
                             )}
                           </TableCell>
-                          <TableCell
-                            className={cn(
-                              'text-right font-mono text-sm',
-                              isSplitIncomeAmount((editable ?? s) as SplitLike, isIncome)
-                                ? 'text-green-600'
-                                : 'text-red-600 dark:text-red-400'
-                            )}
-                          >
-                            {editSplits ? (
-                              <div className="inline-flex min-w-[120px] justify-end">
-                                <CalculatorCell
-                                  value={asMilli(
-                                    Math.abs((editable as EditableSplit)?.amount ?? 0)
-                                  )}
-                                  onCommit={(val) => {
-                                    const editableSplit = editable as EditableSplit | undefined;
-                                    if (editableSplit?.id) {
+                          {(['outflow', 'inflow'] as const).map((flow) => {
+                            const flows = extractSplitFlows(
+                              (editable ?? s) as SplitLike,
+                              amountCurrency
+                            );
+                            const value = flows[flow];
+                            return (
+                              <TableCell
+                                key={flow}
+                                className={cn(
+                                  'text-right font-mono text-sm',
+                                  flow === 'inflow'
+                                    ? 'text-green-600'
+                                    : 'text-red-600 dark:text-red-400'
+                                )}
+                              >
+                                {editSplits ? (
+                                  <CalculatorCell
+                                    value={asMilli(value)}
+                                    onCommit={(val) => {
+                                      const editableSplit = editable as EditableSplit | undefined;
+                                      if (!editableSplit?.id) return;
                                       handleUpdateSplit(editableSplit.id, {
-                                        amount: Math.abs(val),
+                                        [flow]: Math.abs(val),
+                                        ...(val
+                                          ? { [flow === 'inflow' ? 'outflow' : 'inflow']: 0 }
+                                          : {}),
                                       });
-                                    }
-                                  }}
-                                  formatter={(val) => editFormatter.format(val)}
-                                  localizer={currentFormatter}
-                                  inputAlign="right"
-                                  placeholder="0.00"
-                                  className="w-full max-w-[140px]"
-                                  displayClassName="text-sm"
-                                  inputClassName="text-right text-sm"
-                                />
-                              </div>
-                            ) : (
-                              formatSplitAmount(s as SplitLike)
-                            )}
-                          </TableCell>
+                                    }}
+                                    formatter={(val) => editFormatter.format(val)}
+                                    localizer={currentFormatter}
+                                    inputAlign="right"
+                                    placeholder="0.00"
+                                    className="w-full"
+                                    displayClassName="text-sm"
+                                    inputClassName="text-right text-sm"
+                                    zeroAsEmpty
+                                  />
+                                ) : value ? (
+                                  formatMilli(currentFormatter, asMilli(value))
+                                ) : (
+                                  '—'
+                                )}
+                              </TableCell>
+                            );
+                          })}
                           {editSplits && (
                             <TableCell className="text-right">
                               <Button

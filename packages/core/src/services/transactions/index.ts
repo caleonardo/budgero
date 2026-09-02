@@ -388,9 +388,10 @@ export class TransactionService {
         // We detect this by checking if:
         // 1. A valid category was passed (categoryId !== 0)
         // 2. The category is NOT the Transfers category
-        // 3. The current account is on-budget and has outflow (source side of transfer)
-        // Note: We can't check the partner account here because for the source transaction,
-        // the partner transaction doesn't exist yet. The frontend handles the detection.
+        // 3. The current account is the on-budget leg of a transfer crossing
+        //    the budget boundary. For a source leg the partner may not exist
+        //    yet, so the frontend supplies the correct category; an incoming
+        //    destination leg can verify that its existing partner is off-budget.
         debugLog('🔍 Category decision debug:', {
           categoryId,
           transfersCategoryId,
@@ -403,11 +404,11 @@ export class TransactionService {
         });
 
         const userSpecifiedCustomCategory =
-          isCurrentOutflow &&
           isCurrentOnBudget &&
           !useDebtCategory &&
           categoryId !== 0 &&
-          categoryId !== transfersCategoryId;
+          categoryId !== transfersCategoryId &&
+          (isCurrentOutflow || (isCurrentInflow && partner && !isPartnerOnBudget));
 
         if (userSpecifiedCustomCategory) {
           // Keep the user's selected category for off-budget transfers

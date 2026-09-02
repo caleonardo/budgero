@@ -22,6 +22,21 @@ export function shouldShowPayeeField(
   return !isTransfer || transferInvolvesOffBudget;
 }
 
+export function resolveTransferCategories(params: {
+  sourceOnBudget: boolean;
+  destinationOnBudget: boolean;
+  selectedCategory?: string | null;
+}): { sourceCategory: string; destinationCategory: string } {
+  const selected = params.selectedCategory || 'Transfers';
+  if (params.sourceOnBudget && params.destinationOnBudget) {
+    return { sourceCategory: 'Transfers', destinationCategory: 'Transfers' };
+  }
+  if (params.destinationOnBudget) {
+    return { sourceCategory: 'Transfers', destinationCategory: selected };
+  }
+  return { sourceCategory: selected, destinationCategory: 'Transfers' };
+}
+
 /** Direct source-to-destination rate implied by the two exact native amounts. */
 export function calculateImpliedTransferRate(params: {
   sourceAmount: number;
@@ -228,10 +243,9 @@ export function getCurrentDate(date: Date | null): string {
  * Calculates the remaining amount for splits (milliunits in, milliunits out)
  */
 export function calculateSplitRemaining(
-  parentAmount: number | null,
-  splitTotal: number,
+  parentNet: number,
+  splitNet: number,
   isTransfer: boolean
 ): number {
-  const parentSigned = isTransfer ? 0 : (parentAmount ?? 0);
-  return parentSigned - splitTotal;
+  return (isTransfer ? 0 : parentNet) - splitNet;
 }

@@ -14,7 +14,10 @@ import { useDeleteTransaction } from '@entities/transaction/api/useTransactions'
 import { useTransactionCellCommit } from '@features/transactions/api/useTransactionCellCommit';
 import { cn } from '@shared/lib/utils';
 import { toastError } from '@shared/lib/errors';
-import { hasReadOnlyTransferCategory } from '@features/transactions/lib/transfer-category';
+import {
+  hasReadOnlyTransferCategory,
+  transferHasOffBudgetLeg,
+} from '@features/transactions/lib/transfer-category';
 
 interface MobileTransactionListProps {
   transactions: GetTransactionsByAccountRow[];
@@ -347,6 +350,7 @@ export const MobileTransactionList = React.memo(function MobileTransactionList({
         onOpenChange={setRecatOpen}
         budgetId={selectedBudget?.ID || 0}
         hasTransaction={!!activeTransaction}
+        includeTransfers={activeTransaction ? transferHasOffBudgetLeg(activeTransaction) : false}
         onCategorySelect={(categoryId) => {
           if (!activeTransaction) return;
           const accountId = resolveAccountIdForTransaction(activeTransaction);

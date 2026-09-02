@@ -643,6 +643,99 @@ describe('YNABImportService — migration edge cases', () => {
     }
   });
 
+  it('explodes transfer splits while preserving ordinary inflow splits', async () => {
+    const JSZip = (await import('jszip')).default;
+    const registerCsv = [
+      '"Account","Date","Payee","Category Group/Category","Category Group","Category","Memo","Outflow","Inflow"',
+      '"Checking","2026-08-30","Transfer : Savings","","","","Split (1/2): Move to savings","$20.00","$0.00"',
+      '"Checking","2026-08-30","Grocer","Everyday: Food","Everyday","Food","Split (2/2): Food part","$30.00","$0.00"',
+      '"Savings","2026-08-30","Transfer : Checking","","","","Move to savings","$0.00","$20.00"',
+      '"Checking","2026-08-31","Employer","Inflow: Ready to Assign","Inflow","Ready to Assign","Split (1/2): Salary","$0.00","$60.00"',
+      '"Checking","2026-08-31","Store","Everyday: Food","Everyday","Food","Split (2/2): Refund","$0.00","$40.00"',
+    ].join('\r\n');
+    const planCsv = [
+      '"Month","Category Group/Category","Category Group","Category","Assigned","Activity","Available"',
+      '"Aug 2026","Everyday: Food","Everyday","Food","$0.00","$0.00","$0.00"',
+    ].join('\r\n');
+    const zip = new JSZip();
+    zip.file('Transfer Splits - Register.csv', registerCsv);
+    zip.file('Transfer Splits - Plan.csv', planCsv);
+    const archive = await zip.generateAsync({ type: 'uint8array' });
+
+    const preview = await YNABImportService.inspectYNABZip(archive);
+    expect(preview.splitTransactions).toEqual([
+      expect.objectContaining({ account: 'Checking', date: '2026-08-31', partCount: 2 }),
+    ]);
+
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const importer = new YNABImportService(adapter);
+      const result = await importer.importYNABFromZipWithSummary(archive, {
+        spaceId: TEST_SPACE_ID,
+        budgetName: 'Transfer split import',
+        currency: 'USD',
+        numberFormat: '123,456.78',
+        badgeIcon: 'HelpCircle',
+      });
+
+      expect(result.summary.transactionsCreated).toBe(4);
+      expect(result.summary.splitTransactionsImported).toBe(1);
+
+      const transferRows = adapter
+        .prepare(
+          `SELECT t.Memo, t.Payee, t.OutflowNative, t.InflowNative, c.Name AS Category
+           FROM transactions t
+           JOIN categories c ON c.ID = t.CategoryID
+           WHERE t.BudgetID = ? AND t.TransferID IS NOT NULL
+           ORDER BY t.OutflowNative DESC`
+        )
+        .all(result.budgetId) as Record<string, unknown>[];
+      expect(transferRows).toHaveLength(2);
+      expect(transferRows).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            Memo: 'Transfer from Checking to Savings',
+            Payee: null,
+            OutflowNative: 20_000,
+            Category: 'Transfers',
+          }),
+          expect.objectContaining({ Payee: null, InflowNative: 20_000, Category: 'Transfers' }),
+        ])
+      );
+
+      const explodedOrdinary = adapter
+        .prepare(
+          `SELECT t.Memo, t.Payee, t.OutflowNative, c.Name AS Category
+           FROM transactions t
+           JOIN categories c ON c.ID = t.CategoryID
+           WHERE t.BudgetID = ? AND t.Payee = 'Grocer'`
+        )
+        .get(result.budgetId);
+      expect(explodedOrdinary).toEqual({
+        Memo: 'Food part',
+        Payee: 'Grocer',
+        OutflowNative: 30_000,
+        Category: 'Food',
+      });
+
+      const inflowSplits = adapter
+        .prepare(
+          `SELECT s.Memo, s.InflowNative, s.OutflowNative
+           FROM transaction_splits s
+           JOIN transactions t ON t.ID = s.TransactionID
+           WHERE t.BudgetID = ?
+           ORDER BY s.OrderIndex`
+        )
+        .all(result.budgetId);
+      expect(inflowSplits).toEqual([
+        { Memo: 'Salary', InflowNative: 60_000, OutflowNative: 0 },
+        { Memo: 'Refund', InflowNative: 40_000, OutflowNative: 0 },
+      ]);
+    } finally {
+      adapter.close();
+    }
+  });
+
   it('does not detect incomplete or non-contiguous split markers as a split transaction', async () => {
     const JSZip = (await import('jszip')).default;
     const registerCsv = [

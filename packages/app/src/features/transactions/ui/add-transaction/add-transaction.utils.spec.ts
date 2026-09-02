@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   calculateImpliedTransferRate,
+  calculateSplitRemaining,
   calculateTransferRateOverrides,
+  resolveTransferCategories,
   shouldShowPayeeField,
 } from './add-transaction.utils';
 
@@ -11,6 +13,42 @@ describe('shouldShowPayeeField', () => {
     expect(shouldShowPayeeField(false, false)).toBe(true);
     expect(shouldShowPayeeField(true, false)).toBe(false);
     expect(shouldShowPayeeField(true, true)).toBe(true);
+  });
+});
+
+describe('resolveTransferCategories', () => {
+  it('keeps internal transfer categories system-managed', () => {
+    expect(
+      resolveTransferCategories({
+        sourceOnBudget: true,
+        destinationOnBudget: true,
+        selectedCategory: 'Groceries',
+      })
+    ).toEqual({ sourceCategory: 'Transfers', destinationCategory: 'Transfers' });
+  });
+
+  it('places an off-budget transfer category on the on-budget leg in either direction', () => {
+    expect(
+      resolveTransferCategories({
+        sourceOnBudget: true,
+        destinationOnBudget: false,
+        selectedCategory: 'Investing',
+      })
+    ).toEqual({ sourceCategory: 'Investing', destinationCategory: 'Transfers' });
+    expect(
+      resolveTransferCategories({
+        sourceOnBudget: false,
+        destinationOnBudget: true,
+        selectedCategory: 'Income',
+      })
+    ).toEqual({ sourceCategory: 'Transfers', destinationCategory: 'Income' });
+  });
+});
+
+describe('calculateSplitRemaining', () => {
+  it('reconciles mixed inflow and outflow split lines by their net amount', () => {
+    expect(calculateSplitRemaining(-10_000, 5_000 - 15_000, false)).toBe(0);
+    expect(calculateSplitRemaining(10_000, 15_000 - 5_000, false)).toBe(0);
   });
 });
 

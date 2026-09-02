@@ -14,6 +14,7 @@ interface CategorySelectCellProps {
   readyToAssignAmount?: number;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  includeTransfers?: boolean;
 }
 
 export function CategorySelectCell({
@@ -27,6 +28,7 @@ export function CategorySelectCell({
   readyToAssignAmount,
   defaultOpen,
   onOpenChange,
+  includeTransfers = false,
 }: CategorySelectCellProps) {
   const [selectedValue, setSelectedValue] = React.useState(categoryID);
   const { selectedBudget } = useUiStore();
@@ -53,6 +55,7 @@ export function CategorySelectCell({
       readyToAssignAmount={readyToAssignAmount}
       defaultOpen={defaultOpen}
       onOpenChange={onOpenChange}
+      includeTransfers={includeTransfers}
     />
   );
 }

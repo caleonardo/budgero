@@ -22,7 +22,10 @@ import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { asMilli } from '@shared/lib/currency/milli';
 import { getRunningBalance } from '@features/transactions/lib/running-balance';
-import { hasReadOnlyTransferCategory } from '@features/transactions/lib/transfer-category';
+import {
+  hasReadOnlyTransferCategory,
+  transferHasOffBudgetLeg,
+} from '@features/transactions/lib/transfer-category';
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { TransferRateDialog } from '@features/transactions/ui/transfer-rate/TransferRateDialog';
 import { TransactionLabelBadge } from '@features/transactions/ui/TransactionLabelBadge';
@@ -140,6 +143,7 @@ export const TransactionRow = React.memo(function TransactionRow({
   // Transfers move money between your own accounts and cannot be split.
   const isTransfer = !!transaction.TransferID && transaction.TransferID.trim() !== '';
   const isTransferCategoryReadOnly = hasReadOnlyTransferCategory(transaction);
+  const includeTransfersInCategoryPicker = transferHasOffBudgetLeg(transaction);
   const hasUnsafeMoney = hasUnsafeTransactionMoney(transaction);
   const activateCell = (column: TransactionEditableColumn) =>
     onActivateCell(transaction.ID, column);
@@ -499,6 +503,7 @@ export const TransactionRow = React.memo(function TransactionRow({
                   onOpenChange={(open) => {
                     if (!open) onDeactivateCell();
                   }}
+                  includeTransfers={includeTransfersInCategoryPicker}
                 />
               ) : (
                 <CellDisplayButton

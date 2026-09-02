@@ -40,6 +40,7 @@ import {
   calculateSplitRemaining,
   calculateTransferRateOverrides,
   calculateImpliedTransferRate,
+  resolveTransferCategories,
 } from './add-transaction.utils';
 
 export interface UseAddTransactionFormOptions {
@@ -147,14 +148,6 @@ export function useAddTransactionForm({
     setReceivedAmount(null);
   }, [form.transactionType, form.selectedFromAccount, form.selectedToAccount]);
 
-  // Detect if this is an on-budget → off-budget transfer
-  const isOffBudgetTransfer = React.useMemo(() => {
-    if (!form.isTransfer) return false;
-    const fromAcc = accounts.find((a) => a.ID.toString() === form.selectedFromAccount);
-    const toAcc = accounts.find((a) => a.ID.toString() === form.selectedToAccount);
-    return Boolean(fromAcc && toAcc && isAccountOnBudget(fromAcc) && !isAccountOnBudget(toAcc));
-  }, [form.isTransfer, form.selectedFromAccount, form.selectedToAccount, accounts]);
-
   const transferInvolvesOffBudget = React.useMemo(() => {
     if (!form.isTransfer) return false;
     const fromAcc = accounts.find((a) => a.ID.toString() === form.selectedFromAccount);
@@ -168,17 +161,18 @@ export function useAddTransactionForm({
     }
   }, [form.isTransfer, form.payee, setPayee, transferInvolvesOffBudget]);
 
-  const totalSplits = React.useMemo(
-    () => splitLines.reduce((s, l) => s + (l.amount || 0), 0),
+  const splitNet = React.useMemo(
+    () => splitLines.reduce((sum, line) => sum + (line.inflow || 0) - (line.outflow || 0), 0),
     [splitLines]
   );
 
   const parentSigned = React.useMemo(() => {
     const amt = form.amount ?? 0;
-    return form.isTransfer ? 0 : amt;
-  }, [form.isTransfer, form.amount]);
+    if (form.isTransfer) return 0;
+    return form.isInflow ? amt : -Number(amt);
+  }, [form.isInflow, form.isTransfer, form.amount]);
 
-  const remaining = calculateSplitRemaining(form.amount, totalSplits, form.isTransfer);
+  const remaining = calculateSplitRemaining(parentSigned, splitNet, form.isTransfer);
 
   // Track the last prefilled state to avoid re-prefilling when user clears fields
   // We store both transaction type AND a key representing the lastUsed data
@@ -250,13 +244,13 @@ export function useAddTransactionForm({
   }, [form.isInflow, categories, form.selectedCategory, setCategory]);
 
   React.useEffect(() => {
-    if (isOffBudgetTransfer && !form.selectedCategory) {
+    if (transferInvolvesOffBudget && !form.selectedCategory) {
       const transfersCategory = categories.find((cat) => cat.Name === 'Transfers');
       if (transfersCategory) {
         setCategory(transfersCategory.Name);
       }
     }
-  }, [isOffBudgetTransfer, form.selectedCategory, categories, setCategory]);
+  }, [transferInvolvesOffBudget, form.selectedCategory, categories, setCategory]);
 
   React.useEffect(() => {
     if (selectedAccountId) {
@@ -487,11 +481,11 @@ export function useAddTransactionForm({
 
             const transferId = generateTransferId();
 
-            // For off-budget transfers, use the selected category for the source side
-            // This allows users to categorize off-budget transfers as spending
-            const sourceCategory = isOffBudgetTransfer
-              ? form.selectedCategory || 'Transfers'
-              : 'Transfers';
+            const { sourceCategory, destinationCategory } = resolveTransferCategories({
+              sourceOnBudget: isAccountOnBudget(fromAccount),
+              destinationOnBudget: isAccountOnBudget(toAcc),
+              selectedCategory: form.selectedCategory,
+            });
 
             await onAddTransfer({
               date: form.transactionDate,
@@ -506,7 +500,7 @@ export function useAddTransactionForm({
                 exchangeRateOverride: sourceRateOverride,
               },
               destination: {
-                category: 'Transfers',
+                category: destinationCategory,
                 payee: destinationPayee ?? '',
                 amount: inflowAmount,
                 accountId: parseInt(form.selectedToAccount),
@@ -601,6 +595,20 @@ export function useAddTransactionForm({
         return;
       }
 
+      const invalidAmounts = splitLines.some(
+        (line) =>
+          line.inflow < 0 ||
+          line.outflow < 0 ||
+          (line.inflow === 0 && line.outflow === 0) ||
+          (line.inflow > 0 && line.outflow > 0)
+      );
+      if (invalidAmounts) {
+        toast.error('Invalid split amount', {
+          description: 'Each split line needs either an inflow or an outflow amount.',
+        });
+        return;
+      }
+
       const accountId = parseInt(form.selectedFromAccount);
       const uncategorized = categories.find((c) => c.Name === 'Uncategorized');
       const uncategorizedId = uncategorized?.ID ?? null;
@@ -620,7 +628,8 @@ export function useAddTransactionForm({
         transfer_account_id: l.transferAccountId ?? null,
         memo: l.memo ?? '',
         payee: l.payee ?? '',
-        amount: l.amount,
+        inflow: l.inflow,
+        outflow: l.outflow,
         order_index: idx,
       }));
 
@@ -643,7 +652,6 @@ export function useAddTransactionForm({
         await upsertSplits.mutateAsync({
           transactionId,
           splits: prepared,
-          type: form.isInflow ? 'inflow' : 'outflow',
           amountCurrency: 'native',
         });
 
@@ -696,7 +704,6 @@ export function useAddTransactionForm({
       resetFormFields,
       logAutofillApplications,
       autofillAppliedSuggestions,
-      isOffBudgetTransfer,
       transferInvolvesOffBudget,
       receivedAmount,
       onCancel,
@@ -729,9 +736,8 @@ export function useAddTransactionForm({
     toAccount,
     currencyCode,
     needsCurrencyConversion,
-    isOffBudgetTransfer,
     transferInvolvesOffBudget,
-    totalSplits,
+    splitNet,
     parentSigned,
     remaining,
     canUseCurrencyApi,

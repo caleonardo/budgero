@@ -40,6 +40,27 @@ export const extractSplitAmount = (
   return Math.abs(Number(s.amount ?? s.Amount ?? 0));
 };
 
+export const extractSplitFlows = (
+  split: SplitLike,
+  amountCurrency: 'converted' | 'native' = 'converted'
+): { inflow: number; outflow: number } => {
+  const s = split as Record<string, unknown>;
+  const inflow = Number(
+    amountCurrency === 'native'
+      ? (s.InflowNative ?? s.inflow_original ?? s.inflow ?? s.InflowConverted ?? 0)
+      : (s.inflow ?? s.InflowConverted ?? 0)
+  );
+  const outflow = Number(
+    amountCurrency === 'native'
+      ? (s.OutflowNative ?? s.outflow_original ?? s.outflow ?? s.OutflowConverted ?? 0)
+      : (s.outflow ?? s.OutflowConverted ?? 0)
+  );
+  if (inflow !== 0 || outflow !== 0) {
+    return { inflow: Math.abs(inflow), outflow: Math.abs(outflow) };
+  }
+  return { inflow: 0, outflow: Math.abs(Number(s.amount ?? s.Amount ?? 0)) };
+};
+
 /**
  * Convert a split to an editable format
  */
@@ -53,7 +74,8 @@ export const toEditableSplit = (
   transfer_account_id: number | null;
   memo: string;
   payee: string;
-  amount: number;
+  inflow: number;
+  outflow: number;
 } => {
   const s = split as Record<string, unknown>;
   return {
@@ -62,7 +84,7 @@ export const toEditableSplit = (
     transfer_account_id: (s.transfer_account_id ?? s.TransferAccountID ?? null) as number | null,
     memo: String(s.memo ?? s.Memo ?? ''),
     payee: String(s.payee ?? s.Payee ?? ''),
-    amount: extractSplitAmount(split, amountCurrency),
+    ...extractSplitFlows(split, amountCurrency),
   };
 };
 
@@ -75,7 +97,8 @@ export interface EditableSplit {
   transfer_account_id: number | null;
   memo: string;
   payee: string;
-  amount: number;
+  inflow: number;
+  outflow: number;
 }
 
 /**
