@@ -56,13 +56,9 @@ const FULL_GUIDE_LINK = (
 
 export function YnabExportGuide() {
   return (
-    // The guide item ships open on purpose: users who skipped it exported
-    // with locale date/number formats and got silently shifted dates and
-    // wrong amounts.
     <Accordion
       type="single"
       collapsible
-      defaultValue="guide"
       className="mt-2 rounded-lg border border-border/60 bg-muted/30 px-4"
     >
       <AccordionItem value="guide">

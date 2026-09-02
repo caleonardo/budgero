@@ -77,9 +77,11 @@ export function BudgetSwitcher() {
 
       {canManageBudgets && (
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-          <DialogContent>
-            <DialogTitle>Create New Budget</DialogTitle>
-            <DialogDescription>Set up a new budget to track your finances</DialogDescription>
+          <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto p-2 sm:p-4">
+            <DialogTitle className="sr-only">Create New Budget</DialogTitle>
+            <DialogDescription className="sr-only">
+              Set up a new budget to track your finances
+            </DialogDescription>
             <BudgetWizard onCreated={handleBudgetCreated} />
           </DialogContent>
         </Dialog>

@@ -64,18 +64,15 @@ export function ManualBudgetTab({
         <CurrencySelector
           value={displayCurrency}
           onValueChange={onDisplayCurrencyChange}
-          label="Display Currency"
+          label="Budget Currency"
         />
         <p className="text-xs text-muted-foreground">
-          The currency shown on amounts. This is for display only and can be changed anytime.
+          The base currency used for categories, assignments, reports, and converted account values.
         </p>
       </div>
 
       <div className="space-y-1.5">
         <IconPicker value={badgeIcon} onValueChange={onBadgeIconChange} label="Badge Icon" />
-        <p className="text-xs text-muted-foreground">
-          A small icon shown next to your budget name. Handy when you have multiple budgets.
-        </p>
       </div>
 
       <div className="space-y-1.5">

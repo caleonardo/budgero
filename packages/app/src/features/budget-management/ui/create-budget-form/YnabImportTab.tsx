@@ -168,9 +168,14 @@ export function YnabImportTab({
 
       <div className="space-y-3 sm:space-y-4">
         <div className="space-y-1.5">
-          <CurrencySelector value={currency} onValueChange={onCurrencyChange} label="Currency" />
+          <CurrencySelector
+            value={currency}
+            onValueChange={onCurrencyChange}
+            label="Budget Currency"
+          />
           <p className="text-xs text-muted-foreground">
-            The currency shown on amounts. This is for display only and can be changed anytime.
+            The base currency used for categories, assignments, reports, and converted account
+            values.
           </p>
         </div>
 
@@ -192,9 +197,6 @@ export function YnabImportTab({
             onValueChange={onImportBadgeIconChange}
             label="Budget Icon"
           />
-          <p className="text-xs text-muted-foreground">
-            A small icon shown next to your budget name. Handy when you have multiple budgets.
-          </p>
         </div>
       </div>
 

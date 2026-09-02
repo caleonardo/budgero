@@ -444,7 +444,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   }, [tab, onModeChange]);
 
   return (
-    <div className="space-y-3 sm:space-y-4 text-sm sm:text-base max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto sm:max-h-none sm:overflow-visible px-1 sm:px-0">
+    <div className="min-w-0 space-y-3 px-1 text-sm sm:space-y-4 sm:px-0 sm:text-base">
       <Tabs
         value={tab}
         onValueChange={(v) => setTab(v as 'manual' | 'core' | 'import')}
