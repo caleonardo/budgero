@@ -53,6 +53,7 @@ import { migration054 } from './054-add-budget-month-transaction-indexes.js';
 import { migration055 } from './055-add-transfer-rate-override-to-transactions.js';
 import { migration056 } from './056-index-transactions-transfer-id.js';
 import { migration057 } from './057-add-payee-to-transaction-splits.js';
+import { migration058 } from './058-add-dialog-background-blur-preference.js';
 
 import type { Migration } from '../migrations.js';
 
@@ -113,4 +114,5 @@ export const migrations: Migration[] = [
   migration055,
   migration056,
   migration057,
+  migration058,
 ];

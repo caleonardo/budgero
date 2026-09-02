@@ -29,6 +29,7 @@ import { UserPreferencesSync } from '@app/system/UserPreferencesSync';
 import { ActivityHeartbeat } from '@app/system/ActivityHeartbeat';
 import { RateResync } from '@app/system/RateResync';
 import { STARTUP_INTENT_KEY } from '@shared/lib/pwa-constants';
+import { PersistedDialogAppearanceProvider } from '@app/system/PersistedDialogAppearanceProvider';
 
 const PWA_SHORTCUT_CHANNEL = 'budgero-pwa-shortcut-intent-v1';
 const PWA_SHORTCUT_HANDOFF_TIMEOUT_MS = 250;
@@ -250,11 +251,13 @@ function App() {
 function CommonProviders({ children }: { children: React.ReactNode }) {
   return (
     <RuntimeProvider>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <ThemePresetProvider>
-          <LoadingProvider>{children}</LoadingProvider>
-        </ThemePresetProvider>
-      </ThemeProvider>
+      <PersistedDialogAppearanceProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemePresetProvider>
+            <LoadingProvider>{children}</LoadingProvider>
+          </ThemePresetProvider>
+        </ThemeProvider>
+      </PersistedDialogAppearanceProvider>
     </RuntimeProvider>
   );
 }

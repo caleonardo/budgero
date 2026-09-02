@@ -52,6 +52,14 @@ export class UserMetaService {
     this.queries.setPlanningNumberAnimations(value);
   }
 
+  getDialogBackgroundBlur(): boolean {
+    return this.queries.getDialogBackgroundBlur();
+  }
+
+  setDialogBackgroundBlur(value: boolean): void {
+    this.queries.setDialogBackgroundBlur(value);
+  }
+
   getRateCacheRetentionDays(): number {
     return this.queries.getRateCacheRetentionDays();
   }

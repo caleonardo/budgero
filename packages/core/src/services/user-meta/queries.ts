@@ -105,6 +105,22 @@ export class UserMetaQueries {
     run(this.db, `UPDATE user_meta SET PlanningNumberAnimations = ? WHERE ID = 1`, value ? 1 : 0);
   }
 
+  /** Blur the page behind open dialogs. On by default for existing installs. */
+  getDialogBackgroundBlur(): boolean {
+    this.ensureRow();
+    const row = getRow<{ DialogBackgroundBlur: boolean | number | null }>(
+      this.db,
+      `SELECT DialogBackgroundBlur FROM user_meta WHERE ID = 1`
+    );
+    if (!row || row.DialogBackgroundBlur == null) return true;
+    return row.DialogBackgroundBlur === true || row.DialogBackgroundBlur === 1;
+  }
+
+  setDialogBackgroundBlur(value: boolean): void {
+    this.ensureRow();
+    run(this.db, `UPDATE user_meta SET DialogBackgroundBlur = ? WHERE ID = 1`, value ? 1 : 0);
+  }
+
   setLastBackup(timestamp: string): void {
     this.ensureRow();
     run(

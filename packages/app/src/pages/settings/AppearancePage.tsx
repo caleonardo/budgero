@@ -19,7 +19,10 @@ import { useThemePreset } from '@shared/contexts/ThemePresetContext';
 import { BudgetTableSkeleton } from '@features/budget-planning/ui/BudgetTableSkeleton';
 import { AccountOrderCard } from '@features/account-management/ui/AccountOrderCard';
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
-import { usePlanningNumberAnimationsPreference } from '@shared/hooks/useUserPreferences';
+import {
+  useDialogBackgroundBlurPreference,
+  usePlanningNumberAnimationsPreference,
+} from '@shared/hooks/useUserPreferences';
 
 export default function AppearancePage() {
   const { installApp, installSupport, installInstructions, canInstall } = usePWA();
@@ -39,6 +42,11 @@ export default function AppearancePage() {
     updatePlanningNumberAnimations,
     isUpdating: isUpdatingPlanningNumberAnimations,
   } = usePlanningNumberAnimationsPreference();
+  const {
+    dialogBackgroundBlur,
+    updateDialogBackgroundBlur,
+    isUpdating: isUpdatingDialogBackgroundBlur,
+  } = useDialogBackgroundBlurPreference();
 
   const handleHomePageChange = (value: string) => {
     const page = value as HomePageOption;
@@ -179,9 +187,9 @@ export default function AppearancePage() {
             <Activity className="h-5 w-5" />
             Motion
           </CardTitle>
-          <CardDescription>Control interface animations.</CardDescription>
+          <CardDescription>Control interface animations and visual effects.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div className="space-y-0.5">
               <Label htmlFor="planning-number-animations">Animate planning amounts</Label>
@@ -194,6 +202,22 @@ export default function AppearancePage() {
               checked={planningNumberAnimations}
               onCheckedChange={updatePlanningNumberAnimations}
               disabled={isUpdatingPlanningNumberAnimations}
+            />
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="dialog-background-blur">Blur behind dialogs</Label>
+              <p className="text-sm text-muted-foreground">
+                Soften the page behind dialogs. Turn this off to keep account names and other
+                context sharp while a dialog is open.
+              </p>
+            </div>
+            <Switch
+              id="dialog-background-blur"
+              checked={dialogBackgroundBlur}
+              onCheckedChange={updateDialogBackgroundBlur}
+              disabled={isUpdatingDialogBackgroundBlur}
             />
           </div>
         </CardContent>

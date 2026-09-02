@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRuntime, useActiveSpaceId } from '@shared/runtime/runtime-provider';
+import {
+  useRuntime,
+  useActiveSpaceId,
+  useRuntimeInitialized,
+} from '@shared/runtime/runtime-provider';
 import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 
 /** Service interface for user preferences */
@@ -8,6 +12,7 @@ interface UserMetaService {
   getSuggestCategoryFromPayee?(): Promise<boolean> | boolean;
   getShowGroupPercent?(): Promise<boolean> | boolean;
   getPlanningNumberAnimations?(): Promise<boolean> | boolean;
+  getDialogBackgroundBlur?(): Promise<boolean> | boolean;
 }
 
 /** Runtime services with userMeta */
@@ -243,6 +248,69 @@ export function usePlanningNumberAnimationsPreference() {
     planningNumberAnimations,
     isLoading: queryRest.isLoading,
     updatePlanningNumberAnimations: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+  };
+}
+
+/** Whether the page behind open dialogs is blurred. On by default. */
+export function useDialogBackgroundBlur() {
+  const runtime = useRuntime();
+  const runtimeInitialized = useRuntimeInitialized();
+  const spaceId = useActiveSpaceId();
+  const spaceKey = spaceId ?? 'global';
+
+  return useQuery<boolean>({
+    queryKey: ['dialogBackgroundBlur', spaceKey],
+    queryFn: async () => {
+      const services = runtime.services() as ServicesWithUserMeta;
+      if (services?.userMeta?.getDialogBackgroundBlur) {
+        const result = await services.userMeta.getDialogBackgroundBlur();
+        return result ?? true;
+      }
+      return true;
+    },
+    enabled: runtimeInitialized,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+}
+
+function useUpdateDialogBackgroundBlur() {
+  const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
+  const queryClient = useQueryClient();
+  const queryKey = ['dialogBackgroundBlur', spaceId ?? 'global'] as const;
+
+  return useMutation<void, Error, boolean, { previous: boolean | undefined }>({
+    mutationFn: async (value: boolean) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'userPreferences.setDialogBackgroundBlur',
+        payload: { value },
+        meta: { label: 'Update dialog background blur setting' },
+      });
+    },
+    onMutate: async (value) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<boolean>(queryKey);
+      queryClient.setQueryData(queryKey, value);
+      return { previous };
+    },
+    onError: (_error, _value, context) => {
+      queryClient.setQueryData(queryKey, context?.previous ?? true);
+    },
+  });
+}
+
+/** Query + mutation pair for dialog background blur. */
+export function useDialogBackgroundBlurPreference() {
+  const { data: dialogBackgroundBlur = true, ...queryRest } = useDialogBackgroundBlur();
+  const updateMutation = useUpdateDialogBackgroundBlur();
+
+  return {
+    dialogBackgroundBlur,
+    isLoading: queryRest.isLoading,
+    updateDialogBackgroundBlur: updateMutation.mutate,
     isUpdating: updateMutation.isPending,
   };
 }

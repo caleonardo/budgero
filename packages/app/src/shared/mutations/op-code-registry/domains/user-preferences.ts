@@ -49,4 +49,17 @@ export const userPreferenceOps = {
     },
     invalidates: [['planningNumberAnimations'], ['userPreferences']],
   },
+  'userPreferences.setDialogBackgroundBlur': {
+    execute: async (args) => {
+      const services = S() as {
+        userMeta?: { setDialogBackgroundBlur(value: boolean): void };
+      };
+      if (!services.userMeta) {
+        throw new Error('userMeta service not available');
+      }
+      services.userMeta.setDialogBackgroundBlur(args.value as boolean);
+      return { success: true };
+    },
+    invalidates: [['dialogBackgroundBlur'], ['userPreferences']],
+  },
 } satisfies Record<string, OpCodeEntry>;
