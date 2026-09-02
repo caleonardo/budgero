@@ -12,15 +12,21 @@ const chartState = vi.hoisted(() => ({
 vi.mock('@shared/ui/echart', () => ({
   EChart: ({ option, onMarkClick }: { option: unknown; onMarkClick?: (mark: unknown) => void }) => {
     chartState.option = option;
+    const select = (name: string) => {
+      const series = option as { series: { data: { name: string }[] }[] };
+      const dataIndex = series.series[0].data.findIndex((item) => item.name.trim() === name);
+      const selectedName = series.series[0].data[dataIndex]?.name ?? name;
+      onMarkClick?.({ name: selectedName, dataIndex, value: 0, seriesName: '' });
+    };
     return (
-      <button
-        type="button"
-        onClick={() =>
-          onMarkClick?.({ name: 'Other spending', dataIndex: 0, value: 0, seriesName: '' })
-        }
-      >
-        Select Other spending
-      </button>
+      <>
+        <button type="button" onClick={() => select('Other spending')}>
+          Select Other spending
+        </button>
+        <button type="button" onClick={() => select('Fixed')}>
+          Select Fixed
+        </button>
+      </>
     );
   },
 }));
@@ -132,10 +138,51 @@ describe('FlowReport', () => {
     expect(destinationNames()).not.toContain('Category 1');
     expect(destinationNames()).not.toContain('Other spending');
     expect(destinationColor('Category 10')).not.toBe('#71717a');
-    expect(screen.getByRole('button', { name: '← Collapse Other' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '← Back to Money Map' })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: '← Collapse Other' }));
+    fireEvent.click(screen.getByRole('button', { name: '← Back to Money Map' }));
     expect(chartType()).toBe('sankey');
     expect(destinationNames()).toContain('Other spending');
+  });
+
+  it('opens a group as a category treemap and returns to the Money Map', () => {
+    const data: AnalyticsData = {
+      budgetId: 1,
+      isLoading: false,
+      allTxns: [],
+      txns: [
+        {
+          ...transaction(100),
+          category: 'Salary',
+          groupName: 'Income',
+          inflow: 1_000_000,
+          outflow: 0,
+          isIncome: true,
+        },
+        { ...transaction(1), category: 'Housing', groupName: 'Fixed', outflow: 300_000 },
+        { ...transaction(2), category: 'Energy', groupName: 'Fixed', outflow: 100_000 },
+        { ...transaction(3), category: 'Groceries', groupName: 'Variable', outflow: 80_000 },
+      ],
+      accounts: [],
+      onBudgetAccountIds: new Set([1]),
+      categories: [],
+      categoryGroups: [],
+      labels: [],
+      payees: [],
+    };
+
+    render(<FlowReport data={data} />);
+    expect(chartType()).toBe('sankey');
+    expect(destinationNames()).toContain('Fixed');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Select Fixed' }));
+    expect(chartType()).toBe('treemap');
+    expect(destinationNames()).toEqual(['Housing', 'Energy']);
+    expect(destinationNames()).not.toContain('Groceries');
+    expect(screen.getByText('Inside Fixed · 2 categories')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '← Back to Money Map' }));
+    expect(chartType()).toBe('sankey');
+    expect(destinationNames()).toContain('Fixed');
   });
 });

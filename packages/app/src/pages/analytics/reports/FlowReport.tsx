@@ -4,7 +4,11 @@ import { Layers3, Tags } from 'lucide-react';
 import { trendTextClass } from '@shared/lib/amount-color';
 import { EChart } from '@shared/ui/echart';
 import { AnimatedNumber } from '@shared/ui/animated-number';
-import { buildFlowGraph, type FlowSpendingDimension } from '../analytics-model';
+import {
+  buildDimensionTotals,
+  buildFlowGraph,
+  type FlowSpendingDimension,
+} from '../analytics-model';
 import type { AnalyticsData } from '../useAnalyticsData';
 import {
   inkOnFill,
@@ -18,13 +22,15 @@ import { PanelSectionTitle, ProportionRow, StatTile } from '../components/panels
 
 const MAX_DESTINATIONS = 8;
 
+type FlowDrilldown = { kind: 'other' } | { kind: 'group'; name: string };
+
 interface FlowReportProps {
   data: AnalyticsData;
 }
 
 export function FlowReport({ data }: FlowReportProps) {
   const [dimension, setDimension] = useState<FlowSpendingDimension>('group');
-  const [otherExpanded, setOtherExpanded] = useState(false);
+  const [drilldown, setDrilldown] = useState<FlowDrilldown | null>(null);
   const palette = usePalette();
   const money = useMoneyFormatters();
 
@@ -32,7 +38,6 @@ export function FlowReport({ data }: FlowReportProps) {
     () => buildFlowGraph(data.txns, data.onBudgetAccountIds, MAX_DESTINATIONS, dimension),
     [data.txns, data.onBudgetAccountIds, dimension]
   );
-  const showingOther = otherExpanded && collapsedGraph.foldedDestinations.length > 0;
   const graph = collapsedGraph;
 
   const net = graph.totalIncome - graph.totalSpending;
@@ -79,28 +84,59 @@ export function FlowReport({ data }: FlowReportProps) {
     () =>
       collapsedGraph.foldedDestinations.map((destination, index) => ({
         ...destination,
+        key: `other:${destination.name}:${index}`,
         color: palette.series[index % palette.series.length],
       })),
     [collapsedGraph.foldedDestinations, palette.series]
   );
 
+  const groupCategoryRows = useMemo(() => {
+    if (drilldown?.kind !== 'group') return [];
+    return buildDimensionTotals(
+      data.txns.filter((txn) => txn.groupName === drilldown.name),
+      'category',
+      data.onBudgetAccountIds
+    ).map((category, index) => ({
+      key: category.key,
+      name: category.name,
+      value: category.total,
+      color: palette.series[index % palette.series.length],
+    }));
+  }, [data.onBudgetAccountIds, data.txns, drilldown, palette.series]);
+
+  const drilldownRows = drilldown?.kind === 'group' ? groupCategoryRows : otherRows;
+  const showingDrilldown = drilldown !== null && drilldownRows.length > 0;
+  const drilldownTitle = drilldown?.kind === 'group' ? drilldown.name : 'Other spending';
+  const drilldownItemLabel = drilldown?.kind === 'group' ? 'categories' : dimensionLabel;
+
+  const drillableGroupNames = useMemo(
+    () =>
+      new Set(
+        graph.nodes
+          .filter((node) => node.slot === 'group' && node.name.trim() !== 'Other spending')
+          .map((node) => node.name.trim())
+      ),
+    [graph.nodes]
+  );
+
   const destinationRows = useMemo(() => {
-    if (showingOther) return otherRows;
+    if (showingDrilldown) return drilldownRows;
 
     return graph.links
       .filter((link) => link.source === 'Income')
       .map((link) => ({
+        key: `destination:${link.target}`,
         name: link.target.trim(),
         value: link.value,
         color: nodeColors.get(link.target) ?? palette.chrome.other,
       }))
       .sort((a, b) => b.value - a.value);
-  }, [graph.links, nodeColors, otherRows, palette.chrome.other, showingOther]);
+  }, [drilldownRows, graph.links, nodeColors, palette.chrome.other, showingDrilldown]);
 
   const option = useMemo<EChartsCoreOption>(() => {
     const { chrome } = palette;
-    if (showingOther) {
-      const otherTotal = otherRows.reduce((sum, row) => sum + row.value, 0);
+    if (showingDrilldown) {
+      const drilldownTotal = drilldownRows.reduce((sum, row) => sum + row.value, 0);
       return {
         tooltip: {
           ...tooltipBase(chrome),
@@ -112,11 +148,11 @@ export function FlowReport({ data }: FlowReportProps) {
               data: { itemStyle?: { color?: string } };
             };
             const value = Math.round(item.value * 1000);
-            return tooltipHtml(`Inside Other · ${dimensionLabel}`, [
+            return tooltipHtml(`Inside ${drilldownTitle} · ${drilldownItemLabel}`, [
               {
                 color: item.data.itemStyle?.color ?? chrome.other,
                 name: item.name,
-                value: `${money.amount(value)} · ${otherTotal > 0 ? `${((value / otherTotal) * 100).toFixed(1)}%` : '0%'}`,
+                value: `${money.amount(value)} · ${drilldownTotal > 0 ? `${((value / drilldownTotal) * 100).toFixed(1)}%` : '0%'}`,
               },
             ]);
           },
@@ -142,11 +178,12 @@ export function FlowReport({ data }: FlowReportProps) {
               overflow: 'truncate',
               formatter: (params: { name: string }) => params.name,
             },
-            data: otherRows.map((row) => ({
+            data: drilldownRows.map((row) => ({
               name: row.name,
               value: row.value / 1000,
               itemStyle: { color: row.color },
               label: { color: inkOnFill(row.color) },
+              cursor: drilldown?.kind === 'other' && dimension === 'group' ? 'pointer' : 'default',
             })),
           },
         ],
@@ -203,7 +240,11 @@ export function FlowReport({ data }: FlowReportProps) {
           data: graph.nodes.map((node) => ({
             name: node.name,
             itemStyle: { color: nodeColors.get(node.name) },
-            cursor: node.name === 'Other spending' ? 'pointer' : 'default',
+            cursor:
+              node.slot === 'group' &&
+              (dimension === 'group' || node.name.trim() === 'Other spending')
+                ? 'pointer'
+                : 'default',
           })),
           links: graph.links.map((link) => ({
             source: link.source,
@@ -213,7 +254,18 @@ export function FlowReport({ data }: FlowReportProps) {
         },
       ],
     };
-  }, [dimensionLabel, graph, money, nodeColors, otherRows, palette, showingOther]);
+  }, [
+    dimension,
+    drilldown,
+    drilldownItemLabel,
+    drilldownRows,
+    drilldownTitle,
+    graph,
+    money,
+    nodeColors,
+    palette,
+    showingDrilldown,
+  ]);
 
   const largest = destinationRows[0];
 
@@ -228,8 +280,8 @@ export function FlowReport({ data }: FlowReportProps) {
         />
       }
       subtitle={
-        showingOther
-          ? `Inside Other spending · ${collapsedGraph.foldedDestinations.length} ${dimensionLabel}`
+        showingDrilldown
+          ? `Inside ${drilldownTitle} · ${drilldownRows.length} ${drilldownItemLabel}`
           : savingsRate === null
             ? `Every stream from income to ${dimensionLabel}`
             : `Income → ${dimensionLabel}; ${savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`}`
@@ -239,7 +291,7 @@ export function FlowReport({ data }: FlowReportProps) {
           value={dimension}
           onChange={(nextDimension) => {
             setDimension(nextDimension);
-            setOtherExpanded(false);
+            setDrilldown(null);
           }}
           ariaLabel="Money Map spending detail"
           options={[
@@ -252,12 +304,30 @@ export function FlowReport({ data }: FlowReportProps) {
         <EChart
           option={option}
           ariaLabel={
-            showingOther ? `Other spending ${dimensionLabel} breakdown` : 'Income to spending flow'
+            showingDrilldown
+              ? `${drilldownTitle} ${drilldownItemLabel} breakdown`
+              : 'Income to spending flow'
           }
           className="h-[440px]"
           onMarkClick={(mark) => {
-            if (mark.name?.trim() === 'Other spending') {
-              setOtherExpanded(true);
+            const selectedName = mark.name?.trim();
+            if (!selectedName) return;
+
+            if (drilldown?.kind === 'other' && dimension === 'group') {
+              if (otherRows.some((row) => row.name === selectedName)) {
+                setDrilldown({ kind: 'group', name: selectedName });
+              }
+              return;
+            }
+
+            const selectedNode = graph.nodes[mark.dataIndex];
+            if (!selectedNode || selectedNode.slot !== 'group' || selectedNode.name !== mark.name) {
+              return;
+            }
+            if (selectedName === 'Other spending') {
+              setDrilldown({ kind: 'other' });
+            } else if (dimension === 'group') {
+              setDrilldown({ kind: 'group', name: selectedName });
             }
           }}
         />
@@ -287,38 +357,51 @@ export function FlowReport({ data }: FlowReportProps) {
               valueClassName={savingsRate !== null ? trendTextClass(savingsRate) : undefined}
             />
           </div>
-          {showingOther ? (
+          {showingDrilldown ? (
             <button
               type="button"
-              onClick={() => setOtherExpanded(false)}
+              onClick={() => setDrilldown(null)}
               className="mt-4 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              ← Collapse Other
+              ← Back to Money Map
             </button>
           ) : null}
           <PanelSectionTitle>
-            {showingOther
-              ? `Inside Other · ${dimensionLabel}`
+            {showingDrilldown
+              ? `Inside ${drilldownTitle} · ${drilldownItemLabel}`
               : dimension === 'group'
                 ? 'Destination groups'
                 : 'Destination categories'}
           </PanelSectionTitle>
-          <div className={showingOther ? 'max-h-[300px] overflow-y-auto pr-1' : undefined}>
+          <div className={showingDrilldown ? 'max-h-[300px] overflow-y-auto pr-1' : undefined}>
             {destinationRows.map((row) => {
-              const isOther = row.name === 'Other spending';
+              const isOther = !showingDrilldown && row.name === 'Other spending';
+              const isDrillableGroup =
+                dimension === 'group' &&
+                (showingDrilldown
+                  ? drilldown?.kind === 'other'
+                  : drillableGroupNames.has(row.name));
               return (
                 <ProportionRow
-                  key={row.name}
+                  key={row.key}
                   color={row.color}
                   name={
                     isOther
                       ? `Other spending (${collapsedGraph.foldedDestinations.length} ${dimensionLabel}) — inspect`
-                      : row.name
+                      : isDrillableGroup
+                        ? `${row.name} — inspect`
+                        : row.name
                   }
                   value={money.amount(row.value)}
                   fraction={largest && largest.value > 0 ? row.value / largest.value : 0}
-                  onClick={isOther ? () => setOtherExpanded(true) : undefined}
-                  expanded={isOther ? false : undefined}
+                  onClick={
+                    isOther
+                      ? () => setDrilldown({ kind: 'other' })
+                      : isDrillableGroup
+                        ? () => setDrilldown({ kind: 'group', name: row.name })
+                        : undefined
+                  }
+                  expanded={isOther || isDrillableGroup ? false : undefined}
                 />
               );
             })}
