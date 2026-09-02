@@ -51,4 +51,49 @@ describe('op registry invalidation through MutationExecutor', () => {
     const updated = qc.getQueryData<{ ID: number; Name: string }[]>(['budgets', spaceId]);
     expect(updated?.[0]?.Name).toBe('new');
   });
+
+  it('accounts.create refreshes linked mortgage categories and groups', async () => {
+    const spaceId = 'space-1';
+    const qc = new QueryClient();
+
+    await Promise.all([
+      qc.prefetchQuery({
+        queryKey: ['categories', spaceId, 1],
+        queryFn: async () => [{ ID: 1, Name: 'Groceries' }],
+        staleTime: 60_000,
+      }),
+      qc.prefetchQuery({
+        queryKey: ['categoryGroups', spaceId, 1],
+        queryFn: async () => [{ ID: 1, Name: 'Everyday' }],
+        staleTime: 60_000,
+      }),
+    ]);
+
+    const executor = new MutationExecutor({
+      executeOp: async () => ({ ID: 2, Name: 'Home Mortgage' }),
+      getUndoSpec: () => undefined,
+      getInvalidatesForOp,
+      getQueryClient: () => qc as unknown as QueryClientLike,
+      pushUndo: () => {},
+      recordHistory: () => {},
+      getActiveSpaceId: () => spaceId,
+      getSpaceRole: () => 'owner',
+    });
+
+    await executor.execute({
+      op: 'accounts.create',
+      payload: {
+        name: 'Home Mortgage',
+        budgetId: 1,
+        type: 'Mortgage',
+        currency: 'USD',
+        balance: 0,
+        onBudget: false,
+      },
+      spaceId,
+    });
+
+    expect(qc.getQueryState(['categories', spaceId, 1])?.isInvalidated).toBe(true);
+    expect(qc.getQueryState(['categoryGroups', spaceId, 1])?.isInvalidated).toBe(true);
+  });
 });

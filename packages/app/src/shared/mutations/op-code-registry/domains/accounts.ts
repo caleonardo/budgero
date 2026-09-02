@@ -18,6 +18,10 @@ export const accountOps = {
     },
     invalidates: [
       ['accounts', '*'], // Will match ["accounts", budgetId]
+      // Debt and credit accounts create their linked category/group as part
+      // of account creation, so dropdowns must refetch them immediately.
+      ['categories', '*'],
+      ['categoryGroups', '*'],
       ['monthlyBudget', '*'],
       ['onBudgetBalance'],
       ['onBudgetBalanceByDates'],
@@ -42,6 +46,9 @@ export const accountOps = {
       ['accounts', '*'], // Will match ["accounts", budgetId]
       ['account', '*'], // Will match ["account", id]
       ['transactions', '*'], // Currency/type edits can rewrite transactions
+      // Type/name edits can create, relink, or rename system categories.
+      ['categories', '*'],
+      ['categoryGroups', '*'],
       ['monthlyBudget', '*'], // on_budget affects budget calculations
       ['onBudgetBalance'],
       ['onBudgetBalanceByDates'],
@@ -142,6 +149,9 @@ export const accountOps = {
       ['uncategorizedTransactions', '*'], // For uncategorized badges
       ['allAccountsMonthlyTransactions', '*'], // For all accounts monthly transactions
       ['accounts'],
+      // This legacy liability-start path also ensures its category/group.
+      ['categories', '*'],
+      ['categoryGroups', '*'],
       ['monthlyBudget', '*'],
       ['readyToAssign'],
       ['monthlySpending', '*'], // Analytics queries
@@ -187,6 +197,9 @@ export const accountOps = {
     invalidates: [
       ['accounts', '*'], // Will match ["accounts", budgetId]
       ['transactions'],
+      // Deleting a debt/credit account removes its linked system category.
+      ['categories', '*'],
+      ['categoryGroups', '*'],
       ['monthlyBudget', '*'],
       ['onBudgetBalance'],
       ['onBudgetBalanceByDates'],
