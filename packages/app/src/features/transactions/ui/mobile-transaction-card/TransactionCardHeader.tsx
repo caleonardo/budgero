@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
 import { Checkbox } from '@shared/ui/checkbox';
-import { Badge } from '@shared/ui/badge';
 import { Calendar as CalendarIcon, Tag } from 'lucide-react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
-import { hexToRgba } from '@shared/lib/color/hex';
 import { formatShortDate } from '@shared/lib/date-utils';
 import { parseISO } from 'date-fns';
 import { asMilli, formatMilli } from '@shared/lib/currency/milli';
 import { StatusIndicatorPopover } from '@features/transactions/ui/StatusIndicatorPopover';
+import { TransactionLabelBadge } from '@features/transactions/ui/TransactionLabelBadge';
 
 interface TransactionCardHeaderProps {
   transaction: GetTransactionsByAccountRow;
@@ -37,8 +36,6 @@ export const TransactionCardHeader = React.memo(function TransactionCardHeader({
   }, [transaction]);
 
   const categoryDisplay = displayCategoryOverride || transaction.Category || '';
-  const labelColor = transaction.LabelColor || '#9CA3AF';
-
   return (
     <div className="flex flex-1 items-center gap-2 min-w-0">
       {!hideSelection && (
@@ -81,24 +78,12 @@ export const TransactionCardHeader = React.memo(function TransactionCardHeader({
             <span className="truncate">{categoryDisplay}</span>
           </span>
           {transaction.Label && (
-            <Badge
-              variant="outline"
-              className="h-5 rounded-full px-1.5 py-0 sm:px-2 max-w-[1.625rem] sm:max-w-[12rem] inline-flex items-center gap-1"
-              style={{
-                backgroundColor: hexToRgba(labelColor, 0.12),
-                borderColor: hexToRgba(labelColor, 0.4),
-              }}
-              title={transaction.Label}
-              aria-label={`Label: ${transaction.Label}`}
-            >
-              <span
-                className="inline-block h-2 w-2 rounded-full border border-white/60 shrink-0"
-                style={{ backgroundColor: labelColor }}
-                aria-hidden
-              />
-              <span className="sr-only sm:hidden">{transaction.Label}</span>
-              <span className="hidden sm:inline truncate">{transaction.Label}</span>
-            </Badge>
+            <TransactionLabelBadge
+              label={transaction.Label}
+              color={transaction.LabelColor}
+              className="max-w-[1.625rem] sm:max-w-[12rem]"
+              hideTextOnSmallScreens
+            />
           )}
         </div>
       </div>

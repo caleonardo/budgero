@@ -25,6 +25,7 @@ import { getRunningBalance } from '@features/transactions/lib/running-balance';
 import { hasReadOnlyTransferCategory } from '@features/transactions/lib/transfer-category';
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { TransferRateDialog } from '@features/transactions/ui/transfer-rate/TransferRateDialog';
+import { TransactionLabelBadge } from '@features/transactions/ui/TransactionLabelBadge';
 import type {
   TransactionEditableColumn,
   TransactionEditorDirectories,
@@ -435,10 +436,19 @@ export const TransactionRow = React.memo(function TransactionRow({
             />
           ) : (
             <CellDisplayButton
-              value={transaction.Label || 'No label'}
+              value={
+                transaction.Label ? (
+                  <TransactionLabelBadge label={transaction.Label} color={transaction.LabelColor} />
+                ) : (
+                  'No label'
+                )
+              }
               title={transaction.Label || 'Edit label'}
               onClick={() => activateCell('label')}
-              className={transaction.Label ? undefined : 'text-muted-foreground'}
+              className={cn(
+                transaction.Label && 'flex items-center',
+                !transaction.Label && 'text-muted-foreground'
+              )}
             />
           )}
         </TableCell>
