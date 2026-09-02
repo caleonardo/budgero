@@ -30,6 +30,7 @@ vi.mock('@shared/ui/animated-number', () => ({
 }));
 
 vi.mock('../components/chart-utils', () => ({
+  inkOnFill: () => '#ffffff',
   tooltipBase: () => ({}),
   tooltipHtml: () => '',
   useMoneyFormatters: () => ({
@@ -87,8 +88,13 @@ function destinationColor(name: string): string | undefined {
   return option.series[0].data.find((node) => node.name.trim() === name)?.itemStyle?.color;
 }
 
+function chartType(): string {
+  const option = chartState.option as { series: { type: string }[] };
+  return option.series[0].type;
+}
+
 describe('FlowReport', () => {
-  it('toggles to categories and expands Other into colored graph nodes', () => {
+  it('toggles to categories and expands Other into a focused colored breakdown', () => {
     const income: AnalyticsTxn = {
       ...transaction(100),
       category: 'Salary',
@@ -115,14 +121,21 @@ describe('FlowReport', () => {
     expect(destinationNames()).toContain('Other spending');
 
     fireEvent.click(screen.getByRole('button', { name: 'Categories' }));
+    expect(chartType()).toBe('sankey');
     expect(destinationNames()).toContain('Category 1');
     expect(destinationNames()).toContain('Other spending');
     expect(destinationColor('Other spending')).toBe('#71717a');
 
     fireEvent.click(screen.getByRole('button', { name: 'Select Other spending' }));
+    expect(chartType()).toBe('treemap');
     expect(destinationNames()).toContain('Category 10');
+    expect(destinationNames()).not.toContain('Category 1');
     expect(destinationNames()).not.toContain('Other spending');
     expect(destinationColor('Category 10')).not.toBe('#71717a');
     expect(screen.getByRole('button', { name: '← Collapse Other' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '← Collapse Other' }));
+    expect(chartType()).toBe('sankey');
+    expect(destinationNames()).toContain('Other spending');
   });
 });

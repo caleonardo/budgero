@@ -7,6 +7,7 @@ import { AnimatedNumber } from '@shared/ui/animated-number';
 import { buildFlowGraph, type FlowSpendingDimension } from '../analytics-model';
 import type { AnalyticsData } from '../useAnalyticsData';
 import {
+  inkOnFill,
   tooltipBase,
   tooltipHtml,
   useMoneyFormatters,
@@ -32,17 +33,12 @@ export function FlowReport({ data }: FlowReportProps) {
     [data.txns, data.onBudgetAccountIds, dimension]
   );
   const showingOther = otherExpanded && collapsedGraph.foldedDestinations.length > 0;
-  const graph = useMemo(
-    () =>
-      showingOther
-        ? buildFlowGraph(data.txns, data.onBudgetAccountIds, Number.MAX_SAFE_INTEGER, dimension)
-        : collapsedGraph,
-    [data.txns, data.onBudgetAccountIds, dimension, collapsedGraph, showingOther]
-  );
+  const graph = collapsedGraph;
 
   const net = graph.totalIncome - graph.totalSpending;
   const savingsRate = graph.totalIncome > 0 ? (net / graph.totalIncome) * 100 : null;
   const isEmpty = graph.links.length === 0;
+  const dimensionLabel = dimension === 'group' ? 'groups' : 'categories';
 
   // Node colors by role: income sources cycle the cool half of the palette,
   // spending groups the fixed slot order; results use the status pair.
@@ -79,8 +75,84 @@ export function FlowReport({ data }: FlowReportProps) {
     return colors;
   }, [graph.nodes, palette]);
 
+  const otherRows = useMemo(
+    () =>
+      collapsedGraph.foldedDestinations.map((destination, index) => ({
+        ...destination,
+        color: palette.series[index % palette.series.length],
+      })),
+    [collapsedGraph.foldedDestinations, palette.series]
+  );
+
+  const destinationRows = useMemo(() => {
+    if (showingOther) return otherRows;
+
+    return graph.links
+      .filter((link) => link.source === 'Income')
+      .map((link) => ({
+        name: link.target.trim(),
+        value: link.value,
+        color: nodeColors.get(link.target) ?? palette.chrome.other,
+      }))
+      .sort((a, b) => b.value - a.value);
+  }, [graph.links, nodeColors, otherRows, palette.chrome.other, showingOther]);
+
   const option = useMemo<EChartsCoreOption>(() => {
     const { chrome } = palette;
+    if (showingOther) {
+      const otherTotal = otherRows.reduce((sum, row) => sum + row.value, 0);
+      return {
+        tooltip: {
+          ...tooltipBase(chrome),
+          trigger: 'item' as const,
+          formatter: (params: unknown) => {
+            const item = params as {
+              name: string;
+              value: number;
+              data: { itemStyle?: { color?: string } };
+            };
+            const value = Math.round(item.value * 1000);
+            return tooltipHtml(`Inside Other · ${dimensionLabel}`, [
+              {
+                color: item.data.itemStyle?.color ?? chrome.other,
+                name: item.name,
+                value: `${money.amount(value)} · ${otherTotal > 0 ? `${((value / otherTotal) * 100).toFixed(1)}%` : '0%'}`,
+              },
+            ]);
+          },
+        },
+        series: [
+          {
+            type: 'treemap',
+            roam: false,
+            nodeClick: false,
+            breadcrumb: { show: false },
+            top: 8,
+            right: 8,
+            bottom: 8,
+            left: 8,
+            itemStyle: {
+              borderColor: chrome.surface,
+              borderWidth: 2,
+              gapWidth: 2,
+            },
+            label: {
+              show: true,
+              fontSize: 12,
+              overflow: 'truncate',
+              formatter: (params: { name: string }) => params.name,
+            },
+            data: otherRows.map((row) => ({
+              name: row.name,
+              value: row.value / 1000,
+              itemStyle: { color: row.color },
+              label: { color: inkOnFill(row.color) },
+            })),
+          },
+        ],
+      };
+    }
+
     return {
       tooltip: {
         ...tooltipBase(chrome),
@@ -141,22 +213,9 @@ export function FlowReport({ data }: FlowReportProps) {
         },
       ],
     };
-  }, [graph, nodeColors, palette, money]);
-
-  const destinationRows = useMemo(() => {
-    const rows = graph.links
-      .filter((link) => link.source === 'Income')
-      .map((link) => ({
-        name: link.target.trim(),
-        value: link.value,
-        color: nodeColors.get(link.target) ?? palette.chrome.other,
-      }))
-      .sort((a, b) => b.value - a.value);
-    return rows;
-  }, [graph.links, nodeColors, palette]);
+  }, [dimensionLabel, graph, money, nodeColors, otherRows, palette, showingOther]);
 
   const largest = destinationRows[0];
-  const dimensionLabel = dimension === 'group' ? 'groups' : 'categories';
 
   return (
     <ReportShell
@@ -169,9 +228,11 @@ export function FlowReport({ data }: FlowReportProps) {
         />
       }
       subtitle={
-        savingsRate === null
-          ? `Every stream from income to ${dimensionLabel}`
-          : `Income → ${dimensionLabel}; ${savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`}`
+        showingOther
+          ? `Inside Other spending · ${collapsedGraph.foldedDestinations.length} ${dimensionLabel}`
+          : savingsRate === null
+            ? `Every stream from income to ${dimensionLabel}`
+            : `Income → ${dimensionLabel}; ${savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`}`
       }
       controls={
         <ModeToggle
@@ -190,7 +251,9 @@ export function FlowReport({ data }: FlowReportProps) {
       chart={
         <EChart
           option={option}
-          ariaLabel="Income to spending flow"
+          ariaLabel={
+            showingOther ? `Other spending ${dimensionLabel} breakdown` : 'Income to spending flow'
+          }
           className="h-[440px]"
           onMarkClick={(mark) => {
             if (mark.name?.trim() === 'Other spending') {
@@ -234,10 +297,13 @@ export function FlowReport({ data }: FlowReportProps) {
             </button>
           ) : null}
           <PanelSectionTitle>
-            {dimension === 'group' ? 'Destination groups' : 'Destination categories'}
-            {showingOther ? ' · Other expanded' : ''}
+            {showingOther
+              ? `Inside Other · ${dimensionLabel}`
+              : dimension === 'group'
+                ? 'Destination groups'
+                : 'Destination categories'}
           </PanelSectionTitle>
-          <div>
+          <div className={showingOther ? 'max-h-[300px] overflow-y-auto pr-1' : undefined}>
             {destinationRows.map((row) => {
               const isOther = row.name === 'Other spending';
               return (
