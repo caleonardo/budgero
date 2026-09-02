@@ -52,11 +52,16 @@ interface YNABSplitGroup {
   containsTransfer: boolean;
 }
 
+function transferCounterpartyName(row: YNABRegisterRow): string | null {
+  // YNAB identifies register transfers through a synthetic payee named
+  // "Transfer : <account>". Ordinary payees, categories, and memos may also
+  // contain the word "transfer", so they must not participate in detection.
+  const match = (row.Payee || '').trim().match(/^transfer\s*:\s*(.+)$/i);
+  return match?.[1].trim() || null;
+}
+
 function isTransferRow(row: YNABRegisterRow): boolean {
-  const payee = (row.Payee || '').toLowerCase();
-  const category = (row.Category || '').toLowerCase();
-  const memo = (row.Memo || '').toLowerCase();
-  return payee.includes('transfer') || category.includes('transfer') || memo.includes('transfer');
+  return transferCounterpartyName(row) !== null;
 }
 
 function categoryKey(category: YNABCategoryDescriptor): string {
@@ -147,8 +152,7 @@ function detectSplitGroups(registerRows: YNABRegisterRow[]): YNABSplitGroup[] {
       (marker, partIndex) =>
         marker?.part === partIndex + 1 &&
         marker.total === firstMarker.total &&
-        sameSplitContainer(registerRows[index], rows[partIndex]) &&
-        (categoryDescriptor(rows[partIndex]) !== null || isTransferRow(rows[partIndex]))
+        sameSplitContainer(registerRows[index], rows[partIndex])
     );
 
     if (!complete) continue;
@@ -661,6 +665,7 @@ export class YNABImportService {
         isCreditAccountType(this.accountService.getAccount(id).Type)
       )
     );
+    const transferIdsByRowIndex = this.buildTransferIds(registerRows, accounts, numberFormat);
 
     type ImportUnit =
       | { kind: 'row'; row: YNABRegisterRow; originalIndex: number }
@@ -711,7 +716,8 @@ export class YNABImportService {
               incomeCategoryId,
               uncategorizedCategoryId,
               transfersCategoryId,
-              creditCardAccountIds
+              creditCardAccountIds,
+              transferIdsByRowIndex.get(unit.originalIndex + partIndex)
             );
             if (created) transactionsCreated++;
           }
@@ -741,7 +747,8 @@ export class YNABImportService {
           incomeCategoryId,
           uncategorizedCategoryId,
           transfersCategoryId,
-          creditCardAccountIds
+          creditCardAccountIds,
+          transferIdsByRowIndex.get(unit.originalIndex)
         );
         if (created) transactionsCreated++;
       }
@@ -752,6 +759,71 @@ export class YNABImportService {
     }
 
     return { transactionsCreated, splitTransactionsImported };
+  }
+
+  private buildTransferIds(
+    registerRows: YNABRegisterRow[],
+    accounts: Record<string, number>,
+    numberFormat: string
+  ): Map<number, string> {
+    interface TransferPairingState {
+      unmatchedInflows: string[];
+      unmatchedOutflows: string[];
+    }
+
+    const idsByRowIndex = new Map<number, string>();
+    const pairingStates = new Map<string, TransferPairingState>();
+
+    for (let rowIndex = 0; rowIndex < registerRows.length; rowIndex++) {
+      const row = registerRows[rowIndex];
+      const counterpartyName = transferCounterpartyName(row);
+      if (!counterpartyName) continue;
+
+      const currentAccountName = row.Account.trim();
+      const currentAccountId = accounts[currentAccountName];
+      const counterpartyAccountId = accounts[counterpartyName];
+      if (!currentAccountId || !counterpartyAccountId) continue;
+
+      const parsedDate = this.parseYNABDate(row.Date);
+      if (!parsedDate) continue;
+
+      const inflow = fromDecimal(
+        this.currencyParser.parseYNABAmountAdvanced(row.Inflow, numberFormat)
+      );
+      const outflow = fromDecimal(
+        this.currencyParser.parseYNABAmountAdvanced(row.Outflow, numberFormat)
+      );
+      const amount = Number(inflow) + Number(outflow);
+      const [firstAccountId, secondAccountId] = [currentAccountId, counterpartyAccountId].sort(
+        (left, right) => left - right
+      );
+      const splitMarker = parseSplitMarker(row.Memo || '');
+      const normalizedMemo = (splitMarker?.memo || row.Memo || '').trim().toLocaleLowerCase();
+      const pairingKey = JSON.stringify([
+        parsedDate,
+        amount,
+        firstAccountId,
+        secondAccountId,
+        normalizedMemo,
+      ]);
+      const state = pairingStates.get(pairingKey) || {
+        unmatchedInflows: [],
+        unmatchedOutflows: [],
+      };
+
+      const oppositeQueue = inflow > 0 ? state.unmatchedOutflows : state.unmatchedInflows;
+      const ownQueue = inflow > 0 ? state.unmatchedInflows : state.unmatchedOutflows;
+      let transferId = oppositeQueue.shift();
+      if (!transferId) {
+        transferId = `transfer_${parsedDate}_${amount}_${firstAccountId}_${secondAccountId}_${rowIndex + 1}`;
+        ownQueue.push(transferId);
+      }
+
+      idsByRowIndex.set(rowIndex, transferId);
+      pairingStates.set(pairingKey, state);
+    }
+
+    return idsByRowIndex;
   }
 
   private resolveTransactionCategory(
@@ -861,7 +933,8 @@ export class YNABImportService {
     incomeCategoryId: number,
     uncategorizedCategoryId: number,
     transfersCategoryId: number,
-    creditCardAccountIds: Set<number>
+    creditCardAccountIds: Set<number>,
+    transferIdOverride?: string
   ): Promise<boolean> {
     if (!row.Account || !row.Date) return false;
 
@@ -909,7 +982,10 @@ export class YNABImportService {
     }
 
     if (this.isTransfer(row)) {
-      transferId = `transfer_${parsedDate}_${inflow + outflow}`;
+      // Use the precomputed, occurrence-aware ID so repeated equal transfers
+      // on one day remain distinct pairs. Keep a fallback for malformed exports
+      // whose counterparty account is absent.
+      transferId = transferIdOverride || `transfer_${parsedDate}_${inflow + outflow}_${rowIndex}`;
 
       // YNAB transfer rows have an empty category, so the block above defaulted
       // categoryId to Uncategorized. Reset it to 0 so addTransaction assigns the
@@ -921,26 +997,16 @@ export class YNABImportService {
       const currentAccount = row.Account.trim();
       if (inflow > 0) {
         // This is the receiving account
-        if (rawPayee && payeeLower.includes('transfer')) {
-          const payeeParts = rawPayee.split(':');
-          if (payeeParts.length > 1) {
-            const sourceAccount = payeeParts[1].trim();
-            memo = `Transfer from ${sourceAccount} to ${currentAccount}`;
-          } else {
-            memo = `Transfer to ${currentAccount}`;
-          }
-        }
+        const sourceAccount = transferCounterpartyName(row);
+        memo = sourceAccount
+          ? `Transfer from ${sourceAccount} to ${currentAccount}`
+          : `Transfer to ${currentAccount}`;
       } else if (outflow > 0) {
         // This is the sending account
-        if (rawPayee && payeeLower.includes('transfer')) {
-          const payeeParts = rawPayee.split(':');
-          if (payeeParts.length > 1) {
-            const destAccount = payeeParts[1].trim();
-            memo = `Transfer from ${currentAccount} to ${destAccount}`;
-          } else {
-            memo = `Transfer from ${currentAccount}`;
-          }
-        }
+        const destinationAccount = transferCounterpartyName(row);
+        memo = destinationAccount
+          ? `Transfer from ${currentAccount} to ${destinationAccount}`
+          : `Transfer from ${currentAccount}`;
       }
     }
 

@@ -736,6 +736,194 @@ describe('YNABImportService — migration edge cases', () => {
     }
   });
 
+  it('does not mistake ordinary transfer-related text for an account transfer', async () => {
+    const JSZip = (await import('jszip')).default;
+    const registerCsv = [
+      '"Account","Date","Payee","Category Group/Category","Category Group","Category","Memo","Outflow","Inflow"',
+      '"Checking","2026-09-01","Wire Transfer Service","Everyday: Fees","Everyday","Fees","Transfer confirmation fee","$12.00","$0.00"',
+    ].join('\r\n');
+    const planCsv = [
+      '"Month","Category Group/Category","Category Group","Category","Assigned","Activity","Available"',
+      '"Sep 2026","Everyday: Fees","Everyday","Fees","$0.00","$0.00","$0.00"',
+    ].join('\r\n');
+    const zip = new JSZip();
+    zip.file('Transfer Text - Register.csv', registerCsv);
+    zip.file('Transfer Text - Plan.csv', planCsv);
+
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const importer = new YNABImportService(adapter);
+      const result = await importer.importYNABFromZipWithSummary(
+        await zip.generateAsync({ type: 'uint8array' }),
+        {
+          spaceId: TEST_SPACE_ID,
+          budgetName: 'Transfer text',
+          currency: 'USD',
+          numberFormat: '123,456.78',
+          badgeIcon: 'HelpCircle',
+        }
+      );
+
+      const transaction = adapter
+        .prepare(
+          `SELECT t.Payee, t.Memo, t.TransferID, c.Name AS Category
+           FROM transactions t
+           JOIN categories c ON c.ID = t.CategoryID
+           WHERE t.BudgetID = ?`
+        )
+        .get(result.budgetId);
+
+      expect(transaction).toEqual({
+        Payee: 'Wire Transfer Service',
+        Memo: 'Transfer confirmation fee',
+        TransferID: null,
+        Category: 'Fees',
+      });
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('imports uncategorized and mixed-direction split lines without losing their amounts', async () => {
+    const JSZip = (await import('jszip')).default;
+    const registerCsv = [
+      '"Account","Date","Payee","Category Group/Category","Category Group","Category","Memo","Outflow","Inflow"',
+      '"Checking","2026-09-01","Mystery Store","","","","Split (1/2): Unknown item","$10.00","$0.00"',
+      '"Checking","2026-09-01","Grocer","Everyday: Food","Everyday","Food","Split (2/2): Groceries","$20.00","$0.00"',
+      '"Checking","2026-09-02","Store","Everyday: Food","Everyday","Food","Split (1/2): Purchase","$100.00","$0.00"',
+      '"Checking","2026-09-02","Store","Everyday: Food","Everyday","Food","Split (2/2): Refund","$0.00","$25.00"',
+    ].join('\r\n');
+    const planCsv = [
+      '"Month","Category Group/Category","Category Group","Category","Assigned","Activity","Available"',
+      '"Sep 2026","Everyday: Food","Everyday","Food","$0.00","$0.00","$0.00"',
+    ].join('\r\n');
+    const zip = new JSZip();
+    zip.file('Split Directions - Register.csv', registerCsv);
+    zip.file('Split Directions - Plan.csv', planCsv);
+    const archive = await zip.generateAsync({ type: 'uint8array' });
+
+    const preview = await YNABImportService.inspectYNABZip(archive);
+    expect(preview.splitTransactions).toHaveLength(2);
+
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const importer = new YNABImportService(adapter);
+      const result = await importer.importYNABFromZipWithSummary(archive, {
+        spaceId: TEST_SPACE_ID,
+        budgetName: 'Split directions',
+        currency: 'USD',
+        numberFormat: '123,456.78',
+        badgeIcon: 'HelpCircle',
+      });
+
+      expect(result.summary.transactionsCreated).toBe(2);
+      expect(result.summary.splitTransactionsImported).toBe(2);
+
+      const splitRows = adapter
+        .prepare(
+          `SELECT t.Date, s.Memo, s.InflowNative, s.OutflowNative, c.Name AS Category
+           FROM transaction_splits s
+           JOIN transactions t ON t.ID = s.TransactionID
+           JOIN categories c ON c.ID = s.CategoryID
+           WHERE t.BudgetID = ?
+           ORDER BY t.Date, s.OrderIndex`
+        )
+        .all(result.budgetId);
+
+      expect(splitRows).toEqual([
+        {
+          Date: '2026-09-01',
+          Memo: 'Unknown item',
+          InflowNative: 0,
+          OutflowNative: 10_000,
+          Category: 'Uncategorized',
+        },
+        {
+          Date: '2026-09-01',
+          Memo: 'Groceries',
+          InflowNative: 0,
+          OutflowNative: 20_000,
+          Category: 'Food',
+        },
+        {
+          Date: '2026-09-02',
+          Memo: 'Purchase',
+          InflowNative: 0,
+          OutflowNative: 100_000,
+          Category: 'Food',
+        },
+        {
+          Date: '2026-09-02',
+          Memo: 'Refund',
+          InflowNative: 25_000,
+          OutflowNative: 0,
+          Category: 'Food',
+        },
+      ]);
+
+      const mixedParent = adapter
+        .prepare(
+          `SELECT InflowNative, OutflowNative
+           FROM transactions
+           WHERE BudgetID = ? AND Date = '2026-09-02'`
+        )
+        .get(result.budgetId);
+      expect(mixedParent).toEqual({ InflowNative: 25_000, OutflowNative: 100_000 });
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('keeps repeated same-day transfers as distinct balanced pairs', async () => {
+    const JSZip = (await import('jszip')).default;
+    const registerCsv = [
+      '"Account","Date","Payee","Category Group/Category","Category Group","Category","Memo","Outflow","Inflow"',
+      '"Checking","2026-09-03","Transfer : Savings","","","","First transfer","$50.00","$0.00"',
+      '"Checking","2026-09-03","Transfer : Savings","","","","Second transfer","$50.00","$0.00"',
+      '"Savings","2026-09-03","Transfer : Checking","","","","First transfer","$0.00","$50.00"',
+      '"Savings","2026-09-03","Transfer : Checking","","","","Second transfer","$0.00","$50.00"',
+    ].join('\r\n');
+    const planCsv =
+      '"Month","Category Group/Category","Category Group","Category","Assigned","Activity","Available"';
+    const zip = new JSZip();
+    zip.file('Duplicate Transfers - Register.csv', registerCsv);
+    zip.file('Duplicate Transfers - Plan.csv', planCsv);
+
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const importer = new YNABImportService(adapter);
+      const result = await importer.importYNABFromZipWithSummary(
+        await zip.generateAsync({ type: 'uint8array' }),
+        {
+          spaceId: TEST_SPACE_ID,
+          budgetName: 'Duplicate transfers',
+          currency: 'USD',
+          numberFormat: '123,456.78',
+          badgeIcon: 'HelpCircle',
+        }
+      );
+
+      const pairs = adapter
+        .prepare(
+          `SELECT TransferID, COUNT(*) AS LegCount,
+                  SUM(InflowNative) AS TotalInflow, SUM(OutflowNative) AS TotalOutflow
+           FROM transactions
+           WHERE BudgetID = ? AND TransferID IS NOT NULL AND TransferID != ''
+           GROUP BY TransferID
+           ORDER BY TransferID`
+        )
+        .all(result.budgetId);
+
+      expect(pairs).toHaveLength(2);
+      expect(pairs).toEqual([
+        expect.objectContaining({ LegCount: 2, TotalInflow: 50_000, TotalOutflow: 50_000 }),
+        expect.objectContaining({ LegCount: 2, TotalInflow: 50_000, TotalOutflow: 50_000 }),
+      ]);
+    } finally {
+      adapter.close();
+    }
+  });
+
   it('does not detect incomplete or non-contiguous split markers as a split transaction', async () => {
     const JSZip = (await import('jszip')).default;
     const registerCsv = [
