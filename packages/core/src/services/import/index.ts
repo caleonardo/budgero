@@ -1,5 +1,7 @@
 export * from './types.js';
 export * from './ynab-import-service.js';
+export * from './ynab-api-client.js';
+export * from './ynab-api-normalizer.js';
 export * from './currency-parser.js';
 export * from './csv-parser.js';
 export * from './import-history-service.js';

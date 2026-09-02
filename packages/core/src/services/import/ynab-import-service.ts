@@ -16,9 +16,12 @@ import {
   YNABImportPreview,
   YNABImportResult,
   YNABImportCategorySummary,
+  YNABApiPlanSnapshot,
+  YNABImportAccountSpec,
 } from './types.js';
 import { CSVParser } from './csv-parser.js';
 import { CurrencyParser } from './currency-parser.js';
+import { normalizeYNABApiSnapshot } from './ynab-api-normalizer.js';
 
 import { createLogger } from '../../logger.js';
 
@@ -297,6 +300,11 @@ export class YNABImportService {
     return inspectYNABRows(registerRows, budgetRows);
   }
 
+  static inspectYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): YNABImportPreview {
+    const { registerRows, budgetRows } = normalizeYNABApiSnapshot(snapshot);
+    return inspectYNABRows(registerRows, budgetRows);
+  }
+
   async importYNABFromZip(
     zipData: ArrayBuffer | Uint8Array,
     config: YNABImportConfig
@@ -310,6 +318,30 @@ export class YNABImportService {
     config: YNABImportConfig
   ): Promise<YNABImportResult> {
     const { registerRows, budgetRows } = await parseYNABArchive(zipData, this.csvParser);
+    return this.importYNABRowsWithSummary(registerRows, budgetRows, config, config.numberFormat);
+  }
+
+  async importYNABFromApiSnapshotWithSummary(
+    snapshot: YNABApiPlanSnapshot,
+    config: YNABImportConfig
+  ): Promise<YNABImportResult> {
+    const { registerRows, budgetRows, accountSpecs } = normalizeYNABApiSnapshot(snapshot);
+    return this.importYNABRowsWithSummary(
+      registerRows,
+      budgetRows,
+      config,
+      '123,456.78',
+      accountSpecs
+    );
+  }
+
+  private async importYNABRowsWithSummary(
+    registerRows: YNABRegisterRow[],
+    budgetRows: YNABBudgetRow[],
+    config: YNABImportConfig,
+    sourceNumberFormat: string,
+    accountSpecs?: YNABImportAccountSpec[]
+  ): Promise<YNABImportResult> {
     const preview = inspectYNABRows(registerRows, budgetRows);
     debugLog(`Parsed ${registerRows.length} register rows`);
 
@@ -351,11 +383,17 @@ export class YNABImportService {
     }
 
     debugLog('Creating accounts...');
-    const accounts = await this.createAccounts(budgetId, registerRows, budgetRows, config.currency);
+    const accounts = await this.createAccounts(
+      budgetId,
+      registerRows,
+      budgetRows,
+      config.currency,
+      accountSpecs
+    );
     debugLog(`Created ${Object.keys(accounts).length} accounts`);
 
     debugLog('Importing assignments...');
-    this.importAssignments(budgetId, budgetRows, categories, config.numberFormat);
+    this.importAssignments(budgetId, budgetRows, categories, sourceNumberFormat);
     debugLog('Assignments imported successfully');
 
     debugLog('Importing transactions...');
@@ -364,7 +402,7 @@ export class YNABImportService {
       registerRows,
       accounts,
       categories,
-      config.numberFormat
+      sourceNumberFormat
     );
     debugLog('Transactions imported successfully');
 
@@ -533,7 +571,8 @@ export class YNABImportService {
     budgetId: number,
     registerRows: YNABRegisterRow[],
     budgetRows: YNABBudgetRow[],
-    currency: string
+    currency: string,
+    accountSpecs?: YNABImportAccountSpec[]
   ): Promise<Record<string, number>> {
     const accounts: Record<string, number> = {};
     const uniqueAccounts = new Set<string>();
@@ -553,17 +592,32 @@ export class YNABImportService {
     }
     debugLog(`Found ${uniqueAccounts.size} unique accounts from ${registerRows.length} rows`);
 
-    for (const accountName of uniqueAccounts) {
-      const isCreditCard = creditCards.has(accountName);
+    const specs =
+      accountSpecs ||
+      [...uniqueAccounts].map((name) => ({
+        name,
+        type: creditCards.has(name) ? 'Credit' : 'Checking',
+        onBudget: true,
+        archived: false,
+        ynabAccountId: '',
+      }));
+
+    for (const spec of specs) {
+      const accountName = spec.name;
       const account = await this.accountService.createAccount(
         accountName,
         budgetId,
-        isCreditCard ? 'Credit' : 'Checking',
+        spec.type,
         currency,
-        ZERO_MILLI
+        ZERO_MILLI,
+        spec.ynabAccountId ? { ynab_account_id: spec.ynabAccountId } : undefined,
+        spec.onBudget
       );
       accounts[accountName] = account.ID;
-      if (isCreditCard) {
+      if (spec.archived) {
+        this.accountService.setAccountArchived(account.ID, true);
+      }
+      if (isCreditAccountType(spec.type)) {
         debugLog(`Account '${accountName}' imported as a credit card`);
       }
     }
@@ -778,6 +832,10 @@ export class YNABImportService {
       const row = registerRows[rowIndex];
       const counterpartyName = transferCounterpartyName(row);
       if (!counterpartyName) continue;
+      if (row.TransferID) {
+        idsByRowIndex.set(rowIndex, row.TransferID);
+        continue;
+      }
 
       const currentAccountName = row.Account.trim();
       const currentAccountId = accounts[currentAccountName];
@@ -1117,6 +1175,9 @@ export class YNABImportService {
     if (!trimmed) {
       return '';
     }
+
+    const isoMonth = trimmed.match(/^(\d{4})-(\d{2})(?:-\d{2})?$/);
+    if (isoMonth) return `${isoMonth[1]}-${isoMonth[2]}`;
 
     const parts = trimmed.split(' ');
     if (parts.length !== 2) {

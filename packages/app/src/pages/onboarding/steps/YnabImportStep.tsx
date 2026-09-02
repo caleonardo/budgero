@@ -1,25 +1,165 @@
 import React from 'react';
+import type { YNABApiPlanSnapshot, YNABApiPlanSummary } from '@budgero/core/browser';
+import { YNABApiClient } from '@budgero/core/browser';
 import { Title, type StepProps } from './shared';
 
 interface YnabStepProps extends StepProps {
   onFileSelected: (file: File) => Promise<void> | void;
+  onApiSnapshotSelected: (snapshot: YNABApiPlanSnapshot) => Promise<void> | void;
   isInspecting: boolean;
 }
 
 export const YnabImportStep: React.FC<YnabStepProps> = ({
   cur,
   state,
+  set,
   onFileSelected,
+  onApiSnapshotSelected,
   isInspecting,
 }) => {
   const file = state.ynabFile;
+  const apiSnapshot = state.ynabApiSnapshot;
   const preview = state.ynabPreview;
   const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const [sourceMode, setSourceMode] = React.useState<'api' | 'zip'>('api');
+  const [token, setToken] = React.useState('');
+  const [plans, setPlans] = React.useState<YNABApiPlanSummary[]>([]);
+  const [selectedPlanId, setSelectedPlanId] = React.useState('');
+  const [isConnecting, setIsConnecting] = React.useState(false);
+  const [connectionError, setConnectionError] = React.useState('');
+  const hasSource = Boolean(file || apiSnapshot);
+
+  const loadPlan = async (planId: string, accessToken = token) => {
+    if (!planId || !accessToken.trim()) return;
+    setIsConnecting(true);
+    setConnectionError('');
+    try {
+      const snapshot = await new YNABApiClient(accessToken).getPlan(planId);
+      setSelectedPlanId(planId);
+      await onApiSnapshotSelected(snapshot);
+    } catch (error) {
+      setConnectionError(error instanceof Error ? error.message : 'Could not read that plan');
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const connect = async () => {
+    if (!token.trim()) return;
+    setIsConnecting(true);
+    setConnectionError('');
+    try {
+      const availablePlans = await new YNABApiClient(token).listPlans();
+      if (availablePlans.length === 0) throw new Error('No plans are available for this token');
+      setPlans(availablePlans);
+      const firstPlanId = availablePlans[0].id;
+      const snapshot = await new YNABApiClient(token).getPlan(firstPlanId);
+      setSelectedPlanId(firstPlanId);
+      await onApiSnapshotSelected(snapshot);
+    } catch (error) {
+      setPlans([]);
+      setConnectionError(error instanceof Error ? error.message : 'Could not connect to YNAB');
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const switchSource = (mode: 'api' | 'zip') => {
+    setSourceMode(mode);
+    set({ ynabFile: null, ynabApiSnapshot: null, ynabPreview: null });
+  };
 
   return (
     <div>
       <Title h={cur.title} sub={cur.subtitle} />
-      {!file && (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 12 }}>
+        <button
+          type="button"
+          onClick={() => switchSource('api')}
+          style={{
+            padding: 9,
+            border: '1px solid #141414',
+            background: sourceMode === 'api' ? '#141414' : 'transparent',
+            color: sourceMode === 'api' ? '#fbf7eb' : '#141414',
+            fontFamily: 'inherit',
+            fontWeight: 700,
+          }}
+        >
+          CONNECT DIRECTLY
+        </button>
+        <button
+          type="button"
+          onClick={() => switchSource('zip')}
+          style={{
+            padding: 9,
+            border: '1px solid #141414',
+            background: sourceMode === 'zip' ? '#141414' : 'transparent',
+            color: sourceMode === 'zip' ? '#fbf7eb' : '#141414',
+            fontFamily: 'inherit',
+            fontWeight: 700,
+          }}
+        >
+          EXPORT ZIP
+        </button>
+      </div>
+
+      {sourceMode === 'api' && !apiSnapshot && (
+        <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
+          <div style={{ fontSize: 11, fontWeight: 700 }}>YNAB PERSONAL ACCESS TOKEN</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              id="onboarding-ynab-token"
+              aria-label="YNAB personal access token"
+              type="password"
+              autoComplete="off"
+              value={token}
+              onChange={(event) => setToken(event.target.value)}
+              placeholder="Used for this import only"
+              disabled={isConnecting}
+              style={{ flex: 1, minWidth: 0, padding: 9, border: '1px solid #141414' }}
+            />
+            <button
+              type="button"
+              disabled={!token.trim() || isConnecting}
+              onClick={() => void connect()}
+              style={{
+                padding: '8px 14px',
+                border: '1px solid #141414',
+                background: '#141414',
+                color: '#fbf7eb',
+                fontFamily: 'inherit',
+                fontWeight: 700,
+              }}
+            >
+              {isConnecting ? 'CONNECTING…' : 'CONNECT'}
+            </button>
+          </div>
+          <div style={{ fontSize: 10, color: '#393939' }}>
+            Kept in memory for this import and never saved to Budgero or browser storage.
+          </div>
+          {connectionError && (
+            <div style={{ fontSize: 11, color: '#9f2d24' }}>{connectionError}</div>
+          )}
+        </div>
+      )}
+
+      {sourceMode === 'api' && plans.length > 0 && (
+        <select
+          aria-label="YNAB plan"
+          value={selectedPlanId}
+          disabled={isConnecting}
+          onChange={(event) => void loadPlan(event.target.value)}
+          style={{ width: '100%', marginTop: 10, padding: 9, border: '1px solid #141414' }}
+        >
+          {plans.map((plan) => (
+            <option key={plan.id} value={plan.id}>
+              {plan.name}
+            </option>
+          ))}
+        </select>
+      )}
+
+      {sourceMode === 'zip' && !file && (
         <div
           style={{
             marginTop: 12,
@@ -45,7 +185,7 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({
           .
         </div>
       )}
-      {!file && (
+      {sourceMode === 'zip' && !file && (
         // Presentation wrapper: the click merely widens the hit area of the
         // fully keyboard-accessible "Browse files" button inside.
         <div
@@ -110,7 +250,7 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({
           />
         </div>
       )}
-      {file && (
+      {hasSource && (
         <div style={{ marginTop: 12, display: 'grid', gap: 12 }}>
           <div
             style={{
@@ -139,9 +279,12 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({
               Y
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 13, fontWeight: 700 }}>{file.name}</div>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>
+                {file?.name || apiSnapshot?.plan.name}
+              </div>
               <div style={{ fontSize: 10, color: '#393939' }}>
-                {file.size} · ready to import on finish
+                {file ? `${file.size} · ` : 'Connected through YNAB API · '}ready to import on
+                finish
               </div>
             </div>
             <div style={{ fontSize: 11, fontWeight: 700, color: '#2f7d31', letterSpacing: 1 }}>
@@ -171,20 +314,22 @@ export const YnabImportStep: React.FC<YnabStepProps> = ({
                 {preview.registerRowCount === 1 ? 'row' : 'rows'}
               </div>
 
-              <div
-                style={{
-                  padding: 9,
-                  border: '1px solid rgba(198, 137, 44, 0.5)',
-                  background: 'rgba(255, 240, 190, 0.35)',
-                }}
-              >
-                <span style={{ fontWeight: 700, color: '#141414' }}>
-                  Review account types after import.
-                </span>{' '}
-                YNAB does not reliably export account types. Budgero recognizes credit cards where
-                possible and imports other accounts as Checking, so verify every account before
-                budgeting.
-              </div>
+              {file && (
+                <div
+                  style={{
+                    padding: 9,
+                    border: '1px solid rgba(198, 137, 44, 0.5)',
+                    background: 'rgba(255, 240, 190, 0.35)',
+                  }}
+                >
+                  <span style={{ fontWeight: 700, color: '#141414' }}>
+                    Review account types after import.
+                  </span>{' '}
+                  YNAB does not reliably export account types. Budgero recognizes credit cards where
+                  possible and imports other accounts as Checking, so verify every account before
+                  budgeting.
+                </div>
+              )}
 
               {preview.missingCategories.length > 0 && (
                 <div style={{ padding: 9, border: '1px solid rgba(198,57,44,0.35)' }}>

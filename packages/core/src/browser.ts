@@ -215,3 +215,9 @@ export {
 } from './services/import/pdf-table.js';
 export { planImportRows } from './services/import/row-planner.js';
 export { YNABImportService } from './services/import/ynab-import-service.js';
+export { YNABApiClient } from './services/import/ynab-api-client.js';
+export {
+  normalizeYNABApiSnapshot,
+  normalizeYNABMilliunitPrecision,
+  mapYNABAccountType,
+} from './services/import/ynab-api-normalizer.js';

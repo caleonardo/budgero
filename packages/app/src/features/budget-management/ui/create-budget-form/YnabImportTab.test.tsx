@@ -44,6 +44,15 @@ describe('YnabImportTab', () => {
   it('previews counts, account-type guidance, created categories, and automatic splits', () => {
     render(
       <YnabImportTab
+        sourceMode="zip"
+        onSourceModeChange={vi.fn()}
+        personalAccessToken=""
+        onPersonalAccessTokenChange={vi.fn()}
+        plans={[]}
+        selectedPlanId=""
+        onSelectedPlanChange={vi.fn()}
+        isConnecting={false}
+        onConnect={vi.fn()}
         budgetName="Imported budget"
         onBudgetNameChange={vi.fn()}
         currency="USD"
@@ -68,5 +77,61 @@ describe('YnabImportTab', () => {
     expect(screen.getByText(/Archive › Missing From Plan/)).toBeInTheDocument();
     expect(screen.getByText(/as split transactions automatically/)).toBeInTheDocument();
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+  });
+
+  it('offers a direct API connection without persisting the token', () => {
+    render(
+      <YnabImportTab
+        sourceMode="api"
+        onSourceModeChange={vi.fn()}
+        personalAccessToken="secret"
+        onPersonalAccessTokenChange={vi.fn()}
+        plans={[
+          {
+            id: 'plan-1',
+            name: 'Test plan',
+            last_modified_on: '2026-09-03T00:00:00Z',
+            first_month: '2026-01-01',
+            last_month: '2026-09-01',
+            currency_format: {
+              iso_code: 'USD',
+              example_format: '123,456.78',
+              decimal_digits: 2,
+              decimal_separator: '.',
+              symbol_first: true,
+              group_separator: ',',
+              currency_symbol: '$',
+              display_symbol: true,
+            },
+          },
+        ]}
+        selectedPlanId="plan-1"
+        onSelectedPlanChange={vi.fn()}
+        isConnecting={false}
+        onConnect={vi.fn()}
+        budgetName="Imported budget"
+        onBudgetNameChange={vi.fn()}
+        currency="USD"
+        onCurrencyChange={vi.fn()}
+        numberFormat="123,456.78"
+        onNumberFormatChange={vi.fn()}
+        importBadgeIcon="💰"
+        onImportBadgeIconChange={vi.fn()}
+        fileInputRef={React.createRef<HTMLInputElement>()}
+        file={null}
+        onFileChange={vi.fn()}
+        preview={preview}
+        isInspecting={false}
+        isImporting={false}
+        onReset={vi.fn()}
+        onImport={vi.fn()}
+      />
+    );
+
+    expect(screen.getByLabelText('YNAB personal access token')).toHaveAttribute('type', 'password');
+    expect(screen.getByText('Test plan')).toBeInTheDocument();
+    expect(screen.getByText(/never saved to Budgero or browser storage/)).toBeInTheDocument();
+    expect(screen.getByText(/Account types and on-budget status/)).toBeInTheDocument();
+    expect(screen.queryByTestId('ynab-export-guide')).not.toBeInTheDocument();
   });
 });

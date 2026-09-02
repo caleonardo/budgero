@@ -47,6 +47,132 @@ export interface YNABImportResult {
   summary: YNABImportSummary;
 }
 
+export interface YNABApiCurrencyFormat {
+  iso_code: string;
+  example_format: string;
+  decimal_digits: number;
+  decimal_separator: string;
+  symbol_first: boolean;
+  group_separator: string;
+  currency_symbol: string;
+  display_symbol: boolean;
+}
+
+export interface YNABApiPlanSummary {
+  id: string;
+  name: string;
+  last_modified_on: string;
+  first_month: string;
+  last_month: string;
+  currency_format: YNABApiCurrencyFormat;
+}
+
+export interface YNABApiAccount {
+  id: string;
+  name: string;
+  type: string;
+  on_budget: boolean;
+  closed: boolean;
+  deleted: boolean;
+  balance: number;
+  transfer_payee_id: string;
+  note?: string | null;
+}
+
+export interface YNABApiCategoryGroup {
+  id: string;
+  name: string;
+  hidden: boolean;
+  deleted: boolean;
+  internal: boolean;
+}
+
+export interface YNABApiCategory {
+  id: string;
+  category_group_id: string;
+  name: string;
+  hidden: boolean;
+  deleted: boolean;
+  internal: boolean;
+  note?: string | null;
+  budgeted: number;
+  activity: number;
+  balance: number;
+  goal_type?: string | null;
+  goal_target?: number | null;
+  goal_target_month?: string | null;
+  goal_cadence?: number | null;
+  goal_cadence_frequency?: number | null;
+  goal_creation_month?: string | null;
+  goal_needs_whole_amount?: boolean | null;
+}
+
+export interface YNABApiMonth {
+  month: string;
+  deleted: boolean;
+  budgeted: number;
+  activity: number;
+  income: number;
+  to_be_budgeted: number;
+  categories: YNABApiCategory[];
+}
+
+export interface YNABApiPayee {
+  id: string;
+  name: string;
+  transfer_account_id: string | null;
+  deleted: boolean;
+}
+
+export interface YNABApiTransaction {
+  id: string;
+  account_id: string;
+  date: string;
+  amount: number;
+  memo: string | null;
+  cleared: string;
+  approved: boolean;
+  payee_id: string | null;
+  category_id: string | null;
+  transfer_account_id: string | null;
+  transfer_transaction_id: string | null;
+  deleted: boolean;
+}
+
+export interface YNABApiSubtransaction {
+  id: string;
+  transaction_id: string;
+  amount: number;
+  memo: string | null;
+  payee_id: string | null;
+  category_id: string | null;
+  transfer_account_id: string | null;
+  deleted: boolean;
+}
+
+export interface YNABApiPlan extends YNABApiPlanSummary {
+  accounts: YNABApiAccount[];
+  category_groups: YNABApiCategoryGroup[];
+  categories: YNABApiCategory[];
+  months: YNABApiMonth[];
+  payees: YNABApiPayee[];
+  transactions: YNABApiTransaction[];
+  subtransactions: YNABApiSubtransaction[];
+}
+
+export interface YNABApiPlanSnapshot {
+  plan: YNABApiPlan;
+  serverKnowledge: number;
+}
+
+export interface YNABImportAccountSpec {
+  name: string;
+  type: string;
+  onBudget: boolean;
+  archived: boolean;
+  ynabAccountId: string;
+}
+
 export interface YNABRegisterRow {
   Account: string;
   Flag: string;
@@ -59,6 +185,8 @@ export interface YNABRegisterRow {
   Outflow: string;
   Inflow: string;
   Cleared: string;
+  /** Stable transfer relationship supplied by the YNAB API import path. */
+  TransferID?: string;
 }
 
 export interface YNABBudgetRow {

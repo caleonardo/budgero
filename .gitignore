@@ -93,3 +93,6 @@ CLAUDE.md
 .tmp-crypto-compat
 .config
 AGENTS.md
+# Local YNAB API credentials
+ynab_pat
+ynab_pat.txt

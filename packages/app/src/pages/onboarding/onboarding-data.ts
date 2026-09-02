@@ -4,7 +4,7 @@
 
 import { formatDateISO } from '@shared/lib/date-utils';
 import { AccountTypeEnum } from '@entities/account/model/accountTypes';
-import type { YNABImportPreview } from '@budgero/core/browser';
+import type { YNABApiPlanSnapshot, YNABImportPreview } from '@budgero/core/browser';
 
 export type StartMode = 'fresh' | 'ynab';
 
@@ -424,6 +424,7 @@ export interface OnboardingFormState {
   zbbAssigned: { rent: string; groceries: string; savings: string };
   invites: InviteInput[];
   ynabFile: { name: string; size: string; bytes: ArrayBuffer } | null;
+  ynabApiSnapshot: YNABApiPlanSnapshot | null;
   ynabPreview: YNABImportPreview | null;
   /** Selected HEARD_OPTIONS id, or '' if untouched/skipped. */
   heardSource: string;
@@ -461,6 +462,7 @@ export const INITIAL_STATE: OnboardingFormState = {
   zbbAssigned: { rent: '', groceries: '', savings: '' },
   invites: [],
   ynabFile: null,
+  ynabApiSnapshot: null,
   ynabPreview: null,
   heardSource: '',
   heardOther: '',

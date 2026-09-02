@@ -47,7 +47,7 @@ describe('transferHasOffBudgetLeg', () => {
     ).toBe(true);
     expect(
       transferHasOffBudgetLeg({
-        TransferID: null,
+        TransferID: undefined,
         AccountOnBudget: true,
         TransferAccountOnBudget: false,
       })

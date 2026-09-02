@@ -217,20 +217,26 @@ export async function runOnboardingApply(
     // core YNAB importer which creates its own budget record (out-of-band,
     // bypasses the router).
     let budgetId: number;
-    const isYnab = state.startMode === 'ynab' && state.ynabFile;
-    if (isYnab && state.ynabFile) {
+    const isYnab = state.startMode === 'ynab' && (state.ynabFile || state.ynabApiSnapshot);
+    if (isYnab) {
       const db = runtime.getDatabase();
       if (!db) {
         throw new Error('Database not ready — try again in a moment.');
       }
       const importService = new YNABImportService(db as unknown as DatabaseAdapter);
-      const importResult = await importService.importYNABFromZipWithSummary(state.ynabFile.bytes, {
+      const importConfig = {
         spaceId,
         budgetName: state.budgetName.trim() || 'My budget',
         currency: state.currency,
         numberFormat: '$1,096.56',
         badgeIcon: '💰',
-      });
+      };
+      const importResult = state.ynabApiSnapshot
+        ? await importService.importYNABFromApiSnapshotWithSummary(
+            state.ynabApiSnapshot,
+            importConfig
+          )
+        : await importService.importYNABFromZipWithSummary(state.ynabFile!.bytes, importConfig);
       budgetId = importResult.budgetId;
 
       const createdCategories = importResult.summary.missingCategoriesCreated.map(

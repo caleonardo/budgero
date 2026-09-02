@@ -18,6 +18,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import type { YNABApiPlanSnapshot } from '@budgero/core/browser';
 import { YNABImportService } from '@budgero/core/browser';
 import { useRuntime } from '@shared/runtime/runtime-provider';
 import { useLogout, useProfile, useUpdateOnboarding } from '@entities/user/api/useAuth';
@@ -148,7 +149,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         return pw.length >= 8 && pw === state.passwordConfirm;
       }
       case 'ynab_import':
-        return Boolean(state.ynabFile);
+        return Boolean(state.ynabFile || state.ynabApiSnapshot);
       default:
         return true;
     }
@@ -164,7 +165,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const handleYnabFile = useCallback(
     async (file: File) => {
       setIsInspectingYnab(true);
-      set({ ynabFile: null, ynabPreview: null });
+      set({ ynabFile: null, ynabApiSnapshot: null, ynabPreview: null });
       try {
         const bytes = await file.arrayBuffer();
         const preview = await YNABImportService.inspectYNABZip(bytes);
@@ -183,6 +184,19 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
       } finally {
         setIsInspectingYnab(false);
       }
+    },
+    [set, state.budgetName]
+  );
+
+  const handleYnabApiSnapshot = useCallback(
+    (snapshot: YNABApiPlanSnapshot) => {
+      set({
+        ynabFile: null,
+        ynabApiSnapshot: snapshot,
+        ynabPreview: YNABImportService.inspectYNABApiSnapshot(snapshot),
+        budgetName: state.budgetName || snapshot.plan.name,
+        currency: snapshot.plan.currency_format.iso_code,
+      });
     },
     [set, state.budgetName]
   );
@@ -355,6 +369,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
             state={state}
             set={set}
             onFileSelected={handleYnabFile}
+            onApiSnapshotSelected={handleYnabApiSnapshot}
             isInspecting={isInspectingYnab}
           />
         )}
