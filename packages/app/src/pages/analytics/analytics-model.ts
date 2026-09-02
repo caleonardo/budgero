@@ -385,6 +385,8 @@ export interface FlowGraph {
   links: SankeyLink[];
   totalIncome: number;
   totalSpending: number;
+  /** Original destination groups collapsed into the synthetic Other node. */
+  foldedSpendingGroups: { name: string; value: number }[];
 }
 
 /**
@@ -419,9 +421,11 @@ export function buildFlowGraph(
   let groups = [...spendingByGroup.entries()]
     .filter(([, value]) => value > 0)
     .sort((a, b) => b[1] - a[1]);
+  let foldedSpendingGroups: FlowGraph['foldedSpendingGroups'] = [];
   if (groups.length > maxGroups) {
     const kept = groups.slice(0, maxGroups - 1);
-    const foldedTotal = groups.slice(maxGroups - 1).reduce((sum, [, value]) => sum + value, 0);
+    foldedSpendingGroups = groups.slice(maxGroups - 1).map(([name, value]) => ({ name, value }));
+    const foldedTotal = foldedSpendingGroups.reduce((sum, group) => sum + group.value, 0);
     groups = [...kept, ['Other spending', foldedTotal]];
   }
 
@@ -461,7 +465,7 @@ export function buildFlowGraph(
     links.push({ source: name, target: HUB, value: -net });
   }
 
-  return { nodes, links, totalIncome, totalSpending };
+  return { nodes, links, totalIncome, totalSpending, foldedSpendingGroups };
 }
 
 // ---------------------------------------------------------------------------

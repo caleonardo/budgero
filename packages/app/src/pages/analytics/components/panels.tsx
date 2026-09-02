@@ -36,15 +36,19 @@ export function ProportionRow({
   name,
   value,
   fraction,
+  onClick,
+  expanded,
 }: {
   color: string;
   name: string;
   value: string;
   fraction: number;
+  onClick?: () => void;
+  expanded?: boolean;
 }) {
-  return (
-    <div className="py-1.5">
-      <div className="flex items-center gap-2">
+  const content = (
+    <>
+      <span className="flex items-center gap-2">
         <span
           className="h-2.5 w-2.5 shrink-0 rounded-full"
           style={{ backgroundColor: color }}
@@ -52,18 +56,33 @@ export function ProportionRow({
         />
         <span className="min-w-0 flex-1 truncate text-sm">{name}</span>
         <span className="whitespace-nowrap text-sm font-medium tabular-nums">{value}</span>
-      </div>
-      <div className="ml-[18px] mt-1 h-1 rounded-full bg-muted">
-        <div
-          className="h-1 rounded-full"
+      </span>
+      <span className="ml-[18px] mt-1 block h-1 rounded-full bg-muted">
+        <span
+          className="block h-1 rounded-full"
           style={{
             width: `${Math.max(2, Math.min(100, fraction * 100))}%`,
             backgroundColor: color,
           }}
         />
-      </div>
-    </div>
+      </span>
+    </>
   );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-expanded={expanded}
+        className="block w-full rounded-md py-1.5 text-left transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return <div className="py-1.5">{content}</div>;
 }
 
 /** Month row for the side panel monthly breakdown lists. */

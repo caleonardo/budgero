@@ -296,6 +296,10 @@ describe('buildFlowGraph', () => {
     expect(graph.links).toContainEqual({ source: 'From savings', target: 'Income', value: 50_000 });
     const groupNames = graph.nodes.filter((n) => n.slot === 'group').map((n) => n.name);
     expect(groupNames).toEqual(['G1', 'Other spending']);
+    expect(graph.foldedSpendingGroups).toEqual([
+      { name: 'G2', value: 50_000 },
+      { name: 'G3', value: 40_000 },
+    ]);
   });
 });
 

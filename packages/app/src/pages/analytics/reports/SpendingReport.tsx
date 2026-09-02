@@ -52,6 +52,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
   const [view, setView] = useState<SpendingView>('time');
   const [shareStyle, setShareStyle] = useState<ShareStyle>('donut');
   const [dim, setDim] = useState<SpendingDimension>('category');
+  const [otherOpen, setOtherOpen] = useState(false);
   const palette = usePalette();
   const money = useMoneyFormatters();
 
@@ -101,11 +102,22 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
       })),
     [totals, palette]
   );
+  const foldedPanelRows = useMemo(
+    () =>
+      totals.slice(folded.top.length).map((row, index) => ({
+        ...row,
+        color: row.ownColor ?? palette.series[(folded.top.length + index) % palette.series.length],
+      })),
+    [totals, folded.top.length, palette]
+  );
 
   const total = folded.grandTotal;
   const monthCount = Math.max(1, months.length);
   const isEmpty = total <= 0;
   const top = panelRows[0];
+  const showingOther = otherOpen && Boolean(folded.other);
+  const visiblePanelRows = showingOther ? foldedPanelRows : panelRows;
+  const visiblePanelTop = visiblePanelRows[0];
 
   const insights = useMemo(
     () =>
@@ -149,6 +161,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
           type: 'bar' as const,
           stack: 'spending',
           data: entry.values.map((value) => value / 1000),
+          cursor: entry.key === 'other' ? 'pointer' : 'default',
           barMaxWidth: BAR_MAX_WIDTH,
           itemStyle: { color: entry.color, borderColor: chrome.surface, borderWidth: 1 },
         })),
@@ -181,6 +194,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
             data: slices.map((slice) => ({
               name: slice.name,
               value: slice.total / 1000,
+              cursor: slice.key === 'other' ? 'pointer' : 'default',
               itemStyle: { color: slice.color, borderColor: chrome.surface, borderWidth: 2 },
             })),
             label: {
@@ -213,6 +227,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
             type: 'bar',
             data: reversed.map((slice) => ({
               value: slice.total / 1000,
+              cursor: slice.key === 'other' ? 'pointer' : 'default',
               itemStyle: { color: slice.color, borderRadius: [0, 4, 4, 0] },
             })),
             barMaxWidth: 24,
@@ -241,6 +256,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
           data: slices.map((slice) => ({
             name: slice.name,
             value: slice.total / 1000,
+            cursor: slice.key === 'other' ? 'pointer' : 'default',
             itemStyle: { color: slice.color },
             label: { color: inkOnFill(slice.color) },
           })),
@@ -264,7 +280,10 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
         <>
           <ModeToggle
             value={dim}
-            onChange={setDim}
+            onChange={(nextDim) => {
+              setDim(nextDim);
+              setOtherOpen(false);
+            }}
             ariaLabel="Spending dimension"
             options={[
               { value: 'category', label: 'Categories' },
@@ -302,6 +321,11 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
           option={option}
           ariaLabel={`Spending by ${DIM_LABELS[dim]}`}
           className="h-[420px]"
+          onMarkClick={(mark) => {
+            if (mark.seriesName === 'Other' || mark.name?.startsWith('Other (')) {
+              setOtherOpen(true);
+            }
+          }}
         />
       }
       isLoading={data.isLoading}
@@ -334,15 +358,43 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
               A transaction with several labels counts in full under each, so labels can overlap.
             </p>
           ) : null}
-          <PanelSectionTitle>{DIM_LABELS[dim]}</PanelSectionTitle>
+          {folded.other ? (
+            showingOther ? (
+              <button
+                type="button"
+                onClick={() => setOtherOpen(false)}
+                className="mt-4 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                ← Back to all {DIM_LABELS[dim].toLowerCase()}
+              </button>
+            ) : (
+              <div className="mt-3 rounded-lg border border-dashed border-border/70 px-2">
+                <ProportionRow
+                  color={palette.chrome.other}
+                  name={`Other (${foldedPanelRows.length} more) — inspect`}
+                  value={money.amount(folded.other.total)}
+                  fraction={top && top.total > 0 ? folded.other.total / top.total : 0}
+                  onClick={() => setOtherOpen(true)}
+                  expanded={false}
+                />
+              </div>
+            )
+          ) : null}
+          <PanelSectionTitle>
+            {showingOther ? `Inside Other · ${DIM_LABELS[dim]}` : DIM_LABELS[dim]}
+          </PanelSectionTitle>
           <div className="max-h-[420px] overflow-y-auto pr-1">
-            {panelRows.map((row) => (
+            {visiblePanelRows.map((row) => (
               <ProportionRow
                 key={row.key}
                 color={row.color}
                 name={row.name}
                 value={money.amount(row.total)}
-                fraction={top && top.total > 0 ? row.total / top.total : 0}
+                fraction={
+                  visiblePanelTop && visiblePanelTop.total > 0
+                    ? row.total / visiblePanelTop.total
+                    : 0
+                }
               />
             ))}
           </div>
