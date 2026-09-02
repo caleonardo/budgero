@@ -368,15 +368,15 @@ for (const testCase of sharedImportCases) {
       }
     });
 
-    it('should put the savings→checking source legs in Transfers (regression)', () => {
-      // These are the exact rows from the bug report: outflow side of the
-      // "Transfer : Beta Checking" transfers on the Beta Savings RSD account.
+    it('should put transfer source legs in Transfers (regression)', () => {
+      // Identify source legs by their transfer metadata rather than Payee:
+      // internal on-budget transfers intentionally store an empty payee.
       const stmt = adapter.prepare(`
         SELECT c.Name as categoryName, COUNT(*) as count
         FROM transactions t
         JOIN categories c ON t.CategoryID = c.ID
         WHERE t.BudgetId = ?
-          AND t.Payee = 'Transfer : Beta Checking'
+          AND t.TransferID IS NOT NULL AND TRIM(t.TransferID) <> ''
           AND t.OutflowConverted > 0
         GROUP BY c.Name
       `);

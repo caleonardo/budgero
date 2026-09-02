@@ -18,7 +18,13 @@ import { buildCurrencyLocalizer, useUiStore } from '@shared/store/useUiStore';
 import { useCategories } from '@entities/category/api/useCategories';
 import { useDeleteTransaction, useUpsertSplits } from '@entities/transaction/api/useTransactions';
 import { useActiveAccounts } from '@entities/account/api/useActiveAccounts';
-import { asMilli, convertScaled } from '@budgero/core/browser';
+import {
+  asMilli,
+  convertScaled,
+  isAccountOnBudget,
+  resolveTransferPayees,
+  transferInvolvesOffBudgetAccount,
+} from '@budgero/core/browser';
 import type { AddTransferRequest } from '@features/transactions/api/useAddTransactionHandler';
 import type { AddTransferResult } from '@entities/transaction/api/useTransactions';
 import { useAutofillIntegration } from './useAutofillIntegration';
@@ -146,8 +152,21 @@ export function useAddTransactionForm({
     if (!form.isTransfer) return false;
     const fromAcc = accounts.find((a) => a.ID.toString() === form.selectedFromAccount);
     const toAcc = accounts.find((a) => a.ID.toString() === form.selectedToAccount);
-    return fromAcc?.OnBudget && !toAcc?.OnBudget;
+    return Boolean(fromAcc && toAcc && isAccountOnBudget(fromAcc) && !isAccountOnBudget(toAcc));
   }, [form.isTransfer, form.selectedFromAccount, form.selectedToAccount, accounts]);
+
+  const transferInvolvesOffBudget = React.useMemo(() => {
+    if (!form.isTransfer) return false;
+    const fromAcc = accounts.find((a) => a.ID.toString() === form.selectedFromAccount);
+    const toAcc = accounts.find((a) => a.ID.toString() === form.selectedToAccount);
+    return Boolean(fromAcc && toAcc && transferInvolvesOffBudgetAccount(fromAcc, toAcc));
+  }, [form.isTransfer, form.selectedFromAccount, form.selectedToAccount, accounts]);
+
+  React.useEffect(() => {
+    if (form.isTransfer && !transferInvolvesOffBudget && form.payee) {
+      setPayee('');
+    }
+  }, [form.isTransfer, form.payee, setPayee, transferInvolvesOffBudget]);
 
   const totalSplits = React.useMemo(
     () => splitLines.reduce((s, l) => s + (l.amount || 0), 0),
@@ -402,8 +421,11 @@ export function useAddTransactionForm({
             let inflowAmount = amt;
             let sourceRateOverride: number | null = null;
             let destinationRateOverride: number | null = null;
-            const outboundPayee = form.payee || toAcc.Name || '';
-            const inboundPayee = form.payee || fromAccount.Name || '';
+            const { sourcePayee, destinationPayee } = resolveTransferPayees(
+              fromAccount,
+              toAcc,
+              form.payee
+            );
 
             if (fromAccount.Currency !== toAcc.Currency) {
               const currentDate = getCurrentDate(form.transactionDate);
@@ -478,14 +500,14 @@ export function useAddTransactionForm({
               labelId: form.selectedLabelId,
               source: {
                 category: sourceCategory,
-                payee: outboundPayee,
+                payee: sourcePayee ?? '',
                 amount: amt,
                 accountId: parseInt(form.selectedFromAccount),
                 exchangeRateOverride: sourceRateOverride,
               },
               destination: {
                 category: 'Transfers',
-                payee: inboundPayee,
+                payee: destinationPayee ?? '',
                 amount: inflowAmount,
                 accountId: parseInt(form.selectedToAccount),
                 exchangeRateOverride: destinationRateOverride,
@@ -494,7 +516,7 @@ export function useAddTransactionForm({
             });
 
             form.persistLastUsed('transfer', {
-              payee: form.payee,
+              payee: transferInvolvesOffBudget ? form.payee : '',
               accountId: form.selectedFromAccount,
               labelId: form.selectedLabelId,
             });
@@ -675,6 +697,7 @@ export function useAddTransactionForm({
       logAutofillApplications,
       autofillAppliedSuggestions,
       isOffBudgetTransfer,
+      transferInvolvesOffBudget,
       receivedAmount,
       onCancel,
     ]
@@ -707,6 +730,7 @@ export function useAddTransactionForm({
     currencyCode,
     needsCurrencyConversion,
     isOffBudgetTransfer,
+    transferInvolvesOffBudget,
     totalSplits,
     parentSigned,
     remaining,

@@ -21,7 +21,12 @@ export { reconcileSpaceScope } from './database/space-scope.js';
 export { BudgetService } from './services/budgets/index.js';
 export { CategoryService } from './services/categories/index.js';
 export { AccountService } from './services/accounts/index.js';
-export { TransactionService } from './services/transactions/index.js';
+export {
+  TransactionService,
+  isAccountOnBudget,
+  resolveTransferPayees,
+  transferInvolvesOffBudgetAccount,
+} from './services/transactions/index.js';
 export { GoalService } from './services/goals/index.js';
 export { MonthlyBudgetService } from './services/monthly-budgets/index.js';
 export { AnalyticsService } from './services/analytics/index.js';

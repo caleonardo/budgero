@@ -15,6 +15,13 @@ export interface TransferRateOverrides {
   destinationRateOverride: number | null;
 }
 
+export function shouldShowPayeeField(
+  isTransfer: boolean,
+  transferInvolvesOffBudget: boolean
+): boolean {
+  return !isTransfer || transferInvolvesOffBudget;
+}
+
 /** Direct source-to-destination rate implied by the two exact native amounts. */
 export function calculateImpliedTransferRate(params: {
   sourceAmount: number;

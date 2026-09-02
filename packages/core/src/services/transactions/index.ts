@@ -31,6 +31,7 @@ import {
   getTransferRateDetails as loadTransferRateDetails,
   type TransferRateDetails,
 } from './transfer-rate.js';
+import { isAccountOnBudget } from './transfer-payee.js';
 
 export type {
   Transaction,
@@ -43,6 +44,11 @@ export type {
   LabelListItem,
 } from './types.js';
 export type { TransferRateDetails } from './transfer-rate.js';
+export {
+  isAccountOnBudget,
+  resolveTransferPayees,
+  transferInvolvesOffBudgetAccount,
+} from './transfer-payee.js';
 const debugLog = createLogger('services:transactions');
 
 /**
@@ -206,7 +212,7 @@ export class TransactionService {
       this.assertLabelBelongsToBudget(normalizedLabelId, budgetId);
     }
 
-    return this.db.transaction(() => {
+    const transactionId = this.db.transaction(() => {
       // Variables for overpayment split handling (need to be in outer scope)
       let needsOverpaymentSplit = false;
       let spendingAmount: MilliUnits = ZERO_MILLI;
@@ -523,6 +529,8 @@ export class TransactionService {
       debugLog('✅ Transaction added successfully with ID:', id);
       return id;
     });
+    if (transferId) this.normalizeTransferPayees(transferId);
+    return transactionId;
   }
 
   /**
@@ -1042,6 +1050,20 @@ export class TransactionService {
     return loadTransferRateDetails(this.db, transferId);
   }
 
+  /** Enforce that a linked transfer entirely inside the budget has no payee. */
+  normalizeTransferPayees(transferId: string): void {
+    const linked = this.getTransactionsByTransferID(transferId);
+    if (linked.length < 2) return;
+    const internal = linked.every((leg) => {
+      const { account } = this.queries.getAccountAndBudget(leg.AccountID, leg.BudgetID);
+      return account ? isAccountOnBudget(account) : false;
+    });
+    if (!internal) return;
+    this.db.transaction(() => {
+      for (const leg of linked) this.queries.updateTransactionPayee(leg.ID, null);
+    });
+  }
+
   async updateTransferRate(
     transferId: string,
     rate: number,
@@ -1091,12 +1113,15 @@ export class TransactionService {
     const partner = group.find((t) => t.ID !== main.ID);
     if (!partner) return;
 
+    const { account: mainAcc } = this.queries.getAccountAndBudget(main.AccountID, main.BudgetID);
     const { account: partnerAcc, budget } = this.queries.getAccountAndBudget(
       partner.AccountID,
       main.BudgetID
     );
+    if (!mainAcc) return;
     if (!partnerAcc) return;
     if (!budget) return;
+    const internalOnBudgetTransfer = isAccountOnBudget(mainAcc) && isAccountOnBudget(partnerAcc);
 
     // Mirror converted (budget) amounts: partner inflow = main outflow; partner outflow = main inflow
     const pInflowConverted = main.OutflowConverted ?? ZERO_MILLI;
@@ -1156,8 +1181,9 @@ export class TransactionService {
         partner.AccountID,
         partner.Date,
         partner.Memo,
-        partner.Payee ?? null
+        internalOnBudgetTransfer ? null : (partner.Payee ?? null)
       );
+      if (internalOnBudgetTransfer) this.queries.updateTransactionPayee(main.ID, null);
       this.queries.recalculateBalances(partner.AccountID);
     });
   }
@@ -1439,6 +1465,13 @@ export class TransactionService {
         this.queries.updateTransactionMemo(transactionId, newValue as string);
         break;
       case 'payee':
+        if (this.isInternalOnBudgetTransfer(transaction)) {
+          const linked = this.getTransactionsByTransferID(transaction.TransferID!);
+          this.db.transaction(() => {
+            for (const leg of linked) this.queries.updateTransactionPayee(leg.ID, null);
+          });
+          break;
+        }
         if (typeof newValue === 'string' && newValue.trim()) {
           this.queries.insertPayee(transaction.BudgetID, newValue.trim());
         }
@@ -1531,6 +1564,16 @@ export class TransactionService {
       default:
         throw new ValidationError(`Unsupported column: ${columnName}`);
     }
+  }
+
+  private isInternalOnBudgetTransfer(transaction: Transaction): boolean {
+    if (!transaction.TransferID) return false;
+    const linked = this.getTransactionsByTransferID(transaction.TransferID);
+    if (linked.length < 2) return false;
+    return linked.every((leg) => {
+      const { account } = this.queries.getAccountAndBudget(leg.AccountID, leg.BudgetID);
+      return account ? isAccountOnBudget(account) : false;
+    });
   }
 
   /**

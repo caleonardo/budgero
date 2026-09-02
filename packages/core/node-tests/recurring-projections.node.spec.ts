@@ -275,7 +275,7 @@ describe('Recurring transfers', () => {
     expect(sourceLeg?.OutflowConverted).toBe(200);
     expect(sourceLeg?.InflowConverted).toBe(0);
     expect(sourceLeg?.TransferID).toBeTruthy();
-    expect(sourceLeg?.Payee).toBe('Savings');
+    expect(sourceLeg?.Payee).toBeFalsy();
     expect(sourceLeg?.Category).toBe('Transfers');
 
     const destRows = services.transactions.getTransactionsByAccount(savings.ID);
@@ -283,7 +283,7 @@ describe('Recurring transfers', () => {
     expect(destLeg).toBeDefined();
     expect(destLeg?.InflowConverted).toBe(200);
     expect(destLeg?.OutflowConverted).toBe(0);
-    expect(destLeg?.Payee).toBe('Checking');
+    expect(destLeg?.Payee).toBeFalsy();
 
     const occurrence = services.recurring.getOccurrenceWithTemplate(occurrences[0].id);
     expect(occurrence.status).toBe('ready');
@@ -312,6 +312,7 @@ describe('Recurring transfers', () => {
       expect(row.OutflowConverted).toBe(200);
       expect(row.InflowConverted).toBe(0);
       expect(row.AccountID).toBe(account.ID);
+      expect(row.Payee).toBeFalsy();
     }
 
     const destProjected = services.recurring.listProjectedTransactions(budgetId, {
@@ -323,6 +324,7 @@ describe('Recurring transfers', () => {
       expect(row.OutflowConverted).toBe(0);
       expect(row.AccountID).toBe(savings.ID);
       expect(row.Account).toBe('Savings');
+      expect(row.Payee).toBeFalsy();
     }
 
     // Both legs of the same occurrence carry distinct synthetic IDs
@@ -627,6 +629,11 @@ describe('Recurring transfers to off-budget accounts', () => {
       .find((tx) => tx.ID === result.transactionId);
     expect(sourceLeg?.Category).toBe('Utilities');
     expect(sourceLeg?.TransferID).toBeTruthy();
+    expect(sourceLeg?.Payee).toBe('Brokerage');
+    const destinationLeg = services.transactions
+      .getTransactionsByAccount(brokerage.ID)
+      .find((tx) => tx.TransferID === sourceLeg?.TransferID);
+    expect(destinationLeg?.Payee).toBe('Brokerage');
   });
 
   it('still coerces to Transfers without a custom category, and on updates that land on-budget', async () => {

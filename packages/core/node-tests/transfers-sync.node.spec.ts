@@ -181,7 +181,8 @@ describe('Transfer partner sync', () => {
       create_default_categories: true,
     });
 
-    // Accounts: USD and EUR
+    // Keep the destination off-budget so transfer payees remain editable;
+    // internal on-budget transfers intentionally clear them.
     const usd = await services.accounts.createAccount(
       'USD Checking',
       budgetId,
@@ -194,7 +195,9 @@ describe('Transfer partner sync', () => {
       budgetId,
       'checking',
       'EUR',
-      0
+      0,
+      {},
+      false
     );
 
     const month = '2025-01';

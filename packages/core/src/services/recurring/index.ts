@@ -6,6 +6,7 @@ import { ValidationError, NotFoundError } from '../../types/index.js';
 import { safeParseJSON } from '../../utils/json.js';
 import { getLocalDateString, getUTCDateString } from '../../utils/date.js';
 import { TransactionService } from '../transactions/index.js';
+import { resolveTransferPayees } from '../transactions/transfer-payee.js';
 import { ensureTransferCategory } from '../transactions/category-helpers.js';
 import { CategoryService } from '../categories/index.js';
 import { CurrencyService } from '../currency/index.js';
@@ -665,7 +666,12 @@ export class RecurringTransactionService {
          c.Name AS Category,
          o.DueDate AS Date,
          COALESCE(NULLIF(r.Memo, ''), r.Name) AS Memo,
-         r.Name AS Payee,
+         CASE
+           WHEN r.ToAccountID IS NULL THEN r.Name
+           WHEN COALESCE(a.OnBudget, 1) <> 0 AND COALESCE(transfer_destination.OnBudget, 1) <> 0 THEN ''
+           WHEN COALESCE(a.OnBudget, 1) = 0 AND COALESCE(transfer_destination.OnBudget, 1) <> 0 THEN a.Name
+           ELSE transfer_destination.Name
+         END AS Payee,
          CASE WHEN r.Direction = 'inflow'
            THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS InflowConverted,
          CASE WHEN r.Direction = 'outflow'
@@ -675,6 +681,7 @@ export class RecurringTransactionService {
        FROM recurring_transaction_occurrences o
        JOIN recurring_transactions r ON r.ID = o.RecurringTransactionID
        JOIN accounts a ON a.ID = r.AccountID
+       LEFT JOIN accounts transfer_destination ON transfer_destination.ID = r.ToAccountID
        JOIN budgets b ON b.ID = o.BudgetID
        LEFT JOIN categories c ON c.ID = r.CategoryID
        WHERE o.BudgetID = ? AND o.Status = 'scheduled' AND r.Active = 1 ${dateWhere} ${sourceAccountWhere}
@@ -690,7 +697,11 @@ export class RecurringTransactionService {
          c.Name AS Category,
          o.DueDate AS Date,
          COALESCE(NULLIF(r.Memo, ''), r.Name) AS Memo,
-         r.Name AS Payee,
+         CASE
+           WHEN COALESCE(a.OnBudget, 1) <> 0 AND COALESCE(a2.OnBudget, 1) <> 0 THEN ''
+           WHEN COALESCE(a.OnBudget, 1) <> 0 AND COALESCE(a2.OnBudget, 1) = 0 THEN a2.Name
+           ELSE a.Name
+         END AS Payee,
          CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) AS InflowConverted,
          0 AS OutflowConverted,
          CAST(ROUND(r.Amount * ${TRANSFER_LEG_RATE_SQL}) AS INTEGER) AS InflowNative,
@@ -821,16 +832,21 @@ export class RecurringTransactionService {
     memo: string
   ): Promise<number> {
     const accountRow = (id: number) =>
-      getRow<{ ID: number; Name: string; Currency: string }>(
+      getRow<{ ID: number; Name: string; Currency: string; OnBudget: boolean | number }>(
         this.db,
-        'SELECT ID, Name, Currency FROM accounts WHERE ID = ?',
+        'SELECT ID, Name, Currency, OnBudget FROM accounts WHERE ID = ?',
         id
       );
     const source = accountRow(template.accountId);
     const destination = accountRow(template.toAccountId as number);
+    if (!source) {
+      throw new ValidationError('Transfer source account no longer exists', 'accountId');
+    }
     if (!destination) {
       throw new ValidationError('Transfer destination account no longer exists', 'toAccountId');
     }
+
+    const payees = resolveTransferPayees(source, destination);
 
     let destinationAmount = template.amount;
     if (source && source.Currency !== destination.Currency) {
@@ -855,7 +871,7 @@ export class RecurringTransactionService {
       transactionDate,
       memo,
       transferId,
-      destination.Name
+      payees.sourcePayee ?? ''
     );
     try {
       await this.transactions.addTransaction(
@@ -867,7 +883,7 @@ export class RecurringTransactionService {
         transactionDate,
         memo,
         transferId,
-        source?.Name
+        payees.destinationPayee ?? ''
       );
     } catch (error) {
       // The legs can't share one DB transaction (each addTransaction opens

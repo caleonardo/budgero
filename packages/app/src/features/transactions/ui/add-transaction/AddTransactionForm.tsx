@@ -104,6 +104,7 @@ export function AddTransactionForm({
     currencyCode,
     needsCurrencyConversion,
     isOffBudgetTransfer = false,
+    transferInvolvesOffBudget = false,
     parentSigned,
     remaining,
     canUseCurrencyApi,
@@ -393,6 +394,7 @@ export function AddTransactionForm({
         accountsLoading={accountsLoading}
         isTransfer={form.isTransfer}
         isOffBudgetTransfer={isOffBudgetTransfer}
+        transferInvolvesOffBudget={transferInvolvesOffBudget}
         needsCurrencyConversion={needsCurrencyConversion}
         convertedAmount={form.convertedAmount}
         isLoadingRate={form.isLoadingRate}

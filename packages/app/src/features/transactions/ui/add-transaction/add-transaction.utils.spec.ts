@@ -3,7 +3,16 @@ import { describe, expect, it } from 'vitest';
 import {
   calculateImpliedTransferRate,
   calculateTransferRateOverrides,
+  shouldShowPayeeField,
 } from './add-transaction.utils';
+
+describe('shouldShowPayeeField', () => {
+  it('hides payee only for transfers entirely inside the budget', () => {
+    expect(shouldShowPayeeField(false, false)).toBe(true);
+    expect(shouldShowPayeeField(true, false)).toBe(false);
+    expect(shouldShowPayeeField(true, true)).toBe(true);
+  });
+});
 
 describe('calculateTransferRateOverrides', () => {
   it('derives the direct rate from native amounts with different storage scales', () => {

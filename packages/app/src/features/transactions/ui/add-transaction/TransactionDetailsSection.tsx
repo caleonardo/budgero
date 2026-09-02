@@ -20,6 +20,7 @@ import { formatShortDate, parseDateKey } from '@shared/lib/date-utils';
 import type { TransactionType } from '@features/transactions/api/useTransactionForm';
 import type { MilliUnits } from '@shared/lib/currency/milli';
 import type { PayeeCategoryMemory } from '@budgero/core/browser';
+import { shouldShowPayeeField } from './add-transaction.utils';
 import {
   TransactionTypeSelector,
   AmountInput,
@@ -33,6 +34,7 @@ interface Account {
   ID: number;
   Name: string;
   Currency: string;
+  OnBudget: boolean;
 }
 
 interface Category {
@@ -89,6 +91,7 @@ interface TransactionDetailsSectionProps {
 
   // Off-budget transfer (allows category selection)
   isOffBudgetTransfer: boolean;
+  transferInvolvesOffBudget: boolean;
 
   // Payee
   payee: string;
@@ -142,6 +145,7 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
   accountsLoading,
   isTransfer,
   isOffBudgetTransfer,
+  transferInvolvesOffBudget,
   needsCurrencyConversion,
   convertedAmount,
   isLoadingRate,
@@ -253,27 +257,29 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
         />
       )}
 
-      {/* Payee Input */}
-      <div className="space-y-1.5 sm:space-y-2" data-testid="transaction-payee-field">
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <AutofillIndicator
-              show={autofillAppliedFields?.has('payee') ?? false}
-              className="absolute -top-0.5 -right-0.5"
-            />
-          </div>
-          <div className="flex-1">
-            <PayeeCombobox
-              budgetId={budgetId}
-              value={payee}
-              onChange={onPayeeChange}
-              placeholder="Select payee"
-              triggerClassName="h-8 sm:h-10"
-            />
+      {/* Internal transfers do not have a payee; an off-budget account is external to the budget. */}
+      {shouldShowPayeeField(isTransfer, transferInvolvesOffBudget) && (
+        <div className="space-y-1.5 sm:space-y-2" data-testid="transaction-payee-field">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <User className="h-4 w-4 text-muted-foreground" />
+              <AutofillIndicator
+                show={autofillAppliedFields?.has('payee') ?? false}
+                className="absolute -top-0.5 -right-0.5"
+              />
+            </div>
+            <div className="flex-1">
+              <PayeeCombobox
+                budgetId={budgetId}
+                value={payee}
+                onChange={onPayeeChange}
+                placeholder="Select payee"
+                triggerClassName="h-8 sm:h-10"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Label Selector */}
       {showLabel && (
