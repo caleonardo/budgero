@@ -47,6 +47,9 @@ export interface DesktopTransactionTableProps {
   editorDirectories: TransactionEditorDirectories;
   budgetId: number;
   scrollResetKey: string;
+  canLoadMore?: boolean;
+  isLoadingMore?: boolean;
+  onLoadMore?: () => Promise<unknown>;
 }
 
 export function DesktopTransactionTable({
@@ -72,6 +75,9 @@ export function DesktopTransactionTable({
   editorDirectories,
   budgetId,
   scrollResetKey,
+  canLoadMore = false,
+  isLoadingMore = false,
+  onLoadMore,
 }: DesktopTransactionTableProps) {
   const [splitDialogState, setSplitDialogState] = useState<{
     transaction: GetTransactionsByAccountRow;
@@ -105,7 +111,13 @@ export function DesktopTransactionTable({
     startIndex,
     topSpacerHeight,
     bottomSpacerHeight,
+    endIndex,
   } = useVirtualizedTransactionRows(transactions);
+
+  useEffect(() => {
+    if (!canLoadMore || isLoadingMore || endIndex < transactions.length - 20) return;
+    void onLoadMore?.();
+  }, [canLoadMore, endIndex, isLoadingMore, onLoadMore, transactions.length]);
 
   const transactionIds = useMemo(
     () => transactions.map((transaction) => transaction.ID.toString()),

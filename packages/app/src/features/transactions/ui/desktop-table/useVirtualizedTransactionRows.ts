@@ -60,5 +60,6 @@ export function useVirtualizedTransactionRows<T>(items: T[]) {
     startIndex,
     topSpacerHeight: startIndex * TRANSACTION_ROW_HEIGHT,
     bottomSpacerHeight: Math.max(0, (items.length - endIndex) * TRANSACTION_ROW_HEIGHT),
+    endIndex,
   };
 }

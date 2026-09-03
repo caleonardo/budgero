@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useAccounts } from '@entities/account/api/useAccounts';
 // Use runtime services directly instead of db-ops wrappers
 import { useRuntime, useActiveSpaceId } from '@shared/runtime/runtime-provider';
@@ -10,7 +10,12 @@ import type {
   GetTransactionsByCategoryAndMonthRow,
   GetAllTransactions,
   TransferRateDetails,
+  AccountTransactionCursor,
+  AccountTransactionPage,
+  AccountTransactionSummary,
 } from '@budgero/core/browser';
+
+export const ACCOUNT_TRANSACTION_PAGE_SIZE = 200;
 
 /**
  * Fetch all transactions for a given account.
@@ -28,6 +33,90 @@ export function useTransactions(accountId: number | null) {
     },
     enabled: Boolean(spaceId) && Boolean(accountId),
     staleTime: 1000 * 60 * 5,
+  });
+}
+
+/**
+ * Incremental account-register query. Date/ID keysets keep every database read
+ * bounded even when an account has tens of thousands of transactions.
+ */
+export function useAccountTransactionPages(
+  accountId: number | null,
+  fromDate?: string,
+  toDate?: string
+) {
+  const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
+  const spaceKey = resolveSpaceKey(spaceId);
+
+  return useInfiniteQuery<
+    AccountTransactionPage,
+    Error,
+    { pages: AccountTransactionPage[]; pageParams: (AccountTransactionCursor | null)[] },
+    readonly (string | number)[],
+    AccountTransactionCursor | null
+  >({
+    queryKey: [
+      'accountTransactionPages',
+      spaceKey,
+      accountId ?? 0,
+      fromDate ?? '',
+      toDate ?? '',
+      ACCOUNT_TRANSACTION_PAGE_SIZE,
+    ],
+    queryFn: async ({ pageParam }) => {
+      if (!spaceId || !accountId) return { rows: [], nextCursor: null };
+      return runtime.services().transactions.getTransactionsByAccountPage(accountId, {
+        limit: ACCOUNT_TRANSACTION_PAGE_SIZE,
+        cursor: pageParam,
+        fromDate,
+        toDate,
+      });
+    },
+    initialPageParam: null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    enabled: Boolean(spaceId) && Boolean(accountId),
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+/** Full selected range, enabled only while correctness-sensitive client search is active. */
+export function useAccountTransactionsForSearch(
+  accountId: number | null,
+  fromDate: string | undefined,
+  toDate: string | undefined,
+  enabled: boolean
+) {
+  return useSpaceQuery<GetTransactionsByAccountRow[]>({
+    key: ['accountTransactionRange', accountId ?? 0, fromDate ?? '', toDate ?? ''],
+    enabled: enabled && Boolean(accountId),
+    queryFn: (services) =>
+      services.transactions.getTransactionsByAccountRange(accountId as number, fromDate, toDate),
+  });
+}
+
+/** Small aggregate query used by account headers and pagination counts. */
+export function useAccountTransactionSummary(
+  accountId: number | null,
+  fromDate?: string,
+  toDate?: string,
+  enabled = true
+) {
+  return useSpaceQuery<AccountTransactionSummary>({
+    key: ['accountTransactionSummary', accountId ?? 0, fromDate ?? '', toDate ?? ''],
+    enabled: enabled && Boolean(accountId),
+    queryFn: (services) =>
+      services.transactions.getAccountTransactionSummary(accountId as number, fromDate, toDate),
+  });
+}
+
+/** Future-dated rows are used by the small scheduled-transactions panel, not the main register. */
+export function useFutureAccountTransactions(accountId: number | null, afterDate: string) {
+  return useSpaceQuery<GetTransactionsByAccountRow[]>({
+    key: ['futureAccountTransactions', accountId ?? 0, afterDate],
+    enabled: Boolean(accountId),
+    queryFn: (services) =>
+      services.transactions.getTransactionsByAccountRange(accountId as number, afterDate),
   });
 }
 

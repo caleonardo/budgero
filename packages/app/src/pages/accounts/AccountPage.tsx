@@ -4,17 +4,22 @@ import { ReconcileAccountDialog } from '@features/account-management/ui/Reconcil
 import { useCategories } from '@entities/category/api/useCategories';
 import { useRevaluationSummary } from '@entities/currency/api/useRevaluationSummary';
 import { useAccounts } from '@entities/account/api/useAccounts';
-import { useTransactions } from '@entities/transaction/api/useTransactions';
+import {
+  useAccountTransactionPages,
+  useAccountTransactionsForSearch,
+  useAccountTransactionSummary,
+  useFutureAccountTransactions,
+} from '@entities/transaction/api/queries';
 import {
   useMarkRecurringOccurrenceReady,
   useProjectedTransactions,
   useRecurringOccurrences,
   useSkipRecurringOccurrence,
 } from '@entities/recurring/api/useRecurringTransactions';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useUiStore } from '@shared/store/useUiStore';
 import { Badge } from '@shared/ui/badge';
-import { endOfDay, isAfter } from 'date-fns';
+import { addDays, endOfDay, isAfter } from 'date-fns';
 import { Wallet, ArrowUpRight, ArrowDownRight, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { TooltipProvider } from '@shared/ui/tooltip';
 import { PayoffSimulator } from '@features/debt/ui/PayoffSimulator';
@@ -95,8 +100,41 @@ export default function AccountPage() {
     : null;
   const AccountIcon = accountTypeDef?.icon || Wallet;
 
-  const { data, isLoading: isTransactionsLoading } = useTransactions(numericId);
-  const allTransactionsData = useMemo(() => data ?? [], [data]);
+  const [isRegisterFilterActive, setIsRegisterFilterActive] = useState(false);
+  const registerRange = useMemo(() => {
+    const from = dateRange?.from ? formatDateISO(dateRange.from) : undefined;
+    const toSource = dateRange?.to ?? dateRange?.from;
+    return { from, to: toSource ? formatDateISO(toSource) : undefined };
+  }, [dateRange]);
+  const transactionPages = useAccountTransactionPages(
+    numericId,
+    registerRange.from,
+    registerRange.to
+  );
+  const searchTransactions = useAccountTransactionsForSearch(
+    numericId,
+    registerRange.from,
+    registerRange.to,
+    isRegisterFilterActive
+  );
+  const { data: transactionSummary, isLoading: isTransactionSummaryLoading } =
+    useAccountTransactionSummary(numericId, registerRange.from, registerRange.to);
+  const tomorrow = useMemo(() => formatDateISO(addDays(new Date(), 1)), []);
+  const { data: futureTransactions = [] } = useFutureAccountTransactions(numericId, tomorrow);
+  const pagedTransactions = useMemo(
+    () => transactionPages.data?.pages.flatMap((page) => page.rows) ?? [],
+    [transactionPages.data]
+  );
+  const allTransactionsData = useMemo(
+    () =>
+      isRegisterFilterActive ? (searchTransactions.data ?? pagedTransactions) : pagedTransactions,
+    [isRegisterFilterActive, pagedTransactions, searchTransactions.data]
+  );
+  const isTransactionsLoading = transactionPages.isLoading || isTransactionSummaryLoading;
+  const { fetchNextPage } = transactionPages;
+  const handleLoadMoreTransactions = useCallback(async () => {
+    await fetchNextPage();
+  }, [fetchNextPage]);
 
   const { balanceAccountToday, balanceConvertedToday, displayBalanceToday, transactionsData } =
     useAccountMetrics({
@@ -149,14 +187,16 @@ export default function AccountPage() {
     [transactionsData, allTransactionsData, projectedTransactions]
   );
   const unsafeTransactionCount = useMemo(
-    () => registerRows.filter(hasUnsafeTransactionMoney).length,
-    [registerRows]
+    () =>
+      (transactionSummary?.UnsafeTransactionCount ?? 0) +
+      projectedTransactions.filter(hasUnsafeTransactionMoney).length,
+    [projectedTransactions, transactionSummary?.UnsafeTransactionCount]
   );
   const hasUnsafeAccountBalance = Boolean(
     selectedAccount &&
-      [selectedAccount.BalanceNative, selectedAccount.BalanceConverted].some(
-        (value) => value != null && !isSafeStorageAmount(value)
-      )
+    [selectedAccount.BalanceNative, selectedAccount.BalanceConverted].some(
+      (value) => value != null && !isSafeStorageAmount(value)
+    )
   );
   const hasStoredMoneyIntegrityIssue = unsafeTransactionCount > 0 || hasUnsafeAccountBalance;
   const [processingOccurrenceId, setProcessingOccurrenceId] = useState<number | null>(null);
@@ -253,7 +293,7 @@ export default function AccountPage() {
 
   const upcomingScheduledTransactions = useMemo(() => {
     const todayEnd = endOfDay(new Date());
-    return allTransactionsData
+    return futureTransactions
       .map((transaction) => {
         const rawDate =
           (transaction as { Date?: string; date?: string }).Date ??
@@ -271,7 +311,7 @@ export default function AccountPage() {
         if (!a.parsedDate || !b.parsedDate) return 0;
         return a.parsedDate.getTime() - b.parsedDate.getTime();
       });
-  }, [allTransactionsData, recurringPostedTransactionIds]);
+  }, [futureTransactions, recurringPostedTransactionIds]);
 
   const handleOccurrenceAction = async (occurrenceId: number, action: 'ready' | 'skip') => {
     try {
@@ -298,17 +338,53 @@ export default function AccountPage() {
   };
 
   const transactionStats = useMemo(() => {
-    // If we have filtered stats from TransactionsTable (which includes semantic search filters), use those
-    if (filteredStats) {
+    // Search materializes the complete selected range, so its client-filtered
+    // totals remain exact. The normal register uses database aggregates.
+    if (isRegisterFilterActive && !searchTransactions.isFetching && filteredStats) {
       return {
         recentCount: filteredStats.transactionCount,
         totalInflow: filteredStats.totalInflow,
         totalOutflow: filteredStats.totalOutflow,
       };
     }
-    // Fallback to calculating from the register rows (date-filtered, incl. projections)
-    return calculateTransactionStats(registerRows, mobilePageStats, transactionCurrencyDisplay);
-  }, [registerRows, mobilePageStats, transactionCurrencyDisplay, filteredStats]);
+    if (mobilePageStats) {
+      return calculateTransactionStats(registerRows, mobilePageStats, transactionCurrencyDisplay);
+    }
+    const projectedTotals = projectedTransactions.reduce(
+      (totals, transaction) => {
+        totals.inflow +=
+          transactionCurrencyDisplay === 'budget'
+            ? transaction.InflowConverted
+            : (transaction.InflowNative ?? transaction.InflowConverted);
+        totals.outflow +=
+          transactionCurrencyDisplay === 'budget'
+            ? transaction.OutflowConverted
+            : (transaction.OutflowNative ?? transaction.OutflowConverted);
+        return totals;
+      },
+      { inflow: 0, outflow: 0 }
+    );
+    return {
+      recentCount: (transactionSummary?.TransactionCount ?? 0) + projectedTransactions.length,
+      totalInflow:
+        ((transactionCurrencyDisplay === 'budget'
+          ? transactionSummary?.TotalInflowConverted
+          : transactionSummary?.TotalInflowNative) ?? 0) + projectedTotals.inflow,
+      totalOutflow:
+        ((transactionCurrencyDisplay === 'budget'
+          ? transactionSummary?.TotalOutflowConverted
+          : transactionSummary?.TotalOutflowNative) ?? 0) + projectedTotals.outflow,
+    };
+  }, [
+    filteredStats,
+    isRegisterFilterActive,
+    mobilePageStats,
+    projectedTransactions,
+    registerRows,
+    searchTransactions.isFetching,
+    transactionCurrencyDisplay,
+    transactionSummary,
+  ]);
   const hasMoneyIntegrityIssue =
     hasStoredMoneyIntegrityIssue ||
     !isSafeStorageAmount(displayBalanceToday) ||
@@ -570,6 +646,14 @@ export default function AccountPage() {
             categories={categories}
             onDateRangeChange={handleDateRangeChange}
             onFilteredStatsChange={handleFilteredStatsChange}
+            onFilterModeChange={setIsRegisterFilterActive}
+            totalTransactionCount={
+              (transactionSummary?.TransactionCount ?? 0) + projectedTransactions.length
+            }
+            uncategorizedCount={transactionSummary?.UncategorizedCount ?? 0}
+            hasMoreTransactions={Boolean(transactionPages.hasNextPage)}
+            isLoadingMoreTransactions={transactionPages.isFetchingNextPage}
+            onLoadMoreTransactions={handleLoadMoreTransactions}
             headerActions={
               selectedAccount && (
                 <ReconcileAccountDialog

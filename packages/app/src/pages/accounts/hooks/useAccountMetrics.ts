@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { isValid, parseISO } from 'date-fns';
 import type { DateRange } from 'react-day-picker';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
-import { extractDateKey, formatDateISO, getTodayISO } from '@shared/lib/date-utils';
+import { extractDateKey, formatDateISO } from '@shared/lib/date-utils';
 
 /**
  * Normalizes various date inputs to a Date object or null.
@@ -31,6 +31,8 @@ export interface AccountMetricsInput {
   selectedAccount: {
     BalanceNative?: number | null;
     BalanceConverted?: number | null;
+    FutureImpactNative?: number | null;
+    FutureImpactConverted?: number | null;
   } | null;
   allTransactionsData: GetTransactionsByAccountRow[];
   dateRange: DateRange | undefined;
@@ -61,27 +63,15 @@ export function useAccountMetrics({
   dateRange,
   transactionCurrencyDisplay,
 }: AccountMetricsInput): AccountMetricsResult {
-  const futureTransactionImpact = useMemo(() => {
-    if (!allTransactionsData.length) {
-      return { original: 0, converted: 0 };
-    }
-    const cutoff = getTodayISO();
-    return allTransactionsData.reduce(
-      (acc, tx) => {
-        if (!tx?.Date || tx.Date <= cutoff) {
-          return acc;
-        }
-        const inflow = tx.InflowConverted ?? 0;
-        const outflow = tx.OutflowConverted ?? 0;
-        const inflowOriginal = tx.InflowNative ?? inflow;
-        const outflowOriginal = tx.OutflowNative ?? outflow;
-        acc.original += inflowOriginal - outflowOriginal;
-        acc.converted += inflow - outflow;
-        return acc;
-      },
-      { original: 0, converted: 0 }
-    );
-  }, [allTransactionsData]);
+  // Account rows already carry these database aggregates. Reading them here
+  // avoids reducing the complete register merely to derive today's balance.
+  const futureTransactionImpact = useMemo(
+    () => ({
+      original: selectedAccount?.FutureImpactNative ?? 0,
+      converted: selectedAccount?.FutureImpactConverted ?? 0,
+    }),
+    [selectedAccount?.FutureImpactNative, selectedAccount?.FutureImpactConverted]
+  );
 
   const balanceAccountToday = useMemo(() => {
     if (!selectedAccount) {

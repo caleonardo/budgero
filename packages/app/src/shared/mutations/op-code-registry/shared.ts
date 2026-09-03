@@ -187,6 +187,11 @@ export const RULE_INVALIDATION_KEYS: string[][] = [
 
 export const TRANSACTION_INVALIDATION_KEYS: string[][] = [
   ['transactions', '*'],
+  ['accountTransactionPages', '*'],
+  ['accountTransactionRange', '*'],
+  ['accountTransactionSummary', '*'],
+  ['futureAccountTransactions', '*'],
+  ['accountBalanceHistory', '*'],
   ['transferRateDetails', '*'],
   ['transactionsByCategoryAndMonth', '*'],
   ['allTransactions', '*'],

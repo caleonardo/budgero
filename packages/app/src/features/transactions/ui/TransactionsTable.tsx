@@ -65,6 +65,16 @@ interface TransactionsTableProps {
   onDateRangeChange?: (range: DateRange | undefined) => void;
   /** Callback when filtered data changes (includes semantic search filters) */
   onFilteredStatsChange?: (stats: FilteredStats) => void;
+  /** Notifies an account register when search requires its complete selected range. */
+  onFilterModeChange?: (active: boolean) => void;
+  /** Database count for a partially loaded account register. */
+  totalTransactionCount?: number;
+  /** Database count used before the uncategorized filter is activated. */
+  uncategorizedCountOverride?: number;
+  /** Incremental account-register loading controls. */
+  hasMoreTransactions?: boolean;
+  isLoadingMoreTransactions?: boolean;
+  onLoadMoreTransactions?: () => Promise<unknown>;
   /** Extra action buttons rendered in the toolbar row (replaces "Transactions" heading) */
   headerActions?: React.ReactNode;
 }
@@ -80,6 +90,12 @@ export function TransactionsTable({
   categories = EMPTY_CATEGORIES,
   onDateRangeChange,
   onFilteredStatsChange,
+  onFilterModeChange,
+  totalTransactionCount,
+  uncategorizedCountOverride,
+  hasMoreTransactions = false,
+  isLoadingMoreTransactions = false,
+  onLoadMoreTransactions,
   headerActions,
 }: TransactionsTableProps) {
   const isMobile = useIsMobile();
@@ -217,7 +233,7 @@ export function TransactionsTable({
       [transactionCurrencyDisplay]
     );
 
-  const uncategorizedCount = React.useMemo(() => {
+  const loadedUncategorizedCount = React.useMemo(() => {
     return rawData.reduce((count, tx) => count + (isUncategorized(tx) ? 1 : 0), 0);
   }, [rawData]);
 
@@ -242,6 +258,16 @@ export function TransactionsTable({
     handleSelectCategory,
   } = useTransactionSearch(categoryNames, labelNames, onDateRangeChange);
 
+  const isFilterModeActive = searchQuery.trim().length > 0 || showOnlyUncategorized;
+  React.useEffect(() => {
+    onFilterModeChange?.(isFilterModeActive);
+  }, [isFilterModeActive, onFilterModeChange]);
+
+  const uncategorizedCount =
+    !isFilterModeActive && uncategorizedCountOverride !== undefined
+      ? uncategorizedCountOverride
+      : loadedUncategorizedCount;
+
   const filteredData = React.useMemo(
     () =>
       filterTransactions(
@@ -253,6 +279,11 @@ export function TransactionsTable({
       ),
     [rawData, parsedQuery, showOnlyUncategorized, getPrimaryInflow, getPrimaryOutflow]
   );
+
+  const effectiveTransactionCount =
+    !isFilterModeActive && totalTransactionCount !== undefined
+      ? totalTransactionCount
+      : filteredData.length;
 
   const paginatedData = React.useMemo(() => {
     const startIndex = page * pageSize;
@@ -311,11 +342,15 @@ export function TransactionsTable({
   } | null>(null);
   React.useEffect(() => {
     if (!onMobilePageChange) return;
+    if (!isMobile) {
+      onMobilePageChange(null);
+      return;
+    }
 
     // Only calculate for mobile (when callback is provided)
     const totalInflow = paginatedData.reduce((sum, tx) => sum + (getPrimaryInflow(tx) || 0), 0);
     const totalOutflow = paginatedData.reduce((sum, tx) => sum + (getPrimaryOutflow(tx) || 0), 0);
-    const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+    const totalPages = Math.ceil(effectiveTransactionCount / pageSize) || 1;
     const nextStats = {
       totalInflow,
       totalOutflow,
@@ -339,11 +374,12 @@ export function TransactionsTable({
   }, [
     paginatedData,
     page,
-    filteredData.length,
+    effectiveTransactionCount,
     pageSize,
     onMobilePageChange,
     getPrimaryInflow,
     getPrimaryOutflow,
+    isMobile,
   ]);
 
   React.useEffect(() => {
@@ -362,7 +398,7 @@ export function TransactionsTable({
     };
   }, [onMobilePageChange]);
 
-  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const totalPages = Math.ceil(effectiveTransactionCount / pageSize) || 1;
   const hasNextPage = page < totalPages - 1;
   const hasPreviousPage = page > 0;
 
@@ -443,10 +479,17 @@ export function TransactionsTable({
             budgetId={budgetId}
             hasNextPage={hasNextPage}
             hasPreviousPage={hasPreviousPage}
-            onNextPage={() => {
-              if (hasNextPage) {
-                setPage((p) => p + 1);
+            onNextPage={async () => {
+              if (!hasNextPage) return;
+              const nextPage = page + 1;
+              if (
+                !isFilterModeActive &&
+                (nextPage + 1) * pageSize > filteredData.length &&
+                hasMoreTransactions
+              ) {
+                await onLoadMoreTransactions?.();
               }
+              setPage(nextPage);
             }}
             onPreviousPage={() => {
               if (hasPreviousPage) {
@@ -455,6 +498,7 @@ export function TransactionsTable({
             }}
             currentPage={page}
             totalPages={totalPages}
+            isLoadingMore={isLoadingMoreTransactions}
           />
         ) : (
           <DesktopTransactionTable
@@ -489,6 +533,9 @@ export function TransactionsTable({
             editorDirectories={editorDirectories}
             budgetId={budgetId}
             scrollResetKey={`${searchQuery}:${showOnlyUncategorized}`}
+            canLoadMore={!isFilterModeActive && hasMoreTransactions}
+            isLoadingMore={isLoadingMoreTransactions}
+            onLoadMore={onLoadMoreTransactions}
           />
         )}
       </div>
