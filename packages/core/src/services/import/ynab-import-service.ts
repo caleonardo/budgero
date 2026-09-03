@@ -533,14 +533,14 @@ export class YNABImportService {
         readyToAssignMonthsVerified = await this.verifyYNABReadyToAssign(
           budgetId,
           readyToAssignSpecs,
-          async (processed, total) => {
+          async (processed, total, month) => {
             const progress = Math.min(97, 92 + Math.floor((processed / total) * 5));
             await reportProgress({
               stage: 'rta-verification',
               status: 'running',
               progress,
               label: 'Verifying Ready to Assign',
-              detail: `${processed.toLocaleString()} of ${total.toLocaleString()} months verified`,
+              detail: `${processed.toLocaleString()} of ${total.toLocaleString()} months checked · ${month}`,
             });
           }
         );
@@ -618,7 +618,7 @@ export class YNABImportService {
   private async verifyYNABReadyToAssign(
     budgetId: number,
     specs: YNABImportReadyToAssignSpec[],
-    onBatch?: (processed: number, total: number) => void | Promise<void>
+    onMonth?: (processed: number, total: number, month: string) => void | Promise<void>
   ): Promise<number> {
     const mismatches: YNABReadyToAssignMismatch[] = [];
 
@@ -638,9 +638,7 @@ export class YNABImportService {
       }
 
       const processed = index + 1;
-      if (specs.length > 10 && (processed % 5 === 0 || processed === specs.length)) {
-        await onBatch?.(processed, specs.length);
-      }
+      await onMonth?.(processed, specs.length, spec.month);
     }
 
     if (mismatches.length > 0) {

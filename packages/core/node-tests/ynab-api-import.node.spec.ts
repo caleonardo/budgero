@@ -347,6 +347,7 @@ describe('YNAB API import', () => {
         'account-verification:running',
         'account-verification:passed',
         'rta-verification:running',
+        'rta-verification:running',
         'rta-verification:passed',
       ]);
       expect(callbacksOverlapped).toBe(false);
