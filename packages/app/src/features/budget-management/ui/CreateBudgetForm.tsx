@@ -35,6 +35,26 @@ interface CreateBudgetFormProps {
   defaultTab?: 'manual' | 'core' | 'import';
 }
 
+/**
+ * Let React commit a progress update and the browser paint it before the next
+ * synchronous sql.js import batch starts. A timeout fallback also keeps imports
+ * moving in background tabs where animation frames may be throttled.
+ */
+function yieldAfterPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    if (
+      typeof document === 'undefined' ||
+      document.visibilityState !== 'visible' ||
+      typeof requestAnimationFrame !== 'function'
+    ) {
+      setTimeout(resolve, 0);
+      return;
+    }
+
+    requestAnimationFrame(() => setTimeout(resolve, 0));
+  });
+}
+
 const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   onCreated,
   onModeChange,
@@ -235,8 +255,9 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         currency,
         numberFormat,
         badgeIcon: importBadgeIcon,
-        onProgress: (update) => {
+        onProgress: async (update) => {
           setYnabImportUpdates((current) => [...current, update]);
+          await yieldAfterPaint();
         },
       };
 
@@ -257,6 +278,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
           label: 'Saving imported budget',
         },
       ]);
+      await yieldAfterPaint();
       trackBudgetCreated();
       trackImportedFromYnab();
 

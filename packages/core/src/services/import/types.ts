@@ -12,7 +12,11 @@ export interface YNABImportConfig {
   currency: string;
   numberFormat: string;
   badgeIcon: string;
-  onProgress?: (update: YNABImportProgressUpdate) => void;
+  /**
+   * Called at import stage and batch boundaries. Returning a promise applies
+   * backpressure, allowing browser clients to paint before work continues.
+   */
+  onProgress?: (update: YNABImportProgressUpdate) => void | Promise<void>;
 }
 
 export type YNABImportStage =

@@ -361,9 +361,11 @@ export class YNABImportService {
     accountSpecs?: YNABImportAccountSpec[],
     readyToAssignSpecs?: YNABImportReadyToAssignSpec[]
   ): Promise<YNABImportResult> {
-    const reportProgress = (update: YNABImportProgressUpdate) => config.onProgress?.(update);
+    const reportProgress = async (update: YNABImportProgressUpdate) => {
+      await config.onProgress?.(update);
+    };
     const preview = inspectYNABRows(registerRows, budgetRows);
-    reportProgress({
+    await reportProgress({
       stage: 'preparing',
       status: 'running',
       progress: 2,
@@ -391,14 +393,14 @@ export class YNABImportService {
       // the application's cumulative default.
       this.budgetService.updateRtaMode(budgetId, 'monthly');
       debugLog(`Created budget with ID: ${budgetId}`);
-      reportProgress({
+      await reportProgress({
         stage: 'preparing',
         status: 'passed',
         progress: 10,
         label: 'Budget created',
       });
 
-      reportProgress({
+      await reportProgress({
         stage: 'categories',
         status: 'running',
         progress: 12,
@@ -421,7 +423,7 @@ export class YNABImportService {
           debugLog(`DUPLICATE GROUP: "${name}" appears ${count} times`);
         }
       }
-      reportProgress({
+      await reportProgress({
         stage: 'categories',
         status: 'passed',
         progress: 28,
@@ -429,7 +431,7 @@ export class YNABImportService {
         detail: `${Object.keys(categories).length} category mappings`,
       });
 
-      reportProgress({
+      await reportProgress({
         stage: 'accounts',
         status: 'running',
         progress: 30,
@@ -444,7 +446,7 @@ export class YNABImportService {
         accountSpecs
       );
       debugLog(`Created ${Object.keys(accounts).length} accounts`);
-      reportProgress({
+      await reportProgress({
         stage: 'accounts',
         status: 'passed',
         progress: 42,
@@ -452,7 +454,7 @@ export class YNABImportService {
         detail: `${Object.keys(accounts).length} accounts`,
       });
 
-      reportProgress({
+      await reportProgress({
         stage: 'assignments',
         status: 'running',
         progress: 44,
@@ -461,14 +463,14 @@ export class YNABImportService {
       debugLog('Importing assignments...');
       this.importAssignments(budgetId, budgetRows, categories, sourceNumberFormat);
       debugLog('Assignments imported successfully');
-      reportProgress({
+      await reportProgress({
         stage: 'assignments',
         status: 'passed',
         progress: 58,
         label: 'Assignments imported',
       });
 
-      reportProgress({
+      await reportProgress({
         stage: 'transactions',
         status: 'running',
         progress: 60,
@@ -481,10 +483,20 @@ export class YNABImportService {
         registerRows,
         accounts,
         categories,
-        sourceNumberFormat
+        sourceNumberFormat,
+        async (processed, total, transactionsCreated) => {
+          const progress = Math.min(79, 60 + Math.floor((processed / total) * 19));
+          await reportProgress({
+            stage: 'transactions',
+            status: 'running',
+            progress,
+            label: 'Importing transactions',
+            detail: `${processed.toLocaleString()} of ${total.toLocaleString()} entries processed · ${transactionsCreated.toLocaleString()} transactions created`,
+          });
+        }
       );
       debugLog('Transactions imported successfully');
-      reportProgress({
+      await reportProgress({
         stage: 'transactions',
         status: 'passed',
         progress: 80,
@@ -494,14 +506,14 @@ export class YNABImportService {
 
       let accountBalancesVerified: number | undefined;
       if (accountSpecs) {
-        reportProgress({
+        await reportProgress({
           stage: 'account-verification',
           status: 'running',
           progress: 82,
           label: 'Verifying account balances',
         });
         accountBalancesVerified = this.verifyYNABAccountBalances(budgetId, accounts, accountSpecs);
-        reportProgress({
+        await reportProgress({
           stage: 'account-verification',
           status: 'passed',
           progress: 90,
@@ -512,14 +524,27 @@ export class YNABImportService {
 
       let readyToAssignMonthsVerified: number | undefined;
       if (readyToAssignSpecs) {
-        reportProgress({
+        await reportProgress({
           stage: 'rta-verification',
           status: 'running',
           progress: 92,
           label: 'Verifying Ready to Assign',
         });
-        readyToAssignMonthsVerified = this.verifyYNABReadyToAssign(budgetId, readyToAssignSpecs);
-        reportProgress({
+        readyToAssignMonthsVerified = await this.verifyYNABReadyToAssign(
+          budgetId,
+          readyToAssignSpecs,
+          async (processed, total) => {
+            const progress = Math.min(97, 92 + Math.floor((processed / total) * 5));
+            await reportProgress({
+              stage: 'rta-verification',
+              status: 'running',
+              progress,
+              label: 'Verifying Ready to Assign',
+              detail: `${processed.toLocaleString()} of ${total.toLocaleString()} months verified`,
+            });
+          }
+        );
+        await reportProgress({
           stage: 'rta-verification',
           status: 'passed',
           progress: 98,
@@ -528,12 +553,6 @@ export class YNABImportService {
         });
       }
 
-      reportProgress({
-        stage: 'complete',
-        status: 'passed',
-        progress: 100,
-        label: 'Import complete',
-      });
       return {
         budgetId,
         summary: {
@@ -596,22 +615,32 @@ export class YNABImportService {
     return verifiableSpecs.length;
   }
 
-  private verifyYNABReadyToAssign(budgetId: number, specs: YNABImportReadyToAssignSpec[]): number {
+  private async verifyYNABReadyToAssign(
+    budgetId: number,
+    specs: YNABImportReadyToAssignSpec[],
+    onBatch?: (processed: number, total: number) => void | Promise<void>
+  ): Promise<number> {
     const mismatches: YNABReadyToAssignMismatch[] = [];
 
-    for (const spec of specs) {
+    for (let index = 0; index < specs.length; index++) {
+      const spec = specs[index];
       const computedReadyToAssign = this.monthlyBudgetService.getReadyToAssign(
         budgetId,
         spec.month
       );
-      if (computedReadyToAssign === spec.expectedReadyToAssign) continue;
+      if (computedReadyToAssign !== spec.expectedReadyToAssign) {
+        mismatches.push({
+          month: spec.month,
+          expectedReadyToAssign: spec.expectedReadyToAssign,
+          computedReadyToAssign,
+          difference: computedReadyToAssign - spec.expectedReadyToAssign,
+        });
+      }
 
-      mismatches.push({
-        month: spec.month,
-        expectedReadyToAssign: spec.expectedReadyToAssign,
-        computedReadyToAssign,
-        difference: computedReadyToAssign - spec.expectedReadyToAssign,
-      });
+      const processed = index + 1;
+      if (specs.length > 10 && (processed % 5 === 0 || processed === specs.length)) {
+        await onBatch?.(processed, specs.length);
+      }
     }
 
     if (mismatches.length > 0) {
@@ -918,7 +947,12 @@ export class YNABImportService {
     registerRows: YNABRegisterRow[],
     accounts: Record<string, number>,
     categories: Record<string, number>,
-    numberFormat: string
+    numberFormat: string,
+    onBatch?: (
+      processed: number,
+      total: number,
+      transactionsCreated: number
+    ) => void | Promise<void>
   ): Promise<{ transactionsCreated: number; splitTransactionsImported: number }> {
     const incomeCategoryId = categories['Income'];
     const uncategorizedCategoryId = categories['Uncategorized'];
@@ -1022,8 +1056,10 @@ export class YNABImportService {
         if (created) transactionsCreated++;
       }
 
-      if (index % 50 === 0) {
-        debugLog(`Processed ${index + 1}/${sortedUnits.length} transaction units`);
+      const processed = index + 1;
+      if (processed % 50 === 0) {
+        debugLog(`Processed ${processed}/${sortedUnits.length} transaction units`);
+        await onBatch?.(processed, sortedUnits.length, transactionsCreated);
       }
     }
 

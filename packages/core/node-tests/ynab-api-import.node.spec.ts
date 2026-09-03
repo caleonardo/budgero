@@ -7,6 +7,7 @@ import {
   normalizeYNABApiSnapshot,
   normalizeYNABMilliunitPrecision,
   type YNABApiPlanSnapshot,
+  type YNABImportProgressUpdate,
 } from '../src/index.js';
 
 const SPACE_ID = 'space_ynab_api_import';
@@ -308,13 +309,21 @@ describe('YNAB API import', () => {
     try {
       const importer = new YNABImportService(adapter);
       const progress: string[] = [];
+      let callbackInFlight = false;
+      let callbacksOverlapped = false;
       const result = await importer.importYNABFromApiSnapshotWithSummary(snapshotFixture(), {
         spaceId: SPACE_ID,
         budgetName: 'Direct API import',
         currency: 'USD',
         numberFormat: '123,456.78',
         badgeIcon: 'HelpCircle',
-        onProgress: (update) => progress.push(`${update.stage}:${update.status}`),
+        onProgress: async (update) => {
+          if (callbackInFlight) callbacksOverlapped = true;
+          callbackInFlight = true;
+          progress.push(`${update.stage}:${update.status}`);
+          await Promise.resolve();
+          callbackInFlight = false;
+        },
       });
 
       expect(result.summary).toMatchObject({
@@ -339,8 +348,8 @@ describe('YNAB API import', () => {
         'account-verification:passed',
         'rta-verification:running',
         'rta-verification:passed',
-        'complete:passed',
       ]);
+      expect(callbacksOverlapped).toBe(false);
 
       const accounts = adapter
         .prepare(
@@ -409,6 +418,46 @@ describe('YNAB API import', () => {
         { Memo: 'Purchase', InflowNative: 0, OutflowNative: 100_000 },
         { Memo: 'Refund', InflowNative: 25_000, OutflowNative: 0 },
       ]);
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('reports transaction batch progress for large imports', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const snapshot = snapshotFixture();
+      const template = snapshot.plan.transactions[0];
+      snapshot.plan.transactions.push(
+        ...Array.from({ length: 60 }, (_, index) => ({
+          ...template,
+          id: `transaction-zero-${index}`,
+          amount: 0,
+          memo: `No-op fixture ${index}`,
+          payee_id: 'payee-store',
+          category_id: 'category-food',
+        }))
+      );
+      const updates: YNABImportProgressUpdate[] = [];
+
+      await new YNABImportService(adapter).importYNABFromApiSnapshotWithSummary(snapshot, {
+        spaceId: SPACE_ID,
+        budgetName: 'Batched direct API import',
+        currency: 'USD',
+        numberFormat: '123,456.78',
+        badgeIcon: 'HelpCircle',
+        onProgress: (update) => updates.push(update),
+      });
+
+      expect(updates).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            stage: 'transactions',
+            status: 'running',
+            detail: expect.stringMatching(/^50 of \d+ entries processed/),
+          }),
+        ])
+      );
     } finally {
       adapter.close();
     }
