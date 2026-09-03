@@ -4,6 +4,7 @@ import type {
   YNABApiTransaction,
   YNABBudgetRow,
   YNABImportAccountSpec,
+  YNABImportReadyToAssignSpec,
   YNABRegisterRow,
 } from './types.js';
 
@@ -11,6 +12,7 @@ export interface NormalizedYNABApiImport {
   registerRows: YNABRegisterRow[];
   budgetRows: YNABBudgetRow[];
   accountSpecs: YNABImportAccountSpec[];
+  readyToAssignSpecs: YNABImportReadyToAssignSpec[];
 }
 
 export function normalizeYNABMilliunitPrecision(value: number, decimalDigits: number): number {
@@ -116,6 +118,17 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
     };
   };
 
+  const isCategorylessBudgetBoundaryTransfer = (
+    accountId: string,
+    transferAccountId: string | null,
+    categoryId: string | null
+  ) => {
+    if (!transferAccountId || categoryId) return false;
+    const source = accountsById.get(accountId);
+    const destination = accountsById.get(transferAccountId);
+    return Boolean(source && destination && source.on_budget !== destination.on_budget);
+  };
+
   const registerRows: YNABRegisterRow[] = [];
   for (const transaction of plan.transactions) {
     if (transaction.deleted) continue;
@@ -135,6 +148,11 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
           Memo: `Split (${index + 1}/${children.length}): ${child.memo || ''}`,
           ...amountFields(child.amount),
           Cleared: transaction.cleared,
+          ExcludeFromReadyToAssign: isCategorylessBudgetBoundaryTransfer(
+            transaction.account_id,
+            child.transfer_account_id,
+            child.category_id
+          ),
         });
       }
       continue;
@@ -150,6 +168,11 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
       ...amountFields(transaction.amount),
       Cleared: transaction.cleared,
       TransferID: transferIdFor(transaction),
+      ExcludeFromReadyToAssign: isCategorylessBudgetBoundaryTransfer(
+        transaction.account_id,
+        transaction.transfer_account_id,
+        transaction.category_id
+      ),
     });
   }
 
@@ -195,7 +218,13 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
         onBudget: account.on_budget,
         archived: account.closed,
         ynabAccountId: account.id,
-        expectedBalance: account.balance,
+        expectedBalance: normalizeAmount(account.balance),
+      })),
+    readyToAssignSpecs: plan.months
+      .filter((month) => !month.deleted)
+      .map((month) => ({
+        month: month.month.slice(0, 7),
+        expectedReadyToAssign: normalizeAmount(month.to_be_budgeted),
       })),
   };
 }

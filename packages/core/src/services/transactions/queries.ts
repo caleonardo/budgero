@@ -139,7 +139,8 @@ export class TransactionQueries {
     transferId?: string | null,
     exchangeRate?: number | null,
     labelId?: number | null,
-    exchangeRateOverride = false
+    exchangeRateOverride = false,
+    excludeFromReadyToAssign = false
   ): number {
     const result = run(
       this.db,
@@ -147,8 +148,8 @@ export class TransactionQueries {
       INSERT INTO transactions (
         InflowConverted, OutflowConverted, InflowNative, OutflowNative, CategoryID, AccountID,
         Date, Memo, Payee, BudgetID, RunningBalanceConverted, RunningBalanceNative, TransferID,
-        ExchangeRate, LabelID, ExchangeRateOverride
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ExchangeRate, LabelID, ExchangeRateOverride, ExcludeFromReadyToAssign
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       inflow,
       outflow,
@@ -165,7 +166,8 @@ export class TransactionQueries {
       transferId,
       exchangeRate ?? null,
       labelId ?? null,
-      exchangeRateOverride ? 1 : 0
+      exchangeRateOverride ? 1 : 0,
+      excludeFromReadyToAssign ? 1 : 0
     );
     return Number(result.lastInsertRowid);
   }

@@ -364,6 +364,7 @@ export class MonthlyBudgetQueries {
         AND t.OutflowConverted > 0
         AND t.TransferID IS NOT NULL
         AND t.TransferID <> ''
+        AND t.ExcludeFromReadyToAssign = FALSE
         AND DATE(t.Date) <= DATE(?2)
         AND cg.Name = 'Transfers'
         AND EXISTS (
@@ -398,6 +399,7 @@ export class MonthlyBudgetQueries {
         AND t.InflowConverted > 0
         AND t.TransferID IS NOT NULL
         AND t.TransferID <> ''
+        AND t.ExcludeFromReadyToAssign = FALSE
         AND DATE(t.Date) <= DATE(?2)
         AND cg.Name = 'Transfers'
         AND EXISTS (
@@ -476,10 +478,9 @@ export class MonthlyBudgetQueries {
    * Counts income and assignments only up to and including `month`, subtracts
    * prior-month cash overspending (each overspent category's negative cash
    * balance is pulled from Ready to Assign the month after it happens, rather
-   * than carried inside the category), then deducts money already assigned in
-   * future months — but only up to what is left over, so assigning ahead drives
-   * an earlier month to zero rather than negative (YNAB's "Assigned in Future").
-   * Any excess shows up as negative Ready to Assign in the month it was assigned.
+   * than carried inside the category). A historical month's API value is not
+   * retroactively reduced by assignments made in later months; those affect
+   * Ready to Assign when their own month is reached.
    * Credit-card overspending is left to the CC Payment system and never
    * deducted here.
    */
@@ -511,14 +512,6 @@ export class MonthlyBudgetQueries {
         month
       )?.total ?? 0;
 
-    const totalFutureAssignments =
-      getRow<{ total: number }>(
-        this.db,
-        `SELECT IFNULL(SUM(Amount), 0) as total FROM assignments WHERE BudgetID = ?1 AND Month > ?2`,
-        budgetId,
-        month
-      )?.total ?? 0;
-
     const offBudgetTransfers =
       getRow<{ total: number }>(
         this.db,
@@ -533,6 +526,7 @@ export class MonthlyBudgetQueries {
         AND t.OutflowConverted > 0
         AND t.TransferID IS NOT NULL
         AND t.TransferID <> ''
+        AND t.ExcludeFromReadyToAssign = FALSE
         AND t.Month <= ?2
         AND cg.Name = 'Transfers'
         AND EXISTS (
@@ -562,6 +556,7 @@ export class MonthlyBudgetQueries {
         AND t.InflowConverted > 0
         AND t.TransferID IS NOT NULL
         AND t.TransferID <> ''
+        AND t.ExcludeFromReadyToAssign = FALSE
         AND t.Month <= ?2
         AND cg.Name = 'Transfers'
         AND EXISTS (
@@ -599,9 +594,8 @@ export class MonthlyBudgetQueries {
       inBudgetTransfers +
       revaluations -
       priorCashOverspend;
-    // Future assignments can only consume what this month has left over.
-    const futureAssignments = Math.min(totalFutureAssignments, Math.max(0, leftover));
-    const readyToAssign = leftover - futureAssignments;
+    const futureAssignments = 0;
+    const readyToAssign = leftover;
 
     debugLog(`Ready to Assign (monthly, through ${month}):`);
     debugLog(`  Income: ${income.toLocaleString()}`);
@@ -676,7 +670,7 @@ export class MonthlyBudgetQueries {
       FROM contributions con
       JOIN categories c ON c.ID = con.CategoryID
       JOIN category_groups cg ON cg.ID = c.CategoryGroupID
-      WHERE cg.Name NOT IN ('Income', 'Transfers', 'Uncategorized', 'Credit Card Payments')
+      WHERE cg.Name NOT IN ('Income', 'Transfers', 'Credit Card Payments')
       GROUP BY con.CategoryID, con.Month
       ORDER BY con.CategoryID, con.Month
     `,
@@ -718,7 +712,7 @@ export class MonthlyBudgetQueries {
       FROM contributions con
       JOIN categories c ON c.ID = con.CategoryID
       JOIN category_groups cg ON cg.ID = c.CategoryGroupID
-      WHERE cg.Name NOT IN ('Income', 'Transfers', 'Uncategorized', 'Credit Card Payments')
+      WHERE cg.Name NOT IN ('Income', 'Transfers', 'Credit Card Payments')
       GROUP BY con.CategoryID, con.AccountID, con.Month
     `,
       budgetId,
@@ -928,7 +922,10 @@ export class MonthlyBudgetQueries {
         } else {
           if (rawCash < 0) priorCashOverspend += -rawCash;
           carryTotal = Math.max(0, displayed);
-          carryCash = Math.max(0, rawCash);
+          // Credit spending consumes positive category cash before becoming
+          // debt. Carrying rawCash independently would make that funded amount
+          // available again next month and understate later cash overspending.
+          carryCash = Math.max(0, Math.min(rawCash, displayed));
         }
       }
     }

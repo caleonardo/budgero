@@ -12,6 +12,27 @@ export interface YNABImportConfig {
   currency: string;
   numberFormat: string;
   badgeIcon: string;
+  onProgress?: (update: YNABImportProgressUpdate) => void;
+}
+
+export type YNABImportStage =
+  | 'preparing'
+  | 'categories'
+  | 'accounts'
+  | 'assignments'
+  | 'transactions'
+  | 'account-verification'
+  | 'rta-verification'
+  | 'complete';
+
+export type YNABImportProgressStatus = 'running' | 'passed' | 'skipped';
+
+export interface YNABImportProgressUpdate {
+  stage: YNABImportStage;
+  status: YNABImportProgressStatus;
+  progress: number;
+  label: string;
+  detail?: string;
 }
 
 export interface YNABImportCategorySummary {
@@ -42,6 +63,8 @@ export interface YNABImportSummary {
   splitTransactionsImported: number;
   /** Present for API imports after every imported account balance has matched YNAB. */
   accountBalancesVerified?: number;
+  /** Present for API imports after every imported month's RTA has matched YNAB. */
+  readyToAssignMonthsVerified?: number;
 }
 
 export interface YNABImportResult {
@@ -177,6 +200,11 @@ export interface YNABImportAccountSpec {
   expectedBalance?: number;
 }
 
+export interface YNABImportReadyToAssignSpec {
+  month: string;
+  expectedReadyToAssign: number;
+}
+
 export interface YNABRegisterRow {
   Account: string;
   Flag: string;
@@ -191,6 +219,8 @@ export interface YNABRegisterRow {
   Cleared: string;
   /** Stable transfer relationship supplied by the YNAB API import path. */
   TransferID?: string;
+  /** Preserve a source-system transfer that intentionally did not move RTA. */
+  ExcludeFromReadyToAssign?: boolean;
 }
 
 export interface YNABBudgetRow {

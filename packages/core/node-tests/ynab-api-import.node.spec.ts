@@ -97,6 +97,7 @@ function snapshotFixture(): YNABApiPlanSnapshot {
           budgeted: 5_000,
           activity: -95_000,
           income: 100_000,
+          // YNAB leaves a categoryless transfer inside a split out of RTA.
           to_be_budgeted: 95_000,
           categories: [income, food],
         },
@@ -306,12 +307,14 @@ describe('YNAB API import', () => {
     const adapter = await NodeSqlJsAdapter.create();
     try {
       const importer = new YNABImportService(adapter);
+      const progress: string[] = [];
       const result = await importer.importYNABFromApiSnapshotWithSummary(snapshotFixture(), {
         spaceId: SPACE_ID,
         budgetName: 'Direct API import',
         currency: 'USD',
         numberFormat: '123,456.78',
         badgeIcon: 'HelpCircle',
+        onProgress: (update) => progress.push(`${update.stage}:${update.status}`),
       });
 
       expect(result.summary).toMatchObject({
@@ -319,7 +322,25 @@ describe('YNAB API import', () => {
         transactionsCreated: 5,
         splitTransactionsImported: 1,
         accountBalancesVerified: 2,
+        readyToAssignMonthsVerified: 1,
       });
+      expect(progress).toEqual([
+        'preparing:running',
+        'preparing:passed',
+        'categories:running',
+        'categories:passed',
+        'accounts:running',
+        'accounts:passed',
+        'assignments:running',
+        'assignments:passed',
+        'transactions:running',
+        'transactions:passed',
+        'account-verification:running',
+        'account-verification:passed',
+        'rta-verification:running',
+        'rta-verification:passed',
+        'complete:passed',
+      ]);
 
       const accounts = adapter
         .prepare(
@@ -367,6 +388,15 @@ describe('YNAB API import', () => {
         expect.objectContaining({ LegCount: 2, TotalInflow: 10_000, TotalOutflow: 10_000 }),
       ]);
 
+      const rtaExcludedTransfer = adapter
+        .prepare(
+          `SELECT ExcludeFromReadyToAssign
+           FROM transactions
+           WHERE BudgetID = ? AND OutflowNative = 10000`
+        )
+        .get(result.budgetId);
+      expect(rtaExcludedTransfer).toEqual({ ExcludeFromReadyToAssign: 1 });
+
       const mixedLines = adapter
         .prepare(
           `SELECT s.Memo, s.InflowNative, s.OutflowNative
@@ -402,6 +432,57 @@ describe('YNAB API import', () => {
       ).rejects.toThrow(
         /account balance integrity check failed.*Checking: YNAB -4000, Budgero -5000.*incomplete budget was removed/i
       );
+
+      expect(adapter.prepare('SELECT COUNT(*) AS Count FROM budgets').get()).toEqual({ Count: 0 });
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('removes the incomplete budget when Ready to Assign does not reconcile', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const snapshot = snapshotFixture();
+      snapshot.plan.months[0].to_be_budgeted = 94_000;
+      const importer = new YNABImportService(adapter);
+
+      await expect(
+        importer.importYNABFromApiSnapshotWithSummary(snapshot, {
+          spaceId: SPACE_ID,
+          budgetName: 'Failed RTA import',
+          currency: 'USD',
+          numberFormat: '123,456.78',
+          badgeIcon: 'HelpCircle',
+        })
+      ).rejects.toThrow(
+        /Ready to Assign integrity check failed.*2026-09: YNAB 94000, Budgero 95000.*incomplete budget was removed/i
+      );
+
+      expect(adapter.prepare('SELECT COUNT(*) AS Count FROM budgets').get()).toEqual({ Count: 0 });
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('removes the incomplete budget when an import stage fails', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const importer = new YNABImportService(adapter);
+
+      await expect(
+        importer.importYNABFromApiSnapshotWithSummary(snapshotFixture(), {
+          spaceId: SPACE_ID,
+          budgetName: 'Interrupted direct API import',
+          currency: 'USD',
+          numberFormat: '123,456.78',
+          badgeIcon: 'HelpCircle',
+          onProgress: (update) => {
+            if (update.stage === 'categories' && update.status === 'running') {
+              throw new Error('Synthetic category import failure');
+            }
+          },
+        })
+      ).rejects.toThrow('Synthetic category import failure');
 
       expect(adapter.prepare('SELECT COUNT(*) AS Count FROM budgets').get()).toEqual({ Count: 0 });
     } finally {

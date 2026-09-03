@@ -488,10 +488,18 @@ describe('YNABImportService — credit cards', () => {
     const debtMeta = JSON.parse(byName['Debt Card'].Metadata || '{}');
     expect(typeof debtMeta.cc_payment_category_id).toBe('number');
 
-    // The Debt Card's $200 opening debt stays out of Ready to Assign, like YNAB.
+    // The Debt Card's $200 opening debt stays out of Ready to Assign. Each
+    // month reflects income and assignments reached through that month; later
+    // assignments do not rewrite historical RTA snapshots.
     services.budgets.updateRtaMode(budgetId, 'monthly');
-    for (const month of ['2026-07', '2026-08', '2026-09', '2026-10']) {
-      expect(services.monthlyBudgets.getReadyToAssign(budgetId, month)).toBe(0);
+    const expectedRtaByMonth = {
+      '2026-07': 1_050_000,
+      '2026-08': 520_000,
+      '2026-09': 500_000,
+      '2026-10': 0,
+    };
+    for (const [month, expected] of Object.entries(expectedRtaByMonth)) {
+      expect(services.monthlyBudgets.getReadyToAssign(budgetId, month)).toBe(expected);
     }
     expect(byName['Debt Card'].BalanceNative).toBe(-200_000);
   });

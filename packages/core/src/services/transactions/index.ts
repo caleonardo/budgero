@@ -109,7 +109,8 @@ export class TransactionService {
     transferId = '',
     payee?: string,
     labelId?: number | null,
-    exchangeRateOverride?: number | null
+    exchangeRateOverride?: number | null,
+    excludeFromReadyToAssign = false
   ): Promise<number> {
     debugLog('🔵 TransactionService.addTransaction called with:', {
       inflowOriginal,
@@ -469,7 +470,8 @@ export class TransactionService {
         transferId || null,
         resolvedExchangeRate,
         normalizedLabelId,
-        usesPinnedExchangeRate
+        usesPinnedExchangeRate,
+        excludeFromReadyToAssign
       );
 
       // If rate was manual/adjacent/1:1, mark pending for later recalc

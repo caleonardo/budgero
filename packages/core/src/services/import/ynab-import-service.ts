@@ -18,6 +18,8 @@ import {
   YNABImportCategorySummary,
   YNABApiPlanSnapshot,
   YNABImportAccountSpec,
+  YNABImportProgressUpdate,
+  YNABImportReadyToAssignSpec,
 } from './types.js';
 import { CSVParser } from './csv-parser.js';
 import { CurrencyParser } from './currency-parser.js';
@@ -59,6 +61,13 @@ interface YNABAccountBalanceMismatch {
   accountName: string;
   expectedBalance: number;
   computedBalance: number;
+  difference: number;
+}
+
+interface YNABReadyToAssignMismatch {
+  month: string;
+  expectedReadyToAssign: number;
+  computedReadyToAssign: number;
   difference: number;
 }
 
@@ -332,13 +341,15 @@ export class YNABImportService {
     snapshot: YNABApiPlanSnapshot,
     config: YNABImportConfig
   ): Promise<YNABImportResult> {
-    const { registerRows, budgetRows, accountSpecs } = normalizeYNABApiSnapshot(snapshot);
+    const { registerRows, budgetRows, accountSpecs, readyToAssignSpecs } =
+      normalizeYNABApiSnapshot(snapshot);
     return this.importYNABRowsWithSummary(
       registerRows,
       budgetRows,
       config,
       '123,456.78',
-      accountSpecs
+      accountSpecs,
+      readyToAssignSpecs
     );
   }
 
@@ -347,9 +358,18 @@ export class YNABImportService {
     budgetRows: YNABBudgetRow[],
     config: YNABImportConfig,
     sourceNumberFormat: string,
-    accountSpecs?: YNABImportAccountSpec[]
+    accountSpecs?: YNABImportAccountSpec[],
+    readyToAssignSpecs?: YNABImportReadyToAssignSpec[]
   ): Promise<YNABImportResult> {
+    const reportProgress = (update: YNABImportProgressUpdate) => config.onProgress?.(update);
     const preview = inspectYNABRows(registerRows, budgetRows);
+    reportProgress({
+      stage: 'preparing',
+      status: 'running',
+      progress: 2,
+      label: 'Preparing import',
+      detail: `Read ${registerRows.length} register rows`,
+    });
     debugLog(`Parsed ${registerRows.length} register rows`);
 
     this.detectAmbiguousDateOrder(registerRows.map((row) => row.Date));
@@ -365,70 +385,170 @@ export class YNABImportService {
       number_format: config.numberFormat,
       create_default_categories: false,
     });
-    // YNAB's Ready to Assign changes with the viewed month. Imported budgets
-    // should preserve that expectation, while ordinary Budgero budgets keep
-    // the application's cumulative default.
-    this.budgetService.updateRtaMode(budgetId, 'monthly');
-    debugLog(`Created budget with ID: ${budgetId}`);
+    try {
+      // YNAB's Ready to Assign changes with the viewed month. Imported budgets
+      // should preserve that expectation, while ordinary Budgero budgets keep
+      // the application's cumulative default.
+      this.budgetService.updateRtaMode(budgetId, 'monthly');
+      debugLog(`Created budget with ID: ${budgetId}`);
+      reportProgress({
+        stage: 'preparing',
+        status: 'passed',
+        progress: 10,
+        label: 'Budget created',
+      });
 
-    debugLog('Creating categories...');
-    debugLog(`About to call createCategoryStructure with budgetId=${budgetId}`);
-    const categories = this.createCategoryStructure(budgetId, budgetRows, registerRows);
-    debugLog(`Created ${Object.keys(categories).length} categories`);
+      reportProgress({
+        stage: 'categories',
+        status: 'running',
+        progress: 12,
+        label: 'Importing categories',
+      });
+      debugLog('Creating categories...');
+      debugLog(`About to call createCategoryStructure with budgetId=${budgetId}`);
+      const categories = this.createCategoryStructure(budgetId, budgetRows, registerRows);
+      debugLog(`Created ${Object.keys(categories).length} categories`);
 
-    // Check what's actually in the database after creation
-    const finalGroups = this.categoryService.getAllCategoryGroups(budgetId);
-    debugLog(`After createCategoryStructure, database has ${finalGroups.length} groups`);
-    const groupCounts: Record<string, number> = {};
-    for (const g of finalGroups) {
-      groupCounts[g.Name] = (groupCounts[g.Name] || 0) + 1;
-    }
-    for (const [name, count] of Object.entries(groupCounts)) {
-      if (count > 1) {
-        debugLog(`DUPLICATE GROUP: "${name}" appears ${count} times`);
+      // Check what's actually in the database after creation
+      const finalGroups = this.categoryService.getAllCategoryGroups(budgetId);
+      debugLog(`After createCategoryStructure, database has ${finalGroups.length} groups`);
+      const groupCounts: Record<string, number> = {};
+      for (const g of finalGroups) {
+        groupCounts[g.Name] = (groupCounts[g.Name] || 0) + 1;
       }
+      for (const [name, count] of Object.entries(groupCounts)) {
+        if (count > 1) {
+          debugLog(`DUPLICATE GROUP: "${name}" appears ${count} times`);
+        }
+      }
+      reportProgress({
+        stage: 'categories',
+        status: 'passed',
+        progress: 28,
+        label: 'Categories imported',
+        detail: `${Object.keys(categories).length} category mappings`,
+      });
+
+      reportProgress({
+        stage: 'accounts',
+        status: 'running',
+        progress: 30,
+        label: 'Importing accounts',
+      });
+      debugLog('Creating accounts...');
+      const accounts = await this.createAccounts(
+        budgetId,
+        registerRows,
+        budgetRows,
+        config.currency,
+        accountSpecs
+      );
+      debugLog(`Created ${Object.keys(accounts).length} accounts`);
+      reportProgress({
+        stage: 'accounts',
+        status: 'passed',
+        progress: 42,
+        label: 'Accounts imported',
+        detail: `${Object.keys(accounts).length} accounts`,
+      });
+
+      reportProgress({
+        stage: 'assignments',
+        status: 'running',
+        progress: 44,
+        label: 'Importing assignments',
+      });
+      debugLog('Importing assignments...');
+      this.importAssignments(budgetId, budgetRows, categories, sourceNumberFormat);
+      debugLog('Assignments imported successfully');
+      reportProgress({
+        stage: 'assignments',
+        status: 'passed',
+        progress: 58,
+        label: 'Assignments imported',
+      });
+
+      reportProgress({
+        stage: 'transactions',
+        status: 'running',
+        progress: 60,
+        label: 'Importing transactions',
+        detail: `${registerRows.length} register rows`,
+      });
+      debugLog('Importing transactions...');
+      const transactionSummary = await this.importTransactionsWithProperBalances(
+        budgetId,
+        registerRows,
+        accounts,
+        categories,
+        sourceNumberFormat
+      );
+      debugLog('Transactions imported successfully');
+      reportProgress({
+        stage: 'transactions',
+        status: 'passed',
+        progress: 80,
+        label: 'Transactions imported',
+        detail: `${transactionSummary.transactionsCreated} transactions`,
+      });
+
+      let accountBalancesVerified: number | undefined;
+      if (accountSpecs) {
+        reportProgress({
+          stage: 'account-verification',
+          status: 'running',
+          progress: 82,
+          label: 'Verifying account balances',
+        });
+        accountBalancesVerified = this.verifyYNABAccountBalances(budgetId, accounts, accountSpecs);
+        reportProgress({
+          stage: 'account-verification',
+          status: 'passed',
+          progress: 90,
+          label: 'Account balances verified',
+          detail: `${accountBalancesVerified} balances match YNAB`,
+        });
+      }
+
+      let readyToAssignMonthsVerified: number | undefined;
+      if (readyToAssignSpecs) {
+        reportProgress({
+          stage: 'rta-verification',
+          status: 'running',
+          progress: 92,
+          label: 'Verifying Ready to Assign',
+        });
+        readyToAssignMonthsVerified = this.verifyYNABReadyToAssign(budgetId, readyToAssignSpecs);
+        reportProgress({
+          stage: 'rta-verification',
+          status: 'passed',
+          progress: 98,
+          label: 'Ready to Assign verified',
+          detail: `${readyToAssignMonthsVerified} months match YNAB`,
+        });
+      }
+
+      reportProgress({
+        stage: 'complete',
+        status: 'passed',
+        progress: 100,
+        label: 'Import complete',
+      });
+      return {
+        budgetId,
+        summary: {
+          registerRowsImported: registerRows.length,
+          transactionsCreated: transactionSummary.transactionsCreated,
+          missingCategoriesCreated: preview.missingCategories,
+          splitTransactionsImported: transactionSummary.splitTransactionsImported,
+          ...(accountBalancesVerified === undefined ? {} : { accountBalancesVerified }),
+          ...(readyToAssignMonthsVerified === undefined ? {} : { readyToAssignMonthsVerified }),
+        },
+      };
+    } catch (error) {
+      this.budgetService.deleteBudget(budgetId);
+      throw error;
     }
-
-    debugLog('Creating accounts...');
-    const accounts = await this.createAccounts(
-      budgetId,
-      registerRows,
-      budgetRows,
-      config.currency,
-      accountSpecs
-    );
-    debugLog(`Created ${Object.keys(accounts).length} accounts`);
-
-    debugLog('Importing assignments...');
-    this.importAssignments(budgetId, budgetRows, categories, sourceNumberFormat);
-    debugLog('Assignments imported successfully');
-
-    debugLog('Importing transactions...');
-    const transactionSummary = await this.importTransactionsWithProperBalances(
-      budgetId,
-      registerRows,
-      accounts,
-      categories,
-      sourceNumberFormat
-    );
-    debugLog('Transactions imported successfully');
-
-    const accountBalancesVerified = this.verifyYNABAccountBalances(
-      budgetId,
-      accounts,
-      accountSpecs
-    );
-
-    return {
-      budgetId,
-      summary: {
-        registerRowsImported: registerRows.length,
-        transactionsCreated: transactionSummary.transactionsCreated,
-        missingCategoriesCreated: preview.missingCategories,
-        splitTransactionsImported: transactionSummary.splitTransactionsImported,
-        ...(accountBalancesVerified === undefined ? {} : { accountBalancesVerified }),
-      },
-    };
   }
 
   private verifyYNABAccountBalances(
@@ -467,7 +587,6 @@ export class YNABImportService {
             `${accountName}: YNAB ${expectedBalance}, Budgero ${computedBalance}, difference ${difference}`
         )
         .join('; ');
-      this.budgetService.deleteBudget(budgetId);
       throw new Error(
         `YNAB account balance integrity check failed for ${mismatches.length} account${mismatches.length === 1 ? '' : 's'} (${details}). The incomplete budget was removed.`
       );
@@ -475,6 +594,42 @@ export class YNABImportService {
 
     debugLog(`Verified ${verifiableSpecs.length} YNAB account balances`);
     return verifiableSpecs.length;
+  }
+
+  private verifyYNABReadyToAssign(budgetId: number, specs: YNABImportReadyToAssignSpec[]): number {
+    const mismatches: YNABReadyToAssignMismatch[] = [];
+
+    for (const spec of specs) {
+      const computedReadyToAssign = this.monthlyBudgetService.getReadyToAssign(
+        budgetId,
+        spec.month
+      );
+      if (computedReadyToAssign === spec.expectedReadyToAssign) continue;
+
+      mismatches.push({
+        month: spec.month,
+        expectedReadyToAssign: spec.expectedReadyToAssign,
+        computedReadyToAssign,
+        difference: computedReadyToAssign - spec.expectedReadyToAssign,
+      });
+    }
+
+    if (mismatches.length > 0) {
+      const visibleMismatches = mismatches.slice(0, 6);
+      const details = visibleMismatches
+        .map(
+          ({ month, expectedReadyToAssign, computedReadyToAssign, difference }) =>
+            `${month}: YNAB ${expectedReadyToAssign}, Budgero ${computedReadyToAssign}, difference ${difference}`
+        )
+        .join('; ');
+      const omitted = mismatches.length - visibleMismatches.length;
+      throw new Error(
+        `YNAB Ready to Assign integrity check failed for ${mismatches.length} month${mismatches.length === 1 ? '' : 's'} (${details}${omitted > 0 ? `; and ${omitted} more` : ''}). The incomplete budget was removed.`
+      );
+    }
+
+    debugLog(`Verified Ready to Assign for ${specs.length} YNAB months`);
+    return specs.length;
   }
 
   private createCategoryStructure(
@@ -1105,12 +1260,20 @@ export class YNABImportService {
       // whose counterparty account is absent.
       transferId = transferIdOverride || `transfer_${parsedDate}_${inflow + outflow}_${rowIndex}`;
 
-      // YNAB transfer rows have an empty category, so the block above defaulted
-      // categoryId to Uncategorized. Reset it to 0 so addTransaction assigns the
-      // proper "Transfers" category — passing a non-zero, non-Transfers id would
-      // trip its "user chose a custom category" heuristic and keep Uncategorized
-      // on the source (outflow) leg.
-      categoryId = 0;
+      // Empty-category transfers use Budgero's system Transfers category. API
+      // transfers that do carry a spending/income category keep it so YNAB's
+      // envelope activity and subsequent cash-overspend rollover are preserved.
+      if (!row.ExcludeFromReadyToAssign) {
+        const descriptor = categoryDescriptor(row);
+        if (!descriptor) categoryId = 0;
+      } else {
+        // YNAB records a categoryless transfer across the budget boundary as
+        // Uncategorized activity: it does not change current-month RTA, but a
+        // cash outflow rolls into the following month's RTA as overspending.
+        // Only the on-budget leg participates in that envelope activity.
+        const currentAccount = this.accountService.getAccount(accountId);
+        categoryId = currentAccount.OnBudget ? uncategorizedCategoryId : 0;
+      }
 
       const currentAccount = row.Account.trim();
       if (inflow > 0) {
@@ -1142,7 +1305,10 @@ export class YNABImportService {
         parsedDate,
         memo,
         transferId,
-        payee
+        payee,
+        undefined,
+        undefined,
+        row.ExcludeFromReadyToAssign === true
       );
       return true;
     } catch (error) {

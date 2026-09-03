@@ -18,10 +18,7 @@ export interface ReadyToAssignBreakdown {
   income: MilliUnits;
   /** Assigned through `month` (monthly) or across all time (cumulative). */
   assignments: MilliUnits;
-  /**
-   * Assigned in months after `month` and deducted here — capped at what this
-   * month has left over, so it can zero Ready to Assign but not push it negative.
-   */
+  /** Reserved for breakdown compatibility; monthly historical RTA reports zero. */
   futureAssignments: MilliUnits;
   offBudgetTransfers: MilliUnits;
   inBudgetTransfers: MilliUnits;
