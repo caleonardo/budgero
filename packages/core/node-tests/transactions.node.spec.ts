@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import initSqlJs from 'sql.js';
+import path from 'node:path';
 import { getLocalDateString } from '../src/utils/date';
 import {
   NodeSqlJsAdapter,
@@ -80,6 +82,109 @@ describe('Transactions (Node/sql.js)', () => {
     expect(recreated).toBeTruthy();
     const txn = services.transactions.getTransactionByID(txnId);
     expect(txn.CategoryID).toBe(recreated!.ID);
+  });
+
+  it('pages an account register by Date/ID and returns aggregate totals', async () => {
+    const insertedIds: number[] = [];
+    for (const [date, outflow] of [
+      ['2025-01-03', 30],
+      ['2025-01-03', 20],
+      ['2025-01-02', 10],
+      ['2025-01-01', 40],
+      ['2025-01-01', 50],
+    ] as const) {
+      insertedIds.push(
+        await services.transactions.addTransaction(
+          0,
+          outflow,
+          accountId,
+          categoryId,
+          budgetId,
+          date,
+          `paged-${outflow}`
+        )
+      );
+    }
+
+    const first = services.transactions.getTransactionsByAccountPage(accountId, {
+      limit: 2,
+      fromDate: '2025-01-01',
+      toDate: '2025-01-03',
+    });
+    const second = services.transactions.getTransactionsByAccountPage(accountId, {
+      limit: 2,
+      cursor: first.nextCursor,
+      fromDate: '2025-01-01',
+      toDate: '2025-01-03',
+    });
+    const third = services.transactions.getTransactionsByAccountPage(accountId, {
+      limit: 2,
+      cursor: second.nextCursor,
+      fromDate: '2025-01-01',
+      toDate: '2025-01-03',
+    });
+
+    const pagedIds = [...first.rows, ...second.rows, ...third.rows].map((row) => row.ID);
+    expect(pagedIds).toEqual([
+      insertedIds[1],
+      insertedIds[0],
+      insertedIds[2],
+      insertedIds[4],
+      insertedIds[3],
+    ]);
+    expect(first.nextCursor).not.toBeNull();
+    expect(second.nextCursor).not.toBeNull();
+    expect(third.nextCursor).toBeNull();
+
+    const summary = services.transactions.getAccountTransactionSummary(
+      accountId,
+      '2025-01-01',
+      '2025-01-03'
+    );
+    expect(summary.TransactionCount).toBe(5);
+    expect(summary.TotalOutflowNative).toBe(150);
+    expect(summary.TotalOutflowConverted).toBe(150);
+
+    const joined = services.transactions.getTransactionForAccountRegister(insertedIds[0]);
+    expect(joined.AccountID).toBe(accountId);
+    expect(joined.Account).toBe('Test Checking');
+
+    const history = services.transactions.getAccountBalanceHistory(
+      accountId,
+      '2025-01-02',
+      '2025-01-03'
+    );
+    expect(history[0].Date).toBe('0001-01-01');
+    expect(history.slice(1).map((transaction) => transaction.Date)).toEqual([
+      '2025-01-02',
+      '2025-01-03',
+      '2025-01-03',
+    ]);
+  });
+
+  it('uses the exact account/date/id register index', async () => {
+    const indexColumns = adapter
+      .prepare('PRAGMA index_info(idx_transactions_account_date_id)')
+      .all() as { name: string }[];
+    expect(indexColumns.map((column) => column.name)).toEqual(['AccountID', 'Date', 'ID']);
+
+    const SQL = await initSqlJs({
+      locateFile: (file) => path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file),
+    });
+    const raw = new SQL.Database(await adapter.backup());
+    const plan = raw.exec(
+      `EXPLAIN QUERY PLAN
+       SELECT ID FROM transactions
+       WHERE AccountID = ${accountId}
+       ORDER BY Date DESC, ID DESC
+       LIMIT 200`
+    );
+    const details = (plan[0]?.values ?? []).map((step) => String(step[3]));
+    raw.close();
+    expect(details.some((detail) => detail.includes('idx_transactions_account_date_id'))).toBe(
+      true
+    );
+    expect(details.some((detail) => detail.includes('TEMP B-TREE'))).toBe(false);
   });
 
   it('adds a transaction and updates balances with running totals', async () => {

@@ -56,6 +56,7 @@ import { migration057 } from './057-add-payee-to-transaction-splits.js';
 import { migration058 } from './058-add-dialog-background-blur-preference.js';
 import { migration059 } from './059-guard-safe-integer-money-values.js';
 import { migration060 } from './060-add-rta-exclusion-to-transactions.js';
+import { migration061 } from './061-add-account-register-keyset-index.js';
 
 import type { Migration } from '../migrations.js';
 
@@ -119,4 +120,5 @@ export const migrations: Migration[] = [
   migration058,
   migration059,
   migration060,
+  migration061,
 ];

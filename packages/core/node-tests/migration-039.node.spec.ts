@@ -144,7 +144,14 @@ describe('migration 039: REAL money -> INTEGER milliunits', () => {
          ORDER BY name`
       )[0]?.values ?? []
     ).map(([name]) => String(name));
-    expect(postIndexNames).toEqual(expect.arrayContaining(preIndexNames));
+    // Migration 61 deliberately supersedes the account/date prefix index with
+    // the exact account/date/id register order.
+    expect(postIndexNames).toEqual(
+      expect.arrayContaining(
+        preIndexNames.filter((name) => name !== 'idx_transactions_account_date')
+      )
+    );
+    expect(postIndexNames).toContain('idx_transactions_account_date_id');
   });
 
   it('keeps AUTOINCREMENT working after the rebuild', () => {

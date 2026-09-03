@@ -8,9 +8,14 @@ import {
   GetTransactionsByCategoryAndMonthRow,
   TransactionSplit,
   LabelListItem,
+  AccountTransactionPage,
+  AccountTransactionPageOptions,
+  AccountTransactionSummary,
+  AccountBalanceHistoryTransaction,
 } from './types.js';
 import type { Account } from '../accounts/types.js';
 import type { Budget } from '../budgets/types.js';
+import { asMilli, ZERO_MILLI } from '../../money/index.js';
 
 /**
  * Shared column list for the detailed transaction-row SELECTs.
@@ -51,6 +56,8 @@ const TX_ROW_COLUMNS = `
         ELSE NULL END AS TransferAccountOnBudget`;
 
 const SQLITE_BIND_CHUNK_SIZE = 500;
+const DEFAULT_ACCOUNT_PAGE_SIZE = 200;
+const MAX_ACCOUNT_PAGE_SIZE = 500;
 
 function chunkValues<T>(values: T[]): T[][] {
   const chunks: T[][] = [];
@@ -356,6 +363,219 @@ export class TransactionQueries {
       ORDER BY t.Date DESC, t.ID DESC
     `,
       accountId
+    );
+  }
+
+  /**
+   * Read one bounded account-register page using a stable Date/ID keyset.
+   * The extra row is used only to determine whether another page exists.
+   */
+  getTransactionsByAccountPage(
+    accountId: number,
+    options: AccountTransactionPageOptions = {}
+  ): AccountTransactionPage {
+    const requestedLimit = Number.isFinite(options.limit)
+      ? Math.floor(options.limit as number)
+      : DEFAULT_ACCOUNT_PAGE_SIZE;
+    const limit = Math.min(MAX_ACCOUNT_PAGE_SIZE, Math.max(1, requestedLimit));
+    const where = ['t.AccountID = ?'];
+    const params: (string | number)[] = [accountId];
+
+    if (options.fromDate) {
+      where.push('t.Date >= ?');
+      params.push(options.fromDate);
+    }
+    if (options.toDate) {
+      where.push('t.Date <= ?');
+      params.push(options.toDate);
+    }
+    if (options.cursor) {
+      where.push('(t.Date, t.ID) < (?, ?)');
+      params.push(options.cursor.Date, options.cursor.ID);
+    }
+
+    const fetched = allRows<GetTransactionsByAccountRow>(
+      this.db,
+      `
+      SELECT${TX_ROW_COLUMNS}
+      FROM transactions t
+      LEFT JOIN categories c ON t.CategoryID = c.ID
+      LEFT JOIN labels l ON t.LabelID = l.ID
+      LEFT JOIN accounts a ON t.AccountID = a.ID
+      WHERE ${where.join(' AND ')}
+      ORDER BY t.Date DESC, t.ID DESC
+      LIMIT ?
+    `,
+      ...params,
+      limit + 1
+    );
+
+    const hasMore = fetched.length > limit;
+    const rows = hasMore ? fetched.slice(0, limit) : fetched;
+    const last = rows.at(-1);
+    return {
+      rows,
+      nextCursor: hasMore && last ? { Date: last.Date, ID: last.ID } : null,
+    };
+  }
+
+  /** Fetch the selected account-register date range for correctness-sensitive search. */
+  getTransactionsByAccountRange(
+    accountId: number,
+    fromDate?: string,
+    toDate?: string
+  ): GetTransactionsByAccountRow[] {
+    const where = ['t.AccountID = ?'];
+    const params: (string | number)[] = [accountId];
+    if (fromDate) {
+      where.push('t.Date >= ?');
+      params.push(fromDate);
+    }
+    if (toDate) {
+      where.push('t.Date <= ?');
+      params.push(toDate);
+    }
+
+    return allRows<GetTransactionsByAccountRow>(
+      this.db,
+      `
+      SELECT${TX_ROW_COLUMNS}
+      FROM transactions t
+      LEFT JOIN categories c ON t.CategoryID = c.ID
+      LEFT JOIN labels l ON t.LabelID = l.ID
+      LEFT JOIN accounts a ON t.AccountID = a.ID
+      WHERE ${where.join(' AND ')}
+      ORDER BY t.Date DESC, t.ID DESC
+    `,
+      ...params
+    );
+  }
+
+  /** Aggregate account-register totals without allocating and joining every transaction row. */
+  getAccountTransactionSummary(
+    accountId: number,
+    fromDate?: string,
+    toDate?: string
+  ): AccountTransactionSummary {
+    const where = ['t.AccountID = ?'];
+    const params: (string | number)[] = [accountId];
+    if (fromDate) {
+      where.push('t.Date >= ?');
+      params.push(fromDate);
+    }
+    if (toDate) {
+      where.push('t.Date <= ?');
+      params.push(toDate);
+    }
+    const maxSafe = Number.MAX_SAFE_INTEGER;
+    const moneyColumns = [
+      'InflowConverted',
+      'OutflowConverted',
+      'InflowNative',
+      'OutflowNative',
+      'RunningBalanceConverted',
+      'RunningBalanceNative',
+    ];
+    const unsafeMoney = moneyColumns
+      .map(
+        (column) =>
+          `(t.${column} IS NOT NULL AND (typeof(t.${column}) <> 'integer' OR t.${column} > ${maxSafe} OR t.${column} < -${maxSafe}))`
+      )
+      .join(' OR ');
+
+    return (
+      getRow<AccountTransactionSummary>(
+        this.db,
+        `
+        SELECT
+          COUNT(*) AS TransactionCount,
+          COALESCE(SUM(CASE WHEN t.TransferID IS NOT NULL AND t.TransferID != '' THEN 1 ELSE 0 END), 0) AS TransferTransactionCount,
+          COALESCE(SUM(CASE
+            WHEN NOT EXISTS (SELECT 1 FROM transaction_splits s WHERE s.TransactionID = t.ID)
+             AND (t.CategoryID IS NULL OR t.CategoryID = 0 OR c.Name IS NULL OR c.Name = '' OR c.Name = 'Uncategorized')
+            THEN 1 ELSE 0 END), 0) AS UncategorizedCount,
+          COALESCE(SUM(CASE WHEN ${unsafeMoney} THEN 1 ELSE 0 END), 0) AS UnsafeTransactionCount,
+          COALESCE(SUM(t.InflowConverted), 0) AS TotalInflowConverted,
+          COALESCE(SUM(t.OutflowConverted), 0) AS TotalOutflowConverted,
+          COALESCE(SUM(COALESCE(t.InflowNative, t.InflowConverted)), 0) AS TotalInflowNative,
+          COALESCE(SUM(COALESCE(t.OutflowNative, t.OutflowConverted)), 0) AS TotalOutflowNative
+        FROM transactions t
+        LEFT JOIN categories c ON t.CategoryID = c.ID
+        WHERE ${where.join(' AND ')}
+      `,
+        ...params
+      ) ?? {
+        TransactionCount: 0,
+        TransferTransactionCount: 0,
+        UncategorizedCount: 0,
+        UnsafeTransactionCount: 0,
+        TotalInflowConverted: ZERO_MILLI,
+        TotalOutflowConverted: ZERO_MILLI,
+        TotalInflowNative: ZERO_MILLI,
+        TotalOutflowNative: ZERO_MILLI,
+      }
+    );
+  }
+
+  /**
+   * Return only a chart window plus one synthetic opening-balance row. This
+   * preserves exact sparkline math without loading an account's entire ledger.
+   */
+  getAccountBalanceHistory(
+    accountId: number,
+    fromDate: string,
+    toDate: string
+  ): AccountBalanceHistoryTransaction[] {
+    const opening = getRow<{ RunningBalanceConverted: number | null }>(
+      this.db,
+      `
+      SELECT RunningBalanceConverted
+      FROM transactions
+      WHERE AccountID = ? AND Date < ?
+      ORDER BY Date DESC, ID DESC
+      LIMIT 1
+    `,
+      accountId,
+      fromDate
+    );
+    const rows = allRows<AccountBalanceHistoryTransaction>(
+      this.db,
+      `
+      SELECT Date, InflowConverted, OutflowConverted
+      FROM transactions
+      WHERE AccountID = ? AND Date >= ? AND Date <= ?
+      ORDER BY Date ASC, ID ASC
+    `,
+      accountId,
+      fromDate,
+      toDate
+    );
+    if (opening?.RunningBalanceConverted == null) return rows;
+    return [
+      {
+        Date: '0001-01-01',
+        InflowConverted: asMilli(opening.RunningBalanceConverted),
+        OutflowConverted: ZERO_MILLI,
+      },
+      ...rows,
+    ];
+  }
+
+  /** Joined register row used to patch the UI cache after a mutation completes. */
+  getTransactionForAccountRegister(id: number): GetTransactionsByAccountRow | undefined {
+    return getRow<GetTransactionsByAccountRow>(
+      this.db,
+      `
+      SELECT${TX_ROW_COLUMNS},
+        t.AccountID,
+        a.Name AS Account
+      FROM transactions t
+      LEFT JOIN categories c ON t.CategoryID = c.ID
+      LEFT JOIN labels l ON t.LabelID = l.ID
+      LEFT JOIN accounts a ON t.AccountID = a.ID
+      WHERE t.ID = ?
+    `,
+      id
     );
   }
 

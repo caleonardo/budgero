@@ -75,6 +75,42 @@ export interface GetTransactionsByAccountRow {
   RunningBalanceProjected?: boolean;
 }
 
+/** Stable keyset used to continue an account register ordered by Date/ID descending. */
+export interface AccountTransactionCursor {
+  Date: string;
+  ID: number;
+}
+
+export interface AccountTransactionPageOptions {
+  limit?: number;
+  cursor?: AccountTransactionCursor | null;
+  fromDate?: string;
+  toDate?: string;
+}
+
+export interface AccountTransactionPage {
+  rows: GetTransactionsByAccountRow[];
+  nextCursor: AccountTransactionCursor | null;
+}
+
+/** Aggregate values needed by the account register without materializing every row. */
+export interface AccountTransactionSummary {
+  TransactionCount: number;
+  TransferTransactionCount: number;
+  UncategorizedCount: number;
+  UnsafeTransactionCount: number;
+  TotalInflowConverted: MilliUnits;
+  TotalOutflowConverted: MilliUnits;
+  TotalInflowNative: MilliUnits;
+  TotalOutflowNative: MilliUnits;
+}
+
+export interface AccountBalanceHistoryTransaction {
+  Date: string;
+  InflowConverted: MilliUnits;
+  OutflowConverted: MilliUnits;
+}
+
 export interface GetTransactionsByAccountAndMonthRow {
   ID: number;
   Date: string;
