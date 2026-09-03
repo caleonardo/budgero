@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-query';
 // Use runtime services directly instead of db-ops wrappers
-import { useRuntime } from '@shared/runtime/runtime-provider';
+import { useActiveSpaceId, useRuntime } from '@shared/runtime/runtime-provider';
 import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 import { useLoading } from '@shared/contexts/LoadingContext';
-import { applyOpInvalidations } from '@shared/lib/query-utils';
+import { applyOpInvalidations, resolveSpaceKey } from '@shared/lib/query-utils';
+import { getTodayISO } from '@shared/lib/date-utils';
+import { patchPlainAddTransactionCaches } from './plain-add-cache';
 
 // Query invalidation for these mutations is driven centrally by the
 // MutationExecutor from each op's declared `invalidates` (see
@@ -62,6 +64,7 @@ export type AddTransferResult = {
 export function useAddTransaction() {
   const { showTransferLoading, hideTransferLoading } = useLoading();
   const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
   const queryClient = useQueryClient();
 
   return useMutation<number, Error, AddTransactionInput>({
@@ -70,7 +73,7 @@ export function useAddTransaction() {
         showTransferLoading();
       }
 
-      return executeSpaceMutation<number>(runtime, {
+      const transactionId = await executeSpaceMutation<number>(runtime, {
         op: 'transactions.add',
         payload: {
           inflow: input.inflow,
@@ -90,12 +93,48 @@ export function useAddTransaction() {
         // awaited invalidation behavior for legacy transfer calls.
         meta: { label: 'useAddTransaction', skipInvalidate: !input.transferId },
       });
+
+      if (!input.transferId) {
+        try {
+          // Read the final joined row after continuous rules have completed, so
+          // the cache receives their category/label/account metadata as well.
+          const row = runtime
+            .services()
+            .transactions.getTransactionForAccountRegister(transactionId);
+          patchPlainAddTransactionCaches(
+            queryClient,
+            resolveSpaceKey(spaceId),
+            input.budgetId,
+            row,
+            getTodayISO()
+          );
+        } catch (error) {
+          // A cache failure must never turn a committed database write into a
+          // failed form submission. Fall back to the normal bounded refetch.
+          console.warn('Failed to patch plain transaction caches', error);
+          void queryClient.invalidateQueries({ queryKey: ['transactions'] });
+          void queryClient.invalidateQueries({ queryKey: ['accountTransactionPages'] });
+          void queryClient.invalidateQueries({ queryKey: ['accountTransactionRange'] });
+          void queryClient.invalidateQueries({ queryKey: ['accounts'] });
+        }
+      }
+
+      return transactionId;
     },
     onSuccess: (_newId, vars) => {
       if (vars.transferId) {
         hideTransferLoading();
       } else {
-        applyOpInvalidations(queryClient, 'transactions.add');
+        applyOpInvalidations(queryClient, 'transactions.add', {
+          excludeRoots: [
+            'transactions',
+            'accountTransactionPages',
+            'accountTransactionRange',
+            'accountTransactionSummary',
+            'accountBalanceHistory',
+            'accounts',
+          ],
+        });
       }
     },
     onError: (error, vars) => {
