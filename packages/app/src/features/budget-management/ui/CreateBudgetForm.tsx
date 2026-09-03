@@ -13,7 +13,9 @@ import type {
   YNABApiPlanSnapshot,
   YNABApiPlanSummary,
   YNABImportConfig,
+  YNABImportProgressUpdate,
   YNABImportPreview,
+  YNABImportResult,
   DatabaseAdapter,
 } from '@budgero/core/browser';
 import { YNABApiClient, YNABImportService } from '@budgero/core/browser';
@@ -25,6 +27,7 @@ import { notifyUpdateRequired } from '@shared/lib/update-required';
 import { ManualBudgetTab } from '@features/budget-management/ui/create-budget-form/ManualBudgetTab';
 import { RestoreBackupTab } from '@features/budget-management/ui/create-budget-form/RestoreBackupTab';
 import { YnabImportTab } from '@features/budget-management/ui/create-budget-form/YnabImportTab';
+import { YnabImportStatus } from '@features/budget-management/ui/create-budget-form/YnabImportStatus';
 
 interface CreateBudgetFormProps {
   onCreated?: (budgetId: number) => void;
@@ -63,6 +66,10 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   const [selectedYnabPlanId, setSelectedYnabPlanId] = useState('');
   const [ynabApiSnapshot, setYnabApiSnapshot] = useState<YNABApiPlanSnapshot | null>(null);
   const [isConnectingYnab, setIsConnectingYnab] = useState(false);
+  const [ynabImportView, setYnabImportView] = useState<'form' | 'status'>('form');
+  const [ynabImportUpdates, setYnabImportUpdates] = useState<YNABImportProgressUpdate[]>([]);
+  const [ynabImportError, setYnabImportError] = useState<string | null>(null);
+  const [ynabImportResult, setYnabImportResult] = useState<YNABImportResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Budgero backup import state
@@ -84,6 +91,10 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
     setYnabPlans([]);
     setSelectedYnabPlanId('');
     setYnabApiSnapshot(null);
+    setYnabImportView('form');
+    setYnabImportUpdates([]);
+    setYnabImportError(null);
+    setYnabImportResult(null);
     setCoreFile(null);
     setCoreStatus(null);
     if (fileInputRef.current) {
@@ -200,13 +211,16 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
     }
 
     setIsImporting(true);
+    setYnabImportView('status');
+    setYnabImportUpdates([]);
+    setYnabImportError(null);
+    setYnabImportResult(null);
 
     try {
       const dbAdapter = runtime.getDatabase();
 
       if (!dbAdapter) {
-        toast.error('Database not initialized');
-        return;
+        throw new Error('Database not initialized');
       }
 
       const importService = new YNABImportService(dbAdapter as unknown as DatabaseAdapter);
@@ -221,6 +235,9 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         currency,
         numberFormat,
         badgeIcon: importBadgeIcon,
+        onProgress: (update) => {
+          setYnabImportUpdates((current) => [...current, update]);
+        },
       };
 
       const result =
@@ -231,6 +248,15 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
               config
             );
       const { budgetId } = result;
+      setYnabImportUpdates((current) => [
+        ...current,
+        {
+          stage: 'complete',
+          status: 'running',
+          progress: 99,
+          label: 'Saving imported budget',
+        },
+      ]);
       trackBudgetCreated();
       trackImportedFromYnab();
 
@@ -282,36 +308,53 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       } else {
         summaryParts.push('Review imported account types before budgeting.');
       }
-      toast.success(`Successfully imported YNAB budget "${budgetName}"!`, {
-        description: summaryParts.join(' ') || undefined,
-      });
-
-      if (onCreated) {
-        onCreated(budgetId);
-        resetForm();
-      } else {
-        setFile(null);
-        setYnabPreview(null);
-        setYnabPersonalAccessToken('');
-        setYnabPlans([]);
-        setSelectedYnabPlanId('');
-        setYnabApiSnapshot(null);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
+      if (result.summary.readyToAssignMonthsVerified !== undefined) {
+        summaryParts.push(
+          `Verified Ready to Assign for ${result.summary.readyToAssignMonthsVerified} month${result.summary.readyToAssignMonthsVerified === 1 ? '' : 's'}.`
+        );
       }
-
       try {
         await updateOnboardingAsync({ status: 'completed', snoozed_until: null });
       } catch (err) {
         console.warn('[CreateBudgetForm] Failed to mark onboarding complete after import', err);
       }
+      setYnabImportUpdates((current) => [
+        ...current,
+        {
+          stage: 'complete',
+          status: 'passed',
+          progress: 100,
+          label: 'Imported budget saved',
+          detail: summaryParts.join(' ') || undefined,
+        },
+      ]);
+      setYnabImportResult(result);
     } catch (err) {
       console.error('Import failed:', err);
-      toast.error(getErrorMessage(err, 'Import failed. Please check your file and try again.'));
+      setYnabImportError(
+        getErrorMessage(err, 'Import failed. Please check your source and try again.')
+      );
     } finally {
       setIsImporting(false);
     }
+  };
+
+  const handleContinueYnabImport = () => {
+    if (!ynabImportResult) return;
+    const { budgetId } = ynabImportResult;
+    if (onCreated) {
+      onCreated(budgetId);
+    } else {
+      toast.success(`Successfully imported YNAB budget "${budgetName}"!`);
+    }
+    resetForm();
+  };
+
+  const handleBackFromYnabImport = () => {
+    setYnabImportView('form');
+    setYnabImportUpdates([]);
+    setYnabImportError(null);
+    setYnabImportResult(null);
   };
 
   // Budgero backup import
@@ -512,37 +555,48 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         </TabsContent>
 
         <TabsContent value="import" className="space-y-3 sm:space-y-4 mt-3 sm:mt-4">
-          <YnabImportTab
-            sourceMode={ynabSourceMode}
-            onSourceModeChange={(mode) => {
-              setYnabSourceMode(mode);
-              setYnabPreview(null);
-              setYnabApiSnapshot(null);
-            }}
-            personalAccessToken={ynabPersonalAccessToken}
-            onPersonalAccessTokenChange={setYnabPersonalAccessToken}
-            plans={ynabPlans}
-            selectedPlanId={selectedYnabPlanId}
-            onSelectedPlanChange={(planId) => void loadYnabApiPlan(planId)}
-            isConnecting={isConnectingYnab}
-            onConnect={() => void handleConnectYnab()}
-            budgetName={budgetName}
-            onBudgetNameChange={setBudgetName}
-            currency={currency}
-            onCurrencyChange={setCurrency}
-            numberFormat={numberFormat}
-            onNumberFormatChange={setNumberFormat}
-            importBadgeIcon={importBadgeIcon}
-            onImportBadgeIconChange={setImportBadgeIcon}
-            fileInputRef={fileInputRef}
-            file={file}
-            onFileChange={handleFileChange}
-            preview={ynabPreview}
-            isInspecting={isInspectingYnab}
-            isImporting={isImporting}
-            onReset={resetForm}
-            onImport={handleImport}
-          />
+          {ynabImportView === 'status' ? (
+            <YnabImportStatus
+              sourceMode={ynabSourceMode}
+              updates={ynabImportUpdates}
+              error={ynabImportError}
+              summary={ynabImportResult?.summary ?? null}
+              onBack={handleBackFromYnabImport}
+              onContinue={handleContinueYnabImport}
+            />
+          ) : (
+            <YnabImportTab
+              sourceMode={ynabSourceMode}
+              onSourceModeChange={(mode) => {
+                setYnabSourceMode(mode);
+                setYnabPreview(null);
+                setYnabApiSnapshot(null);
+              }}
+              personalAccessToken={ynabPersonalAccessToken}
+              onPersonalAccessTokenChange={setYnabPersonalAccessToken}
+              plans={ynabPlans}
+              selectedPlanId={selectedYnabPlanId}
+              onSelectedPlanChange={(planId) => void loadYnabApiPlan(planId)}
+              isConnecting={isConnectingYnab}
+              onConnect={() => void handleConnectYnab()}
+              budgetName={budgetName}
+              onBudgetNameChange={setBudgetName}
+              currency={currency}
+              onCurrencyChange={setCurrency}
+              numberFormat={numberFormat}
+              onNumberFormatChange={setNumberFormat}
+              importBadgeIcon={importBadgeIcon}
+              onImportBadgeIconChange={setImportBadgeIcon}
+              fileInputRef={fileInputRef}
+              file={file}
+              onFileChange={handleFileChange}
+              preview={ynabPreview}
+              isInspecting={isInspectingYnab}
+              isImporting={isImporting}
+              onReset={resetForm}
+              onImport={handleImport}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </div>
