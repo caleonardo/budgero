@@ -191,6 +191,9 @@ describe.skipIf(!token || !planId)('YNAB API live reconciliation', () => {
       expect(importedTransactionNet).toBe(sourceTransactionNet);
       expect(importedAssignments).toBe(sourceAssignments);
       expect(result.summary.accountBalancesVerified).toBe(accountComparisons.length);
+      expect(result.summary.readyToAssignMonthsVerified).toBe(
+        snapshot.plan.months.filter((month) => !month.deleted).length
+      );
     } finally {
       adapter.close();
     }
