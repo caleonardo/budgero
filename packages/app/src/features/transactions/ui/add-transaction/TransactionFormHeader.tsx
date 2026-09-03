@@ -28,7 +28,7 @@ export const TransactionFormHeader = React.memo(function TransactionFormHeader({
   rememberLast,
   onRememberLastChange,
   title = 'Add New Transaction',
-  description = 'Choose a transaction type and fill in the details below.',
+  description,
   showRememberLast = true,
   recurringEnabled,
   onRecurringEnabledChange,
@@ -38,9 +38,11 @@ export const TransactionFormHeader = React.memo(function TransactionFormHeader({
     <>
       <DialogHeader className="space-y-1.5">
         <DialogTitle className="text-lg sm:text-xl font-semibold">{title}</DialogTitle>
-        <DialogDescription className="hidden sm:block text-xs sm:text-sm text-muted-foreground">
-          {description}
-        </DialogDescription>
+        {description && (
+          <DialogDescription className="hidden sm:block text-xs sm:text-sm text-muted-foreground">
+            {description}
+          </DialogDescription>
+        )}
       </DialogHeader>
 
       <div className="mt-2 sm:mt-3 flex flex-wrap items-center justify-between gap-3">
