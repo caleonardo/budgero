@@ -176,7 +176,10 @@ export class TransactionQueries {
    * GetAllTransactions - Gets all transactions for a budget
    * SQL: SELECT * FROM transactions WHERE budget_id = ? ORDER BY date DESC, id DESC
    */
-  getAllTransactions(budgetId: number): GetAllTransactions[] {
+  getAllTransactions(budgetId: number, limit?: number): GetAllTransactions[] {
+    const normalizedLimit =
+      typeof limit === 'number' && Number.isFinite(limit) ? Math.max(1, Math.floor(limit)) : null;
+
     return allRows<GetAllTransactions>(
       this.db,
       `
@@ -204,8 +207,10 @@ export class TransactionQueries {
         LEFT JOIN accounts a ON t.AccountID = a.ID
       WHERE t.BudgetID = ?
       ORDER BY t.Date DESC, t.ID DESC
+      ${normalizedLimit === null ? '' : 'LIMIT ?'}
     `,
-      budgetId
+      budgetId,
+      ...(normalizedLimit === null ? [] : [normalizedLimit])
     );
   }
 

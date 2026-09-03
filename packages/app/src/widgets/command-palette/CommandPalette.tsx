@@ -69,6 +69,8 @@ interface SelectedTransactionData extends GetTransactionsByAccountRow {
   OutflowNative?: MilliUnits;
 }
 
+const COMMAND_PALETTE_TRANSACTION_LIMIT = 200;
+
 export function CommandPalette() {
   const [showTransactionDialog, setShowTransactionDialog] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
@@ -84,10 +86,14 @@ export function CommandPalette() {
   const setCommandPaletteOpen = useUiStore((state) => state.setCommandPaletteOpen);
   const toggleCommandPalette = useUiStore((state) => state.toggleCommandPalette);
   const budgetId = selectedBudget?.ID || 0;
+  const isSearching = searchValue.trim().length > 0;
 
   const { data: categories = [] } = useCategories(budgetId);
   const { data: accounts = [] } = useAccounts(budgetId);
-  const { data: allTransactions = [] } = useAllTransactions(budgetId);
+  const { data: recentTransactions = [] } = useAllTransactions(budgetId, {
+    enabled: commandPaletteOpen && isSearching,
+    limit: COMMAND_PALETTE_TRANSACTION_LIMIT,
+  });
   const addTransactionMutation = useAddTransaction();
   const addTransferMutation = useAddTransfer();
   const cellCommit = useTransactionCellCommit();
@@ -389,8 +395,6 @@ export function CommandPalette() {
     return result;
   };
 
-  const isSearching = searchValue.length > 0;
-
   const displayedCategories = React.useMemo(() => {
     if (isSearching) {
       return categories; // Show all when searching
@@ -412,7 +416,7 @@ export function CommandPalette() {
 
     const searchLower = searchValue.toLowerCase();
 
-    const filtered = allTransactions.filter((transaction) => {
+    const filtered = recentTransactions.filter((transaction) => {
       const memo = (transaction.Memo || '').toLowerCase();
       const category = (transaction.Category || '').toLowerCase();
       const payee = (transaction.Payee || '').toLowerCase();
@@ -431,10 +435,8 @@ export function CommandPalette() {
       );
     });
 
-    return filtered
-      .sort((a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime())
-      .slice(0, 50);
-  }, [allTransactions, isSearching, searchValue]);
+    return filtered.slice(0, 50);
+  }, [recentTransactions, isSearching, searchValue]);
 
   return (
     <>

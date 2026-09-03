@@ -539,8 +539,8 @@ export class TransactionService {
   /**
    * GetAllTransactions - Gets all transactions for a budget
    */
-  getAllTransactions(budgetId: number): GetAllTransactions[] {
-    return this.queries.getAllTransactions(budgetId);
+  getAllTransactions(budgetId: number, limit?: number): GetAllTransactions[] {
+    return this.queries.getAllTransactions(budgetId, limit);
   }
 
   /**

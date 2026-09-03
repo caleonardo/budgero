@@ -262,6 +262,9 @@ describe('Transactions (Node/sql.js)', () => {
       expect(allTransactions.some((t: GetAllTransactions) => t.Memo === 'Test 1')).toBe(true);
       expect(allTransactions.some((t: GetAllTransactions) => t.Memo === 'Test 2')).toBe(true);
       expect(allTransactions.some((t: GetAllTransactions) => t.Memo === 'Income')).toBe(true);
+
+      const recentTransactions = services.transactions.getAllTransactions(budgetId, 2);
+      expect(recentTransactions).toEqual(allTransactions.slice(0, 2));
     });
 
     it('should persist payee values and expose distinct payees', async () => {

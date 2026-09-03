@@ -127,11 +127,22 @@ export function useTransactionsByCategoryAndRange(
 /**
  * Fetch all transactions for a budget.
  */
-export function useAllTransactions(budgetId: number) {
+export interface AllTransactionsQueryOptions {
+  enabled?: boolean;
+  limit?: number;
+}
+
+export function useAllTransactions(
+  budgetId: number,
+  { enabled = true, limit }: AllTransactionsQueryOptions = {}
+) {
   return useSpaceQuery<GetAllTransactions[]>({
-    key: ['allTransactions', budgetId],
-    enabled: Boolean(budgetId),
-    queryFn: (services) => services.transactions.getAllTransactions(budgetId),
+    key:
+      limit === undefined
+        ? ['allTransactions', budgetId]
+        : ['allTransactions', budgetId, 'limit', limit],
+    enabled: Boolean(budgetId) && enabled,
+    queryFn: (services) => services.transactions.getAllTransactions(budgetId, limit),
   });
 }
 
