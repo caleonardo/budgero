@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { getLocalDateString } from '../src/utils/date';
 import { NodeSqlJsAdapter, ServiceManager, DatabaseAdapter } from '../src';
 
@@ -161,6 +161,31 @@ describe('Rules payee actions (Node/sql.js)', () => {
     const updated = services.transactions.getTransactionByID(transactionId);
     expect(updated?.Memo).toBe('Groceries run');
     expect(updated?.CategoryID).toBe(otherCategoryId);
+  });
+
+  it('does not rebuild balances for metadata-only rules on plain transactions', async () => {
+    const transactionId = await services.transactions.addTransaction(
+      0,
+      10,
+      accountId,
+      categoryId,
+      budgetId,
+      getLocalDateString(),
+      'metadata target'
+    );
+    const rule = services.rules.createRule({
+      budgetId,
+      name: 'Metadata only',
+      conditions: [{ field: 'memo', operator: 'contains', value: 'metadata target' }],
+      actions: [{ type: 'memo.set', payload: { memo: 'updated metadata' } }],
+    });
+    const prepareSpy = vi.spyOn(adapter, 'prepare');
+
+    await services.rules.executeRule(rule.id, { transactionIds: [transactionId] });
+
+    const executedSql = prepareSpy.mock.calls.map(([sql]) => String(sql));
+    expect(executedSql.some((sql) => sql.includes('WITH balances AS MATERIALIZED'))).toBe(false);
+    expect(services.transactions.getTransactionByID(transactionId).Memo).toBe('updated metadata');
   });
 
   it('supports account conditions with is/is_not operators', async () => {

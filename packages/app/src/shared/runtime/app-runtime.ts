@@ -605,6 +605,7 @@ export class AppRuntime {
       }
 
       const invalidates = getInvalidatesForOp('rules.execute');
+      const deferPlainAddInvalidation = isTransactionAdd && spec.meta?.skipInvalidate === true;
 
       for (const transactionId of transactionIds) {
         for (const rule of continuousRules) {
@@ -619,7 +620,11 @@ export class AppRuntime {
                 },
               },
               invalidates,
-              meta: { skipUndo: true, forceInvalidate: true },
+              meta: {
+                skipUndo: true,
+                forceInvalidate: true,
+                skipInvalidate: deferPlainAddInvalidation,
+              },
             });
           } catch (error) {
             console.warn('[AppRuntime] Failed to run continuous rule', {

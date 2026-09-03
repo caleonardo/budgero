@@ -1114,16 +1114,25 @@ export class RulesService {
       return [];
     }
 
-    await this.transactions.updateTransaction(
-      Number(transaction.ID),
-      working.inflow,
-      working.outflow,
-      working.accountId,
-      working.categoryId,
-      transaction.Date,
-      working.memo,
-      working.payee
-    );
+    if (!transaction.TransferID && !accountChanged && !amountChanged) {
+      this.transactions.updatePlainTransactionMetadata(
+        Number(transaction.ID),
+        working.categoryId,
+        working.memo,
+        working.payee
+      );
+    } else {
+      await this.transactions.updateTransaction(
+        Number(transaction.ID),
+        working.inflow,
+        working.outflow,
+        working.accountId,
+        working.categoryId,
+        transaction.Date,
+        working.memo,
+        working.payee
+      );
+    }
 
     const loggedChanges: TransactionRuleRunChange[] = [];
 

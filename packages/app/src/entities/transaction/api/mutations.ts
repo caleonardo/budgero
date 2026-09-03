@@ -62,6 +62,7 @@ export type AddTransferResult = {
 export function useAddTransaction() {
   const { showTransferLoading, hideTransferLoading } = useLoading();
   const runtime = useRuntime();
+  const queryClient = useQueryClient();
 
   return useMutation<number, Error, AddTransactionInput>({
     mutationFn: async (input) => {
@@ -84,13 +85,18 @@ export function useAddTransaction() {
           transferId: input.transferId,
           exchangeRateOverride: input.exchangeRateOverride ?? null,
         },
-        meta: { label: 'useAddTransaction' },
+        // Plain adds refresh active views in the background so a large account
+        // register does not keep the add dialog pending. Preserve the existing
+        // awaited invalidation behavior for legacy transfer calls.
+        meta: { label: 'useAddTransaction', skipInvalidate: !input.transferId },
       });
     },
-    // Invalidation is executor-driven (transactions.add invalidates). The hook
-    // only manages the transfer loading overlay.
     onSuccess: (_newId, vars) => {
-      if (vars.transferId) hideTransferLoading();
+      if (vars.transferId) {
+        hideTransferLoading();
+      } else {
+        applyOpInvalidations(queryClient, 'transactions.add');
+      }
     },
     onError: (error, vars) => {
       if (vars.transferId) hideTransferLoading();

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { getLocalDateString } from '../src/utils/date';
 import {
   NodeSqlJsAdapter,
@@ -265,6 +265,84 @@ describe('Transactions (Node/sql.js)', () => {
 
       const recentTransactions = services.transactions.getAllTransactions(budgetId, 2);
       expect(recentTransactions).toEqual(allTransactions.slice(0, 2));
+    });
+
+    it('maintains both running balances when adding a backdated plain transaction', async () => {
+      const emptyAccount = await services.accounts.createAccount(
+        'Backdated checking',
+        budgetId,
+        'checking',
+        'USD',
+        0
+      );
+
+      const laterId = await services.transactions.addTransaction(
+        0,
+        300,
+        emptyAccount.ID,
+        categoryId,
+        budgetId,
+        '2024-01-03',
+        'Later'
+      );
+      const earlierId = await services.transactions.addTransaction(
+        100,
+        0,
+        emptyAccount.ID,
+        incomeId,
+        budgetId,
+        '2024-01-01',
+        'Earlier'
+      );
+
+      const earlier = services.transactions.getTransactionByID(earlierId);
+      const later = services.transactions.getTransactionByID(laterId);
+      expect(earlier.RunningBalanceConverted).toBe(100);
+      expect(earlier.RunningBalanceNative).toBe(100);
+      expect(later.RunningBalanceConverted).toBe(-200);
+      expect(later.RunningBalanceNative).toBe(-200);
+      expect(services.accounts.getAccount(emptyAccount.ID).BalanceConverted).toBe(-200);
+      expect(services.accounts.getAccount(emptyAccount.ID).BalanceNative).toBe(-200);
+    });
+
+    it('does not scan future balances when appending a newest plain transaction', async () => {
+      const emptyAccount = await services.accounts.createAccount(
+        'Append-only checking',
+        budgetId,
+        'checking',
+        'USD',
+        0
+      );
+      await services.transactions.addTransaction(
+        0,
+        100,
+        emptyAccount.ID,
+        categoryId,
+        budgetId,
+        '2024-01-01',
+        'First'
+      );
+      const prepareSpy = vi.spyOn(adapter, 'prepare');
+
+      await services.transactions.addTransaction(
+        0,
+        50,
+        emptyAccount.ID,
+        categoryId,
+        budgetId,
+        '2024-01-02',
+        'Newest'
+      );
+
+      const futureBalanceWrites = prepareSpy.mock.calls
+        .map(([sql]) => String(sql))
+        .filter(
+          (sql) =>
+            sql.includes('UPDATE transactions') &&
+            sql.includes('RunningBalance') &&
+            sql.includes('Date >')
+        );
+      expect(futureBalanceWrites).toHaveLength(0);
     });
 
     it('should persist payee values and expose distinct payees', async () => {

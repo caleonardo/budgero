@@ -437,10 +437,25 @@ export class TransactionService {
         throw new NotFoundError(`Category '${categoryId}' does not exist`);
       }
 
-      // 3. Get previous running balances (both original and converted)
-      const prevBalanceConverted = this.queries.getRunningBalanceBefore(accountId, date) || 0;
-      const prevBalanceOriginal =
-        this.queries.getRunningBalanceOriginalBefore(accountId, date) || 0;
+      // 3. Get previous running balances (both original and converted).
+      // Plain transactions normally append at the newest ledger position. In that
+      // common case the latest row supplies both balances and there are no future
+      // rows to update. Keep the established transfer path unchanged.
+      let plainAppendOnly = false;
+      let prevBalanceConverted: number;
+      let prevBalanceOriginal: number;
+      if (!transferId) {
+        const latest = this.queries.getLatestRunningBalances(accountId);
+        plainAppendOnly = latest === null || latest.Date <= date;
+        const previous = plainAppendOnly
+          ? latest
+          : this.queries.getRunningBalancesBefore(accountId, date);
+        prevBalanceConverted = previous?.RunningBalanceConverted ?? 0;
+        prevBalanceOriginal = previous?.RunningBalanceNative ?? 0;
+      } else {
+        prevBalanceConverted = this.queries.getRunningBalanceBefore(accountId, date) || 0;
+        prevBalanceOriginal = this.queries.getRunningBalanceOriginalBefore(accountId, date) || 0;
+      }
 
       // 4. Compute new balances
       const deltaConverted = inflowConverted - outflowConverted;
@@ -477,9 +492,23 @@ export class TransactionService {
       // If rate was manual/adjacent/1:1, mark pending for later recalc
       if (markPending) this.queries.setConversionPending(id, true);
 
-      // 6. Bump future balances (both converted and original)
-      this.queries.bumpFutureBalances(accountId, date, id, deltaConverted);
-      this.queries.bumpFutureBalancesOriginal(accountId, date, id, deltaOriginal);
+      // 6. Bump future balances (both converted and original). A newest plain
+      // transaction has no future rows; backdated plain adds update both balance
+      // columns in one scan. Transfers retain their established behavior.
+      if (!transferId) {
+        if (!plainAppendOnly) {
+          this.queries.bumpFutureBalancesCombined(
+            accountId,
+            date,
+            id,
+            deltaConverted,
+            deltaOriginal
+          );
+        }
+      } else {
+        this.queries.bumpFutureBalances(accountId, date, id, deltaConverted);
+        this.queries.bumpFutureBalancesOriginal(accountId, date, id, deltaOriginal);
+      }
 
       // 7. Update account-level balance (both original and converted)
       this.queries.updateAccountBalance(
@@ -592,6 +621,26 @@ export class TransactionService {
       throw new NotFoundError('Transaction', id);
     }
     return transaction;
+  }
+
+  /** Update non-balance fields without entering the full balance-recalculation path. */
+  updatePlainTransactionMetadata(
+    id: number,
+    categoryId: number,
+    memo: string,
+    payee?: string
+  ): void {
+    const transaction = this.getTransactionByID(id);
+    if (transaction.TransferID) {
+      throw new ValidationError('Plain transaction metadata updates cannot modify transfers');
+    }
+
+    const normalizedPayee = this.resolvePayee(payee, transaction.Payee);
+    this.db.transaction(() => {
+      this.queries.recategorizeTransaction(id, categoryId);
+      this.queries.updateTransactionMemo(id, memo);
+      this.queries.updateTransactionPayee(id, normalizedPayee);
+    });
   }
 
   /**

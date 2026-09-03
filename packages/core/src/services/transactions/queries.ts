@@ -74,6 +74,30 @@ export const NO_SPLITS_FILTER = `AND NOT EXISTS (SELECT 1 FROM transaction_split
 export class TransactionQueries {
   constructor(private db: DatabaseAdapter) {}
 
+  getLatestRunningBalances(accountId: number): {
+    Date: string;
+    RunningBalanceConverted: number | null;
+    RunningBalanceNative: number | null;
+  } | null {
+    return (
+      getRow<{
+        Date: string;
+        RunningBalanceConverted: number | null;
+        RunningBalanceNative: number | null;
+      }>(
+        this.db,
+        `
+        SELECT Date, RunningBalanceConverted, RunningBalanceNative
+        FROM transactions
+        WHERE AccountID = ?
+        ORDER BY Date DESC, ID DESC
+        LIMIT 1
+      `,
+        accountId
+      ) ?? null
+    );
+  }
+
   /**
    * GetAccountAndBudget - Loads an account row and a budget row together.
    * The budget defaults to the account's own BudgetID; pass `budgetId` to load
@@ -394,6 +418,36 @@ export class TransactionQueries {
     return this.getRunningBalanceColumn('RunningBalanceNative', accountId, date, id);
   }
 
+  getRunningBalancesBefore(
+    accountId: number,
+    date: string,
+    id?: number
+  ): {
+    RunningBalanceConverted: number | null;
+    RunningBalanceNative: number | null;
+  } | null {
+    return (
+      getRow<{
+        RunningBalanceConverted: number | null;
+        RunningBalanceNative: number | null;
+      }>(
+        this.db,
+        `
+        SELECT RunningBalanceConverted, RunningBalanceNative
+        FROM transactions
+        WHERE AccountID = ?
+          AND (Date < ? OR (Date = ? AND ID < COALESCE(?, 9223372036854775807)))
+        ORDER BY Date DESC, ID DESC
+        LIMIT 1
+      `,
+        accountId,
+        date,
+        date,
+        id || null
+      ) ?? null
+    );
+  }
+
   private bumpFutureBalancesColumn(
     col: 'RunningBalanceConverted' | 'RunningBalanceNative',
     accountId: number,
@@ -429,6 +483,30 @@ export class TransactionQueries {
    */
   bumpFutureBalancesOriginal(accountId: number, date: string, id: number, delta: number): void {
     this.bumpFutureBalancesColumn('RunningBalanceNative', accountId, date, id, delta);
+  }
+
+  bumpFutureBalancesCombined(
+    accountId: number,
+    date: string,
+    id: number,
+    convertedDelta: number,
+    nativeDelta: number
+  ): void {
+    run(
+      this.db,
+      `
+      UPDATE transactions
+      SET RunningBalanceConverted = RunningBalanceConverted + ?,
+          RunningBalanceNative = RunningBalanceNative + ?
+      WHERE AccountID = ? AND (Date > ? OR (Date = ? AND ID > ?))
+    `,
+      convertedDelta,
+      nativeDelta,
+      accountId,
+      date,
+      date,
+      id
+    );
   }
 
   private updateRunningBalanceColumn(
