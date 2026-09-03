@@ -197,5 +197,5 @@ describe.skipIf(!token || !planId)('YNAB API live reconciliation', () => {
     } finally {
       adapter.close();
     }
-  }, 30_000);
+  }, 120_000);
 });

@@ -2,6 +2,8 @@
 
 const API_BASE = 'https://api.ynab.com/v1';
 const PREFIX = '[Budgero 5Y]';
+const TARGET_TRANSACTION_COUNT = 15_000;
+const SCALE_IMPORT_ID_PREFIX = 'BG5Y:SCALE:';
 const token = process.env.YNAB_ACCESS_TOKEN?.trim();
 const planId = process.env.YNAB_PLAN_ID?.trim() || process.argv[2]?.trim();
 
@@ -147,6 +149,98 @@ function add(month, code, transaction, occurrence = 1) {
     import_id: importId(month, code, occurrence),
     ...transaction,
   });
+}
+
+async function createMissingTransactions(candidates, label) {
+  const existingImportIds = new Set(
+    plan.transactions
+      .filter((transaction) => !transaction.deleted && transaction.import_id)
+      .map((transaction) => transaction.import_id)
+  );
+  const missing = candidates.filter((transaction) => !existingImportIds.has(transaction.import_id));
+  const chunkSize = 100;
+  let createdOrMatched = 0;
+  let duplicateImportIds = 0;
+
+  for (let start = 0; start < missing.length; start += chunkSize) {
+    const chunk = missing.slice(start, start + chunkSize);
+    const data = await request(`${planPath}/transactions`, {
+      method: 'POST',
+      body: JSON.stringify({ transactions: chunk }),
+    });
+    createdOrMatched += data.transaction_ids?.length ?? 0;
+    duplicateImportIds += data.duplicate_import_ids?.length ?? 0;
+    console.log(
+      `${label} batch ${Math.floor(start / chunkSize) + 1}/${Math.ceil(missing.length / chunkSize)}`
+    );
+  }
+
+  return {
+    candidates: candidates.length,
+    submitted: missing.length,
+    createdOrMatched,
+    duplicateImportIds,
+  };
+}
+
+function scaleTransaction(index) {
+  const month = months[index % months.length];
+  const cycle = Math.floor(index / months.length);
+  const choices = [
+    {
+      category: categories.groceries,
+      payees: ['Corner Grocer', 'Fresh Basket', 'Farmers Market'],
+      minimum: 8_000,
+      range: 92_000,
+    },
+    {
+      category: categories.dining,
+      payees: ['Coffee Window', 'Noodle House', 'Lunch Counter'],
+      minimum: 4_000,
+      range: 58_000,
+    },
+    {
+      category: categories.transport,
+      payees: ['City Transit', 'Metro Fuel', 'Ride Share'],
+      minimum: 3_000,
+      range: 74_000,
+    },
+    {
+      category: categories.household,
+      payees: ['Corner Pharmacy', 'Home Supply', 'Local Hardware'],
+      minimum: 6_000,
+      range: 86_000,
+    },
+    {
+      category: categories.medical,
+      payees: ['Neighborhood Pharmacy', 'Health Clinic', 'Dental Care'],
+      minimum: 12_000,
+      range: 138_000,
+    },
+    {
+      category: categories.clothing,
+      payees: ['Main Street Outfitters', 'Shoe Shop', 'Tailor'],
+      minimum: 9_000,
+      range: 111_000,
+    },
+  ];
+  const choice = choices[(index * 17 + cycle * 7) % choices.length];
+  const payee = choice.payees[(index * 13 + cycle) % choice.payees.length];
+  const magnitude =
+    choice.minimum + ((Math.imul(index + 1, 48_271) + cycle * 7_919) % choice.range);
+  const isRefund = index % 47 === 0;
+
+  return {
+    approved: true,
+    cleared: index % 9 === 0 ? 'uncleared' : 'cleared',
+    memo: `${PREFIX} volume ${String(index + 1).padStart(5, '0')}`,
+    import_id: `${SCALE_IMPORT_ID_PREFIX}${String(index + 1).padStart(5, '0')}`,
+    account_id: index % 3 === 0 ? accounts.checking.id : accounts.credit.id,
+    date: date(month, 3 + ((index * 11 + cycle * 5) % 25)),
+    amount: isRefund ? Math.max(1_000, Math.round(magnitude / 3)) : -magnitude,
+    payee_name: isRefund ? `${payee} Refund` : payee,
+    category_id: choice.category.id,
+  };
 }
 
 for (let monthIndex = 0; monthIndex < months.length; monthIndex++) {
@@ -383,23 +477,43 @@ for (let monthIndex = 0; monthIndex < months.length; monthIndex++) {
   }
 }
 
-const chunkSize = 100;
-let createdOrMatched = 0;
-let duplicateImportIds = 0;
-for (let start = 0; start < transactions.length; start += chunkSize) {
-  const chunk = transactions.slice(start, start + chunkSize);
-  const data = await request(`${planPath}/transactions`, {
-    method: 'POST',
-    body: JSON.stringify({ transactions: chunk }),
-  });
-  createdOrMatched += data.transaction_ids?.length ?? 0;
-  duplicateImportIds += data.duplicate_import_ids?.length ?? 0;
-  console.log(
-    `Seeded transaction batch ${Math.floor(start / chunkSize) + 1}/${Math.ceil(transactions.length / chunkSize)}`
+const baseTransactions = await createMissingTransactions(transactions, 'Base history');
+await refreshPlan();
+
+const transactionCountAfterBase = plan.transactions.filter(
+  (transaction) => !transaction.deleted
+).length;
+if (transactionCountAfterBase > TARGET_TRANSACTION_COUNT) {
+  throw new Error(
+    `Plan already contains ${transactionCountAfterBase} transactions, above the ${TARGET_TRANSACTION_COUNT} target; refusing to delete data`
   );
 }
 
+const existingScaleImportIds = new Set(
+  plan.transactions
+    .filter(
+      (transaction) =>
+        !transaction.deleted && transaction.import_id?.startsWith(SCALE_IMPORT_ID_PREFIX)
+    )
+    .map((transaction) => transaction.import_id)
+);
+const scaleTransactions = [];
+let scaleIndex = 0;
+while (scaleTransactions.length < TARGET_TRANSACTION_COUNT - transactionCountAfterBase) {
+  const candidate = scaleTransaction(scaleIndex++);
+  if (!existingScaleImportIds.has(candidate.import_id)) scaleTransactions.push(candidate);
+}
+const scaleResult = await createMissingTransactions(scaleTransactions, 'Scale history');
 await refreshPlan();
+const finalTransactionCount = plan.transactions.filter(
+  (transaction) => !transaction.deleted
+).length;
+if (finalTransactionCount !== TARGET_TRANSACTION_COUNT) {
+  throw new Error(
+    `Expected ${TARGET_TRANSACTION_COUNT} transactions after seeding, found ${finalTransactionCount}`
+  );
+}
+
 let assignmentsUpdated = 0;
 let assignmentsUnchanged = 0;
 let assignmentsOutsideWriteWindow = 0;
@@ -431,9 +545,10 @@ console.log(
     {
       plan: plan.name,
       period: { firstMonth: months[0], lastMonth: months.at(-1), months: months.length },
-      generatedTransactions: transactions.length,
-      createdOrMatched,
-      duplicateImportIds,
+      targetTransactionCount: TARGET_TRANSACTION_COUNT,
+      finalTransactionCount,
+      baseTransactions,
+      scaleTransactions: scaleResult,
       assignmentTargets: assignments.length,
       assignmentsUpdated,
       assignmentsUnchanged,
