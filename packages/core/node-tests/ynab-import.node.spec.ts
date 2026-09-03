@@ -579,6 +579,7 @@ describe('YNABImportService — migration edge cases', () => {
           },
         ],
         splitTransactionsImported: 1,
+        sourceRowsVerified: 4,
       });
 
       const transactions = adapter

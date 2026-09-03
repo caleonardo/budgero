@@ -41,6 +41,8 @@ function parseSummary(value: string): ImportRunSummary {
       transactionsImported: Number(parsed.transactionsImported) || 0,
       accountsCreated: Number(parsed.accountsCreated) || 0,
       categoriesCreated: Number(parsed.categoriesCreated) || 0,
+      ...(parsed.verification ? { verification: parsed.verification } : {}),
+      ...(parsed.acceptedWithWarnings === true ? { acceptedWithWarnings: true } : {}),
     };
   } catch {
     return { transactionsImported: 0, accountsCreated: 0, categoriesCreated: 0 };
@@ -80,7 +82,7 @@ export class ImportHistoryService {
           Status,
           CreatedAt
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'completed', datetime('now'))
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
       `,
       input.budgetId,
       input.sourceType,
@@ -89,10 +91,13 @@ export class ImportHistoryService {
         transactionsImported: input.summary.transactionsImported,
         accountsCreated: input.summary.accountsCreated,
         categoriesCreated: input.summary.categoriesCreated,
+        ...(input.summary.verification ? { verification: input.summary.verification } : {}),
+        ...(input.summary.acceptedWithWarnings === true ? { acceptedWithWarnings: true } : {}),
       }),
       JSON.stringify(input.transactionIds ?? []),
       JSON.stringify(input.accountIds ?? []),
-      JSON.stringify(input.categoryIds ?? [])
+      JSON.stringify(input.categoryIds ?? []),
+      input.status ?? 'completed'
     );
     const insertedId =
       typeof result.lastInsertRowid === 'bigint'

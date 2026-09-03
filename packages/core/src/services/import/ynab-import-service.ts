@@ -18,12 +18,17 @@ import {
   YNABImportCategorySummary,
   YNABApiPlanSnapshot,
   YNABImportAccountSpec,
+  YNABImportCategoryMonthSpec,
+  YNABCategoryMonthMismatch,
+  YNABDebtBalanceAdjustment,
   YNABImportProgressUpdate,
   YNABImportReadyToAssignSpec,
+  YNABReadyToAssignMismatch,
+  YNABReconciliationReport,
 } from './types.js';
 import { CSVParser } from './csv-parser.js';
 import { CurrencyParser } from './currency-parser.js';
-import { normalizeYNABApiSnapshot } from './ynab-api-normalizer.js';
+import { normalizeYNABApiSnapshot, type NormalizedYNABApiImport } from './ynab-api-normalizer.js';
 
 import { createLogger } from '../../logger.js';
 
@@ -64,12 +69,14 @@ interface YNABAccountBalanceMismatch {
   difference: number;
 }
 
-interface YNABReadyToAssignMismatch {
-  month: string;
-  expectedReadyToAssign: number;
-  computedReadyToAssign: number;
-  difference: number;
-}
+const YNAB_MANAGED_DEBT_ACCOUNT_TYPES = new Set([
+  'mortgage',
+  'autoLoan',
+  'studentLoan',
+  'personalLoan',
+  'medicalDebt',
+  'otherDebt',
+]);
 
 function transferCounterpartyName(row: YNABRegisterRow): string | null {
   // YNAB identifies register transfers through a synthetic payee named
@@ -341,15 +348,23 @@ export class YNABImportService {
     snapshot: YNABApiPlanSnapshot,
     config: YNABImportConfig
   ): Promise<YNABImportResult> {
-    const { registerRows, budgetRows, accountSpecs, readyToAssignSpecs } =
-      normalizeYNABApiSnapshot(snapshot);
+    const {
+      registerRows,
+      budgetRows,
+      accountSpecs,
+      categoryMonthSpecs,
+      readyToAssignSpecs,
+      source,
+    } = normalizeYNABApiSnapshot(snapshot);
     return this.importYNABRowsWithSummary(
       registerRows,
       budgetRows,
       config,
       '123,456.78',
       accountSpecs,
-      readyToAssignSpecs
+      readyToAssignSpecs,
+      categoryMonthSpecs,
+      source
     );
   }
 
@@ -359,7 +374,9 @@ export class YNABImportService {
     config: YNABImportConfig,
     sourceNumberFormat: string,
     accountSpecs?: YNABImportAccountSpec[],
-    readyToAssignSpecs?: YNABImportReadyToAssignSpec[]
+    readyToAssignSpecs?: YNABImportReadyToAssignSpec[],
+    categoryMonthSpecs?: YNABImportCategoryMonthSpec[],
+    source?: NormalizedYNABApiImport['source']
   ): Promise<YNABImportResult> {
     const reportProgress = async (update: YNABImportProgressUpdate) => {
       await config.onProgress?.(update);
@@ -373,6 +390,19 @@ export class YNABImportService {
       detail: `Read ${registerRows.length} register rows`,
     });
     debugLog(`Parsed ${registerRows.length} register rows`);
+
+    if (source) {
+      await reportProgress({
+        stage: 'source-verification',
+        status: 'passed',
+        progress: 6,
+        label: 'YNAB source verified',
+        detail:
+          source.categoryAssignmentsVerified === undefined
+            ? `${source.registerRows.toLocaleString()} source rows accounted for`
+            : `${source.registerRows.toLocaleString()} source rows · ${source.categoryAssignmentsVerified.toLocaleString()} assignments confirmed by Money Movements`,
+      });
+    }
 
     this.detectAmbiguousDateOrder(registerRows.map((row) => row.Date));
     debugLog(`Parsed ${budgetRows.length} budget rows`);
@@ -443,6 +473,7 @@ export class YNABImportService {
         registerRows,
         budgetRows,
         config.currency,
+        categories,
         accountSpecs
       );
       debugLog(`Created ${Object.keys(accounts).length} accounts`);
@@ -495,6 +526,11 @@ export class YNABImportService {
           });
         }
       );
+      if (transactionSummary.sourceRowsProcessed !== registerRows.length) {
+        throw new Error(
+          `YNAB source completeness check failed: imported ${transactionSummary.sourceRowsProcessed} of ${registerRows.length} register rows. The incomplete budget was removed.`
+        );
+      }
       debugLog('Transactions imported successfully');
       await reportProgress({
         stage: 'transactions',
@@ -504,7 +540,9 @@ export class YNABImportService {
         detail: `${transactionSummary.transactionsCreated} transactions`,
       });
 
-      let accountBalancesVerified: number | undefined;
+      let accountVerification:
+        | { verified: number; debtBalanceAdjustments: YNABDebtBalanceAdjustment[] }
+        | undefined;
       if (accountSpecs) {
         await reportProgress({
           stage: 'account-verification',
@@ -512,29 +550,80 @@ export class YNABImportService {
           progress: 82,
           label: 'Verifying account balances',
         });
-        accountBalancesVerified = this.verifyYNABAccountBalances(budgetId, accounts, accountSpecs);
+        accountVerification = await this.verifyYNABAccountBalances(
+          budgetId,
+          accounts,
+          accountSpecs
+        );
         await reportProgress({
           stage: 'account-verification',
           status: 'passed',
           progress: 90,
           label: 'Account balances verified',
-          detail: `${accountBalancesVerified} balances match YNAB`,
+          detail: `${accountVerification.verified} balances match YNAB${
+            accountVerification.debtBalanceAdjustments.length > 0
+              ? ` · ${accountVerification.debtBalanceAdjustments.length} visible debt interest adjustment${accountVerification.debtBalanceAdjustments.length === 1 ? '' : 's'}`
+              : ''
+          }`,
         });
       }
 
-      let readyToAssignMonthsVerified: number | undefined;
+      let categoryVerification:
+        | {
+            checked: number;
+            matched: number;
+            mismatches: YNABCategoryMonthMismatch[];
+            omittedMismatches: number;
+          }
+        | undefined;
+      if (categoryMonthSpecs) {
+        await reportProgress({
+          stage: 'category-verification',
+          status: 'running',
+          progress: 91,
+          label: 'Verifying category history',
+        });
+        categoryVerification = await this.verifyYNABCategoryMonths(
+          budgetId,
+          categoryMonthSpecs,
+          async (processed, total, month) => {
+            const progress = Math.min(94, 91 + Math.floor((processed / total) * 3));
+            await reportProgress({
+              stage: 'category-verification',
+              status: 'running',
+              progress,
+              label: 'Verifying category history',
+              detail: `${processed.toLocaleString()} of ${total.toLocaleString()} months checked · ${month}`,
+            });
+          }
+        );
+        const categoryWarning = categoryVerification.mismatches.length > 0;
+        await reportProgress({
+          stage: 'category-verification',
+          status: categoryWarning ? 'warning' : 'passed',
+          progress: 94,
+          label: categoryWarning ? 'Category differences found' : 'Category history verified',
+          detail: categoryWarning
+            ? `${categoryVerification.checked - categoryVerification.matched} value${categoryVerification.checked - categoryVerification.matched === 1 ? '' : 's'} differ from YNAB`
+            : `${categoryVerification.checked} values match YNAB`,
+        });
+      }
+
+      let readyToAssignVerification:
+        | { checked: number; matched: number; mismatches: YNABReadyToAssignMismatch[] }
+        | undefined;
       if (readyToAssignSpecs) {
         await reportProgress({
           stage: 'rta-verification',
           status: 'running',
-          progress: 92,
+          progress: 95,
           label: 'Verifying Ready to Assign',
         });
-        readyToAssignMonthsVerified = await this.verifyYNABReadyToAssign(
+        readyToAssignVerification = await this.verifyYNABReadyToAssign(
           budgetId,
           readyToAssignSpecs,
           async (processed, total, month) => {
-            const progress = Math.min(97, 92 + Math.floor((processed / total) * 5));
+            const progress = Math.min(98, 95 + Math.floor((processed / total) * 3));
             await reportProgress({
               stage: 'rta-verification',
               status: 'running',
@@ -544,25 +633,66 @@ export class YNABImportService {
             });
           }
         );
+        const rtaWarning = readyToAssignVerification.mismatches.length > 0;
         await reportProgress({
           stage: 'rta-verification',
-          status: 'passed',
+          status: rtaWarning ? 'warning' : 'passed',
           progress: 98,
-          label: 'Ready to Assign verified',
-          detail: `${readyToAssignMonthsVerified} months match YNAB`,
+          label: rtaWarning ? 'Ready to Assign differences found' : 'Ready to Assign verified',
+          detail: rtaWarning
+            ? `${readyToAssignVerification.mismatches.length} of ${readyToAssignVerification.checked} months differ from YNAB`
+            : `${readyToAssignVerification.matched} months match YNAB`,
         });
       }
+
+      const verification: YNABReconciliationReport | undefined =
+        source && accountVerification && categoryVerification && readyToAssignVerification
+          ? {
+              status:
+                categoryVerification.mismatches.length > 0 ||
+                readyToAssignVerification.mismatches.length > 0
+                  ? 'warning'
+                  : 'passed',
+              source,
+              accounts: {
+                checked: accountVerification.verified,
+                matched: accountVerification.verified,
+                debtBalanceAdjustments: accountVerification.debtBalanceAdjustments,
+              },
+              categories: categoryVerification,
+              readyToAssign: readyToAssignVerification,
+            }
+          : undefined;
+
+      const totalTransactionsCreated =
+        transactionSummary.transactionsCreated +
+        (accountVerification?.debtBalanceAdjustments.length ?? 0);
 
       return {
         budgetId,
         summary: {
           registerRowsImported: registerRows.length,
-          transactionsCreated: transactionSummary.transactionsCreated,
+          transactionsCreated: totalTransactionsCreated,
           missingCategoriesCreated: preview.missingCategories,
           splitTransactionsImported: transactionSummary.splitTransactionsImported,
-          ...(accountBalancesVerified === undefined ? {} : { accountBalancesVerified }),
-          ...(readyToAssignMonthsVerified === undefined ? {} : { readyToAssignMonthsVerified }),
+          sourceRowsVerified: transactionSummary.sourceRowsProcessed,
+          ...(accountVerification === undefined
+            ? {}
+            : {
+                accountBalancesVerified: accountVerification.verified,
+                debtBalanceAdjustmentsCreated: accountVerification.debtBalanceAdjustments.length,
+              }),
+          ...(categoryVerification === undefined
+            ? {}
+            : { categoryMonthsVerified: categoryVerification.matched }),
+          ...(readyToAssignVerification === undefined
+            ? {}
+            : { readyToAssignMonthsVerified: readyToAssignVerification.matched }),
+          ...(source?.categoryAssignmentsVerified === undefined
+            ? {}
+            : { moneyMovementAssignmentsVerified: source.categoryAssignmentsVerified }),
         },
+        ...(verification ? { verification } : {}),
       };
     } catch (error) {
       this.budgetService.deleteBudget(budgetId);
@@ -570,26 +700,82 @@ export class YNABImportService {
     }
   }
 
-  private verifyYNABAccountBalances(
+  private async verifyYNABAccountBalances(
     budgetId: number,
     accounts: Record<string, number>,
-    accountSpecs?: YNABImportAccountSpec[]
-  ): number | undefined {
-    if (!accountSpecs) return undefined;
-
+    accountSpecs: YNABImportAccountSpec[]
+  ): Promise<{ verified: number; debtBalanceAdjustments: YNABDebtBalanceAdjustment[] }> {
     const verifiableSpecs = accountSpecs.filter(
       (spec): spec is YNABImportAccountSpec & { expectedBalance: number } =>
         spec.expectedBalance !== undefined
     );
     const mismatches: YNABAccountBalanceMismatch[] = [];
+    const debtBalanceAdjustments: YNABDebtBalanceAdjustment[] = [];
+    const transfersCategoryId = ensureCategoryWithGroup(
+      this.categoryService,
+      budgetId,
+      'Transfers',
+      'Transfers',
+      ''
+    );
 
     for (const spec of verifiableSpecs) {
       const accountId = accounts[spec.name];
-      const account =
-        accountId === undefined ? undefined : this.accountService.getAccount(accountId);
-      const computedBalance = account?.BalanceNative;
+      let account = accountId === undefined ? undefined : this.accountService.getAccount(accountId);
+      let computedBalance = account?.BalanceNative;
+
+      if (
+        spec.expectedLedgerBalance !== undefined &&
+        computedBalance !== spec.expectedLedgerBalance
+      ) {
+        mismatches.push({
+          accountName: `${spec.name} (exported transaction ledger)`,
+          expectedBalance: spec.expectedLedgerBalance,
+          computedBalance: computedBalance ?? 0,
+          difference: (computedBalance ?? 0) - spec.expectedLedgerBalance,
+        });
+        continue;
+      }
 
       if (computedBalance === spec.expectedBalance) continue;
+
+      // YNAB's debt engine applies calculated interest directly to special
+      // loan balances without exporting a corresponding transaction. Preserve
+      // both truths by materializing that exact delta as a visible transaction
+      // instead of hiding it in account metadata or silently accepting drift.
+      if (
+        accountId !== undefined &&
+        computedBalance !== undefined &&
+        spec.ynabAccountType &&
+        YNAB_MANAGED_DEBT_ACCOUNT_TYPES.has(spec.ynabAccountType)
+      ) {
+        const amount = spec.expectedBalance - computedBalance;
+        const date = (spec.balanceAdjustmentDate || '').slice(0, 10) || '1970-01-01';
+        await this.transactionService.addTransaction(
+          amount > 0 ? asMilli(amount) : ZERO_MILLI,
+          amount < 0 ? asMilli(-amount) : ZERO_MILLI,
+          accountId,
+          transfersCategoryId,
+          budgetId,
+          date,
+          'Imported YNAB debt interest adjustment',
+          '',
+          'Budgero',
+          undefined,
+          undefined,
+          true
+        );
+        debtBalanceAdjustments.push({
+          accountName: spec.name,
+          date,
+          amount,
+          balanceBefore: computedBalance,
+          expectedBalance: spec.expectedBalance,
+        });
+        account = this.accountService.getAccount(accountId);
+        computedBalance = account?.BalanceNative;
+        if (computedBalance === spec.expectedBalance) continue;
+      }
 
       mismatches.push({
         accountName: spec.name,
@@ -612,28 +798,102 @@ export class YNABImportService {
     }
 
     debugLog(`Verified ${verifiableSpecs.length} YNAB account balances`);
-    return verifiableSpecs.length;
+    return { verified: verifiableSpecs.length, debtBalanceAdjustments };
+  }
+
+  private async verifyYNABCategoryMonths(
+    budgetId: number,
+    specs: YNABImportCategoryMonthSpec[],
+    onMonth?: (processed: number, total: number, month: string) => void | Promise<void>
+  ): Promise<{
+    checked: number;
+    matched: number;
+    mismatches: YNABCategoryMonthMismatch[];
+    omittedMismatches: number;
+  }> {
+    const MAX_VISIBLE_MISMATCHES = 100;
+    const mismatches: YNABCategoryMonthMismatch[] = [];
+    let mismatchCount = 0;
+    const specsByMonth = new Map<string, YNABImportCategoryMonthSpec[]>();
+
+    for (const spec of specs) {
+      const monthSpecs = specsByMonth.get(spec.month) || [];
+      monthSpecs.push(spec);
+      specsByMonth.set(spec.month, monthSpecs);
+    }
+
+    const months = [...specsByMonth.entries()].sort(([left], [right]) => left.localeCompare(right));
+    for (let monthIndex = 0; monthIndex < months.length; monthIndex++) {
+      const [month, monthSpecs] = months[monthIndex];
+      const rows = new Map(
+        this.monthlyBudgetService
+          .getMonthlyBudget(month, budgetId)
+          .map((row) => [`${row.CategoryGroup}::${row.Category}`, row])
+      );
+
+      for (const spec of monthSpecs) {
+        const row = rows.get(`${spec.categoryGroup}::${spec.category}`);
+        const comparisons = [
+          ['assigned', spec.expectedAssigned, Number(row?.Assigned ?? 0)],
+          ['activity', spec.expectedActivity, Number(row?.Activity ?? 0)],
+          ['available', spec.expectedAvailable, Number(row?.Available ?? 0)],
+        ] as const;
+
+        for (const [field, expectedAmount, computedAmount] of comparisons) {
+          if (expectedAmount === computedAmount) continue;
+          mismatchCount++;
+          if (mismatches.length < MAX_VISIBLE_MISMATCHES) {
+            mismatches.push({
+              month: spec.month,
+              categoryGroup: spec.categoryGroup,
+              category: spec.category,
+              field,
+              expectedAmount,
+              computedAmount,
+              difference: computedAmount - expectedAmount,
+            });
+          }
+        }
+      }
+
+      await onMonth?.(monthIndex + 1, months.length, month);
+    }
+
+    const checked = specs.length * 3;
+    debugLog(`Verified ${checked - mismatchCount}/${checked} YNAB category-month values`);
+    return {
+      checked,
+      matched: checked - mismatchCount,
+      mismatches,
+      omittedMismatches: Math.max(0, mismatchCount - mismatches.length),
+    };
   }
 
   private async verifyYNABReadyToAssign(
     budgetId: number,
     specs: YNABImportReadyToAssignSpec[],
     onMonth?: (processed: number, total: number, month: string) => void | Promise<void>
-  ): Promise<number> {
+  ): Promise<{ checked: number; matched: number; mismatches: YNABReadyToAssignMismatch[] }> {
     const mismatches: YNABReadyToAssignMismatch[] = [];
 
     for (let index = 0; index < specs.length; index++) {
       const spec = specs[index];
-      const computedReadyToAssign = this.monthlyBudgetService.getReadyToAssign(
-        budgetId,
-        spec.month
-      );
+      const breakdown = this.monthlyBudgetService.getReadyToAssignBreakdown(budgetId, spec.month);
+      const computedReadyToAssign = Number(breakdown.readyToAssign);
       if (computedReadyToAssign !== spec.expectedReadyToAssign) {
         mismatches.push({
           month: spec.month,
           expectedReadyToAssign: spec.expectedReadyToAssign,
           computedReadyToAssign,
           difference: computedReadyToAssign - spec.expectedReadyToAssign,
+          breakdown: {
+            income: Number(breakdown.income),
+            assignments: Number(breakdown.assignments),
+            offBudgetTransfers: Number(breakdown.offBudgetTransfers),
+            inBudgetTransfers: Number(breakdown.inBudgetTransfers),
+            revaluations: Number(breakdown.revaluations),
+            priorCashOverspend: Number(breakdown.priorCashOverspend),
+          },
         });
       }
 
@@ -641,22 +901,14 @@ export class YNABImportService {
       await onMonth?.(processed, specs.length, spec.month);
     }
 
-    if (mismatches.length > 0) {
-      const visibleMismatches = mismatches.slice(0, 6);
-      const details = visibleMismatches
-        .map(
-          ({ month, expectedReadyToAssign, computedReadyToAssign, difference }) =>
-            `${month}: YNAB ${expectedReadyToAssign}, Budgero ${computedReadyToAssign}, difference ${difference}`
-        )
-        .join('; ');
-      const omitted = mismatches.length - visibleMismatches.length;
-      throw new Error(
-        `YNAB Ready to Assign integrity check failed for ${mismatches.length} month${mismatches.length === 1 ? '' : 's'} (${details}${omitted > 0 ? `; and ${omitted} more` : ''}). The incomplete budget was removed.`
-      );
-    }
-
-    debugLog(`Verified Ready to Assign for ${specs.length} YNAB months`);
-    return specs.length;
+    debugLog(
+      `Verified Ready to Assign for ${specs.length - mismatches.length}/${specs.length} YNAB months`
+    );
+    return {
+      checked: specs.length,
+      matched: specs.length - mismatches.length,
+      mismatches,
+    };
   }
 
   private createCategoryStructure(
@@ -814,6 +1066,7 @@ export class YNABImportService {
     registerRows: YNABRegisterRow[],
     budgetRows: YNABBudgetRow[],
     currency: string,
+    categories: Record<string, number>,
     accountSpecs?: YNABImportAccountSpec[]
   ): Promise<Record<string, number>> {
     const accounts: Record<string, number> = {};
@@ -834,7 +1087,7 @@ export class YNABImportService {
     }
     debugLog(`Found ${uniqueAccounts.size} unique accounts from ${registerRows.length} rows`);
 
-    const specs =
+    const specs: YNABImportAccountSpec[] =
       accountSpecs ||
       [...uniqueAccounts].map((name) => ({
         name,
@@ -846,13 +1099,22 @@ export class YNABImportService {
 
     for (const spec of specs) {
       const accountName = spec.name;
+      const inferredLinkedCategoryId =
+        spec.linkedCategoryGroup && spec.linkedCategory
+          ? categories[`${spec.linkedCategoryGroup}::${spec.linkedCategory}`]
+          : undefined;
       const account = await this.accountService.createAccount(
         accountName,
         budgetId,
         spec.type,
         currency,
         ZERO_MILLI,
-        spec.ynabAccountId ? { ynab_account_id: spec.ynabAccountId } : undefined,
+        spec.ynabAccountId || inferredLinkedCategoryId
+          ? {
+              ...(spec.ynabAccountId ? { ynab_account_id: spec.ynabAccountId } : {}),
+              ...(inferredLinkedCategoryId ? { linked_category_id: inferredLinkedCategoryId } : {}),
+            }
+          : undefined,
         spec.onBudget
       );
       accounts[accountName] = account.ID;
@@ -951,7 +1213,11 @@ export class YNABImportService {
       total: number,
       transactionsCreated: number
     ) => void | Promise<void>
-  ): Promise<{ transactionsCreated: number; splitTransactionsImported: number }> {
+  ): Promise<{
+    transactionsCreated: number;
+    splitTransactionsImported: number;
+    sourceRowsProcessed: number;
+  }> {
     const incomeCategoryId = categories['Income'];
     const uncategorizedCategoryId = categories['Uncategorized'];
     const transfersCategoryId = ensureCategoryWithGroup(
@@ -1000,6 +1266,7 @@ export class YNABImportService {
 
     let transactionsCreated = 0;
     let splitTransactionsImported = 0;
+    let sourceRowsProcessed = 0;
 
     for (let index = 0; index < sortedUnits.length; index++) {
       const unit = sortedUnits[index];
@@ -1020,7 +1287,10 @@ export class YNABImportService {
               creditCardAccountIds,
               transferIdsByRowIndex.get(unit.originalIndex + partIndex)
             );
-            if (created) transactionsCreated++;
+            if (created) {
+              transactionsCreated++;
+              sourceRowsProcessed++;
+            }
           }
         } else {
           const created = await this.importSplitGroup(
@@ -1035,6 +1305,7 @@ export class YNABImportService {
           if (created) {
             transactionsCreated++;
             splitTransactionsImported++;
+            sourceRowsProcessed += unit.group.rows.length;
           }
         }
       } else {
@@ -1051,7 +1322,10 @@ export class YNABImportService {
           creditCardAccountIds,
           transferIdsByRowIndex.get(unit.originalIndex)
         );
-        if (created) transactionsCreated++;
+        if (created) {
+          transactionsCreated++;
+          sourceRowsProcessed++;
+        }
       }
 
       const processed = index + 1;
@@ -1061,7 +1335,7 @@ export class YNABImportService {
       }
     }
 
-    return { transactionsCreated, splitTransactionsImported };
+    return { transactionsCreated, splitTransactionsImported, sourceRowsProcessed };
   }
 
   private buildTransferIds(

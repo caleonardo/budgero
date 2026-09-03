@@ -4,6 +4,7 @@ import type {
   YNABApiTransaction,
   YNABBudgetRow,
   YNABImportAccountSpec,
+  YNABImportCategoryMonthSpec,
   YNABImportReadyToAssignSpec,
   YNABRegisterRow,
 } from './types.js';
@@ -12,8 +13,25 @@ export interface NormalizedYNABApiImport {
   registerRows: YNABRegisterRow[];
   budgetRows: YNABBudgetRow[];
   accountSpecs: YNABImportAccountSpec[];
+  categoryMonthSpecs: YNABImportCategoryMonthSpec[];
   readyToAssignSpecs: YNABImportReadyToAssignSpec[];
+  source: {
+    transactions: number;
+    subtransactions: number;
+    registerRows: number;
+    moneyMovements?: number;
+    categoryAssignmentsVerified?: number;
+  };
 }
+
+const YNAB_MANAGED_DEBT_ACCOUNT_TYPES = new Set([
+  'mortgage',
+  'autoLoan',
+  'studentLoan',
+  'personalLoan',
+  'medicalDebt',
+  'otherDebt',
+]);
 
 export function normalizeYNABMilliunitPrecision(value: number, decimalDigits: number): number {
   if (!Number.isSafeInteger(value)) {
@@ -130,13 +148,34 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
   };
 
   const registerRows: YNABRegisterRow[] = [];
+  const transactionNetByAccount = new Map<string, number>();
+  let sourceTransactions = 0;
+  let sourceSubtransactions = 0;
+  let expectedRegisterRows = 0;
   for (const transaction of plan.transactions) {
     if (transaction.deleted) continue;
     const account = accountsById.get(transaction.account_id);
     if (!account || account.deleted) continue;
 
+    sourceTransactions++;
+    const transactionAmount = normalizeAmount(transaction.amount);
+    transactionNetByAccount.set(
+      transaction.account_id,
+      (transactionNetByAccount.get(transaction.account_id) || 0) + transactionAmount
+    );
     const children = childrenByTransactionId.get(transaction.id) || [];
     if (children.length > 0) {
+      const childTotal = children.reduce(
+        (total, child) => total + normalizeAmount(child.amount),
+        0
+      );
+      if (childTotal !== transactionAmount) {
+        throw new Error(
+          `YNAB source integrity check failed: split transaction ${transaction.id} has parent amount ${transactionAmount} but its active parts total ${childTotal}.`
+        );
+      }
+      sourceSubtransactions += children.length;
+      expectedRegisterRows += children.length;
       for (let index = 0; index < children.length; index++) {
         const child = children[index];
         registerRows.push({
@@ -158,6 +197,8 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
       continue;
     }
 
+    expectedRegisterRows++;
+
     registerRows.push({
       Account: account.name,
       Flag: '',
@@ -176,7 +217,15 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
     });
   }
 
+  if (registerRows.length !== expectedRegisterRows) {
+    throw new Error(
+      `YNAB source integrity check failed: expected ${expectedRegisterRows} normalized register rows but produced ${registerRows.length}.`
+    );
+  }
+
   const budgetRows: YNABBudgetRow[] = [];
+  const categoryMonthSpecs: YNABImportCategoryMonthSpec[] = [];
+  const categoryMonthIds: string[] = [];
   const representedCategoryIds = new Set<string>();
   for (const month of plan.months) {
     if (month.deleted) continue;
@@ -191,6 +240,19 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
         Available: milliToDecimal(normalizeAmount(category.balance || 0)),
       });
       representedCategoryIds.add(category.id);
+
+      const group = groupsById.get(category.category_group_id);
+      if (!category.internal && !group?.internal) {
+        categoryMonthSpecs.push({
+          month: month.month.slice(0, 7),
+          categoryGroup: group?.name || 'Imported from YNAB',
+          category: category.name,
+          expectedAssigned: normalizeAmount(category.budgeted || 0),
+          expectedActivity: normalizeAmount(category.activity || 0),
+          expectedAvailable: normalizeAmount(category.balance || 0),
+        });
+        categoryMonthIds.push(category.id);
+      }
     }
   }
 
@@ -207,24 +269,121 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
     });
   }
 
+  let categoryAssignmentsVerified: number | undefined;
+  if (snapshot.moneyMovements) {
+    const movementNet = new Map<string, number>();
+    const activeMovements = snapshot.moneyMovements.filter((movement) => !movement.deleted);
+    for (const movement of activeMovements) {
+      const month = movement.month.slice(0, 7);
+      const amount = normalizeAmount(movement.amount);
+      if (movement.from_category_id) {
+        const key = `${month}::${movement.from_category_id}`;
+        movementNet.set(key, (movementNet.get(key) || 0) - amount);
+      }
+      if (movement.to_category_id) {
+        const key = `${month}::${movement.to_category_id}`;
+        movementNet.set(key, (movementNet.get(key) || 0) + amount);
+      }
+    }
+
+    const mismatches = categoryMonthSpecs.flatMap((spec, index) => {
+      const actual = movementNet.get(`${spec.month}::${categoryMonthIds[index]}`) || 0;
+      if (actual === spec.expectedAssigned) return [];
+      return [{ ...spec, movementNet: actual }];
+    });
+    if (mismatches.length > 0) {
+      const visible = mismatches
+        .slice(0, 6)
+        .map(
+          (item) =>
+            `${item.month} ${item.categoryGroup} › ${item.category}: monthly assignment ${item.expectedAssigned}, Money Movements ${item.movementNet}`
+        )
+        .join('; ');
+      const omitted = mismatches.length - Math.min(mismatches.length, 6);
+      throw new Error(
+        `YNAB source integrity check failed: Money Movements disagree with ${mismatches.length} monthly category assignment${mismatches.length === 1 ? '' : 's'} (${visible}${omitted > 0 ? `; and ${omitted} more` : ''}).`
+      );
+    }
+    categoryAssignmentsVerified = categoryMonthSpecs.length;
+  }
+
+  const latestTransactionDateByAccount = new Map<string, string>();
+  const linkedCategoryCandidatesByAccount = new Map<string, Set<string>>();
+  const recordDebtPaymentCategory = (
+    categoryId: string | null,
+    transferAccountId: string | null
+  ) => {
+    if (!categoryId || !transferAccountId) return;
+    const transferAccount = accountsById.get(transferAccountId);
+    if (!transferAccount || !YNAB_MANAGED_DEBT_ACCOUNT_TYPES.has(transferAccount.type)) return;
+
+    const candidates =
+      linkedCategoryCandidatesByAccount.get(transferAccount.id) || new Set<string>();
+    candidates.add(categoryId);
+    linkedCategoryCandidatesByAccount.set(transferAccount.id, candidates);
+  };
+
+  for (const transaction of plan.transactions) {
+    if (transaction.deleted) continue;
+    const existing = latestTransactionDateByAccount.get(transaction.account_id);
+    if (!existing || transaction.date > existing) {
+      latestTransactionDateByAccount.set(transaction.account_id, transaction.date);
+    }
+
+    recordDebtPaymentCategory(transaction.category_id, transaction.transfer_account_id);
+  }
+
+  for (const child of plan.subtransactions) {
+    if (child.deleted) continue;
+    recordDebtPaymentCategory(child.category_id, child.transfer_account_id);
+  }
+
   return {
     registerRows,
     budgetRows,
     accountSpecs: plan.accounts
       .filter((account) => !account.deleted)
-      .map((account) => ({
-        name: account.name,
-        type: mapYNABAccountType(account.type),
-        onBudget: account.on_budget,
-        archived: account.closed,
-        ynabAccountId: account.id,
-        expectedBalance: normalizeAmount(account.balance),
-      })),
+      .map((account) => {
+        const candidates = linkedCategoryCandidatesByAccount.get(account.id);
+        const linkedCategoryId = candidates?.size === 1 ? [...candidates][0] : undefined;
+        const linkedCategory = linkedCategoryId ? categoriesById.get(linkedCategoryId) : undefined;
+        const linkedGroup = linkedCategory
+          ? groupsById.get(linkedCategory.category_group_id)
+          : undefined;
+        return {
+          name: account.name,
+          type: mapYNABAccountType(account.type),
+          onBudget: account.on_budget,
+          archived: account.closed,
+          ynabAccountId: account.id,
+          expectedBalance: normalizeAmount(account.balance),
+          expectedLedgerBalance: transactionNetByAccount.get(account.id) || 0,
+          ynabAccountType: account.type,
+          balanceAdjustmentDate:
+            latestTransactionDateByAccount.get(account.id) || plan.last_month || plan.first_month,
+          ...(linkedCategory && linkedGroup
+            ? {
+                linkedCategoryGroup: linkedGroup.name,
+                linkedCategory: linkedCategory.name,
+              }
+            : {}),
+        };
+      }),
+    categoryMonthSpecs,
     readyToAssignSpecs: plan.months
       .filter((month) => !month.deleted)
       .map((month) => ({
         month: month.month.slice(0, 7),
         expectedReadyToAssign: normalizeAmount(month.to_be_budgeted),
       })),
+    source: {
+      transactions: sourceTransactions,
+      subtransactions: sourceSubtransactions,
+      registerRows: registerRows.length,
+      ...(snapshot.moneyMovements
+        ? { moneyMovements: snapshot.moneyMovements.filter((movement) => !movement.deleted).length }
+        : {}),
+      ...(categoryAssignmentsVerified === undefined ? {} : { categoryAssignmentsVerified }),
+    },
   };
 }

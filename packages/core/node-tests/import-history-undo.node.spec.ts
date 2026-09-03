@@ -19,6 +19,59 @@ async function setup() {
 }
 
 describe('ImportHistoryService.undoImportRun — balance recalculation', () => {
+  it('persists an accepted YNAB reconciliation warning for later review', async () => {
+    const { services, budgetId } = await setup();
+    const verification = {
+      status: 'warning' as const,
+      source: { transactions: 1, subtransactions: 0, registerRows: 1 },
+      accounts: { checked: 1, matched: 1, debtBalanceAdjustments: [] },
+      categories: { checked: 3, matched: 3, mismatches: [], omittedMismatches: 0 },
+      readyToAssign: {
+        checked: 1,
+        matched: 0,
+        mismatches: [
+          {
+            month: '2026-01',
+            expectedReadyToAssign: 10_000,
+            computedReadyToAssign: 9_000,
+            difference: -1_000,
+            breakdown: {
+              income: 10_000,
+              assignments: 1_000,
+              offBudgetTransfers: 0,
+              inBudgetTransfers: 0,
+              revaluations: 0,
+              priorCashOverspend: 0,
+            },
+          },
+        ],
+      },
+    };
+
+    services.importHistory.recordImportRun({
+      budgetId,
+      sourceType: 'ynab-api',
+      sourceName: 'Test plan',
+      summary: {
+        transactionsImported: 1,
+        accountsCreated: 1,
+        categoriesCreated: 1,
+        verification,
+        acceptedWithWarnings: true,
+      },
+      transactionIds: [],
+      accountIds: [],
+      categoryIds: [],
+      status: 'completed_with_warnings',
+    });
+
+    expect(services.importHistory.listImportRuns(budgetId)[0]).toMatchObject({
+      sourceType: 'ynab-api',
+      status: 'completed_with_warnings',
+      summary: { acceptedWithWarnings: true, verification },
+    });
+  });
+
   it('restores the account balance after undoing an import into a pre-existing account', async () => {
     const { services, budgetId, categoryId } = await setup();
     const acc = await services.accounts.createAccount('Checking', budgetId, 'checking', 'USD', 0);

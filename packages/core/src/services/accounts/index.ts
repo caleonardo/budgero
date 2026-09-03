@@ -163,16 +163,28 @@ export class AccountService {
     const needsLinkedCategory = isLiability && !isCreditAccountType(accType);
 
     if (needsLinkedCategory) {
-      const liabilitiesGroupId = ensureCategoryGroup(this.categoryService, budgetId, 'Liabilities');
+      const requestedLinkedCategoryId = (metadata || {}).linked_category_id;
+      if (this.categoryExistsInBudget(budgetId, requestedLinkedCategoryId)) {
+        // Importers can preserve an explicit source-system payment category.
+        // Ordinary account creation still falls through to the Budgero-owned
+        // Liabilities category below.
+        linkedCategoryId = requestedLinkedCategoryId as number;
+      } else {
+        const liabilitiesGroupId = ensureCategoryGroup(
+          this.categoryService,
+          budgetId,
+          'Liabilities'
+        );
 
-      // Create per-account linked category (e.g., "Home Mortgage")
-      // This category will be used for tracking spending when paying down this debt
-      linkedCategoryId = this.categoryService.addCategory(
-        liabilitiesGroupId,
-        budgetId,
-        name, // Use account name for the category
-        ''
-      );
+        // Create per-account linked category (e.g., "Home Mortgage")
+        // This category will be used for tracking spending when paying down this debt
+        linkedCategoryId = this.categoryService.addCategory(
+          liabilitiesGroupId,
+          budgetId,
+          name, // Use account name for the category
+          ''
+        );
+      }
 
       // Store linked category ID in metadata for transfer handling
       const updatedMetadata = {

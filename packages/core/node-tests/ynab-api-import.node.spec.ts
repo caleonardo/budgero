@@ -12,7 +12,14 @@ import {
 
 const SPACE_ID = 'space_ynab_api_import';
 
-function category(id: string, categoryGroupId: string, name: string, budgeted = 0) {
+function category(
+  id: string,
+  categoryGroupId: string,
+  name: string,
+  budgeted = 0,
+  activity = 0,
+  balance = budgeted + activity
+) {
   return {
     id,
     category_group_id: categoryGroupId,
@@ -22,13 +29,13 @@ function category(id: string, categoryGroupId: string, name: string, budgeted = 
     internal: false,
     note: null,
     budgeted,
-    activity: 0,
-    balance: budgeted,
+    activity,
+    balance,
   };
 }
 
 function snapshotFixture(): YNABApiPlanSnapshot {
-  const food = category('category-food', 'group-everyday', 'Food', 5_000);
+  const food = category('category-food', 'group-everyday', 'Food', 5_000, -95_000);
   const income = {
     ...category('category-income', 'group-income', 'Ready to Assign'),
     internal: true,
@@ -36,6 +43,16 @@ function snapshotFixture(): YNABApiPlanSnapshot {
 
   return {
     serverKnowledge: 42,
+    moneyMovements: [
+      {
+        id: 'movement-food',
+        month: '2026-09-01',
+        from_category_id: null,
+        to_category_id: 'category-food',
+        amount: 5_000,
+        deleted: false,
+      },
+    ],
     plan: {
       id: 'plan-edge-cases',
       name: 'YNAB API edge cases',
@@ -233,6 +250,92 @@ function snapshotFixture(): YNABApiPlanSnapshot {
   };
 }
 
+function debtSnapshotFixture(): YNABApiPlanSnapshot {
+  const snapshot = snapshotFixture();
+  const paymentCategory = category(
+    'category-mortgage-payment',
+    'group-bills',
+    'Mortgage Payment',
+    0,
+    -1_850_000
+  );
+  snapshot.plan.category_groups.push({
+    id: 'group-bills',
+    name: 'Bills',
+    hidden: false,
+    deleted: false,
+    internal: false,
+  });
+  snapshot.plan.categories.push(paymentCategory);
+  snapshot.plan.months[0].categories.push(paymentCategory);
+  snapshot.plan.months[0].activity -= 1_850_000;
+  snapshot.plan.accounts[0].balance -= 1_850_000;
+  snapshot.plan.accounts.push({
+    id: 'account-mortgage',
+    name: 'Mortgage',
+    type: 'mortgage',
+    on_budget: false,
+    closed: false,
+    deleted: false,
+    balance: -249_426_040,
+    transfer_payee_id: 'payee-transfer-mortgage',
+    debt_interest_rates: { '2026-09-01': 6_125 },
+    debt_minimum_payments: { '2026-09-01': 1_850_000 },
+  });
+  snapshot.plan.payees.push({
+    id: 'payee-transfer-mortgage',
+    name: 'Transfer : Mortgage',
+    transfer_account_id: 'account-mortgage',
+    deleted: false,
+  });
+  snapshot.plan.transactions.push(
+    {
+      id: 'transaction-mortgage-opening',
+      account_id: 'account-mortgage',
+      date: '2026-09-01',
+      amount: -250_000_000,
+      memo: null,
+      cleared: 'cleared',
+      approved: true,
+      payee_id: 'payee-starting',
+      category_id: null,
+      transfer_account_id: null,
+      transfer_transaction_id: null,
+      deleted: false,
+    },
+    {
+      id: 'transaction-mortgage-payment-source',
+      account_id: 'account-checking',
+      date: '2026-09-03',
+      amount: -1_850_000,
+      memo: 'Mortgage payment',
+      cleared: 'cleared',
+      approved: true,
+      payee_id: 'payee-transfer-mortgage',
+      category_id: 'category-mortgage-payment',
+      transfer_account_id: 'account-mortgage',
+      transfer_transaction_id: 'transaction-mortgage-payment-debt',
+      deleted: false,
+    },
+    {
+      id: 'transaction-mortgage-payment-debt',
+      account_id: 'account-mortgage',
+      date: '2026-09-03',
+      amount: 1_850_000,
+      memo: 'Mortgage payment',
+      cleared: 'uncleared',
+      approved: true,
+      payee_id: 'payee-transfer-checking',
+      category_id: null,
+      transfer_account_id: 'account-checking',
+      transfer_transaction_id: 'transaction-mortgage-payment-source',
+      debt_transaction_type: 'payment',
+      deleted: false,
+    }
+  );
+  return snapshot;
+}
+
 describe('YNAB API import', () => {
   it('calls the current plans API with a bearer token', async () => {
     const fetchMock = vi.fn(
@@ -251,6 +354,30 @@ describe('YNAB API import', () => {
       method: 'GET',
       headers: { Authorization: 'Bearer secret-token', Accept: 'application/json' },
     });
+  });
+
+  it('reads the plan and Money Movements at the same YNAB revision', async () => {
+    const fixture = snapshotFixture();
+    const fetchMock = vi.fn(async (input: string | URL | Request) => {
+      const url = String(input);
+      const data = url.endsWith('/money_movements')
+        ? { money_movements: fixture.moneyMovements, server_knowledge: 42 }
+        : { plan: fixture.plan, server_knowledge: 42 };
+      return new Response(JSON.stringify({ data }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+
+    const snapshot = await new YNABApiClient(
+      'secret-token',
+      fetchMock,
+      'https://example.test/v1'
+    ).getPlan('plan-edge-cases');
+
+    expect(snapshot.serverKnowledge).toBe(42);
+    expect(snapshot.moneyMovements).toEqual(fixture.moneyMovements);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it('invokes the default fetch with the browser global as its receiver', async () => {
@@ -282,6 +409,24 @@ describe('YNAB API import', () => {
     expect(normalizeYNABMilliunitPrecision(-9_876, 2)).toBe(-9_880);
   });
 
+  it('rejects a source snapshot whose Money Movements disagree with monthly assignments', () => {
+    const snapshot = snapshotFixture();
+    snapshot.moneyMovements![0].amount = 4_000;
+
+    expect(() => normalizeYNABApiSnapshot(snapshot)).toThrow(
+      /source integrity check failed.*Money Movements disagree.*Food/i
+    );
+  });
+
+  it('rejects a source split whose active parts do not equal its parent amount', () => {
+    const snapshot = snapshotFixture();
+    snapshot.plan.subtransactions[0].amount = -9_000;
+
+    expect(() => normalizeYNABApiSnapshot(snapshot)).toThrow(
+      /source integrity check failed.*split transaction transaction-transfer-split.*parent amount -30000.*total -29000/i
+    );
+  });
+
   it('normalizes API splits while marking only ordinary splits for preservation', () => {
     const snapshot = snapshotFixture();
     const normalized = normalizeYNABApiSnapshot(snapshot);
@@ -302,6 +447,35 @@ describe('YNAB API import', () => {
     expect(preview.splitTransactions).toEqual([
       expect.objectContaining({ date: '2026-09-03', partCount: 2 }),
     ]);
+  });
+
+  it('infers a managed-debt payment category from a transfer inside a split', () => {
+    const snapshot = debtSnapshotFixture();
+    const source = snapshot.plan.transactions.find(
+      (transaction) => transaction.id === 'transaction-mortgage-payment-source'
+    );
+    if (!source) throw new Error('Mortgage payment source fixture is missing');
+    source.category_id = null;
+    source.transfer_account_id = null;
+    snapshot.plan.subtransactions.push({
+      id: 'sub-mortgage-payment',
+      transaction_id: source.id,
+      amount: source.amount,
+      memo: source.memo,
+      payee_id: source.payee_id,
+      category_id: 'category-mortgage-payment',
+      transfer_account_id: 'account-mortgage',
+      deleted: false,
+    });
+
+    expect(
+      normalizeYNABApiSnapshot(snapshot).accountSpecs.find(
+        (account) => account.ynabAccountId === 'account-mortgage'
+      )
+    ).toMatchObject({
+      linkedCategoryGroup: 'Bills',
+      linkedCategory: 'Mortgage Payment',
+    });
   });
 
   it('imports accounts, assignments, transfer splits, and mixed-direction splits', async () => {
@@ -332,9 +506,20 @@ describe('YNAB API import', () => {
         splitTransactionsImported: 1,
         accountBalancesVerified: 2,
         readyToAssignMonthsVerified: 1,
+        sourceRowsVerified: 6,
+        categoryMonthsVerified: 3,
+        moneyMovementAssignmentsVerified: 1,
+      });
+      expect(result.verification).toMatchObject({
+        status: 'passed',
+        source: { registerRows: 6, categoryAssignmentsVerified: 1 },
+        accounts: { checked: 2, matched: 2 },
+        categories: { checked: 3, matched: 3, mismatches: [] },
+        readyToAssign: { checked: 1, matched: 1, mismatches: [] },
       });
       expect(progress).toEqual([
         'preparing:running',
+        'source-verification:passed',
         'preparing:passed',
         'categories:running',
         'categories:passed',
@@ -346,6 +531,9 @@ describe('YNAB API import', () => {
         'transactions:passed',
         'account-verification:running',
         'account-verification:passed',
+        'category-verification:running',
+        'category-verification:running',
+        'category-verification:passed',
         'rta-verification:running',
         'rta-verification:running',
         'rta-verification:passed',
@@ -489,25 +677,136 @@ describe('YNAB API import', () => {
     }
   });
 
-  it('removes the incomplete budget when Ready to Assign does not reconcile', async () => {
+  it('returns a reviewable warning when Ready to Assign does not reconcile', async () => {
     const adapter = await NodeSqlJsAdapter.create();
     try {
       const snapshot = snapshotFixture();
       snapshot.plan.months[0].to_be_budgeted = 94_000;
       const importer = new YNABImportService(adapter);
 
-      await expect(
-        importer.importYNABFromApiSnapshotWithSummary(snapshot, {
+      const result = await importer.importYNABFromApiSnapshotWithSummary(snapshot, {
+        spaceId: SPACE_ID,
+        budgetName: 'Warned RTA import',
+        currency: 'USD',
+        numberFormat: '123,456.78',
+        badgeIcon: 'HelpCircle',
+      });
+
+      expect(result.verification).toMatchObject({
+        status: 'warning',
+        readyToAssign: {
+          checked: 1,
+          matched: 0,
+          mismatches: [
+            {
+              month: '2026-09',
+              expectedReadyToAssign: 94_000,
+              computedReadyToAssign: 95_000,
+              difference: 1_000,
+            },
+          ],
+        },
+      });
+      expect(adapter.prepare('SELECT COUNT(*) AS Count FROM budgets').get()).toEqual({ Count: 1 });
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('materializes YNAB-managed debt interest as a visible adjustment', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const result = await new YNABImportService(adapter).importYNABFromApiSnapshotWithSummary(
+        debtSnapshotFixture(),
+        {
           spaceId: SPACE_ID,
-          budgetName: 'Failed RTA import',
+          budgetName: 'Mortgage import',
+          currency: 'USD',
+          numberFormat: '123,456.78',
+          badgeIcon: 'HelpCircle',
+        }
+      );
+
+      expect(result.summary.debtBalanceAdjustmentsCreated).toBe(1);
+      expect(result.verification).toMatchObject({
+        status: 'passed',
+        accounts: {
+          checked: 3,
+          matched: 3,
+          debtBalanceAdjustments: [
+            {
+              accountName: 'Mortgage',
+              date: '2026-09-03',
+              amount: -1_276_040,
+              balanceBefore: -248_150_000,
+              expectedBalance: -249_426_040,
+            },
+          ],
+        },
+      });
+      const mortgageMetadata = JSON.parse(
+        (
+          adapter
+            .prepare(`SELECT Metadata FROM accounts WHERE BudgetID = ? AND Name = 'Mortgage'`)
+            .get(result.budgetId) as { Metadata: string }
+        ).Metadata
+      ) as { linked_category_id: number };
+      expect(
+        adapter
+          .prepare(
+            `SELECT c.Name AS Category, cg.Name AS CategoryGroup
+             FROM categories c
+             JOIN category_groups cg ON cg.ID = c.CategoryGroupID
+             WHERE c.ID = ?`
+          )
+          .get(mortgageMetadata.linked_category_id)
+      ).toEqual({ Category: 'Mortgage Payment', CategoryGroup: 'Bills' });
+      expect(
+        adapter
+          .prepare(
+            `SELECT COUNT(*) AS Count
+             FROM categories c
+             JOIN category_groups cg ON cg.ID = c.CategoryGroupID
+             WHERE c.BudgetID = ? AND cg.Name = 'Liabilities' AND c.Name = 'Mortgage'`
+          )
+          .get(result.budgetId)
+      ).toEqual({ Count: 0 });
+      expect(
+        adapter
+          .prepare(
+            `SELECT a.BalanceNative, t.Memo, t.InflowNative, t.OutflowNative
+             FROM accounts a
+             JOIN transactions t ON t.AccountID = a.ID
+             WHERE a.BudgetID = ? AND a.Name = 'Mortgage'
+               AND t.Memo = 'Imported YNAB debt interest adjustment'`
+          )
+          .get(result.budgetId)
+      ).toEqual({
+        BalanceNative: -249_426_040,
+        Memo: 'Imported YNAB debt interest adjustment',
+        InflowNative: 0,
+        OutflowNative: 1_276_040,
+      });
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('removes the incomplete budget when a normalized source row is skipped', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const snapshot = snapshotFixture();
+      snapshot.plan.transactions[0].date = 'not-a-date';
+
+      await expect(
+        new YNABImportService(adapter).importYNABFromApiSnapshotWithSummary(snapshot, {
+          spaceId: SPACE_ID,
+          budgetName: 'Incomplete source import',
           currency: 'USD',
           numberFormat: '123,456.78',
           badgeIcon: 'HelpCircle',
         })
-      ).rejects.toThrow(
-        /Ready to Assign integrity check failed.*2026-09: YNAB 94000, Budgero 95000.*incomplete budget was removed/i
-      );
-
+      ).rejects.toThrow(/source completeness check failed: imported 5 of 6 register rows/i);
       expect(adapter.prepare('SELECT COUNT(*) AS Count FROM budgets').get()).toEqual({ Count: 0 });
     } finally {
       adapter.close();

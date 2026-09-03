@@ -21,15 +21,17 @@ export interface YNABImportConfig {
 
 export type YNABImportStage =
   | 'preparing'
+  | 'source-verification'
   | 'categories'
   | 'accounts'
   | 'assignments'
   | 'transactions'
   | 'account-verification'
+  | 'category-verification'
   | 'rta-verification'
   | 'complete';
 
-export type YNABImportProgressStatus = 'running' | 'passed' | 'skipped';
+export type YNABImportProgressStatus = 'running' | 'passed' | 'warning' | 'skipped';
 
 export interface YNABImportProgressUpdate {
   stage: YNABImportStage;
@@ -69,11 +71,83 @@ export interface YNABImportSummary {
   accountBalancesVerified?: number;
   /** Present for API imports after every imported month's RTA has matched YNAB. */
   readyToAssignMonthsVerified?: number;
+  /** Source register rows that were accounted for by an imported row or split. */
+  sourceRowsVerified?: number;
+  /** Category-month values that matched YNAB after import. */
+  categoryMonthsVerified?: number;
+  /** YNAB category-month assignments independently confirmed by Money Movements. */
+  moneyMovementAssignmentsVerified?: number;
+  /** Visible ledger adjustments derived from YNAB-managed debt interest. */
+  debtBalanceAdjustmentsCreated?: number;
 }
 
 export interface YNABImportResult {
   budgetId: number;
   summary: YNABImportSummary;
+  /** Present for direct API imports, where YNAB supplies authoritative totals. */
+  verification?: YNABReconciliationReport;
+}
+
+export interface YNABReadyToAssignMismatch {
+  month: string;
+  expectedReadyToAssign: number;
+  computedReadyToAssign: number;
+  difference: number;
+  breakdown: {
+    income: number;
+    assignments: number;
+    offBudgetTransfers: number;
+    inBudgetTransfers: number;
+    revaluations: number;
+    priorCashOverspend: number;
+  };
+}
+
+export type YNABCategoryMonthField = 'assigned' | 'activity' | 'available';
+
+export interface YNABCategoryMonthMismatch {
+  month: string;
+  categoryGroup: string;
+  category: string;
+  field: YNABCategoryMonthField;
+  expectedAmount: number;
+  computedAmount: number;
+  difference: number;
+}
+
+export interface YNABDebtBalanceAdjustment {
+  accountName: string;
+  date: string;
+  amount: number;
+  balanceBefore: number;
+  expectedBalance: number;
+}
+
+export interface YNABReconciliationReport {
+  status: 'passed' | 'warning';
+  source: {
+    transactions: number;
+    subtransactions: number;
+    registerRows: number;
+    moneyMovements?: number;
+    categoryAssignmentsVerified?: number;
+  };
+  accounts: {
+    checked: number;
+    matched: number;
+    debtBalanceAdjustments: YNABDebtBalanceAdjustment[];
+  };
+  categories: {
+    checked: number;
+    matched: number;
+    mismatches: YNABCategoryMonthMismatch[];
+    omittedMismatches: number;
+  };
+  readyToAssign: {
+    checked: number;
+    matched: number;
+    mismatches: YNABReadyToAssignMismatch[];
+  };
 }
 
 export interface YNABApiCurrencyFormat {
@@ -106,6 +180,10 @@ export interface YNABApiAccount {
   balance: number;
   transfer_payee_id: string;
   note?: string | null;
+  debt_original_balance?: number | null;
+  debt_interest_rates?: Record<string, number>;
+  debt_minimum_payments?: Record<string, number>;
+  debt_escrow_amounts?: Record<string, number>;
 }
 
 export interface YNABApiCategoryGroup {
@@ -165,6 +243,8 @@ export interface YNABApiTransaction {
   category_id: string | null;
   transfer_account_id: string | null;
   transfer_transaction_id: string | null;
+  debt_transaction_type?: string | null;
+  import_id?: string | null;
   deleted: boolean;
 }
 
@@ -192,6 +272,16 @@ export interface YNABApiPlan extends YNABApiPlanSummary {
 export interface YNABApiPlanSnapshot {
   plan: YNABApiPlan;
   serverKnowledge: number;
+  moneyMovements?: YNABApiMoneyMovement[];
+}
+
+export interface YNABApiMoneyMovement {
+  id: string;
+  month: string;
+  from_category_id: string | null;
+  to_category_id: string | null;
+  amount: number;
+  deleted: boolean;
 }
 
 export interface YNABImportAccountSpec {
@@ -202,11 +292,29 @@ export interface YNABImportAccountSpec {
   ynabAccountId: string;
   /** Authoritative native balance supplied by the YNAB API. */
   expectedBalance?: number;
+  /** Sum of exported YNAB transaction amounts before debt-engine adjustments. */
+  expectedLedgerBalance?: number;
+  /** Original YNAB type, used to identify balances managed by YNAB's debt engine. */
+  ynabAccountType?: string;
+  /** Latest exported ledger date for a visible derived debt adjustment. */
+  balanceAdjustmentDate?: string;
+  /** Payment category inferred from categorized transfers into this debt account. */
+  linkedCategoryGroup?: string;
+  linkedCategory?: string;
 }
 
 export interface YNABImportReadyToAssignSpec {
   month: string;
   expectedReadyToAssign: number;
+}
+
+export interface YNABImportCategoryMonthSpec {
+  month: string;
+  categoryGroup: string;
+  category: string;
+  expectedAssigned: number;
+  expectedActivity: number;
+  expectedAvailable: number;
 }
 
 export interface YNABRegisterRow {
@@ -277,12 +385,14 @@ export interface ImportTemplate {
   updatedAt: string;
 }
 
-export type ImportSourceType = 'csv' | 'pdf' | 'ofx' | 'qif' | 'camt';
+export type ImportSourceType = 'csv' | 'pdf' | 'ofx' | 'qif' | 'camt' | 'ynab-api' | 'ynab-zip';
 
 export interface ImportRunSummary {
   transactionsImported: number;
   accountsCreated: number;
   categoriesCreated: number;
+  verification?: YNABReconciliationReport;
+  acceptedWithWarnings?: boolean;
 }
 
 export interface ImportRunRecordInput {
@@ -293,6 +403,7 @@ export interface ImportRunRecordInput {
   transactionIds: number[];
   accountIds: number[];
   categoryIds: number[];
+  status?: 'completed' | 'completed_with_warnings';
 }
 
 export interface ImportRun {
@@ -304,7 +415,7 @@ export interface ImportRun {
   transactionIds: number[];
   accountIds: number[];
   categoryIds: number[];
-  status: 'completed' | 'undone';
+  status: 'completed' | 'completed_with_warnings' | 'undone';
   createdAt: string;
 }
 

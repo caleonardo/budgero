@@ -1,4 +1,9 @@
-import type { YNABApiPlan, YNABApiPlanSnapshot, YNABApiPlanSummary } from './types.js';
+import type {
+  YNABApiMoneyMovement,
+  YNABApiPlan,
+  YNABApiPlanSnapshot,
+  YNABApiPlanSummary,
+} from './types.js';
 
 const DEFAULT_YNAB_API_BASE_URL = 'https://api.ynab.com/v1';
 
@@ -62,9 +67,26 @@ export class YNABApiClient {
     const encodedPlanId = encodeURIComponent(planId.trim());
     if (!encodedPlanId) throw new Error('A YNAB plan is required');
 
-    const data = await this.get<{ plan: YNABApiPlan; server_knowledge: number }>(
-      `/plans/${encodedPlanId}`
+    // These are separate YNAB endpoints. Retry if the plan changes between
+    // reads so normalization never combines two different source revisions.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const [data, movementData] = await Promise.all([
+        this.get<{ plan: YNABApiPlan; server_knowledge: number }>(`/plans/${encodedPlanId}`),
+        this.get<{ money_movements: YNABApiMoneyMovement[]; server_knowledge: number }>(
+          `/plans/${encodedPlanId}/money_movements`
+        ),
+      ]);
+      if (data.server_knowledge === movementData.server_knowledge) {
+        return {
+          plan: data.plan,
+          serverKnowledge: data.server_knowledge,
+          moneyMovements: movementData.money_movements,
+        };
+      }
+    }
+
+    throw new Error(
+      'The YNAB plan changed while Budgero was reading it. Wait a moment, then reconnect and try again.'
     );
-    return { plan: data.plan, serverKnowledge: data.server_knowledge };
   }
 }
