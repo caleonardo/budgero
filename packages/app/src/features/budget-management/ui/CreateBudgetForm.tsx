@@ -90,6 +90,8 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   const [ynabImportUpdates, setYnabImportUpdates] = useState<YNABImportProgressUpdate[]>([]);
   const [ynabImportError, setYnabImportError] = useState<string | null>(null);
   const [ynabImportResult, setYnabImportResult] = useState<YNABImportResult | null>(null);
+  const [isFinalizingYnab, setIsFinalizingYnab] = useState(false);
+  const pendingYnabBudgetIdRef = useRef<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Budgero backup import state
@@ -101,6 +103,20 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   const addBudgetMutation = useAddBudget();
   const runtime = useRuntime();
   const { mutateAsync: updateOnboardingAsync } = useUpdateOnboarding();
+
+  useEffect(
+    () => () => {
+      const pendingBudgetId = pendingYnabBudgetIdRef.current;
+      if (pendingBudgetId === null) return;
+      try {
+        runtime.services().budgets.deleteBudget(pendingBudgetId);
+      } catch (error) {
+        console.warn('[CreateBudgetForm] Failed to remove an unaccepted YNAB import', error);
+      }
+      pendingYnabBudgetIdRef.current = null;
+    },
+    [runtime]
+  );
 
   const resetForm = () => {
     setName('');
@@ -219,6 +235,133 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
     }
   };
 
+  const finalizeYnabImport = async (result: YNABImportResult, acceptedWithWarnings: boolean) => {
+    const activeSpaceId = runtime.getActiveSpaceId();
+    if (!activeSpaceId) throw new Error('No active workspace selected');
+
+    setIsFinalizingYnab(true);
+    setYnabImportUpdates((current) => [
+      ...current,
+      {
+        stage: 'complete',
+        status: 'running',
+        progress: 99,
+        label: acceptedWithWarnings
+          ? 'Saving imported budget with accepted warnings'
+          : 'Saving imported budget',
+      },
+    ]);
+    await yieldAfterPaint();
+
+    try {
+      runtime.services().importHistory.recordImportRun({
+        budgetId: result.budgetId,
+        sourceType: ynabSourceMode === 'api' ? 'ynab-api' : 'ynab-zip',
+        sourceName:
+          ynabSourceMode === 'api'
+            ? ynabApiSnapshot?.plan.name || 'YNAB API'
+            : file?.name || 'YNAB export ZIP',
+        summary: {
+          transactionsImported: result.summary.transactionsCreated,
+          accountsCreated: result.verification?.accounts.checked ?? ynabPreview?.accountCount ?? 0,
+          categoriesCreated: ynabPreview?.categoryCount ?? 0,
+          ...(result.verification ? { verification: result.verification } : {}),
+          ...(acceptedWithWarnings ? { acceptedWithWarnings: true } : {}),
+        },
+        transactionIds: [],
+        accountIds: [],
+        categoryIds: [],
+        status: acceptedWithWarnings ? 'completed_with_warnings' : 'completed',
+      });
+
+      trackBudgetCreated();
+      trackImportedFromYnab();
+
+      const db = runtime.getDatabase();
+      if (db && typeof db.saveToOPFSPublic === 'function') {
+        await db.saveToOPFSPublic();
+      }
+
+      try {
+        await runtime.finalizeOutOfBandMutation({ uploadSnapshot: true });
+      } catch (uploadError) {
+        console.error('Failed to finalize out-of-band import sync:', uploadError);
+        // The accepted import is already saved locally; a later sync can retry.
+      }
+
+      syncBudgetStateFromRuntime({
+        runtime,
+        queryClient,
+        spaceId: activeSpaceId,
+        preferredBudgetId: result.budgetId,
+      });
+      await queryClient.invalidateQueries({ queryKey: getBudgetsQueryKey(activeSpaceId) });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['categories'] }),
+        queryClient.invalidateQueries({ queryKey: ['accounts'] }),
+        queryClient.invalidateQueries({ queryKey: ['transactions'] }),
+        queryClient.invalidateQueries({ queryKey: ['assignments'] }),
+        queryClient.invalidateQueries({ queryKey: ['monthly-budgets'] }),
+        queryClient.invalidateQueries({ queryKey: ['importHistory'] }),
+      ]);
+
+      const categoryNames = result.summary.missingCategoriesCreated.map(
+        (category) => `${category.categoryGroup} › ${category.category}`
+      );
+      const summaryParts: string[] = [];
+      if (categoryNames.length > 0) {
+        summaryParts.push(
+          `Created ${categoryNames.length} historical categor${categoryNames.length === 1 ? 'y' : 'ies'} referenced by transactions: ${categoryNames.join(', ')}.`
+        );
+      }
+      if (result.summary.splitTransactionsImported > 0) {
+        summaryParts.push(
+          `Imported ${result.summary.splitTransactionsImported} split transaction${result.summary.splitTransactionsImported === 1 ? '' : 's'}.`
+        );
+      }
+      if (result.summary.accountBalancesVerified !== undefined) {
+        summaryParts.push(
+          `Verified ${result.summary.accountBalancesVerified} account balance${result.summary.accountBalancesVerified === 1 ? '' : 's'} against YNAB.`
+        );
+      } else {
+        summaryParts.push('Review imported account types before budgeting.');
+      }
+      if (result.summary.readyToAssignMonthsVerified !== undefined) {
+        summaryParts.push(
+          `Matched Ready to Assign for ${result.summary.readyToAssignMonthsVerified} month${result.summary.readyToAssignMonthsVerified === 1 ? '' : 's'}.`
+        );
+      }
+      if ((result.summary.debtBalanceAdjustmentsCreated ?? 0) > 0) {
+        summaryParts.push(
+          `Created ${result.summary.debtBalanceAdjustmentsCreated} visible YNAB debt interest adjustment${result.summary.debtBalanceAdjustmentsCreated === 1 ? '' : 's'}.`
+        );
+      }
+
+      try {
+        await updateOnboardingAsync({ status: 'completed', snoozed_until: null });
+      } catch (error) {
+        console.warn('[CreateBudgetForm] Failed to mark onboarding complete after import', error);
+      }
+
+      pendingYnabBudgetIdRef.current = null;
+      setYnabImportUpdates((current) => [
+        ...current,
+        {
+          stage: 'complete',
+          status: 'passed',
+          progress: 100,
+          label: acceptedWithWarnings
+            ? 'Imported budget saved with warnings'
+            : 'Imported budget saved',
+          detail: summaryParts.join(' ') || undefined,
+        },
+      ]);
+      setYnabImportResult(result);
+    } finally {
+      setIsFinalizingYnab(false);
+    }
+  };
+
   const handleImport = async () => {
     const hasSource = ynabSourceMode === 'api' ? Boolean(ynabApiSnapshot) : Boolean(file);
     if (!hasSource || !budgetName.trim()) {
@@ -268,89 +411,23 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
               await (file as File).arrayBuffer(),
               config
             );
-      const { budgetId } = result;
-      setYnabImportUpdates((current) => [
-        ...current,
-        {
-          stage: 'complete',
-          status: 'running',
-          progress: 99,
-          label: 'Saving imported budget',
-        },
-      ]);
-      await yieldAfterPaint();
-      trackBudgetCreated();
-      trackImportedFromYnab();
-
-      const db = runtime.getDatabase();
-
-      if (db && typeof db.saveToOPFSPublic === 'function') {
-        await db.saveToOPFSPublic();
-      }
-
-      try {
-        await runtime.finalizeOutOfBandMutation({ uploadSnapshot: true });
-      } catch (uploadError) {
-        console.error('Failed to finalize out-of-band import sync:', uploadError);
-        // Don't fail the import if upload fails - data is saved locally
-      }
-
-      syncBudgetStateFromRuntime({
-        runtime,
-        queryClient,
-        spaceId: activeSpaceId,
-        preferredBudgetId: budgetId,
-      });
-      await queryClient.invalidateQueries({ queryKey: getBudgetsQueryKey(activeSpaceId) });
-
-      await queryClient.invalidateQueries({ queryKey: ['categories'] });
-      await queryClient.invalidateQueries({ queryKey: ['accounts'] });
-      await queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      await queryClient.invalidateQueries({ queryKey: ['assignments'] });
-      await queryClient.invalidateQueries({ queryKey: ['monthly-budgets'] });
-
-      const categoryNames = result.summary.missingCategoriesCreated.map(
-        (category) => `${category.categoryGroup} › ${category.category}`
-      );
-      const summaryParts: string[] = [];
-      if (categoryNames.length > 0) {
-        summaryParts.push(
-          `Created ${categoryNames.length} historical categor${categoryNames.length === 1 ? 'y' : 'ies'} referenced by transactions: ${categoryNames.join(', ')}.`
-        );
-      }
-      if (result.summary.splitTransactionsImported > 0) {
-        summaryParts.push(
-          `Imported ${result.summary.splitTransactionsImported} split transaction${result.summary.splitTransactionsImported === 1 ? '' : 's'}.`
-        );
-      }
-      if (result.summary.accountBalancesVerified !== undefined) {
-        summaryParts.push(
-          `Verified ${result.summary.accountBalancesVerified} account balance${result.summary.accountBalancesVerified === 1 ? '' : 's'} against YNAB.`
-        );
-      } else {
-        summaryParts.push('Review imported account types before budgeting.');
-      }
-      if (result.summary.readyToAssignMonthsVerified !== undefined) {
-        summaryParts.push(
-          `Verified Ready to Assign for ${result.summary.readyToAssignMonthsVerified} month${result.summary.readyToAssignMonthsVerified === 1 ? '' : 's'}.`
-        );
-      }
-      try {
-        await updateOnboardingAsync({ status: 'completed', snoozed_until: null });
-      } catch (err) {
-        console.warn('[CreateBudgetForm] Failed to mark onboarding complete after import', err);
-      }
-      setYnabImportUpdates((current) => [
-        ...current,
-        {
-          stage: 'complete',
-          status: 'passed',
-          progress: 100,
-          label: 'Imported budget saved',
-          detail: summaryParts.join(' ') || undefined,
-        },
-      ]);
+      pendingYnabBudgetIdRef.current = result.budgetId;
       setYnabImportResult(result);
+      if (result.verification?.status === 'warning') {
+        setYnabImportUpdates((current) => [
+          ...current,
+          {
+            stage: 'complete',
+            status: 'warning',
+            progress: 99,
+            label: 'Waiting for your review',
+            detail: 'The imported budget has not been saved or synced yet.',
+          },
+        ]);
+        return;
+      }
+
+      await finalizeYnabImport(result, false);
     } catch (err) {
       console.error('Import failed:', err);
       setYnabImportError(
@@ -372,11 +449,33 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
     resetForm();
   };
 
-  const handleBackFromYnabImport = () => {
+  const discardPendingYnabImport = async () => {
+    const pendingBudgetId = pendingYnabBudgetIdRef.current;
+    if (pendingBudgetId !== null) {
+      runtime.services().budgets.deleteBudget(pendingBudgetId);
+      pendingYnabBudgetIdRef.current = null;
+    }
     setYnabImportView('form');
     setYnabImportUpdates([]);
     setYnabImportError(null);
     setYnabImportResult(null);
+  };
+
+  const handleAcceptYnabWarnings = async () => {
+    if (!ynabImportResult || ynabImportResult.verification?.status !== 'warning') return;
+    setYnabImportError(null);
+    try {
+      await finalizeYnabImport(ynabImportResult, true);
+    } catch (error) {
+      console.error('Failed to save accepted YNAB import:', error);
+      setYnabImportError(
+        getErrorMessage(error, 'Could not save the accepted import. You can cancel it safely.')
+      );
+    }
+  };
+
+  const handleBackFromYnabImport = () => {
+    void discardPendingYnabImport();
   };
 
   // Budgero backup import
@@ -583,8 +682,13 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
               updates={ynabImportUpdates}
               error={ynabImportError}
               summary={ynabImportResult?.summary ?? null}
+              verification={ynabImportResult?.verification ?? null}
+              currency={currency}
+              isFinalizing={isFinalizingYnab}
               onBack={handleBackFromYnabImport}
               onContinue={handleContinueYnabImport}
+              onAcceptWarnings={() => void handleAcceptYnabWarnings()}
+              onCancelPending={() => void discardPendingYnabImport()}
             />
           ) : (
             <YnabImportTab

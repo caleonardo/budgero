@@ -144,7 +144,15 @@ export default function ImportsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="capitalize">
-                        {run.sourceName || run.sourceType}
+                        <div>{run.sourceName || run.sourceType}</div>
+                        {run.summary.acceptedWithWarnings && run.summary.verification && (
+                          <div className="mt-1 text-[11px] normal-case text-amber-700 dark:text-amber-400">
+                            {run.summary.verification.readyToAssign.mismatches.length} RTA ·{' '}
+                            {run.summary.verification.categories.checked -
+                              run.summary.verification.categories.matched}{' '}
+                            category differences
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell className="text-center">
                         {run.summary.transactionsImported}
@@ -157,25 +165,31 @@ export default function ImportsPage() {
                       </TableCell>
                       <TableCell>
                         <Badge variant={run.status === 'undone' ? 'outline' : 'secondary'}>
-                          {run.status === 'undone' ? 'Undone' : 'Completed'}
+                          {run.status === 'undone'
+                            ? 'Undone'
+                            : run.status === 'completed_with_warnings'
+                              ? 'Warning accepted'
+                              : 'Completed'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={run.status === 'undone' || disableActions}
-                            onClick={() =>
-                              setPendingAction({
-                                type: 'undo',
-                                id: run.id,
-                                label: run.sourceName || run.sourceType,
-                              })
-                            }
-                          >
-                            <Undo2 className="h-4 w-4 mr-1" /> Undo
-                          </Button>
+                          {!run.sourceType.startsWith('ynab-') && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={run.status === 'undone' || disableActions}
+                              onClick={() =>
+                                setPendingAction({
+                                  type: 'undo',
+                                  id: run.id,
+                                  label: run.sourceName || run.sourceType,
+                                })
+                              }
+                            >
+                              <Undo2 className="h-4 w-4 mr-1" /> Undo
+                            </Button>
+                          )}
                           <Button
                             size="sm"
                             variant="ghost"
