@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
-import { useTransactions } from '@entities/transaction/api/useTransactions';
 import { computeDailyBalances } from '@entities/account/lib/history';
+import { useSpaceQuery } from '@shared/api/useSpaceQuery';
+import { formatDateISO } from '@shared/lib/date-utils';
+import type { AccountBalanceHistoryTransaction } from '@budgero/core/browser';
 
 export interface AccountBalancePoint {
   date: string;
@@ -11,21 +13,28 @@ export interface AccountBalancePoint {
  * Historical balance data for an account over a specified period, derived
  * from the account's transactions (running balance per day).
  *
- * Pure computation over `useTransactions` — memoized rather than cached in
- * the query client, so it can never serve stale data across spaces.
+ * The query returns only the requested window plus its opening balance; the
+ * space-scoped cache is patched on plain adds and invalidated by other writes.
  */
 export function useAccountBalanceHistory(accountId: number, periodMonths = 6) {
-  const { data: transactions, isLoading } = useTransactions(accountId);
+  const range = useMemo(() => {
+    const end = new Date();
+    const start = new Date();
+    start.setMonth(start.getMonth() - periodMonths);
+    return { start, end, fromDate: formatDateISO(start), toDate: formatDateISO(end) };
+  }, [periodMonths]);
+  const { data: transactions, isLoading } = useSpaceQuery<AccountBalanceHistoryTransaction[]>({
+    key: ['accountBalanceHistory', accountId, range.fromDate, range.toDate],
+    enabled: Boolean(accountId),
+    queryFn: (services) =>
+      services.transactions.getAccountBalanceHistory(accountId, range.fromDate, range.toDate),
+  });
 
   const data = useMemo<AccountBalancePoint[] | undefined>(() => {
     if (!accountId || !transactions) return undefined;
 
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setMonth(startDate.getMonth() - periodMonths);
-
-    return computeDailyBalances(transactions, startDate, endDate);
-  }, [accountId, transactions, periodMonths]);
+    return computeDailyBalances(transactions, range.start, range.end);
+  }, [accountId, range, transactions]);
 
   return { data, isLoading };
 }

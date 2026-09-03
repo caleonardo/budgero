@@ -3,6 +3,10 @@ import { getRow, run } from '../../database/sql.js';
 import {
   Transaction,
   GetTransactionsByAccountRow,
+  AccountTransactionPage,
+  AccountTransactionPageOptions,
+  AccountTransactionSummary,
+  AccountBalanceHistoryTransaction,
   GetTransactionsByAccountAndMonthRow,
   GetAllTransactions,
   GetTransactionsByCategoryAndMonthRow,
@@ -593,6 +597,45 @@ export class TransactionService {
    */
   getTransactionsByAccount(accountId: number): GetTransactionsByAccountRow[] {
     return this.queries.getTransactionsByAccount(accountId);
+  }
+
+  getTransactionsByAccountPage(
+    accountId: number,
+    options: AccountTransactionPageOptions = {}
+  ): AccountTransactionPage {
+    return this.queries.getTransactionsByAccountPage(accountId, options);
+  }
+
+  getTransactionsByAccountRange(
+    accountId: number,
+    fromDate?: string,
+    toDate?: string
+  ): GetTransactionsByAccountRow[] {
+    return this.queries.getTransactionsByAccountRange(accountId, fromDate, toDate);
+  }
+
+  getAccountTransactionSummary(
+    accountId: number,
+    fromDate?: string,
+    toDate?: string
+  ): AccountTransactionSummary {
+    return this.queries.getAccountTransactionSummary(accountId, fromDate, toDate);
+  }
+
+  getAccountBalanceHistory(
+    accountId: number,
+    fromDate: string,
+    toDate: string
+  ): AccountBalanceHistoryTransaction[] {
+    return this.queries.getAccountBalanceHistory(accountId, fromDate, toDate);
+  }
+
+  getTransactionForAccountRegister(id: number): GetTransactionsByAccountRow {
+    const transaction = this.queries.getTransactionForAccountRegister(id);
+    if (!transaction) {
+      throw new NotFoundError('Transaction', id);
+    }
+    return transaction;
   }
 
   /**

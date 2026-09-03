@@ -45,7 +45,7 @@ interface MobileTransactionListProps {
   budgetId: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-  onNextPage: () => void;
+  onNextPage: () => void | Promise<void>;
   onPreviousPage: () => void;
   currentPage: number;
   totalPages: number;

@@ -15,6 +15,12 @@ export interface AccountTransactionsSectionProps {
   categories?: Category[];
   onDateRangeChange?: (range: DateRange | undefined) => void;
   onFilteredStatsChange?: (stats: FilteredStats) => void;
+  onFilterModeChange?: (active: boolean) => void;
+  totalTransactionCount?: number;
+  uncategorizedCount?: number;
+  hasMoreTransactions?: boolean;
+  isLoadingMoreTransactions?: boolean;
+  onLoadMoreTransactions?: () => Promise<unknown>;
   headerActions?: React.ReactNode;
 }
 
@@ -28,6 +34,12 @@ export const AccountTransactionsSection = React.memo(function AccountTransaction
   categories,
   onDateRangeChange,
   onFilteredStatsChange,
+  onFilterModeChange,
+  totalTransactionCount,
+  uncategorizedCount,
+  hasMoreTransactions,
+  isLoadingMoreTransactions,
+  onLoadMoreTransactions,
   headerActions,
 }: AccountTransactionsSectionProps) {
   if (isTransactionsLoading || isProcessingTransfer) {
@@ -49,6 +61,12 @@ export const AccountTransactionsSection = React.memo(function AccountTransaction
       categories={categories}
       onDateRangeChange={onDateRangeChange}
       onFilteredStatsChange={onFilteredStatsChange}
+      onFilterModeChange={onFilterModeChange}
+      totalTransactionCount={totalTransactionCount}
+      uncategorizedCountOverride={uncategorizedCount}
+      hasMoreTransactions={hasMoreTransactions}
+      isLoadingMoreTransactions={isLoadingMoreTransactions}
+      onLoadMoreTransactions={onLoadMoreTransactions}
       headerActions={headerActions}
     />
   );

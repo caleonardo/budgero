@@ -23,7 +23,7 @@ import {
   useSetAccountArchived,
   type AccountCurrencyChangeMode,
 } from '@entities/account/api/useAccounts';
-import { useTransactions } from '@entities/transaction/api/useTransactions';
+import { useAccountTransactionSummary } from '@entities/transaction/api/queries';
 import { CurrencySelector } from '@features/currencies/ui/CurrencySelector';
 import { roundMilli } from '@shared/lib/currency/round-amount';
 import { fromDecimal, toDecimal, type MilliUnits } from '@shared/lib/currency/milli';
@@ -107,7 +107,8 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
   const editAccountMutation = useEditAccount();
   const deleteAccountMutation = useDeleteAccount();
   const setArchivedMutation = useSetAccountArchived();
-  const { data: transactions } = useTransactions(selectedAccount?.ID || 0);
+  const { data: transactionSummary, isLoading: isTransactionSummaryLoading } =
+    useAccountTransactionSummary(selectedAccount?.ID || 0, undefined, undefined, open);
 
   const navigate = useNavigate();
   const { globalLocalizer } = useUiStore();
@@ -269,7 +270,13 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
   };
 
   const handleDelete = async () => {
-    const transactionCount = transactions?.length || 0;
+    if (!transactionSummary) {
+      toast.info('Still checking this account', {
+        description: 'Please try again in a moment.',
+      });
+      return;
+    }
+    const transactionCount = transactionSummary.TransactionCount;
 
     if (transactionCount > 0) {
       toast.error('Cannot delete account with transactions!', {
@@ -453,7 +460,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                   variant="destructive"
                   className="h-8 sm:h-9"
                   onClick={handleDelete}
-                  disabled={deleteAccountMutation.isPending}
+                  disabled={deleteAccountMutation.isPending || isTransactionSummaryLoading}
                 >
                   {deleteAccountMutation.isPending ? 'Deleting...' : 'Delete'}
                 </Button>
@@ -523,7 +530,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
         newCurrency={currency}
         mode={currencyChangeMode}
         onModeChange={setCurrencyChangeMode}
-        hasLinkedTransfers={Boolean(transactions?.some((transaction) => transaction.TransferID))}
+        hasLinkedTransfers={Boolean(transactionSummary?.TransferTransactionCount)}
         isLoading={editAccountMutation.isPending}
         onConfirm={proceedCurrencyChange}
       />

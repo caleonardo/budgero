@@ -62,9 +62,14 @@ export function invalidateRoots(qc: QueryClient, ...roots: string[]) {
  * everything the hook needs; keep an explicit `invalidateRoots` call when the
  * hook must refresh roots the registry doesn't list.
  */
-export function applyOpInvalidations(qc: QueryClient, op: string) {
+export function applyOpInvalidations(
+  qc: QueryClient,
+  op: string,
+  options: { excludeRoots?: readonly string[] } = {}
+) {
   const keys = getInvalidatesForOp(op) ?? [];
-  const roots = [...new Set(keys.map((key) => key[0]))];
+  const excluded = new Set(options.excludeRoots ?? []);
+  const roots = [...new Set(keys.map((key) => key[0]))].filter((root) => !excluded.has(root));
   if (roots.length > 0) {
     invalidateRoots(qc, ...roots);
   }
