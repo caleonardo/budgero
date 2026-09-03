@@ -11,7 +11,11 @@
 import type { QueryClient } from '@tanstack/react-query';
 import type { NavigateFunction } from 'react-router-dom';
 import { toast } from 'sonner';
-import type { DatabaseAdapter } from '@budgero/core/browser';
+import type {
+  DatabaseAdapter,
+  YNABImportProgressUpdate,
+  YNABImportResult,
+} from '@budgero/core/browser';
 import { YNABImportService, GoalPurpose, GoalType } from '@budgero/core/browser';
 import { MasterPasswordManager } from '@shared/lib/crypto';
 import { getErrorMessage } from '@shared/lib/errors';
@@ -60,6 +64,31 @@ export interface OnboardingApplyDeps {
   onComplete: () => void;
   setApplyStatus: (status: 'idle' | 'running' | 'error') => void;
   setApplyError: (message: string | null) => void;
+  onYnabProgress: (update: YNABImportProgressUpdate) => void | Promise<void>;
+  onYnabResult: (result: YNABImportResult) => void;
+  reviewYnabImport: (result: YNABImportResult) => Promise<'accept' | 'cancel'>;
+  onYnabImportCancelled: () => void;
+  waitForYnabContinue: () => Promise<boolean>;
+}
+
+async function removeIncompleteYnabWorkspace(
+  runtime: AppRuntime,
+  queryClient: QueryClient,
+  spaceId: string,
+  budgetId?: number
+): Promise<void> {
+  if (budgetId !== undefined) {
+    runtime.services().budgets.deleteBudget(budgetId);
+  }
+  await spaceApi.deleteSpace(spaceId);
+  await runtime.refreshSpaces();
+  syncBudgetStateFromRuntime({
+    runtime,
+    queryClient,
+    spaceId: null,
+    candidateSelectedBudget: null,
+  });
+  await queryClient.invalidateQueries({ queryKey: BUDGET_SPACES_QUERY_KEY });
 }
 
 export async function runOnboardingApply(
@@ -77,6 +106,11 @@ export async function runOnboardingApply(
     onComplete,
     setApplyStatus,
     setApplyError,
+    onYnabProgress,
+    onYnabResult,
+    reviewYnabImport,
+    onYnabImportCancelled,
+    waitForYnabContinue,
   } = deps;
 
   setApplyStatus('running');
@@ -217,7 +251,9 @@ export async function runOnboardingApply(
     // core YNAB importer which creates its own budget record (out-of-band,
     // bypasses the router).
     let budgetId: number;
-    const isYnab = state.startMode === 'ynab' && (state.ynabFile || state.ynabApiSnapshot);
+    const isYnab = Boolean(state.startMode === 'ynab' && (state.ynabFile || state.ynabApiSnapshot));
+    let ynabImportResult: YNABImportResult | null = null;
+    let ynabSummaryDescription = '';
     if (isYnab) {
       const db = runtime.getDatabase();
       if (!db) {
@@ -230,14 +266,85 @@ export async function runOnboardingApply(
         currency: state.currency,
         numberFormat: '$1,096.56',
         badgeIcon: '💰',
+        onProgress: onYnabProgress,
       };
-      const importResult = state.ynabApiSnapshot
-        ? await importService.importYNABFromApiSnapshotWithSummary(
-            state.ynabApiSnapshot,
-            importConfig
-          )
-        : await importService.importYNABFromZipWithSummary(state.ynabFile!.bytes, importConfig);
+      let importResult: YNABImportResult;
+      try {
+        importResult = state.ynabApiSnapshot
+          ? await importService.importYNABFromApiSnapshotWithSummary(
+              state.ynabApiSnapshot,
+              importConfig
+            )
+          : await importService.importYNABFromZipWithSummary(state.ynabFile!.bytes, importConfig);
+      } catch (error) {
+        try {
+          await removeIncompleteYnabWorkspace(runtime, queryClient, spaceId);
+        } catch (cleanupError) {
+          console.warn('[Onboarding] Failed to remove an incomplete YNAB workspace', cleanupError);
+        }
+        throw error;
+      }
+      ynabImportResult = importResult;
+      onYnabResult(importResult);
       budgetId = importResult.budgetId;
+
+      if (importResult.verification?.status === 'warning') {
+        // Register the decision resolver before painting the review screen so
+        // even an immediate click cannot race ahead of the suspended pipeline.
+        const reviewDecision = reviewYnabImport(importResult);
+        await onYnabProgress({
+          stage: 'complete',
+          status: 'warning',
+          progress: 99,
+          label: 'Waiting for your review',
+          detail: 'The imported budget has not been saved or synced yet.',
+        });
+        const decision = await reviewDecision;
+        if (decision === 'cancel') {
+          try {
+            await removeIncompleteYnabWorkspace(runtime, queryClient, spaceId, budgetId);
+          } catch (cleanupError) {
+            throw new Error(
+              `The import was cancelled, but Budgero could not completely remove its temporary workspace: ${getErrorMessage(cleanupError, 'unknown cleanup error')}`
+            );
+          }
+          setApplyStatus('idle');
+          setApplyError(null);
+          onYnabImportCancelled();
+          return;
+        }
+      }
+
+      await onYnabProgress({
+        stage: 'complete',
+        status: 'running',
+        progress: 99,
+        label:
+          importResult.verification?.status === 'warning'
+            ? 'Saving imported budget with accepted warnings'
+            : 'Saving imported budget',
+      });
+
+      runtime.services().importHistory.recordImportRun({
+        budgetId,
+        sourceType: state.ynabApiSnapshot ? 'ynab-api' : 'ynab-zip',
+        sourceName: state.ynabApiSnapshot?.plan.name || state.ynabFile?.name || 'YNAB import',
+        summary: {
+          transactionsImported: importResult.summary.transactionsCreated,
+          accountsCreated:
+            importResult.verification?.accounts.checked ?? state.ynabPreview?.accountCount ?? 0,
+          categoriesCreated: state.ynabPreview?.categoryCount ?? 0,
+          ...(importResult.verification ? { verification: importResult.verification } : {}),
+          ...(importResult.verification?.status === 'warning'
+            ? { acceptedWithWarnings: true }
+            : {}),
+        },
+        transactionIds: [],
+        accountIds: [],
+        categoryIds: [],
+        status:
+          importResult.verification?.status === 'warning' ? 'completed_with_warnings' : 'completed',
+      });
 
       const createdCategories = importResult.summary.missingCategoriesCreated.map(
         (category) => `${category.categoryGroup} › ${category.category}`
@@ -260,7 +367,7 @@ export async function runOnboardingApply(
       } else {
         summaryParts.push('Review imported account types before budgeting.');
       }
-      toast.success('YNAB import complete', { description: summaryParts.join(' ') });
+      ynabSummaryDescription = summaryParts.join(' ');
     } else {
       const result = await runtime.mutationsRouter().execute<number>({
         op: 'budgets.create',
@@ -515,9 +622,32 @@ export async function runOnboardingApply(
       }
     }
 
-    // 10. Tell the server master password is set so future signs-in skip
+    // 10. Keep the YNAB verification report inside the onboarding gate until
+    // the user explicitly opens the imported budget. None of the completion
+    // flags below may move ahead of this wait: each can make
+    // StartupController replace OnboardingFlow with the dashboard.
+    if (ynabImportResult) {
+      // Register the continuation before painting the completed state so an
+      // immediate click cannot race ahead of the suspended pipeline.
+      const continueFromYnabReport = waitForYnabContinue();
+      await onYnabProgress({
+        stage: 'complete',
+        status: 'passed',
+        progress: 100,
+        label:
+          ynabImportResult.verification?.status === 'warning'
+            ? 'Imported budget saved with warnings'
+            : 'Imported budget saved',
+        detail: ynabSummaryDescription || undefined,
+      });
+      toast.success('YNAB import complete', { description: ynabSummaryDescription });
+      if (!(await continueFromYnabReport)) return;
+    }
+
+    // 11. Tell the server master password is set so future sign-ins skip
     // onboarding. Then mark onboarding completed + intro acknowledged so
-    // the StartupController gates pass and we route to the dashboard.
+    // the StartupController gates pass and we route to the dashboard. For a
+    // YNAB import this runs only after "Open imported budget" is clicked.
     try {
       await authApi.setMasterPasswordStatus(true);
     } catch (err) {
@@ -534,7 +664,7 @@ export async function runOnboardingApply(
     }
     writeIntroAcknowledged(profileId ?? null);
 
-    // 11. Refresh every cached query so the dashboard lands on real data,
+    // 12. Refresh every cached query so the dashboard lands on real data,
     // then release the intro gate.
     await queryClient.invalidateQueries();
     onComplete();

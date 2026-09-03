@@ -16,11 +16,68 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.11.4',
+    date: 'September 4, 2026',
+    summary:
+      'This patch adds report drill-downs and direct YNAB API imports, and fixes several transaction, account, and large-ledger issues.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Inspect grouped values in spending reports and Money Map',
+        description:
+          'Other Spending can be expanded into its categories and reflected in the chart. Money Map can switch between groups and categories, and selecting a group opens a tiled category breakdown with a route back to the full map.',
+      },
+      {
+        type: 'new',
+        title: 'Import directly from the YNAB API',
+        description:
+          'A YNAB personal access token can be used to select and import a plan without creating a ZIP. Tokens are kept in memory for the import and are not stored by Budgero.',
+      },
+      {
+        type: 'improved',
+        title: 'Verify direct YNAB imports before saving',
+        description:
+          'Direct imports check source rows, account balances, category history, Money Movements, and Ready to Assign for every month. Source and account failures stop the import; category or Ready to Assign differences can be reviewed, removed, or accepted and retained in Import History.',
+      },
+      {
+        type: 'improved',
+        title: 'Preserve YNAB transfer, split, and debt semantics',
+        description:
+          'Transfers contained in YNAB splits are imported as individual transactions, while ordinary splits retain inflows and outflows. Mortgage and loan accounts reuse an identifiable YNAB payment category, and loan-engine interest that is not exported as a register entry is recorded as a visible adjustment.',
+      },
+      {
+        type: 'fixed',
+        title: 'Correct off-budget transfer reporting and transfer payees',
+        description:
+          'Spending reports now include categorized transfers to off-budget accounts. On-budget transfers no longer retain a payee, while transfers involving an off-budget account keep the account payee and the category used by Ready to Assign.',
+      },
+      {
+        type: 'fixed',
+        title: 'Transaction forms and details remain usable with long lists and text',
+        description:
+          'Account fields can be searched by name, split-detail memos wrap within the dialog, newly created debt categories appear without a reload, label colors are restored, and dialog background blur can be disabled in Appearance settings.',
+      },
+      {
+        type: 'fixed',
+        title: 'Reject unsafe exchange-rate calculations',
+        description:
+          'Exchange rates and converted milliunit values are validated before they reach account and query views, preventing an accidentally extreme rate from replacing the page with a runtime error.',
+      },
+      {
+        type: 'improved',
+        title: 'Reduce work when adding transactions to large ledgers',
+        description:
+          'Account registers use paged queries, transaction additions patch cached results instead of broadly rebuilding them, and large account pages render less data at once.',
+      },
+    ],
+  },
+  {
     version: 'v1.11.3',
     date: 'August 30, 2026',
     summary:
       'YNAB imports preserve more source data, split lines support payees, and reports sync with stable identifiers.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'improved',

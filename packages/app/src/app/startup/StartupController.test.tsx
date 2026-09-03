@@ -82,7 +82,13 @@ vi.mock('./screens', () => ({
     <div data-testid="startup-splash">{message ?? 'splash'}</div>
   ),
   AccessBlockedScreen: () => <div data-testid="access-blocked-screen" />,
-  IntroRequiredScreen: () => <div data-testid="intro-required-screen" />,
+  IntroRequiredScreen: ({ acknowledgeIntro }: { acknowledgeIntro: () => void }) => (
+    <div data-testid="intro-required-screen">
+      <button type="button" onClick={acknowledgeIntro}>
+        Complete onboarding
+      </button>
+    </div>
+  ),
   MasterPasswordRequiredScreen: () => <div data-testid="master-password-screen" />,
   WorkspaceRequiredScreen: () => <div data-testid="workspace-required-screen" />,
   BudgetRequiredScreen: () => <div data-testid="budget-required-screen" />,
@@ -367,5 +373,32 @@ describe('StartupController', () => {
 
     expect(await screen.findByTestId('intro-required-screen')).toBeInTheDocument();
     expect(screen.queryByTestId('app-route')).not.toBeInTheDocument();
+  });
+
+  it('pins first-user onboarding across transient startup-state changes until explicit completion', async () => {
+    const acknowledgeIntro = vi.fn();
+    introSnapshot = createIntroSnapshot({ status: 'intro_required', acknowledgeIntro });
+    const view = renderController();
+
+    expect(await screen.findByTestId('intro-required-screen')).toBeInTheDocument();
+
+    // Runtime initialization can clear/refetch auth queries while the YNAB
+    // import is running. Neither that splash nor the subsequently-ready app
+    // may replace the active onboarding tree.
+    authSnapshot = createAuthSnapshot({ status: 'loading' });
+    introSnapshot = createIntroSnapshot({ status: 'ready', acknowledgeIntro });
+    view.rerender(<TestHarness path="/dashboard" queryClient={view.queryClient} />);
+    expect(await screen.findByTestId('intro-required-screen')).toBeInTheDocument();
+    expect(screen.queryByTestId('startup-splash')).not.toBeInTheDocument();
+
+    authSnapshot = createAuthSnapshot({ status: 'ready' });
+    view.rerender(<TestHarness path="/dashboard" queryClient={view.queryClient} />);
+    expect(await screen.findByTestId('intro-required-screen')).toBeInTheDocument();
+    expect(screen.queryByTestId('app-route')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Complete onboarding' }));
+
+    expect(acknowledgeIntro).toHaveBeenCalledOnce();
+    expect(await screen.findByTestId('app-route')).toBeInTheDocument();
   });
 });

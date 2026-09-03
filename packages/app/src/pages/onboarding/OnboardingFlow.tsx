@@ -14,17 +14,22 @@
 // `runOnboardingApply` (./apply-onboarding.ts) — a plain, React-free function
 // so it's unit-testable without rendering this component.
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { YNABApiPlanSnapshot } from '@budgero/core/browser';
+import type {
+  YNABApiPlanSnapshot,
+  YNABImportProgressUpdate,
+  YNABImportResult,
+} from '@budgero/core/browser';
 import { YNABImportService } from '@budgero/core/browser';
 import { useRuntime } from '@shared/runtime/runtime-provider';
 import { useLogout, useProfile, useUpdateOnboarding } from '@entities/user/api/useAuth';
 import { useThemePreset } from '@shared/contexts/ThemePresetContext';
 import { getTodayISO } from '@shared/lib/date-utils';
 import { readPendingSpaceInvite } from '@features/budget-sharing/lib/pending-space-invite';
+import { YnabImportStatus } from '@features/budget-management/ui/create-budget-form/YnabImportStatus';
 import {
   INITIAL_STATE,
   ONBOARDING_STEPS,
@@ -62,6 +67,20 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function yieldAfterPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    if (
+      typeof document === 'undefined' ||
+      document.visibilityState !== 'visible' ||
+      typeof requestAnimationFrame !== 'function'
+    ) {
+      setTimeout(resolve, 0);
+      return;
+    }
+    requestAnimationFrame(() => setTimeout(resolve, 0));
+  });
+}
+
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const runtime = useRuntime();
   const queryClient = useQueryClient();
@@ -89,6 +108,23 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const [applyStatus, setApplyStatus] = useState<'idle' | 'running' | 'error'>('idle');
   const [applyError, setApplyError] = useState<string | null>(null);
   const [isInspectingYnab, setIsInspectingYnab] = useState(false);
+  const [ynabImportUpdates, setYnabImportUpdates] = useState<YNABImportProgressUpdate[]>([]);
+  const [ynabImportResult, setYnabImportResult] = useState<YNABImportResult | null>(null);
+  const [isFinalizingYnab, setIsFinalizingYnab] = useState(false);
+  const ynabReviewResolverRef = useRef<((decision: 'accept' | 'cancel') => void) | null>(null);
+  const ynabContinueResolverRef = useRef<((shouldContinue: boolean) => void) | null>(null);
+
+  useEffect(
+    () => () => {
+      // If onboarding is torn down while a warned import is awaiting a
+      // decision, release the pipeline so it can remove the pending data.
+      ynabReviewResolverRef.current?.('cancel');
+      ynabReviewResolverRef.current = null;
+      ynabContinueResolverRef.current?.(false);
+      ynabContinueResolverRef.current = null;
+    },
+    []
+  );
 
   const set = useCallback((patch: Partial<OnboardingFormState>) => {
     setState((s) => ({ ...s, ...patch }));
@@ -201,7 +237,66 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
     [set, state.budgetName]
   );
 
+  const handleYnabProgress = useCallback(async (update: YNABImportProgressUpdate) => {
+    setYnabImportUpdates((current) => [...current, update]);
+    await yieldAfterPaint();
+  }, []);
+
+  const reviewYnabImport = useCallback(
+    (result: YNABImportResult) =>
+      new Promise<'accept' | 'cancel'>((resolve) => {
+        setYnabImportResult(result);
+        ynabReviewResolverRef.current = resolve;
+      }),
+    []
+  );
+
+  const resolveYnabReview = useCallback((decision: 'accept' | 'cancel') => {
+    const resolve = ynabReviewResolverRef.current;
+    if (!resolve) return;
+    ynabReviewResolverRef.current = null;
+    setIsFinalizingYnab(true);
+    resolve(decision);
+  }, []);
+
+  const waitForYnabContinue = useCallback(
+    () =>
+      new Promise<boolean>((resolve) => {
+        ynabContinueResolverRef.current = resolve;
+        setIsFinalizingYnab(false);
+      }),
+    []
+  );
+
+  const continueFromYnabReport = useCallback(() => {
+    const resolve = ynabContinueResolverRef.current;
+    if (!resolve) return;
+    ynabContinueResolverRef.current = null;
+    resolve(true);
+  }, []);
+
+  const returnToYnabSource = useCallback(() => {
+    ynabReviewResolverRef.current = null;
+    ynabContinueResolverRef.current?.(false);
+    ynabContinueResolverRef.current = null;
+    setYnabImportUpdates([]);
+    setYnabImportResult(null);
+    setIsFinalizingYnab(false);
+    setApplyStatus('idle');
+    setApplyError(null);
+    setStepIndex(PATH_STEPS.ynab.indexOf('ynab_import'));
+  }, []);
+
   const applyOnboarding = useCallback(async () => {
+    if (activePath === 'ynab') {
+      setYnabImportUpdates([]);
+      setYnabImportResult(null);
+      setIsFinalizingYnab(false);
+      // Commit the status screen before any expensive import work begins.
+      // Without a paint boundary React may batch these state updates with the
+      // importer and the user never sees the progress view.
+      await yieldAfterPaint();
+    }
     await runOnboardingApply(state, {
       activePath,
       runtime,
@@ -213,35 +308,57 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
       onComplete,
       setApplyStatus,
       setApplyError,
+      onYnabProgress: handleYnabProgress,
+      onYnabResult: setYnabImportResult,
+      reviewYnabImport,
+      onYnabImportCancelled: returnToYnabSource,
+      waitForYnabContinue,
     });
   }, [
     activePath,
+    handleYnabProgress,
     navigate,
     onComplete,
     profile?.id,
     queryClient,
     runtime,
+    reviewYnabImport,
+    returnToYnabSource,
     setThemeId,
     state,
     updateOnboardingAsync,
+    waitForYnabContinue,
   ]);
 
   const isFinal = safeStep === total - 1;
   const isFirst = safeStep === 0;
+  const launchesYnabImport = activePath === 'ynab' && curId === 'password';
+  // The YNAB path has no generic Done summary. Its final step is always the
+  // live import/reconciliation report and it owns the explicit hand-off into
+  // the dashboard.
+  const isShowingYnabStatus = curId === 'done' && activePath === 'ynab';
 
   const primaryLabel = isFirst
     ? 'Let’s begin →'
-    : isFinal
-      ? activePath === 'join'
-        ? 'Join workspace →'
-        : 'Open my budget →'
-      : 'Next →';
+    : launchesYnabImport
+      ? 'Import my budget →'
+      : isFinal
+        ? activePath === 'join'
+          ? 'Join workspace →'
+          : 'Open my budget →'
+        : 'Next →';
   const primaryAction = isFinal
     ? () => {
         if (applyStatus === 'running') return;
         void applyOnboarding();
       }
-    : next;
+    : launchesYnabImport
+      ? () => {
+          if (applyStatus === 'running') return;
+          setStepIndex((current) => Math.min(current + 1, total - 1));
+          void applyOnboarding();
+        }
+      : next;
 
   return (
     <div
@@ -379,91 +496,108 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         {curId === 'where_heard' && <WhereHeardStep cur={cur} state={state} set={set} />}
         {curId === 'theme' && <ThemeStep cur={cur} state={state} set={set} />}
         {curId === 'password' && <PasswordStep cur={cur} state={state} set={set} />}
-        {curId === 'done' && (
-          <DoneStep cur={cur} state={state} applyState={applyStatus} applyError={applyError} />
-        )}
+        {curId === 'done' &&
+          (isShowingYnabStatus ? (
+            <YnabImportStatus
+              sourceMode={state.ynabApiSnapshot ? 'api' : 'zip'}
+              updates={ynabImportUpdates}
+              error={applyError}
+              summary={ynabImportResult?.summary ?? null}
+              verification={ynabImportResult?.verification ?? null}
+              currency={state.currency}
+              isFinalizing={isFinalizingYnab}
+              onBack={returnToYnabSource}
+              onContinue={continueFromYnabReport}
+              onAcceptWarnings={() => resolveYnabReview('accept')}
+              onCancelPending={() => resolveYnabReview('cancel')}
+            />
+          ) : (
+            <DoneStep cur={cur} state={state} applyState={applyStatus} applyError={applyError} />
+          ))}
 
         {/* Footer */}
-        <div
-          style={{
-            marginTop: 36,
-            paddingTop: 22,
-            borderTop: '1px dashed rgba(57,57,57,0.4)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <div>
-            {!isFirst && applyStatus !== 'running' && (
+        {!isShowingYnabStatus && (
+          <div
+            style={{
+              marginTop: 36,
+              paddingTop: 22,
+              borderTop: '1px dashed rgba(57,57,57,0.4)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              {!isFirst && applyStatus !== 'running' && (
+                <button
+                  type="button"
+                  onClick={back}
+                  style={{
+                    background: 'transparent',
+                    color: '#393939',
+                    border: 'none',
+                    padding: '12px 8px',
+                    fontFamily: 'inherit',
+                    fontSize: 13,
+                    letterSpacing: 0.5,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  ← Back
+                </button>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {/* Skip is only available on the educational ZBB demo, on Sharing
+                  (invites are optional), and on the referral question (purely
+                  informational). Every other step feeds a real value into the
+                  apply pipeline and can't be skipped. */}
+              {(curId === 'zbb' || curId === 'share' || curId === 'where_heard') && (
+                <button
+                  type="button"
+                  onClick={next}
+                  style={{
+                    background: 'transparent',
+                    color: '#393939',
+                    border: 'none',
+                    padding: '12px 8px',
+                    fontFamily: 'inherit',
+                    fontSize: 13,
+                    letterSpacing: 0.5,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Skip for now
+                </button>
+              )}
               <button
                 type="button"
-                onClick={back}
+                onClick={primaryAction}
+                disabled={!canAdvance || applyStatus === 'running'}
                 style={{
-                  background: 'transparent',
-                  color: '#393939',
-                  border: 'none',
-                  padding: '12px 8px',
+                  background: '#141414',
+                  color: '#fbf7eb',
+                  border: '1px solid #141414',
+                  padding: '12px 24px',
                   fontFamily: 'inherit',
                   fontSize: 13,
                   letterSpacing: 0.5,
                   fontWeight: 600,
-                  cursor: 'pointer',
+                  cursor: !canAdvance || applyStatus === 'running' ? 'not-allowed' : 'pointer',
+                  opacity: !canAdvance || applyStatus === 'running' ? 0.4 : 1,
                 }}
               >
-                ← Back
+                {isFinal && applyStatus === 'running'
+                  ? 'Working…'
+                  : isFinal && applyStatus === 'error'
+                    ? 'Try again →'
+                    : primaryLabel}
               </button>
-            )}
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {/* Skip is only available on the educational ZBB demo, on Sharing
-                (invites are optional), and on the referral question (purely
-                informational). Every other step feeds a real value into the
-                apply pipeline and can't be skipped. */}
-            {(curId === 'zbb' || curId === 'share' || curId === 'where_heard') && (
-              <button
-                type="button"
-                onClick={next}
-                style={{
-                  background: 'transparent',
-                  color: '#393939',
-                  border: 'none',
-                  padding: '12px 8px',
-                  fontFamily: 'inherit',
-                  fontSize: 13,
-                  letterSpacing: 0.5,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
-                Skip for now
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={primaryAction}
-              disabled={!canAdvance || applyStatus === 'running'}
-              style={{
-                background: '#141414',
-                color: '#fbf7eb',
-                border: '1px solid #141414',
-                padding: '12px 24px',
-                fontFamily: 'inherit',
-                fontSize: 13,
-                letterSpacing: 0.5,
-                fontWeight: 600,
-                cursor: !canAdvance || applyStatus === 'running' ? 'not-allowed' : 'pointer',
-                opacity: !canAdvance || applyStatus === 'running' ? 0.4 : 1,
-              }}
-            >
-              {isFinal && applyStatus === 'running'
-                ? 'Working…'
-                : isFinal && applyStatus === 'error'
-                  ? 'Try again →'
-                  : primaryLabel}
-            </button>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Footnote */}

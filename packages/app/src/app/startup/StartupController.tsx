@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import SpaceInviteRedirect from '@features/budget-sharing/ui/SpaceInviteRedirect';
@@ -74,6 +74,13 @@ export default function StartupController() {
   const [runtimeError, setRuntimeError] = useState('');
   const [runtimeRetryToken, setRuntimeRetryToken] = useState(0);
   const [switchingWorkspaceId, setSwitchingWorkspaceId] = useState<string | null>(null);
+  // Runtime initialization replaces/refetches the session query cache. During
+  // first-user onboarding that can temporarily make the normal startup
+  // resolver move through splash/app states while OnboardingFlow is still
+  // importing. Latch the intro screen once it has been entered and release it
+  // only when OnboardingFlow explicitly calls its completion callback.
+  const [introFlowPinned, setIntroFlowPinned] = useState(false);
+  const introCompletionRequestedRef = useRef(false);
   const [syncPhase, setSyncPhase] = useState<'hidden' | 'syncing' | 'warning' | 'complete'>(
     'hidden'
   );
@@ -105,6 +112,18 @@ export default function StartupController() {
   useEffect(() => {
     dispatch({ type: 'RESOLVE', resolution });
   }, [resolution]);
+
+  useEffect(() => {
+    if (resolution.screen === 'intro' && !introCompletionRequestedRef.current) {
+      setIntroFlowPinned(true);
+    }
+  }, [resolution.screen]);
+
+  const completeIntroFlow = useCallback(() => {
+    introCompletionRequestedRef.current = true;
+    intro.acknowledgeIntro();
+    setIntroFlowPinned(false);
+  }, [intro]);
 
   useEffect(() => {
     if (machineState.stablePublished) {
@@ -342,7 +361,7 @@ export default function StartupController() {
     return <Navigate to={auth.redirectTo ?? '/auth'} replace />;
   }
 
-  if (bypassStartupGuards) {
+  if (bypassStartupGuards && !introFlowPinned) {
     return (
       <>
         {auth.user ? <SpaceInviteRedirect user={auth.user} /> : null}
@@ -352,67 +371,76 @@ export default function StartupController() {
   }
 
   let content: React.ReactNode;
-  switch (machineState.resolution.screen) {
-    case 'access_blocked':
-      content = <AccessBlockedScreen mode={auth.accessBlockedMode ?? 'subscription-required'} />;
-      break;
-    case 'intro':
-      content = <IntroRequiredScreen acknowledgeIntro={intro.acknowledgeIntro} />;
-      break;
-    case 'master_password':
-      content = <MasterPasswordRequiredScreen snapshot={masterPassword} />;
-      break;
-    case 'workspace':
-      content = (
-        <WorkspaceRequiredScreen
-          snapshot={workspace}
-          profile={auth.user}
-          accessStatus={auth.accessStatus}
-        />
-      );
-      break;
-    case 'budget':
-      content = (
-        <BudgetRequiredScreen
-          alternativeWorkspaces={budget.alternativeWorkspaces}
-          switchingWorkspaceId={switchingWorkspaceId}
-          onSwitchWorkspace={(spaceId) => {
-            void handleSwitchWorkspace(spaceId);
-          }}
-        />
-      );
-      break;
-    case 'budget_blocked':
-      content = (
-        <BudgetBlockedScreen
-          alternativeWorkspaces={budget.alternativeWorkspaces}
-          switchingWorkspaceId={switchingWorkspaceId}
-          onSwitchWorkspace={(spaceId) => {
-            void handleSwitchWorkspace(spaceId);
-          }}
-        />
-      );
-      break;
-    case 'error':
-      content = (
-        <StartupErrorScreen
-          error={machineState.resolution.error ?? 'Startup failed unexpectedly.'}
-          onRetry={handleRetry}
-        />
-      );
-      break;
-    case 'app':
-      content = <Outlet />;
-      break;
-    case 'splash':
-    default:
-      content = (
-        <StartupSplashScreen
-          message={machineState.resolution.message}
-          detail={machineState.resolution.detail}
-        />
-      );
-      break;
+  if (introFlowPinned) {
+    content = <IntroRequiredScreen acknowledgeIntro={completeIntroFlow} />;
+  } else if (introCompletionRequestedRef.current && machineState.resolution.screen === 'intro') {
+    // The explicit completion callback releases the pin synchronously. Keep
+    // the old intro resolution from remounting a fresh OnboardingFlow during
+    // the one render before the startup reducer publishes the ready screen.
+    content = <StartupSplashScreen message="Opening your budget…" />;
+  } else {
+    switch (machineState.resolution.screen) {
+      case 'access_blocked':
+        content = <AccessBlockedScreen mode={auth.accessBlockedMode ?? 'subscription-required'} />;
+        break;
+      case 'intro':
+        content = <IntroRequiredScreen acknowledgeIntro={completeIntroFlow} />;
+        break;
+      case 'master_password':
+        content = <MasterPasswordRequiredScreen snapshot={masterPassword} />;
+        break;
+      case 'workspace':
+        content = (
+          <WorkspaceRequiredScreen
+            snapshot={workspace}
+            profile={auth.user}
+            accessStatus={auth.accessStatus}
+          />
+        );
+        break;
+      case 'budget':
+        content = (
+          <BudgetRequiredScreen
+            alternativeWorkspaces={budget.alternativeWorkspaces}
+            switchingWorkspaceId={switchingWorkspaceId}
+            onSwitchWorkspace={(spaceId) => {
+              void handleSwitchWorkspace(spaceId);
+            }}
+          />
+        );
+        break;
+      case 'budget_blocked':
+        content = (
+          <BudgetBlockedScreen
+            alternativeWorkspaces={budget.alternativeWorkspaces}
+            switchingWorkspaceId={switchingWorkspaceId}
+            onSwitchWorkspace={(spaceId) => {
+              void handleSwitchWorkspace(spaceId);
+            }}
+          />
+        );
+        break;
+      case 'error':
+        content = (
+          <StartupErrorScreen
+            error={machineState.resolution.error ?? 'Startup failed unexpectedly.'}
+            onRetry={handleRetry}
+          />
+        );
+        break;
+      case 'app':
+        content = <Outlet />;
+        break;
+      case 'splash':
+      default:
+        content = (
+          <StartupSplashScreen
+            message={machineState.resolution.message}
+            detail={machineState.resolution.detail}
+          />
+        );
+        break;
+    }
   }
 
   return (
