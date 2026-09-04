@@ -1,3 +1,5 @@
+import { ComparisonReferences } from '@/components/comparison-references';
+import { MultiCurrencyExample } from '@/components/multi-currency-example';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Globe, Shield, Euro, DollarSign, Ban } from 'lucide-react';
@@ -12,7 +14,7 @@ export const revalidate = false;
 export const metadata: Metadata = {
   title: 'Monarch Money Alternative for Europe — Multi-Currency Budgeting | Budgero',
   description:
-    'Monarch Money is US and Canada only. Budgero is the Monarch alternative for Europe — multi-currency, GDPR-compliant, encrypted, and built for EUR, GBP, CHF, and 165 more. 35-day free trial.',
+    'Monarch Money is US and Canada only. Budgero is the Monarch alternative for Europe — multi-currency, end-to-end encrypted, and built for EUR, GBP, CHF, and 165 more. 35-day free trial.',
   keywords: [
     'monarch money europe',
     'monarch money europe alternative',
@@ -32,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Monarch Money Alternative for Europe — Multi-Currency Budgeting | Budgero',
     description:
-      'Monarch Money is US and Canada only. Budgero is the Monarch alternative for Europe — multi-currency, GDPR-compliant, and built for EUR, GBP, CHF, and more.',
+      'Monarch Money is US and Canada only. Budgero is the Monarch alternative for Europe — multi-currency, encrypted, and built for EUR, GBP, CHF, and more.',
     url: 'https://budgero.app/monarch-money-europe-alternative',
     type: 'website',
   },
@@ -46,157 +48,88 @@ export const metadata: Metadata = {
 
 const comparisonData = [
   {
-    feature: 'Available in Europe',
+    feature: 'Official availability in Europe',
     budgero: true,
     monarch: false,
-    budgeroNote: 'Every EU country + UK + CH',
+    budgeroNote: 'Browser app; no bank connection required',
     monarchNote: 'US and Canada only',
   },
   {
-    feature: 'Multi-currency support',
+    feature: 'Currencies in one budget',
     budgero: '168 currencies',
-    monarch: 'USD only',
-    budgeroNote: 'EUR, GBP, CHF, PLN, SEK + live FX',
-    monarchNote: 'Foreign currency shown as $',
-  },
-  {
-    feature: 'Billing currency',
-    budgero: 'EUR, GBP, USD, etc.',
-    monarch: 'USD only',
-    budgeroNote: 'VAT invoices included',
-    monarchNote: 'FX fees on every charge',
+    monarch: 'USD or CAD display',
+    budgeroNote: 'Original amounts plus conversion',
+    monarchNote: 'No native currency conversion',
   },
   {
     feature: 'Annual price',
     budgero: `${pricing.yearly}/year`,
     monarch: '$99.99/year',
-    budgeroNote: 'Or free with Self-Host',
-    monarchNote: null,
+    budgeroNote: 'Or free with self-hosting; hosting costs may apply',
+    monarchNote: 'Check current plan and offers',
   },
   {
-    feature: 'GDPR-compliant by design',
+    feature: 'Zero-knowledge budget encryption',
     budgero: true,
     monarch: false,
-    budgeroNote: 'Zero-knowledge architecture',
-    monarchNote: 'US-based data storage',
+    budgeroNote: 'Encrypted before syncing',
+    monarchNote: 'Server-managed encryption',
   },
   {
-    feature: 'Zero-knowledge encryption',
-    budgero: true,
-    monarch: false,
-    budgeroNote: 'We cannot decrypt your data',
-    monarchNote: 'Bank-level, but not zero-knowledge',
-  },
-  {
-    feature: 'Works offline',
-    budgero: true,
-    monarch: false,
-    budgeroNote: 'PWA, full offline',
-    monarchNote: 'Cloud-only',
-  },
-  {
-    feature: 'Bank sync for European banks',
-    budgero: 'CSV / manual',
-    monarch: false,
-    budgeroNote: 'Import from any EU bank',
-    monarchNote: 'No EU banks supported',
+    feature: 'European bank transactions',
+    budgero: 'Manual or file import',
+    monarch: 'No European bank sync',
+    budgeroNote: 'Preview your bank’s supported export',
+    monarchNote: 'Official coverage is US/Canada',
   },
   {
     feature: 'Investment tracking',
-    budgero: 'Manual',
-    monarch: 'Automatic (US brokers)',
-    budgeroNote: 'Track any asset manually',
-    monarchNote: 'US brokers only',
+    budgero: 'Manual asset values',
+    monarch: 'Brokerage connections',
+    budgeroNote: 'No automatic security prices or brokerage sync',
+    monarchNote: 'Check your supported institution',
   },
   {
     feature: 'Self-host option',
     budgero: true,
     monarch: false,
-    budgeroNote: 'Docker on EU server',
+    budgeroNote: 'Docker; choose your hosting location',
     monarchNote: null,
-  },
-  {
-    feature: 'Mobile app in EU App Store',
-    budgero: 'PWA (works everywhere)',
-    monarch: false,
-    budgeroNote: null,
-    monarchNote: 'iOS: US store only',
-  },
-];
-
-const euBankingExamples = [
-  {
-    country: 'Germany',
-    flag: '🇩🇪',
-    note: 'N26, DKB, Deutsche Bank — none connect to Monarch.',
-  },
-  {
-    country: 'United Kingdom',
-    flag: '🇬🇧',
-    note: 'Monzo, Revolut, Starling — not available.',
-  },
-  {
-    country: 'France',
-    flag: '🇫🇷',
-    note: 'BNP Paribas, Crédit Agricole, Société Générale — no integration.',
-  },
-  {
-    country: 'Netherlands',
-    flag: '🇳🇱',
-    note: 'ING, ABN AMRO, Bunq — unsupported.',
-  },
-  {
-    country: 'Spain',
-    flag: '🇪🇸',
-    note: 'Santander, BBVA, CaixaBank — not available.',
-  },
-  {
-    country: 'Switzerland',
-    flag: '🇨🇭',
-    note: 'UBS, Raiffeisen, PostFinance — no CHF support.',
   },
 ];
 
 const faqs = [
   {
-    q: 'Why is Monarch Money not available in Europe?',
-    a: 'Monarch Money was built for the US market and relies on US bank-sync providers like Plaid to work. They have announced Canadian support, but no European expansion. You cannot download the iOS app in the UK, EU, or Switzerland App Stores, and even if you use the web app, there is no way to connect European banks, hold non-USD accounts, or be billed in EUR or GBP. Monarch is unusable for European households as of 2026.',
+    q: 'Is Monarch Money available in Europe?',
+    a: 'Monarch’s official FAQ lists the US and Canada as its supported countries. Its currency documentation describes dollar display without conversion between currencies, so a European household needing EUR and GBP accounts in one budget should consider another option.',
   },
   {
-    q: 'What is the best Monarch Money alternative for Europe?',
-    a: 'Budgero. It is the budgeting app most European users switch to when they realise Monarch is not an option. Budgero supports 168 currencies natively (including EUR, GBP, CHF, PLN, SEK, and every other European currency), it is GDPR-compliant by design through zero-knowledge encryption, and it bills in your local currency with proper VAT invoices. You can use Budgero Cloud from anywhere, or self-host on your own EU server.',
+    q: 'Is Budgero a suitable Monarch Money alternative for Europe?',
+    a: 'Budgero can suit households that need multiple currencies and end-to-end encrypted budgeting. It does not offer automatic bank or brokerage sync. If bank feeds are essential, check an alternative with documented support for your specific European institutions.',
   },
   {
-    q: 'Can I hold accounts in EUR and GBP in Budgero?',
-    a: 'Yes, in the same budget. Pick a home currency (say, EUR). Hold any number of accounts in any supported currency. Every transaction is automatically converted at live exchange rates, and your net worth rolls up in your home currency. Cross-border households, expats, and freelancers with multi-currency income are the single biggest group of Budgero users.',
+    q: 'Can I hold EUR and GBP accounts in Budgero?',
+    a: 'Yes. Choose a budget currency and set each account’s currency separately. Transactions retain their original amounts and use exchange rates for budget totals. You can override a transaction’s rate or converted amount when a statement uses a different rate.',
   },
   {
     q: 'Does Budgero connect to European banks?',
-    a: "No, and this is by design. Bank sync requires sharing your credentials with a third-party aggregator — which in Europe means Tink, GoCardless, or Plaid's limited European footprint. Budgero is manual-first: you enter transactions yourself or import CSVs from your bank. Every EU bank exports CSVs. This keeps your credentials under your control and is part of why Budgero can offer true end-to-end encryption.",
+    a: 'No automatic bank connection is available. Use manual entry or import a supported file such as CSV, OFX, or CAMT.053. Preview date and number formats and reconcile balances; do not assume every bank’s export needs no adjustments.',
   },
   {
-    q: 'Is Budgero GDPR-compliant?',
-    a: "Yes. Because Budgero uses zero-knowledge encryption, your financial data is encrypted on your device before it ever reaches our servers. We literally cannot decrypt it. That makes Budgero one of the most GDPR-compliant budgeting apps available — there is no sensitive personal data for us to expose, lose, or be compelled to hand over. If full EU data sovereignty matters to you, you can also self-host on your own infrastructure.",
+    q: 'How does Budgero protect my budget?',
+    a: 'Budget contents are encrypted on your device before they sync. Cloud hosts encrypted budget data in Finland; self-hosting lets you choose your server location. Account and billing data are handled separately under the privacy policy.',
   },
   {
-    q: 'Does Budgero have investment tracking like Monarch?',
-    a: "Budgero supports manual investment tracking — you can record any asset, any currency, at any value. For European users this is usually preferable anyway, since Monarch's automatic brokerage sync does not work with European brokers (Interactive Brokers, Trading 212, DEGIRO, etc.). Manual tracking also means your portfolio stays encrypted and private.",
+    q: 'Does Budgero track investments like Monarch?',
+    a: 'Budgero lets you record asset values manually. It does not replace Monarch’s automatic brokerage connections or security-level investment tools. Decide whether a manually updated net-worth view meets your needs.',
   },
   {
-    q: 'How does Budgero bill customers in Europe?',
-    a: "Via Lemon Squeezy, our merchant of record — prices are tax-inclusive, VAT is handled for you, and every payment produces a VAT-compliant invoice downloadable from your account. For freelancers and small businesses across the EU, that means Budgero is properly deductible as a business expense. Monarch charges in USD with no local currency or VAT support.",
+    q: 'How much does Budgero cost in Europe?',
+    a: `Cloud is listed at ${pricing.monthly}/month or ${pricing.yearly}/year in USD, tax included. Check the checkout total and your payment provider’s conversion terms. Self-hosting has no software subscription fee; hosting costs are separate.`,
   },
   {
-    q: 'Is Budgero cheaper than Monarch?',
-    a: `Yes. Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year, versus Monarch at $14.99/month or $99.99/year. That is roughly a third of the price, tax included, without the USD FX fees that European Monarch customers would incur. And if you prefer to not pay anything, Budgero Self-Host is free forever on your own Docker server.`,
-  },
-  {
-    q: 'Can I import my Monarch Money data?',
-    a: 'Yes. Budgero imports CSV exports from Monarch (and from most other budgeting apps). Categories, transactions, and account balances come across. The import tool gives you a preview before confirming, so nothing is ever overwritten unexpectedly.',
-  },
-  {
-    q: 'Does Budgero work offline?',
-    a: "Yes. Budgero is a Progressive Web App with full offline support. Add transactions on a flight, review your budget on a train with no signal, or keep your financial data off the network entirely. Everything syncs automatically when you reconnect. Monarch is cloud-only.",
+    q: 'Can I import my Monarch Money transactions?',
+    a: 'You can map a Monarch transaction CSV in Budgero’s file importer. Create or select the destination accounts, check dates and amounts in the preview, then reconcile each account. CSV transaction import does not recreate every budget setting, target, or account balance history. Avoid importing overlapping date ranges because file imports do not automatically deduplicate existing transactions.',
   },
 ];
 
@@ -216,9 +149,7 @@ function renderCellValue(val: unknown, note?: string | null, isHighlight?: boole
   return (
     <div className="flex flex-col items-center gap-1">
       <span
-        className={`text-sm ${
-          isHighlight ? 'font-medium text-[#2f6246]' : 'text-foreground/65'
-        }`}
+        className={`text-sm ${isHighlight ? 'font-medium text-[#2f6246]' : 'text-foreground/65'}`}
       >
         {String(val)}
       </span>
@@ -248,7 +179,7 @@ export default function MonarchMoneyEuropeAlternativePage() {
         operatingSystem: ['Web', 'Windows', 'macOS', 'Linux'],
         url: 'https://budgero.app/monarch-money-europe-alternative',
         description:
-          'Monarch Money alternative for Europe — multi-currency budgeting in EUR, GBP, CHF, PLN and 168 currencies, with GDPR-compliant zero-knowledge encryption.',
+          'Monarch Money alternative for Europe — multi-currency budgeting in EUR, GBP, CHF, PLN and 168 currencies, with zero-knowledge budget encryption.',
         offers: [
           {
             '@type': 'Offer',
@@ -275,7 +206,7 @@ export default function MonarchMoneyEuropeAlternativePage() {
         featureList: [
           'Available across Europe',
           'Multi-currency (168 currencies) with live FX',
-          'GDPR-compliant zero-knowledge encryption',
+          'zero-knowledge budget encryption',
           'VAT-compliant billing in local currency',
           'Offline support',
           'Self-host option',
@@ -331,15 +262,15 @@ export default function MonarchMoneyEuropeAlternativePage() {
                 <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
                   The Monarch Money Alternative for Europe
                   <span className="block text-2xl md:text-3xl mt-3 text-foreground/70 font-medium">
-                    Because Monarch literally doesn&apos;t work here.
+                    Manage EUR, GBP, and CHF accounts in one budget.
                   </span>
                 </h1>
 
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Monarch Money is a US and Canada product. No European bank integrations. No
-                  non-USD currencies. No EU App Store listing. Budgero is the privacy-first
-                  alternative built for EUR, GBP, CHF, and the other 165 currencies — plus
-                  GDPR-compliant zero-knowledge encryption.
+                  Monarch officially supports the US and Canada and does not convert currencies
+                  within a budget. Budgero supports 168 currencies with end-to-end encrypted budget
+                  sync. Bring transactions through file import or manual entry; Budgero does not
+                  offer automatic bank connections.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -371,90 +302,43 @@ export default function MonarchMoneyEuropeAlternativePage() {
 
             <div className="my-12 border-t border-border" aria-hidden />
 
-            {/* Why Monarch doesn't work */}
             <section id="why-not-monarch" className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why Monarch Money Doesn&apos;t Work in Europe
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                What Monarch’s Europe and currency limits mean
               </h2>
-              <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
+              <div className="space-y-5 text-lg text-foreground/75 leading-relaxed">
                 <p>
-                  Monarch Money is a genuinely good product. It just isn&apos;t built for anyone
-                  outside North America, and the gap is wider than most people expect.
-                </p>
-
-                <div className="space-y-4">
-                  <p>
-                    <strong className="text-foreground">No European banks.</strong> Monarch&apos;s
-                    bank sync is powered by Plaid, MX, and Finicity — US-centric aggregators. No
-                    N26, no Revolut EU, no Monzo, no ING, no Santander, no BNP Paribas, no HSBC UK.
-                    You cannot connect a single European bank to Monarch.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">No non-USD currencies.</strong> Monarch
-                    displays every transaction with a &ldquo;$&rdquo; symbol regardless of the
-                    underlying currency. A €1,000 grocery bill shows as &ldquo;$1,000&rdquo;. A
-                    £50 coffee shows as &ldquo;$50&rdquo;. There is no conversion, no multi-currency
-                    awareness, and no way to set EUR, GBP, or CHF as your home currency.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">USD billing only.</strong> Monarch charges
-                    in USD through the US App Store. European users pay FX fees on every renewal.
-                    No VAT invoice is issued, which is a problem if you want to expense it as a
-                    freelancer.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">iOS app not in European stores.</strong>{' '}
-                    The Monarch iOS app is listed in the US App Store. European users have to use
-                    the web app or maintain a US Apple ID.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Data stored under US law.</strong>{' '}
-                    Monarch&apos;s servers are in the US. Your financial data is subject to US data
-                    legislation, which for many European users is a meaningful privacy concern
-                    compared to an EU-hosted or zero-knowledge alternative.
-                  </p>
-                </div>
-
-                <p className="pt-4">
-                  The short version: Monarch is a US-first product that has not meaningfully
-                  invested in internationalisation. If you live in Europe, you are not the customer
-                  Monarch was built for.
-                </p>
-              </div>
-            </section>
-
-            <div className="my-12 border-t border-border" aria-hidden />
-
-            {/* EU Banking Examples */}
-            <section className="py-16 max-w-5xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Not a Single European Bank Connects to Monarch
-                </h2>
-                <p className="text-lg text-foreground/70 max-w-3xl mx-auto">
-                  Here are the common banks across major European countries. Monarch supports none
-                  of them. Budgero works the same way with all of them — CSV import or manual
-                  entry, every bank, every currency.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {euBankingExamples.map((c) => (
-                  <div
-                    key={c.country}
-                    className="bg-card rounded-xl p-6 border border-border/70"
+                  Monarch’s{' '}
+                  <a
+                    href="https://help.monarch.com/hc/en-us/articles/19985735202068-FAQs-about-Monarch"
+                    className="underline hover:text-foreground"
                   >
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-2xl">{c.flag}</span>
-                      <h3 className="font-semibold text-foreground text-lg">{c.country}</h3>
-                    </div>
-                    <p className="text-sm text-foreground/70">{c.note}</p>
-                  </div>
-                ))}
+                    official FAQ
+                  </a>{' '}
+                  lists availability in the US and Canada. That limits the usefulness of its
+                  bank-connected workflow for a household banking in Europe.
+                </p>
+                <p>
+                  Its{' '}
+                  <a
+                    href="https://help.monarch.com/hc/en-us/articles/360048393552-International-Accounts-and-Currency"
+                    className="underline hover:text-foreground"
+                  >
+                    currency documentation
+                  </a>{' '}
+                  explains that it displays dollar amounts without differentiating or converting
+                  currencies. A £50 transaction and a €50 transaction cannot simply be combined into
+                  a meaningful total without conversion.
+                </p>
+                <p>
+                  Budgero records an original account amount and a converted budget amount. This
+                  supports a household using EUR and GBP together, but it comes with a different
+                  import workflow: you bring a statement file or enter transactions yourself.
+                </p>
               </div>
             </section>
 
-            <div className="my-12 border-t border-border" aria-hidden />
+            <MultiCurrencyExample />
 
             {/* Key Advantages */}
             <section className="py-16 max-w-4xl mx-auto">
@@ -473,8 +357,8 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     Actually Works in Europe
                   </h3>
                   <p className="text-foreground/70">
-                    Every EU country, the UK, Switzerland, Norway. CSV imports from any bank, every
-                    currency, any account type.
+                    Plan in EUR, GBP, CHF, and other supported currencies. Enter transactions
+                    manually or preview a supported bank export before importing it.
                   </p>
                 </div>
 
@@ -483,11 +367,11 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     <Euro className="w-6 h-6 text-[#2f6246]" />
                   </div>
                   <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Billed in Your Currency
+                    Tax-Inclusive Cloud Pricing
                   </h3>
                   <p className="text-foreground/70">
-                    Pay in EUR, GBP, or whichever currency you use. No USD FX fees. Proper
-                    VAT-compliant invoice on every payment.
+                    Cloud prices are listed in USD with tax included. Check your checkout total and
+                    payment provider’s conversion terms for your local cost.
                   </p>
                 </div>
 
@@ -496,7 +380,7 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     <Shield className="w-6 h-6 text-[#564176]" />
                   </div>
                   <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    GDPR by Design
+                    Encrypted Budget Contents
                   </h3>
                   <p className="text-foreground/70">
                     Zero-knowledge encryption means we cannot see your data. Even a server breach
@@ -512,8 +396,8 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     {percentCheaper}% Cheaper
                   </h3>
                   <p className="text-foreground/70">
-                    Monarch costs $99.99/year. Budgero Cloud is {pricing.yearly}/year — save
-                    ~${yearlySavings}/year. Or{' '}
+                    Monarch costs $99.99/year. Budgero Cloud is {pricing.yearly}/year — save ~$
+                    {yearlySavings}/year. Or{' '}
                     <Link href="/self-hostable" className="underline hover:text-foreground">
                       self-host
                     </Link>{' '}
@@ -581,7 +465,7 @@ export default function MonarchMoneyEuropeAlternativePage() {
                   </a>
                 </Button>
                 <span className="text-sm text-foreground/60">
-                  No card · EUR/GBP billing · 168 currencies
+                  No card · 168 currencies · Free self-host option
                 </span>
               </div>
             </section>
@@ -615,12 +499,12 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Want GDPR-grade privacy with zero-knowledge encryption</span>
+                      <span>Want end-to-end encryption for budget contents</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
                       <span>
-                        Are a freelancer or small business needing VAT-compliant invoicing
+                        Want a manually maintained household budget in multiple currencies
                       </span>
                     </li>
                     <li className="flex items-start gap-3">
@@ -648,13 +532,13 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>Only budget in USD and never touch a foreign currency</span>
+                      <span>Budget in USD or CAD without needing currency conversion</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
                       <span>
-                        Prefer fully hands-off bank sync and are willing to share bank credentials
-                        with Plaid
+                        Prefer automatic bank sync and are comfortable authorizing a supported bank
+                        connection
                       </span>
                     </li>
                   </ul>
@@ -684,6 +568,24 @@ export default function MonarchMoneyEuropeAlternativePage() {
 
             <div className="my-12 border-t border-border" aria-hidden />
 
+            <ComparisonReferences
+              reviewedOn="2026-09-05"
+              sources={[
+                {
+                  label: 'Monarch supported countries',
+                  href: 'https://help.monarch.com/hc/en-us/articles/19985735202068-FAQs-about-Monarch',
+                },
+                {
+                  label: 'Monarch international accounts and currency limits',
+                  href: 'https://help.monarch.com/hc/en-us/articles/360048393552-International-Accounts-and-Currency',
+                },
+                {
+                  label: 'Monarch subscription pricing',
+                  href: 'https://help.monarch.com/hc/en-us/articles/44815447567636-Updating-Your-Subscription',
+                },
+              ]}
+            />
+
             <TestimonialsSection />
 
             <div className="my-12 border-t border-border" aria-hidden />
@@ -695,9 +597,9 @@ export default function MonarchMoneyEuropeAlternativePage() {
                   A budgeting app that actually works in Europe.
                 </h2>
                 <p className="text-lg text-foreground/70 mb-8">
-                  Start your 35-day Budgero trial. Billed in EUR or GBP. Works with every European
-                  bank via CSV. Zero-knowledge encryption, GDPR by design, and about a third of the price
-                  of Monarch.
+                  Start your 35-day Budgero trial. Bring a supported bank export and try budgeting
+                  across currencies with zero-knowledge encryption. Cloud is {pricing.yearly}/year;
+                  self-hosting has no software subscription fee.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
@@ -728,10 +630,7 @@ export default function MonarchMoneyEuropeAlternativePage() {
                     Full Budgero vs Monarch
                   </Link>{' '}
                   ·{' '}
-                  <Link
-                    href="/ynab-alternative-europe"
-                    className="underline hover:text-foreground"
-                  >
+                  <Link href="/ynab-alternative-europe" className="underline hover:text-foreground">
                     YNAB alternative for Europe
                   </Link>
                 </p>

@@ -1,3 +1,4 @@
+import { ComparisonReferences } from '@/components/comparison-references';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Download, Import } from 'lucide-react';
@@ -10,8 +11,8 @@ export const dynamic = 'force-static';
 export const revalidate = false;
 
 export const metadata: Metadata = {
-  title: 'Budgero vs YNAB — The Free YNAB Alternative (2026)',
-  description: `Budgero vs YNAB, compared feature by feature. The free YNAB alternative: self-host at no cost, or Cloud from ${pricing.monthly}/mo — a third of YNAB's price, tax included. Import your YNAB budget in 5 minutes.`,
+  title: 'Budgero vs YNAB — Free Self-Hosting or Paid Cloud (2026)',
+  description: `Compare Budgero and YNAB on price, encryption, bank sync, and multiple currencies. Self-host Budgero free or use Cloud at ${pricing.yearly}/year.`,
   keywords: [
     'free ynab alternative',
     'ynab free alternative',
@@ -28,37 +29,112 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: 'https://budgero.app/vs-ynab' },
   openGraph: {
-    title: 'Budgero vs YNAB — The Free YNAB Alternative (2026)',
-    description:
-      "Free to self-host, or Cloud at half YNAB's price. Zero-based budgeting in 168 currencies with end-to-end encryption. Import your YNAB budget in 5 minutes.",
+    title: 'Budgero vs YNAB — Free Self-Hosting or Paid Cloud (2026)',
+    description: `Self-host Budgero free, or use Cloud at ${pricing.yearly}/year. Compare encryption, bank imports, and multi-currency budgeting with YNAB.`,
     url: 'https://budgero.app/vs-ynab',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Budgero vs YNAB — The Free YNAB Alternative (2026)',
-    description:
-      "Free to self-host, or Cloud at half YNAB's price. Zero-based budgeting in 168 currencies, end-to-end encrypted.",
+    title: 'Budgero vs YNAB — Free Self-Hosting or Paid Cloud (2026)',
+    description: `Free self-hosting or ${pricing.yearly}/year Cloud. Compare Budgero and YNAB on currencies, encryption, and bank sync.`,
   },
 };
 
 const comparisonData = [
-  { feature: 'Monthly price', cloud: `${pricing.monthly}/mo (${pricing.yearly}/yr)`, selfHost: 'Free forever', ynab: '$14.99/mo ($109/yr)' },
-  { feature: 'Free trial', cloud: '35 days, no credit card', selfHost: 'N/A — always free', ynab: '34 days' },
+  {
+    feature: 'Monthly price',
+    cloud: `${pricing.monthly}/mo (${pricing.yearly}/yr)`,
+    selfHost: 'Free forever',
+    ynab: '$14.99/mo ($109/yr)',
+  },
+  {
+    feature: 'Free trial',
+    cloud: '35 days, no credit card',
+    selfHost: 'N/A — always free',
+    ynab: '34 days',
+  },
   { feature: 'Zero-based budgeting', cloud: true, selfHost: true, ynab: true },
-  { feature: 'End-to-end encryption', cloud: 'AES-256-GCM, zero-knowledge', selfHost: 'Local encryption', ynab: false, ynabNote: 'Data stored in plaintext' },
-  { feature: 'Offline mode', cloud: true, selfHost: true, ynab: false },
-  { feature: 'Multi-currency support', cloud: '168 currencies', selfHost: '168 currencies', ynab: false, ynabNote: 'Manual workarounds only' },
-  { feature: 'Bank sync', cloud: false, selfHost: false, ynab: true, cloudNote: 'Manual entry by design', ynabNote: 'US/Canada/EU via Plaid' },
+  {
+    feature: 'End-to-end encryption',
+    cloud: 'AES-256-GCM, zero-knowledge',
+    selfHost: 'Local encryption',
+    ynab: false,
+    ynabNote: 'Encrypted at rest and in transit; not zero-knowledge',
+  },
+  {
+    feature: 'Offline access',
+    cloud: 'Installed PWA',
+    selfHost: 'Installed PWA',
+    ynab: 'Mobile offline use',
+  },
+  {
+    feature: 'Multi-currency support',
+    cloud: '168 currencies',
+    selfHost: '168 currencies',
+    ynab: false,
+    ynabNote: 'Manual workarounds only',
+  },
+  {
+    feature: 'Bank sync',
+    cloud: false,
+    selfHost: false,
+    ynab: true,
+    cloudNote: 'Manual entry by design',
+    ynabNote: 'US/Canada/EU via Plaid',
+  },
   { feature: 'YNAB data import', cloud: true, selfHost: true, ynab: 'N/A' },
-  { feature: 'Self-hosting option', cloud: false, selfHost: true, ynab: false, cloudNote: 'Use Self-Host edition' },
-  { feature: 'Works if you cancel', cloud: 'Export anytime', selfHost: 'Your data, your server', ynab: false, ynabNote: 'Lose access to budgets' },
+  {
+    feature: 'Self-hosting option',
+    cloud: false,
+    selfHost: true,
+    ynab: false,
+    cloudNote: 'Use Self-Host edition',
+  },
+  {
+    feature: 'Works if you cancel',
+    cloud: 'Export anytime',
+    selfHost: 'Your data, your server',
+    ynab: false,
+    ynabNote: 'Lose access to budgets',
+  },
   { feature: 'Mobile app', cloud: 'PWA', selfHost: 'PWA', ynab: 'Native iOS & Android' },
-  { feature: 'Shared budgets', cloud: true, selfHost: 'Via shared server', ynab: true, cloudNote: 'Encrypted shared workspaces', ynabNote: 'Up to 5 users' },
-  { feature: 'AI categorization', cloud: true, selfHost: true, ynab: false, cloudNote: 'Local LLM, optional' },
-  { feature: 'Receipt scanning', cloud: true, selfHost: true, ynab: false, cloudNote: 'AI-powered, privacy-first' },
-  { feature: 'Reports & analytics', cloud: 'Modern dashboards', selfHost: 'Modern dashboards', ynab: 'Basic reports' },
-  { feature: 'API access', cloud: true, selfHost: true, ynab: false, cloudNote: 'Push API' },
+  {
+    feature: 'Shared budgets',
+    cloud: true,
+    selfHost: 'Via shared server',
+    ynab: true,
+    cloudNote: 'Encrypted shared workspaces',
+    ynabNote: 'Up to 6 people including the group manager',
+  },
+  {
+    feature: 'AI categorization',
+    cloud: true,
+    selfHost: true,
+    ynab: false,
+    cloudNote: 'Local LLM, optional',
+  },
+  {
+    feature: 'Receipt scanning',
+    cloud: true,
+    selfHost: true,
+    ynab: false,
+    cloudNote: 'AI-powered, privacy-first',
+  },
+  {
+    feature: 'Reports & analytics',
+    cloud: 'Modern dashboards',
+    selfHost: 'Modern dashboards',
+    ynab: 'Built-in reports and insights',
+  },
+  {
+    feature: 'API access',
+    cloud: true,
+    selfHost: true,
+    ynab: true,
+    cloudNote: 'Push API',
+    ynabNote: 'Public REST API',
+  },
 ];
 
 const faqs = [
@@ -80,11 +156,11 @@ const faqs = [
   },
   {
     q: 'Can I import my YNAB budget into Budgero?',
-    a: 'Yes. Budgero imports YNAB export files and automatically maps your transactions, categories, groups, and accounts. The process takes about 5 minutes and preserves your full history.',
+    a: 'Yes. Budgero imports YNAB export files and automatically maps your transactions, categories, groups, and accounts. Use direct API import or an export ZIP, review account balances and category history, then rebuild goals and scheduled transactions.',
   },
   {
     q: 'Does Budgero connect to my bank?',
-    a: "No, and that's intentional. Bank sync requires sharing your credentials with third-party aggregators like Plaid. Budgero is manual-first: you enter transactions yourself (or scan receipts), which means your bank credentials never leave your control.",
+    a: 'No. Budgero uses manual entry and file imports instead of built-in bank connections. Other apps may connect through an aggregator, including bank-authorized token connections that do not require sharing your banking password.',
   },
   {
     q: 'How does Budgero keep my data private?',
@@ -119,7 +195,9 @@ function renderCellValue(val: unknown, note?: string, isHighlight?: boolean) {
   }
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className={`text-sm ${isHighlight ? 'font-medium text-[#2f6246]' : 'text-foreground/65'}`}>
+      <span
+        className={`text-sm ${isHighlight ? 'font-medium text-[#2f6246]' : 'text-foreground/65'}`}
+      >
         {String(val)}
       </span>
       {note && <span className="text-xs text-foreground/55">{note}</span>}
@@ -139,7 +217,7 @@ export default function VsYnabPage() {
         operatingSystem: ['Web', 'Windows', 'macOS', 'Linux'],
         url: 'https://budgero.app/vs-ynab',
         description:
-          'The free YNAB alternative — zero-based budgeting in 168 currencies with end-to-end encryption and offline mode. Free self-host edition, Cloud at half YNAB\u2019s price.',
+          'The free YNAB alternative — zero-based budgeting in 168 currencies with end-to-end encryption and offline mode. Free self-host edition, paid managed Cloud.',
         offers: [
           {
             '@type': 'Offer',
@@ -180,7 +258,12 @@ export default function VsYnabPage() {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://budgero.app/' },
-          { '@type': 'ListItem', position: 2, name: 'Budgero vs YNAB', item: 'https://budgero.app/vs-ynab' },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Budgero vs YNAB',
+            item: 'https://budgero.app/vs-ynab',
+          },
         ],
       },
     ],
@@ -212,9 +295,9 @@ export default function VsYnabPage() {
                 </h1>
 
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Everything YNAB does well — free if you self-host, half the price on Cloud.
-                  Zero-based budgeting in 168 currencies, with end-to-end encryption and offline
-                  mode. Import your YNAB budget in 5 minutes.
+                  Free if you self-host, or {pricing.yearly}/year on Cloud. Zero-based budgeting in
+                  168 currencies, with end-to-end encryption and offline mode. Import through YNAB’s
+                  API or an export ZIP and review the results.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -252,49 +335,46 @@ export default function VsYnabPage() {
                   YNAB pioneered zero-based budgeting and it changed the way a generation thinks
                   about money. But YNAB was built for the US market, and it shows. If you live in
                   Europe, the UK, Australia, Asia, or anywhere else outside North America — or if
-                  you earn or spend in multiple currencies — YNAB leaves you with workarounds instead
-                  of a product built for you.
+                  you earn or spend in multiple currencies — YNAB leaves you with workarounds
+                  instead of a product built for you.
                 </p>
 
                 <div className="space-y-4">
                   <p>
-                    <strong className="text-foreground">
-                      No native multi-currency support.
-                    </strong>{' '}
+                    <strong className="text-foreground">No native multi-currency support.</strong>{' '}
                     YNAB has no concept of currencies beyond the account level — you cannot hold
                     accounts in EUR and GBP and see a unified picture in a single home currency.
                     Expats, freelancers invoicing abroad, and cross-border households all hit the
                     same wall.
                   </p>
                   <p>
-                    <strong className="text-foreground">Bank sync is US-first.</strong> YNAB&apos;s
-                    bank sync works well in the US and Canada, thinly in parts of Europe via Plaid,
-                    and not at all in most of the world. Outside those regions you are paying full
-                    US price for a feature you cannot use.
+                    <strong className="text-foreground">Bank coverage.</strong> YNAB connects to
+                    select banks in the US, Canada, the UK, and Europe. File import and manual entry
+                    remain available without a connection. Budgero uses manual entry and file
+                    import; it has no built-in bank sync.
                   </p>
                   <p>
-                    <strong className="text-foreground">Price keeps climbing.</strong> YNAB costs
-                    $14.99/month or $109/year — roughly €100/year at current rates. For an app that
-                    does not track investments, does not support multi-currency budgeting natively,
-                    and stores all your financial data on their servers, that is a hard sell in
-                    2026.
+                    <strong className="text-foreground">Subscription cost.</strong> YNAB lists
+                    $14.99/month or $109/year in USD, plus applicable taxes. Budgero Cloud is
+                    {pricing.monthly}/month or {pricing.yearly}/year, tax included. Self-hosting has
+                    no software fee; you supply hosting, maintenance, and backups.
                   </p>
                   <p>
-                    <strong className="text-foreground">Privacy concerns.</strong> YNAB stores your
-                    budget data on their servers in plaintext. If you connect your bank, your
-                    credentials flow through Plaid, a third-party data aggregator. You are trusting
-                    two companies with your complete financial picture.
+                    <strong className="text-foreground">Encryption model.</strong> YNAB encrypts
+                    data at rest and in transit with access controls. Budgero encrypts budget
+                    contents on your device before sync and does not hold the keys needed to read
+                    them. Bank connections can use bank-authorized tokens; they do not always
+                    require sharing a password with an aggregator.
                   </p>
                   <p>
-                    <strong className="text-foreground">No offline mode.</strong> YNAB is a web-first
-                    app. If you are on a plane, in a rural area, or just prefer to budget without an
-                    internet connection, you are out of luck.
+                    <strong className="text-foreground">Offline workflows.</strong> YNAB supports
+                    mobile offline use. Budgero’s installed PWA supports offline budgeting too. Both
+                    need a connection for cross-device sync, and online data feeds need internet.
                   </p>
                   <p>
-                    <strong className="text-foreground">Vendor lock-in.</strong> Cancel your YNAB
-                    subscription and you lose access to your data. Your budget history, your
-                    categories, your years of careful tracking, gone unless you export before your
-                    subscription lapses.
+                    <strong className="text-foreground">Migration.</strong> Save a YNAB export while
+                    your subscription is active. After importing, reconcile your accounts and review
+                    category history before switching your daily budgeting workflow.
                   </p>
                 </div>
               </div>
@@ -355,9 +435,9 @@ export default function VsYnabPage() {
               <p className="mt-6 text-foreground/60 text-sm max-w-3xl">
                 <strong className="text-foreground">Key takeaway:</strong> Budgero Cloud gives you
                 everything YNAB does for zero-based budgeting, plus encryption, offline mode,
-                multi-currency, and AI features, at a lower price. The trade-off is no automatic bank
-                sync: Budgero is manual-first by design, because that is how you keep your data truly
-                private.
+                multi-currency, and AI features, at a lower price. The trade-off is no automatic
+                bank sync: Budgero is manual-first by design, because that is how you keep your data
+                truly private.
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -410,13 +490,13 @@ export default function VsYnabPage() {
                   },
                   {
                     step: '3',
-                    title: 'Import Your YNAB File',
-                    text: 'In Budgero, open Settings and click "Import." Drop in your YNAB export file. Budgero automatically maps your categories, groups, and accounts. You will see a preview of everything before confirming.',
+                    title: 'Import Through the API or ZIP',
+                    text: 'In Budgero, choose Import from YNAB. Connect directly through the API or upload an export ZIP. Review the importer’s results and any reported differences.',
                   },
                   {
                     step: '4',
                     title: 'Review and Adjust',
-                    text: 'Take a few minutes to review your imported data. Budgero preserves your category structure, but you might want to tweak a few names or merge groups. Your full transaction history is there, ready to go.',
+                    text: 'Review imported balances, account types, and category history. Resolve any warnings, then rebuild goals and scheduled transactions.',
                   },
                   {
                     step: '5',
@@ -440,8 +520,12 @@ export default function VsYnabPage() {
               </div>
 
               <p className="mt-8 text-center text-foreground/60">
-                The whole process takes about 5 minutes. No re-entering transactions. No rebuilding
-                categories from scratch. No lost history.
+                Review balances, account types, and debt links after importing. Rebuild goals and
+                scheduled transactions. Follow the{' '}
+                <Link href="/docs/ynab-import" className="underline hover:text-foreground">
+                  YNAB migration checklist
+                </Link>{' '}
+                before relying on the new budget.
               </p>
             </section>
 
@@ -460,10 +544,11 @@ export default function VsYnabPage() {
                   </h3>
                   <p className="text-lg text-foreground/75 leading-relaxed">
                     Budgero encrypts your financial data on your device before it ever reaches our
-                    servers. We use AES-256-GCM encryption with PBKDF2-HMAC-SHA256 key derivation, the same
-                    cryptographic standards banks and security-critical applications rely on. The
-                    difference: even Budgero&apos;s own team cannot read your budget. With YNAB, your
-                    data sits on their servers in readable form.
+                    servers. We use AES-256-GCM encryption with PBKDF2-HMAC-SHA256 key derivation,
+                    the same cryptographic standards banks and security-critical applications rely
+                    on. The difference: even Budgero&apos;s own team cannot read your budget. With
+                    YNAB, your data is encrypted at rest and in transit with server-managed access
+                    controls.
                   </p>
                 </div>
 
@@ -472,9 +557,12 @@ export default function VsYnabPage() {
                     Works Everywhere, in Every Currency
                   </h3>
                   <p className="text-lg text-foreground/75 leading-relaxed">
-                    YNAB was built for the US market. Budgero was built for the world. Track spending
-                    in{' '}
-                    <Link href="/multi-currency-budgeting" className="underline hover:text-foreground">
+                    YNAB was built for the US market. Budgero was built for the world. Track
+                    spending in{' '}
+                    <Link
+                      href="/multi-currency-budgeting"
+                      className="underline hover:text-foreground"
+                    >
                       168 currencies
                     </Link>{' '}
                     with automatic conversion rates and a unified dashboard in your home currency.
@@ -547,8 +635,7 @@ export default function VsYnabPage() {
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
                       <span>
-                        Care about financial data privacy and do not want your budget stored in
-                        plaintext
+                        Want budget contents encrypted on your device before they reach a server
                       </span>
                     </li>
                     <li className="flex items-start gap-3">
@@ -563,7 +650,9 @@ export default function VsYnabPage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Prefer manual transaction entry that keeps you aware of every dollar</span>
+                      <span>
+                        Prefer manual transaction entry that keeps you aware of every dollar
+                      </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
@@ -584,9 +673,7 @@ export default function VsYnabPage() {
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Need automatic bank sync and will not consider manual entry
-                      </span>
+                      <span>Need automatic bank sync and will not consider manual entry</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
@@ -597,9 +684,7 @@ export default function VsYnabPage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Are happy with YNAB&apos;s pricing and privacy approach
-                      </span>
+                      <span>Are happy with YNAB&apos;s pricing and privacy approach</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
@@ -642,6 +727,22 @@ export default function VsYnabPage() {
 
             <div className="my-12 border-t border-border" aria-hidden />
 
+            <ComparisonReferences
+              reviewedOn="2026-09-05"
+              sources={[
+                { label: 'YNAB pricing', href: 'https://www.ynab.com/pricing' },
+                {
+                  label: 'YNAB security and bank authorization',
+                  href: 'https://www.ynab.com/security',
+                },
+                {
+                  label: 'YNAB features, offline use, and family sharing',
+                  href: 'https://www.ynab.com/features',
+                },
+                { label: 'YNAB public API', href: 'https://api.ynab.com/' },
+              ]}
+            />
+
             <TestimonialsSection />
 
             <div className="my-12 border-t border-border" aria-hidden />
@@ -669,7 +770,10 @@ export default function VsYnabPage() {
                 </Button>
                 <p className="mt-6 text-sm text-foreground/60">
                   Prefer to self-host?{' '}
-                  <Link href="/self-hosted-ynab-alternative" className="underline hover:text-foreground">
+                  <Link
+                    href="/self-hosted-ynab-alternative"
+                    className="underline hover:text-foreground"
+                  >
                     Run Budgero on your own server for free
                   </Link>
                 </p>

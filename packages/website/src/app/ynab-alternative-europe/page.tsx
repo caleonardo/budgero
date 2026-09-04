@@ -1,6 +1,8 @@
+import { ComparisonReferences } from '@/components/comparison-references';
+import { MultiCurrencyExample } from '@/components/multi-currency-example';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Check, X, Download, Globe, Shield, Euro } from 'lucide-react';
+import { ArrowRight, Check, X, Download, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { TestimonialsSection } from '@/components/landing/Testimonials';
@@ -11,7 +13,7 @@ export const revalidate = false;
 
 export const metadata: Metadata = {
   title: 'YNAB Alternative for Europe — Hosted in Finland | Budgero',
-  description: `The YNAB alternative built for Europe. EUR, GBP, CHF, PLN and 168 currencies in one budget, end-to-end encrypted, data hosted in Finland, and no telemetry unless you allow it. From ${pricing.monthly}/mo. 35-day free trial.`,
+  description: `The YNAB alternative built for Europe. EUR, GBP, CHF, PLN and 168 currencies in one budget, end-to-end encrypted, data hosted in Finland. From ${pricing.monthly}/mo. 35-day free trial.`,
   keywords: [
     'ynab alternative europe',
     'ynab alternative eu',
@@ -32,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'YNAB Alternative for Europe — Hosted in Finland | Budgero',
     description:
-      'The YNAB alternative built for Europe. EUR, GBP, CHF, PLN and 168 currencies in one budget, end-to-end encrypted, data hosted in Finland, no telemetry unless you allow it.',
+      'The YNAB alternative built for Europe. EUR, GBP, CHF, PLN and 168 currencies in one budget, end-to-end encrypted, data hosted in Finland.',
     url: 'https://budgero.app/ynab-alternative-europe',
     type: 'website',
   },
@@ -40,66 +42,45 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'YNAB Alternative for Europe — Hosted in Finland | Budgero',
     description:
-      'EUR, GBP, CHF and 168 currencies in one budget. End-to-end encrypted, hosted in Finland, no telemetry by default.',
+      'EUR, GBP, CHF and 168 currencies in one budget. End-to-end encrypted, hosted in Finland.',
   },
 };
 
 const comparisonData = [
   {
-    feature: 'Works across Europe',
-    budgero: true,
-    ynab: 'Partial',
-    budgeroNote: 'Every country, every currency',
-    ynabNote: 'UK/EU bank sync via Plaid only (select banks)',
+    feature: 'Bank transactions',
+    budgero: 'Manual or file import',
+    ynab: 'Direct Import, file import, or manual',
+    budgeroNote: 'No automatic bank connection',
+    ynabNote: 'Select banks in supported UK/EU countries',
   },
   {
     feature: 'Multi-currency in one budget',
     budgero: '168 currencies',
     ynab: false,
-    budgeroNote: 'EUR, GBP, CHF, PLN, SEK, NOK + live FX',
-    ynabNote: 'One currency per budget, no conversion',
+    budgeroNote: 'Original amounts plus conversion to your budget currency',
+    ynabNote: 'One currency per plan; no native conversion',
   },
   {
     feature: 'Annual price',
     budgero: `${pricing.yearly}/year`,
-    ynab: '$109/year (~€100)',
-    budgeroNote: 'Or free with Self-Host',
-    ynabNote: null,
+    ynab: '$109/year',
+    budgeroNote: 'Or free with self-hosting; hosting costs may apply',
+    ynabNote: 'USD; applicable taxes extra',
   },
   {
-    feature: 'Where your data lives',
-    budgero: 'Finland 🇫🇮',
-    ynab: 'United States',
-    budgeroNote: 'EU jurisdiction, zero-knowledge encrypted',
-    ynabNote: 'US servers, subject to US data law',
-  },
-  {
-    feature: 'Telemetry & tracking',
-    budgero: 'Opt-in only',
-    ynab: true,
-    budgeroNote: 'No telemetry unless you explicitly allow it',
-    ynabNote: 'Third-party analytics by default',
-  },
-  {
-    feature: 'End-to-end encryption',
+    feature: 'End-to-end budget encryption',
     budgero: true,
     ynab: false,
-    budgeroNote: 'AES-256-GCM, zero-knowledge',
-    ynabNote: 'Plaintext on their servers',
+    budgeroNote: 'AES-256-GCM; keys stay on your devices',
+    ynabNote: 'Encryption at rest and in transit; not zero-knowledge',
   },
   {
-    feature: 'Offline mode',
+    feature: 'Offline access',
     budgero: true,
-    ynab: false,
-    budgeroNote: 'PWA works fully offline',
-    ynabNote: 'Requires internet',
-  },
-  {
-    feature: 'Billing in your currency',
-    budgero: true,
-    ynab: false,
-    budgeroNote: 'VAT-compliant EU invoicing',
-    ynabNote: 'USD-only charges',
+    ynab: 'Mobile offline use',
+    budgeroNote: 'Installed PWA; reconnect to sync',
+    ynabNote: 'Reconnect for bank imports and sync',
   },
   {
     feature: 'Zero-based budgeting',
@@ -112,101 +93,46 @@ const comparisonData = [
     feature: 'YNAB data import',
     budgero: true,
     ynab: 'N/A',
-    budgeroNote: 'Full categories, transactions, history',
+    budgeroNote: 'Direct API or export ZIP; review after import',
     ynabNote: null,
   },
   {
     feature: 'Self-host option',
     budgero: true,
     ynab: false,
-    budgeroNote: 'Docker, your EU server',
+    budgeroNote: 'Docker; choose your hosting location',
     ynabNote: null,
-  },
-];
-
-const euBankingExamples = [
-  {
-    country: 'Germany',
-    flag: '🇩🇪',
-    banks: 'N26, DKB, Deutsche Bank, ING, Commerzbank',
-    pain: 'YNAB\u2019s Plaid sync covers only select German banks — N26, DKB, and regional Sparkassen still mean manual CSV.',
-  },
-  {
-    country: 'United Kingdom',
-    flag: '🇬🇧',
-    banks: 'Monzo, Revolut, Starling, HSBC, Lloyds',
-    pain: 'YNAB returned in 2024–25 via Plaid, but Starling and Lloyds are still outside coverage — and billing stays in USD.',
-  },
-  {
-    country: 'Netherlands',
-    flag: '🇳🇱',
-    banks: 'ING, ABN AMRO, Rabobank, Bunq',
-    pain: 'Plaid coverage is spotty and iDEAL-linked transfers rarely show up correctly.',
-  },
-  {
-    country: 'Switzerland',
-    flag: '🇨🇭',
-    banks: 'UBS, Raiffeisen, PostFinance, Revolut CH',
-    pain: 'CHF is not a first-class citizen in YNAB. Manual FX conversion every time.',
-  },
-  {
-    country: 'Nordics',
-    flag: '🇸🇪',
-    banks: 'Swedbank, Nordea, SEB, DNB',
-    pain: 'SEK and NOK are not supported as budget currencies alongside EUR.',
-  },
-  {
-    country: 'Central Europe',
-    flag: '🇵🇱',
-    banks: 'mBank, PKO BP, Revolut, ING PL',
-    pain: 'PLN, CZK, HUF are second-class currencies in most US-built apps.',
   },
 ];
 
 const faqs = [
   {
-    q: 'Does Budgero work across Europe?',
-    a: "Yes. Budgero works in every EU country plus the UK, Switzerland, Norway, and Iceland. The app, billing, onboarding, and support are all built without US-centric assumptions. Our users are concentrated across Germany, the UK, the Netherlands, France, Spain, Poland, and Sweden.",
-  },
-  {
-    q: 'Is Budgero GDPR-compliant?',
-    a: "Yes — structurally, not just on paper. Your data is hosted in Finland under EU jurisdiction, and it is encrypted on your device before it ever reaches our servers, so we literally cannot decrypt it. There is no sensitive personal data for us to expose, lose, or be compelled to hand over, and no telemetry runs unless you explicitly enable it. You can also self-host on your own EU infrastructure if you prefer full data sovereignty.",
-  },
-  {
-    q: 'What happened to YNAB in the UK and Europe?',
-    a: "YNAB officially withdrew from the UK in 2022, citing the cost of maintaining UK-specific features. In 2024\u201325 it returned via Plaid's Open Banking integration — UK users can now link select banks (Revolut, Monzo, Nationwide, NatWest, HSBC, American Express and others) and import transactions directly. Coverage is real but selective: many UK and EU banks are still outside Plaid's supported list, billing remains in USD, there is still no multi-currency support, EU-specific flows like SEPA direct debits or iDEAL-linked transfers don't map cleanly, and VAT-compliant invoicing isn't offered. So YNAB works in the UK again, it just doesn't work the way most European households need it to.",
+    q: 'Does YNAB work in Europe?',
+    a: 'Yes. YNAB offers Direct Import for select banks in supported European countries, including the UK, Germany, France, and the Netherlands. Check your specific bank and account type. Manual entry and file import are also available without a bank connection.',
   },
   {
     q: 'Can I budget in EUR, GBP, and other European currencies?',
-    a: `Yes. Budgero supports 168 currencies natively — EUR, GBP, CHF, PLN, SEK, NOK, DKK, CZK, HUF, RON, HRK, BGN and more. You can hold accounts in multiple currencies simultaneously, see your total net worth in your home currency, and assign budget amounts across currencies. Live exchange rates update automatically.`,
+    a: 'Budgero lets accounts in different currencies share a single budget. Choose a budget currency, keep each account’s original amounts, and use fetched or custom exchange rates for budget totals. YNAB uses one currency per plan without native conversion.',
   },
   {
     q: 'How much does Budgero cost in euros?',
-    a: `Budgero Cloud is ${pricing.monthly}/month or ${pricing.yearly}/year. At current rates that is roughly €3.50/month or €30/year — about a third of what YNAB charges, tax included. Payments run through Lemon Squeezy, our merchant of record, which handles VAT and issues proper VAT-compliant invoices for freelancers and businesses. If you prefer to not pay anything, Budgero Self-Host is free forever on your own server.`,
-  },
-  {
-    q: 'Can I get a VAT invoice?',
-    a: "Yes. Every payment generates a VAT-compliant invoice downloadable from your account. For freelancers and small businesses across the EU, this means Budgero is properly deductible as a business expense. YNAB does not issue VAT invoices by default.",
+    a: `Budgero Cloud is listed in USD at ${pricing.monthly}/month or ${pricing.yearly}/year, tax included. Check the checkout total and your payment provider’s conversion terms for the euro cost. Self-hosting has no software subscription fee; any hosting costs are separate.`,
   },
   {
     q: 'Can I import my YNAB budget?',
-    a: 'Yes. Budgero imports YNAB export files directly. Categories, transactions, budget groups, and accounts come across intact. The process takes about 5 minutes. Your years of YNAB history are preserved.',
+    a: 'Yes. Connect through the YNAB API or import an export ZIP. Accounts, categories, transactions, and monthly assignments can be imported. Review the import results and account balances, and rebuild goals and scheduled transactions. The import guide explains the differences between the two methods.',
   },
   {
     q: 'Does Budgero connect to European banks?',
-    a: "No, and that is deliberate. Automatic bank sync requires sharing your banking credentials with a third-party aggregator like Plaid or Tink. Budgero is manual-first: you either enter transactions yourself or import a CSV from your bank. This keeps your credentials under your control and is part of why Budgero can offer true end-to-end encryption. If automatic bank sync is a dealbreaker, Budgero is not the right choice.",
+    a: 'Budgero has no automatic bank connection. Enter transactions manually or import a supported statement file, such as CSV, OFX, or CAMT.053. Check your bank’s export and preview its dates, amounts, and account mapping before importing.',
   },
   {
-    q: 'Where is my data stored?',
-    a: "In Finland. Budgero Cloud runs on EU infrastructure under EU jurisdiction — your encrypted data never sits on US servers. And because it is encrypted on your device with a key we never see, even we cannot read it where it sits. If you want full control over hosting location, Budgero Self-Host lets you run the same app on your own server with Docker in under an hour.",
+    q: 'Where is my budget stored?',
+    a: 'Budgero Cloud hosts encrypted budget data in Finland. Budget contents are encrypted on your device before sync. Account and billing information are handled separately, as described in our privacy policy. Self-hosting lets you choose where to run your server.',
   },
   {
     q: 'Does Budgero work offline?',
-    a: "Yes. Budgero is a Progressive Web App with full offline support. Add transactions on a train without signal, review your budget on a flight, or keep your data off the network entirely. Everything syncs automatically when you reconnect.",
-  },
-  {
-    q: 'Does Budgero collect telemetry or usage analytics?',
-    a: 'Not unless you explicitly allow it. By default the app sends no telemetry, no usage tracking, and no analytics events. If you opt in, anonymized diagnostics help us fix bugs — and you can turn it off again at any time.',
+    a: 'Yes. Once set up, the installed Progressive Web App lets you enter transactions and review your budget offline. Reconnect to sync between devices and refresh exchange rates; use cached or manual rates while offline.',
   },
 ];
 
@@ -226,9 +152,7 @@ function renderCellValue(val: unknown, note?: string | null, isHighlight?: boole
   return (
     <div className="flex flex-col items-center gap-1">
       <span
-        className={`text-sm ${
-          isHighlight ? 'font-medium text-[#2f6246]' : 'text-foreground/65'
-        }`}
+        className={`text-sm ${isHighlight ? 'font-medium text-[#2f6246]' : 'text-foreground/65'}`}
       >
         {String(val)}
       </span>
@@ -277,7 +201,6 @@ export default function YnabAlternativeEuropePage() {
           'Zero-knowledge encryption (AES-256-GCM)',
           'Multi-currency (168 currencies) with live FX rates',
           'Data hosted in Finland (EU)',
-          'No telemetry unless explicitly enabled',
           'VAT-compliant invoicing',
           'Offline support',
           'YNAB import',
@@ -340,10 +263,10 @@ export default function YnabAlternativeEuropePage() {
                 </h1>
 
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  YNAB bills in USD, still doesn&apos;t do multi-currency, and sends your bank
-                  data through Plaid. Budgero is a zero-based budgeting app built with EU-first
-                  currencies, zero-knowledge privacy, and proper VAT invoicing — at roughly a third
-                  the price.
+                  Keep zero-based budgeting while managing EUR, GBP, CHF, and other currencies
+                  together. Budgero offers encrypted budget sync hosted in Finland, manual or file
+                  import, and Cloud at {pricing.yearly}/year. YNAB supports select European bank
+                  connections; choose Budgero if currency conversion or self-hosting matters more.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -375,64 +298,33 @@ export default function YnabAlternativeEuropePage() {
 
             <div className="my-12 border-t border-border" aria-hidden />
 
-            {/* Why European YNAB users are leaving */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Why European YNAB Users Are Leaving
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                Choosing a YNAB alternative in Europe
               </h2>
-              <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
+              <div className="space-y-5 text-lg text-foreground/75 leading-relaxed">
                 <p>
-                  YNAB is a great American app. The operative word is <em>American</em>. The
-                  envelope-budgeting philosophy travels well. The actual product does not.
+                  Start with the problem you need to solve. If your budget uses one currency and
+                  YNAB connects to your bank, its native apps and Direct Import may already suit
+                  you. Budgero is worth considering when you need several account currencies in one
+                  budget, end-to-end encryption, or your own server.
                 </p>
-
-                <div className="space-y-4">
-                  <p>
-                    <strong className="text-foreground">YNAB&apos;s UK return is via Plaid.</strong>{' '}
-                    YNAB withdrew from the UK in 2022 and returned in 2024–25 through Plaid&apos;s
-                    Open Banking integration. Coverage is real but selective — Revolut, Monzo,
-                    Nationwide, NatWest, HSBC and American Express are in; many smaller UK
-                    institutions still aren&apos;t. And every connection routes your transaction
-                    data through Plaid as a third party.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">EU bank sync is uneven.</strong> YNAB&apos;s
-                    direct import covers select EU banks via Plaid. If you bank with N26, Bunq,
-                    Revolut EU, or any of hundreds of smaller regional banks outside Plaid&apos;s
-                    coverage list, you&apos;re still on CSV exports.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">
-                      Multi-currency is effectively not supported.
-                    </strong>{' '}
-                    YNAB treats each account as a single currency and offers no home-currency
-                    rollup. Expats, cross-border households, freelancers invoicing abroad, and
-                    anyone who lives between EUR and GBP hit the wall immediately.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">
-                      No VAT-compliant invoicing for freelancers.
-                    </strong>{' '}
-                    YNAB does not issue proper VAT invoices. If you are a freelancer in Germany,
-                    France, Italy, or Spain, that matters at tax time.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Data lives under US law.</strong> YNAB
-                    stores your budget on US servers, subject to US subpoenas and data legislation.
-                    For Europeans who care about GDPR and data sovereignty, that is a real concern —
-                    especially when the data is stored in plaintext.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Billed in USD.</strong> YNAB is
-                    $14.99/month or $109/year — roughly €100/year once you include FX fees. For
-                    an app that still doesn&apos;t natively support your currency or your tax
-                    regime, that&apos;s a hard sell in 2026.
-                  </p>
-                </div>
+                <p>
+                  For example, a household earning GBP while paying rent in EUR needs a consistent
+                  conversion rule. A traveller who only wants automatic imports from a German bank
+                  has a different requirement. Currency support does not establish bank
+                  connectivity.
+                </p>
+                <p>
+                  For migration,{' '}
+                  <Link href="/docs/ynab-import" className="underline hover:text-foreground">
+                    connect through YNAB’s API or import its export ZIP
+                  </Link>
+                  . Compare account balances and category history before relying on the new budget.
+                  Rebuild targets and scheduled transactions, and keep your source export.
+                </p>
               </div>
             </section>
-
-            <div className="my-12 border-t border-border" aria-hidden />
 
             {/* Comparison Table */}
             <section id="comparison" className="py-16 max-w-5xl mx-auto">
@@ -493,178 +385,61 @@ export default function YnabAlternativeEuropePage() {
                   </a>
                 </Button>
                 <span className="text-sm text-foreground/60">
-                  No card · 168 currencies · VAT-compliant
+                  No card · 168 currencies · Free self-host option
                 </span>
               </div>
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
 
-            {/* EU Banking Landscape */}
-            <section className="py-16 max-w-5xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Budgero Understands the European Banking Landscape
-                </h2>
-                <p className="text-lg text-foreground/70 max-w-3xl mx-auto">
-                  Plaid does not. Budgero skips the bank-aggregator middleman entirely — which means
-                  it works the same everywhere, for every bank, with every currency.
-                </p>
-              </div>
+            <MultiCurrencyExample />
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {euBankingExamples.map((c) => (
-                  <div
-                    key={c.country}
-                    className="bg-card rounded-xl p-6 border border-border/70"
-                  >
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-2xl">{c.flag}</span>
-                      <h3 className="font-semibold text-foreground text-lg">{c.country}</h3>
-                    </div>
-                    <p className="text-sm text-foreground/65 mb-3">
-                      <strong className="text-foreground/85">Common banks:</strong> {c.banks}
-                    </p>
-                    <p className="text-sm text-foreground/70">
-                      <strong className="text-foreground/85">YNAB problem:</strong> {c.pain}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <p className="mt-8 text-center text-foreground/60 max-w-2xl mx-auto">
-                In Budgero, it does not matter which bank you use. You import CSVs or enter
-                transactions yourself, and every currency works the same way — whether it is EUR,
-                GBP, CHF, PLN, SEK, or anything else.
-              </p>
-            </section>
-
-            <div className="my-12 border-t border-border" aria-hidden />
-
-            {/* Multi-currency deep section */}
             <section className="py-16 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-                Real Multi-Currency, Not &ldquo;One Currency Per Budget&rdquo;
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                Encrypted budget sync hosted in Finland
               </h2>
-              <div className="space-y-6 text-lg text-foreground/75 leading-relaxed">
+              <div className="space-y-5 text-lg text-foreground/75 leading-relaxed">
                 <p>
-                  A lot of European budgeters have one budget for EUR and another for GBP. That
-                  works for exactly nobody. If rent goes out in GBP, groceries in EUR, and your
-                  salary arrives in whichever of the two your employer decided, you need one unified
-                  picture.
+                  Budgero encrypts budget contents on your device before syncing them to Cloud.
+                  Hosting in Finland and end-to-end encryption address different needs: one
+                  determines the server location, while the other limits access to budget contents.
                 </p>
                 <p>
-                  Budgero lets you hold accounts in any of{' '}
-                  <Link
-                    href="/multi-currency-budgeting"
-                    className="underline hover:text-foreground"
-                  >
-                    168 currencies
+                  Encryption does not remove every category of personal information. Read our{' '}
+                  <Link href="/privacy" className="underline hover:text-foreground">
+                    privacy policy
                   </Link>{' '}
-                  inside the same budget. Pick a home currency (say, EUR). Every transaction in GBP,
-                  CHF, PLN, or SEK is automatically converted at the live exchange rate. Your net
-                  worth rolls up in your home currency. Your budget envelopes work across currencies
-                  transparently.
+                  for account and billing data, and our{' '}
+                  <Link href="/docs/security" className="underline hover:text-foreground">
+                    security guide
+                  </Link>{' '}
+                  for key management and recovery. You can also{' '}
+                  <Link href="/self-hostable" className="underline hover:text-foreground">
+                    self-host
+                  </Link>{' '}
+                  and manage your own server and backups.
+                </p>
+              </div>
+            </section>
+
+            <section className="py-16 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                Cloud pricing and self-hosting costs
+              </h2>
+              <div className="space-y-5 text-lg text-foreground/75 leading-relaxed">
+                <p>
+                  Budgero Cloud costs {pricing.monthly}/month or {pricing.yearly}/year in USD, tax
+                  included. Lemon Squeezy handles checkout as merchant of record. Check the checkout
+                  total and your payment provider’s exchange terms for the amount you will pay in
+                  euros or pounds.
                 </p>
                 <p>
-                  This is the number one reason Europeans switch. YNAB has never offered this
-                  natively, and the community workarounds (multiple budgets, manual FX conversion)
-                  break down within a month.
+                  Self-hosting has no Budgero subscription fee. You provide the server, updates, and
+                  backups; the cost depends on whether you use hardware you already own or a paid
+                  hosting service.
                 </p>
               </div>
             </section>
-
-            <div className="my-12 border-t border-border" aria-hidden />
-
-            {/* GDPR and privacy */}
-            <section className="py-16 max-w-3xl mx-auto">
-              <div className="bg-card rounded-2xl p-8 border border-border/70">
-                <div className="flex items-center gap-3 mb-4">
-                  <Shield className="w-8 h-8 text-[#2f6246]" />
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                    Your Data Lives in Finland — and We Can&apos;t Read It
-                  </h2>
-                </div>
-                <p className="text-lg text-foreground/75 leading-relaxed mb-4">
-                  Budgero Cloud is hosted in Finland, in the EU, under EU jurisdiction — not on US
-                  servers subject to US data law. And before your data even gets there, it is
-                  encrypted on your device with a key that never leaves it. We cannot decrypt your
-                  budget — not for marketing, not for support, not for subpoenas.
-                </p>
-                <p className="text-lg text-foreground/75 leading-relaxed mb-4">
-                  Concretely, that means:
-                </p>
-                <ul className="space-y-3 text-foreground/75">
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      No telemetry, no usage tracking, no analytics — unless you explicitly turn
-                      it on. The app does not phone home by default.
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Your data export request is instant — we hand you your encrypted blob and
-                      that is everything we have.
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Right to be forgotten is mechanical — delete your account and your encrypted
-                      blob is gone. There is no shadow copy in an analytics pipeline.
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Data breach risk is minimized — even a full server compromise yields
-                      encrypted gibberish, not your financial history.
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Full data sovereignty is one Docker command away — run{' '}
-                      <Link
-                        href="/self-hostable"
-                        className="underline hover:text-foreground"
-                      >
-                        Budgero Self-Host
-                      </Link>{' '}
-                      on your own EU server if you want total control.
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </section>
-
-            <div className="my-12 border-t border-border" aria-hidden />
-
-            {/* Pricing in EUR context */}
-            <section className="py-16 max-w-3xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 mb-4">
-                <Euro className="w-6 h-6 text-foreground/70" />
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                  Priced for Europe
-                </h2>
-              </div>
-              <p className="text-lg text-foreground/75 leading-relaxed mb-6">
-                Budgero Cloud is {pricing.monthly}/month or {pricing.yearly}/year — roughly €3.50
-                per month, or around €30 per year. That is about a third of what YNAB charges, tax included. Payments
-                are handled by Lemon Squeezy as merchant of record — VAT is included in the
-                price and handled for you, and every payment produces a VAT-compliant invoice
-                that you can hand straight to your accountant.
-              </p>
-              <p className="text-lg text-foreground/75 leading-relaxed">
-                If you would rather not pay at all, Budgero Self-Host is free forever. Full feature
-                parity. Runs on a €5/month VPS in a data center of your choosing — which, for many
-                European users, is itself the point.
-              </p>
-            </section>
-
-            <div className="my-12 border-t border-border" aria-hidden />
 
             {/* Who This Is For */}
             <section className="py-16 max-w-4xl mx-auto">
@@ -689,13 +464,11 @@ export default function YnabAlternativeEuropePage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>Are a freelancer who needs VAT-compliant invoices</span>
+                      <span>Want to keep EUR and GBP accounts in one budget</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                      <span>
-                        Care that your financial data is not stored in plaintext on US servers
-                      </span>
+                      <span>Want budget contents encrypted before they reach the server</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
@@ -716,10 +489,7 @@ export default function YnabAlternativeEuropePage() {
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Only use USD and are based in the US (Budgero works, but YNAB is optimized
-                        for you)
-                      </span>
+                      <span>Use one budget currency and have a supported bank connection</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
@@ -733,9 +503,7 @@ export default function YnabAlternativeEuropePage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>
-                        Are not concerned about data sovereignty or encryption-at-rest guarantees
-                      </span>
+                      <span>Prefer a managed service and do not need self-hosting</span>
                     </li>
                   </ul>
                 </div>
@@ -760,6 +528,25 @@ export default function YnabAlternativeEuropePage() {
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
+
+            <ComparisonReferences
+              reviewedOn="2026-09-05"
+              sources={[
+                {
+                  label: 'YNAB Direct Import in Europe',
+                  href: 'https://support.ynab.com/en_us/direct-import-in-europe-Syae1z_A9',
+                },
+                { label: 'YNAB pricing', href: 'https://www.ynab.com/pricing' },
+                {
+                  label: 'YNAB security and optional bank connections',
+                  href: 'https://www.ynab.com/security',
+                },
+                {
+                  label: 'YNAB features, including mobile offline access',
+                  href: 'https://www.ynab.com/features',
+                },
+              ]}
+            />
 
             <TestimonialsSection />
 

@@ -1,3 +1,4 @@
+import { ComparisonReferences } from '@/components/comparison-references';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, Globe, Shield, Cpu, DollarSign } from 'lucide-react';
@@ -139,11 +140,11 @@ const faqs = [
   },
   {
     q: 'Does Budgero connect to my bank like Monarch Money does?',
-    a: 'No, and that is by design. Bank sync requires sharing credentials with a third-party aggregator (Plaid, MX, Tink), which limits the providers you can use, restricts which countries the app works in, and prevents true zero-knowledge encryption. Budgero is manual-first: enter transactions yourself, import CSVs from any bank in the world, or use our Push API for DIY automation. The trade-off is that Budgero works literally everywhere, your credentials stay yours, and your data is end-to-end encrypted.',
+    a: 'Budgero has no built-in bank sync. Enter transactions manually, import a supported bank statement, or write your own automation with the Push API. Preview file formats and reconcile imported balances. Budget contents are encrypted on your device before sync; Budgero does not ask for your bank login.',
   },
   {
     q: 'Can I import my Monarch Money data into Budgero?',
-    a: 'Yes. Budgero imports CSV exports from Monarch (and from most other budgeting apps including YNAB, Mint, EveryDollar, and Goodbudget). Categories, transactions, and account balances come across. You get a preview before confirming, so nothing is overwritten unexpectedly. Most users finish migrating in under 15 minutes.',
+    a: 'Yes. Budgero imports CSV exports from Monarch (and from most other budgeting apps including YNAB, Mint, EveryDollar, and Goodbudget). Map the transaction columns, choose destination accounts, review the preview, and reconcile balances afterward. CSV import does not recreate every budget setting or historical balance. Avoid overlapping date ranges; file imports do not automatically deduplicate existing transactions.',
   },
   {
     q: 'Does Budgero support shared budgets like Monarch Money?',
@@ -159,7 +160,7 @@ const faqs = [
   },
   {
     q: 'Can I self-host Budgero?',
-    a: `Yes. Budgero Self-Host is free, runs on Docker, and includes the full feature set — zero-knowledge encryption, multi-currency, shared budgets, and YNAB import. No license keys, no feature gating, no telemetry. You can run it on a Raspberry Pi, NAS (Synology, Unraid, TrueNAS), homelab server, or any cloud VPS. Monarch has no self-host option.`,
+    a: `Yes. Budgero Self-Host is free, runs on Docker, and includes the full feature set — zero-knowledge encryption, multi-currency, shared budgets, and YNAB import. No license keys or feature gating. You can run it on a Raspberry Pi, NAS (Synology, Unraid, TrueNAS), homelab server, or any cloud VPS. Monarch has no self-host option.`,
   },
 ];
 
@@ -302,9 +303,7 @@ export default function MonarchMoneyAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="/self-hostable">
-                      Explore Self-Host
-                    </a>
+                    <a href="/self-hostable">Explore Self-Host</a>
                   </Button>
                 </div>
 
@@ -312,10 +311,7 @@ export default function MonarchMoneyAlternativePage() {
                   No credit card required. Zero-knowledge encryption on all plans.
                   <br />
                   Or{' '}
-                  <a
-                    href="/self-hostable"
-                    className="underline hover:text-foreground"
-                  >
+                  <a href="/self-hostable" className="underline hover:text-foreground">
                     self-host for free
                   </a>{' '}
                   with full features.
@@ -359,12 +355,9 @@ export default function MonarchMoneyAlternativePage() {
                     {percentCheaper}% Cheaper
                   </h3>
                   <p className="text-foreground/70">
-                    Monarch costs $99.99/year. Budgero Cloud is {pricing.yearly}/year — save
-                    ~${yearlySavings}/year with every feature included. You can also{' '}
-                    <a
-                      href="/self-hostable"
-                      className="underline hover:text-foreground"
-                    >
+                    Monarch costs $99.99/year. Budgero Cloud is {pricing.yearly}/year — save ~$
+                    {yearlySavings}/year with every feature included. You can also{' '}
+                    <a href="/self-hostable" className="underline hover:text-foreground">
                       self-host
                     </a>{' '}
                     for free with full features including sync and multi-currency.
@@ -408,9 +401,7 @@ export default function MonarchMoneyAlternativePage() {
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                   Budgero vs Monarch Money
                 </h2>
-                <p className="text-lg text-foreground/70">
-                  Feature-by-feature comparison
-                </p>
+                <p className="text-lg text-foreground/70">Feature-by-feature comparison</p>
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-border/70 bg-card">
@@ -432,11 +423,7 @@ export default function MonarchMoneyAlternativePage() {
                     {comparisonData.map((row, index) => (
                       <tr
                         key={row.feature}
-                        className={
-                          index % 2 === 0
-                            ? 'bg-transparent'
-                            : 'bg-muted/25'
-                        }
+                        className={index % 2 === 0 ? 'bg-transparent' : 'bg-muted/25'}
                       >
                         <td className="px-6 py-4 text-sm font-medium text-foreground">
                           {row.feature}
@@ -450,7 +437,9 @@ export default function MonarchMoneyAlternativePage() {
                                 <X className="w-5 h-5 text-foreground/35" />
                               )}
                               {row.budgeroNote && (
-                                <span className="text-xs text-foreground/55">{row.budgeroNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.budgeroNote}
+                                </span>
                               )}
                             </div>
                           ) : (
@@ -459,7 +448,9 @@ export default function MonarchMoneyAlternativePage() {
                                 {row.budgero}
                               </span>
                               {row.budgeroNote && (
-                                <span className="text-xs text-foreground/55">{row.budgeroNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.budgeroNote}
+                                </span>
                               )}
                             </div>
                           )}
@@ -473,16 +464,18 @@ export default function MonarchMoneyAlternativePage() {
                                 <X className="w-5 h-5 text-foreground/35" />
                               )}
                               {row.monarchNote && (
-                                <span className="text-xs text-foreground/55">{row.monarchNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.monarchNote}
+                                </span>
                               )}
                             </div>
                           ) : (
                             <div className="flex flex-col items-center gap-1">
-                              <span className="text-sm text-foreground/65">
-                                {row.monarch}
-                              </span>
+                              <span className="text-sm text-foreground/65">{row.monarch}</span>
                               {row.monarchNote && (
-                                <span className="text-xs text-foreground/55">{row.monarchNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.monarchNote}
+                                </span>
                               )}
                             </div>
                           )}
@@ -495,10 +488,7 @@ export default function MonarchMoneyAlternativePage() {
               <p className="mt-4 text-sm text-foreground/60">
                 * Push API requires writing your own automation scripts using our encrypted Python
                 SDK. Not a plug-and-play bank sync.{' '}
-                <Link
-                  href="/docs/push-api"
-                  className="underline hover:text-foreground"
-                >
+                <Link href="/docs/push-api" className="underline hover:text-foreground">
                   Learn more
                 </Link>
               </p>
@@ -607,33 +597,31 @@ export default function MonarchMoneyAlternativePage() {
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">No multi-currency:</strong>{' '}
-                      Monarch displays all transactions as &quot;$&quot; regardless of actual
-                      currency. A 1,000 JPY transaction shows as &quot;$1,000&quot; — misleading and
-                      unusable for international users.
+                      <strong className="text-foreground">No multi-currency:</strong> Monarch
+                      displays all transactions as &quot;$&quot; regardless of actual currency. A
+                      1,000 JPY transaction shows as &quot;$1,000&quot; — misleading and unusable
+                      for international users.
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">US/Canada only:</strong> You
-                      cannot download the app outside North American app stores or connect
-                      non-US/Canadian banks.
+                      <strong className="text-foreground">US/Canada only:</strong> You cannot
+                      download the app outside North American app stores or connect non-US/Canadian
+                      banks.
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Cloud-only:</strong> No
-                      offline mode. You need internet to access your budget.
+                      <strong className="text-foreground">Cloud-only:</strong> No offline mode. You
+                      need internet to access your budget.
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">
-                        AI processes data externally:
-                      </strong>{' '}
+                      <strong className="text-foreground">AI processes data externally:</strong>{' '}
                       Monarch&apos;s AI assistant uses third-party LLM providers, sending
                       transaction data to external servers for processing (though not stored or used
                       for training).
@@ -642,8 +630,9 @@ export default function MonarchMoneyAlternativePage() {
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Expensive:</strong> At
-                      $99.99/year, Monarch costs ~${yearlySavings}/year more than Budgero Cloud&apos;s {pricing.yearly}.
+                      <strong className="text-foreground">Expensive:</strong> At $99.99/year,
+                      Monarch costs ~${yearlySavings}/year more than Budgero Cloud&apos;s{' '}
+                      {pricing.yearly}.
                     </span>
                   </li>
                 </ul>
@@ -668,6 +657,24 @@ export default function MonarchMoneyAlternativePage() {
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
+
+            <ComparisonReferences
+              reviewedOn="2026-09-05"
+              sources={[
+                {
+                  label: 'Monarch supported countries',
+                  href: 'https://help.monarch.com/hc/en-us/articles/19985735202068-FAQs-about-Monarch',
+                },
+                {
+                  label: 'Monarch currency limitations',
+                  href: 'https://help.monarch.com/hc/en-us/articles/360048393552-International-Accounts-and-Currency',
+                },
+                {
+                  label: 'Monarch subscription pricing',
+                  href: 'https://help.monarch.com/hc/en-us/articles/44815447567636-Updating-Your-Subscription',
+                },
+              ]}
+            />
 
             <TestimonialsSection />
 
@@ -726,10 +733,7 @@ export default function MonarchMoneyAlternativePage() {
                 </p>
                 <p className="mt-3 text-sm text-foreground/60">
                   Still comparing apps? See{' '}
-                  <Link
-                    href="/best-ynab-alternatives"
-                    className="underline hover:text-foreground"
-                  >
+                  <Link href="/best-ynab-alternatives" className="underline hover:text-foreground">
                     9 budgeting apps compared
                   </Link>
                   .

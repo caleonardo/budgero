@@ -1,3 +1,4 @@
+import { ComparisonReferences } from '@/components/comparison-references';
 import type { Metadata } from 'next';
 import { ArrowRight, Check, X, Shield, Lock, Target, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ export const revalidate = false;
 export const metadata: Metadata = {
   title: 'PocketGuard Alternative - Budget Without Bank Connections | Budgero',
   description:
-    'Looking for a PocketGuard alternative that doesn\'t require bank connections? Budgero offers zero-based budgeting with zero-knowledge encryption and multi-currency support.',
+    "Looking for a PocketGuard alternative that doesn't require bank connections? Budgero offers zero-based budgeting with zero-knowledge encryption and multi-currency support.",
   keywords: [
     'pocketguard alternative',
     'pocketguard replacement',
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'PocketGuard Alternative - Budget Without Bank Connections | Budgero',
     description:
-      'Looking for a PocketGuard alternative that doesn\'t require bank connections? Budgero offers zero-based budgeting with zero-knowledge encryption and multi-currency support.',
+      "Looking for a PocketGuard alternative that doesn't require bank connections? Budgero offers zero-based budgeting with zero-knowledge encryption and multi-currency support.",
     url: 'https://budgero.app/pocketguard-alternative',
     type: 'website',
   },
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PocketGuard Alternative - Budget Without Bank Connections | Budgero',
     description:
-      'Looking for a PocketGuard alternative that doesn\'t require bank connections? Budgero offers zero-based budgeting with zero-knowledge encryption and multi-currency support.',
+      "Looking for a PocketGuard alternative that doesn't require bank connections? Budgero offers zero-based budgeting with zero-knowledge encryption and multi-currency support.",
   },
 };
 
@@ -40,9 +41,9 @@ const comparisonData = [
   {
     feature: 'Annual price',
     budgero: `${pricing.yearly}/year`,
-    pocketguard: '$34.99/year',
+    pocketguard: '$74.99/year',
     budgeroNote: 'Or free with Self-Host',
-    pocketguardNote: '$7.99/mo if monthly',
+    pocketguardNote: '$12.99/mo or $149.99 lifetime',
   },
   {
     feature: 'Budgeting method',
@@ -59,18 +60,18 @@ const comparisonData = [
     pocketguardNote: 'Standard server-side encryption',
   },
   {
-    feature: 'Bank sync required',
-    budgero: false,
+    feature: 'Manual transaction entry',
+    budgero: true,
     pocketguard: true,
-    budgeroNote: 'Manual-first, works without it',
-    pocketguardNote: 'Core functionality depends on it',
+    budgeroNote: 'Manual entry or file import',
+    pocketguardNote: 'Cash accounts and CSV import supported',
   },
   {
     feature: 'Multi-currency support',
     budgero: true,
     pocketguard: false,
     budgeroNote: '168 currencies, live FX rates',
-    pocketguardNote: 'USD only',
+    pocketguardNote: 'No native conversion between account currencies',
   },
   {
     feature: 'Works offline',
@@ -165,9 +166,9 @@ export default function PocketGuardAlternativePage() {
                 </h1>
 
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  PocketGuard requires Plaid to connect your bank accounts and track spending.
-                  Budgero takes a fundamentally different approach: manual-first, zero-knowledge
-                  encrypted, with no aggregators touching your data.
+                  PocketGuard offers bank connections as well as manual cash accounts and CSV
+                  imports. Budgero combines manual entry and file import with zero-based budgeting,
+                  multiple currencies, and end-to-end encrypted budget sync.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -187,9 +188,7 @@ export default function PocketGuardAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="/self-hostable">
-                      Explore Self-Host
-                    </a>
+                    <a href="/self-hostable">Explore Self-Host</a>
                   </Button>
                 </div>
 
@@ -197,10 +196,7 @@ export default function PocketGuardAlternativePage() {
                   No credit card required. Zero-knowledge encryption on all plans.
                   <br />
                   Or{' '}
-                  <a
-                    href="/self-hostable"
-                    className="underline hover:text-foreground"
-                  >
+                  <a href="/self-hostable" className="underline hover:text-foreground">
                     self-host for free
                   </a>{' '}
                   with full features.
@@ -231,9 +227,9 @@ export default function PocketGuardAlternativePage() {
                     No Bank Credentials Shared
                   </h3>
                   <p className="text-foreground/70">
-                    PocketGuard requires Plaid to access your bank accounts. Budgero never asks for
-                    your bank login. You enter transactions manually or import them from CSV/PDF
-                    files you download yourself.
+                    PocketGuard supports optional bank connections. Budgero never asks for your bank
+                    login. You enter transactions manually or import them from CSV/PDF files you
+                    download yourself.
                   </p>
                 </div>
 
@@ -245,9 +241,9 @@ export default function PocketGuardAlternativePage() {
                     Zero-Knowledge Encryption
                   </h3>
                   <p className="text-foreground/70">
-                    PocketGuard stores your financial data on their servers with standard encryption.
-                    Budgero encrypts everything client-side with AES-256-GCM before it leaves your
-                    device. We literally cannot see your finances.
+                    PocketGuard stores your financial data on their servers with standard
+                    encryption. Budgero encrypts everything client-side with AES-256-GCM before it
+                    leaves your device. We literally cannot see your finances.
                   </p>
                 </div>
 
@@ -255,9 +251,7 @@ export default function PocketGuardAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#dfe4ec] flex items-center justify-center mb-4">
                     <Target className="w-6 h-6 text-[#314258]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Zero-Based Method
-                  </h3>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg">Zero-Based Method</h3>
                   <p className="text-foreground/70">
                     PocketGuard tracks spending after the fact and shows what&apos;s left &quot;in
                     your pocket.&quot; Budgero uses zero-based budgeting: every dollar gets a job
@@ -269,9 +263,7 @@ export default function PocketGuardAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#efe4d8] flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-[#8a5730]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Works Worldwide
-                  </h3>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg">Works Worldwide</h3>
                   <p className="text-foreground/70">
                     PocketGuard is focused on the US and Canada with limited international support.
                     Budgero works in 168 currencies with live exchange rates and automatic
@@ -289,9 +281,7 @@ export default function PocketGuardAlternativePage() {
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                   Budgero vs PocketGuard
                 </h2>
-                <p className="text-lg text-foreground/70">
-                  Feature-by-feature comparison
-                </p>
+                <p className="text-lg text-foreground/70">Feature-by-feature comparison</p>
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-border/70 bg-card">
@@ -313,11 +303,7 @@ export default function PocketGuardAlternativePage() {
                     {comparisonData.map((row, index) => (
                       <tr
                         key={row.feature}
-                        className={
-                          index % 2 === 0
-                            ? 'bg-transparent'
-                            : 'bg-muted/25'
-                        }
+                        className={index % 2 === 0 ? 'bg-transparent' : 'bg-muted/25'}
                       >
                         <td className="px-6 py-4 text-sm font-medium text-foreground">
                           {row.feature}
@@ -331,7 +317,9 @@ export default function PocketGuardAlternativePage() {
                                 <X className="w-5 h-5 text-foreground/35" />
                               )}
                               {row.budgeroNote && (
-                                <span className="text-xs text-foreground/55">{row.budgeroNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.budgeroNote}
+                                </span>
                               )}
                             </div>
                           ) : (
@@ -340,7 +328,9 @@ export default function PocketGuardAlternativePage() {
                                 {row.budgero}
                               </span>
                               {row.budgeroNote && (
-                                <span className="text-xs text-foreground/55">{row.budgeroNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.budgeroNote}
+                                </span>
                               )}
                             </div>
                           )}
@@ -354,16 +344,18 @@ export default function PocketGuardAlternativePage() {
                                 <X className="w-5 h-5 text-foreground/35" />
                               )}
                               {row.pocketguardNote && (
-                                <span className="text-xs text-foreground/55">{row.pocketguardNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.pocketguardNote}
+                                </span>
                               )}
                             </div>
                           ) : (
                             <div className="flex flex-col items-center gap-1">
-                              <span className="text-sm text-foreground/65">
-                                {row.pocketguard}
-                              </span>
+                              <span className="text-sm text-foreground/65">{row.pocketguard}</span>
                               {row.pocketguardNote && (
-                                <span className="text-xs text-foreground/55">{row.pocketguardNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.pocketguardNote}
+                                </span>
                               )}
                             </div>
                           )}
@@ -391,17 +383,15 @@ export default function PocketGuardAlternativePage() {
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Automatic spending tracking:</strong>{' '}
-                      If you are OK with bank sync, PocketGuard pulls transactions automatically and
+                      <strong className="text-foreground">Automatic spending tracking:</strong> If
+                      you are OK with bank sync, PocketGuard pulls transactions automatically and
                       categorizes them. No manual entry needed.
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">
-                        &quot;In My Pocket&quot; feature:
-                      </strong>{' '}
+                      <strong className="text-foreground">&quot;In My Pocket&quot; feature:</strong>{' '}
                       PocketGuard&apos;s signature feature shows you exactly how much you can safely
                       spend after accounting for bills, goals, and necessities. It is genuinely
                       useful for quick spending decisions.
@@ -410,10 +400,8 @@ export default function PocketGuardAlternativePage() {
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">
-                        Simpler for passive users:
-                      </strong>{' '}
-                      If you do not want to enter transactions or assign categories manually,
+                      <strong className="text-foreground">Simpler for passive users:</strong> If you
+                      do not want to enter transactions or assign categories manually,
                       PocketGuard&apos;s automated approach requires less effort. Budgero is built
                       for people who want active control over their budget.
                     </span>
@@ -474,7 +462,9 @@ export default function PocketGuardAlternativePage() {
                   <ul className="space-y-3 text-foreground/70">
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You prefer fully automatic bank sync over manual transaction entry</span>
+                      <span>
+                        You prefer fully automatic bank sync over manual transaction entry
+                      </span>
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
@@ -489,7 +479,9 @@ export default function PocketGuardAlternativePage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <X className="w-4 h-4 text-foreground/35 mt-1 flex-shrink-0" />
-                      <span>You want a passive spending tracker rather than a proactive budgeting tool</span>
+                      <span>
+                        You want a passive spending tracker rather than a proactive budgeting tool
+                      </span>
                     </li>
                   </ul>
                 </div>
@@ -497,6 +489,21 @@ export default function PocketGuardAlternativePage() {
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
+
+            <ComparisonReferences
+              reviewedOn="2026-09-05"
+              sources={[
+                { label: 'PocketGuard pricing', href: 'https://pocketguard.com/pricing/' },
+                {
+                  label: 'PocketGuard manual cash accounts',
+                  href: 'https://pocketguard.com/help/track-cash-in-pocketguard/',
+                },
+                {
+                  label: 'PocketGuard file import',
+                  href: 'https://pocketguard.com/helps/import-transactions-to-track-expenses-manually/',
+                },
+              ]}
+            />
 
             <TestimonialsSection />
 
@@ -526,20 +533,14 @@ export default function PocketGuardAlternativePage() {
                 </div>
                 <p className="mt-6 text-sm text-foreground/60">
                   No credit card required. Want all features for free?{' '}
-                  <a
-                    href="/self-hostable"
-                    className="underline hover:text-foreground"
-                  >
+                  <a href="/self-hostable" className="underline hover:text-foreground">
                     Self-host Budgero
                   </a>{' '}
                   on your own infrastructure.
                 </p>
                 <p className="mt-3 text-sm text-foreground/60">
                   Weighing your options? Compare the{' '}
-                  <a
-                    href="/best-ynab-alternatives"
-                    className="underline hover:text-foreground"
-                  >
+                  <a href="/best-ynab-alternatives" className="underline hover:text-foreground">
                     top budgeting apps
                   </a>{' '}
                   side by side.

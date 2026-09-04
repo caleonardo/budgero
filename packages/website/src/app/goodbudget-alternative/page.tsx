@@ -1,3 +1,4 @@
+import { ComparisonReferences } from '@/components/comparison-references';
 import type { Metadata } from 'next';
 import { ArrowRight, Check, X, Shield, Globe, BarChart3, Paintbrush } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -40,9 +41,9 @@ const comparisonData = [
   {
     feature: 'Annual price',
     budgero: `${pricing.yearly}/year`,
-    goodbudget: '$70/year',
+    goodbudget: '$80/year',
     budgeroNote: 'Or free with Self-Host',
-    goodbudgetNote: 'Plus plan; free tier available',
+    goodbudgetNote: 'Premium plan; free tier available',
   },
   {
     feature: 'Envelope / zero-based method',
@@ -61,9 +62,9 @@ const comparisonData = [
   {
     feature: 'Bank sync',
     budgero: false,
-    goodbudget: false,
-    budgeroNote: null,
-    goodbudgetNote: null,
+    goodbudget: true,
+    budgeroNote: 'Manual entry or file import',
+    goodbudgetNote: 'Premium; US banks only',
   },
   {
     feature: 'Multi-currency support',
@@ -172,10 +173,10 @@ export default function GoodbudgetAlternativePage() {
                 </h1>
 
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Goodbudget is simple and reliable, but its interface and feature set haven&apos;t
-                  kept up. Budgero takes the same envelope-based, zero-based philosophy and adds
-                  zero-knowledge encryption, 168 currencies, modern reporting, and a polished
-                  interface.
+                  Goodbudget offers envelope budgeting with a free tier and optional US bank sync on
+                  Premium. Budgero adds end-to-end encryption, accounts in multiple currencies, and
+                  free self-hosting. It uses manual entry or file imports instead of automatic bank
+                  connections.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -195,9 +196,7 @@ export default function GoodbudgetAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="/self-hostable">
-                      Explore Self-Host
-                    </a>
+                    <a href="/self-hostable">Explore Self-Host</a>
                   </Button>
                 </div>
 
@@ -205,10 +204,7 @@ export default function GoodbudgetAlternativePage() {
                   No credit card required. Zero-knowledge encryption on all plans.
                   <br />
                   Or{' '}
-                  <a
-                    href="/self-hostable"
-                    className="underline hover:text-foreground"
-                  >
+                  <a href="/self-hostable" className="underline hover:text-foreground">
                     self-host for free
                   </a>{' '}
                   with full features.
@@ -238,8 +234,8 @@ export default function GoodbudgetAlternativePage() {
                     Zero-Knowledge Encryption
                   </h3>
                   <p className="text-foreground/70">
-                    Goodbudget uses standard server-side storage. Budgero encrypts everything on your
-                    device before it leaves. We literally cannot see your financial data.
+                    Goodbudget uses standard server-side storage. Budgero encrypts everything on
+                    your device before it leaves. We literally cannot see your financial data.
                   </p>
                 </div>
 
@@ -247,9 +243,7 @@ export default function GoodbudgetAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#dfe4ec] flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-[#314258]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    168 Currencies
-                  </h3>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg">168 Currencies</h3>
                   <p className="text-foreground/70">
                     Goodbudget is single-currency only. Budgero handles 168 currencies with live
                     exchange rates and automatic conversion in a single budget.
@@ -260,9 +254,7 @@ export default function GoodbudgetAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#dde9df] flex items-center justify-center mb-4">
                     <BarChart3 className="w-6 h-6 text-[#2f6246]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Modern Reporting
-                  </h3>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg">Modern Reporting</h3>
                   <p className="text-foreground/70">
                     Goodbudget offers basic spending reports. Budgero provides detailed spending
                     breakdowns, net worth tracking, and trend analysis across all your accounts.
@@ -273,9 +265,7 @@ export default function GoodbudgetAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#efe4d8] flex items-center justify-center mb-4">
                     <Paintbrush className="w-6 h-6 text-[#8a5730]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    Modern Interface
-                  </h3>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg">Modern Interface</h3>
                   <p className="text-foreground/70">
                     Goodbudget&apos;s UI hasn&apos;t changed much in years. Budgero is built with a
                     modern, polished design that feels responsive and refined on every screen size.
@@ -292,9 +282,7 @@ export default function GoodbudgetAlternativePage() {
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                   Budgero vs Goodbudget
                 </h2>
-                <p className="text-lg text-foreground/70">
-                  Feature-by-feature comparison
-                </p>
+                <p className="text-lg text-foreground/70">Feature-by-feature comparison</p>
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-border/70 bg-card">
@@ -316,11 +304,7 @@ export default function GoodbudgetAlternativePage() {
                     {comparisonData.map((row, index) => (
                       <tr
                         key={row.feature}
-                        className={
-                          index % 2 === 0
-                            ? 'bg-transparent'
-                            : 'bg-muted/25'
-                        }
+                        className={index % 2 === 0 ? 'bg-transparent' : 'bg-muted/25'}
                       >
                         <td className="px-6 py-4 text-sm font-medium text-foreground">
                           {row.feature}
@@ -334,7 +318,9 @@ export default function GoodbudgetAlternativePage() {
                                 <X className="w-5 h-5 text-foreground/35" />
                               )}
                               {row.budgeroNote && (
-                                <span className="text-xs text-foreground/55">{row.budgeroNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.budgeroNote}
+                                </span>
                               )}
                             </div>
                           ) : (
@@ -343,7 +329,9 @@ export default function GoodbudgetAlternativePage() {
                                 {row.budgero}
                               </span>
                               {row.budgeroNote && (
-                                <span className="text-xs text-foreground/55">{row.budgeroNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.budgeroNote}
+                                </span>
                               )}
                             </div>
                           )}
@@ -357,16 +345,18 @@ export default function GoodbudgetAlternativePage() {
                                 <X className="w-5 h-5 text-foreground/35" />
                               )}
                               {row.goodbudgetNote && (
-                                <span className="text-xs text-foreground/55">{row.goodbudgetNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.goodbudgetNote}
+                                </span>
                               )}
                             </div>
                           ) : (
                             <div className="flex flex-col items-center gap-1">
-                              <span className="text-sm text-foreground/65">
-                                {row.goodbudget}
-                              </span>
+                              <span className="text-sm text-foreground/65">{row.goodbudget}</span>
                               {row.goodbudgetNote && (
-                                <span className="text-xs text-foreground/55">{row.goodbudgetNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.goodbudgetNote}
+                                </span>
                               )}
                             </div>
                           )}
@@ -401,17 +391,17 @@ export default function GoodbudgetAlternativePage() {
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Native mobile apps:</strong>{' '}
-                      Goodbudget has dedicated iOS and Android apps. Budgero uses a PWA that works
-                      on all devices but is not listed in app stores.
+                      <strong className="text-foreground">Native mobile apps:</strong> Goodbudget
+                      has dedicated iOS and Android apps. Budgero uses a PWA that works on all
+                      devices but is not listed in app stores.
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Free tier:</strong>{' '}
-                      Goodbudget offers a free plan with limited envelopes and accounts. Budgero
-                      Cloud requires a paid subscription (though you can{' '}
+                      <strong className="text-foreground">Free tier:</strong> Goodbudget offers a
+                      free plan with limited envelopes and accounts. Budgero Cloud requires a paid
+                      subscription (though you can{' '}
                       <a href="/self-hostable" className="underline hover:text-foreground">
                         self-host for free
                       </a>
@@ -499,6 +489,16 @@ export default function GoodbudgetAlternativePage() {
 
             <div className="my-12 border-t border-border" aria-hidden />
 
+            <ComparisonReferences
+              reviewedOn="2026-09-05"
+              sources={[
+                {
+                  label: 'Goodbudget plans, prices, and US bank sync',
+                  href: 'https://goodbudget.com/help/billing/subscribe-to-goodbudget/',
+                },
+              ]}
+            />
+
             <TestimonialsSection />
 
             <div className="my-12 border-t border-border" aria-hidden />
@@ -527,20 +527,14 @@ export default function GoodbudgetAlternativePage() {
                 </div>
                 <p className="mt-6 text-sm text-foreground/60">
                   Want all features for free?{' '}
-                  <a
-                    href="/self-hostable"
-                    className="underline hover:text-foreground"
-                  >
+                  <a href="/self-hostable" className="underline hover:text-foreground">
                     Self-host Budgero
                   </a>{' '}
                   with full sync, multi-currency, and collaboration.
                 </p>
                 <p className="mt-3 text-sm text-foreground/60">
                   Still exploring? Compare the{' '}
-                  <a
-                    href="/best-ynab-alternatives"
-                    className="underline hover:text-foreground"
-                  >
+                  <a href="/best-ynab-alternatives" className="underline hover:text-foreground">
                     YNAB alternatives
                   </a>{' '}
                   worth switching to.

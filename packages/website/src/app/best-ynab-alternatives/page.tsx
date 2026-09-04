@@ -1,3 +1,4 @@
+import { ComparisonReferences } from '@/components/comparison-references';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, X, BookOpen } from 'lucide-react';
@@ -67,11 +68,12 @@ const summaryData = [
     zeroBased: true,
     multiCurrency: false,
     encryption: 'E2EE (optional)',
-    bankSync: false,
+    bankSync: true,
+    bankSyncNote: 'Optional providers; manual sync trigger',
   },
   {
     app: 'PocketSmith',
-    price: 'From $9.99/mo',
+    price: 'From $9.99/mo (annual)',
     zeroBased: false,
     multiCurrency: true,
     encryption: 'Standard',
@@ -80,20 +82,21 @@ const summaryData = [
   },
   {
     app: 'Simplifi by Quicken',
-    price: '$35.88/yr',
+    price: '$3.99/mo offer (annual)',
     zeroBased: false,
     multiCurrency: false,
     encryption: 'Standard',
     bankSync: true,
-    bankSyncNote: 'US',
+    bankSyncNote: 'US/CA',
   },
   {
     app: 'Goodbudget',
-    price: 'Free / $70/yr',
+    price: 'Free / $80/yr Premium',
     zeroBased: true,
     multiCurrency: false,
     encryption: 'Standard',
-    bankSync: false,
+    bankSync: true,
+    bankSyncNote: 'Premium; US banks only',
   },
   {
     app: 'EveryDollar',
@@ -102,11 +105,11 @@ const summaryData = [
     multiCurrency: false,
     encryption: 'Standard',
     bankSync: true,
-    bankSyncNote: 'US only',
+    bankSyncNote: 'Premium; US only',
   },
   {
     app: 'Lunch Money',
-    price: '$100/yr',
+    price: '$10/mo; flexible annual price',
     zeroBased: false,
     multiCurrency: true,
     encryption: 'Standard',
@@ -114,7 +117,7 @@ const summaryData = [
   },
   {
     app: 'PocketGuard',
-    price: 'Free / $74.99/yr',
+    price: '$74.99/yr',
     zeroBased: false,
     multiCurrency: false,
     encryption: 'Standard',
@@ -126,6 +129,8 @@ const summaryData = [
 const alternatives = [
   {
     name: 'Budgero',
+    sourceUrl: 'https://budgero.app/#pricing',
+    comparisonHref: '/self-hostable',
     price: `${pricing.yearly}/yr or ${pricing.monthly}/mo (free self-host option)`,
     bestFor: 'Privacy-conscious users, expats, multi-currency households',
     pros: [
@@ -145,6 +150,9 @@ const alternatives = [
   },
   {
     name: 'Monarch Money',
+    sourceUrl:
+      'https://help.monarch.com/hc/en-us/articles/44815447567636-Updating-Your-Subscription',
+    comparisonHref: '/monarch-money-alternative',
     price: '$99.99/yr or $14.99/mo',
     bestFor: 'US-based users who want a modern all-in-one',
     pros: [
@@ -159,10 +167,12 @@ const alternatives = [
       'No zero-knowledge encryption',
       'More expensive than most alternatives',
     ],
-    take: "The best YNAB alternative if you're in the US, want bank sync, and prefer a full financial picture (investments, net worth) over strict envelope discipline. It is not usable outside North America — if that's you, see our Monarch Money alternative for Europe guide.",
+    take: "The best YNAB alternative if you're in the US, want bank sync, and prefer a full financial picture (investments, net worth) over strict envelope discipline. It is officially available in the US and Canada — if that's you, see our Monarch Money alternative for Europe guide.",
   },
   {
     name: 'Actual Budget',
+    sourceUrl: 'https://actualbudget.org/docs/advanced/bank-sync/',
+    comparisonHref: '/blog/actual-budget-vs-budgero',
     price: 'Free (self-hosted)',
     bestFor: 'Technical users who want open-source and local-first',
     pros: [
@@ -174,14 +184,16 @@ const alternatives = [
     cons: [
       'Requires technical setup for self-hosting',
       'No multi-currency support',
-      'Smaller feature set than YNAB or Budgero',
-      'No dedicated mobile app',
+      'Bank integrations require a server and provider setup',
+      'Official mobile experience is an installable PWA',
     ],
-    take: "The strongest free option if you're comfortable running Docker. Actual nails the YNAB envelope method and costs nothing — the trade-offs are single-currency budgets, a thinner feature set, and you being your own sysadmin. We compare it to Budgero in detail in our Actual Budget vs Budgero post.",
+    take: "The strongest free option if you're comfortable running Docker. Actual nails the YNAB envelope method and costs nothing — the trade-offs are no native currency conversion and responsibility for your hosting. We compare it to Budgero in detail in our Actual Budget vs Budgero post.",
   },
   {
     name: 'PocketSmith',
-    price: 'From $9.99/mo (Foundation) to $26.66/mo (Fortune)',
+    sourceUrl: 'https://www.pocketsmith.com/pricing/',
+    comparisonHref: null,
+    price: 'From $9.99/mo (Foundation), billed annually; free tier available',
     bestFor: 'Forecasting and calendar-based planning, global bank feeds',
     pros: [
       'Cashflow forecasting up to 10+ years out',
@@ -199,17 +211,19 @@ const alternatives = [
   },
   {
     name: 'Simplifi by Quicken',
-    price: '$2.99/mo billed annually ($35.88/yr)',
-    bestFor: 'US users who want cheap, automated budgeting',
+    sourceUrl: 'https://www.quicken.com/products/simplifi/',
+    comparisonHref: '/quicken-simplifi-alternative',
+    price: '$3.99/mo introductory offer, billed annually; listed regular rate $6.99/mo',
+    bestFor: 'US and Canadian users who want a Spending Plan',
     pros: [
-      'Roughly a third of YNAB\'s price',
+      'Introductory subscription offers',
       'Automatic bank sync',
-      'Spending Plan shows what\'s safe to spend',
+      "Spending Plan shows what's safe to spend",
       'Polished mobile apps',
     ],
     cons: [
-      'US only',
-      'Not zero-based — automation-first philosophy',
+      'US/Canada banks and currencies only',
+      'Spending Plan differs from YNAB’s category workflow',
       'No multi-currency',
       'Quicken account required; data lives on their servers',
     ],
@@ -217,7 +231,9 @@ const alternatives = [
   },
   {
     name: 'Goodbudget',
-    price: 'Free (limited) or $70/yr',
+    sourceUrl: 'https://goodbudget.com/help/billing/subscribe-to-goodbudget/',
+    comparisonHref: '/goodbudget-alternative',
+    price: 'Free (limited) or $80/yr Premium',
     bestFor: 'Couples who want simple envelope budgeting',
     pros: [
       'Simple envelope system that works',
@@ -226,15 +242,18 @@ const alternatives = [
       'Free tier for basic use',
     ],
     cons: [
-      'No bank sync',
+      'Bank sync requires Premium and a supported US bank',
       'Limited reporting and analytics',
-      'Dated interface',
+      'Free tier limits accounts, envelopes, and devices',
       'No multi-currency',
     ],
-    take: "Keeps it simple. The free tier (limited envelopes, 2 devices) is one of the easiest ways to try envelope budgeting without paying anything. Good if you want the method without complexity; you'll outgrow it if you want reports, multi-currency, or encryption.",
+    take: 'Keeps it simple. The free tier (limited envelopes, 2 devices) is one of the easiest ways to try envelope budgeting without paying anything. Consider Budgero if you need multiple currencies, end-to-end encryption, or self-hosting; consider Goodbudget if native mobile apps or Premium US bank sync matter more.',
   },
   {
     name: 'EveryDollar',
+    sourceUrl:
+      'https://everydollar.help.ramseysolutions.com/hc/en-us/articles/21544207900685-EveryDollar-Premium-Subscription-Cost',
+    comparisonHref: '/everydollar-alternative',
     price: 'Free (manual) or $79.99/yr with bank sync',
     bestFor: 'Dave Ramsey followers',
     pros: [
@@ -244,7 +263,7 @@ const alternatives = [
       'Debt payoff tools (Baby Steps)',
     ],
     cons: [
-      'US only',
+      'Premium and mobile apps unavailable internationally',
       'Tied to the Ramsey ecosystem',
       'Limited customization',
       'No multi-currency',
@@ -253,7 +272,9 @@ const alternatives = [
   },
   {
     name: 'Lunch Money',
-    price: '$100/yr or $10/mo',
+    sourceUrl: 'https://lunchmoney.app/pricing',
+    comparisonHref: null,
+    price: '$10/mo; choose your annual price (default $100)',
     bestFor: 'Tech-savvy users who want API access and multi-currency',
     pros: [
       'Multi-currency support',
@@ -263,7 +284,7 @@ const alternatives = [
     ],
     cons: [
       'Not zero-based budgeting (tracking-focused)',
-      'More expensive than most options',
+      'No permanent free tier',
       'No self-host option',
       'Smaller team and community',
     ],
@@ -271,11 +292,13 @@ const alternatives = [
   },
   {
     name: 'PocketGuard',
-    price: 'Free / $74.99/yr (or $149.99 lifetime)',
+    sourceUrl: 'https://pocketguard.com/pricing/',
+    comparisonHref: '/pocketguard-alternative',
+    price: '$74.99/yr, $12.99/mo, or $149.99 lifetime',
     bestFor: 'Guardrails and overspending alerts, irregular incomes',
     pros: [
       '"In My Pocket" shows safe-to-spend at a glance',
-      'Bank sync with unlimited accounts on Plus',
+      'Bank sync with unlimited accounts',
       'Lifetime purchase option — pay once',
       'Debt payoff planning tools',
     ],
@@ -283,7 +306,7 @@ const alternatives = [
       'Not zero-based budgeting',
       'US/Canada focused',
       'No multi-currency',
-      'Free tier is quite limited',
+      'Check trial and renewal terms',
     ],
     take: "The pick for people who don't want to budget so much as be told when to stop spending. The 2026 'Pace' feature warns you mid-month if you're burning too fast. Philosophically the opposite of YNAB's intentionality — which is exactly why it works for some people YNAB never clicked for.",
   },
@@ -292,13 +315,29 @@ const alternatives = [
 const pickGuide = [
   { priority: 'Privacy', pick: 'Budgero', reason: 'Zero-knowledge encryption, self-host option' },
   { priority: 'Bank sync (US)', pick: 'Monarch Money', reason: 'Best modern US bank integration' },
-  { priority: 'Bank sync (global)', pick: 'PocketSmith', reason: 'Feeds in many countries, multi-currency' },
+  {
+    priority: 'Bank sync (global)',
+    pick: 'PocketSmith',
+    reason: 'Feeds in many countries, multi-currency',
+  },
   { priority: 'Open source', pick: 'Actual Budget', reason: 'Fully open, local-first' },
   { priority: 'Multi-currency', pick: 'Budgero', reason: '168 currencies, live FX rates' },
-  { priority: 'Lowest paid price', pick: 'Budgero', reason: '$35/yr tax included — a third of YNAB' },
-  { priority: 'Free', pick: 'Actual, EveryDollar, or Budgero Self-Host', reason: 'All genuinely free, different trade-offs' },
+  {
+    priority: 'Managed encrypted hosting',
+    pick: 'Budgero',
+    reason: `${pricing.yearly}/yr with a free self-host option`,
+  },
+  {
+    priority: 'Free',
+    pick: 'Actual, EveryDollar, or Budgero Self-Host',
+    reason: 'All genuinely free, different trade-offs',
+  },
   { priority: 'Simplicity', pick: 'Goodbudget', reason: 'No-frills envelope budgeting' },
-  { priority: 'Forecasting', pick: 'PocketSmith', reason: 'Calendar-based projections, years ahead' },
+  {
+    priority: 'Forecasting',
+    pick: 'PocketSmith',
+    reason: 'Calendar-based projections, years ahead',
+  },
 ];
 
 const faqs = [
@@ -312,7 +351,7 @@ const faqs = [
   },
   {
     q: 'What is the best YNAB alternative for Europe?',
-    a: "Most US budgeting apps (Monarch, Simplifi, EveryDollar) simply don't work in Europe. The realistic European options are Budgero (multi-currency, EU data hosting, EUR/GBP billing), PocketSmith (international bank feeds), and Actual Budget (self-hosted). See our dedicated YNAB alternative for Europe guide for the full breakdown.",
+    a: 'Check country and bank coverage separately. Options include Budgero (multi-currency, EU hosting, manual or file import), PocketSmith (international bank feeds), Actual Budget (self-hosted with optional bank integrations), and Lunch Money (multi-currency). See our dedicated YNAB alternative for Europe guide for the full breakdown.',
   },
   {
     q: 'What is the best self-hosted YNAB alternative?',
@@ -324,7 +363,7 @@ const faqs = [
   },
   {
     q: 'Why are people leaving YNAB?',
-    a: "Three reasons come up constantly: price ($109/yr and rising), US-centricity (bank sync barely works outside North America and there's no multi-currency support), and data privacy (budgets are stored on YNAB's servers in readable form). Which of those bothers you most should drive which alternative you pick.",
+    a: 'Three reasons come up constantly: price ($109/yr), native currency conversion, and a preference for end-to-end encryption or self-hosting. YNAB supports select European banks and encrypts data at rest and in transit. Which of those bothers you most should drive which alternative you pick.',
   },
 ];
 
@@ -337,7 +376,7 @@ export default function BestYnabAlternativesPage() {
         headline: 'Best YNAB Alternatives in 2026 — 9 Apps Compared',
         author: { '@type': 'Organization', name: 'Budgero' },
         datePublished: '2026-04-11',
-        dateModified: '2026-06-11',
+        dateModified: '2026-09-05',
         description:
           'Comparing 9 YNAB alternatives on price, privacy, multi-currency, and features.',
       },
@@ -395,10 +434,10 @@ export default function BestYnabAlternativesPage() {
               <div className="max-w-4xl mx-auto">
                 <Badge
                   variant="outline"
-                  className="mb-6 px-4 py-1.5 text-sm font-medium border-border/50"
+                  className="mb-6 max-w-full whitespace-normal px-4 py-1.5 text-sm font-medium border-border/50"
                 >
-                  <BookOpen className="w-3.5 h-3.5 mr-2" />
-                  2026 Comparison Guide — Updated June 2026
+                  <BookOpen className="w-3.5 h-3.5 mr-2 shrink-0" />
+                  <span>2026 Comparison Guide — Updated September 5, 2026</span>
                 </Badge>
 
                 <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
@@ -410,15 +449,15 @@ export default function BestYnabAlternativesPage() {
 
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
                   YNAB is a great zero-based budgeting app, but at $109/yr it&apos;s not for
-                  everyone. Some people need multi-currency, better privacy, bank sync that works
-                  in their country, or just a lower price. Here are the 9 best alternatives,
-                  compared honestly.
+                  everyone. Some people need multi-currency, better privacy, bank sync that works in
+                  their country, or just a lower price. Here are the 9 best alternatives, compared
+                  honestly.
                 </p>
 
                 <p className="text-sm text-foreground/55 max-w-2xl mx-auto">
-                  Disclosure: Budgero is our app. It&apos;s in this list because it belongs here,
-                  but we tell you exactly when it&apos;s <em>not</em> the right pick — and which
-                  app is.
+                  By Budgero, the maker of one of the apps compared. This guide compares documented
+                  features and published prices. It is not a hands-on test of every app or bank
+                  connection.
                 </p>
               </div>
             </section>
@@ -432,23 +471,20 @@ export default function BestYnabAlternativesPage() {
               </h2>
               <div className="space-y-4 text-lg text-foreground/75 leading-relaxed">
                 <p>
-                  People leave YNAB for three reasons: <strong className="text-foreground">price</strong>{' '}
-                  ($109/yr and climbing), <strong className="text-foreground">geography</strong>{' '}
-                  (bank sync barely works outside North America, and there&apos;s no multi-currency
-                  support), and <strong className="text-foreground">privacy</strong> (your budget
-                  lives on their servers in readable form). So that&apos;s what we scored every app
-                  on — alongside the question that matters most: does it actually keep the
-                  zero-based method that made YNAB work for you, or does it quietly replace it with
-                  passive expense tracking?
+                  Compare the budgeting method, currency conversion, encryption model, and total
+                  subscription cost before switching. Bank coverage is specific to the country,
+                  institution, and account type; manual entry and file import can remain available
+                  when a bank connection is unsupported. YNAB itself supports select European banks.
                 </p>
                 <p>
-                  Five of the nine apps below are US-only in practice. If you&apos;re in Europe or
-                  budgeting across currencies, your realistic shortlist is Budgero, PocketSmith,
-                  Actual Budget, and Goodbudget — we&apos;ve written a dedicated{' '}
+                  Prices below are in USD. Annual billing, introductory discounts, hosting costs,
+                  and optional bank-provider fees can change the total. “Bank sync” means an
+                  integration is available, not that every bank is supported or fetching is
+                  automatic. Our{' '}
                   <Link href="/ynab-alternative-europe" className="underline hover:text-foreground">
-                    YNAB alternative for Europe
+                    Europe guide
                   </Link>{' '}
-                  guide for that case.
+                  explains the difference between bank coverage and multi-currency budgeting.
                 </p>
               </div>
             </section>
@@ -493,9 +529,7 @@ export default function BestYnabAlternativesPage() {
                         key={row.app}
                         className={index % 2 === 0 ? 'bg-transparent' : 'bg-muted/25'}
                       >
-                        <td className="px-4 py-4 text-sm font-medium text-foreground">
-                          {row.app}
-                        </td>
+                        <td className="px-4 py-4 text-sm font-medium text-foreground">{row.app}</td>
                         <td className="px-4 py-4 text-center text-sm text-foreground/70">
                           {row.price}
                         </td>
@@ -551,7 +585,7 @@ export default function BestYnabAlternativesPage() {
                         </h3>
                         <p className="text-foreground/60 mt-1">Best for: {app.bestFor}</p>
                       </div>
-                      <span className="text-lg font-semibold text-foreground/80 md:whitespace-nowrap md:text-right">
+                      <span className="text-lg font-semibold text-foreground/80 md:max-w-sm md:shrink-0 md:text-right">
                         {app.price}
                       </span>
                     </div>
@@ -586,6 +620,18 @@ export default function BestYnabAlternativesPage() {
                     </div>
 
                     <p className="text-sm text-foreground/60 italic">{app.take}</p>
+                    <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+                      <a href={app.sourceUrl} className="underline hover:text-foreground">
+                        {app.name}: official pricing or documentation
+                      </a>
+                      {app.comparisonHref && (
+                        <Link href={app.comparisonHref} className="underline hover:text-foreground">
+                          {app.name === 'Budgero'
+                            ? 'Explore free self-hosting'
+                            : `Compare ${app.name} with Budgero`}
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </section>
 
@@ -657,10 +703,7 @@ export default function BestYnabAlternativesPage() {
                 </li>
                 <li>
                   Coming from Firefly III?{' '}
-                  <Link
-                    href="/firefly-iii-alternative"
-                    className="underline hover:text-foreground"
-                  >
+                  <Link href="/firefly-iii-alternative" className="underline hover:text-foreground">
                     Firefly III alternative
                   </Link>
                 </li>
@@ -709,6 +752,27 @@ export default function BestYnabAlternativesPage() {
             </section>
 
             <div className="my-12 border-t border-border" aria-hidden />
+
+            <ComparisonReferences
+              reviewedOn="2026-09-05"
+              sources={[
+                { label: 'YNAB pricing', href: 'https://www.ynab.com/pricing' },
+                {
+                  label: 'YNAB European bank coverage',
+                  href: 'https://support.ynab.com/en_us/direct-import-in-europe-Syae1z_A9',
+                },
+                { label: 'YNAB security', href: 'https://www.ynab.com/security' },
+                {
+                  label: 'Simplifi country and currency support',
+                  href: 'https://support.simplifi.quicken.com/en/articles/3828353-what-currencies-does-quicken-simplifi-support',
+                },
+                {
+                  label: 'Actual multi-currency limitations',
+                  href: 'https://actualbudget.org/docs/budgeting/multi-currency/',
+                },
+                { label: 'Actual mobile FAQ', href: 'https://actualbudget.org/docs/faq/' },
+              ]}
+            />
 
             <TestimonialsSection />
 

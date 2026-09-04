@@ -1,3 +1,4 @@
+import { ComparisonReferences } from '@/components/comparison-references';
 import type { Metadata } from 'next';
 import { ArrowRight, Check, X, Globe, Shield, Target, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,18 +39,18 @@ export const metadata: Metadata = {
 
 const comparisonData = [
   {
-    feature: 'Annual price',
+    feature: 'Subscription price',
     budgero: `${pricing.yearly}/year`,
-    simplifi: '$35.88/year',
+    simplifi: '$3.99/mo introductory offer',
     budgeroNote: 'Or free with Self-Host',
-    simplifiNote: '$2.99/mo billed annually',
+    simplifiNote: 'Billed annually; listed regular rate $6.99/mo',
   },
   {
     feature: 'Works outside the US',
     budgero: true,
     simplifi: false,
     budgeroNote: 'Any country, 168 currencies',
-    simplifiNote: 'US banks and USD only',
+    simplifiNote: 'US/Canada banks; USD or CAD',
   },
   {
     feature: 'Budgeting method',
@@ -77,7 +78,7 @@ const comparisonData = [
     budgero: true,
     simplifi: false,
     budgeroNote: '168 currencies with live FX rates',
-    simplifiNote: 'USD only',
+    simplifiNote: 'USD or CAD; one currency at a time',
   },
   {
     feature: 'Works offline',
@@ -112,7 +113,7 @@ const comparisonData = [
     budgero: true,
     simplifi: false,
     budgeroNote: null,
-    simplifiNote: 'US focused',
+    simplifiNote: 'US/Canada banks and currencies',
   },
 ];
 
@@ -123,11 +124,11 @@ const faqs = [
   },
   {
     q: 'Is Simplifi cheaper than Budgero?',
-    a: `No — Budgero Cloud at ${pricing.yearly}/year (tax included) now edges out Simplifi's $35.88/year ($2.99/mo billed annually). And Budgero Self-Host is free forever with the full feature set, which makes it the cheaper option by far if you're willing to run a Docker container.`,
+    a: `Compare checkout totals and renewal terms. Budgero Cloud is ${pricing.yearly}/year, tax included. Simplifi currently advertises $3.99/month billed annually as an introductory offer, with $6.99/month shown as the regular rate. Budgero Self-Host has no software fee; your hosting costs are separate.`,
   },
   {
     q: 'Does Simplifi work outside the US?',
-    a: 'Not really. Simplifi connects to US financial institutions and operates in USD. If you live outside the US, bank with non-US institutions, or need multiple currencies, Simplifi is not built for you — that is exactly the case Budgero covers, with 168 currencies and no dependency on bank connections.',
+    a: 'Simplifi supports banks in the US and Canada and uses USD or CAD, one currency at a time. Mixing those currencies can cause balance discrepancies. Budgero supports accounts in multiple currencies in one budget, using manual entry or file imports.',
   },
   {
     q: 'Can I switch from Simplifi to Budgero?',
@@ -219,9 +220,9 @@ export default function QuickenSimplifiAlternativePage() {
                 </h1>
 
                 <p className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Simplifi is a modern take on Quicken&apos;s legacy, but it still requires bank
-                  connections and stores your data on their servers. Budgero takes a different
-                  approach: zero-based budgeting with zero-knowledge encryption.
+                  Simplifi offers connected bank accounts and stores your data on their servers.
+                  Budgero takes a different approach: zero-based budgeting with zero-knowledge
+                  encryption.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -241,9 +242,7 @@ export default function QuickenSimplifiAlternativePage() {
                     size="lg"
                     className="h-14 px-8 text-lg border-border/80"
                   >
-                    <a href="/self-hostable">
-                      Explore Self-Host
-                    </a>
+                    <a href="/self-hostable">Explore Self-Host</a>
                   </Button>
                 </div>
 
@@ -251,10 +250,7 @@ export default function QuickenSimplifiAlternativePage() {
                   No credit card required. Zero-knowledge encryption on all plans.
                   <br />
                   Or{' '}
-                  <a
-                    href="/self-hostable"
-                    className="underline hover:text-foreground"
-                  >
+                  <a href="/self-hostable" className="underline hover:text-foreground">
                     self-host for free
                   </a>{' '}
                   with full features.
@@ -307,13 +303,11 @@ export default function QuickenSimplifiAlternativePage() {
                   <div className="w-12 h-12 rounded-full bg-[#dfe4ec] flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-[#314258]" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-lg">
-                    168 Currencies
-                  </h3>
+                  <h3 className="font-semibold text-foreground mb-2 text-lg">168 Currencies</h3>
                   <p className="text-foreground/70">
                     Simplifi is US focused and works primarily with USD. Budgero supports 168
-                    currencies with live exchange rates and automatic conversion, working anywhere in
-                    the world.
+                    currencies with live exchange rates and automatic conversion, working anywhere
+                    in the world.
                   </p>
                 </div>
 
@@ -325,9 +319,9 @@ export default function QuickenSimplifiAlternativePage() {
                     No Bank Connection Required
                   </h3>
                   <p className="text-foreground/70">
-                    Simplifi needs Plaid to connect to your bank and pull transactions automatically.
-                    Budgero is manual-first by design. You stay in control of what data enters your
-                    budget.
+                    Simplifi needs Plaid to connect to your bank and pull transactions
+                    automatically. Budgero is manual-first by design. You stay in control of what
+                    data enters your budget.
                   </p>
                 </div>
               </div>
@@ -341,9 +335,7 @@ export default function QuickenSimplifiAlternativePage() {
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                   Budgero vs Quicken Simplifi
                 </h2>
-                <p className="text-lg text-foreground/70">
-                  Feature-by-feature comparison
-                </p>
+                <p className="text-lg text-foreground/70">Feature-by-feature comparison</p>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">
@@ -365,11 +357,7 @@ export default function QuickenSimplifiAlternativePage() {
                     {comparisonData.map((row, index) => (
                       <tr
                         key={row.feature}
-                        className={
-                          index % 2 === 0
-                            ? 'bg-transparent'
-                            : 'bg-muted/25'
-                        }
+                        className={index % 2 === 0 ? 'bg-transparent' : 'bg-muted/25'}
                       >
                         <td className="px-6 py-4 text-sm font-medium text-foreground">
                           {row.feature}
@@ -383,7 +371,9 @@ export default function QuickenSimplifiAlternativePage() {
                                 <X className="w-5 h-5 text-foreground/35" />
                               )}
                               {row.budgeroNote && (
-                                <span className="text-xs text-foreground/55">{row.budgeroNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.budgeroNote}
+                                </span>
                               )}
                             </div>
                           ) : (
@@ -392,7 +382,9 @@ export default function QuickenSimplifiAlternativePage() {
                                 {row.budgero}
                               </span>
                               {row.budgeroNote && (
-                                <span className="text-xs text-foreground/55">{row.budgeroNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.budgeroNote}
+                                </span>
                               )}
                             </div>
                           )}
@@ -406,16 +398,18 @@ export default function QuickenSimplifiAlternativePage() {
                                 <X className="w-5 h-5 text-foreground/35" />
                               )}
                               {row.simplifiNote && (
-                                <span className="text-xs text-foreground/55">{row.simplifiNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.simplifiNote}
+                                </span>
                               )}
                             </div>
                           ) : (
                             <div className="flex flex-col items-center gap-1">
-                              <span className="text-sm text-foreground/65">
-                                {row.simplifi}
-                              </span>
+                              <span className="text-sm text-foreground/65">{row.simplifi}</span>
                               {row.simplifiNote && (
-                                <span className="text-xs text-foreground/55">{row.simplifiNote}</span>
+                                <span className="text-xs text-foreground/55">
+                                  {row.simplifiNote}
+                                </span>
                               )}
                             </div>
                           )}
@@ -442,19 +436,19 @@ export default function QuickenSimplifiAlternativePage() {
                   found YNAB-style budgeting exhausting, it removes nearly all the work.
                 </p>
                 <p>
-                  The catch is that removing the work also removes the awareness. The Spending
-                  Plan tells you what&apos;s left; it doesn&apos;t make you decide what your money
-                  is <em>for</em>. Zero-based budgeting — the method Budgero shares with YNAB —
-                  forces that decision up front: every dollar gets a job before the month starts,
-                  and overspending in one envelope means consciously taking from another. People
-                  who switch from passive tracking to zero-based budgeting consistently report the
+                  The catch is that removing the work also removes the awareness. The Spending Plan
+                  tells you what&apos;s left; it doesn&apos;t make you decide what your money is{' '}
+                  <em>for</em>. Zero-based budgeting — the method Budgero shares with YNAB — forces
+                  that decision up front: every dollar gets a job before the month starts, and
+                  overspending in one envelope means consciously taking from another. People who
+                  switch from passive tracking to zero-based budgeting consistently report the
                   method itself, not the app, is what changed their finances.
                 </p>
                 <p>
                   Neither approach is wrong. If you want money management on autopilot, Simplifi
-                  does it cheaply and well — for US banks and US dollars. If you want the
-                  discipline of envelopes with privacy and multi-currency on top, that&apos;s
-                  Budgero&apos;s lane. We compare both against seven other apps in our{' '}
+                  does it cheaply and well — for US banks and US dollars. If you want the discipline
+                  of envelopes with privacy and multi-currency on top, that&apos;s Budgero&apos;s
+                  lane. We compare both against seven other apps in our{' '}
                   <a href="/best-ynab-alternatives" className="underline hover:text-foreground">
                     9-app comparison
                   </a>
@@ -478,7 +472,9 @@ export default function QuickenSimplifiAlternativePage() {
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Investment tracking and net worth:</strong>{' '}
+                      <strong className="text-foreground">
+                        Investment tracking and net worth:
+                      </strong>{' '}
                       Simplifi automatically syncs with brokerages and tracks your investments and
                       net worth in real time. Budgero only supports manual investment tracking.
                     </span>
@@ -494,20 +490,24 @@ export default function QuickenSimplifiAlternativePage() {
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Comparable price point:</strong>{' '}
-                      At $35.88/year ($2.99/mo billed annually), Simplifi is priced almost
-                      identically to Budgero Cloud at {pricing.yearly}/year. Though you can{' '}
+                      <strong className="text-foreground">Comparable price point:</strong> Check
+                      Simplifi’s current introductory offer and renewal price. Budgero is priced at{' '}
+                      {pricing.yearly}/year on Cloud. You can also{' '}
                       <a href="/self-hostable" className="underline hover:text-foreground">
                         self-host Budgero for free
-                      </a>.
+                      </a>
+                      .
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">Automatic transaction categorization:</strong>{' '}
+                      <strong className="text-foreground">
+                        Automatic transaction categorization:
+                      </strong>{' '}
                       With bank sync enabled, Simplifi automatically imports and categorizes
-                      transactions. Budgero is manual-first, which means more control but more effort.
+                      transactions. Budgero is manual-first, which means more control but more
+                      effort.
                     </span>
                   </li>
                 </ul>
@@ -604,6 +604,20 @@ export default function QuickenSimplifiAlternativePage() {
 
             <div className="my-12 border-t border-border" aria-hidden />
 
+            <ComparisonReferences
+              reviewedOn="2026-09-05"
+              sources={[
+                {
+                  label: 'Simplifi pricing and renewal terms',
+                  href: 'https://www.quicken.com/products/simplifi/',
+                },
+                {
+                  label: 'Simplifi supported countries and currencies',
+                  href: 'https://support.simplifi.quicken.com/en/articles/3828353-what-currencies-does-quicken-simplifi-support',
+                },
+              ]}
+            />
+
             <TestimonialsSection />
 
             <div className="my-12 border-t border-border" aria-hidden />
@@ -632,10 +646,7 @@ export default function QuickenSimplifiAlternativePage() {
                 </div>
                 <p className="mt-6 text-sm text-foreground/60">
                   Want all features for free?{' '}
-                  <a
-                    href="/self-hostable"
-                    className="underline hover:text-foreground"
-                  >
+                  <a href="/self-hostable" className="underline hover:text-foreground">
                     Self-host Budgero
                   </a>{' '}
                   with full sync, multi-currency, and collaboration.
