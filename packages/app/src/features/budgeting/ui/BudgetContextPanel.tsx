@@ -734,30 +734,27 @@ export function BudgetContextPanel({
         <CardTitle className={titleClass}>Quick Actions</CardTitle>
       </CardHeader>
       <CardContent className={cn(contentClass, 'flex flex-col gap-1.5')}>
+        <QuickActionButton
+          icon={AlertTriangle}
+          label="Cover overspending"
+          onClick={handleCoverOverspending}
+          pending={batchUpsertAssignments.isPending}
+          disabled={
+            overspentSummary.categories.length === 0 || (readyToAssign <= 0 && !allowOverAssignment)
+          }
+          suffix={`+${formatAmount(overspendingQuickActionAmount)}`}
+        />
         {!selectedCategory && (
-          <>
-            <QuickActionButton
-              icon={AlertTriangle}
-              label="Cover overspending"
-              onClick={handleCoverOverspending}
-              pending={batchUpsertAssignments.isPending}
-              disabled={
-                overspentSummary.categories.length === 0 ||
-                (readyToAssign <= 0 && !allowOverAssignment)
-              }
-              suffix={`+${formatAmount(overspendingQuickActionAmount)}`}
-            />
-            <QuickActionButton
-              icon={Target}
-              label="Fund underfunded"
-              onClick={handleFundUnderfunded}
-              pending={batchUpsertAssignments.isPending}
-              disabled={
-                underfundedSummary.count === 0 || (readyToAssign <= 0 && !allowOverAssignment)
-              }
-              suffix={`+${formatAmount(underfundedQuickActionAmount)}`}
-            />
-          </>
+          <QuickActionButton
+            icon={Target}
+            label="Fund underfunded"
+            onClick={handleFundUnderfunded}
+            pending={batchUpsertAssignments.isPending}
+            disabled={
+              underfundedSummary.count === 0 || (readyToAssign <= 0 && !allowOverAssignment)
+            }
+            suffix={`+${formatAmount(underfundedQuickActionAmount)}`}
+          />
         )}
         {goalQuickActions?.underfunded && (
           <QuickActionButton
