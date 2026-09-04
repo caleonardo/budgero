@@ -5,19 +5,16 @@ import {
   AlertTriangle,
   Check,
   CheckCircle2,
-  Database,
   Download,
   Eye,
   EyeOff,
-  FileJson2,
   KeyRound,
   LoaderCircle,
-  LockKeyhole,
   RefreshCcw,
   ShieldCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -145,94 +142,42 @@ export function YnabSupportExporter() {
   };
 
   return (
-    <main className="relative isolate overflow-hidden border-t border-[#9e9e9e]/50 bg-[#eef3f2] text-[#13211d]">
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-70"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(19,33,29,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(19,33,29,.045) 1px, transparent 1px)',
-          backgroundSize: '42px 42px',
-        }}
-      />
-      <div className="pointer-events-none absolute -right-28 top-12 -z-10 h-96 w-96 rounded-full bg-[#8ee0bd]/35 blur-3xl" />
-
-      <section className="container mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:gap-14 lg:pb-24 lg:pt-16">
-        <div className="lg:sticky lg:top-8">
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#1b604b]/20 bg-white/70 px-3 py-1.5 text-sm font-semibold text-[#1b604b] shadow-sm backdrop-blur">
-            <ShieldCheck className="size-4" />
-            Budgero support export
-          </div>
-          <h1 className="max-w-xl text-4xl font-bold leading-[1.08] tracking-[-0.04em] sm:text-5xl lg:text-[3.75rem]">
-            Share the evidence,
-            <span className="block text-[#1b604b]">not your identity.</span>
-          </h1>
-          <p className="mt-6 max-w-xl text-base leading-7 text-[#40534c] sm:text-lg">
-            Create a diagnostic copy of your YNAB plan for Budgero support. It keeps the numbers
-            needed to reproduce an import problem and replaces the personal details around them.
+    <main className="min-h-[70vh] border-t border-border/70 bg-background">
+      <div className="container mx-auto max-w-3xl px-4 py-12 sm:py-16">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">YNAB support export</h1>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
+            Enter your YNAB personal access token to download an anonymized JSON copy of your plan
+            for Budgero support.
           </p>
+        </header>
 
-          <div className="mt-9 space-y-5 border-l border-[#1b604b]/20 pl-5">
-            {[
-              ['1', 'Connect', 'Your token is used only for direct requests from this browser to YNAB.'],
-              ['2', 'Anonymize', 'Names, IDs, notes, memos, and import references are replaced locally.'],
-              ['3', 'Download', 'You decide whether to inspect or send the generated JSON file.'],
-            ].map(([number, title, copy]) => (
-              <div key={number} className="relative grid grid-cols-[2rem_1fr] gap-3">
-                <span className="-ml-[2.55rem] flex size-8 items-center justify-center rounded-full border border-[#1b604b]/25 bg-[#eef3f2] text-xs font-bold text-[#1b604b]">
-                  {number}
-                </span>
-                <div className="-ml-8">
-                  <p className="font-semibold">{title}</p>
-                  <p className="mt-1 text-sm leading-6 text-[#53665f]">{copy}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+        <Card className="gap-0 overflow-hidden py-0">
+          <CardHeader className="border-b border-border/70 px-5 py-5 sm:px-6">
+            <CardTitle className="text-lg">Generate diagnostic file</CardTitle>
+            <CardDescription className="leading-6">
+              The token is used only for direct requests from your browser to YNAB. Budgero does
+              not receive or store it.
+            </CardDescription>
+          </CardHeader>
 
-          <div className="mt-9 flex items-start gap-3 rounded-2xl border border-[#d19624]/30 bg-[#fff4d7] p-4 text-sm leading-6 text-[#604a1d]">
-            <AlertTriangle className="mt-0.5 size-5 shrink-0 text-[#a06a00]" />
-            <p>
-              Amounts and dates stay unchanged because they are needed for verification. Treat the
-              downloaded file as sensitive and review it before sharing.
-            </p>
-          </div>
-        </div>
-
-        <Card className="gap-0 overflow-hidden rounded-[1.75rem] border-solid border-[#193a30]/15 bg-white/95 py-0 shadow-[0_28px_80px_-36px_rgba(17,48,39,.45)] backdrop-blur">
-          <div className="flex items-center justify-between border-b border-[#193a30]/10 bg-[#153b31] px-5 py-4 text-white sm:px-7">
-            <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-xl bg-[#a7f3d0] text-[#153b31]">
-                <FileJson2 className="size-5" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold">Diagnostic builder</p>
-                <p className="text-xs text-white/65">Runs locally in this tab</p>
-              </div>
-            </div>
-            <span className="hidden items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs text-white/80 sm:inline-flex">
-              <LockKeyhole className="size-3.5" /> No upload
-            </span>
-          </div>
-
-          <CardContent className="space-y-7 px-5 py-6 sm:px-7 sm:py-8">
+          <CardContent className="space-y-6 px-5 py-6 sm:px-6">
             <form onSubmit={connect} className="space-y-4">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-3">
-                  <Label htmlFor="ynab-token" className="text-[#203b33]">
-                    YNAB personal access token
-                  </Label>
+                  <Label htmlFor="ynab-token">YNAB personal access token</Label>
                   {plans.length > 0 && (
                     <button
                       type="button"
                       onClick={clearEverything}
-                      className="text-xs font-semibold text-[#4e665e] underline-offset-4 hover:text-[#153b31] hover:underline"
+                      className="text-xs font-semibold text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
                     >
                       Clear connection
                     </button>
                   )}
                 </div>
                 <div className="relative">
-                  <KeyRound className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#688078]" />
+                  <KeyRound className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <input
                     id="ynab-token"
                     type={showToken ? 'text' : 'password'}
@@ -244,19 +189,19 @@ export function YnabSupportExporter() {
                     data-1p-ignore
                     disabled={busy}
                     placeholder="Paste your token"
-                    className="h-12 w-full rounded-xl border border-[#24463b]/20 bg-[#f7faf9] py-2 pl-10 pr-12 text-base text-[#13211d] shadow-inner outline-none transition placeholder:text-[#81928c] focus:border-[#1b604b]/50 focus:ring-4 focus:ring-[#65c9a1]/15 disabled:opacity-60"
+                    className="h-11 w-full rounded-md border border-input bg-card py-2 pl-10 pr-12 text-base text-foreground shadow-xs outline-none transition placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:opacity-60"
                   />
                   <button
                     type="button"
                     onClick={() => setShowToken((visible) => !visible)}
-                    className="absolute right-2 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-[#5c7069] hover:bg-[#e9f0ed] hover:text-[#153b31] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1b604b]"
+                    className="absolute right-1 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     aria-label={showToken ? 'Hide token' : 'Show token'}
                   >
                     {showToken ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                   </button>
                 </div>
-                <p className="text-xs leading-5 text-[#687b74]">
-                  Kept in memory only. It is never saved in this site or included in the download.
+                <p className="text-xs leading-5 text-muted-foreground">
+                  Kept in memory only and never included in the downloaded file.
                 </p>
               </div>
 
@@ -264,7 +209,7 @@ export function YnabSupportExporter() {
                 <Button
                   type="submit"
                   disabled={busy || !token.trim()}
-                  className="h-11 w-full rounded-xl border-[#153b31] bg-[#153b31] text-white hover:bg-[#205545]"
+                  className="h-10 w-full"
                 >
                   {phase === 'connecting' ? (
                     <>
@@ -280,22 +225,20 @@ export function YnabSupportExporter() {
             </form>
 
             {plans.length > 0 && (
-              <div className="space-y-5 border-t border-[#193a30]/10 pt-6">
-                <div className="flex items-center gap-2 text-sm font-semibold text-[#1b604b]">
+              <div className="space-y-5 border-t border-border/70 pt-6">
+                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <CheckCircle2 className="size-4" /> Connected directly to YNAB
                 </div>
                 <div className="space-y-2.5">
-                  <Label htmlFor="ynab-plan" className="text-[#203b33]">
-                    Plan to export
-                  </Label>
+                  <Label htmlFor="ynab-plan">Plan to export</Label>
                   <Select value={selectedPlanId} onValueChange={setSelectedPlanId} disabled={busy}>
                     <SelectTrigger
                       id="ynab-plan"
-                      className="h-12 w-full rounded-xl border-[#24463b]/20 bg-[#f7faf9] px-3.5 text-base focus:ring-[#65c9a1]/20"
+                      className="h-11 w-full bg-card px-3.5 text-base"
                     >
                       <SelectValue placeholder="Choose a plan" />
                     </SelectTrigger>
-                    <SelectContent className="border-[#24463b]/20 bg-white text-[#13211d]">
+                    <SelectContent>
                       {plans.map((plan) => (
                         <SelectItem key={plan.id} value={plan.id}>
                           {plan.name}
@@ -304,7 +247,7 @@ export function YnabSupportExporter() {
                     </SelectContent>
                   </Select>
                   {selectedPlan && (
-                    <p className="text-xs text-[#687b74]">
+                    <p className="text-xs text-muted-foreground">
                       {selectedPlan.first_month && selectedPlan.last_month
                         ? `${selectedPlan.first_month.slice(0, 7)} to ${selectedPlan.last_month.slice(0, 7)}`
                         : 'The complete plan history will be included.'}
@@ -316,7 +259,7 @@ export function YnabSupportExporter() {
                   type="button"
                   onClick={generate}
                   disabled={busy || !selectedPlanId}
-                  className="h-12 w-full rounded-xl border-[#153b31] bg-[#153b31] text-white hover:bg-[#205545]"
+                  className="h-10 w-full"
                 >
                   {phase === 'generating' ? (
                     <>
@@ -338,7 +281,7 @@ export function YnabSupportExporter() {
             {error && (
               <div
                 role="alert"
-                className="flex items-start gap-3 rounded-xl border border-[#b94438]/25 bg-[#fff0ed] p-4 text-sm leading-6 text-[#792c24]"
+                className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm leading-6 text-destructive"
               >
                 <AlertTriangle className="mt-0.5 size-4 shrink-0" />
                 <span>{error}</span>
@@ -347,14 +290,14 @@ export function YnabSupportExporter() {
 
             <div aria-live="polite">
               {result && (
-                <div className="rounded-2xl border border-[#278264]/20 bg-[#eafaf3] p-5">
+                <div className="rounded-lg border border-emerald-700/20 bg-emerald-50 p-4 text-emerald-950 dark:bg-emerald-950/30 dark:text-emerald-100">
                   <div className="flex items-start gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#1b604b] text-white">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-white">
                       <Check className="size-5" />
                     </span>
                     <div className="min-w-0">
-                      <p className="font-semibold text-[#153b31]">Your diagnostic is ready</p>
-                      <p className="mt-1 truncate text-sm text-[#53665f]">{result.filename}</p>
+                      <p className="font-semibold">Diagnostic downloaded</p>
+                      <p className="mt-1 truncate text-sm opacity-75">{result.filename}</p>
                     </div>
                   </div>
                   <dl className="mt-4 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
@@ -364,9 +307,9 @@ export function YnabSupportExporter() {
                       ['Transactions', result.transactions],
                       ['Checks flagged', result.mismatches],
                     ].map(([label, value]) => (
-                      <div key={label} className="rounded-lg bg-white/70 px-3 py-2.5">
-                        <dt className="text-[#6b7c76]">{label}</dt>
-                        <dd className="mt-1 font-bold text-[#173f34]">{value}</dd>
+                      <div key={label} className="rounded-md bg-white/70 px-3 py-2 dark:bg-black/20">
+                        <dt className="opacity-65">{label}</dt>
+                        <dd className="mt-1 font-bold">{value}</dd>
                       </div>
                     ))}
                   </dl>
@@ -375,41 +318,23 @@ export function YnabSupportExporter() {
             </div>
           </CardContent>
         </Card>
-      </section>
 
-      <section className="border-y border-[#193a30]/10 bg-white/60">
-        <div className="container mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-2 md:gap-12">
-          <div>
-            <div className="mb-4 flex items-center gap-2 font-semibold text-[#153b31]">
-              <ShieldCheck className="size-5 text-[#1b604b]" /> Replaced before download
-            </div>
-            <ul className="grid gap-3 text-sm leading-6 text-[#50635c] sm:grid-cols-2">
-              {['Plan, account & payee names', 'Category & group names', 'Memos, notes & import IDs', 'Record and relationship IDs'].map(
-                (item) => (
-                  <li key={item} className="flex items-start gap-2">
-                    <Check className="mt-1 size-4 shrink-0 text-[#278264]" /> {item}
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
-          <div>
-            <div className="mb-4 flex items-center gap-2 font-semibold text-[#153b31]">
-              <Database className="size-5 text-[#1b604b]" /> Preserved for verification
-            </div>
-            <ul className="grid gap-3 text-sm leading-6 text-[#50635c] sm:grid-cols-2">
-              {['Amounts, dates & account types', 'Monthly Ready to Assign', 'Assigned, activity & available', 'Money Movements & balances'].map(
-                (item) => (
-                  <li key={item} className="flex items-start gap-2">
-                    <Check className="mt-1 size-4 shrink-0 text-[#278264]" /> {item}
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
+        <div className="mt-6 space-y-3 rounded-xl border border-border/70 bg-card/70 p-5 text-sm leading-6 text-muted-foreground">
+          <p>
+            <strong className="text-foreground">Anonymized:</strong> plan, account, category,
+            category group and payee names; notes, memos, import IDs and record IDs.
+          </p>
+          <p>
+            <strong className="text-foreground">Preserved:</strong> amounts, dates, account types,
+            monthly Ready to Assign, category assigned/activity/available values, balances and Money
+            Movements.
+          </p>
+          <p className="flex items-start gap-2 border-t border-border/70 pt-3 text-amber-800 dark:text-amber-300">
+            <AlertTriangle className="mt-1 size-4 shrink-0" />
+            Amounts and dates remain sensitive. Review the JSON file before sending it to support.
+          </p>
         </div>
-      </section>
+      </div>
     </main>
   );
 }
-
