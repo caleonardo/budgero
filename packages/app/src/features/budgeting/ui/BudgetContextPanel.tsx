@@ -41,10 +41,13 @@ import {
 import type { BudgetRow } from '@features/budget-planning/lib/budget-transforms';
 import {
   calculateUnderfundedGoals,
+  calculateOverspentCategories,
   calculateOverfundedCategories,
+  prepareUnderfundedAssignments,
+  prepareOverspentAssignments,
 } from '@features/budget-planning/ui/assign-dropdown/assign-dropdown.utils';
 import type { GetMonthlyBudgetRow } from '@budgero/core/browser';
-import { ZERO_MILLI } from '@shared/lib/currency/milli';
+import { asMilli, sumMilli, ZERO_MILLI } from '@shared/lib/currency/milli';
 import { roundMilli } from '@shared/lib/currency/round-amount';
 import { GoalSection } from '@features/goal-management/ui/GoalSection';
 import {
@@ -57,6 +60,7 @@ import {
   Layers,
   Wallet,
   ArrowLeftRight,
+  AlertTriangle,
   Coins,
   Target,
   type LucideIcon,
@@ -66,10 +70,12 @@ import { useFormatMaskedMilli } from '@features/budget-planning/lib/useFormatMas
 import { cn } from '@shared/lib/utils';
 import { extractDateKey } from '@shared/lib/date-utils';
 import { toastError } from '@shared/lib/errors';
+import { useAllowOverAssignment } from '@shared/hooks/useUserPreferences';
 
 interface BudgetContextPanelProps {
   budgetId: number;
   currentMonth: string;
+  readyToAssign: number;
   globalLocalizer: Intl.NumberFormat;
   selectedCategoryIds: number[];
   transformedRows: BudgetRow[];
@@ -87,6 +93,7 @@ interface QuickActionButtonProps {
   onClick: () => void;
   /** Disables the button and swaps the icon for a spinner. */
   pending: boolean;
+  disabled?: boolean;
   /** Optional right-aligned monospace annotation (e.g. the amount involved). */
   suffix?: string;
 }
@@ -96,6 +103,7 @@ function QuickActionButton({
   label,
   onClick,
   pending,
+  disabled = false,
   suffix,
 }: QuickActionButtonProps) {
   return (
@@ -103,7 +111,7 @@ function QuickActionButton({
       variant="outline"
       size="sm"
       onClick={onClick}
-      disabled={pending}
+      disabled={pending || disabled}
       className="justify-start gap-2"
     >
       {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}
@@ -118,12 +126,14 @@ function QuickActionButton({
 export function BudgetContextPanel({
   budgetId,
   currentMonth,
+  readyToAssign,
   globalLocalizer,
   selectedCategoryIds,
   transformedRows,
   monthsBack = 6,
 }: BudgetContextPanelProps) {
   const batchUpsertAssignments = useBatchUpsertAssignments();
+  const { data: allowOverAssignment = false } = useAllowOverAssignment();
   // Every amount in this panel (budget rows, goals, analytics totals) is
   // stored milliunits; this formatter converts to decimal at display time.
   const formatAmount = useFormatMaskedMilli(globalLocalizer);
@@ -147,6 +157,21 @@ export function BudgetContextPanel({
     const idSet = new Set(effectiveCategoryIds);
     return allCategoryRows.filter((row) => idSet.has(row.categoryId));
   }, [allCategoryRows, effectiveCategoryIds]);
+
+  const selectedBudgetRows = useMemo(
+    () =>
+      selectedRows.map(
+        (row) =>
+          ({
+            CategoryID: row.categoryId,
+            Category: row.name,
+            Assigned: row.assigned,
+            Activity: row.activity,
+            Available: row.available,
+          }) as GetMonthlyBudgetRow
+      ),
+    [selectedRows]
+  );
 
   const isUsingAllCategories =
     selectedCategoryIds.length === 0 || effectiveCategoryIds.length === 0;
@@ -183,24 +208,16 @@ export function BudgetContextPanel({
   // (the selection, or every category). Same maths as the assign dropdown's
   // "Fund underfunded goals" so the two surfaces always agree.
   const underfundedSummary = useMemo(() => {
-    if (!allGoals.length || !selectedRows.length) return { total: ZERO_MILLI, count: 0 };
+    if (!allGoals.length || !selectedRows.length) {
+      return { total: ZERO_MILLI, count: 0, goals: [] };
+    }
     const currencyCode = globalLocalizer.resolvedOptions().currency ?? 'USD';
     const idSet = new Set(selectedRows.map((row) => row.categoryId));
     const goalsInScope = allGoals.filter((goal) => idSet.has(goal.CategoryID));
-    if (!goalsInScope.length) return { total: ZERO_MILLI, count: 0 };
-    const rowData = selectedRows.map(
-      (row) =>
-        ({
-          CategoryID: row.categoryId,
-          Category: row.name,
-          Assigned: row.assigned,
-          Activity: row.activity,
-          Available: row.available,
-        }) as GetMonthlyBudgetRow
-    );
+    if (!goalsInScope.length) return { total: ZERO_MILLI, count: 0, goals: [] };
     const underfunded = calculateUnderfundedGoals(
       goalsInScope,
-      rowData,
+      selectedBudgetRows,
       currencyCode,
       currentMonth,
       cycleFinancials
@@ -208,8 +225,30 @@ export function BudgetContextPanel({
     return {
       total: roundMilli(underfunded.reduce((sum, g) => sum + g.needed, 0)),
       count: underfunded.length,
+      goals: underfunded,
     };
-  }, [allGoals, selectedRows, globalLocalizer, currentMonth, cycleFinancials]);
+  }, [allGoals, selectedRows, selectedBudgetRows, globalLocalizer, currentMonth, cycleFinancials]);
+
+  const overspentSummary = useMemo(() => {
+    const categories = calculateOverspentCategories(selectedBudgetRows);
+    return {
+      categories,
+      total: sumMilli(categories.map((category) => category.overspent)),
+    };
+  }, [selectedBudgetRows]);
+
+  const overspendingQuickActionAmount = asMilli(
+    Math.min(
+      overspentSummary.total,
+      allowOverAssignment ? overspentSummary.total : Math.max(0, readyToAssign)
+    )
+  );
+  const underfundedQuickActionAmount = asMilli(
+    Math.min(
+      underfundedSummary.total,
+      allowOverAssignment ? underfundedSummary.total : Math.max(0, readyToAssign)
+    )
+  );
 
   // Goal-based quick actions for a single selected category. Reuses the same
   // underfunded/overfunded math as the assign dropdown so both surfaces agree.
@@ -586,6 +625,32 @@ export function BudgetContextPanel({
     );
   };
 
+  const handleCoverOverspending = () => {
+    const { assignments, batchAssignments } = prepareOverspentAssignments(
+      overspentSummary.categories,
+      overspendingQuickActionAmount,
+      selectedBudgetRows
+    );
+    const total = sumMilli(assignments.map((assignment) => assignment.amount));
+    handleApplyAssignments(
+      batchAssignments,
+      `Covered ${assignments.length} categor${assignments.length === 1 ? 'y' : 'ies'} (${formatAmount(total)})`
+    );
+  };
+
+  const handleFundUnderfunded = () => {
+    const { assignments, batchAssignments } = prepareUnderfundedAssignments(
+      underfundedSummary.goals,
+      underfundedQuickActionAmount,
+      selectedBudgetRows
+    );
+    const total = sumMilli(assignments.map((assignment) => assignment.amount));
+    handleApplyAssignments(
+      batchAssignments,
+      `Funded ${assignments.length} goal${assignments.length === 1 ? '' : 's'} (${formatAmount(total)})`
+    );
+  };
+
   if (effectiveCategoryIds.length === 0) {
     return (
       <Card className="h-full">
@@ -669,6 +734,31 @@ export function BudgetContextPanel({
         <CardTitle className={titleClass}>Quick Actions</CardTitle>
       </CardHeader>
       <CardContent className={cn(contentClass, 'flex flex-col gap-1.5')}>
+        {!selectedCategory && (
+          <>
+            <QuickActionButton
+              icon={AlertTriangle}
+              label="Cover overspending"
+              onClick={handleCoverOverspending}
+              pending={batchUpsertAssignments.isPending}
+              disabled={
+                overspentSummary.categories.length === 0 ||
+                (readyToAssign <= 0 && !allowOverAssignment)
+              }
+              suffix={`+${formatAmount(overspendingQuickActionAmount)}`}
+            />
+            <QuickActionButton
+              icon={Target}
+              label="Fund underfunded"
+              onClick={handleFundUnderfunded}
+              pending={batchUpsertAssignments.isPending}
+              disabled={
+                underfundedSummary.count === 0 || (readyToAssign <= 0 && !allowOverAssignment)
+              }
+              suffix={`+${formatAmount(underfundedQuickActionAmount)}`}
+            />
+          </>
+        )}
         {goalQuickActions?.underfunded && (
           <QuickActionButton
             icon={Target}

@@ -168,6 +168,7 @@ export function BudgetingPageMobile() {
             <BudgetContextPanel
               budgetId={budgetId}
               currentMonth={currentMonth}
+              readyToAssign={readyToAssign}
               globalLocalizer={globalLocalizer}
               selectedCategoryIds={selectedCategories.map((category) => category.ID)}
               transformedRows={transformedRows}

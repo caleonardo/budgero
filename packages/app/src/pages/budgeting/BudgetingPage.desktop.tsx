@@ -270,6 +270,7 @@ export function BudgetingPageDesktop() {
               <BudgetContextPanel
                 budgetId={budgetId}
                 currentMonth={currentMonth}
+                readyToAssign={readyToAssign}
                 globalLocalizer={globalLocalizer}
                 selectedCategoryIds={selectedCategoryIds}
                 transformedRows={transformedRows}
