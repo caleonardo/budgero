@@ -315,19 +315,30 @@ export function YnabSupportExporter() {
           </CardContent>
         </Card>
 
-        <div className="mt-6 space-y-3 rounded-xl border border-border/70 bg-card/70 p-5 text-sm leading-6 text-muted-foreground">
-          <p>
-            <strong className="text-foreground">Anonymized:</strong> plan, account, category,
-            category group and payee names; notes, memos, import IDs and record IDs.
-          </p>
-          <p>
-            <strong className="text-foreground">Preserved for verification:</strong> dates, account
-            types, and the mathematical relationships between transactions, balances, Ready to
-            Assign, category values and Money Movements.
-          </p>
-          <p className="flex items-start gap-2 border-t border-border/70 pt-3 text-amber-800 dark:text-amber-300">
+        <div className="mt-6 rounded-xl border border-border/70 bg-card/70 p-5 text-sm leading-6 text-muted-foreground">
+          <p className="font-semibold text-foreground">How the data is anonymized</p>
+          <ul className="mt-3 list-disc space-y-2 pl-5">
+            <li>
+              Plan, account, category group, category and payee names are replaced with neutral
+              labels such as Account 001 and Category 001.
+            </li>
+            <li>
+              Record IDs are replaced consistently, so transactions still reference the correct
+              anonymized accounts, categories and payees.
+            </li>
+            <li>
+              Notes, memos, import IDs, imported payee names and custom flag names are removed.
+            </li>
+            <li>
+              Every monetary value is multiplied by the same random factor for that export. The
+              factor is not included, while signs, ratios, totals and mismatches remain verifiable.
+            </li>
+            <li>Dates and account types are left unchanged.</li>
+          </ul>
+          <p className="mt-4 flex items-start gap-2 border-t border-border/70 pt-3 text-amber-800 dark:text-amber-300">
             <AlertTriangle className="mt-1 size-4 shrink-0" />
-            Amounts and dates remain sensitive. Review the JSON file before sending it to support.
+            Dates, transaction timing, account types and spending patterns can still be sensitive.
+            Review the JSON file before sending it to support.
           </p>
         </div>
       </div>
