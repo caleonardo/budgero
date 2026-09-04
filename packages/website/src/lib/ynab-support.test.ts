@@ -192,12 +192,9 @@ test('adds the verification values used by the Budgero import checks', () => {
 
   assert.equal(bundle.serverKnowledge, 42);
   assert.equal(bundle._support.generatedAt, '2026-09-04T12:00:00.000Z');
-  assert.deepEqual(bundle._support.anonymization.amountScaling, {
-    operation: 'multiply',
-    k: 7,
-    formula: 'exported_amount = original_amount * k',
-  });
   assert.equal(bundle._support.anonymization.amountsPreserved, false);
+  assert.equal(bundle._support.anonymization.amountsUniformlyScaled, true);
+  assert.equal(JSON.stringify(bundle._support).includes('"k":'), false);
   assert.deepEqual(bundle._support.verification.readyToAssignByMonth, [
     {
       month: '2026-02',
@@ -248,6 +245,15 @@ test('scales every monetary representation by one factor without scaling rates',
   assert.equal(movement.amount, 45000);
   assert.equal(movement.amount_currency, 45);
   assert.equal(movement.amount_formatted, '€45.00');
+});
+
+test('does not disclose the private amount scale factor', () => {
+  const bundle = createYnabSupportBundle(fixture, { idFactory, amountScaleFactor: 7 });
+  const serialized = JSON.stringify(bundle);
+
+  assert.equal(serialized.includes('amountScaleFactor'), false);
+  assert.equal(serialized.includes('"k":7'), false);
+  assert.equal(serialized.includes('original_amount * k'), false);
 });
 
 test('rejects scale factors that could make milliunit values unsafe', () => {

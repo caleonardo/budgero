@@ -34,7 +34,6 @@ type Phase = 'idle' | 'connecting' | 'connected' | 'generating' | 'complete';
 interface ExportResult {
   filename: string;
   fileSize: string;
-  amountScaleFactor: number;
   months: number;
   transactions: number;
   mismatches: number;
@@ -125,7 +124,6 @@ export function YnabSupportExporter() {
       setResult({
         filename,
         fileSize: formatBytes(new Blob([contents]).size),
-        amountScaleFactor: bundle._support.anonymization.amountScaling.k,
         months: bundle._support.verification.counts.months,
         transactions: bundle._support.verification.counts.transactions,
         mismatches: bundle._support.verification.moneyMovementAssignments.mismatches.length,
@@ -295,10 +293,9 @@ export function YnabSupportExporter() {
                       <p className="mt-1 truncate text-sm opacity-75">{result.filename}</p>
                     </div>
                   </div>
-                  <dl className="mt-4 grid grid-cols-2 gap-2 text-xs sm:grid-cols-5">
+                  <dl className="mt-4 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
                     {[
                       ['Size', result.fileSize],
-                      ['Amount scale', `×${result.amountScaleFactor}`],
                       ['Months', result.months],
                       ['Transactions', result.transactions],
                       ['Checks flagged', result.mismatches],

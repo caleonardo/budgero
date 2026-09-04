@@ -24,11 +24,7 @@ export interface YnabSupportBundle extends YnabApiSnapshot {
       identifiersReplaced: boolean;
       freeTextRemoved: boolean;
       amountsPreserved: boolean;
-      amountScaling: {
-        operation: 'multiply';
-        k: number;
-        formula: 'exported_amount = original_amount * k';
-      };
+      amountsUniformlyScaled: boolean;
       datesPreserved: boolean;
     };
     verification: ReturnType<typeof createVerification>;
@@ -613,11 +609,7 @@ export function createYnabSupportBundle(
         identifiersReplaced: true,
         freeTextRemoved: true,
         amountsPreserved: false,
-        amountScaling: {
-          operation: 'multiply',
-          k: amountScaleFactor,
-          formula: 'exported_amount = original_amount * k',
-        },
+        amountsUniformlyScaled: true,
         datesPreserved: true,
       },
       verification: createVerification(anonymized),
