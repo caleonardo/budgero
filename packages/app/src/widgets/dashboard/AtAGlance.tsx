@@ -22,6 +22,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@shared/ui/popover';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { trendTextClass } from '@shared/lib/amount-color';
 import { focusCategoryNavState } from '@shared/hooks/useFocusCategoryFromNavState';
+import { getBiggestOnBudgetOutflows } from './at-a-glance.utils';
 
 export function AtAGlance() {
   const navigate = useNavigate();
@@ -48,10 +49,7 @@ export function AtAGlance() {
   const { data: readyToAssign = 0 } = useReadyToAssign(budgetId);
   const { data: onBudgetBalance = 0 } = useOnBudgetBalance(budgetId);
 
-  const biggestOutflows = monthTx
-    .filter((t) => (t.OutflowConverted || 0) > 0 && !t.TransferID)
-    .sort((a, b) => (b.OutflowConverted || 0) - (a.OutflowConverted || 0))
-    .slice(0, 5);
+  const biggestOutflows = getBiggestOnBudgetOutflows(monthTx);
 
   const start = startOfMonth(today);
   const end = endOfMonth(today);
