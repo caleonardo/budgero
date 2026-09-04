@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { Callout } from '@/components/callout';
 import { CodeBlock } from '@/components/mdx/code-block';
 import { TrialCta } from '@/components/mdx/trial-cta';
+import { TrackedLink } from '@/components/TrackedLink';
 import { pricing } from '@/lib/pricing';
 
 const Prose = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -81,6 +82,7 @@ const components = {
   table: Table,
   Callout,
   TrialCta,
+  TrackedLink,
   MonthlyPrice,
   YearlyPrice,
   pre: (props: React.HTMLAttributes<HTMLPreElement>) => <CodeBlock {...props} />,

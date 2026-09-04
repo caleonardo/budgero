@@ -56,6 +56,10 @@ Budgero persists all self-host data under `/data`:
 - Metadata DB: `/data/budgero.db`
 - Encrypted budget blobs: `/data/budget_spaces/`
 
+<Callout title="Support Budgero">
+  <p className="!my-0">Self-hosting is free, and donations are optional. If Budgero is useful to you, <TrackedLink href="/donate" event="Self-Host - Donate (Setup Guide)" className="underline underline-offset-4">make a one-time donation</TrackedLink> to help support development.</p>
+</Callout>
+
 ## Docker Compose
 
 ```yaml
@@ -156,6 +160,7 @@ Each entry must match the browser's origin exactly: scheme, host, and port (when
 
 ## Environment variables
 
+<div className="overflow-x-auto">
 <table>
   <thead>
     <tr>
@@ -197,6 +202,7 @@ Each entry must match the browser's origin exactly: scheme, host, and port (when
     </tr>
   </tbody>
 </table>
+</div>
 
 ### Update check
 

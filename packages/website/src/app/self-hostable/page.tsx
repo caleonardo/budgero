@@ -6,7 +6,6 @@ import {
   RefreshCw,
   CheckCircle2,
   ArrowRight,
-  Cloud,
   Database,
   Globe,
   Key,
@@ -261,6 +260,17 @@ export default function SelfHostablePage() {
                     Read the full setup guide
                   </TrackedLink>
                 </p>
+                <p className="mt-4 text-sm text-foreground/60">
+                  Already using Budgero?{' '}
+                  <TrackedLink
+                    href="/donate"
+                    event="Self-Host - Donate (Hero)"
+                    className="text-foreground underline underline-offset-4 hover:text-foreground/70"
+                  >
+                    Support development with an optional donation
+                  </TrackedLink>
+                  .
+                </p>
               </div>
             </section>
 
@@ -414,7 +424,7 @@ export default function SelfHostablePage() {
                 Related comparisons
               </h2>
               <p className="text-foreground/65 mb-8">
-                If you're evaluating self-host because you outgrew another budgeting app, these
+                If you&apos;re evaluating self-host because you outgrew another budgeting app, these
                 comparisons might help.
               </p>
               <div className="grid sm:grid-cols-2 gap-4">

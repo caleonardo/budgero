@@ -760,6 +760,17 @@ export default function LandingPage() {
                       Read the self-hosting guide
                     </Link>
                   </div>
+                  <p className="mt-5 text-sm text-foreground/70">
+                    Already self-hosting?{' '}
+                    <Link
+                      href="/donate"
+                      onClick={() => track('Self-Host - Donate (Homepage)')}
+                      className="underline underline-offset-4 hover:text-foreground"
+                    >
+                      Support Budgero with an optional donation
+                    </Link>
+                    .
+                  </p>
                 </div>
               </section>
 

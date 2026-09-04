@@ -143,6 +143,15 @@ export function SiteFooter() {
             <h3 className="font-medium text-[#141414] mb-6">Community</h3>
             <ul className="space-y-3 text-sm text-[#4b5563]">
               <li>
+                <TrackedLink
+                  href="/donate"
+                  event="Donate Link - Footer"
+                  className="hover:text-[#141414] transition-colors"
+                >
+                  Donate to Budgero
+                </TrackedLink>
+              </li>
+              <li>
                 <a
                   href="https://discord.gg/ZgWnzaPqae"
                   target="_blank"

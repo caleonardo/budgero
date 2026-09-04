@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { TestimonialsSection } from '@/components/landing/Testimonials';
 import { pricing } from '@/lib/pricing';
+import { TrackedLink } from '@/components/TrackedLink';
 
 export const dynamic = 'force-static';
 export const revalidate = false;
@@ -518,6 +519,17 @@ volumes:
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                 </Button>
+                <p className="mt-5 text-sm text-foreground/70">
+                  Self-hosting is free. If Budgero works for you,{' '}
+                  <TrackedLink
+                    href="/donate"
+                    event="Self-Host - Donate (YNAB Alternative)"
+                    className="text-foreground underline underline-offset-4 hover:text-foreground/70"
+                  >
+                    help support development with an optional donation
+                  </TrackedLink>
+                  .
+                </p>
               </div>
             </section>
 
