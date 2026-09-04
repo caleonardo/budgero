@@ -16,11 +16,31 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.11.5',
+    date: 'September 5, 2026',
+    summary: 'Fixes YNAB import verification and selected-category overspending actions.',
+    isLatest: true,
+    items: [
+      {
+        type: 'fixed',
+        title: 'Import YNAB plans with missing Money Movement history',
+        description:
+          'Direct YNAB imports no longer fail just because a month has no Money Movement records. Monthly assignments are preserved, and only assignments checked against available movement history are counted as verified.',
+      },
+      {
+        type: 'fixed',
+        title: 'Cover overspending for a selected category',
+        description:
+          'Cover overspending now stays visible in Quick Actions when you select a single category.',
+      },
+    ],
+  },
+  {
     version: 'v1.11.4',
     date: 'September 4, 2026',
     summary:
       'This patch adds report drill-downs and direct YNAB API imports, and fixes several transaction, account, and large-ledger issues.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
