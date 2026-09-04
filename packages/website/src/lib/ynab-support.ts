@@ -24,6 +24,11 @@ export interface YnabSupportBundle extends YnabApiSnapshot {
       identifiersReplaced: boolean;
       freeTextRemoved: boolean;
       amountsPreserved: boolean;
+      amountScaling: {
+        operation: 'multiply';
+        k: number;
+        formula: 'exported_amount = original_amount * k';
+      };
       datesPreserved: boolean;
     };
     verification: ReturnType<typeof createVerification>;
@@ -183,7 +188,25 @@ const RELATION_KINDS: Record<string, EntityKind> = {
 };
 
 const FREE_TEXT_KEY =
-  /^(memo|note|import_id|import_payee_name|original_payee|payee_name|account_name|category_name|category_group_name|description)$/i;
+  /^(memo|note|import_id|import_payee_name|import_payee_name_original|original_payee|payee_name|account_name|category_name|category_group_name|flag_name|description)$/i;
+
+const MILLIUNIT_KEYS = new Set([
+  'amount',
+  'balance',
+  'cleared_balance',
+  'uncleared_balance',
+  'budgeted',
+  'activity',
+  'income',
+  'to_be_budgeted',
+  'debt_original_balance',
+  'goal_target',
+  'goal_under_funded',
+  'goal_overall_funded',
+  'goal_overall_left',
+]);
+
+const PERIODIC_MILLIUNIT_KEYS = new Set(['debt_minimum_payments', 'debt_escrow_amounts']);
 
 function isRecord(value: unknown): value is JsonRecord {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -211,6 +234,53 @@ function defaultIdFactory(): string {
 
 interface AnonymizeOptions {
   idFactory?: (kind: EntityKind, index: number) => string;
+  amountScaleFactor?: number;
+}
+
+const MIN_RANDOM_SCALE_FACTOR = 2;
+const MAX_RANDOM_SCALE_FACTOR = 9;
+
+function randomAmountScaleFactor(): number {
+  const randomValue = new Uint32Array(1);
+  globalThis.crypto.getRandomValues(randomValue);
+  return (
+    MIN_RANDOM_SCALE_FACTOR +
+    (randomValue[0] % (MAX_RANDOM_SCALE_FACTOR - MIN_RANDOM_SCALE_FACTOR + 1))
+  );
+}
+
+function validateAmountScaleFactor(value: number): number {
+  if (!Number.isSafeInteger(value) || value < 1) {
+    throw new Error('The amount scale factor must be a positive safe integer.');
+  }
+  return value;
+}
+
+function formatScaledMilliunits(
+  milliunits: number,
+  currencyFormat: JsonRecord | undefined
+): string {
+  const requestedDigits = numberValue(currencyFormat?.decimal_digits);
+  const decimalDigits = Math.max(0, Math.min(3, Math.trunc(requestedDigits)));
+  const increment = 10 ** (3 - decimalDigits);
+  const rounded = Math.round(Math.abs(milliunits) / increment) * increment;
+  const whole = Math.floor(rounded / 1000);
+  const fraction = Math.floor((rounded % 1000) / increment);
+  const groupSeparator = stringValue(currencyFormat?.group_separator) || ',';
+  const decimalSeparator = stringValue(currencyFormat?.decimal_separator) || '.';
+  const groupedWhole = String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, groupSeparator);
+  const numeric =
+    decimalDigits > 0
+      ? `${groupedWhole}${decimalSeparator}${String(fraction).padStart(decimalDigits, '0')}`
+      : groupedWhole;
+  const currencySymbol = stringValue(currencyFormat?.currency_symbol);
+  const displaySymbol = booleanValue(currencyFormat?.display_symbol) && currencySymbol;
+  const withSymbol = displaySymbol
+    ? booleanValue(currencyFormat?.symbol_first)
+      ? `${currencySymbol}${numeric}`
+      : `${numeric}${currencySymbol}`
+    : numeric;
+  return milliunits < 0 ? `-${withSymbol}` : withSymbol;
 }
 
 /**
@@ -222,6 +292,10 @@ export function anonymizeYnabSnapshot(
   options: AnonymizeOptions = {}
 ): YnabApiSnapshot {
   const idFactory = options.idFactory || defaultIdFactory;
+  const amountScaleFactor = validateAmountScaleFactor(options.amountScaleFactor ?? 1);
+  const currencyFormat = isRecord(snapshot.plan.currency_format)
+    ? snapshot.plan.currency_format
+    : undefined;
   const idMaps = new Map<EntityKind, Map<string, string>>();
   const aliasMaps = new Map<EntityKind, Map<string, string>>();
   const anonymousObjectKeys = new WeakMap<object, string>();
@@ -273,6 +347,31 @@ export function anonymizeYnabSnapshot(
     return alias;
   };
 
+  const scaleMilliunits = (value: unknown, key: string): unknown => {
+    if (value === null || value === undefined) return value;
+    if (typeof value !== 'number' || !Number.isSafeInteger(value)) {
+      throw new Error(`YNAB returned an invalid milliunit value for ${key}.`);
+    }
+    const scaled = value * amountScaleFactor;
+    if (!Number.isSafeInteger(scaled)) {
+      throw new Error(`YNAB amount ${key} is too large to scale safely.`);
+    }
+    return scaled;
+  };
+
+  const scalePeriodicMilliunits = (value: unknown, key: string): unknown => {
+    if (value === null || value === undefined) return value;
+    if (!isRecord(value)) {
+      throw new Error(`YNAB returned an invalid periodic amount map for ${key}.`);
+    }
+    return Object.fromEntries(
+      Object.entries(value).map(([period, amount]) => [
+        period,
+        scaleMilliunits(amount, `${key}.${period}`),
+      ])
+    );
+  };
+
   const relationKind = (key: string): EntityKind | undefined => {
     if (RELATION_KINDS[key]) return RELATION_KINDS[key];
     if (!key.endsWith('_id')) return undefined;
@@ -307,6 +406,37 @@ export function anonymizeYnabSnapshot(
         result[key] = mappedId(context || 'generic', child);
         continue;
       }
+      if (MILLIUNIT_KEYS.has(key)) {
+        result[key] = scaleMilliunits(child, key);
+        continue;
+      }
+      if (PERIODIC_MILLIUNIT_KEYS.has(key)) {
+        result[key] = scalePeriodicMilliunits(child, key);
+        continue;
+      }
+      if (key.endsWith('_formatted')) {
+        const sourceKey = key.slice(0, -'_formatted'.length);
+        const rawAmount = value[sourceKey];
+        result[key] =
+          typeof rawAmount === 'number'
+            ? formatScaledMilliunits(
+                scaleMilliunits(rawAmount, sourceKey) as number,
+                currencyFormat
+              )
+            : null;
+        continue;
+      }
+      if (key.endsWith('_currency')) {
+        const sourceKey = key.slice(0, -'_currency'.length);
+        const rawAmount = value[sourceKey];
+        result[key] =
+          typeof rawAmount === 'number'
+            ? (scaleMilliunits(rawAmount, sourceKey) as number) / 1000
+            : typeof child === 'number' && Number.isFinite(child)
+              ? child * amountScaleFactor
+              : child;
+        continue;
+      }
       const relatedKind = relationKind(key);
       if (relatedKind) {
         result[key] = mappedId(relatedKind, child);
@@ -320,7 +450,11 @@ export function anonymizeYnabSnapshot(
   return {
     plan: rewrite(snapshot.plan, 'plan') as JsonRecord,
     serverKnowledge: snapshot.serverKnowledge,
-    moneyMovements: rewrite(snapshot.moneyMovements, 'moneyMovement', 'moneyMovements') as JsonRecord[],
+    moneyMovements: rewrite(
+      snapshot.moneyMovements,
+      'moneyMovement',
+      'moneyMovements'
+    ) as JsonRecord[],
   };
 }
 
@@ -463,19 +597,27 @@ export function createYnabSupportBundle(
   snapshot: YnabApiSnapshot,
   options: AnonymizeOptions & { now?: Date } = {}
 ): YnabSupportBundle {
-  const anonymized = anonymizeYnabSnapshot(snapshot, options);
+  const amountScaleFactor = validateAmountScaleFactor(
+    options.amountScaleFactor ?? randomAmountScaleFactor()
+  );
+  const anonymized = anonymizeYnabSnapshot(snapshot, { ...options, amountScaleFactor });
   return {
     ...anonymized,
     _support: {
       schema: 'budgero-ynab-diagnostic-v1',
       generatedAt: (options.now || new Date()).toISOString(),
       notice:
-        'Names, free text, and identifiers were replaced. Amounts and dates remain unchanged for import verification.',
+        'Names, free text, and identifiers were replaced. Amounts were uniformly scaled for import verification; dates remain unchanged.',
       anonymization: {
         namesReplaced: true,
         identifiersReplaced: true,
         freeTextRemoved: true,
-        amountsPreserved: true,
+        amountsPreserved: false,
+        amountScaling: {
+          operation: 'multiply',
+          k: amountScaleFactor,
+          formula: 'exported_amount = original_amount * k',
+        },
         datesPreserved: true,
       },
       verification: createVerification(anonymized),

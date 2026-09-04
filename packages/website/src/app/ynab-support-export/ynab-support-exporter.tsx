@@ -34,6 +34,7 @@ type Phase = 'idle' | 'connecting' | 'connected' | 'generating' | 'complete';
 interface ExportResult {
   filename: string;
   fileSize: string;
+  amountScaleFactor: number;
   months: number;
   transactions: number;
   mismatches: number;
@@ -124,6 +125,7 @@ export function YnabSupportExporter() {
       setResult({
         filename,
         fileSize: formatBytes(new Blob([contents]).size),
+        amountScaleFactor: bundle._support.anonymization.amountScaling.k,
         months: bundle._support.verification.counts.months,
         transactions: bundle._support.verification.counts.transactions,
         mismatches: bundle._support.verification.moneyMovementAssignments.mismatches.length,
@@ -156,8 +158,8 @@ export function YnabSupportExporter() {
           <CardHeader className="border-b border-border/70 px-5 py-5 sm:px-6">
             <CardTitle className="text-lg">Generate diagnostic file</CardTitle>
             <CardDescription className="leading-6">
-              The token is used only for direct requests from your browser to YNAB. Budgero does
-              not receive or store it.
+              The token is used only for direct requests from your browser to YNAB. Budgero does not
+              receive or store it.
             </CardDescription>
           </CardHeader>
 
@@ -206,11 +208,7 @@ export function YnabSupportExporter() {
               </div>
 
               {plans.length === 0 && (
-                <Button
-                  type="submit"
-                  disabled={busy || !token.trim()}
-                  className="h-10 w-full"
-                >
+                <Button type="submit" disabled={busy || !token.trim()} className="h-10 w-full">
                   {phase === 'connecting' ? (
                     <>
                       <LoaderCircle className="animate-spin" /> Connecting securely…
@@ -232,10 +230,7 @@ export function YnabSupportExporter() {
                 <div className="space-y-2.5">
                   <Label htmlFor="ynab-plan">Plan to export</Label>
                   <Select value={selectedPlanId} onValueChange={setSelectedPlanId} disabled={busy}>
-                    <SelectTrigger
-                      id="ynab-plan"
-                      className="h-11 w-full bg-card px-3.5 text-base"
-                    >
+                    <SelectTrigger id="ynab-plan" className="h-11 w-full bg-card px-3.5 text-base">
                       <SelectValue placeholder="Choose a plan" />
                     </SelectTrigger>
                     <SelectContent>
@@ -300,14 +295,18 @@ export function YnabSupportExporter() {
                       <p className="mt-1 truncate text-sm opacity-75">{result.filename}</p>
                     </div>
                   </div>
-                  <dl className="mt-4 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+                  <dl className="mt-4 grid grid-cols-2 gap-2 text-xs sm:grid-cols-5">
                     {[
                       ['Size', result.fileSize],
+                      ['Amount scale', `×${result.amountScaleFactor}`],
                       ['Months', result.months],
                       ['Transactions', result.transactions],
                       ['Checks flagged', result.mismatches],
                     ].map(([label, value]) => (
-                      <div key={label} className="rounded-md bg-white/70 px-3 py-2 dark:bg-black/20">
+                      <div
+                        key={label}
+                        className="rounded-md bg-white/70 px-3 py-2 dark:bg-black/20"
+                      >
                         <dt className="opacity-65">{label}</dt>
                         <dd className="mt-1 font-bold">{value}</dd>
                       </div>
