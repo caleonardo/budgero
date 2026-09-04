@@ -26,6 +26,11 @@ import { pricing } from '@/lib/pricing';
 import { TestimonialsSection } from '@/components/landing/Testimonials';
 // Newsletter signup coming soon
 
+type CloudCtaPlacement = 'hero' | 'pricing' | 'final' | 'mobile-sticky';
+
+const cloudSignupUrl = (placement: CloudCtaPlacement) =>
+  `https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=home&utm_content=${placement}`;
+
 export default function LandingPage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
@@ -60,19 +65,12 @@ export default function LandingPage() {
   const heroDesktopImageSrc = '/desktop_new.png';
   const heroMobileImageSrc = '/mobile_new.png';
 
-  const goToApp = () => {
-    if (typeof window !== 'undefined') {
-      track('CTA Clicked - Cloud');
-      window.location.href =
-        'https://my.budgero.app/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=home&utm_content=hero';
-    }
-  };
-
-  const goToSelfHost = () => {
-    if (typeof window !== 'undefined') {
-      track('CTA Clicked - Self Host');
-      window.location.href = '/self-hostable';
-    }
+  const trackCloudCta = (placement: CloudCtaPlacement) => {
+    track('CTA Clicked - Cloud', {
+      placement,
+      page: 'home',
+      ...(placement === 'pricing' ? { billingCycle } : {}),
+    });
   };
 
   const featureShowcases = [
@@ -162,22 +160,13 @@ export default function LandingPage() {
     };
   }, [activeFeature, totalFeatures]);
 
-  const selfHostFeatures = [
-    'Open source (AGPL-3.0)',
-    'Run Budgero on your own infrastructure',
-    'Encrypted sync and collaboration included',
-    'Seamless multi-currency with live rates',
-    'YNAB & CSV import',
-    'Local LLM integration',
-    'No subscription fees',
-  ];
-
   const paidFeatures = [
+    'Hosting, maintenance, and automatic updates handled for you',
     'Encrypted sync across unlimited devices',
-    '5 Seats per Subscription',
+    '5 seats for your household',
     'Seamless multi-currency with live rates',
     'YNAB & CSV import',
-    'Powerful Analytics Engine with Custom Dashboards',
+    'Spending reports and custom dashboards',
   ];
 
   const paidPlanPricing = {
@@ -274,43 +263,38 @@ export default function LandingPage() {
                   </h1>
                   <div className="text-lg md:text-2xl text-foreground/70 mb-8 max-w-3xl mx-auto leading-relaxed space-y-3">
                     <p>
-                      Not Budgero. Not an aggregator. Not a subpoena. Every transaction is encrypted
-                      before it leaves your device — zero-knowledge, by architecture, not by
-                      promise.
+                      Budgero Cloud brings your budget, accounts, and household together with
+                      encrypted sync. We handle the hosting and updates. Your financial data is
+                      encrypted on your device before it reaches our servers.
                     </p>
-                    <p>
-                      And you don&apos;t have to take our word for it: Budgero is{' '}
+                    <p className="text-base md:text-lg">
+                      Built on{' '}
                       <a
                         href="https://github.com/tombadilo-bombadilo/budgero"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="underline underline-offset-4 decoration-dotted hover:text-foreground"
                       >
-                        open source
+                        open-source code
                       </a>{' '}
-                      (AGPL-3.0).
+                      you can inspect. Managed Cloud is {pricing.monthly}/month or {pricing.yearly}
+                      /year, tax included.
                     </p>
                   </div>
                   <div className="flex items-center justify-center">
                     <Button
-                      onClick={() => goToApp()}
+                      asChild
                       className="h-11 w-full sm:w-auto px-6 text-sm bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b] transition-colors font-semibold"
                     >
-                      Start 35-day free trial
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <a href={cloudSignupUrl('hero')} onClick={() => trackCloudCta('hero')}>
+                        Try Cloud free for 35 days
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </a>
                     </Button>
                   </div>
-                  <div className="mt-5 flex items-center justify-center gap-4 text-sm md:text-base text-foreground/70">
-                    <button
-                      type="button"
-                      onClick={() => goToSelfHost()}
-                      className="font-medium underline underline-offset-4 decoration-dotted"
-                    >
-                      Explore Self-Host
-                    </button>
-                  </div>
                   <p className="mt-4 text-xs sm:text-sm text-foreground/60">
-                    No Plaid. No bank connections. 35-day trial, no card.
+                    No credit card required. No server setup. Import files or enter transactions
+                    manually, without connecting your bank.
                   </p>
                   <p className="mt-2 text-xs sm:text-sm text-foreground/60">
                     Looking for a{' '}
@@ -387,89 +371,31 @@ export default function LandingPage() {
                     </h2>
                     <div className="max-w-3xl mx-auto space-y-3">
                       <p className="text-xl md:text-2xl text-foreground/80 font-medium leading-relaxed">
-                        Begin with a 35-day trial to get encrypted sync, shared workspaces, and
-                        native multi-currency from day one.
+                        Your budget is ready when you are. Get encrypted sync, shared workspaces,
+                        and multi-currency budgeting with hosting and updates taken care of.
                       </p>
                       <p className="text-sm md:text-base text-foreground/80">
-                        You can self-host Budgero for free when you want full infrastructure
-                        ownership.
-                      </p>
-                      <p className="text-base md:text-lg text-foreground/70 leading-relaxed">
-                        Need help choosing?{' '}
-                        <Link
-                          href="/self-hostable"
-                          className="text-foreground font-semibold underline underline-offset-4 decoration-dotted hover:text-foreground/80 transition-colors"
-                        >
-                          Explore Budgero Self-Host.
-                        </Link>
+                        Try every Cloud feature free for 35 days. No credit card required.
                       </p>
                     </div>
                   </div>
-                  <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                    <div className="relative group h-full order-2">
+                  <div className="max-w-2xl mx-auto">
+                    <div className="relative group h-full">
                       <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20">
                         <Badge className="px-4 py-1.5 bg-[#111c34] text-[#f8fafc] border border-[#111c34] shadow-sm">
-                          Self-Host
+                          Budgero Cloud
                         </Badge>
                       </div>
                       <div className="absolute -inset-1 rounded-3xl border border-border/40 opacity-0 group-hover:opacity-100 transition duration-500"></div>
                       <Card className="relative bg-background/90 border border-border/60 rounded-3xl shadow-xl transition-all duration-500 hover:border-border h-full flex flex-col">
                         <div className="absolute inset-0 pointer-events-none" aria-hidden />
                         <CardHeader className="relative pb-8">
-                          <div className="flex justify-between items-start mb-4">
+                          <div className="flex flex-wrap justify-between items-start gap-3 mb-4">
                             <Badge
                               variant="secondary"
                               className="bg-[#d7dbe2] text-[#141414] border-[#b9bec8] px-3 py-1"
                             >
-                              Free
-                            </Badge>
-                          </div>
-                          <CardTitle className="text-5xl font-bold text-foreground mb-2 tracking-tight">
-                            Free
-                          </CardTitle>
-                          <CardDescription className="text-foreground/80 font-medium">
-                            Full Budgero stack on your own infrastructure.
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent className="relative flex-grow flex flex-col space-y-8">
-                          <ul className="space-y-4 flex-grow">
-                            {selfHostFeatures.map((feature, idx) => (
-                              <li key={idx} className="flex items-start gap-3 group/item">
-                                <div className="mt-1 p-0.5 rounded-full bg-[#d7dbe2] text-[#374151] group-hover/item:bg-[#c9ced8] transition-colors">
-                                  <CircleCheckBig className="w-3.5 h-3.5" strokeWidth={2.5} />
-                                </div>
-                                <span className="text-foreground/80 font-medium">{feature}</span>
-                              </li>
-                            ))}
-                          </ul>
-                          <Button
-                            onClick={() => goToSelfHost()}
-                            variant="outline"
-                            className="w-full h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 mt-auto"
-                          >
-                            Deploy Self-Host
-                            <ArrowRight className="ml-2 w-4 h-4" />
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <div className="relative group h-full order-1">
-                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20">
-                        <Badge className="px-4 py-1.5 bg-[#111c34] text-[#f8fafc] border border-[#111c34] shadow-sm">
-                          Cloud • Recommended
-                        </Badge>
-                      </div>
-                      <div className="absolute -inset-1 rounded-3xl border border-border/40 opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                      <Card className="relative bg-background/90 border border-border/60 rounded-3xl shadow-xl transition-all duration-500 hover:border-border h-full flex flex-col">
-                        <div className="absolute inset-0 pointer-events-none" aria-hidden />
-                        <CardHeader className="relative pb-8">
-                          <div className="flex justify-between items-start mb-4">
-                            <Badge
-                              variant="secondary"
-                              className="bg-[#d7dbe2] text-[#141414] border-[#b9bec8] px-3 py-1"
-                            >
-                              {billingCycle === 'monthly' ? 'Flexible' : 'Save $13'}
+                              {billingCycle === 'monthly' ? 'Pay monthly' : 'Billed yearly'}
                             </Badge>
                             <div className="flex items-center justify-center gap-1 bg-[#d7dbe2] rounded-full p-1 border border-[#b9bec8]">
                               {(['monthly', 'yearly'] as const).map((cycle) => (
@@ -478,6 +404,7 @@ export default function LandingPage() {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => setBillingCycle(cycle)}
+                                  aria-pressed={billingCycle === cycle}
                                   className={`px-3 py-1 text-xs font-medium transition-all duration-150 h-7 rounded-full ${
                                     billingCycle === cycle
                                       ? 'bg-[#fffdf8] text-[#141414] shadow-sm hover:bg-[#f7f3e7]'
@@ -507,6 +434,9 @@ export default function LandingPage() {
                           <p className="text-xs text-foreground/60">
                             Tax included — the price you see is the price you pay, worldwide.
                           </p>
+                          <CardDescription className="mt-4 text-foreground/80 font-medium">
+                            All budgeting features, with the infrastructure managed for you.
+                          </CardDescription>
                         </CardHeader>
                         <CardContent className="relative flex-grow flex flex-col space-y-8">
                           <ul className="space-y-4 flex-grow">
@@ -522,11 +452,16 @@ export default function LandingPage() {
                             )}
                           </ul>
                           <Button
-                            onClick={() => goToApp()}
+                            asChild
                             className="w-full bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b] h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 mt-auto"
                           >
-                            Start 35-day free trial
-                            <ArrowRight className="ml-2 w-4 h-4" />
+                            <a
+                              href={cloudSignupUrl('pricing')}
+                              onClick={() => trackCloudCta('pricing')}
+                            >
+                              Try Cloud free for 35 days
+                              <ArrowRight className="ml-2 w-4 h-4" />
+                            </a>
                           </Button>
                         </CardContent>
                       </Card>
@@ -563,7 +498,7 @@ export default function LandingPage() {
                     </p>
                   </div>
                   <div className="grid md:grid-cols-3 gap-8">
-                    {["We Can't See Your Data", 'Self-Hostable', 'Bank-Level Security'].map(
+                    {["We Can't See Your Data", 'Open Source', 'Bank-Level Security'].map(
                       (title, i) => (
                         <div className="relative group h-full" key={i}>
                           <div className="absolute -inset-1 rounded-2xl border border-border/40 opacity-0 group-hover:opacity-100 transition duration-300"></div>
@@ -582,7 +517,7 @@ export default function LandingPage() {
                               {
                                 [
                                   'Your password encrypts everything before it reaches our servers. We never see your balances, categories, or transactions — period.',
-                                  'Run Budgero on your own server with Docker — free, full feature parity. Your data never has to touch our infrastructure, and you can export or migrate anytime.',
+                                  'Budgero’s source code is public under AGPL-3.0. You can inspect how your budget is protected, contribute improvements, and export your data anytime.',
                                   'AES-256-GCM with PBKDF2-HMAC-SHA256 key derivation (600,000 iterations) protects your data using battle-tested cryptography in your browser.',
                                 ][i]
                               }
@@ -771,28 +706,59 @@ export default function LandingPage() {
                       Ready to try Budgero Cloud?
                     </h2>
                     <p className="mt-4 text-base md:text-lg text-foreground/70 leading-relaxed">
-                      Start your 35-day trial in minutes. If you prefer owning infrastructure, run
-                      Budgero Self-Host for free.
+                      Start your 35-day trial with hosting, updates, and encrypted sync included.
+                      Then {pricing.monthly}/month or {pricing.yearly}/year, tax included.
                     </p>
                     <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                       <Button
-                        onClick={() => goToApp()}
+                        asChild
                         className="h-11 w-full sm:w-auto px-6 bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
                       >
-                        Start 35-day free trial
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => goToSelfHost()}
-                        className="h-11 w-full sm:w-auto px-6"
-                      >
-                        Explore Self-Host
+                        <a href={cloudSignupUrl('final')} onClick={() => trackCloudCta('final')}>
+                          Try Cloud free for 35 days
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </a>
                       </Button>
                     </div>
                     <p className="mt-4 text-sm text-foreground/70">
-                      Prefer self-managed infrastructure? Self-Host is free forever.
+                      No credit card required. Start in your browser.
                     </p>
+                  </div>
+                </div>
+              </section>
+
+              <section id="self-host" aria-labelledby="self-host-heading" className="pb-24">
+                <div className="mx-auto max-w-3xl border-t border-border/70 pt-10 text-center">
+                  <h2 id="self-host-heading" className="text-2xl font-bold text-foreground">
+                    Open source. Free to self-host.
+                  </h2>
+                  <p className="mt-4 text-base text-foreground/70 leading-relaxed">
+                    Prefer running Budgero on your own server? The same open-source product is
+                    available to self-host without a software subscription. You manage the hosting,
+                    updates, and backups.
+                  </p>
+                  <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
+                    <Link
+                      href="/self-hostable"
+                      onClick={() =>
+                        track('CTA Clicked - Self Host', { placement: 'bottom', page: 'home' })
+                      }
+                      className="font-semibold underline underline-offset-4 hover:text-foreground/70"
+                    >
+                      Explore self-hosting
+                    </Link>
+                    <Link
+                      href="/docs/self-hosting-guide"
+                      onClick={() =>
+                        track('Self-Host - Setup Guide (Homepage)', {
+                          placement: 'bottom',
+                          page: 'home',
+                        })
+                      }
+                      className="font-semibold underline underline-offset-4 hover:text-foreground/70"
+                    >
+                      Read the self-hosting guide
+                    </Link>
                   </div>
                 </div>
               </section>
@@ -813,13 +779,16 @@ export default function LandingPage() {
           <div className="rounded-2xl border border-border/80 bg-background/95 backdrop-blur px-3 py-3 shadow-2xl">
             <div className="flex items-center gap-2">
               <Button
-                onClick={() => goToApp()}
-                className="flex-1 h-11 text-sm font-semibold bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
+                asChild
+                className="w-full h-11 text-sm font-semibold bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b]"
               >
-                Start free trial
-              </Button>
-              <Button variant="ghost" onClick={() => goToSelfHost()} className="h-11 px-3 text-xs">
-                Self-host
+                <a
+                  href={cloudSignupUrl('mobile-sticky')}
+                  onClick={() => trackCloudCta('mobile-sticky')}
+                  tabIndex={showMobileStickyCta ? undefined : -1}
+                >
+                  Try Cloud free for 35 days
+                </a>
               </Button>
             </div>
           </div>

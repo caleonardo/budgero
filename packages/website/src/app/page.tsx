@@ -6,21 +6,18 @@ import { pricing } from '@/lib/pricing';
 
 export const metadata: Metadata = {
   title: 'Budgero: Private Budgeting Without Bank Connections',
-  description:
-    'Manual-first budgeting with rule-based automation. Start a 35-day Cloud trial with encrypted sync, or self-host Budgero for free.',
+  description: `Open-source budgeting with encrypted sync and managed hosting. Try Budgero Cloud free for 35 days, then ${pricing.monthly}/month or ${pricing.yearly}/year.`,
   alternates: { canonical: 'https://budgero.app/' },
   openGraph: {
     title: 'Budgero: Private Budgeting Without Bank Connections',
-    description:
-      'Manual-first budgeting with rule-based automation. Start a 35-day Cloud trial with encrypted sync, or self-host Budgero for free.',
+    description: `Open-source budgeting with encrypted sync and managed hosting. Try Budgero Cloud free for 35 days, then ${pricing.monthly}/month or ${pricing.yearly}/year.`,
     url: 'https://budgero.app/',
     // OG image is auto-emitted by /src/app/opengraph-image.tsx (1200x630 PNG).
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Budgero: Private Budgeting Without Bank Connections',
-    description:
-      'Manual-first budgeting with rule-based automation. Start a 35-day Cloud trial with encrypted sync, or self-host Budgero for free.',
+    description: `Open-source budgeting with encrypted sync and managed hosting. Try Budgero Cloud free for 35 days, then ${pricing.monthly}/month or ${pricing.yearly}/year.`,
     // Twitter image is auto-emitted by the same file convention.
   },
 };

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { TrackedLink } from '@/components/TrackedLink';
 import { ManageCookiesButton } from '@/components/ManageCookiesButton';
 
-
 export function SiteFooter() {
   return (
     <footer className="bg-[#f5f0e3] border-t border-[#9e9e9e]/70 text-[#141414] py-16">
@@ -94,6 +93,15 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <TrackedLink
+                  href="/docs/self-hosting-guide"
+                  event="Self-Host Setup Guide - Footer"
+                  className="hover:text-[#141414] transition-colors"
+                >
+                  Self-hosting guide
+                </TrackedLink>
+              </li>
+              <li>
                 <a
                   href="https://feedback.budgero.app"
                   target="_blank"
@@ -109,7 +117,10 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <a href="mailto:hello@budgero.app" className="hover:text-[#141414] transition-colors">
+                <a
+                  href="mailto:hello@budgero.app"
+                  className="hover:text-[#141414] transition-colors"
+                >
                   Contact Us
                 </a>
               </li>
