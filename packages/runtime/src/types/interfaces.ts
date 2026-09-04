@@ -221,7 +221,11 @@ export interface DatabaseSyncDeps {
  * MutationExecutor dependency injection interface.
  */
 export interface MutationExecutorDeps {
-  executeOp(op: string, payload: Record<string, unknown>): Promise<unknown>;
+  executeOp(
+    op: string,
+    payload: Record<string, unknown>,
+    context: MutationExecutionContext
+  ): Promise<unknown>;
   getUndoSpec(op: string): UndoSpec | undefined;
   getInvalidatesForOp(op: string): string[][] | undefined;
   getQueryClient(): QueryClientLike | undefined;
@@ -231,6 +235,12 @@ export interface MutationExecutorDeps {
   getActiveSpaceId(): string | null;
   getSpaceRole(spaceId: string): string | null;
   onAnalyticsEvent?(op: string): void;
+}
+
+/** Execution metadata available to domain op-code handlers. */
+export interface MutationExecutionContext {
+  mutationId: string;
+  isReceiver: boolean;
 }
 
 /**

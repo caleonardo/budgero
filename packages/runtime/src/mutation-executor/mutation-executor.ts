@@ -81,7 +81,10 @@ export class MutationExecutor {
     const hasInvalidates = Array.isArray(invalidates) && invalidates.length > 0;
 
     // Execute op via registry
-    const result = (await this.deps.executeOp(spec.op, spec.payload)) as T;
+    const result = (await this.deps.executeOp(spec.op, spec.payload, {
+      mutationId,
+      isReceiver,
+    })) as T;
 
     // Invalidate queries for every origin (local + remote) off the op's
     // declared set. Previously only remote/forced mutations invalidated here

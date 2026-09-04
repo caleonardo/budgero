@@ -6,6 +6,7 @@ import type {
   MutationBudgetResolutionContext,
   UndoEntry,
   HistoryEntry,
+  MutationExecutionContext,
 } from '../types';
 import type { LocalPersistenceCipher } from '../crypto';
 import { errorMessage } from '../utils/diagnostics';
@@ -35,7 +36,11 @@ export interface RuntimeContext {
 
 export interface RuntimeContextFactoryDeps {
   getToken(): Promise<string | null>;
-  executeOp(op: string, payload: Record<string, unknown>): Promise<unknown>;
+  executeOp(
+    op: string,
+    payload: Record<string, unknown>,
+    context: MutationExecutionContext
+  ): Promise<unknown>;
   getUndoSpec(op: string): ReturnType<MutationExecutorDeps['getUndoSpec']>;
   getInvalidatesForOp(op: string): string[][] | undefined;
   getQueryClient(): QueryClientLike | undefined;
@@ -279,7 +284,7 @@ export class RuntimeContextFactory {
 
   private buildExecutor(getSpaceRole: (spaceId: string) => string | null): MutationExecutor {
     return new MutationExecutor({
-      executeOp: (op, payload) => this.deps.executeOp(op, payload),
+      executeOp: (op, payload, context) => this.deps.executeOp(op, payload, context),
       getUndoSpec: (op) => this.deps.getUndoSpec(op),
       getInvalidatesForOp: (op) => this.deps.getInvalidatesForOp(op),
       getQueryClient: () => this.deps.getQueryClient(),

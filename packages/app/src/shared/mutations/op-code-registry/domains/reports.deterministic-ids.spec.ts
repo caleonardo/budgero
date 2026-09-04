@@ -3,6 +3,8 @@ import { executeMutationOp } from '@shared/mutations/op-code-registry';
 
 const reportMocks = vi.hoisted(() => ({
   saveReport: vi.fn(),
+  updateReport: vi.fn(),
+  reconcileAndUpdateReport: vi.fn(),
   addChartToReport: vi.fn(),
   duplicateReport: vi.fn(),
 }));
@@ -73,5 +75,33 @@ describe('report mutation IDs', () => {
     });
 
     expect(reportMocks.duplicateReport).toHaveBeenCalledWith('report-1', 'Legacy Copy');
+  });
+
+  it('uses legacy ID reconciliation only for receiver updates', async () => {
+    const payload = {
+      id: 'remote-report-id',
+      name: 'Spending',
+      query: 'SELECT 1',
+      charts: [chart],
+    };
+
+    await executeMutationOp('reports.update', payload, {
+      mutationId: 'remote-mutation-id',
+      isReceiver: true,
+    });
+    expect(reportMocks.reconcileAndUpdateReport).toHaveBeenCalledWith(
+      'remote-report-id',
+      expect.objectContaining({ name: 'Spending', query: 'SELECT 1', charts: [chart] })
+    );
+    expect(reportMocks.updateReport).not.toHaveBeenCalled();
+
+    await executeMutationOp('reports.update', payload, {
+      mutationId: 'local-mutation-id',
+      isReceiver: false,
+    });
+    expect(reportMocks.updateReport).toHaveBeenCalledWith(
+      'remote-report-id',
+      expect.objectContaining({ name: 'Spending' })
+    );
   });
 });

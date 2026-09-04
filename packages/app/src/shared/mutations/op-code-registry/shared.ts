@@ -249,8 +249,13 @@ export type ReportChart = ChartConfiguration;
 export type NewReportChart = Omit<ChartConfiguration, 'id'>;
 export type ReportSaveInput = SaveReportInput;
 
+export interface OpCodeExecutionContext {
+  mutationId: string;
+  isReceiver: boolean;
+}
+
 export interface OpCodeEntry {
-  execute: (args: Record<string, unknown>) => Promise<unknown>;
+  execute: (args: Record<string, unknown>, context?: OpCodeExecutionContext) => Promise<unknown>;
   // Query keys to invalidate (for remote mutations)
   invalidates: string[][];
   undo?: {

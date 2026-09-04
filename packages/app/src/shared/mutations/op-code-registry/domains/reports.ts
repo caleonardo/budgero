@@ -24,15 +24,19 @@ export const reportOps = {
 
   // useUpdateReport
   'reports.update': {
-    execute: async (args) => {
-      return await S().reports!.updateReport(args.id as string, {
+    execute: async (args, context) => {
+      const updates = {
         name: args.name as string | undefined,
         description: args.description as string | undefined,
         query: args.query as string | undefined,
         charts: args.charts as ReportChart[] | undefined,
         tags: args.tags as string[] | undefined,
         isFavorite: args.isFavorite as boolean | undefined,
-      });
+      };
+      if (context?.isReceiver) {
+        return await S().reports!.reconcileAndUpdateReport(args.id as string, updates);
+      }
+      return await S().reports!.updateReport(args.id as string, updates);
     },
     invalidates: [['reports'], ['report', '*']],
   },

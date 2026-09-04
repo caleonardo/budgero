@@ -12,6 +12,7 @@ export type {
   ConnectivityMonitorDeps,
   DatabaseSyncDeps,
   MutationExecutorDeps,
+  MutationExecutionContext,
   QueryClientLike,
   UndoSpec,
   UndoEntry,

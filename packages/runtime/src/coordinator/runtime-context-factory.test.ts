@@ -109,7 +109,11 @@ describe('RuntimeContextFactory', () => {
     expect(ctx.dbSync.getBlobVersion()).toBe(9);
 
     await ctx.executor.execute({ op: 'tx.create', payload: { budget_id: 1 } });
-    expect(deps.executeOp).toHaveBeenCalledWith('tx.create', { budget_id: 1 });
+    expect(deps.executeOp).toHaveBeenCalledWith(
+      'tx.create',
+      { budget_id: 1 },
+      expect.objectContaining({ isReceiver: false })
+    );
 
     ctx.sync.destroy();
   });

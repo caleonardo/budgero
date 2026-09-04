@@ -48,7 +48,11 @@ export interface RuntimeCoordinatorDeps {
     }
   ): Promise<WebDatabaseInstance>;
 
-  executeOp(op: string, payload: Record<string, unknown>): Promise<unknown>;
+  executeOp(
+    op: string,
+    payload: Record<string, unknown>,
+    context: import('../types').MutationExecutionContext
+  ): Promise<unknown>;
   getUndoSpec(
     op: string
   ): MutationExecutorDeps['getUndoSpec'] extends (op: string) => infer R ? R : never;

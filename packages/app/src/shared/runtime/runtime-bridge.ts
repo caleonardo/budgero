@@ -164,8 +164,8 @@ export function createRuntimeDeps(): RuntimeCoordinatorDeps {
       return runtimeDb;
     },
 
-    async executeOp(op, payload) {
-      return executeMutationOp(op, payload);
+    async executeOp(op, payload, context) {
+      return executeMutationOp(op, payload, context);
     },
 
     getUndoSpec(op) {

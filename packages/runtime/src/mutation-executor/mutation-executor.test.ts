@@ -53,6 +53,11 @@ describe('MutationExecutor', () => {
     });
 
     expect(result.isReceiver).toBe(true);
+    expect(deps.executeOp).toHaveBeenCalledWith(
+      'budgets.update',
+      { budget_id: 2 },
+      { mutationId: 'server-id', isReceiver: true }
+    );
     expect(deps.pushUndo).not.toHaveBeenCalled();
     expect(invalidateQueries).toHaveBeenCalled();
   });

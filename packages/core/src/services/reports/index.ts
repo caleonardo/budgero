@@ -57,6 +57,11 @@ export interface UnifiedReportService {
     id: string,
     updates: Partial<Omit<UnifiedReport, 'id' | 'createdAt'>>
   ): UnifiedReport;
+  /** Repair legacy replay ID drift before applying a remote update. */
+  reconcileAndUpdateReport(
+    id: string,
+    updates: Partial<Omit<UnifiedReport, 'id' | 'createdAt'>>
+  ): UnifiedReport;
   deleteReport(id: string): void;
 
   // Chart management within reports
@@ -241,6 +246,45 @@ export class DatabaseUnifiedReportService implements UnifiedReportService {
     return updatedReport;
   }
 
+  reconcileAndUpdateReport(
+    id: string,
+    updates: Partial<Omit<UnifiedReport, 'id' | 'createdAt'>>
+  ): UnifiedReport {
+    if (this.getReport(id)) {
+      return this.updateReport(id, updates);
+    }
+
+    const match = this.findLegacyUpdateCandidate(updates);
+    if (match.ambiguous) {
+      throw new Error('Multiple legacy reports match the remote update');
+    }
+    const { candidate } = match;
+    if (candidate) {
+      return this.db.transaction(() => {
+        this.rekeyLegacyReport(candidate, id, updates.charts);
+        return this.updateReport(id, updates);
+      });
+    }
+
+    if (
+      typeof updates.name === 'string' &&
+      typeof updates.query === 'string' &&
+      Array.isArray(updates.charts)
+    ) {
+      return this.saveReport({
+        id,
+        name: updates.name,
+        description: updates.description,
+        query: updates.query,
+        charts: updates.charts,
+        tags: updates.tags,
+        isFavorite: updates.isFavorite,
+      });
+    }
+
+    throw new Error('Report not found and remote update is incomplete');
+  }
+
   deleteReport(id: string): void {
     run(this.db, `DELETE FROM saved_reports WHERE ID = ?`, id);
   }
@@ -321,6 +365,76 @@ export class DatabaseUnifiedReportService implements UnifiedReportService {
       tags: report.tags,
       isFavorite: false,
     });
+  }
+
+  private findLegacyUpdateCandidate(updates: Partial<Omit<UnifiedReport, 'id' | 'createdAt'>>): {
+    candidate: UnifiedReport | null;
+    ambiguous: boolean;
+  } {
+    const reports = this.getReports();
+    const normalizedName = updates.name?.trim().toLocaleLowerCase();
+    if (normalizedName) {
+      const byName = reports.filter(
+        (report) => report.name.trim().toLocaleLowerCase() === normalizedName
+      );
+      if (byName.length === 1) return { candidate: byName[0], ambiguous: false };
+      if (byName.length > 1) return { candidate: null, ambiguous: true };
+    }
+
+    if (typeof updates.query !== 'string' || !Array.isArray(updates.charts)) {
+      return { candidate: null, ambiguous: false };
+    }
+
+    const incomingCharts = this.chartStructure(updates.charts);
+    const byStructure = reports.filter(
+      (report) =>
+        report.query === updates.query && this.chartStructure(report.charts) === incomingCharts
+    );
+    if (byStructure.length === 1) {
+      return { candidate: byStructure[0], ambiguous: false };
+    }
+    return { candidate: null, ambiguous: byStructure.length > 1 };
+  }
+
+  private rekeyLegacyReport(
+    legacy: UnifiedReport,
+    incomingId: string,
+    incomingCharts: ChartConfiguration[] | undefined
+  ): void {
+    if (incomingCharts) {
+      legacy.charts.forEach((chart, index) => {
+        const incomingChart = incomingCharts[index];
+        if (!incomingChart || incomingChart.id === chart.id) return;
+        run(
+          this.db,
+          `UPDATE custom_dashboard_widgets SET ChartID = ? WHERE ReportID = ? AND ChartID = ?`,
+          incomingChart.id,
+          legacy.id,
+          chart.id
+        );
+      });
+    }
+
+    run(
+      this.db,
+      `UPDATE custom_dashboard_widgets SET ReportID = ? WHERE ReportID = ?`,
+      incomingId,
+      legacy.id
+    );
+    run(this.db, `UPDATE saved_reports SET ID = ? WHERE ID = ?`, incomingId, legacy.id);
+  }
+
+  private chartStructure(charts: ChartConfiguration[]): string {
+    return JSON.stringify(
+      charts.map(({ id: _id, ...chart }) => ({
+        chartType: chart.chartType,
+        title: chart.title ?? null,
+        xAxisColumn: chart.xAxisColumn,
+        yAxisColumn: chart.yAxisColumn,
+        groupByColumn: chart.groupByColumn ?? null,
+        aggregateFunction: chart.aggregateFunction,
+      }))
+    );
   }
 
   private mapRowToReport(row: SavedReportRow): UnifiedReport {

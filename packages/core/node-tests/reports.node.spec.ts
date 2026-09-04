@@ -1,8 +1,99 @@
 import { describe, it, expect } from 'vitest';
-import { NodeSqlJsAdapter, DatabaseAdapter } from '../src';
+import { NodeSqlJsAdapter, DatabaseAdapter, ServiceManager } from '../src';
 import { DatabaseUnifiedReportService, ChartConfiguration } from '../src/services/reports/index.js';
 
 describe('UnifiedReportService', () => {
+  it('repairs a legacy remote report ID and preserves dashboard widget references', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    const sm = new ServiceManager();
+    await sm.initialize(adapter as DatabaseAdapter);
+    const services = sm.getServices();
+    const budgetId = await services.budgets.createBudget({
+      name: 'Main',
+      display_currency: 'USD',
+      badge_icon: 'wallet',
+      number_format: 'en-US',
+      create_default_categories: false,
+    });
+    const legacy = services.reports.saveReport({
+      id: 'legacy-local-report-id',
+      name: 'Original name',
+      query: 'SELECT month, amount FROM transactions',
+      charts: [
+        {
+          id: 'legacy-local-chart-id',
+          chartType: 'bar',
+          xAxisColumn: 'month',
+          yAxisColumn: 'amount',
+          aggregateFunction: 'SUM',
+        },
+      ],
+    });
+    const dashboard = services.customDashboards.createDashboard({
+      budgetId,
+      name: 'Overview',
+    });
+    services.customDashboards.addWidget({
+      dashboardId: dashboard.id,
+      reportId: legacy.id,
+      chartId: legacy.charts[0]!.id,
+    });
+
+    const repaired = services.reports.reconcileAndUpdateReport('remote-report-id', {
+      name: 'Renamed remotely',
+      query: legacy.query,
+      charts: [{ ...legacy.charts[0]!, id: 'remote-chart-id' }],
+    });
+
+    expect(repaired.id).toBe('remote-report-id');
+    expect(repaired.name).toBe('Renamed remotely');
+    expect(services.reports.getReport('legacy-local-report-id')).toBeNull();
+    const repairedDashboard = services.customDashboards.getDashboard(dashboard.id);
+    expect(repairedDashboard?.widgets[0]).toMatchObject({
+      reportId: 'remote-report-id',
+      chartId: 'remote-chart-id',
+    });
+  });
+
+  it('recreates a missing remote report only from a complete update', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    const svc = new DatabaseUnifiedReportService(adapter as DatabaseAdapter);
+
+    const recreated = svc.reconcileAndUpdateReport('remote-report-id', {
+      name: 'Remote report',
+      description: 'Complete state',
+      query: 'SELECT 1',
+      charts: [],
+    });
+    expect(recreated).toMatchObject({ id: 'remote-report-id', name: 'Remote report' });
+
+    expect(() => svc.reconcileAndUpdateReport('another-missing-id', { isFavorite: true })).toThrow(
+      /remote update is incomplete/
+    );
+  });
+
+  it('refuses to guess when multiple legacy reports match a remote update', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    const svc = new DatabaseUnifiedReportService(adapter as DatabaseAdapter);
+    const chart = {
+      chartType: 'stat' as const,
+      xAxisColumn: 'label',
+      yAxisColumn: 'amount',
+      aggregateFunction: 'SUM' as const,
+    };
+    svc.saveReport({ name: 'First', query: 'SELECT 1', charts: [chart] });
+    svc.saveReport({ name: 'Second', query: 'SELECT 1', charts: [chart] });
+
+    expect(() =>
+      svc.reconcileAndUpdateReport('remote-id', {
+        name: 'Renamed remotely',
+        query: 'SELECT 1',
+        charts: [{ ...chart, id: 'remote-chart-id' }],
+      })
+    ).toThrow(/Multiple legacy reports/);
+    expect(svc.getReport('remote-id')).toBeNull();
+  });
+
   it('preserves report and chart IDs supplied by mutation payloads', async () => {
     const adapter = await NodeSqlJsAdapter.create();
     const svc = new DatabaseUnifiedReportService(adapter as DatabaseAdapter);

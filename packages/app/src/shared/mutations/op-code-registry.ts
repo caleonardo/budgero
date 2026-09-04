@@ -1,4 +1,4 @@
-import type { OpCodeEntry } from './op-code-registry/shared';
+import type { OpCodeEntry, OpCodeExecutionContext } from './op-code-registry/shared';
 import { accountOps } from './op-code-registry/domains/accounts';
 import { budgetOps } from './op-code-registry/domains/budgets';
 import { categoryOps } from './op-code-registry/domains/categories';
@@ -62,7 +62,8 @@ export type { OpCodeEntry } from './op-code-registry/shared';
  */
 export async function executeMutationOp(
   op: string,
-  args: Record<string, unknown>
+  args: Record<string, unknown>,
+  context?: OpCodeExecutionContext
 ): Promise<unknown> {
   if (!isKnownOpCode(op)) {
     console.warn(`[OpCodeRegistry] Unknown op code: ${op}`);
@@ -72,7 +73,7 @@ export async function executeMutationOp(
   const entry = opCodeRegistry[op];
 
   try {
-    return await entry.execute(args);
+    return await entry.execute(args, context);
   } catch (error) {
     console.error(`[OpCodeRegistry] Failed to apply mutation: ${op}`, error);
     throw error;

@@ -87,7 +87,7 @@ export class RuntimeCoordinator {
     const contextFactory = new RuntimeContextFactory(
       {
         getToken: () => deps.getToken(),
-        executeOp: (op, payload) => deps.executeOp(op, payload),
+        executeOp: (op, payload, context) => deps.executeOp(op, payload, context),
         getUndoSpec: (op) => deps.getUndoSpec(op),
         getInvalidatesForOp: (op) => deps.getInvalidatesForOp(op),
         getQueryClient: () => this.getQueryClient(),
