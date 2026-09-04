@@ -8,6 +8,7 @@
     "dev:next": "next dev",
     "dev:cl": "contentlayer2 dev",
     "build": "NODE_ENV=production contentlayer2 build && next build",
+    "test:ynab-support": "node --experimental-strip-types --test src/lib/ynab-support.test.ts",
     "start": "next start",
     "lint": "eslint"
   },
