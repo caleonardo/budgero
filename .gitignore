@@ -96,3 +96,7 @@ AGENTS.md
 # Local YNAB API credentials
 ynab_pat
 ynab_pat.txt
+
+# Local SEO reports and advertising exports
+/docs/seo/
+/packages/website/ads/
