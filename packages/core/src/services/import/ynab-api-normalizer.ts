@@ -272,9 +272,11 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
   let categoryAssignmentsVerified: number | undefined;
   if (snapshot.moneyMovements) {
     const movementNet = new Map<string, number>();
+    const monthsWithMovements = new Set<string>();
     const activeMovements = snapshot.moneyMovements.filter((movement) => !movement.deleted);
     for (const movement of activeMovements) {
       const month = movement.month.slice(0, 7);
+      monthsWithMovements.add(month);
       const amount = normalizeAmount(movement.amount);
       if (movement.from_category_id) {
         const key = `${month}::${movement.from_category_id}`;
@@ -286,9 +288,16 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
       }
     }
 
+    let verifiedAssignments = 0;
     const mismatches = categoryMonthSpecs.flatMap((spec, index) => {
+      // YNAB may omit historical Money Movements. A month without active
+      // records is unverifiable, not evidence that every assignment was zero.
+      if (!monthsWithMovements.has(spec.month)) return [];
       const actual = movementNet.get(`${spec.month}::${categoryMonthIds[index]}`) || 0;
-      if (actual === spec.expectedAssigned) return [];
+      if (actual === spec.expectedAssigned) {
+        verifiedAssignments++;
+        return [];
+      }
       return [{ ...spec, movementNet: actual }];
     });
     if (mismatches.length > 0) {
@@ -304,7 +313,7 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
         `YNAB source integrity check failed: Money Movements disagree with ${mismatches.length} monthly category assignment${mismatches.length === 1 ? '' : 's'} (${visible}${omitted > 0 ? `; and ${omitted} more` : ''}).`
       );
     }
-    categoryAssignmentsVerified = categoryMonthSpecs.length;
+    categoryAssignmentsVerified = verifiedAssignments;
   }
 
   const latestTransactionDateByAccount = new Map<string, string>();

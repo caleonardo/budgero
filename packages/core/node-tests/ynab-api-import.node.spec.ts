@@ -418,6 +418,86 @@ describe('YNAB API import', () => {
     );
   });
 
+  it.each(['2026-04-01', '2026-08-01', '2026-10-01'])(
+    'preserves assignments in %s without counting missing movement history as verified',
+    (month) => {
+      const snapshot = snapshotFixture();
+      const sourceMonth = snapshot.plan.months[0];
+      snapshot.plan.months.push({ ...sourceMonth, month: '2026-05-01' }, { ...sourceMonth, month });
+      snapshot.moneyMovements!.push({
+        ...snapshot.moneyMovements![0],
+        id: 'movement-food-may',
+        month: '2026-05-01',
+      });
+
+      const normalized = normalizeYNABApiSnapshot(snapshot);
+
+      expect(normalized.budgetRows).toContainEqual(
+        expect.objectContaining({ Month: month, Category: 'Food', Assigned: '5.000' })
+      );
+      expect(normalized.categoryMonthSpecs).toHaveLength(3);
+      expect(normalized.source).toMatchObject({
+        moneyMovements: 2,
+        categoryAssignmentsVerified: 2,
+      });
+    }
+  );
+
+  it.each(['empty', 'deleted-only'])(
+    'does not verify assignments against %s Money Movement history',
+    (history) => {
+      const snapshot = snapshotFixture();
+      snapshot.moneyMovements =
+        history === 'empty' ? [] : [{ ...snapshot.moneyMovements![0], deleted: true }];
+
+      const normalized = normalizeYNABApiSnapshot(snapshot);
+
+      expect(normalized.categoryMonthSpecs).toHaveLength(1);
+      expect(normalized.source).toMatchObject({
+        moneyMovements: 0,
+        categoryAssignmentsVerified: 0,
+      });
+    }
+  );
+
+  it('does not report movement verification when Money Movements were not supplied', () => {
+    const snapshot = snapshotFixture();
+    delete snapshot.moneyMovements;
+
+    expect(normalizeYNABApiSnapshot(snapshot).source).toEqual({
+      transactions: 4,
+      subtransactions: 4,
+      registerRows: 6,
+    });
+  });
+
+  it('rejects a missing category movement within a month that has movement history', () => {
+    const snapshot = snapshotFixture();
+    const rent = category('category-rent', 'group-everyday', 'Rent', 2_000);
+    snapshot.plan.categories.push(rent);
+    snapshot.plan.months[0].categories.push(rent);
+
+    expect(() => normalizeYNABApiSnapshot(snapshot)).toThrow(
+      /Money Movements disagree with 1 monthly category assignment.*Rent: monthly assignment 2000, Money Movements 0/i
+    );
+  });
+
+  it('verifies zero assignments in a covered month, including movements that cancel out', () => {
+    const snapshot = snapshotFixture();
+    snapshot.plan.months[0].categories.find((item) => item.id === 'category-food')!.budgeted = 0;
+    const rent = category('category-rent', 'group-everyday', 'Rent');
+    snapshot.plan.categories.push(rent);
+    snapshot.plan.months[0].categories.push(rent);
+    snapshot.moneyMovements!.push({
+      ...snapshot.moneyMovements![0],
+      id: 'movement-food-returned',
+      from_category_id: 'category-food',
+      to_category_id: null,
+    });
+
+    expect(normalizeYNABApiSnapshot(snapshot).source.categoryAssignmentsVerified).toBe(2);
+  });
+
   it('rejects a source split whose active parts do not equal its parent amount', () => {
     const snapshot = snapshotFixture();
     snapshot.plan.subtransactions[0].amount = -9_000;
@@ -651,6 +731,66 @@ describe('YNAB API import', () => {
       adapter.close();
     }
   });
+
+  it.each([true, false])(
+    'imports historical assignments when recent Money Movement history is available: %s',
+    async (hasRecentMovements) => {
+      const adapter = await NodeSqlJsAdapter.create();
+      try {
+        const snapshot = snapshotFixture();
+        snapshot.plan.first_month = '2026-04-01';
+        snapshot.plan.months.unshift({
+          month: '2026-04-01',
+          deleted: false,
+          budgeted: 10_000,
+          activity: 0,
+          income: 0,
+          to_be_budgeted: -10_000,
+          categories: [category('category-food', 'group-everyday', 'Food', 10_000)],
+        });
+        snapshot.plan.months[1].categories.find((item) => item.id === 'category-food')!.balance +=
+          10_000;
+        snapshot.plan.months[1].to_be_budgeted -= 10_000;
+        if (!hasRecentMovements) snapshot.moneyMovements = [];
+
+        const result = await new YNABImportService(adapter).importYNABFromApiSnapshotWithSummary(
+          snapshot,
+          {
+            spaceId: SPACE_ID,
+            budgetName: 'Historical API import',
+            currency: 'USD',
+            numberFormat: '123,456.78',
+            badgeIcon: 'HelpCircle',
+          }
+        );
+
+        expect(result.summary.moneyMovementAssignmentsVerified).toBe(hasRecentMovements ? 1 : 0);
+        expect(result.verification).toMatchObject({
+          status: 'passed',
+          source: { categoryAssignmentsVerified: hasRecentMovements ? 1 : 0 },
+          accounts: { checked: 2, matched: 2 },
+          categories: { checked: 6, matched: 6, mismatches: [] },
+          readyToAssign: { checked: 2, matched: 2, mismatches: [] },
+        });
+        expect(
+          adapter
+            .prepare(
+              `SELECT a.Month, a.Amount
+               FROM assignments a
+               JOIN categories c ON c.ID = a.CategoryId
+               WHERE a.BudgetId = ? AND c.Name = 'Food'
+               ORDER BY a.Month`
+            )
+            .all(result.budgetId)
+        ).toEqual([
+          { Month: '2026-04', Amount: 10_000 },
+          { Month: '2026-09', Amount: 5_000 },
+        ]);
+      } finally {
+        adapter.close();
+      }
+    }
+  );
 
   it('removes the incomplete budget when an account balance does not reconcile', async () => {
     const adapter = await NodeSqlJsAdapter.create();
