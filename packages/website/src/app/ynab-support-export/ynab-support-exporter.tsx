@@ -321,9 +321,9 @@ export function YnabSupportExporter() {
             category group and payee names; notes, memos, import IDs and record IDs.
           </p>
           <p>
-            <strong className="text-foreground">Preserved:</strong> amounts, dates, account types,
-            monthly Ready to Assign, category assigned/activity/available values, balances and Money
-            Movements.
+            <strong className="text-foreground">Preserved for verification:</strong> dates, account
+            types, and the mathematical relationships between transactions, balances, Ready to
+            Assign, category values and Money Movements.
           </p>
           <p className="flex items-start gap-2 border-t border-border/70 pt-3 text-amber-800 dark:text-amber-300">
             <AlertTriangle className="mt-1 size-4 shrink-0" />
