@@ -91,6 +91,13 @@ export class SyncTransport {
   private catchUpRecoveryInProgress = false;
 
   /**
+   * A snapshot cannot repair a deterministic domain-apply failure. Remember
+   * the failed log entry across the one allowed snapshot restore so the next
+   * replay can quarantine it instead of reconnecting forever.
+   */
+  private catchUpApplyFailures = new Map<string, { version: number; precedingVersion: number }>();
+
+  /**
    * Set when catch-up recovery fails terminally (no snapshot to restore).
    * Blocks connect/reconnect for the rest of this transport's lifetime —
    * retrying would replay the same doomed catch-up forever.
@@ -819,6 +826,7 @@ export class SyncTransport {
         const { op, args } = await this.decodeMutationPayload(m);
 
         await this.deps.onRemoteMutation(op, args, id || '');
+        this.catchUpApplyFailures.delete(this.catchUpFailureKey(m));
         await this.updateLocalVersion(m.version);
       } catch (error) {
         if (error instanceof FormatTooNewError) {
@@ -835,6 +843,19 @@ export class SyncTransport {
         this.log('warn', 'Failed to apply catch-up mutation', {
           mutationId: id,
           error: errorMessage(error),
+        });
+        const failureKey = this.catchUpFailureKey(m);
+        const previousFailure = this.catchUpApplyFailures.get(failureKey);
+        if (
+          previousFailure?.version === m.version &&
+          previousFailure.precedingVersion === this.localVersion
+        ) {
+          await this.quarantineCatchUpMutation(m, error);
+          continue;
+        }
+        this.catchUpApplyFailures.set(failureKey, {
+          version: m.version,
+          precedingVersion: this.localVersion,
         });
         await this.handleCatchUpUnsafe('apply_failed');
         return;
@@ -916,6 +937,30 @@ export class SyncTransport {
       return;
     }
     this.requestCatchUpIfNeeded(this.ws, previousVersion);
+  }
+
+  private catchUpFailureKey(mutation: WsCatchUpMutation): string {
+    return mutation.id || `version:${mutation.version}`;
+  }
+
+  private async quarantineCatchUpMutation(
+    mutation: WsCatchUpMutation,
+    error: unknown
+  ): Promise<void> {
+    const { version } = mutation;
+    if (typeof version !== 'number' || !Number.isFinite(version)) return;
+    const mutationId = mutation.id || `version ${mutation.version}`;
+    const message = `A synced change (${mutationId}) could not be applied and was skipped on this device.`;
+
+    this.log('error', 'catch_up_mutation_quarantined', {
+      mutationId: mutation.id,
+      version: mutation.version,
+      precedingVersion: this.localVersion,
+      error: errorMessage(error),
+      spaceId: this.spaceId,
+    });
+    await this.updateLocalVersion(version);
+    this.updateSyncStatus({ isSyncing: false, syncError: message });
   }
 
   private requestCatchUpIfNeeded(ws: WebSocket | null, sinceVersion = this.localVersion): void {

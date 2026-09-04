@@ -695,6 +695,41 @@ describe('SyncTransport', () => {
     );
   });
 
+  it('quarantines the same deterministic catch-up failure after one snapshot recovery', async () => {
+    const { transport, onRemoteMutation, onCatchUpUnsafe } = createTransport();
+    const onSyncStatus = vi.fn();
+    transport.addSyncStatusListener(onSyncStatus);
+    transport.setLocalVersion(8);
+    onRemoteMutation.mockRejectedValue(new Error('Report not found after update'));
+    const message = {
+      type: 'catch_up_response',
+      spaceId: 'space_1',
+      mutations: [{ id: 'c9', version: 9, op: 'reports.update', args: { id: 'missing' } }],
+      hasMore: false,
+      latestVersion: 9,
+      nextSinceVersion: 9,
+    };
+    const handleCatchUp = (
+      transport as unknown as { handleCatchUp(msg: unknown): Promise<void> }
+    ).handleCatchUp.bind(transport);
+
+    await handleCatchUp(message);
+    expect(onCatchUpUnsafe).toHaveBeenCalledTimes(1);
+    expect(transport.getLocalVersion()).toBe(8);
+
+    await handleCatchUp(message);
+
+    expect(onCatchUpUnsafe).toHaveBeenCalledTimes(1);
+    expect(onRemoteMutation).toHaveBeenCalledTimes(2);
+    expect(transport.getLocalVersion()).toBe(9);
+    expect(onSyncStatus).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        syncError: expect.stringContaining('c9'),
+      })
+    );
+    transport.destroy();
+  });
+
   it('fails closed to snapshot recovery on catch-up metadata regression', async () => {
     const { transport, onCatchUpUnsafe } = createTransport();
     transport.setLocalVersion(10);

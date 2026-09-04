@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useEffect, useMemo, useSyncExternalStore } from 'react';
+import { toast } from 'sonner';
 import { AppRuntime } from '@shared/runtime/app-runtime';
 import { useRequiredContext } from '@shared/lib/useRequiredContext';
 import { setRuntime } from '@shared/runtime/global';
@@ -21,6 +22,22 @@ export function RuntimeProvider({ children }: { children: React.ReactNode }) {
     cs.refresh();
     return () => cs.stop();
   }, []);
+
+  useEffect(() => {
+    let lastShownError: string | null = null;
+    return runtime.onSyncStatus((status) => {
+      if (!status.syncError) {
+        lastShownError = null;
+        return;
+      }
+      if (status.syncError === lastShownError) return;
+      lastShownError = status.syncError;
+      toast.warning('Sync needs attention', {
+        description: status.syncError,
+        duration: 15_000,
+      });
+    });
+  }, [runtime]);
 
   return <RuntimeContext.Provider value={runtime}>{children}</RuntimeContext.Provider>;
 }
