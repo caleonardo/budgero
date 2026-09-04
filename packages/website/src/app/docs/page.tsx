@@ -53,7 +53,9 @@ type AugmentedTopic = (typeof docsSections)[number]['topics'][number] & {
   readingTimeMinutes?: number;
 };
 
-type AugmentedSection = (typeof docsSections)[number] & { topics: AugmentedTopic[] };
+type AugmentedSection = Omit<(typeof docsSections)[number], 'topics'> & {
+  topics: AugmentedTopic[];
+};
 
 export default function DocsPage() {
   const publishedGuides = allGuides.filter((guide) => guide.published !== false);

@@ -12,7 +12,9 @@ interface Params {
 }
 
 export function generateStaticParams(): Params[] {
-  return allPosts.filter((p) => !p.draft).map((post) => ({ slug: post.slugAsParams.split('/') }));
+  return allPosts
+    .filter((p) => !p.draft && p.published !== false)
+    .map((post) => ({ slug: post.slugAsParams.split('/') }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
@@ -52,11 +54,13 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   const post = allPosts.find((p) => p.slugAsParams === slugStr);
   if (!post || post.draft || post.published === false) return notFound();
 
-  const formattedDate = new Date(post.date).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: '2-digit',
-  });
+  const formatDate = (date: string) =>
+    new Date(date).toLocaleDateString('en-US', {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: 'long',
+      day: '2-digit',
+    });
   const readingTime =
     typeof post.readingTimeMinutes === 'number' ? `${post.readingTimeMinutes} min read` : null;
 
@@ -106,7 +110,17 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
           {post.title}
         </h1>
         <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-2">
-          <span>{formattedDate}</span>
+          <span>By Budgero</span>
+          <span aria-hidden>•</span>
+          <time dateTime={publishedTime}>{formatDate(post.date)}</time>
+          {post.updated && modifiedTime !== publishedTime ? (
+            <>
+              <span aria-hidden>•</span>
+              <span>
+                Updated <time dateTime={modifiedTime}>{formatDate(post.updated)}</time>
+              </span>
+            </>
+          ) : null}
           {readingTime ? (
             <>
               <span aria-hidden>•</span>

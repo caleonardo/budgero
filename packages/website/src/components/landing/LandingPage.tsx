@@ -104,9 +104,7 @@ export default function LandingPage() {
       mediaAlt: 'Demo of semantic search in Budgero.',
     },
     {
-      icon: (
-        <CalendarRange className="h-6 w-6 text-foreground/70" strokeWidth={1.8} />
-      ),
+      icon: <CalendarRange className="h-6 w-6 text-foreground/70" strokeWidth={1.8} />,
       title: 'Plan months ahead instantly',
       description:
         'Zoom out to anywhere from three to six months at a time and adjust plans in seconds. Every change ripples across future buckets so you always know what is coming next.',
@@ -276,9 +274,9 @@ export default function LandingPage() {
                   </h1>
                   <div className="text-lg md:text-2xl text-foreground/70 mb-8 max-w-3xl mx-auto leading-relaxed space-y-3">
                     <p>
-                      Not Budgero. Not an aggregator. Not a subpoena. Every transaction
-                      is encrypted before it leaves your device — zero-knowledge, by
-                      architecture, not by promise.
+                      Not Budgero. Not an aggregator. Not a subpoena. Every transaction is encrypted
+                      before it leaves your device — zero-knowledge, by architecture, not by
+                      promise.
                     </p>
                     <p>
                       And you don&apos;t have to take our word for it: Budgero is{' '}
@@ -328,6 +326,23 @@ export default function LandingPage() {
                       className="underline underline-offset-4 decoration-dotted hover:text-foreground"
                     >
                       Compare Budgero vs YNAB
+                    </Link>
+                    .
+                  </p>
+                  <p className="mt-2 text-xs sm:text-sm text-foreground/60">
+                    Budgeting across borders? Explore our{' '}
+                    <Link
+                      href="/monarch-money-europe-alternative"
+                      className="underline underline-offset-4 hover:text-foreground"
+                    >
+                      Monarch Money alternative for Europe
+                    </Link>{' '}
+                    and{' '}
+                    <Link
+                      href="/multi-currency-budgeting"
+                      className="underline underline-offset-4 hover:text-foreground"
+                    >
+                      multi-currency budgeting
                     </Link>
                     .
                   </p>
@@ -423,9 +438,7 @@ export default function LandingPage() {
                                 <div className="mt-1 p-0.5 rounded-full bg-[#d7dbe2] text-[#374151] group-hover/item:bg-[#c9ced8] transition-colors">
                                   <CircleCheckBig className="w-3.5 h-3.5" strokeWidth={2.5} />
                                 </div>
-                                <span className="text-foreground/80 font-medium">
-                                  {feature}
-                                </span>
+                                <span className="text-foreground/80 font-medium">{feature}</span>
                               </li>
                             ))}
                           </ul>
@@ -503,9 +516,7 @@ export default function LandingPage() {
                                   <div className="mt-1 p-0.5 rounded-full bg-[#d7dbe2] text-[#374151] group-hover/item:bg-[#c9ced8] transition-colors">
                                     <CircleCheckBig className="w-3.5 h-3.5" strokeWidth={2.5} />
                                   </div>
-                                  <span className="text-foreground/80 font-medium">
-                                    {feature}
-                                  </span>
+                                  <span className="text-foreground/80 font-medium">{feature}</span>
                                 </li>
                               )
                             )}
@@ -533,16 +544,22 @@ export default function LandingPage() {
                       <Lock className="w-10 h-10 text-foreground" />
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-foreground mb-6 leading-tight">
-                      Your Data is{' '}
-                      <span className="text-foreground/85">Truly Private</span>
+                      Your Data is <span className="text-foreground/85">Truly Private</span>
                     </h2>
                     <p className="text-xl text-foreground/70 max-w-3xl mx-auto">
-                      In most finance apps, your raw data sits on someone else's servers where
-                      employees or third parties could access it. Budgero flips that model:
-                      everything is encrypted on your device before it ever leaves.{' '}
+                      Budgero encrypts your budget on your device before it reaches our servers.
+                      Your transactions, categories, and balances stay private during sync.{' '}
                       <span className="font-semibold text-foreground/85">
                         We literally cannot read, mine, or sell your transactions.
                       </span>
+                    </p>
+                    <p className="text-base text-foreground/70">
+                      <Link
+                        href="/encrypted-budgeting"
+                        className="underline underline-offset-4 hover:text-foreground"
+                      >
+                        How encrypted budgeting protects your data
+                      </Link>
                     </p>
                   </div>
                   <div className="grid md:grid-cols-3 gap-8">
@@ -560,14 +577,12 @@ export default function LandingPage() {
                                 ][i]
                               }
                             </div>
-                            <h3 className="text-xl font-bold text-foreground mb-4">
-                              {title}
-                            </h3>
+                            <h3 className="text-xl font-bold text-foreground mb-4">{title}</h3>
                             <p className="text-foreground/70 leading-relaxed flex-grow">
                               {
                                 [
                                   'Your password encrypts everything before it reaches our servers. We never see your balances, categories, or transactions — period.',
-                                  "Run Budgero on your own server with Docker — free, full feature parity. Your data never has to touch our infrastructure, and you can export or migrate anytime.",
+                                  'Run Budgero on your own server with Docker — free, full feature parity. Your data never has to touch our infrastructure, and you can export or migrate anytime.',
                                   'AES-256-GCM with PBKDF2-HMAC-SHA256 key derivation (600,000 iterations) protects your data using battle-tested cryptography in your browser.',
                                 ][i]
                               }
@@ -587,8 +602,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4 relative z-10">
                   <div className="text-center mb-16 space-y-4">
                     <h2 className="text-4xl md:text-5xl font-black text-foreground leading-tight">
-                      Features You&apos;ll{' '}
-                      <span className="text-foreground/85">Love</span>
+                      Features You&apos;ll <span className="text-foreground/85">Love</span>
                     </h2>
                     <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
                       Peek behind the curtain at how Budgero feels in motion. These quick clips
@@ -603,33 +617,30 @@ export default function LandingPage() {
                       <div className="absolute -inset-x-12 -top-10 h-40 rounded-full bg-foreground/5 blur-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
                       <div className="relative flex h-full flex-col lg:grid lg:grid-cols-12 lg:gap-3">
                         <div className="relative overflow-hidden lg:col-span-9 lg:ml-4 lg:my-3">
-                          <div
-                            className="relative flex aspect-[4/3] items-center justify-center"
-                          >
-                            {currentFeature && (
+                          <div className="relative flex aspect-[4/3] items-center justify-center">
+                            {currentFeature &&
                               (() => {
                                 const activeMediaSrc =
                                   isMobile && currentFeature.mediaMobile
                                     ? currentFeature.mediaMobile
                                     : currentFeature.media;
                                 return (
-                              <ResettingGif
-                                resetKey={activeFeature}
-                                src={activeMediaSrc}
-                                alt={currentFeature.mediaAlt}
-                                fill
-                                sizes="(min-width: 1280px) 62vw, (min-width: 1024px) 58vw, (min-width: 768px) 80vw, 100vw"
-                                className="h-full w-full"
-                                style={{
-                                  objectFit: 'contain',
-                                  objectPosition: 'center center',
-                                }}
-                                unoptimized
-                                priority={activeFeature === 0}
-                              />
+                                  <ResettingGif
+                                    resetKey={activeFeature}
+                                    src={activeMediaSrc}
+                                    alt={currentFeature.mediaAlt}
+                                    fill
+                                    sizes="(min-width: 1280px) 62vw, (min-width: 1024px) 58vw, (min-width: 768px) 80vw, 100vw"
+                                    className="h-full w-full"
+                                    style={{
+                                      objectFit: 'contain',
+                                      objectPosition: 'center center',
+                                    }}
+                                    unoptimized
+                                    priority={activeFeature === 0}
+                                  />
                                 );
-                              })()
-                            )}
+                              })()}
                           </div>
                         </div>
                         <div className="relative z-10 mt-4 px-6 pb-8 lg:col-span-3 lg:mt-0 lg:px-0 lg:pr-8 lg:py-6 lg:flex lg:flex-col lg:justify-center">
@@ -686,9 +697,7 @@ export default function LandingPage() {
                                 type="button"
                                 onClick={() => goToFeature(index)}
                                 className={`h-2.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background ${
-                                  isActive
-                                    ? 'w-8 bg-foreground'
-                                    : 'w-2.5 bg-muted/60'
+                                  isActive ? 'w-8 bg-foreground' : 'w-2.5 bg-muted/60'
                                 }`}
                                 aria-label={`Showcase ${feature.title}`}
                                 aria-pressed={isActive}
@@ -711,9 +720,7 @@ export default function LandingPage() {
               <section id="faq" className="relative py-32 overflow-hidden -mt-16 pt-48">
                 <div className="container mx-auto px-4 relative z-10">
                   <div className="max-w-4xl mx-auto space-y-8">
-                    <h2 className="text-3xl md:text-4xl font-black text-foreground">
-                      FAQ
-                    </h2>
+                    <h2 className="text-3xl md:text-4xl font-black text-foreground">FAQ</h2>
                     <div className="space-y-4">
                       {faqs.map((faq, index) => {
                         const isOpen = expandedFaq === index;

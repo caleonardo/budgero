@@ -8,8 +8,21 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const metadata: Metadata = {
-  title: 'Blog',
-  description: 'Articles and updates from Budgero.',
+  title: 'Budgeting Guides and Comparisons | Budgero',
+  description:
+    'Compare budgeting apps, learn about private and self-hosted budgeting, and find practical guides to switching to Budgero.',
+  alternates: { canonical: 'https://budgero.app/blog' },
+  openGraph: {
+    title: 'Budgeting Guides and Comparisons | Budgero',
+    description: 'Budgeting app comparisons, privacy guides, and stories from Budgero.',
+    url: 'https://budgero.app/blog',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Budgeting Guides and Comparisons | Budgero',
+    description: 'Budgeting app comparisons, privacy guides, and stories from Budgero.',
+  },
 };
 
 export default function BlogPage() {
@@ -31,11 +44,15 @@ export default function BlogPage() {
             Budgero blog
           </Badge>
           <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Insights & updates
+            Budgeting guides & comparisons
           </h1>
           <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Follow along as we ship new budgeting tools, share privacy-first finance tips, and
-            unpack the thinking behind Budgero&apos;s roadmap.
+            Compare budgeting apps, explore financial privacy, and learn how to move your budget.
+            New to the method? Start with our{' '}
+            <Link href="/zero-based-budgeting" className="underline hover:text-foreground">
+              guide to zero-based budgeting
+            </Link>
+            .
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             {heroHighlights.map((item) => (

@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/docs/budgero-core-vs-cloud',
+        destination: '/self-hostable',
+        permanent: true,
+      },
+      {
         source: '/free-ynab-alternative',
         destination: '/vs-ynab',
         permanent: true,

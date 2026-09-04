@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Budgero' }],
   robots: { index: true, follow: true },
   alternates: {
-    canonical: 'https://budgero.app/',
+    // Indexable routes set their own canonical; never inherit the homepage URL.
     types: {
       'application/rss+xml': 'https://budgero.app/feed.xml',
     },
@@ -107,32 +107,31 @@ export default function RootLayout({
           <SiteFooter />
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Organization',
-              name: 'Budgero',
-              url: 'https://budgero.app/',
-              logo: {
-                '@type': 'ImageObject',
-                url: 'https://budgero.app/logo_512.png',
-                width: 512,
-                height: 512,
-              },
-            }) }}
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'Organization',
+                name: 'Budgero',
+                url: 'https://budgero.app/',
+                logo: {
+                  '@type': 'ImageObject',
+                  url: 'https://budgero.app/logo_512.png',
+                  width: 512,
+                  height: 512,
+                },
+              }),
+            }}
           />
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: 'Budgero',
-              url: 'https://budgero.app/',
-              potentialAction: {
-                '@type': 'SearchAction',
-                target: 'https://budgero.app/?q={search_term_string}',
-                'query-input': 'required name=search_term_string',
-              },
-            }) }}
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'WebSite',
+                name: 'Budgero',
+                url: 'https://budgero.app/',
+              }),
+            }}
           />
         </Providers>
       </body>
