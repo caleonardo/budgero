@@ -376,6 +376,16 @@ export default function VsYnabPage() {
                     your subscription is active. After importing, reconcile your accounts and review
                     category history before switching your daily budgeting workflow.
                   </p>
+                  <p>
+                    Budgeting across currencies? Read our{' '}
+                    <Link
+                      href="/blog/ynab-multi-currency"
+                      className="underline hover:text-foreground"
+                    >
+                      guide to YNAB multi-currency workarounds and alternatives
+                    </Link>{' '}
+                    for separate plans, third-party tools, and a worked USD/EUR example.
+                  </p>
                 </div>
               </div>
             </section>

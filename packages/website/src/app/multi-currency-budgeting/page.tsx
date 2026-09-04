@@ -1,14 +1,6 @@
 import type { Metadata } from 'next';
-import {
-  ArrowRight,
-  Globe,
-  TrendingUp,
-  Wallet,
-  Briefcase,
-  Plane,
-  Users,
-  X,
-} from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, Globe, TrendingUp, Wallet, Briefcase, Plane, Users, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { TestimonialsSection } from '@/components/landing/Testimonials';
@@ -189,9 +181,7 @@ export default function MultiCurrencyBudgetingPage() {
                   separate budgets per currency with no way to see your total financial picture.
                   Spreadsheets with manual FX lookups break down within a month.
                 </p>
-                <p>
-                  You end up not budgeting at all because the tools don&apos;t match your life.
-                </p>
+                <p>You end up not budgeting at all because the tools don&apos;t match your life.</p>
               </div>
             </section>
 
@@ -259,9 +249,15 @@ export default function MultiCurrencyBudgetingPage() {
                   <li className="flex items-start gap-3">
                     <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <span>
-                      <strong className="text-foreground">YNAB:</strong> One currency per budget.
-                      No conversion. You need separate budgets for each currency with no unified
-                      view.
+                      <strong className="text-foreground">YNAB:</strong> One currency per budget. No
+                      native conversion between account currencies in one plan. Read our{' '}
+                      <Link
+                        href="/blog/ynab-multi-currency"
+                        className="underline hover:text-foreground"
+                      >
+                        YNAB multi-currency guide
+                      </Link>{' '}
+                      for separate plans, travel spending, and third-party workarounds.
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
