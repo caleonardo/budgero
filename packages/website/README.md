@@ -37,6 +37,11 @@ include placement. Signup includes only allowlisted homepage campaign query valu
 Existing `CTA Clicked - Cloud` and `Cloud Trial - Header` events remain for
 historical comparisons.
 
+The report gallery records `Report Preview Selected` and `Report Preview Enlarged`
+with a public report ID and the homepage variant. Its trial link uses the `reports`
+placement, which the Cloud signup event also preserves. Gallery events measure
+interest in the product examples; they are not steps in the trial funnel.
+
 The website and Cloud app use the same Umami website ID and `/stats/api/send`
 proxy. After deploying both, verify a consent-denied signup journey in Umami
 before relying on cross-domain funnel percentages. IP/browser changes and session

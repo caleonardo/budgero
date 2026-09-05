@@ -25,7 +25,7 @@ function sentPayload() {
 }
 
 describe('anonymous signup funnel', () => {
-  it.each(['hero', 'sharing'])(
+  it.each(['hero', 'sharing', 'reports'])(
     'retains the public %s placement while excluding credentials and arbitrary campaign text',
     (placement) => {
       sendSignupViewedToUmami(

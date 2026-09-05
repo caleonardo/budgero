@@ -19,6 +19,7 @@ import { FeaturedTestimonial } from './Testimonials';
 import { HOMEPAGE_VARIANT, TrialLink } from './TrialLink';
 import { BudgetPreview } from './BudgetPreview';
 import { SharedBudgeting } from './SharedBudgeting';
+import { ReportShowcase } from './ReportShowcase';
 
 const features = [
   'Encrypted sync across your devices',
@@ -88,6 +89,8 @@ export default function LandingPage() {
       </section>
 
       <FeaturedTestimonial />
+
+      <ReportShowcase />
 
       <section
         id="how-it-works"

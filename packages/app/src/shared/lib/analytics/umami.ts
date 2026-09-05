@@ -16,6 +16,7 @@ const UMAMI_WEBSITE_ID = '76a1a09b-2dbc-4291-9c0b-d3f4e9eb2caa';
 const HOMEPAGE_PLACEMENTS = new Set([
   'header',
   'hero',
+  'reports',
   'sharing',
   'pricing',
   'final',
