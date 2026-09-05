@@ -1,38 +1,45 @@
 /**
- * Cookieless funnel event → self-hosted Umami (stats.budgero.app).
+ * Anonymous Cloud funnel events, sent through the same Umami proxy and website
+ * ID as the marketing site. No device storage, user IDs, or financial data.
+ * Signup URLs contain only the finite, public homepage campaign values below;
+ * never forward an auth URL, OAuth parameter, invite token, or referrer verbatim.
  *
- * Separate from the PostHog facade on purpose: PostHog is consent-gated
- * (opt-in), while this sends a single anonymous, name-only event with NO
- * device storage, NO user id, and NO properties — the same no-consent
- * rationale as the marketing site's Umami layer. Umami sessions visitors by
- * (website, ip, user-agent, rotating salt), so a trial fired minutes after
- * the landing-page visit joins that visit's session and inherits its
- * UTM/referrer attribution.
- *
- * Self-host: the `import.meta.env.VITE_SELF_HOSTABLE` comparison below is
- * statically replaced at build time (selfhost.Dockerfile builds with
- * VITE_SELF_HOSTABLE=true), so the whole body — endpoint and website id
- * included — is dead-code-eliminated from self-hostable bundles. The
- * IS_SELF_HOSTABLE_BUILD check additionally covers flavors that flag
- * self-host at runtime (`window.budgero.selfHostable`).
+ * Umami owns session grouping. In v2.19 it hashes website, IP, user agent and a
+ * rotating salt. Sharing the endpoint preserves the client IP seen by Umami,
+ * but a changed network, browser, or salt can still split a journey. Validate
+ * the deployed version's funnel after release; events are not exact people.
  */
-
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
 
-// Send via the marketing site's Cloudflare-fronted proxy, not stats.budgero.app
-// directly: Umami reads the real client IP + geo from Cloudflare headers, and a
-// direct hit (no Cloudflare) lands as an isolated, geo-less session that can't
-// stitch to the visitor's marketing-site pageviews.
 const UMAMI_ENDPOINT = 'https://budgero.app/stats/api/send';
 const UMAMI_WEBSITE_ID = '76a1a09b-2dbc-4291-9c0b-d3f4e9eb2caa';
+const HOMEPAGE_PLACEMENTS = new Set(['header', 'hero', 'pricing', 'final', 'mobile-sticky']);
 
-/** Fire-and-forget `Trial Started` to Umami. Never throws, never blocks. */
-export function sendTrialStartedToUmami(): void {
+function signupEventUrl(search: string): string {
+  const incoming = new URLSearchParams(search);
+  const safe = new URLSearchParams({ mode: 'signup' });
+  if (
+    incoming.get('utm_source') === 'website' &&
+    incoming.get('utm_medium') === 'cta' &&
+    incoming.get('utm_campaign') === 'home' &&
+    HOMEPAGE_PLACEMENTS.has(incoming.get('utm_content') ?? '')
+  ) {
+    safe.set('utm_source', 'website');
+    safe.set('utm_medium', 'cta');
+    safe.set('utm_campaign', 'home');
+    safe.set('utm_content', incoming.get('utm_content')!);
+    if (incoming.get('landing_variant') === 'trial-focused-v1') {
+      safe.set('landing_variant', 'trial-focused-v1');
+    }
+  }
+  return `/auth?${safe}`;
+}
+
+function sendFunnelEvent(name: 'Signup Viewed' | 'Trial Started', url: string): void {
+  // Keep both checks: one supports static elimination, one runtime self-host.
   if (import.meta.env.VITE_SELF_HOSTABLE === 'true') return;
-  if (IS_SELF_HOSTABLE_BUILD) return;
-  if (typeof window === 'undefined') return;
-  // Production only — keeps localhost/preview traffic out of the stats.
-  if (!window.location.hostname.endsWith('budgero.app')) return;
+  if (IS_SELF_HOSTABLE_BUILD || typeof window === 'undefined') return;
+  if (window.location.hostname !== 'my.budgero.app') return;
 
   try {
     void fetch(UMAMI_ENDPOINT, {
@@ -44,16 +51,25 @@ export function sendTrialStartedToUmami(): void {
         payload: {
           website: UMAMI_WEBSITE_ID,
           hostname: window.location.hostname,
-          url: '/trial-started',
-          name: 'Trial Started',
+          url,
+          name,
           language: navigator.language,
           screen: `${window.screen.width}x${window.screen.height}`,
         },
       }),
     }).catch(() => {
-      /* analytics must never surface errors */
+      /* Analytics must never interrupt authentication. */
     });
   } catch {
-    /* fetch unavailable — ignore */
+    /* Fetch unavailable — ignore. */
   }
+}
+
+export function sendSignupViewedToUmami(search: string): void {
+  sendFunnelEvent('Signup Viewed', signupEventUrl(search));
+}
+
+/** New backend account observed at startup; not first-budget activation. */
+export function sendTrialStartedToUmami(): void {
+  sendFunnelEvent('Trial Started', '/trial-started');
 }

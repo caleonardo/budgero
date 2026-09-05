@@ -6,6 +6,9 @@ interface ImportMetaEnv {
   readonly VITE_E2E_SKIP_SERVER?: string;
   readonly VITE_SELF_HOSTABLE?: string;
   readonly VITE_CLERK_PUBLISHABLE_KEY?: string;
+  /** Cloud offer copy; keep aligned with website pricing and billing plans. */
+  readonly VITE_BUDGERO_PRICE_MONTHLY?: string;
+  readonly VITE_BUDGERO_PRICE_YEARLY?: string;
   readonly VITE_API_BASE_URL?: string;
   readonly VITE_POSTHOG_KEY?: string;
   readonly VITE_POSTHOG_HOST?: string;

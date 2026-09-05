@@ -63,6 +63,7 @@ type NameOnlyEvent =
   | 'Imported from YNAB'
   | 'Imported CSV/PDF'
   | 'Shared Budget'
+  | 'Signup Viewed'
   | 'Trial Started';
 
 let initialized = false;
@@ -221,6 +222,7 @@ export const trackImportedFromYnab = (): void => captureStrict('Imported from YN
 export const trackImportedCsvPdf = (): void => captureStrict('Imported CSV/PDF');
 export const trackSharedBudget = (): void => captureStrict('Shared Budget');
 export const trackTrialStarted = (): void => captureStrict('Trial Started');
+export const trackSignupViewed = (): void => captureStrict('Signup Viewed');
 
 // ---------------------------------------------------------------------------
 // Commercial funnel events — strictly typed prop allowlists.

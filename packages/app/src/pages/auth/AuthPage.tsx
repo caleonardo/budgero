@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SignIn, SignUp } from '@clerk/clerk-react';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
-import { Loader2 } from 'lucide-react';
+import { Check, Loader2, LockKeyhole } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ApiError, useApiClient } from '@shared/hooks/useApiClient';
 import { useSelfHostAuth } from '@shared/model/useSelfHostAuth';
 import { Helmet } from 'react-helmet-async';
 import type { User } from '@shared/model/auth';
+import { sendSignupViewedToUmami } from '@shared/lib/analytics/umami';
+import { trackSignupViewed } from '@shared/lib/analytics/analytics';
 
 const IS_SELF_HOSTABLE =
   typeof import.meta !== 'undefined' &&
@@ -22,6 +24,7 @@ type LocalAuthStatus = 'idle' | 'loading' | 'error';
 const CLERK_APPEARANCE = {
   elements: {
     rootBox: 'w-full',
+    cardBox: 'w-full',
     card: 'w-full shadow-lg border-0',
     headerTitle: 'text-2xl font-bold',
     headerSubtitle: 'text-sm text-muted-foreground',
@@ -42,12 +45,29 @@ export default function AuthPage() {
     return <SelfHostAuthPage />;
   }
 
-  const mode = searchParams.get('mode');
-  const isSignup = mode === 'signup';
-  const metaTitle = isSignup ? 'Create a Free Account | Budgero' : 'Login to Budgero Cloud';
+  return <CloudAuthPage isSignup={searchParams.get('mode') === 'signup'} />;
+}
+
+function CloudAuthPage({ isSignup }: { isSignup: boolean }) {
+  const signupViewed = useRef(false);
+  const [searchParams] = useSearchParams();
+  const monthly = import.meta.env.VITE_BUDGERO_PRICE_MONTHLY ?? '$4';
+  const yearly = import.meta.env.VITE_BUDGERO_PRICE_YEARLY ?? '$35';
+  const metaTitle = isSignup
+    ? 'Start Your 35-Day Free Trial | Budgero'
+    : 'Sign in to Budgero Cloud';
   const metaDescription = isSignup
-    ? 'Start your zero-based budget today. No credit card required for Budgero Core. Private by design.'
-    : 'Securely access your encrypted budget. Enter your master password to decrypt your data.';
+    ? `Try private budgeting with Budgero Cloud free for 35 days. No credit card required. Then ${monthly}/month or ${yearly}/year, tax included.`
+    : 'Sign in to your Budgero Cloud account and unlock your private budget.';
+  const alternateQuery = new URLSearchParams(searchParams);
+  alternateQuery.set('mode', isSignup ? 'signin' : 'signup');
+
+  useEffect(() => {
+    if (!isSignup || signupViewed.current) return;
+    signupViewed.current = true;
+    trackSignupViewed();
+    sendSignupViewedToUmami(window.location.search);
+  }, [isSignup]);
 
   return (
     <>
@@ -59,48 +79,99 @@ export default function AuthPage() {
         <meta name="twitter:title" content={metaTitle} />
         <meta name="twitter:description" content={metaDescription} />
       </Helmet>
-      <div className="min-h-screen flex flex-col">
-        {/* Early Access Banner at top */}
-
-        <div className="flex-1 flex items-center justify-center bg-background px-4">
-          <div className="w-full max-w-sm space-y-6">
-            {/* Logo/Title */}
-            <div className="text-center">
-              <div className="flex justify-center mb-4">
-                <img src="/logo_64.png" alt="Budgero Logo" className="w-16 h-16 object-contain" />
-              </div>
-              <h1 className="text-3xl font-bold text-foreground">Budgero</h1>
-            </div>
-
-            {/* Clerk Auth with reserved space to prevent layout jumping */}
-            {mode === 'signup' ? (
+      <div className="min-h-svh bg-background px-4 py-5 sm:px-8 sm:py-8">
+        <a
+          href="https://budgero.app/"
+          className="mx-auto flex max-w-5xl items-center gap-2 text-lg font-bold"
+        >
+          <img src="/logo_64.png" alt="" className="h-9 w-9 rounded-lg" /> Budgero
+        </a>
+        <main
+          className={`mx-auto flex min-h-[calc(100svh-9rem)] max-w-5xl flex-col justify-center gap-6 py-6 sm:gap-8 sm:py-8 ${isSignup ? 'lg:flex-row lg:items-center lg:gap-20' : 'items-center'}`}
+        >
+          <div
+            className={
+              isSignup ? 'text-center lg:max-w-md lg:flex-1 lg:text-left' : 'max-w-md text-center'
+            }
+          >
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Budgero Cloud
+            </p>
+            <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+              {isSignup ? 'Start your 35-day free trial.' : 'Welcome back to your budget.'}
+            </h1>
+            <p className="mt-4 text-base leading-7 text-muted-foreground">
+              {isSignup
+                ? 'Know what you can spend. Keep your budget private. Create your account to start your free trial.'
+                : 'Sign in, then unlock your budget with your master password.'}
+            </p>
+            {isSignup && (
+              <>
+                <p className="mt-4 text-sm font-medium">No credit card required.</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Then {monthly}/month or {yearly}/year, tax included.
+                </p>
+                <ul className="mt-7 hidden space-y-4 text-sm lg:block">
+                  {[
+                    'Start fresh or bring your YNAB budget',
+                    'Budget together with up to five people',
+                    'Use your phone, tablet, or computer',
+                  ].map((benefit) => (
+                    <li key={benefit} className="flex items-center gap-3">
+                      <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-7 hidden items-start gap-3 text-sm leading-6 text-muted-foreground lg:flex">
+                  <LockKeyhole className="mt-1 size-4 shrink-0" aria-hidden="true" />
+                  Your budget is encrypted on your device before it syncs. Budgero cannot read its
+                  contents.
+                </p>
+              </>
+            )}
+          </div>
+          <div className="mx-auto w-full max-w-sm shrink-0 space-y-5 lg:mx-0">
+            {isSignup ? (
               <SignUp
+                signInUrl={`/auth?${alternateQuery}`}
                 routing="hash"
                 oauthFlow="redirect"
-                fallback={
-                  <div className="h-[360px] flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
-                  </div>
-                }
+                fallback={<AuthLoading />}
                 appearance={CLERK_APPEARANCE}
               />
             ) : (
               <SignIn
+                signUpUrl={`/auth?${alternateQuery}`}
                 routing="hash"
                 withSignUp={false}
                 oauthFlow="redirect"
-                fallback={
-                  <div className="h-[360px] flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
-                  </div>
-                }
+                fallback={<AuthLoading />}
                 appearance={CLERK_APPEARANCE}
               />
             )}
+            {isSignup && (
+              <p className="text-center text-xs leading-5 text-muted-foreground">
+                No automatic charge when your trial ends. Choose a plan only if Budgero works for
+                you.
+              </p>
+            )}
           </div>
-        </div>
+        </main>
       </div>
     </>
+  );
+}
+
+function AuthLoading() {
+  return (
+    <div
+      className="flex h-[360px] items-center justify-center"
+      role="status"
+      aria-label="Loading secure sign-in"
+    >
+      <Loader2 className="size-6 animate-spin text-primary" aria-hidden="true" />
+    </div>
   );
 }
 

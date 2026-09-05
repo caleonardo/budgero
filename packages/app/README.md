@@ -32,6 +32,11 @@ pnpm run type-check:app   # TypeScript check
 pnpm run build:app        # Production build
 ```
 
+Cloud signup displays the 35-day trial and current default prices ($4/month,
+$35/year). Optional build-time `VITE_BUDGERO_PRICE_MONTHLY` and
+`VITE_BUDGERO_PRICE_YEARLY` values override this copy. Keep them aligned with
+the website's `NEXT_PUBLIC_BUDGERO_PRICE_*` values and the billing plans.
+
 ## Testing
 
 - Unit/integration: `vitest` + `@testing-library/react`
