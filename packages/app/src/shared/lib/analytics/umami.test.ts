@@ -25,17 +25,20 @@ function sentPayload() {
 }
 
 describe('anonymous signup funnel', () => {
-  it('retains the public homepage placement while excluding credentials and arbitrary campaign text', () => {
-    sendSignupViewedToUmami(
-      '?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=home&utm_content=hero&landing_variant=trial-focused-v1&code=private-oauth-code&next=/join/secret&email=private@example.com&utm_term=private'
-    );
-    expect(sentPayload().url).toBe(
-      '/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=home&utm_content=hero&landing_variant=trial-focused-v1'
-    );
-    expect(sentPayload()).not.toHaveProperty('data');
-    expect(sentPayload()).not.toHaveProperty('id');
-    expect(sentPayload()).not.toHaveProperty('referrer');
-  });
+  it.each(['hero', 'sharing'])(
+    'retains the public %s placement while excluding credentials and arbitrary campaign text',
+    (placement) => {
+      sendSignupViewedToUmami(
+        `?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=home&utm_content=${placement}&landing_variant=trial-focused-v1&code=private-oauth-code&next=/join/secret&email=private@example.com&utm_term=private`
+      );
+      expect(sentPayload().url).toBe(
+        `/auth?mode=signup&utm_source=website&utm_medium=cta&utm_campaign=home&utm_content=${placement}&landing_variant=trial-focused-v1`
+      );
+      expect(sentPayload()).not.toHaveProperty('data');
+      expect(sentPayload()).not.toHaveProperty('id');
+      expect(sentPayload()).not.toHaveProperty('referrer');
+    }
+  );
 
   it('rejects unrecognized campaign values instead of forwarding user-controlled strings', () => {
     sendSignupViewedToUmami(

@@ -24,7 +24,7 @@ export const homepageFaqs = [
   {
     question: 'Can I budget with my partner and use my phone?',
     answer:
-      'Yes. A Cloud workspace includes up to five people. Use Budgero in your browser on a phone, tablet, or computer, with encrypted sync across your devices.',
+      'Yes. One Cloud subscription includes up to five people in your workspace. Your partner does not need a separate subscription, and each person signs in with their own account and master password. Use Budgero in your browser on a phone, tablet, or computer, with encrypted sync across your devices.',
   },
   {
     question: 'Can I export my data or self-host later?',

@@ -3,7 +3,7 @@
 import type { ComponentProps } from 'react';
 import { track } from '@/lib/analytics';
 
-type Placement = 'header' | 'hero' | 'pricing' | 'final' | 'mobile-sticky';
+type Placement = 'header' | 'hero' | 'sharing' | 'pricing' | 'final' | 'mobile-sticky';
 export const HOMEPAGE_VARIANT = 'trial-focused-v1';
 
 export function TrialLink({

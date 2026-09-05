@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -18,6 +17,8 @@ import { homepageFaqs } from '@/lib/homepage-content';
 import { track } from '@/lib/analytics';
 import { FeaturedTestimonial } from './Testimonials';
 import { HOMEPAGE_VARIANT, TrialLink } from './TrialLink';
+import { BudgetPreview } from './BudgetPreview';
+import { SharedBudgeting } from './SharedBudgeting';
 
 const features = [
   'Encrypted sync across your devices',
@@ -80,34 +81,10 @@ export default function LandingPage() {
               <LockKeyhole className="size-3.5" aria-hidden="true" /> End-to-end encrypted
             </span>
             <span>Open source</span>
-            <span>No bank connection needed</span>
+            <span>Up to five people included</span>
           </p>
         </div>
-        <figure className="mx-auto mt-10 max-w-6xl sm:mt-12">
-          <div className="overflow-hidden rounded-xl border border-border bg-card shadow-2xl shadow-black/10 sm:rounded-2xl">
-            <Image
-              src="/desktop_new.png"
-              alt="Budgero Planning view with budget categories, assignments, activity, and available amounts."
-              width={2880}
-              height={2160}
-              priority
-              sizes="(min-width: 1200px) 1152px, 100vw"
-              className="hidden h-auto w-full md:block"
-            />
-            <Image
-              src="/mobile_new.png"
-              alt="Budgero Planning view on a phone."
-              width={2880}
-              height={2160}
-              priority
-              sizes="(min-width: 768px) 1px, (min-width: 440px) 400px, 100vw"
-              className="mx-auto h-auto w-full max-w-[400px] md:hidden"
-            />
-          </div>
-          <figcaption className="mt-3 text-center text-xs text-muted-foreground">
-            Budgero on desktop and mobile.
-          </figcaption>
-        </figure>
+        <BudgetPreview />
       </section>
 
       <FeaturedTestimonial />
@@ -223,6 +200,8 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <SharedBudgeting />
+
       <section
         id="pricing"
         aria-labelledby="pricing-heading"
@@ -270,7 +249,7 @@ export default function LandingPage() {
                 <span className="text-sm text-muted-foreground">/year</span>
               </p>
               <p className="mb-6 mt-2 text-xs text-muted-foreground">
-                Tax included. Both plans include everything below.
+                For your workspace, with up to five people. Tax included.
               </p>
               <ul className="space-y-3">
                 {features.map((feature) => (

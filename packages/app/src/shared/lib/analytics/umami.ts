@@ -13,7 +13,14 @@ import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
 
 const UMAMI_ENDPOINT = 'https://budgero.app/stats/api/send';
 const UMAMI_WEBSITE_ID = '76a1a09b-2dbc-4291-9c0b-d3f4e9eb2caa';
-const HOMEPAGE_PLACEMENTS = new Set(['header', 'hero', 'pricing', 'final', 'mobile-sticky']);
+const HOMEPAGE_PLACEMENTS = new Set([
+  'header',
+  'hero',
+  'sharing',
+  'pricing',
+  'final',
+  'mobile-sticky',
+]);
 
 function signupEventUrl(search: string): string {
   const incoming = new URLSearchParams(search);
