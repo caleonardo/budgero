@@ -1,10 +1,9 @@
-import { Star } from 'lucide-react';
 import { pricing } from '@/lib/pricing';
 
 const testimonials = [
   {
     quote:
-      'I used YNAB for years and love zero-based budgeting. Budgero nails the same methodology with a design I actually enjoy using. I keep coming back because I\'m a budget geek. The SQL Explorer is a dream if you have a technical background.',
+      "I used YNAB for years and love zero-based budgeting. Budgero nails the same methodology with a design I actually enjoy using. I keep coming back because I'm a budget geek. The SQL Explorer is a dream if you have a technical background.",
     highlight: 'a design I actually enjoy using',
     name: 'Developer & self-described budget geek',
     detail: 'Switched from YNAB',
@@ -38,7 +37,6 @@ const testimonials = [
   },
 ];
 
-
 const trustStats = [
   { value: '168', label: 'Currencies supported' },
   { value: '100%', label: 'Zero-knowledge encrypted' },
@@ -46,13 +44,24 @@ const trustStats = [
   { value: '0', label: 'Third parties see your data' },
 ];
 
-function Stars() {
+export function FeaturedTestimonial() {
   return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-      ))}
-    </div>
+    <figure className="mx-auto max-w-3xl px-6 py-14 text-center sm:py-20">
+      <blockquote className="text-xl font-medium leading-relaxed sm:text-2xl">
+        “Was looking for an alternative to YNAB. What a wonderful app.”
+      </blockquote>
+      <figcaption className="mt-5 text-sm text-muted-foreground">
+        A Budgero community member ·{' '}
+        <a
+          href="https://www.reddit.com/r/budgero/comments/1vx27fi/comment/p65w8u3/?context=3"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-4 hover:text-foreground"
+        >
+          Read the public comment
+        </a>
+      </figcaption>
+    </figure>
   );
 }
 
@@ -71,18 +80,11 @@ function HighlightedQuote({ text, highlight }: { text: string; highlight: string
   );
 }
 
-function Card({
-  item,
-  className,
-}: {
-  item: (typeof testimonials)[number];
-  className?: string;
-}) {
+function Card({ item, className }: { item: (typeof testimonials)[number]; className?: string }) {
   return (
     <div
       className={`bg-card rounded-2xl border border-border/70 p-6 sm:p-7 flex flex-col gap-4 transition-colors hover:border-border ${className ?? ''}`}
     >
-      <Stars />
       <HighlightedQuote text={item.quote} highlight={item.highlight} />
       <div className="flex items-center gap-3 pt-3 border-t border-border/60">
         <div className="w-9 h-9 rounded-full bg-muted/50 flex items-center justify-center text-sm font-bold text-foreground/70 flex-shrink-0">
@@ -124,7 +126,6 @@ export function TestimonialsSection() {
         {testimonials.map((t) => (
           <Card key={t.initial} item={t} />
         ))}
-
       </div>
 
       <div className="flex justify-center gap-10 sm:gap-14 flex-wrap mt-10 pt-6 border-t border-border/60">

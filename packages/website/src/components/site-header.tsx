@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { track } from '@/lib/analytics';
+import { HomepageHeader } from '@/components/landing/HomepageHeader';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +35,7 @@ function GitHubIcon({ className }: { className?: string }) {
 
 export function SiteHeader() {
   const pathname = usePathname();
+  if (pathname === '/') return <HomepageHeader />;
   const isOverlay = pathname === '/' || pathname.startsWith('/privacy');
 
   const headerClasses = isOverlay

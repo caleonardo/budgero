@@ -28,6 +28,31 @@ pnpm run dev:website    # Next.js dev server (port 3000)
 pnpm run build:website  # Static export
 ```
 
+## Homepage Trial Funnel
+
+The homepage implementation is labeled `trial-focused-v1`. In Umami, use the
+ordered events `Homepage Viewed` → `Trial CTA Clicked` → `Signup Viewed` →
+`Trial Started`. Homepage and CTA events include the variant; CTA events also
+include placement. Signup includes only allowlisted homepage campaign query values.
+Existing `CTA Clicked - Cloud` and `Cloud Trial - Header` events remain for
+historical comparisons.
+
+The website and Cloud app use the same Umami website ID and `/stats/api/send`
+proxy. After deploying both, verify a consent-denied signup journey in Umami
+before relying on cross-domain funnel percentages. IP/browser changes and session
+expiry can split a journey. PostHog receives the same event names only with consent.
+Production-host checks exclude local Umami funnel events and website custom events.
+
+`Trial Started` retains its existing meaning: a newly created backend account
+observed during app startup within 15 minutes of account creation, deduplicated
+per device. It does not mean the user created or funded a budget. Compare equal
+date windows and homepage cohorts; total sitewide trials divided by homepage CTA
+clicks is not a valid conversion rate.
+
+Run `pnpm run test:analytics` for delayed-tracker, queue-limit, and provider-failure
+checks. App funnel URL filtering has separate tests in
+`packages/app/src/shared/lib/analytics/umami.test.ts`.
+
 ## Publishing Content
 
 ### Blog Posts
