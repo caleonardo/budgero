@@ -30,6 +30,11 @@ export class CategoryService {
     if (!this.queries.categoryGroupExists(categoryGroupId)) {
       throw new BudgetError(`category group '${categoryGroupId}' does not exist`);
     }
+    const group = this.getCategoryGroup(categoryGroupId);
+    if (group.BudgetID !== budgetId) {
+      throw new BudgetError('Category group must belong to the selected budget');
+    }
+    if (group.Name === 'Income') name = this.validateIncomeName(group, name);
 
     try {
       const categoryId = this.queries.insertCategory(name, note, categoryGroupId, budgetId);
@@ -63,6 +68,9 @@ export class CategoryService {
    * UpdateCategory - Updates category
    */
   updateCategory(id: number, categoryGroupId: number, name: string, note: string): void {
+    this.assertEditableIncomeCategory(id);
+    const group = this.getCategoryGroup(categoryGroupId);
+    if (group.Name === 'Income') name = this.validateIncomeName(group, name, id);
     this.queries.updateCategory(id, note, categoryGroupId, name);
   }
 
@@ -70,6 +78,11 @@ export class CategoryService {
    * MoveCategoryToNewGroup - Move category to new group
    */
   moveCategoryToNewGroup(newGroupId: number, categoryId: number): void {
+    this.assertEditableIncomeCategory(categoryId);
+    const group = this.getCategoryGroup(newGroupId);
+    if (group.Name === 'Income') {
+      this.validateIncomeName(group, this.getCategory(categoryId).Name, categoryId);
+    }
     this.queries.moveCategoryToNewGroup(categoryId, newGroupId);
   }
 
@@ -77,6 +90,10 @@ export class CategoryService {
    * UpdateCategoryName - Updates category name only
    */
   updateCategoryName(id: number, name: string): void {
+    this.assertEditableIncomeCategory(id);
+    const category = this.getCategory(id);
+    const group = this.getCategoryGroup(category.CategoryGroupID);
+    if (group.Name === 'Income') name = this.validateIncomeName(group, name, id);
     this.queries.updateCategoryName(id, name);
   }
 
@@ -86,6 +103,7 @@ export class CategoryService {
    * New method for TypeScript implementation
    */
   updateCategoryExcludeFromBudgetPace(id: number, excludeFromBudgetPace: boolean): void {
+    this.assertEditableIncomeCategory(id);
     this.queries.updateCategoryExcludeFromBudgetPace(id, excludeFromBudgetPace);
   }
 
@@ -113,6 +131,7 @@ export class CategoryService {
    * use), so deletion is allowed once the linked account is archived.
    */
   deleteCategory(id: number): void {
+    this.assertEditableIncomeCategory(id);
     const linkedAccount = this.queries.getAccountLinkedToCategory(id);
     if (linkedAccount && !linkedAccount.Archived) {
       const noun = linkedAccount.LinkType === 'cc_payment' ? 'credit card' : 'debt account';
@@ -162,6 +181,7 @@ export class CategoryService {
    * UpdateCategoryGroup - Updates category group
    */
   updateCategoryGroup(id: number, name: string): void {
+    this.assertEditableIncomeGroup(id);
     this.queries.updateCategoryGroup(id, '', name);
   }
 
@@ -169,7 +189,35 @@ export class CategoryService {
    * DeleteCategoryGroup - Deletes a category group
    */
   deleteCategoryGroup(id: number): void {
+    this.assertEditableIncomeGroup(id);
     this.queries.deleteCategoryGroup(id);
+  }
+
+  private assertEditableIncomeCategory(id: number): void {
+    const category = this.getCategory(id);
+    if (
+      category.Name === 'Income' &&
+      this.getCategoryGroup(category.CategoryGroupID).Name === 'Income'
+    ) {
+      throw new BudgetError('The system Income category cannot be edited or deleted');
+    }
+  }
+
+  private assertEditableIncomeGroup(id: number): void {
+    if (this.getCategoryGroup(id).Name === 'Income') {
+      throw new BudgetError('The system Income group cannot be edited or deleted');
+    }
+  }
+
+  private validateIncomeName(group: CategoryGroup, name: string, excludeId?: number): string {
+    const trimmed = name.trim();
+    if (!trimmed) throw new BudgetError('Income category name cannot be empty');
+    const duplicate = this.getCategoriesByGroup(group.BudgetID, group.ID).some(
+      (category) =>
+        category.ID !== excludeId && category.Name.trim().toLowerCase() === trimmed.toLowerCase()
+    );
+    if (duplicate) throw new BudgetError('An income category with this name already exists');
+    return trimmed;
   }
 
   // ========================================

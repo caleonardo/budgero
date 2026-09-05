@@ -8,7 +8,7 @@ import {
   FutureOverspendingWarning,
   type FutureOverspendingMonth,
 } from '@features/budget-planning/ui/FutureOverspendingWarning';
-import { DeleteCategoryDialog } from './DeleteCategoryDialog';
+import { DeleteCategoryDialog } from '@features/category-management/ui/DeleteCategoryDialog';
 import type { BudgetRow } from '../../lib/budget-transforms';
 import type { CategoryModalState, SpendingDrawerState } from './types';
 

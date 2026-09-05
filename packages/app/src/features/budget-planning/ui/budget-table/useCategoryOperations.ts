@@ -21,10 +21,9 @@ import {
 import {
   useUpsertAssignment,
   useBatchUpsertAssignments,
-  useReassignAssignments,
   useFutureOverspendingCheck,
 } from '@entities/budget/api/useMonthlyBudget';
-import { useReassignTransactions } from '@entities/transaction/api/useTransactions';
+import { useReassignAndDeleteCategory } from '@features/category-management/api/useReassignAndDeleteCategory';
 import { toast } from 'sonner';
 import { useRuntime } from '@shared/runtime/runtime-provider';
 import { useUiStore } from '@shared/store/useUiStore';
@@ -70,8 +69,7 @@ export function useCategoryOperations({
   const createCategoryGroupMutation = useAddCategoryGroup();
   const createCategoryMutation = useAddCategory();
   const moveCategoryToNewGroupMutation = useMoveCategoryToNewGroup();
-  const reassignTransactionsMutation = useReassignTransactions();
-  const reassignAssignmentsMutation = useReassignAssignments();
+  const reassignAndDeleteCategoryMutation = useReassignAndDeleteCategory();
   const batchUpsertAssignments = useBatchUpsertAssignments();
   const reorderCategoryGroupsMutation = useReorderCategoryGroups();
   const reorderCategoriesMutation = useReorderCategories();
@@ -261,20 +259,9 @@ export function useCategoryOperations({
       }
 
       try {
-        await reassignTransactionsMutation.mutateAsync({
+        await reassignAndDeleteCategoryMutation.mutateAsync({
           newCategoryId: targetCategoryId,
           oldCategoryId: deletingCategory.categoryId,
-          budgetId: budgetIdForOps,
-        });
-
-        await reassignAssignmentsMutation.mutateAsync({
-          newCategoryId: targetCategoryId,
-          oldCategoryId: deletingCategory.categoryId,
-          budgetId: budgetIdForOps,
-        });
-
-        await deleteCategoryMutation.mutateAsync({
-          id: deletingCategory.categoryId,
           budgetId: budgetIdForOps,
         });
 
@@ -287,13 +274,7 @@ export function useCategoryOperations({
         throw error;
       }
     },
-    [
-      budgetId,
-      deleteCategoryMutation,
-      reassignAssignmentsMutation,
-      reassignTransactionsMutation,
-      selectedBudgetId,
-    ]
+    [budgetId, reassignAndDeleteCategoryMutation, selectedBudgetId]
   );
 
   const handleCreateCategory = useCallback(
@@ -582,9 +563,6 @@ export function useCategoryOperations({
     isDeletingCategory: deleteCategoryMutation.isPending,
     isSavingCategoryEdit:
       updateCategoryNameMutation.isPending || updateCategoryExcludeFromBudgetPaceMutation.isPending,
-    isDeletingCategoryWithData:
-      deleteCategoryMutation.isPending ||
-      reassignTransactionsMutation.isPending ||
-      reassignAssignmentsMutation.isPending,
+    isDeletingCategoryWithData: reassignAndDeleteCategoryMutation.isPending,
   };
 }

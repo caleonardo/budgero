@@ -10,15 +10,15 @@ import {
 import { Button } from '@shared/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { toDecimal, type MilliUnits } from '@shared/lib/currency/milli';
-import { BudgetRow } from '@features/budget-planning/lib/budget-transforms';
 
 interface DeleteCategoryDialogProps {
   open: boolean;
   onClose: () => void;
-  categories: BudgetRow[];
+  categories: { categoryId: number; name: string; isGroup?: boolean; available?: MilliUnits }[];
   currentCategoryId: number;
-  currentCategoryTotalTransactions: number;
-  currentCategoryAssigned: MilliUnits;
+  currentCategoryTotalTransactions?: number;
+  currentCategoryAssigned?: MilliUnits;
+  incomeOnly?: boolean;
   onDelete: (selectedCategoryId: number) => Promise<void> | void;
   isLoading?: boolean;
   /** Formats a stored integer-milliunit amount for display. */
@@ -32,6 +32,7 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
   currentCategoryTotalTransactions,
   currentCategoryAssigned,
   currentCategoryId,
+  incomeOnly = false,
   onDelete,
   isLoading = false,
   formatAmount = (value) => toDecimal(value).toLocaleString(),
@@ -52,18 +53,29 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next && !isLoading) onClose();
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Category</DialogTitle>
           <DialogDescription>
-            Before you can delete the category, you need to reassign all
-            {currentCategoryTotalTransactions > 0 && currentCategoryAssigned > 0
-              ? ' transactions and assignments'
-              : currentCategoryTotalTransactions > 0
-                ? ' transactions'
-                : ' assignments'}{' '}
-            to a new category.
+            {incomeOnly ? (
+              'Choose another income category to receive this category’s transactions and any assignments. Your income totals will stay the same.'
+            ) : (
+              <>
+                Before you can delete the category, you need to reassign all
+                {(currentCategoryTotalTransactions ?? 0) > 0 && (currentCategoryAssigned ?? 0) !== 0
+                  ? ' transactions and assignments'
+                  : (currentCategoryTotalTransactions ?? 0) > 0
+                    ? ' transactions'
+                    : ' assignments'}{' '}
+                to a new category.
+              </>
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -71,8 +83,11 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
             Select a category to reassign transactions, assigned amounts, and any remaining
             available amounts.
           </p>
-          <Select onValueChange={(value) => setSelectedCategoryId(parseInt(value, 10))}>
-            <SelectTrigger>
+          <Select
+            disabled={isLoading}
+            onValueChange={(value) => setSelectedCategoryId(parseInt(value, 10))}
+          >
+            <SelectTrigger aria-label="Destination category">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
@@ -80,10 +95,15 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
                 .filter(
                   (category) => category.categoryId !== currentCategoryId && !category.isGroup
                 )
-                .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name))
+                .sort(
+                  (a, b) => (b.available ?? 0) - (a.available ?? 0) || a.name.localeCompare(b.name)
+                )
                 .map((category) => (
                   <SelectItem key={category.categoryId} value={String(category.categoryId)}>
-                    {category.name} ({formatAmount(category.available)})
+                    {category.name}
+                    {!incomeOnly &&
+                      category.available !== undefined &&
+                      ` (${formatAmount(category.available)})`}
                   </SelectItem>
                 ))}
             </SelectContent>
@@ -91,18 +111,24 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
           <div className="text-sm mt-4">
             <p>Here's what will be reassigned to the new category:</p>
             <ul className="list-disc pl-6 space-y-1">
-              {currentCategoryTotalTransactions > 0 && (
-                <li>All transactions ({currentCategoryTotalTransactions})</li>
+              {(incomeOnly || (currentCategoryTotalTransactions ?? 0) > 0) && (
+                <li>
+                  All transactions
+                  {currentCategoryTotalTransactions !== undefined &&
+                    ` (${currentCategoryTotalTransactions})`}
+                  , including split lines
+                </li>
               )}
-              {currentCategoryAssigned > 0 && (
+              {currentCategoryAssigned !== undefined && currentCategoryAssigned !== 0 && (
                 <li>Assigned amount ({formatAmount(currentCategoryAssigned)})</li>
               )}
               <li>Any remaining available amount</li>
+              <li>Scheduled transactions using this category</li>
             </ul>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
           <Button

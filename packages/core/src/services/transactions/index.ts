@@ -1131,6 +1131,12 @@ export class TransactionService {
    * ReassignTransactions - Moves all transactions from one category to another
    */
   reassignTransactions(newCategoryId: number, oldCategoryId: number): void {
+    const categories = new CategoryService(this.db);
+    const source = categories.getCategory(oldCategoryId);
+    const destination = categories.getCategory(newCategoryId);
+    if (source.BudgetID !== destination.BudgetID) {
+      throw new ValidationError('Both categories must belong to the same budget');
+    }
     this.queries.reassignTransactionCategories(newCategoryId, oldCategoryId);
   }
 

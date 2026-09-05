@@ -1071,16 +1071,28 @@ export class TransactionQueries {
    * SQL: UPDATE transactions SET category_id = ? WHERE category_id = ?
    */
   reassignTransactionCategories(newCategoryId: number, oldCategoryId: number): void {
-    run(
-      this.db,
-      `
-      UPDATE transactions 
-      SET CategoryID = ? 
-      WHERE CategoryID = ?
-    `,
-      newCategoryId,
-      oldCategoryId
-    );
+    this.db.transaction(() => {
+      run(
+        this.db,
+        'UPDATE transactions SET CategoryID = ? WHERE CategoryID = ?',
+        newCategoryId,
+        oldCategoryId
+      );
+      // Split lines and scheduled transactions also retain their category when
+      // the source is deleted by the shared category reassignment flow.
+      run(
+        this.db,
+        'UPDATE transaction_splits SET CategoryID = ? WHERE CategoryID = ?',
+        newCategoryId,
+        oldCategoryId
+      );
+      run(
+        this.db,
+        'UPDATE recurring_transactions SET CategoryID = ? WHERE CategoryID = ?',
+        newCategoryId,
+        oldCategoryId
+      );
+    });
   }
 
   /**

@@ -4,6 +4,7 @@ import {
   sortTransactionSnapshots,
   transactionSnapshotToAddOp,
   TRANSACTION_INVALIDATION_KEYS,
+  RECURRING_TEMPLATE_INVALIDATIONS,
   type NormalizedSplit,
   type OpCodeEntry,
   type TransactionRowWithColumns,
@@ -435,7 +436,11 @@ export const transactionOps = {
         args.oldCategoryId as number
       );
     },
-    invalidates: TX_MOVE_INVALIDATION_KEYS,
+    invalidates: [
+      ...TRANSACTION_INVALIDATION_KEYS,
+      ['transactionSplits', '*'],
+      ...RECURRING_TEMPLATE_INVALIDATIONS,
+    ],
   },
 
   // useReconcileAccount

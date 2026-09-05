@@ -12,6 +12,7 @@ import { useBudgets, useUpdateBudgetRtaMode } from '@entities/budget/api/useBudg
 import { useUiStore } from '@shared/store/useUiStore';
 import { cn } from '@shared/lib/utils';
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
+import { IncomeCategoriesCard } from './components/IncomeCategoriesCard';
 
 type RtaMode = 'cumulative' | 'monthly';
 
@@ -173,10 +174,12 @@ export default function BudgetSettingsPage() {
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
         title="Budget Settings"
-        description="Configure how Budgero handles your budget assignments and constraints."
+        description="Manage income categories, budget calculations, and assignment preferences."
       />
 
       <RtaModeCard />
+
+      <IncomeCategoriesCard />
 
       <GroupPercentCard />
 
