@@ -16,10 +16,37 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.11.6',
+    date: 'September 5, 2026',
+    summary:
+      'Adds optional income categories, preserves more category history during deletion, and clarifies Cloud signup.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Manage income categories',
+        description:
+          'Add, rename, and delete custom income categories in Budget Settings to organize analytics. All income categories contribute equally to Ready to Assign. The system Income category remains protected.',
+      },
+      {
+        type: 'fixed',
+        title: 'Preserve split and scheduled transaction categories',
+        description:
+          'Reassigning transactions before deleting a category now also moves split lines and scheduled transactions to the selected destination.',
+      },
+      {
+        type: 'improved',
+        title: 'Clearer Cloud signup',
+        description:
+          'Cloud signup now displays the 35-day trial, subscription pricing, and no-credit-card terms alongside account creation.',
+      },
+    ],
+  },
+  {
     version: 'v1.11.5',
     date: 'September 5, 2026',
     summary: 'Fixes YNAB import verification and selected-category overspending actions.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'fixed',
