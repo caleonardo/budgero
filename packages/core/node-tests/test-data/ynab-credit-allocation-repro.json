@@ -1,0 +1,3135 @@
+{
+  "currency_format": {
+    "iso_code": "USD",
+    "example_format": "123,456.78",
+    "decimal_digits": 2,
+    "decimal_separator": ".",
+    "symbol_first": true,
+    "group_separator": ",",
+    "currency_symbol": "$",
+    "display_symbol": true
+  },
+  "accounts": [
+    {
+      "id": "repro-040",
+      "name": "Repro Checking",
+      "type": "checking",
+      "on_budget": true,
+      "closed": false,
+      "deleted": false,
+      "balance": 1080000,
+      "transfer_payee_id": "repro-029"
+    },
+    {
+      "id": "repro-006",
+      "name": "Repro Card B",
+      "type": "creditCard",
+      "on_budget": true,
+      "closed": false,
+      "deleted": false,
+      "balance": -80000,
+      "transfer_payee_id": "repro-009"
+    },
+    {
+      "id": "repro-031",
+      "name": "Repro Card A",
+      "type": "creditCard",
+      "on_budget": true,
+      "closed": false,
+      "deleted": false,
+      "balance": -50000,
+      "transfer_payee_id": "repro-000"
+    },
+    {
+      "id": "repro-037",
+      "name": "Repro Positive Card",
+      "type": "creditCard",
+      "on_budget": true,
+      "closed": false,
+      "deleted": false,
+      "balance": -20000,
+      "transfer_payee_id": "repro-036"
+    }
+  ],
+  "categories": [
+    {
+      "id": "repro-025",
+      "category_group_id": "repro-024",
+      "name": "Purchases",
+      "hidden": false,
+      "deleted": false,
+      "internal": false,
+      "budgeted": 80000,
+      "activity": -140000,
+      "balance": -60000
+    },
+    {
+      "id": "repro-008",
+      "category_group_id": "repro-012",
+      "name": "Inflow: Ready to Assign",
+      "hidden": false,
+      "deleted": false,
+      "internal": true,
+      "budgeted": 0,
+      "activity": 1110000,
+      "balance": 1110000
+    },
+    {
+      "id": "repro-005",
+      "category_group_id": "repro-012",
+      "name": "Uncategorized",
+      "hidden": false,
+      "deleted": false,
+      "internal": true,
+      "budgeted": 0,
+      "activity": 0,
+      "balance": 0
+    },
+    {
+      "id": "repro-013",
+      "category_group_id": "repro-034",
+      "name": "Repro Card A",
+      "hidden": false,
+      "deleted": false,
+      "internal": false,
+      "budgeted": 0,
+      "activity": 60000,
+      "balance": 60000
+    },
+    {
+      "id": "repro-038",
+      "category_group_id": "repro-034",
+      "name": "Repro Card B",
+      "hidden": false,
+      "deleted": false,
+      "internal": false,
+      "budgeted": 0,
+      "activity": 20000,
+      "balance": 20000
+    },
+    {
+      "id": "repro-004",
+      "category_group_id": "repro-024",
+      "name": "Other Purchases",
+      "hidden": false,
+      "deleted": false,
+      "internal": false,
+      "budgeted": 40000,
+      "activity": -40000,
+      "balance": 0
+    },
+    {
+      "id": "repro-048",
+      "category_group_id": "repro-034",
+      "name": "Repro Positive Card",
+      "hidden": false,
+      "deleted": false,
+      "internal": false,
+      "budgeted": 0,
+      "activity": 20000,
+      "balance": 20000
+    }
+  ],
+  "category_groups": [
+    {
+      "id": "repro-024",
+      "name": "Repro",
+      "hidden": false,
+      "deleted": false,
+      "internal": false
+    },
+    {
+      "id": "repro-012",
+      "name": "Internal Master Category",
+      "hidden": false,
+      "deleted": false,
+      "internal": true
+    },
+    {
+      "id": "repro-034",
+      "name": "Credit Card Payments",
+      "hidden": false,
+      "deleted": false,
+      "internal": true
+    }
+  ],
+  "payees": [
+    {
+      "id": "repro-017",
+      "name": "Manual Balance Adjustment",
+      "transfer_account_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-010",
+      "name": "Reconciliation Balance Adjustment",
+      "transfer_account_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-045",
+      "name": "Repro Merchant",
+      "transfer_account_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-049",
+      "name": "Starting Balance",
+      "transfer_account_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-000",
+      "name": "Transfer : Repro Card A",
+      "transfer_account_id": "repro-031",
+      "deleted": false
+    },
+    {
+      "id": "repro-009",
+      "name": "Transfer : Repro Card B",
+      "transfer_account_id": "repro-006",
+      "deleted": false
+    },
+    {
+      "id": "repro-029",
+      "name": "Transfer : Repro Checking",
+      "transfer_account_id": "repro-040",
+      "deleted": false
+    },
+    {
+      "id": "repro-001",
+      "name": "Repro split income",
+      "transfer_account_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-036",
+      "name": "Transfer : Repro Positive Card",
+      "transfer_account_id": "repro-037",
+      "deleted": false
+    }
+  ],
+  "cases": [
+    {
+      "name": "01-a-first",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": -60000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -160000,
+              "balance": -60000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02-b-first",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-054",
+          "date": "2026-09-02"
+        },
+        {
+          "id": "repro-007",
+          "date": "2026-09-01"
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": -60000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -160000,
+              "balance": -60000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03-same-day-equal",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-054"
+        },
+        {
+          "id": "repro-007",
+          "date": "2026-09-01"
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": -60000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -160000,
+              "balance": -60000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04-same-day-unequal",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-031",
+          "balance": -60000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-007",
+          "date": "2026-09-01"
+        },
+        {
+          "id": "repro-054",
+          "amount": -60000
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": -40000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -140000,
+              "balance": -40000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05-cash-priority",
+      "accounts": [
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        },
+        {
+          "id": "repro-040",
+          "balance": 950000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-019",
+          "amount": -50000
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 50000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": -160000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -210000,
+              "balance": -110000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 50000,
+              "balance": 50000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06-refund-a",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-031",
+          "balance": -40000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-032",
+          "date": "2026-09-03",
+          "amount": 40000
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 60000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 40000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": -20000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -120000,
+              "balance": -20000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 60000,
+              "balance": 60000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 40000,
+              "balance": 40000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07-unfunded",
+      "accounts": [
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-032",
+          "date": "2026-09-03"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 1000000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 1000000,
+          "budgeted": 0,
+          "activity": -160000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": -160000,
+              "balance": -160000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08-funded-later",
+      "accounts": [
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-032",
+          "date": "2026-09-03"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": -60000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -160000,
+              "balance": -60000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "09-same-day-a-larger",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        },
+        {
+          "id": "repro-006",
+          "balance": -60000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-032",
+          "date": "2026-09-03"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-054"
+        },
+        {
+          "id": "repro-007",
+          "date": "2026-09-01",
+          "amount": -60000
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": -40000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -140000,
+              "balance": -40000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10-refund-b",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        },
+        {
+          "id": "repro-006",
+          "balance": -40000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-032",
+          "account_id": "repro-006",
+          "date": "2026-09-03",
+          "amount": 40000
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": -20000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -120000,
+              "balance": -20000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "11-refund-exceeds-a-spend",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1000000
+        },
+        {
+          "id": "repro-031",
+          "balance": 40000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-032",
+          "date": "2026-09-03",
+          "amount": 120000
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 900000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 60000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1000000,
+          "to_be_budgeted": 900000,
+          "budgeted": 100000,
+          "activity": 40000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -40000,
+              "balance": 60000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1000000,
+              "balance": 1000000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "12-split-income",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1120000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-047"
+        },
+        {
+          "id": "repro-032",
+          "date": "2026-09-03"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [
+        {
+          "id": "repro-023"
+        },
+        {
+          "id": "repro-050"
+        }
+      ],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 1000000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 40000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1100000,
+          "to_be_budgeted": 1000000,
+          "budgeted": 100000,
+          "activity": -20000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 100000,
+              "activity": -140000,
+              "balance": -40000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 40000,
+              "balance": 40000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1100000,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "13-same-day-new-a",
+      "accounts": [
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-040",
+          "balance": 1120000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-047"
+        },
+        {
+          "id": "repro-032",
+          "date": "2026-09-03"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-007",
+          "date": "2026-09-01"
+        },
+        {
+          "id": "repro-041",
+          "date": "2026-09-01",
+          "amount": -80000
+        },
+        {
+          "id": "repro-054",
+          "amount": 0
+        }
+      ],
+      "subtransactions": [
+        {
+          "id": "repro-023"
+        },
+        {
+          "id": "repro-050"
+        }
+      ],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 1020000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1100000,
+          "to_be_budgeted": 1020000,
+          "budgeted": 80000,
+          "activity": -40000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 80000,
+              "activity": -140000,
+              "balance": -60000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1100000,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "14-interleaved-refund",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1120000
+        },
+        {
+          "id": "repro-031",
+          "balance": -40000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-032",
+          "amount": 40000
+        },
+        {
+          "id": "repro-047"
+        },
+        {
+          "id": "repro-041",
+          "amount": -40000
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054",
+          "amount": -40000
+        }
+      ],
+      "subtransactions": [
+        {
+          "id": "repro-023"
+        },
+        {
+          "id": "repro-050"
+        }
+      ],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 1020000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1100000,
+          "to_be_budgeted": 1020000,
+          "budgeted": 80000,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 80000,
+              "activity": -100000,
+              "balance": -20000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1100000,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "15-refund-excess-no-budget",
+      "accounts": [
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-040",
+          "balance": 1120000
+        },
+        {
+          "id": "repro-031",
+          "balance": 40000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-047"
+        },
+        {
+          "id": "repro-032",
+          "amount": 120000
+        },
+        {
+          "id": "repro-041"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [
+        {
+          "id": "repro-023"
+        },
+        {
+          "id": "repro-050"
+        }
+      ],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 1120000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 40000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1100000,
+          "to_be_budgeted": 1120000,
+          "budgeted": -20000,
+          "activity": 20000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": -20000,
+              "activity": -20000,
+              "balance": -40000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 40000,
+              "balance": 40000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1100000,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "16-final",
+      "accounts": [
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-040",
+          "balance": 1120000
+        },
+        {
+          "id": "repro-031",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-032"
+        },
+        {
+          "id": "repro-047"
+        },
+        {
+          "id": "repro-041"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        }
+      ],
+      "subtransactions": [
+        {
+          "id": "repro-023"
+        },
+        {
+          "id": "repro-050"
+        }
+      ],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 1020000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1100000,
+          "to_be_budgeted": 1020000,
+          "budgeted": 80000,
+          "activity": -40000,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 80000,
+              "activity": -140000,
+              "balance": -60000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1100000,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "17-cross-month-refund",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1120000
+        },
+        {
+          "id": "repro-031",
+          "balance": -60000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-047"
+        },
+        {
+          "id": "repro-032",
+          "amount": 180000
+        },
+        {
+          "id": "repro-041"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-033",
+          "amount": -80000
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-054"
+        },
+        {
+          "id": "repro-053",
+          "amount": -80000
+        }
+      ],
+      "subtransactions": [
+        {
+          "id": "repro-023"
+        },
+        {
+          "id": "repro-050"
+        }
+      ],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 860000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-004",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 60000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 120000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1100000,
+          "to_be_budgeted": 860000,
+          "budgeted": 160000,
+          "activity": 20000,
+          "categories": [
+            {
+              "id": "repro-004",
+              "budgeted": 80000,
+              "activity": -80000,
+              "balance": 0
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 80000,
+              "activity": 40000,
+              "balance": 120000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": -20000,
+              "balance": 60000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1100000,
+              "balance": 1100000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-08-01",
+          "income": 0,
+          "to_be_budgeted": -80000,
+          "budgeted": 80000,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 80000,
+              "activity": -80000,
+              "balance": 0
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 80000,
+              "balance": 80000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-004",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "18-payment-and-credit-income",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1100000
+        },
+        {
+          "id": "repro-031",
+          "balance": -50000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-016"
+        },
+        {
+          "id": "repro-028"
+        },
+        {
+          "id": "repro-051"
+        },
+        {
+          "id": "repro-032"
+        },
+        {
+          "id": "repro-047"
+        },
+        {
+          "id": "repro-041"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-033"
+        },
+        {
+          "id": "repro-054"
+        },
+        {
+          "id": "repro-053"
+        }
+      ],
+      "subtransactions": [
+        {
+          "id": "repro-023"
+        },
+        {
+          "id": "repro-050"
+        }
+      ],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 1020000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-004",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 60000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1110000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1100000,
+          "to_be_budgeted": 1020000,
+          "budgeted": 80000,
+          "activity": -60000,
+          "categories": [
+            {
+              "id": "repro-004",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 80000,
+              "activity": -140000,
+              "balance": -60000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 60000,
+              "balance": 60000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1110000,
+              "balance": 1110000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-08-01",
+          "income": 0,
+          "to_be_budgeted": 0,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-004",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "19-positive-card-balance",
+      "accounts": [
+        {
+          "id": "repro-040",
+          "balance": 1080000
+        },
+        {
+          "id": "repro-031",
+          "balance": -50000
+        },
+        {
+          "id": "repro-006",
+          "balance": -80000
+        },
+        {
+          "id": "repro-037",
+          "balance": -20000
+        }
+      ],
+      "transactions": [
+        {
+          "id": "repro-018"
+        },
+        {
+          "id": "repro-039"
+        },
+        {
+          "id": "repro-014"
+        },
+        {
+          "id": "repro-030"
+        },
+        {
+          "id": "repro-016"
+        },
+        {
+          "id": "repro-028"
+        },
+        {
+          "id": "repro-051"
+        },
+        {
+          "id": "repro-032"
+        },
+        {
+          "id": "repro-047"
+        },
+        {
+          "id": "repro-019"
+        },
+        {
+          "id": "repro-041"
+        },
+        {
+          "id": "repro-007"
+        },
+        {
+          "id": "repro-033"
+        },
+        {
+          "id": "repro-054"
+        },
+        {
+          "id": "repro-026"
+        },
+        {
+          "id": "repro-035"
+        },
+        {
+          "id": "repro-042"
+        },
+        {
+          "id": "repro-053"
+        }
+      ],
+      "subtransactions": [
+        {
+          "id": "repro-023"
+        },
+        {
+          "id": "repro-050"
+        }
+      ],
+      "months": [
+        {
+          "month": "2026-10-01",
+          "income": 0,
+          "to_be_budgeted": 980000,
+          "budgeted": 0,
+          "activity": 0,
+          "categories": [
+            {
+              "id": "repro-048",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-004",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 60000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 1110000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-09-01",
+          "income": 1100000,
+          "to_be_budgeted": 980000,
+          "budgeted": 120000,
+          "activity": -80000,
+          "categories": [
+            {
+              "id": "repro-004",
+              "budgeted": 40000,
+              "activity": -40000,
+              "balance": 0
+            },
+            {
+              "id": "repro-048",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 80000,
+              "activity": -140000,
+              "balance": -60000
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 20000,
+              "balance": 20000
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 60000,
+              "balance": 60000
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 1110000,
+              "balance": 1110000
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "month": "2026-08-01",
+          "income": 0,
+          "to_be_budgeted": 20000,
+          "budgeted": 0,
+          "activity": -20000,
+          "categories": [
+            {
+              "id": "repro-048",
+              "budgeted": 0,
+              "activity": -20000,
+              "balance": -20000
+            },
+            {
+              "id": "repro-025",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-038",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-013",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-008",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-005",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            },
+            {
+              "id": "repro-004",
+              "budgeted": 0,
+              "activity": 0,
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "id": "repro-014",
+      "account_id": "repro-031",
+      "date": "2026-09-07",
+      "amount": 0,
+      "memo": null,
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-049",
+      "category_id": "repro-008",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-018",
+      "account_id": "repro-006",
+      "date": "2026-09-07",
+      "amount": 0,
+      "memo": null,
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-049",
+      "category_id": "repro-008",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-030",
+      "account_id": "repro-040",
+      "date": "2026-09-07",
+      "amount": 1000000,
+      "memo": null,
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-049",
+      "category_id": "repro-008",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-007",
+      "account_id": "repro-006",
+      "date": "2026-09-02",
+      "amount": -80000,
+      "memo": "B purchase",
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-045",
+      "category_id": "repro-025",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-054",
+      "account_id": "repro-031",
+      "date": "2026-09-01",
+      "amount": -80000,
+      "memo": "A purchase",
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-045",
+      "category_id": "repro-025",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-019",
+      "account_id": "repro-040",
+      "date": "2026-09-03",
+      "amount": 0,
+      "memo": "Later cash purchase",
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-045",
+      "category_id": "repro-025",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-032",
+      "account_id": "repro-031",
+      "date": "2026-09-04",
+      "amount": 0,
+      "memo": "A refund",
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-045",
+      "category_id": "repro-025",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-047",
+      "account_id": "repro-040",
+      "date": "2026-09-04",
+      "amount": 120000,
+      "memo": "Split income and refund",
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-001",
+      "category_id": "repro-046",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-041",
+      "account_id": "repro-031",
+      "date": "2026-09-03",
+      "amount": 0,
+      "memo": "A replacement",
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-045",
+      "category_id": "repro-025",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-033",
+      "account_id": "repro-031",
+      "date": "2026-09-02",
+      "amount": 0,
+      "memo": null,
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-045",
+      "category_id": "repro-004",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-053",
+      "account_id": "repro-031",
+      "date": "2026-08-01",
+      "amount": 0,
+      "memo": null,
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-045",
+      "category_id": "repro-025",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-016",
+      "account_id": "repro-040",
+      "date": "2026-09-06",
+      "amount": -20000,
+      "memo": "Repro card payment",
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-000",
+      "category_id": null,
+      "transfer_account_id": "repro-031",
+      "transfer_transaction_id": "repro-028",
+      "deleted": false
+    },
+    {
+      "id": "repro-028",
+      "account_id": "repro-031",
+      "date": "2026-09-06",
+      "amount": 20000,
+      "memo": "Repro card payment",
+      "cleared": "uncleared",
+      "approved": true,
+      "payee_id": "repro-029",
+      "category_id": null,
+      "transfer_account_id": "repro-040",
+      "transfer_transaction_id": "repro-016",
+      "deleted": false
+    },
+    {
+      "id": "repro-051",
+      "account_id": "repro-031",
+      "date": "2026-09-05",
+      "amount": 10000,
+      "memo": "Credit reward, not cash income",
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-045",
+      "category_id": "repro-008",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-039",
+      "account_id": "repro-037",
+      "date": "2026-09-07",
+      "amount": 0,
+      "memo": null,
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-049",
+      "category_id": "repro-008",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-026",
+      "account_id": "repro-037",
+      "date": "2026-09-01",
+      "amount": -40000,
+      "memo": "Spend positive card balance then credit",
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-045",
+      "category_id": "repro-004",
+      "transfer_account_id": null,
+      "transfer_transaction_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-035",
+      "account_id": "repro-040",
+      "date": "2026-08-31",
+      "amount": -20000,
+      "memo": null,
+      "cleared": "cleared",
+      "approved": true,
+      "payee_id": "repro-036",
+      "category_id": null,
+      "transfer_account_id": "repro-037",
+      "transfer_transaction_id": "repro-042",
+      "deleted": false
+    },
+    {
+      "id": "repro-042",
+      "account_id": "repro-037",
+      "date": "2026-08-31",
+      "amount": 20000,
+      "memo": null,
+      "cleared": "uncleared",
+      "approved": true,
+      "payee_id": "repro-029",
+      "category_id": null,
+      "transfer_account_id": "repro-040",
+      "transfer_transaction_id": "repro-035",
+      "deleted": false
+    }
+  ],
+  "subtransactions": [
+    {
+      "id": "repro-023",
+      "transaction_id": "repro-047",
+      "amount": 100000,
+      "memo": "income piece",
+      "payee_id": null,
+      "category_id": "repro-008",
+      "transfer_account_id": null,
+      "deleted": false
+    },
+    {
+      "id": "repro-050",
+      "transaction_id": "repro-047",
+      "amount": 20000,
+      "memo": "refund piece",
+      "payee_id": null,
+      "category_id": "repro-025",
+      "transfer_account_id": null,
+      "deleted": false
+    }
+  ]
+}

@@ -558,6 +558,38 @@ describe('YNAB API import', () => {
     });
   });
 
+  it('pairs an empty-memo split transfer with its empty-memo counterpart', async () => {
+    const snapshot = snapshotFixture();
+    snapshot.plan.subtransactions.find((part) => part.id === 'sub-transfer')!.memo = '';
+    snapshot.plan.transactions.find(
+      (transaction) => transaction.id === 'transaction-transfer-counterpart'
+    )!.memo = '';
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const result = await new YNABImportService(adapter).importYNABFromApiSnapshotWithSummary(
+        snapshot,
+        {
+          spaceId: SPACE_ID,
+          budgetName: 'Empty transfer memo',
+          currency: 'USD',
+          numberFormat: '123,456.78',
+          badgeIcon: 'HelpCircle',
+        }
+      );
+      const pairs = adapter
+        .prepare(
+          `
+        SELECT COUNT(*) AS legs, SUM(InflowNative - OutflowNative) AS net
+        FROM transactions WHERE BudgetID = ? AND TransferID <> '' GROUP BY TransferID
+      `
+        )
+        .all(result.budgetId);
+      expect(pairs).toEqual([{ legs: 2, net: 0 }]);
+    } finally {
+      adapter.close();
+    }
+  });
+
   it('imports accounts, assignments, transfer splits, and mixed-direction splits', async () => {
     const adapter = await NodeSqlJsAdapter.create();
     try {

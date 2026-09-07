@@ -1262,6 +1262,38 @@ export class YNABImportService {
       return dateA.localeCompare(dateB) || a.originalIndex - b.originalIndex;
     });
 
+    // API credit purchases need a stable same-day tie order. Reorder only their
+    // existing slots: changing transfer/debt import order can change the running
+    // balance used by the transaction service when categorizing a loan payment.
+    const creditSlotsByDate = new Map<string, number[]>();
+    sortedUnits.forEach((unit, index) => {
+      const rows = unit.kind === 'row' ? [unit.row] : unit.group.rows;
+      const row = rows[0];
+      if (
+        !row.SourceId ||
+        !creditCardAccountIds.has(accounts[row.Account.trim()]) ||
+        rows.some((part) => this.isTransfer(part))
+      )
+        return;
+      const date = this.parseYNABDate(row.Date);
+      if (!date) return;
+      const slots = creditSlotsByDate.get(date) ?? [];
+      slots.push(index);
+      creditSlotsByDate.set(date, slots);
+    });
+    for (const slots of creditSlotsByDate.values()) {
+      const ordered = slots
+        .map((index) => sortedUnits[index])
+        .sort((a, b) => {
+          const rowA = a.kind === 'row' ? a.row : a.group.rows[0];
+          const rowB = b.kind === 'row' ? b.row : b.group.rows[0];
+          return rowA.SourceId!.localeCompare(rowB.SourceId!);
+        });
+      slots.forEach((index, position) => {
+        sortedUnits[index] = ordered[position];
+      });
+    }
+
     debugLog(`Processing ${sortedUnits.length} transaction units in chronological order`);
 
     let transactionsCreated = 0;
@@ -1379,7 +1411,7 @@ export class YNABImportService {
         (left, right) => left - right
       );
       const splitMarker = parseSplitMarker(row.Memo || '');
-      const normalizedMemo = (splitMarker?.memo || row.Memo || '').trim().toLocaleLowerCase();
+      const normalizedMemo = (splitMarker?.memo ?? row.Memo ?? '').trim().toLocaleLowerCase();
       const pairingKey = JSON.stringify([
         parsedDate,
         amount,

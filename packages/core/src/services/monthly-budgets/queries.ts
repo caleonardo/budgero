@@ -14,6 +14,36 @@ import { createLogger } from '../../logger.js';
 
 const debugLog = createLogger('services:monthly-budgets:queries');
 
+// Split-aware ledger through ?2 for budget ?1. A positive credit-card balance
+// is cash: spending it must not reserve the same money again for a card payment.
+const MONTHLY_ACTIVITY_CTE = `
+  ledger_lines AS (
+    SELECT t.ID AS TransactionID, t.AccountID, t.CategoryID, t.Month, t.Date,
+           0 AS PartIndex, t.OutflowConverted AS TransactionOutflow,
+           t.InflowConverted - t.OutflowConverted AS Amount, LOWER(a.Type) AS AccountType
+    FROM transactions t JOIN accounts a ON a.ID = t.AccountID
+    WHERE t.BudgetID = ?1 AND t.Month <= ?2 AND a.OnBudget = TRUE ${NO_SPLITS_FILTER}
+    UNION ALL
+    SELECT t.ID, t.AccountID, s.CategoryID, t.Month, t.Date, s.OrderIndex,
+           t.OutflowConverted, s.InflowConverted - s.OutflowConverted, LOWER(a.Type)
+    FROM transaction_splits s JOIN transactions t ON t.ID = s.TransactionID
+    JOIN accounts a ON a.ID = t.AccountID
+    WHERE t.BudgetID = ?1 AND t.Month <= ?2 AND a.OnBudget = TRUE
+  ),
+  ledger_balances AS (
+    SELECT *, SUM(Amount) OVER (
+      PARTITION BY AccountID ORDER BY Date, TransactionOutflow DESC, TransactionID, PartIndex
+      ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS BalanceAfter
+    FROM ledger_lines
+  ),
+  monthly_activity AS (
+    SELECT *, CASE WHEN AccountType <> 'credit' THEN Amount
+      ELSE MAX(0, BalanceAfter) - MAX(0, BalanceAfter - Amount) END AS Cash
+    FROM ledger_balances
+  )
+`;
+
 /**
  * MonthlyBudgetQueries - All SQL queries for monthly budget operations
  * Extracted from the main queries file for better organization
@@ -489,16 +519,13 @@ export class MonthlyBudgetQueries {
       getRow<{ total: number }>(
         this.db,
         `
-      SELECT IFNULL(SUM(t.InflowConverted - t.OutflowConverted), 0) as total
-      FROM transactions t
-      INNER JOIN accounts acc ON t.AccountID = acc.ID
-      INNER JOIN categories c ON t.CategoryID = c.ID
-      INNER JOIN category_groups cg ON c.CategoryGroupID = cg.ID
-      WHERE t.BudgetID = ?1
-        AND acc.OnBudget = TRUE
-        AND cg.Name = 'Income'
-        AND (t.TransferID IS NULL OR t.TransferID = '')
-        AND t.Month <= ?2
+      WITH ${MONTHLY_ACTIVITY_CTE}
+      SELECT IFNULL(SUM(CASE WHEN line.AccountType = 'credit' THEN line.Cash ELSE line.Amount END), 0) AS total
+      FROM monthly_activity line
+      JOIN categories c ON line.CategoryID = c.ID
+      JOIN category_groups cg ON c.CategoryGroupID = cg.ID
+      WHERE cg.Name = 'Income'
+        OR (line.AccountType = 'credit' AND cg.Name = 'Transfers')
     `,
         budgetId,
         month
@@ -638,32 +665,11 @@ export class MonthlyBudgetQueries {
     }>(
       this.db,
       `
-      WITH contributions AS (
-        /* assignments */
-        SELECT a.CategoryID AS CategoryID, a.Month AS Month,
-               a.Amount AS Assigned, 0 AS Cash, 0 AS Credit
-        FROM assignments a
-        WHERE a.BudgetID = ?1 AND a.Month <= ?2
+      WITH ${MONTHLY_ACTIVITY_CTE}, contributions AS (
+        SELECT a.CategoryID, a.Month, a.Amount AS Assigned, 0 AS Cash, 0 AS Credit
+        FROM assignments a WHERE a.BudgetID = ?1 AND a.Month <= ?2
         UNION ALL
-        /* activity from split lines, partitioned by account kind */
-        SELECT s.CategoryID, t.Month,
-               0,
-               CASE WHEN LOWER(acc.Type) = 'credit' THEN 0 ELSE s.InflowConverted - s.OutflowConverted END,
-               CASE WHEN LOWER(acc.Type) = 'credit' THEN s.InflowConverted - s.OutflowConverted ELSE 0 END
-        FROM transaction_splits s
-        JOIN transactions t ON t.ID = s.TransactionID
-        JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?1 AND acc.OnBudget = TRUE AND t.Month <= ?2
-        UNION ALL
-        /* activity from non-split transactions, partitioned by account kind */
-        SELECT t.CategoryID, t.Month,
-               0,
-               CASE WHEN LOWER(acc.Type) = 'credit' THEN 0 ELSE t.InflowConverted - t.OutflowConverted END,
-               CASE WHEN LOWER(acc.Type) = 'credit' THEN t.InflowConverted - t.OutflowConverted ELSE 0 END
-        FROM transactions t
-        JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?1 AND acc.OnBudget = TRUE AND t.Month <= ?2
-          ${NO_SPLITS_FILTER}
+        SELECT CategoryID, Month, 0, Cash, Amount - Cash FROM monthly_activity
       )
       SELECT con.CategoryID AS CategoryID, con.Month AS Month,
              SUM(con.Assigned) AS Assigned, SUM(con.Cash) AS Cash, SUM(con.Credit) AS Credit
@@ -680,40 +686,24 @@ export class MonthlyBudgetQueries {
   }
 
   /**
-   * Net credit-card spend per (spending category, card, month) up to and
-   * including `throughMonth`. Positive = net outflow (refunds subtracted).
-   * Feeds per-card attribution of the covered ("funded") portion of spending.
+   * Individual credit purchases and refunds in funding order. Monthly totals
+   * lose which card made a purchase first when a category is underfunded.
    */
-  private getCreditSpendByCategoryCardMonth(
+  private getCreditPurchasesInFundingOrder(
     budgetId: number,
     throughMonth: string
   ): { CategoryID: number; AccountID: number; Month: string; Spend: number }[] {
     return allRows<{ CategoryID: number; AccountID: number; Month: string; Spend: number }>(
       this.db,
       `
-      WITH contributions AS (
-        SELECT s.CategoryID AS CategoryID, t.AccountID AS AccountID,
-               t.Month AS Month,
-               s.OutflowConverted - s.InflowConverted AS Spend
-        FROM transaction_splits s
-        JOIN transactions t ON t.ID = s.TransactionID
-        JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit' AND t.Month <= ?2
-        UNION ALL
-        SELECT t.CategoryID, t.AccountID, t.Month,
-               t.OutflowConverted - t.InflowConverted
-        FROM transactions t
-        JOIN accounts acc ON acc.ID = t.AccountID
-        WHERE t.BudgetID = ?1 AND LOWER(acc.Type) = 'credit' AND t.Month <= ?2
-          ${NO_SPLITS_FILTER}
-      )
-      SELECT con.CategoryID AS CategoryID, con.AccountID AS AccountID, con.Month AS Month,
-             SUM(con.Spend) AS Spend
-      FROM contributions con
+      WITH ${MONTHLY_ACTIVITY_CTE}
+      SELECT con.CategoryID, con.AccountID, con.Month, con.Cash - con.Amount AS Spend
+      FROM monthly_activity con
       JOIN categories c ON c.ID = con.CategoryID
       JOIN category_groups cg ON cg.ID = c.CategoryGroupID
-      WHERE cg.Name NOT IN ('Income', 'Transfers', 'Credit Card Payments')
-      GROUP BY con.CategoryID, con.AccountID, con.Month
+      WHERE con.AccountType = 'credit'
+        AND cg.Name NOT IN ('Income', 'Transfers', 'Credit Card Payments')
+      ORDER BY con.Date, con.TransactionOutflow DESC, con.TransactionID, con.PartIndex
     `,
       budgetId,
       throughMonth
@@ -769,8 +759,22 @@ export class MonthlyBudgetQueries {
    */
   getActivityByAccountKind(
     month: string,
-    budgetId: number
+    budgetId: number,
+    monthly = false
   ): Map<number, { cash: number; credit: number }> {
+    if (monthly) {
+      const rows = allRows<{ CategoryID: number; Cash: number; Credit: number }>(
+        this.db,
+        `
+        WITH ${MONTHLY_ACTIVITY_CTE}
+        SELECT CategoryID, SUM(Cash) AS Cash, SUM(Amount - Cash) AS Credit
+        FROM monthly_activity WHERE Month = ?2 GROUP BY CategoryID
+      `,
+        budgetId,
+        month
+      );
+      return new Map(rows.map((row) => [row.CategoryID, { cash: row.Cash, credit: row.Credit }]));
+    }
     const rows = allRows<{ CategoryID: number; Cash: number; Credit: number }>(
       this.db,
       `
@@ -828,11 +832,17 @@ export class MonthlyBudgetQueries {
   ): {
     availableByCategory: Map<number, number>;
     paymentAvailableByCategory: Map<number, number>;
+    paymentActivityByCategory: Map<number, number>;
+    paymentCalculationByCategory: Map<
+      number,
+      { previousAvailable: number; funded: number; payments: number; refunds: number }
+    >;
+    currentFundingByPaymentCategory: Map<number, Map<number, number>>;
     debtBreakdownByPaymentCat: Map<number, { categoryId: number; month: string; amount: number }[]>;
     priorCashOverspend: number;
   } {
     const series = this.getCategoryMonthlySeries(budgetId, month);
-    const creditSpend = this.getCreditSpendByCategoryCardMonth(budgetId, month);
+    const creditSpend = this.getCreditPurchasesInFundingOrder(budgetId, month);
     const cardPayments = this.getCardPaymentsByMonth(budgetId, month);
     const paymentAssignments = this.getPaymentCategoryAssignmentsByMonth(budgetId, month);
     const cardToPaymentCat = this.getCCAccountPaymentCategoryMap(budgetId);
@@ -869,7 +879,15 @@ export class MonthlyBudgetQueries {
     const availableByCategory = new Map<number, number>();
     // fundedByPaymentCat[paymentCatId][month] -> funded amount
     const fundedByPaymentCat = new Map<number, Map<string, number>>();
-    const addFunded = (paymentCatId: number, m: string, amount: number) => {
+    const refundsByPaymentCat = new Map<number, Map<string, number>>();
+    const currentFundingByPaymentCategory = new Map<number, Map<number, number>>();
+    const addFunded = (paymentCatId: number, categoryId: number, m: string, amount: number) => {
+      if (m === month) {
+        const sources =
+          currentFundingByPaymentCategory.get(paymentCatId) ?? new Map<number, number>();
+        sources.set(categoryId, (sources.get(categoryId) ?? 0) + amount);
+        currentFundingByPaymentCategory.set(paymentCatId, sources);
+      }
       let byMonth = fundedByPaymentCat.get(paymentCatId);
       if (!byMonth) fundedByPaymentCat.set(paymentCatId, (byMonth = new Map()));
       byMonth.set(m, (byMonth.get(m) ?? 0) + amount);
@@ -896,23 +914,38 @@ export class MonthlyBudgetQueries {
       for (const m of allMonths) {
         const s = byMonth.get(m) ?? { Assigned: 0, Cash: 0, Credit: 0 };
         const availableToCover = carryTotal + s.Assigned + s.Cash; // before credit spend
-        const netCreditSpend = Math.max(0, -s.Credit); // refunds already netted in
-        const funded = Math.min(netCreditSpend, Math.max(0, availableToCover));
-        const unfunded = netCreditSpend - funded; // credit overspend that became debt
-
-        // Attribute funded and unfunded to each card's payment category,
-        // proportional to that card's positive net spend this month.
-        if (funded > 0 || unfunded > 0) {
-          const cards = creditByCat.get(categoryId)?.get(m) ?? [];
-          const positive = cards.filter((c) => c.spend > 0);
-          const denom = positive.reduce((sum, c) => sum + c.spend, 0);
-          for (const c of positive) {
-            const paymentCatId = cardToPaymentCat.get(c.card);
-            if (!paymentCatId || denom <= 0) continue;
-            const share = c.spend / denom;
-            if (funded > 0) addFunded(paymentCatId, m, Math.round(funded * share));
-            if (unfunded > 0) addDebt(paymentCatId, categoryId, m, Math.round(unfunded * share));
-          }
+        const cards = creditByCat.get(categoryId)?.get(m) ?? [];
+        const refunds = new Map<number, number>();
+        for (const c of cards) {
+          if (c.spend < 0) refunds.set(c.card, (refunds.get(c.card) ?? 0) - c.spend);
+        }
+        // YNAB's observed refund behavior cancels the same card's earliest
+        // purchases first, then reallocates funding to the remaining purchases.
+        const purchases = cards
+          .filter((c) => c.spend > 0)
+          .map((c) => {
+            const refunded = Math.min(c.spend, refunds.get(c.card) ?? 0);
+            refunds.set(c.card, (refunds.get(c.card) ?? 0) - refunded);
+            return { card: c.card, spend: c.spend - refunded };
+          });
+        let remaining = Math.max(
+          0,
+          availableToCover + [...refunds.values()].reduce((sum, value) => sum + value, 0)
+        );
+        for (const c of purchases) {
+          const paymentCatId = cardToPaymentCat.get(c.card);
+          if (!paymentCatId) continue;
+          const funded = Math.min(c.spend, remaining);
+          remaining -= funded;
+          if (funded > 0) addFunded(paymentCatId, categoryId, m, funded);
+          if (c.spend > funded) addDebt(paymentCatId, categoryId, m, c.spend - funded);
+        }
+        for (const [card, refund] of refunds) {
+          const paymentCatId = cardToPaymentCat.get(card);
+          if (!paymentCatId || refund === 0) continue;
+          let byMonth = refundsByPaymentCat.get(paymentCatId);
+          if (!byMonth) refundsByPaymentCat.set(paymentCatId, (byMonth = new Map()));
+          byMonth.set(m, (byMonth.get(m) ?? 0) + refund);
         }
 
         const displayed = carryTotal + s.Assigned + s.Cash + s.Credit;
@@ -948,15 +981,32 @@ export class MonthlyBudgetQueries {
 
     const paymentCatIds = new Set<number>(cardToPaymentCat.values());
     const paymentAvailableByCategory = new Map<number, number>();
+    const paymentActivityByCategory = new Map<number, number>();
+    const paymentCalculationByCategory = new Map<
+      number,
+      { previousAvailable: number; funded: number; payments: number; refunds: number }
+    >();
     for (const paymentCatId of paymentCatIds) {
       let carry = 0;
       for (const m of allMonths) {
         const assigned = paymentAssignedByCat.get(paymentCatId)?.get(m) ?? 0;
         const funded = fundedByPaymentCat.get(paymentCatId)?.get(m) ?? 0;
         const payments = paymentsByPaymentCat.get(paymentCatId)?.get(m) ?? 0;
-        const raw = carry + assigned + funded - payments;
+        const refunded = Math.min(
+          refundsByPaymentCat.get(paymentCatId)?.get(m) ?? 0,
+          Math.max(0, carry + assigned + funded)
+        );
+        const activity = funded - payments - refunded;
+        const raw = carry + assigned + activity;
         if (m === month) {
           paymentAvailableByCategory.set(paymentCatId, raw);
+          paymentActivityByCategory.set(paymentCatId, activity);
+          paymentCalculationByCategory.set(paymentCatId, {
+            previousAvailable: carry,
+            funded,
+            payments,
+            refunds: refunded,
+          });
         } else {
           if (raw < 0) priorCashOverspend += -raw; // overpaid card = cash overspend
           carry = Math.max(0, raw);
@@ -978,6 +1028,9 @@ export class MonthlyBudgetQueries {
     return {
       availableByCategory,
       paymentAvailableByCategory,
+      paymentActivityByCategory,
+      paymentCalculationByCategory,
+      currentFundingByPaymentCategory,
       debtBreakdownByPaymentCat,
       priorCashOverspend,
     };

@@ -131,6 +131,14 @@ export function AvailableInfoPopover({
           <div className={cn('text-xs', amountRowGap)}>
             {isCCPayment ? (
               <>
+                {item.paymentCalculation && (
+                  <div className="flex justify-between">
+                    <span>Previous month:</span>
+                    <span className="font-mono">
+                      {formatAmount(item.paymentCalculation.previousAvailable)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span>Assigned:</span>
                   <span className="font-mono">{formatAmount(item.assigned)}</span>
@@ -141,8 +149,20 @@ export function AvailableInfoPopover({
                 </div>
                 <div className="flex justify-between">
                   <span>Payments made:</span>
-                  <span className="font-mono">{formatAmount(item.activity)}</span>
+                  <span className="font-mono">
+                    {formatAmount(
+                      item.paymentCalculation ? 0 - item.paymentCalculation.payments : item.activity
+                    )}
+                  </span>
                 </div>
+                {!!item.paymentCalculation?.refunds && (
+                  <div className="flex justify-between">
+                    <span>Returned to categories:</span>
+                    <span className="font-mono">
+                      {formatAmount(0 - item.paymentCalculation.refunds)}
+                    </span>
+                  </div>
+                )}
                 <div className="border-t pt-1 flex justify-between font-medium">
                   <span>Available for payment:</span>
                   <span className="font-mono">{formatAmount(item.available)}</span>

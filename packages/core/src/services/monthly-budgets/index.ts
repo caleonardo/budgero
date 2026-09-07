@@ -39,10 +39,11 @@ export class MonthlyBudgetService {
    */
   getMonthlyBudget(month: string, budgetId: number): GetMonthlyBudgetRow[] {
     const rows = this.queries.getMonthlyBudget(month, budgetId);
+    const isMonthly = this.queries.getRtaMode(budgetId) === 'monthly';
 
     // Split each category's current-month activity into cash vs credit so the
     // UI can flag credit overspend (yellow) distinctly from cash (red).
-    const activityByKind = this.queries.getActivityByAccountKind(month, budgetId);
+    const activityByKind = this.queries.getActivityByAccountKind(month, budgetId, isMonthly);
     for (const row of rows) {
       const kind = activityByKind.get(row.CategoryID);
       row.CashActivity = asMilli(kind?.cash ?? 0);
@@ -157,9 +158,15 @@ export class MonthlyBudgetService {
     // running balance whose funding is recomputed per month on the floored
     // balances. Applied last so the cumulative CC funding math above still runs
     // for cumulative mode; here its payment-row values are replaced.
-    if (this.queries.getRtaMode(budgetId) === 'monthly') {
-      const { availableByCategory, paymentAvailableByCategory, debtBreakdownByPaymentCat } =
-        this.queries.computeMonthlyRollforward(budgetId, month);
+    if (isMonthly) {
+      const {
+        availableByCategory,
+        paymentAvailableByCategory,
+        paymentActivityByCategory,
+        paymentCalculationByCategory,
+        currentFundingByPaymentCategory,
+        debtBreakdownByPaymentCat,
+      } = this.queries.computeMonthlyRollforward(budgetId, month);
       const nameById = new Map(rows.map((r) => [r.CategoryID, r.Category]));
       for (const row of rows) {
         const spendOverride = availableByCategory.get(row.CategoryID);
@@ -169,6 +176,25 @@ export class MonthlyBudgetService {
         }
         const paymentOverride = paymentAvailableByCategory.get(row.CategoryID);
         if (paymentOverride !== undefined) row.Available = asMilli(paymentOverride);
+        const paymentActivity = paymentActivityByCategory.get(row.CategoryID);
+        if (paymentActivity !== undefined) row.Activity = asMilli(paymentActivity);
+        const calculation = paymentCalculationByCategory.get(row.CategoryID);
+        if (calculation) {
+          row.paymentCalculation = {
+            previousAvailable: asMilli(calculation.previousAvailable),
+            funded: asMilli(calculation.funded),
+            payments: asMilli(calculation.payments),
+            refunds: asMilli(calculation.refunds),
+          };
+          row.totalFunded = asMilli(calculation.funded);
+          row.fundingBreakdown = [
+            ...(currentFundingByPaymentCategory.get(row.CategoryID) ?? []),
+          ].map(([categoryId, amount]) => ({
+            categoryId,
+            categoryName: nameById.get(categoryId) ?? '',
+            amount: asMilli(amount),
+          }));
+        }
         const debt = debtBreakdownByPaymentCat.get(row.CategoryID);
         if (debt) {
           row.debtBreakdown = debt.map((d) => ({

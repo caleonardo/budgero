@@ -187,6 +187,7 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
           Memo: `Split (${index + 1}/${children.length}): ${child.memo || ''}`,
           ...amountFields(child.amount),
           Cleared: transaction.cleared,
+          SourceId: transaction.id,
           ExcludeFromReadyToAssign: isCategorylessBudgetBoundaryTransfer(
             transaction.account_id,
             child.transfer_account_id,
@@ -208,6 +209,7 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
       Memo: transaction.memo || '',
       ...amountFields(transaction.amount),
       Cleared: transaction.cleared,
+      SourceId: transaction.id,
       TransferID: transferIdFor(transaction),
       ExcludeFromReadyToAssign: isCategorylessBudgetBoundaryTransfer(
         transaction.account_id,
@@ -242,7 +244,7 @@ export function normalizeYNABApiSnapshot(snapshot: YNABApiPlanSnapshot): Normali
       representedCategoryIds.add(category.id);
 
       const group = groupsById.get(category.category_group_id);
-      if (!category.internal && !group?.internal) {
+      if (!category.internal) {
         categoryMonthSpecs.push({
           month: month.month.slice(0, 7),
           categoryGroup: group?.name || 'Imported from YNAB',

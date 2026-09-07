@@ -18,7 +18,7 @@ async function setup() {
     .find((c: { Name: string }) => c.Name === 'Income')!.ID;
   const group = services.categories.addCategoryGroup('Spending', budgetId);
   const food = services.categories.addCategory(group, budgetId, 'Food');
-  return { services, budgetId, incomeId, food };
+  return { adapter, services, budgetId, incomeId, food };
 }
 
 // Available for a spending category in a given month.
@@ -65,6 +65,34 @@ describe('Ready to Assign — monthly (YNAB-style) mode', () => {
     // Cumulative is month-independent: 1000 income - 300 assigned = 700 everywhere.
     expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2024-01')).toBe(asMilli(700));
     expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2024-03')).toBe(asMilli(700));
+  });
+
+  it('counts an explicitly income-categorized transfer once', async () => {
+    const { adapter, services, budgetId, incomeId } = await setup();
+    services.budgets.updateRtaMode(budgetId, 'monthly');
+    const checking = await services.accounts.createAccount(
+      'Checking',
+      budgetId,
+      'checking',
+      'USD',
+      0
+    );
+    await services.transactions.addTransaction(
+      asMilli(50000),
+      0,
+      checking.ID,
+      incomeId,
+      budgetId,
+      '2024-01-05',
+      'Imported income transfer',
+      'source-transfer'
+    );
+    // Imported ledgers can retain an explicit income category on a transfer.
+    // The interactive transaction service defaults unmatched transfers to Transfers.
+    adapter
+      .prepare('UPDATE transactions SET CategoryID = ? WHERE BudgetID = ? AND TransferID = ?')
+      .run(incomeId, budgetId, 'source-transfer');
+    expect(services.monthlyBudgets.getReadyToAssign(budgetId, '2024-01')).toBe(50000);
   });
 
   it('counts income only through the selected month', async () => {

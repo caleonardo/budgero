@@ -83,6 +83,13 @@ export interface GetMonthlyBudgetRow {
   debtBreakdown?: DebtSource[];
   /** For CC Payment categories: total funded from spending categories */
   totalFunded?: MilliUnits;
+  /** Monthly-mode card envelope calculation; payments/refunds are positive deductions. */
+  paymentCalculation?: {
+    previousAvailable: MilliUnits;
+    funded: MilliUnits;
+    payments: MilliUnits;
+    refunds: MilliUnits;
+  };
   /**
    * For CC Payment categories: the linked card's signed balance as of the end
    * of the viewed month (negative = debt). Display-only — lets the UI show

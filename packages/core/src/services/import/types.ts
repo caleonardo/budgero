@@ -331,6 +331,8 @@ export interface YNABRegisterRow {
   Cleared: string;
   /** Stable transfer relationship supplied by the YNAB API import path. */
   TransferID?: string;
+  /** Source transaction ID used to keep API imports deterministic on tied dates/amounts. */
+  SourceId?: string;
   /** Preserve a source-system transfer that intentionally did not move RTA. */
   ExcludeFromReadyToAssign?: boolean;
 }
