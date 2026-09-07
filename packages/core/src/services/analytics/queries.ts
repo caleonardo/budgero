@@ -103,7 +103,7 @@ export class AnalyticsQueries {
 
   /**
    * GetSpendingByDatesByCategories - Get spending by dates and category groups
-   * For pie chart: returns aggregated spending per category group for the entire period
+   * Returns daily net spending, including refund-only days for period aggregation.
    */
   getSpendingByDatesByCategories(
     startDate: string,
@@ -113,24 +113,24 @@ export class AnalyticsQueries {
   ) {
     const query = `
       WITH base AS (
-        SELECT DATE(t.Date) AS Date, c.CategoryGroupID AS GroupID, s.OutflowConverted AS OutflowConverted
+        SELECT DATE(t.Date) AS Date, c.CategoryGroupID AS GroupID, s.OutflowConverted - s.InflowConverted AS Spending
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
         JOIN categories c ON c.ID = s.CategoryID
-        WHERE t.BudgetID = ? AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND a.OnBudget = 1 AND s.OutflowConverted > 0
+        WHERE t.BudgetID = ? AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND a.OnBudget = 1
         UNION ALL
-        SELECT DATE(t.Date) AS Date, c.CategoryGroupID AS GroupID, t.OutflowConverted AS OutflowConverted
+        SELECT DATE(t.Date) AS Date, c.CategoryGroupID AS GroupID, t.OutflowConverted - t.InflowConverted AS Spending
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         JOIN categories c ON c.ID = t.CategoryID
-        WHERE t.BudgetID = ? AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND a.OnBudget = 1 AND t.OutflowConverted > 0
+        WHERE t.BudgetID = ? AND DATE(t.Date) >= DATE(?) AND DATE(t.Date) <= DATE(?) AND a.OnBudget = 1
           ${NO_SPLITS_FILTER}
       )
-      SELECT b.Date AS Date, SUM(b.OutflowConverted) AS Spending, cg.ID AS CategoryGroupID, cg.Name AS CategoryGroupName
+      SELECT b.Date AS Date, SUM(b.Spending) AS Spending, cg.ID AS CategoryGroupID, cg.Name AS CategoryGroupName
       FROM base b
       LEFT JOIN category_groups cg ON cg.ID = b.GroupID
-      WHERE (cg.Name != 'Transfers' OR cg.Name IS NULL)
+      WHERE (cg.Name NOT IN ('Transfers', 'Income') OR cg.Name IS NULL)
       GROUP BY b.Date, cg.ID, cg.Name
       ORDER BY b.Date, cg.Name;
     `;
@@ -194,7 +194,7 @@ export class AnalyticsQueries {
   }
 
   /**
-   * GetSpendingByCategoriesInGroup - Get spending by categories in a specific group
+   * GetSpendingByCategoriesInGroup - Get positive net spending by categories in a specific group
    */
   getSpendingByCategoriesInGroup(
     startDate: string,
@@ -208,7 +208,7 @@ export class AnalyticsQueries {
         -- Prefer split rows when present
         SELECT
           s.CategoryID AS CategoryID,
-          s.OutflowConverted AS OutflowConverted
+          s.OutflowConverted - s.InflowConverted AS Spending
         FROM transaction_splits s
         JOIN transactions t ON t.ID = s.TransactionID
         JOIN accounts a ON a.ID = t.AccountID
@@ -217,7 +217,6 @@ export class AnalyticsQueries {
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
           AND a.OnBudget = 1
-          AND s.OutflowConverted > 0
           AND c.CategoryGroupID = ?
           AND c.BudgetID = ?
 
@@ -226,7 +225,7 @@ export class AnalyticsQueries {
         -- Fallback to parent transactions that do not have splits
         SELECT
           t.CategoryID AS CategoryID,
-          t.OutflowConverted AS OutflowConverted
+          t.OutflowConverted - t.InflowConverted AS Spending
         FROM ${transactionsSource(opts?.includeProjections)} t
         JOIN accounts a ON a.ID = t.AccountID
         JOIN categories c ON c.ID = t.CategoryID
@@ -234,7 +233,6 @@ export class AnalyticsQueries {
           AND DATE(t.Date) >= DATE(?)
           AND DATE(t.Date) <= DATE(?)
           AND a.OnBudget = 1
-          AND t.OutflowConverted > 0
           AND c.CategoryGroupID = ?
           AND c.BudgetID = ?
           ${NO_SPLITS_FILTER}
@@ -242,11 +240,13 @@ export class AnalyticsQueries {
       SELECT
         c.ID AS CategoryID,
         c.Name AS CategoryName,
-        COALESCE(SUM(base.OutflowConverted), 0) AS Spending
+        COALESCE(SUM(base.Spending), 0) AS Spending
       FROM base
       JOIN categories c ON c.ID = base.CategoryID
+      LEFT JOIN category_groups cg ON cg.ID = c.CategoryGroupID
+      WHERE (cg.Name NOT IN ('Transfers', 'Income') OR cg.Name IS NULL)
       GROUP BY c.ID, c.Name
-      HAVING Spending > 0
+      HAVING SUM(base.Spending) > 0
       ORDER BY Spending DESC;
     `;
 

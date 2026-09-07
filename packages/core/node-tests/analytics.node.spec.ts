@@ -77,6 +77,104 @@ describe('AnalyticsService', () => {
     expect(balanceSeries[0].Balance).toBeGreaterThan(0);
   });
 
+  it.each([false, true])(
+    'nets category inflows against dashboard spending (split transactions: %s)',
+    async (useSplits) => {
+      const adapter = await NodeSqlJsAdapter.create();
+      const sm = new ServiceManager();
+      await sm.initialize(adapter as DatabaseAdapter);
+      const { budgets, accounts, categories, transactions, analytics, splits } = sm.getServices();
+      const budgetId = await budgets.createBudget({
+        name: 'Net spending',
+        display_currency: 'USD',
+        badge_icon: 'dollar',
+        number_format: '123,456.78',
+        create_default_categories: true,
+      });
+      const on = await accounts.createAccount('On', budgetId, 'checking', 'USD', 0, {}, true);
+      const off = await accounts.createAccount('Off', budgetId, 'other asset', 'USD', 0, {}, false);
+      const groupId = categories.addCategoryGroup('Car', budgetId);
+      const carId = categories.addCategory(groupId, budgetId, 'New car');
+      const refundedId = categories.addCategory(groupId, budgetId, 'Fully refunded');
+      const creditId = categories.addCategory(groupId, budgetId, 'Net credit');
+      const income = categories.getAllCategories(budgetId).find((c) => c.Name === 'Income')!;
+      const transferGroupId = categories.addCategoryGroup('Transfers', budgetId);
+      const transferId = categories.addCategory(transferGroupId, budgetId, 'Transfer');
+
+      const add = async (
+        categoryId: number,
+        inflow: number,
+        outflow: number,
+        date = '2024-03-01',
+        accountId = on.ID
+      ) => {
+        const id = await transactions.addTransaction(
+          inflow,
+          outflow,
+          accountId,
+          categoryId,
+          budgetId,
+          date,
+          'Net spending regression'
+        );
+        if (useSplits) {
+          await splits.upsertSplits(id, [
+            {
+              CategoryID: categoryId,
+              InflowConverted: inflow,
+              OutflowConverted: outflow,
+              OrderIndex: 0,
+            },
+          ]);
+        }
+      };
+
+      await add(carId, 0, 20_000_000);
+      // Refund-only days must survive until the whole period is aggregated.
+      await add(carId, 10_000_000, 0, '2024-03-02');
+      await add(refundedId, 0, 2_000_000);
+      await add(refundedId, 2_000_000, 0, '2024-03-02');
+      await add(creditId, 0, 1_000_000);
+      await add(creditId, 3_000_000, 0, '2024-03-02');
+      await add(income.ID, 50_000_000, 0);
+      await add(income.ID, 0, 5_000_000);
+      await add(transferId, 6_000_000, 0);
+      await add(transferId, 0, 7_000_000);
+      await add(carId, 40_000_000, 0, '2024-03-03', off.ID);
+      await add(carId, 0, 40_000_000, '2024-03-03', off.ID);
+      await add(carId, 30_000_000, 0, '2024-04-01');
+      await add(carId, 0, 30_000_000, '2024-02-29');
+
+      const groups = analytics.getSpendingByDatesByCategories('2024-03-01', '2024-03-31', budgetId);
+      expect(groups.every((row) => row.CategoryGroupID === groupId)).toBe(true);
+      expect(groups.find((row) => row.Date === '2024-03-02')?.Spending).toBe(-15_000_000);
+      expect(groups.reduce((sum, row) => sum + row.Spending, 0)).toBe(8_000_000);
+      const breakdown = analytics.getSpendingByCategoriesInGroup(
+        '2024-03-01',
+        '2024-03-31',
+        budgetId,
+        groupId
+      );
+      expect(breakdown).toEqual([
+        {
+          CategoryID: carId,
+          CategoryName: 'New car',
+          Spending: 10_000_000,
+        },
+      ]);
+      for (const excludedGroup of [income.CategoryGroupID, transferGroupId]) {
+        expect(
+          analytics.getSpendingByCategoriesInGroup(
+            '2024-03-01',
+            '2024-03-31',
+            budgetId,
+            excludedGroup
+          )
+        ).toEqual([]);
+      }
+    }
+  );
+
   it('computes on-budget daily balances without double-counting end date', async () => {
     const adapter = await NodeSqlJsAdapter.create();
     const sm = new ServiceManager();
