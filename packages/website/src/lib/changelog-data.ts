@@ -16,11 +16,37 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.11.7',
+    date: 'September 8, 2026',
+    summary: 'Fixes monthly credit-card calculations, YNAB imports, and dashboard spending totals.',
+    isLatest: true,
+    items: [
+      {
+        type: 'fixed',
+        title: 'Monthly credit-card balances',
+        description:
+          'Monthly mode now funds earlier card purchases first and correctly handles refunds and positive card balances. Payment-category Activity and calculation details now reflect funding and payments separately.',
+      },
+      {
+        type: 'fixed',
+        title: 'YNAB income and transfer imports',
+        description:
+          'Ready to Assign correctly counts income within split transactions. Split transfers with empty memos are paired correctly, and import verification now includes credit-card payment categories.',
+      },
+      {
+        type: 'fixed',
+        title: 'Dashboard spending totals',
+        description:
+          'Refunds and other category inflows now reduce dashboard spending totals and category breakdowns.',
+      },
+    ],
+  },
+  {
     version: 'v1.11.6',
     date: 'September 5, 2026',
     summary:
       'Adds optional income categories, preserves more category history during deletion, and clarifies Cloud signup.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
