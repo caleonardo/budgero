@@ -9,7 +9,11 @@ import type {
   UpdateDatabaseRowResponse,
   AdminQueryResult,
 } from '@features/admin/model/admin-database';
-import type { SelfHostAdminStats, SelfHostAdminUser } from '@features/admin/model/admin-self-host';
+import type {
+  SelfHostRegistrationSettings,
+  SelfHostAdminStats,
+  SelfHostAdminUser,
+} from '@features/admin/model/admin-self-host';
 import type { AdminUserDetails } from '@features/admin/model/admin-users';
 import type {
   AdminStats,
@@ -45,6 +49,12 @@ export function useAdminApi() {
       blockUser: (userId: string) => apiClient.post(`/admin/users/${userId}/block`),
       unblockUser: (userId: string) => apiClient.post(`/admin/users/${userId}/unblock`),
 
+      getSelfHostRegistration: () =>
+        apiClient.get<SelfHostRegistrationSettings>('/admin/selfhost/registration'),
+      updateSelfHostRegistration: (registrationEnabled: boolean) =>
+        apiClient.put<SelfHostRegistrationSettings>('/admin/selfhost/registration', {
+          registrationEnabled,
+        }),
       getSelfHostStats: () => apiClient.get<SelfHostAdminStats>('/admin/selfhost/stats'),
       getSelfHostUsers: () => apiClient.get<SelfHostAdminUser[]>('/admin/selfhost/users'),
       createSelfHostUser: (email: string, name: string, password: string, isAdmin: boolean) =>

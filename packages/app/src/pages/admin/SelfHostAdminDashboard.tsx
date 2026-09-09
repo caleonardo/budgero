@@ -22,6 +22,7 @@ import { formatBytes } from '@shared/lib/format-bytes';
 import { StatCard } from '@pages/admin/components/StatCard';
 import { useAdminApi } from '@features/admin/api/useAdminApi';
 import type { SelfHostAdminStats } from '@features/admin/model/admin-self-host';
+import { RegistrationSettings } from './components/RegistrationSettings';
 
 export default function SelfHostAdminDashboard() {
   const adminApi = useAdminApi();
@@ -146,6 +147,8 @@ export default function SelfHostAdminDashboard() {
           />
         ))}
       </div>
+
+      <RegistrationSettings />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>

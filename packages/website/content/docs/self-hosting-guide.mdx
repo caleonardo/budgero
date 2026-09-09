@@ -256,6 +256,11 @@ budgero admin block-user --username johndoe
 
 ### Disable public sign-ups
 
+In the self-host admin dashboard at `/admin`, use **Registration → Allow public
+sign-ups**. This toggle shares the CLI setting and applies immediately. If
+`DISABLE_REGISTRATION=true` is set, the toggle is locked until you remove the
+environment flag and restart the server.
+
 Use the admin CLI to close public registration. Existing users can still sign in,
 and admins can still create accounts with `budgero admin create-user`.
 

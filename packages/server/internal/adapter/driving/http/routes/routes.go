@@ -231,6 +231,8 @@ func SetupRoutes(e *echo.Echo, h *handler.Handlers, services *application.Servic
 
 	if opts.SelfHost {
 		selfHostAdmin := admin.Group("/selfhost")
+		selfHostAdmin.GET("/registration", h.GetSelfHostRegistration)
+		selfHostAdmin.PUT("/registration", h.UpdateSelfHostRegistration)
 		selfHostAdmin.GET("/stats", h.GetSelfHostAdminStats)
 		selfHostAdmin.GET("/users", h.GetSelfHostAdminUsers)
 		selfHostAdmin.POST("/users", h.CreateSelfHostUser)

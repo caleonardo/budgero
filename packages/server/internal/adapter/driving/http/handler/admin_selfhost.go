@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"budgero-server/internal/adapter/driven/sqlite"
+	"budgero-server/internal/config"
 	"budgero-server/internal/domain"
 	"budgero-server/internal/port/driven/repository"
 
@@ -228,4 +229,42 @@ func (h *Handlers) DownloadSelfHostDatabase(c echo.Context) error {
 	c.Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename="+filename)
 	c.Response().Header().Set(echo.HeaderContentLength, strconv.FormatInt(info.Size(), 10))
 	return c.Stream(http.StatusOK, "application/octet-stream", file)
+}
+
+// GetSelfHostRegistration returns the effective policy and environment lock.
+func (h *Handlers) GetSelfHostRegistration(c echo.Context) error {
+	if err := h.ensureSelfHostMode(); err != nil {
+		return err
+	}
+	disabled, err := h.isRegistrationDisabled()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusServiceUnavailable, "registration settings unavailable")
+	}
+	c.Response().Header().Set("Cache-Control", "no-store")
+	return c.JSON(http.StatusOK, map[string]bool{
+		"registrationEnabled": !disabled,
+		"environmentLocked":   h.cfg != nil && h.cfg.Features.DisableRegistration,
+	})
+}
+
+// UpdateSelfHostRegistration updates the same persistent switch used by the CLI.
+func (h *Handlers) UpdateSelfHostRegistration(c echo.Context) error {
+	if err := h.ensureSelfHostMode(); err != nil {
+		return err
+	}
+	var req struct {
+		RegistrationEnabled *bool `json:"registrationEnabled"`
+	}
+	if err := c.Bind(&req); err != nil || req.RegistrationEnabled == nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "registrationEnabled must be a boolean")
+	}
+	if h.cfg != nil && h.cfg.Features.DisableRegistration {
+		return echo.NewHTTPError(http.StatusConflict, "registration is controlled by DISABLE_REGISTRATION; remove it and restart the server to change this setting")
+	}
+	policy := config.RegistrationPolicy{DatabasePath: sqlite.ResolvePath()}
+	if err := policy.SetDisabled(!*req.RegistrationEnabled); err != nil {
+		log.Error().Err(err).Msg("failed to update registration settings")
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to update registration settings")
+	}
+	return h.GetSelfHostRegistration(c)
 }

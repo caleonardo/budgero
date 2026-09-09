@@ -76,3 +76,45 @@ func TestRegistrationPolicyEnforcement(t *testing.T) {
 		})
 	}
 }
+
+func TestAdminRegistrationUpdates(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "budget.db")
+	_, _, services, cfg := testkit.NewTestServices(t, true)
+	t.Setenv("DB_PATH", path)
+	policy := config.RegistrationPolicy{DatabasePath: path}
+	h := handler.NewHandlers(services, nil, handler.Options{SelfHost: true, Config: cfg, RegistrationDisabled: policy.Disabled})
+	e := echo.New()
+	for _, tc := range []struct {
+		body     string
+		code     int
+		disabled bool
+	}{
+		{`{"registrationEnabled":false}`, http.StatusOK, true},
+		{`{}`, http.StatusBadRequest, true},
+		{`{"registrationEnabled":"true"}`, http.StatusBadRequest, true},
+		{`{"registrationEnabled":true}`, http.StatusOK, false},
+	} {
+		req := httptest.NewRequest(http.MethodPut, "/", strings.NewReader(tc.body))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		err := h.UpdateSelfHostRegistration(e.NewContext(req, rec))
+		if err != nil {
+			e.HTTPErrorHandler(err, e.NewContext(req, rec))
+		}
+		if rec.Code != tc.code {
+			t.Fatalf("%s: status = %d, error = %v", tc.body, rec.Code, err)
+		}
+		disabled, readErr := policy.Disabled()
+		if readErr != nil || disabled != tc.disabled {
+			t.Fatalf("persisted policy = %v, %v", disabled, readErr)
+		}
+	}
+	cfg.Features.DisableRegistration = true
+	req := httptest.NewRequest(http.MethodPut, "/", strings.NewReader(`{"registrationEnabled":true}`))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	err := h.UpdateSelfHostRegistration(e.NewContext(req, httptest.NewRecorder()))
+	var httpErr *echo.HTTPError
+	if !errors.As(err, &httpErr) || httpErr.Code != http.StatusConflict {
+		t.Fatalf("environment lock: %v", err)
+	}
+}

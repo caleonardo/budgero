@@ -35,3 +35,8 @@ export interface SelfHostAdminUser {
   spaceMembershipCount: number;
   ownedSpaceCount: number;
 }
+
+export interface SelfHostRegistrationSettings {
+  registrationEnabled: boolean;
+  environmentLocked: boolean;
+}
