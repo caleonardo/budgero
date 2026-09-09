@@ -215,6 +215,7 @@ func newAdminCmd() *cobra.Command {
 	unblockCmd.Flags().StringVar(&blockUsername, "username", "", "Username")
 	_ = unblockCmd.MarkFlagRequired("username")
 
+	adminCmd.AddCommand(newRegistrationCmd())
 	adminCmd.AddCommand(createCmd, resetCmd, listCmd, setAdminCmd, deleteCmd, resetDataCmd, blockCmd, unblockCmd)
 	return adminCmd
 }
@@ -858,4 +859,39 @@ func adminBlockUser(username string, blocked bool) error {
 		fmt.Printf("%s %s (%s)\n", action, user.Name, user.Email)
 		return nil
 	})
+}
+
+func newRegistrationCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:       "registration [enable|disable|status]",
+		Short:     "Control public sign-ups without restarting the server",
+		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+		ValidArgs: []string{"enable", "disable", "status"},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := config.Load()
+			if err != nil {
+				return err
+			}
+			policy := config.RegistrationPolicy{DatabasePath: sqlite.ResolvePath(), EnvironmentDisabled: cfg.Features.DisableRegistration}
+			if args[0] != "status" {
+				if args[0] == "enable" && policy.EnvironmentDisabled {
+					return fmt.Errorf("DISABLE_REGISTRATION=true overrides the CLI setting; unset it on the server and restart before enabling sign-ups")
+				}
+				if setErr := policy.SetDisabled(args[0] == "disable"); setErr != nil {
+					return setErr
+				}
+			}
+			disabled, err := policy.Disabled()
+			if err != nil {
+				return err
+			}
+			if disabled {
+				cmd.Println("Public registration: disabled")
+			} else {
+				cmd.Println("Public registration: enabled")
+			}
+			cmd.Println("DISABLE_REGISTRATION=true on the server always overrides this setting.")
+			return nil
+		},
+	}
 }

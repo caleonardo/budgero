@@ -19,8 +19,8 @@ import (
 	serverpkg "budgero-server"
 	"budgero-server/internal/adapter/driven/currencyapi"
 	"budgero-server/internal/adapter/driven/sqlite"
-	"budgero-server/internal/adapter/driven/updatecheck"
 	"budgero-server/internal/adapter/driven/sqlite/sqlc"
+	"budgero-server/internal/adapter/driven/updatecheck"
 	"budgero-server/internal/adapter/driving/http/handler"
 	appmw "budgero-server/internal/adapter/driving/http/middleware"
 	"budgero-server/internal/adapter/driving/http/routes"
@@ -229,10 +229,11 @@ func Run(selfHost bool) {
 	go application.NewRateRefresher(services.ExchangeRate).Run(context.Background())
 
 	h := handler.NewHandlers(services, hub, handler.Options{
-		SelfHost:      selfHost,
-		Config:        cfg,
-		Email:         emailSvc,
-		LatestVersion: newLatestVersionSource(cfg, selfHost),
+		SelfHost:             selfHost,
+		RegistrationDisabled: (config.RegistrationPolicy{DatabasePath: sqlite.ResolvePath(), EnvironmentDisabled: cfg.Features.DisableRegistration}).Disabled,
+		Config:               cfg,
+		Email:                emailSvc,
+		LatestVersion:        newLatestVersionSource(cfg, selfHost),
 	})
 	if !selfHost {
 		h.StartProviderSyncLoop(context.Background(), time.Hour)

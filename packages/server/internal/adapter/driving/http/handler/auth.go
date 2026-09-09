@@ -470,7 +470,11 @@ func (h *Handlers) SelfHostRegister(c echo.Context) error {
 	if err := h.ensureSelfHostMode(); err != nil {
 		return err
 	}
-	if h.cfg != nil && h.cfg.Features.DisableRegistration {
+	disabled, policyErr := h.isRegistrationDisabled()
+	if policyErr != nil {
+		return echo.NewHTTPError(http.StatusServiceUnavailable, "registration settings unavailable")
+	}
+	if disabled {
 		return echo.NewHTTPError(http.StatusForbidden, "registration is disabled on this instance")
 	}
 	ctx := c.Request().Context()
@@ -668,4 +672,27 @@ func (h *Handlers) buildServiceUserResponse(ctx context.Context, user *domain.Us
 			Msg("failed to load user preferences for profile response")
 	}
 	return payload
+}
+
+func (h *Handlers) isRegistrationDisabled() (bool, error) {
+	if h.cfg != nil && h.cfg.Features.DisableRegistration {
+		return true, nil
+	}
+	if h.registrationDisabled != nil {
+		return h.registrationDisabled()
+	}
+	return false, nil
+}
+
+// SelfHostAuthConfig exposes only the public registration policy.
+func (h *Handlers) SelfHostAuthConfig(c echo.Context) error {
+	if err := h.ensureSelfHostMode(); err != nil {
+		return err
+	}
+	c.Response().Header().Set("Cache-Control", "no-store")
+	disabled, policyErr := h.isRegistrationDisabled()
+	if policyErr != nil {
+		return echo.NewHTTPError(http.StatusServiceUnavailable, "registration settings unavailable")
+	}
+	return c.JSON(http.StatusOK, map[string]bool{"registration_enabled": !disabled})
 }

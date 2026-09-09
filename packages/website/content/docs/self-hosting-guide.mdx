@@ -254,6 +254,31 @@ budgero admin reset-password --username johndoe --password "new-password"
 budgero admin block-user --username johndoe
 ```
 
+### Disable public sign-ups
+
+Use the admin CLI to close public registration. Existing users can still sign in,
+and admins can still create accounts with `budgero admin create-user`.
+
+```bash
+budgero admin registration disable
+budgero admin registration status
+budgero admin registration enable
+```
+
+Changes take effect without restarting the server. When disabled, the login page
+hides Sign up, sign-up links redirect to sign-in, and the registration API rejects
+new accounts. An already-open page updates on refocus or reload; API enforcement
+applies to new registration requests immediately.
+
+Run the command with the same `DB_PATH` and working directory as the server.
+The setting persists in `<database-path>.registration-disabled`; include this file
+in backups. For Docker, run the command inside the server container, for example
+`docker compose exec budgero budgero admin registration disable`.
+
+Alternatively, set `DISABLE_REGISTRATION=true` in the server environment and
+restart. This environment flag takes precedence over the CLI setting; remove it
+and restart before using the CLI to reopen registration.
+
 ## Running as a background service
 
 ### Using the built-in daemon (all platforms)

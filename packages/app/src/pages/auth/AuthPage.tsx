@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { SignIn, SignUp } from '@clerk/clerk-react';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
@@ -17,7 +18,6 @@ const IS_SELF_HOSTABLE =
   typeof import.meta !== 'undefined' &&
   (import.meta as ImportMeta & { env?: Record<string, string> }).env?.VITE_SELF_HOSTABLE === 'true';
 
-type LocalAuthMode = 'signin' | 'signup';
 type LocalAuthStatus = 'idle' | 'loading' | 'error';
 
 // Shared Clerk appearance config for both the SignIn and SignUp components.
@@ -175,10 +175,8 @@ function AuthLoading() {
   );
 }
 
-function SelfHostAuthPage() {
-  const [searchParams] = useSearchParams();
-  const initialMode = (searchParams.get('mode') as LocalAuthMode) || 'signin';
-  const [mode, setMode] = useState<LocalAuthMode>(initialMode);
+export function SelfHostAuthPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -189,6 +187,28 @@ function SelfHostAuthPage() {
   const navigate = useNavigate();
   const next = searchParams.get('next');
   const isLoading = status === 'loading';
+  const { data: authConfig, isPending: configPending } = useQuery({
+    queryKey: ['self-host-auth-config'],
+    queryFn: () => apiClient.get<{ registration_enabled: boolean }>('/auth/local/config'),
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    retry: false,
+  });
+  const registrationEnabled = authConfig?.registration_enabled === true;
+  const mode = searchParams.get('mode') === 'signup' && registrationEnabled ? 'signup' : 'signin';
+  const setMode = (value: 'signin' | 'signup') => {
+    const params = new URLSearchParams(searchParams);
+    params.set('mode', value);
+    setSearchParams(params);
+  };
+
+  useEffect(() => {
+    if (authConfig?.registration_enabled === false && searchParams.get('mode') === 'signup') {
+      const params = new URLSearchParams(searchParams);
+      params.set('mode', 'signin');
+      setSearchParams(params, { replace: true });
+    }
+  }, [authConfig, searchParams, setSearchParams]);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -212,6 +232,8 @@ function SelfHostAuthPage() {
       setStatus('idle');
     }
   };
+
+  if (configPending) return <AuthLoading />;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -282,25 +304,27 @@ function SelfHostAuthPage() {
           </Button>
         </form>
 
-        <div className="text-center">
-          {mode === 'signin' ? (
-            <button
-              type="button"
-              onClick={() => setMode('signup')}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Need an account? <span className="text-primary">Sign up</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setMode('signin')}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Already have an account? <span className="text-primary">Sign in</span>
-            </button>
-          )}
-        </div>
+        {registrationEnabled && (
+          <div className="text-center">
+            {mode === 'signin' ? (
+              <button
+                type="button"
+                onClick={() => setMode('signup')}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Need an account? <span className="text-primary">Sign up</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setMode('signin')}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Already have an account? <span className="text-primary">Sign in</span>
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

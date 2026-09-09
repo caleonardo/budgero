@@ -33,6 +33,7 @@ func SetupRoutes(e *echo.Echo, h *handler.Handlers, services *application.Servic
 	api.GET("/exchange-rates", h.GetExchangeRates)
 
 	if opts.SelfHost {
+		api.GET("/auth/local/config", h.SelfHostAuthConfig)
 		api.POST("/auth/local/login", h.SelfHostLogin)
 		api.POST("/auth/local/register", h.SelfHostRegister)
 	}

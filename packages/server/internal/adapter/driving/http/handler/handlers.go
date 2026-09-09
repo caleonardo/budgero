@@ -25,8 +25,9 @@ import (
 
 // Options configures the handlers.
 type Options struct {
-	SelfHost bool
-	Config   *config.Config
+	SelfHost             bool
+	RegistrationDisabled func() (bool, error)
+	Config               *config.Config
 	// Email is the transactional email service. Optional — nil when email is
 	// disabled (self-host, missing RESEND_API_KEY). When present, it's wired
 	// into ClerkSync so the welcome email fires on user creation.
@@ -39,6 +40,7 @@ type Options struct {
 
 // Handlers contains HTTP request handlers for the API.
 type Handlers struct {
+	registrationDisabled func() (bool, error)
 	cfg                  *config.Config
 	services             *application.Services
 	usecases             *application.Usecases
@@ -89,6 +91,7 @@ func NewHandlers(services *application.Services, syncHub *synchub.Hub, opts Opti
 		legacyVariantIDs:     legacyVariants,
 		subscriptionsEnabled: !opts.SelfHost,
 		selfHostMode:         opts.SelfHost,
+		registrationDisabled: opts.RegistrationDisabled,
 		latestVersion:        opts.LatestVersion,
 		email:                opts.Email,
 	}
