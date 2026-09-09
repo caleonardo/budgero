@@ -11,9 +11,10 @@ export type ReportKey =
   | 'scenario'
   | 'ledger';
 
-export type PeriodKey = '3m' | '6m' | '12m' | '24m' | 'ytd' | 'all' | 'custom';
+export type PeriodKey = 'mtd' | '3m' | '6m' | '12m' | '24m' | 'ytd' | 'all' | 'custom';
 
 export const PERIOD_LABELS: Record<PeriodKey, string> = {
+  mtd: 'Month to date',
   '3m': 'Last 3 months',
   '6m': 'Last 6 months',
   '12m': 'Last 12 months',
@@ -60,6 +61,10 @@ export function resolvePeriod(selections: AnalyticsSelections, todayISO: string)
   let startDate: string;
   let endDate = lastDayOfMonth(currentMonth);
   switch (selections.period) {
+    case 'mtd':
+      startDate = `${currentMonth}-01`;
+      endDate = todayISO;
+      break;
     case '3m':
     case '6m':
     case '12m':
