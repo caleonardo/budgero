@@ -16,10 +16,30 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.11.8',
+    date: 'September 10, 2026',
+    summary: 'Adds a Month to date report shortcut and self-host registration controls.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Month to date reports',
+        description:
+          'Select Month to date directly in the pre-built reports’ date dropdown to report from the first of the current month through today.',
+      },
+      {
+        type: 'new',
+        title: 'Control self-host sign-ups',
+        description:
+          'Enable or disable public registration from the admin dashboard or CLI without restarting. When disabled, Sign up is hidden and sign-up links redirect to sign-in. Existing users can still sign in, and admins can create accounts.',
+      },
+    ],
+  },
+  {
     version: 'v1.11.7',
     date: 'September 8, 2026',
     summary: 'Fixes monthly credit-card calculations, YNAB imports, and dashboard spending totals.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'fixed',
