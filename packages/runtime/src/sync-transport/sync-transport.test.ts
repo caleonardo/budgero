@@ -100,6 +100,436 @@ describe('SyncTransport', () => {
     };
   }
 
+  function deferred<T>() {
+    let resolve!: (value: T) => void;
+    let reject!: (reason: unknown) => void;
+    const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+      resolve = resolvePromise;
+      reject = rejectPromise;
+    });
+    return { promise, resolve, reject };
+  }
+
+  it.each(['live', 'catch-up'])(
+    'stops pending %s decryption effects after destroy',
+    async (kind) => {
+      const decrypted = deferred<{ op: string; args: Record<string, unknown> }>();
+      const decryptPayload = vi.fn(() => decrypted.promise);
+      const persistLocalDatabase = vi.fn(async () => true);
+      const { transport, onRemoteMutation } = createTransport({
+        decryptPayload,
+        persistLocalDatabase,
+      });
+      await transport.connect();
+      const ws = FakeWebSocket.instances[0]!;
+      ws.emitOpen();
+      if (kind === 'live') {
+        ws.emitMessage({ type: 'catch_up_response', mutations: [], hasMore: false });
+        ws.emitMessage({
+          type: 'mutation_applied',
+          mutationId: 'pending',
+          version: 1,
+          payload: { encryptedPayload: 'cipher' },
+        });
+      } else {
+        ws.emitMessage({
+          type: 'catch_up_response',
+          hasMore: false,
+          mutations: [{ id: 'pending', version: 1, encryptedPayload: 'cipher' }],
+        });
+      }
+      expect(decryptPayload).toHaveBeenCalledTimes(1);
+
+      transport.destroy();
+      decrypted.resolve({ op: 'remote.op', args: { a: 1 } });
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(onRemoteMutation).not.toHaveBeenCalled();
+      expect(persistLocalDatabase).not.toHaveBeenCalled();
+      expect(transport.getLocalVersion()).toBe(0);
+      expect(localStorageMock.getItem(`${MUTATION_CURSOR_STORAGE_PREFIX}space_1`)).toBe(null);
+    }
+  );
+
+  it('does not overwrite a newer session cursor when a save completes after destroy', async () => {
+    const persisted = deferred<boolean>();
+    const persistLocalDatabase = vi.fn(() => persisted.promise);
+    const { transport } = createTransport({ persistLocalDatabase });
+    await transport.connect();
+    const ws = FakeWebSocket.instances[0]!;
+    ws.emitOpen();
+    ws.emitMessage({ type: 'mutation_ack', version: 1 });
+    expect(persistLocalDatabase).toHaveBeenCalledTimes(1);
+
+    transport.destroy();
+    localStorageMock.setItem(`${MUTATION_CURSOR_STORAGE_PREFIX}space_1`, '7');
+    persisted.resolve(true);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(localStorageMock.getItem(`${MUTATION_CURSOR_STORAGE_PREFIX}space_1`)).toBe('7');
+  });
+
+  it.each(['live', 'catch-up', 'ack'])(
+    'stops after a pending %s callback settles following destroy',
+    async (kind) => {
+      const applied = deferred<void>();
+      const onRemoteMutation = vi.fn(() => applied.promise);
+      const onMutationAck = vi.fn(() => applied.promise);
+      const persistLocalDatabase = vi.fn(async () => true);
+      const { transport, onCatchUpUnsafe } = createTransport({
+        onRemoteMutation,
+        onMutationAck,
+        persistLocalDatabase,
+      });
+      await transport.connect();
+      const ws = FakeWebSocket.instances[0]!;
+      ws.emitOpen();
+      if (kind === 'live') {
+        ws.emitMessage({ type: 'catch_up_response', mutations: [], hasMore: false });
+        // Also cover the no-version persistence path.
+        ws.emitMessage({
+          type: 'mutation_applied',
+          mutationId: 'pending',
+          payload: { op: 'x', args: {} },
+        });
+      } else if (kind === 'catch-up') {
+        ws.emitMessage({
+          type: 'catch_up_response',
+          hasMore: false,
+          mutations: [
+            { id: 'pending', version: 1, op: 'x', args: {} },
+            { id: 'next', version: 2, op: 'x', args: {} },
+          ],
+        });
+      } else {
+        transport.setBufferMode(true);
+        ws.emitMessage({ type: 'mutation_ack', mutationId: 'pending', version: 1 });
+        ws.emitMessage({ type: 'mutation_ack', mutationId: 'next', version: 2 });
+        void transport.flushBuffer();
+      }
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      const callback = kind === 'ack' ? onMutationAck : onRemoteMutation;
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      transport.destroy();
+      applied.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(persistLocalDatabase).not.toHaveBeenCalled();
+      expect(onCatchUpUnsafe).not.toHaveBeenCalled();
+      expect(transport.getLocalVersion()).toBe(0);
+      expect(localStorageMock.getItem(`${MUTATION_CURSOR_STORAGE_PREFIX}space_1`)).toBe(null);
+      if (kind === 'catch-up') expect(transport.hasInitialCatchUpSettled()).toBe(false);
+    }
+  );
+
+  it.each(['live', 'catch-up'])(
+    'ignores a newer format discovered by pending %s decryption after destroy',
+    async (kind) => {
+      const decrypted = deferred<{ v: number; op: string; args: Record<string, unknown> }>();
+      const onFormatTooNew = vi.fn();
+      const { transport, onRemoteMutation, onCatchUpUnsafe } = createTransport({
+        decryptPayload: () => decrypted.promise,
+        onFormatTooNew,
+      });
+      await transport.connect();
+      const ws = FakeWebSocket.instances[0]!;
+      ws.emitOpen();
+      if (kind === 'live') {
+        ws.emitMessage({ type: 'catch_up_response', mutations: [], hasMore: false });
+        ws.emitMessage({
+          type: 'mutation_applied',
+          mutationId: 'pending',
+          version: 1,
+          payload: { encryptedPayload: 'cipher' },
+        });
+      } else {
+        ws.emitMessage({
+          type: 'catch_up_response',
+          hasMore: false,
+          mutations: [{ id: 'pending', version: 1, encryptedPayload: 'cipher' }],
+        });
+      }
+
+      transport.destroy();
+      decrypted.resolve({ v: 999, op: 'remote.op', args: {} });
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(onFormatTooNew).not.toHaveBeenCalled();
+      expect(onRemoteMutation).not.toHaveBeenCalled();
+      expect(onCatchUpUnsafe).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each(['success', 'failure'])(
+    'ignores pending snapshot recovery %s after destroy',
+    async (result) => {
+      const recovered = deferred<{ mutationVersion: number; blobVersion: number }>();
+      const onCatchUpUnsafe = vi.fn(() => recovered.promise);
+      const onSyncStateChanged = vi.fn();
+      const onSyncStatus = vi.fn();
+      const { transport } = createTransport({ onCatchUpUnsafe, onSyncStateChanged });
+      transport.addSyncStatusListener(onSyncStatus);
+      await transport.connect();
+      const ws = FakeWebSocket.instances[0]!;
+      ws.emitOpen();
+      ws.emitMessage({
+        type: 'catch_up_response',
+        hasMore: false,
+        mutations: [{ id: 'gap', version: 3, op: 'x', args: {} }],
+      });
+      expect(onCatchUpUnsafe).toHaveBeenCalledTimes(1);
+
+      transport.destroy();
+      onSyncStatus.mockClear();
+      localStorageMock.setItem(`${MUTATION_CURSOR_STORAGE_PREFIX}space_1`, '7');
+      if (result === 'success') recovered.resolve({ mutationVersion: 1, blobVersion: 1 });
+      else recovered.reject(new SnapshotUnavailableError());
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(onSyncStateChanged).not.toHaveBeenCalled();
+      expect(onSyncStatus).not.toHaveBeenCalled();
+      expect(transport.getLocalVersion()).toBe(0);
+      expect(localStorageMock.getItem(`${MUTATION_CURSOR_STORAGE_PREFIX}space_1`)).toBe('7');
+      expect(FakeWebSocket.instances).toHaveLength(1);
+    }
+  );
+
+  it('finishes an accepted mutation across a temporary suspend and reconnect', async () => {
+    const decrypted = deferred<{ op: string; args: Record<string, unknown> }>();
+    const persistLocalDatabase = vi.fn(async () => true);
+    const { transport, onRemoteMutation } = createTransport({
+      decryptPayload: () => decrypted.promise,
+      persistLocalDatabase,
+    });
+    await transport.connect();
+    const ws = FakeWebSocket.instances[0]!;
+    ws.emitOpen();
+    ws.emitMessage({ type: 'catch_up_response', mutations: [], hasMore: false });
+    ws.emitMessage({
+      type: 'mutation_applied',
+      mutationId: 'pending',
+      version: 1,
+      payload: { encryptedPayload: 'cipher' },
+    });
+
+    transport.suspend();
+    await transport.connect();
+    FakeWebSocket.instances[1]!.emitOpen();
+    decrypted.resolve({ op: 'remote.op', args: {} });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(onRemoteMutation).toHaveBeenCalledWith('remote.op', {}, 'pending');
+    expect(persistLocalDatabase).toHaveBeenCalledTimes(1);
+    expect(localStorageMock.getItem(`${MUTATION_CURSOR_STORAGE_PREFIX}space_1`)).toBe('1');
+    expect(transport.isConnected()).toBe(true);
+    transport.destroy();
+  });
+
+  it('does not reconnect after destroy when socket close is delivered asynchronously', async () => {
+    vi.useFakeTimers();
+    const getToken = vi.fn(async () => 'token');
+    const { transport } = createTransport({ getToken, getReconnectDelayMs: () => 10 });
+    await transport.connect();
+    const ws = FakeWebSocket.instances[0]!;
+    ws.emitOpen();
+    ws.close = () => {
+      setTimeout(() => ws.emitClose(), 0);
+    };
+
+    transport.destroy();
+    await vi.runAllTimersAsync();
+
+    expect(FakeWebSocket.instances).toHaveLength(1);
+    expect(getToken).toHaveBeenCalledTimes(1);
+    expect(transport.isConnected()).toBe(false);
+  });
+
+  it('does not create a socket when destroyed while obtaining its token', async () => {
+    let resolveToken!: (token: string) => void;
+    const getToken = vi.fn(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveToken = resolve;
+        })
+    );
+    const getWebSocketUrl = vi.fn(() => 'ws://example/ws');
+    const { transport } = createTransport({ getToken, getWebSocketUrl });
+
+    const connecting = transport.connect();
+    transport.destroy();
+    resolveToken('token');
+    await connecting;
+
+    expect(FakeWebSocket.instances).toHaveLength(0);
+    expect(getWebSocketUrl).not.toHaveBeenCalled();
+    expect(getToken).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps destroy terminal for explicit connect and retained network callbacks', async () => {
+    vi.useFakeTimers();
+    const getToken = vi.fn(async () => 'token');
+    const unsubscribe = vi.fn();
+    let network!: { online(): void; offline(): void };
+    const { transport, onConnectionChange } = createTransport({
+      getToken,
+      subscribeNetworkStatus: (listeners) => {
+        network = listeners;
+        return unsubscribe;
+      },
+      getReconnectDelayMs: () => 0,
+    });
+
+    transport.destroy();
+    onConnectionChange.mockClear();
+    network.online();
+    network.offline();
+    await transport.connect();
+    await vi.runAllTimersAsync();
+    transport.destroy();
+
+    expect(getToken).not.toHaveBeenCalled();
+    expect(FakeWebSocket.instances).toHaveLength(0);
+    expect(onConnectionChange).not.toHaveBeenCalled();
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores socket callbacks already retained when the transport is destroyed', async () => {
+    vi.useFakeTimers();
+    const onMutationAck = vi.fn();
+    const { transport, onConnectionChange } = createTransport({ onMutationAck });
+    await transport.connect();
+    const ws = FakeWebSocket.instances[0]!;
+    const onOpen = ws.onopen!;
+    const onClose = ws.onclose!;
+    const onMessage = ws.onmessage!;
+
+    transport.destroy();
+    onConnectionChange.mockClear();
+    onOpen();
+    onMessage({ data: JSON.stringify({ type: 'mutation_ack', mutationId: 'old', version: 1 }) });
+    onClose();
+    await vi.runAllTimersAsync();
+
+    expect(onConnectionChange).not.toHaveBeenCalled();
+    expect(onMutationAck).not.toHaveBeenCalled();
+    expect(transport.getLocalVersion()).toBe(0);
+    expect(ws.sent).toHaveLength(0);
+    expect(FakeWebSocket.instances).toHaveLength(1);
+  });
+
+  it('suspends automatic reconnect until an explicit connect resumes the transport', async () => {
+    vi.useFakeTimers();
+    let network!: { online(): void; offline(): void };
+    const { transport } = createTransport({
+      subscribeNetworkStatus: (listeners) => {
+        network = listeners;
+        return () => undefined;
+      },
+      getReconnectDelayMs: () => 0,
+    });
+    await transport.connect();
+    const ws = FakeWebSocket.instances[0]!;
+    ws.emitOpen();
+    ws.close = () => {
+      setTimeout(() => ws.emitClose(), 0);
+    };
+
+    transport.suspend();
+    expect([ws.onopen, ws.onclose, ws.onerror, ws.onmessage]).toEqual([null, null, null, null]);
+    network.online();
+    await vi.runAllTimersAsync();
+    expect(FakeWebSocket.instances).toHaveLength(1);
+    expect(transport.isConnected()).toBe(false);
+
+    await transport.connect();
+    FakeWebSocket.instances[1]!.emitOpen();
+    expect(transport.isConnected()).toBe(true);
+    transport.destroy();
+  });
+
+  it('does not revive a suspended connection attempt when its token resolves after resuming', async () => {
+    let resolveToken!: (token: string) => void;
+    const getToken = vi.fn(async () => 'new-token');
+    getToken.mockImplementationOnce(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveToken = resolve;
+        })
+    );
+    const getWebSocketUrl = vi.fn(
+      (_spaceId: string, token: string | null) => `ws://example/${token}`
+    );
+    const { transport } = createTransport({ getToken, getWebSocketUrl });
+
+    const firstConnection = transport.connect();
+    transport.suspend();
+    await transport.connect();
+    const ws = FakeWebSocket.instances[0]!;
+    ws.emitOpen();
+    resolveToken('old-token');
+    await firstConnection;
+
+    expect(FakeWebSocket.instances).toHaveLength(1);
+    expect(ws.url).toBe('ws://example/new-token');
+    expect(getWebSocketUrl).toHaveBeenCalledTimes(1);
+    expect(transport.isConnected()).toBe(true);
+    transport.destroy();
+  });
+
+  it('ignores stale socket callbacks after a replacement connection has opened', async () => {
+    vi.useFakeTimers();
+    const onMutationAck = vi.fn();
+    const { transport, onConnectionChange } = createTransport({ onMutationAck });
+    await transport.connect();
+    const oldWs = FakeWebSocket.instances[0]!;
+    oldWs.emitOpen();
+    const onOpen = oldWs.onopen!;
+    const onClose = oldWs.onclose!;
+    const onMessage = oldWs.onmessage!;
+    // The socket is closed, but its queued close event has not been dispatched yet.
+    oldWs.readyState = FakeWebSocket.CLOSED;
+    await transport.connect();
+    const replacement = FakeWebSocket.instances[1]!;
+    replacement.emitOpen();
+    onConnectionChange.mockClear();
+    const originalSentCount = oldWs.sent.length;
+
+    onOpen();
+    onMessage({ data: JSON.stringify({ type: 'mutation_ack', mutationId: 'old', version: 1 }) });
+    onClose();
+    await vi.runAllTimersAsync();
+
+    expect(transport.isConnected()).toBe(true);
+    expect(transport.isCatchUpInProgress()).toBe(true);
+    expect(transport.getLocalVersion()).toBe(0);
+    expect(onConnectionChange).not.toHaveBeenCalled();
+    expect(onMutationAck).not.toHaveBeenCalled();
+    expect(oldWs.sent).toHaveLength(originalSentCount);
+    expect(FakeWebSocket.instances).toHaveLength(2);
+    transport.destroy();
+  });
+
+  it('reconnects normally after an unexpected socket close', async () => {
+    vi.useFakeTimers();
+    const { transport, onConnectionChange } = createTransport({ getReconnectDelayMs: () => 10 });
+    await transport.connect();
+    const ws = FakeWebSocket.instances[0]!;
+    ws.emitOpen();
+
+    setTimeout(() => ws.emitClose(), 0);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(transport.isConnected()).toBe(false);
+    expect(onConnectionChange).toHaveBeenLastCalledWith(false);
+    await vi.advanceTimersByTimeAsync(10);
+    expect(FakeWebSocket.instances).toHaveLength(2);
+    FakeWebSocket.instances[1]!.emitOpen();
+    expect(transport.isConnected()).toBe(true);
+    expect(onConnectionChange).toHaveBeenLastCalledWith(true);
+    transport.destroy();
+  });
+
   it('connects and sends encrypted mutations', async () => {
     const { transport } = createTransport();
 

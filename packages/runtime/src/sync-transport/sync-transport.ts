@@ -55,6 +55,13 @@ export class SyncTransport {
 
   private ws: WebSocket | null = null;
 
+  private destroyed = false;
+
+  private suspended = false;
+
+  /** Invalidates connection attempts that are still waiting for a token. */
+  private connectionGeneration = 0;
+
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
   private reconnectAttempts = 0;
@@ -123,6 +130,7 @@ export class SyncTransport {
     this.localVersion = readStoredVersion(this.cursorStorageKey, 0);
 
     const handleOffline = () => {
+      if (this.destroyed || this.suspended) return;
       try {
         this.ws?.close();
       } catch {
@@ -231,7 +239,7 @@ export class SyncTransport {
   // ---- Connection ----
 
   async connect(): Promise<void> {
-    if (this.syncDisabled) return;
+    if (this.destroyed || this.syncDisabled) return;
     if (
       this.ws &&
       (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)
@@ -239,15 +247,36 @@ export class SyncTransport {
       return;
     }
 
+    this.suspended = false;
+    const generation = ++this.connectionGeneration;
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
     const token = await this.deps.getToken();
+    if (
+      this.destroyed ||
+      this.suspended ||
+      this.syncDisabled ||
+      generation !== this.connectionGeneration
+    ) {
+      return;
+    }
     const url =
       this.deps.getWebSocketUrl?.(this.spaceId, token) ?? this.createDefaultWebSocketUrl(token);
 
     try {
       const ws = new WebSocket(url);
       this.ws = ws;
+      const isCurrentConnection = () =>
+        !this.destroyed &&
+        !this.suspended &&
+        !this.syncDisabled &&
+        generation === this.connectionGeneration &&
+        this.ws === ws;
 
       ws.onopen = () => {
+        if (!isCurrentConnection()) return;
         this.reconnectAttempts = 0;
         this.notifyConnection(true);
         this.catchUpPages = 0;
@@ -255,6 +284,8 @@ export class SyncTransport {
         this.requestCatchUpIfNeeded(ws, this.localVersion);
       };
       ws.onclose = () => {
+        if (!isCurrentConnection()) return;
+        this.ws = null;
         this.catchUpInProgress = false;
         this.catchUpRequestedSince = null;
         this.catchUpMutationBuffer = [];
@@ -265,6 +296,7 @@ export class SyncTransport {
         /* onclose will handle reconnect */
       };
       ws.onmessage = (ev) => {
+        if (!isCurrentConnection()) return;
         this.handleRawMessage(ev.data).catch(() => {
           /* message handling errors logged internally */
         });
@@ -312,6 +344,7 @@ export class SyncTransport {
         op: payload.op,
         args: payload.args,
       });
+      if (this.destroyed) return false;
       const message = {
         type: 'mutation',
         id: payload.id,
@@ -325,6 +358,7 @@ export class SyncTransport {
       this.ws.send(JSON.stringify(message));
       return true;
     } catch (e) {
+      if (this.destroyed) return false;
       this.log('error', 'Failed to send mutation', {
         error: errorMessage(e),
         spaceId: this.spaceId,
@@ -428,6 +462,8 @@ export class SyncTransport {
   // ---- Lifecycle ----
 
   suspend(): void {
+    this.suspended = true;
+    this.connectionGeneration++;
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
@@ -437,16 +473,25 @@ export class SyncTransport {
     this.catchUpRequestedSince = null;
     this.catchUpPages = 0;
     this.catchUpMutationBuffer = [];
+    const { ws } = this;
+    this.ws = null;
+    if (ws) {
+      ws.onopen = null;
+      ws.onclose = null;
+      ws.onerror = null;
+      ws.onmessage = null;
+    }
     try {
-      this.ws?.close();
+      ws?.close();
     } catch {
       /* no-op */
     }
-    this.ws = null;
     this.notifyConnection(false);
   }
 
   destroy(): void {
+    if (this.destroyed) return;
+    this.destroyed = true;
     this.suspend();
     this.messageBuffer = [];
     this.catchUpMutationBuffer = [];
@@ -483,7 +528,7 @@ export class SyncTransport {
   // ---- Internals ----
 
   private scheduleReconnect(): void {
-    if (this.syncDisabled) return;
+    if (this.destroyed || this.suspended || this.syncDisabled) return;
     if (this.reconnectTimer) return;
     this.reconnectAttempts++;
     const defaultDelay = Math.min(1000 * 2 ** (this.reconnectAttempts - 1), 10000);
@@ -552,6 +597,7 @@ export class SyncTransport {
   }
 
   private async processMessage(msg: WsMessage): Promise<void> {
+    if (this.destroyed) return;
     if (msg.type === 'mutation_ack') {
       // The server's WritePump serializes the acked mutation ID as
       // `mutationId` (its internal hub Message carries it in `hash` — accept
@@ -563,12 +609,14 @@ export class SyncTransport {
         try {
           await this.deps.onMutationAck?.(ackedId, msg.version ?? 0);
         } catch (error) {
+          if (this.destroyed) return;
           this.log('warn', 'onMutationAck handler failed', {
             mutationId: ackedId,
             error: errorMessage(error),
           });
         }
       }
+      if (this.destroyed) return;
       if (typeof msg.version === 'number' && Number.isFinite(msg.version)) {
         if (msg.version > this.localVersion + 1) {
           // Our mutation landed at a version beyond the next contiguous one:
@@ -705,6 +753,7 @@ export class SyncTransport {
 
     try {
       const { op, args } = await this.decodeMutationPayload(payload);
+      if (this.destroyed) return;
 
       this.log('debug', 'Applying remote mutation', {
         op,
@@ -713,12 +762,14 @@ export class SyncTransport {
       });
 
       await this.deps.onRemoteMutation(op, args, id);
+      if (this.destroyed) return;
       if (typeof msg.version === 'number' && Number.isFinite(msg.version)) {
         await this.updateLocalVersion(msg.version);
       } else {
         await this.persistLocalMutationOnly('mutation_applied_no_version');
       }
     } catch (error) {
+      if (this.destroyed) return;
       if (error instanceof FormatTooNewError) {
         this.log('error', 'Remote mutation uses a newer data format — update required', {
           mutationId: id,
@@ -809,6 +860,7 @@ export class SyncTransport {
     let lastVersion: number | null = null;
 
     for (const m of mutations) {
+      if (this.destroyed) return;
       const { id } = m;
       if (typeof m.version !== 'number' || !Number.isFinite(m.version) || m.version <= 0) {
         await this.handleCatchUpUnsafe('invalid_mutation_version');
@@ -824,11 +876,14 @@ export class SyncTransport {
 
       try {
         const { op, args } = await this.decodeMutationPayload(m);
+        if (this.destroyed) return;
 
         await this.deps.onRemoteMutation(op, args, id || '');
+        if (this.destroyed) return;
         this.catchUpApplyFailures.delete(this.catchUpFailureKey(m));
         await this.updateLocalVersion(m.version);
       } catch (error) {
+        if (this.destroyed) return;
         if (error instanceof FormatTooNewError) {
           // A snapshot fallback cannot fix a format we don't understand —
           // stop syncing this space and prompt for an app update instead.
@@ -862,6 +917,7 @@ export class SyncTransport {
       }
     }
 
+    if (this.destroyed) return;
     this.catchUpPages += 1;
     const hasMoreMeta = typeof msg.hasMore === 'boolean' ? msg.hasMore : undefined;
     const latestVersionMeta =
@@ -960,10 +1016,12 @@ export class SyncTransport {
       spaceId: this.spaceId,
     });
     await this.updateLocalVersion(version);
+    if (this.destroyed) return;
     this.updateSyncStatus({ isSyncing: false, syncError: message });
   }
 
   private requestCatchUpIfNeeded(ws: WebSocket | null, sinceVersion = this.localVersion): void {
+    if (this.destroyed) return;
     if (!ws) return;
     if (sinceVersion < 0) return;
     if (ws.readyState !== WebSocket.OPEN) return;
@@ -1031,7 +1089,7 @@ export class SyncTransport {
   }
 
   private async handleCatchUpUnsafe(reason: string): Promise<void> {
-    if (this.catchUpRecoveryInProgress) return;
+    if (this.destroyed || this.catchUpRecoveryInProgress) return;
     this.catchUpRecoveryInProgress = true;
 
     const sinceVersion = this.catchUpRequestedSince ?? this.localVersion;
@@ -1054,6 +1112,7 @@ export class SyncTransport {
         localVersion: this.localVersion,
         spaceId: this.spaceId,
       });
+      if (this.destroyed) return;
       if (
         recovery &&
         typeof recovery.mutationVersion === 'number' &&
@@ -1075,6 +1134,7 @@ export class SyncTransport {
         }
       }
     } catch (error) {
+      if (this.destroyed) return;
       if (error instanceof SnapshotUnavailableError) {
         // Nothing left to restore from: the mutation log can't be replayed and
         // the server has no snapshot/blob. Retrying would loop through the
@@ -1097,6 +1157,7 @@ export class SyncTransport {
       this.catchUpRecoveryInProgress = false;
     }
 
+    if (this.destroyed) return;
     if (this.syncDisabled) {
       try {
         this.ws?.close();
@@ -1121,7 +1182,7 @@ export class SyncTransport {
   }
 
   private markInitialCatchUpSettled(): void {
-    if (this.initialCatchUpSettled) return;
+    if (this.destroyed || this.initialCatchUpSettled) return;
     this.initialCatchUpSettled = true;
     this.resolveInitialCatchUpWaiters({ completed: true, timedOut: false });
   }
@@ -1140,11 +1201,13 @@ export class SyncTransport {
   }
 
   private async updateLocalVersion(version: number): Promise<void> {
+    if (this.destroyed) return;
     if (!Number.isFinite(version)) return;
     if (version <= this.localVersion) return;
     this.localVersion = version;
 
     const persisted = await this.persistCursorAfterLocalSave(version);
+    if (this.destroyed) return;
     if (!persisted) {
       this.log('warn', 'Mutation cursor advance skipped due to local persistence failure', {
         version,
@@ -1154,6 +1217,7 @@ export class SyncTransport {
   }
 
   private replaceLocalVersion(version: number): void {
+    if (this.destroyed) return;
     if (!Number.isFinite(version) || version < 0) return;
     if (version === this.localVersion) return;
     this.localVersion = version;
@@ -1165,16 +1229,18 @@ export class SyncTransport {
   }
 
   private async persistCursorAfterLocalSave(version: number): Promise<boolean> {
+    if (this.destroyed) return false;
     try {
       if (this.deps.persistLocalDatabase) {
         const persisted = await this.deps.persistLocalDatabase();
-        if (!persisted) {
+        if (this.destroyed || !persisted) {
           return false;
         }
       }
       writeStoredVersion(this.cursorStorageKey, version);
       return true;
     } catch (error) {
+      if (this.destroyed) return false;
       this.log('warn', 'Failed to persist mutation cursor after local save', {
         version,
         spaceId: this.spaceId,
@@ -1185,9 +1251,11 @@ export class SyncTransport {
   }
 
   private async persistLocalMutationOnly(reason: string): Promise<boolean> {
+    if (this.destroyed) return false;
     try {
       if (!this.deps.persistLocalDatabase) return true;
       const persisted = await this.deps.persistLocalDatabase();
+      if (this.destroyed) return false;
       if (!persisted) {
         this.log('warn', 'Failed to persist local database for applied mutation', {
           reason,
@@ -1197,6 +1265,7 @@ export class SyncTransport {
       }
       return persisted;
     } catch (error) {
+      if (this.destroyed) return false;
       this.log('warn', 'Error persisting local database for applied mutation', {
         reason,
         version: this.localVersion,
