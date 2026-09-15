@@ -12,6 +12,11 @@ export type ChangelogEntry = {
   summary: string;
   isLatest?: boolean;
   items: ChangelogItem[];
+  acknowledgements?: {
+    githubUsername: string;
+    pullRequest: number;
+    contribution: string;
+  }[];
 };
 
 export const changelogEntries: ChangelogEntry[] = [
@@ -69,6 +74,13 @@ export const changelogEntries: ChangelogEntry[] = [
         title: 'Sync session cleanup',
         description:
           'Closed sync sessions no longer reconnect or start further updates after shutdown. Delayed saves cannot overwrite a newer session’s sync position.',
+      },
+    ],
+    acknowledgements: [
+      {
+        githubUsername: 'Dmitiry1921',
+        pullRequest: 6,
+        contribution: 'the recurring transaction currency fixes',
       },
     ],
   },

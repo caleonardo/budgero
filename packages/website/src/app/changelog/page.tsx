@@ -162,6 +162,28 @@ export default function ChangelogPage() {
                         );
                       })}
                     </ul>
+                    {entry.acknowledgements?.map((acknowledgement) => (
+                      <p
+                        key={`${acknowledgement.githubUsername}-${acknowledgement.pullRequest}`}
+                        className="mt-5 border-t border-border/60 pt-5 text-sm leading-relaxed text-muted-foreground"
+                      >
+                        Thank you to{' '}
+                        <a
+                          href={`https://github.com/${acknowledgement.githubUsername}`}
+                          className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                        >
+                          @{acknowledgement.githubUsername}
+                        </a>{' '}
+                        for contributing {acknowledgement.contribution} in{' '}
+                        <a
+                          href={`https://github.com/tombadilo-bombadilo/budgero/pull/${acknowledgement.pullRequest}`}
+                          className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                        >
+                          PR #{acknowledgement.pullRequest}
+                        </a>
+                        .
+                      </p>
+                    ))}
                   </CardContent>
                 </Card>
               </article>
