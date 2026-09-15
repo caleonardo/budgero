@@ -1,9 +1,9 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useTransition } from 'react';
-import { usePathname, useRouter } from '@/i18n/navigation';
-import { localeFlags, localeNames, routing, type Locale } from '@/i18n/routing';
+import { useState } from 'react';
+import { usePathname } from '@/i18n/navigation';
+import { localeFlags, localeNames, routing } from '@/i18n/routing';
 import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -15,14 +15,15 @@ import {
 function useLocaleNavigation() {
   const locale = useLocale();
   const pathname = usePathname();
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
   const changeLocale = (next: string) => {
-    startTransition(() =>
-      router.replace(`${pathname}${window.location.search}${window.location.hash}`, {
-        locale: next as Locale,
-      })
-    );
+    if (!routing.locales.some((value) => value === next) || next === locale) return;
+    setPending(true);
+    // A document navigation preserves fragments through locale redirects.
+    // Prefix English explicitly so middleware updates the locale cookie before
+    // redirecting to its canonical, unprefixed URL.
+    const path = pathname === '/' ? '' : pathname;
+    window.location.replace(`/${next}${path}${window.location.search}${window.location.hash}`);
   };
   return { locale, pending, changeLocale };
 }
