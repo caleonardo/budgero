@@ -1,7 +1,12 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { getRow, allRows, run } from '../../database/sql.js';
 import { asMilli, ZERO_MILLI } from '../../money/index.js';
-import { convertScaled } from '../../currencies/index.js';
+import {
+  convertScaled,
+  FIAT_SCALE,
+  CRYPTO_SCALE,
+  listCryptoCurrencies,
+} from '../../currencies/index.js';
 import { ValidationError, NotFoundError } from '../../types/index.js';
 import { safeParseJSON } from '../../utils/json.js';
 import { getLocalDateString, getUTCDateString } from '../../utils/date.js';
@@ -33,6 +38,8 @@ interface RecurringTransactionRow {
   ToAccountID?: number | bigint | null;
   /** Computed by occurrence queries only, not a real column. */
   DestinationAmount?: number | bigint | null;
+  /** Computed by occurrence queries only, not a real column. */
+  BudgetAmount?: number | bigint | null;
   CategoryID: number | bigint | null;
   Name: string;
   Memo: string | null;
@@ -72,6 +79,7 @@ interface OccurrenceWithTemplateRow {
   TemplateAccountID?: number | bigint;
   TemplateToAccountID?: number | bigint | null;
   TemplateDestinationAmount?: number | bigint | null;
+  TemplateBudgetAmount?: number | bigint | null;
   TemplateCategoryID?: number | bigint | null;
   TemplateName?: string;
   TemplateMemo?: string | null;
@@ -100,36 +108,128 @@ const MAX_GENERATED_OCCURRENCES = 240;
 
 /**
  * Account-currency → budget-currency rate for a projected occurrence.
- * Falls back to the latest known rate (future months never have rates),
- * then to 1 when no rate exists or the currencies match.
+ * Custom date-range rates have priority, followed by the latest known official
+ * rate no later than today for future occurrences, then 1 when no rate exists.
  * Expects aliases: r = recurring_transactions, o = occurrences, a = accounts, b = budgets.
  * Shared with the projected-transactions relation in analytics — drift here
  * silently skews projections.
  */
 export const PROJECTION_RATE_SQL = `
-  CASE WHEN a.Currency = b.DisplayCurrency THEN 1 ELSE COALESCE((
-    SELECT cr.Rate FROM currency_rates cr
-    WHERE cr.BudgetID = o.BudgetID
-      AND cr.FromCurrency = a.Currency
-      AND cr.ToCurrency = b.DisplayCurrency
-    ORDER BY cr.RateDate DESC LIMIT 1
-  ), 1) END
+  CASE WHEN a.Currency = b.DisplayCurrency THEN 1 ELSE COALESCE(
+    (
+      SELECT ccr.Rate FROM custom_currency_rates ccr
+      WHERE ccr.BudgetID = o.BudgetID
+        AND ccr.FromCurrency = a.Currency
+        AND ccr.ToCurrency = b.DisplayCurrency
+        AND ccr.StartDate <= o.DueDate
+        AND (ccr.EndDate IS NULL OR ccr.EndDate >= o.DueDate)
+      ORDER BY ccr.StartDate DESC LIMIT 1
+    ),
+    (
+      SELECT 1.0 / ccr.Rate FROM custom_currency_rates ccr
+      WHERE ccr.BudgetID = o.BudgetID
+        AND ccr.FromCurrency = b.DisplayCurrency
+        AND ccr.ToCurrency = a.Currency
+        AND ccr.StartDate <= o.DueDate
+        AND (ccr.EndDate IS NULL OR ccr.EndDate >= o.DueDate)
+      ORDER BY ccr.StartDate DESC LIMIT 1
+    ),
+    (
+      SELECT cr.Rate FROM currency_rates cr
+      WHERE cr.BudgetID = o.BudgetID
+        AND cr.FromCurrency = a.Currency
+        AND cr.ToCurrency = b.DisplayCurrency
+        AND cr.RateDate <= CASE
+          WHEN o.DueDate > date('now', 'localtime') THEN date('now', 'localtime')
+          ELSE o.DueDate
+        END
+      ORDER BY cr.RateDate DESC LIMIT 1
+    ),
+    (
+      SELECT 1.0 / cr.Rate FROM currency_rates cr
+      WHERE cr.BudgetID = o.BudgetID
+        AND cr.FromCurrency = b.DisplayCurrency
+        AND cr.ToCurrency = a.Currency
+        AND cr.RateDate <= CASE
+          WHEN o.DueDate > date('now', 'localtime') THEN date('now', 'localtime')
+          ELSE o.DueDate
+        END
+      ORDER BY cr.RateDate DESC LIMIT 1
+    ),
+    1
+  ) END
 `;
 
 /**
  * Account-currency rate from a transfer's source account (alias a) to its
  * destination account (alias a2), for the destination leg's original amount.
- * Same fallback strategy as PROJECTION_RATE_SQL: latest known rate, else 1.
+ * Same priority strategy as PROJECTION_RATE_SQL: custom date-range rate,
+ * latest known official rate, then 1.
  */
 const TRANSFER_LEG_RATE_SQL = `
-  CASE WHEN a.Currency = a2.Currency THEN 1 ELSE COALESCE((
-    SELECT cr.Rate FROM currency_rates cr
-    WHERE cr.BudgetID = o.BudgetID
-      AND cr.FromCurrency = a.Currency
-      AND cr.ToCurrency = a2.Currency
-    ORDER BY cr.RateDate DESC LIMIT 1
-  ), 1) END
+  CASE WHEN a.Currency = a2.Currency THEN 1 ELSE COALESCE(
+    (
+      SELECT ccr.Rate FROM custom_currency_rates ccr
+      WHERE ccr.BudgetID = o.BudgetID
+        AND ccr.FromCurrency = a.Currency
+        AND ccr.ToCurrency = a2.Currency
+        AND ccr.StartDate <= o.DueDate
+        AND (ccr.EndDate IS NULL OR ccr.EndDate >= o.DueDate)
+      ORDER BY ccr.StartDate DESC LIMIT 1
+    ),
+    (
+      SELECT 1.0 / ccr.Rate FROM custom_currency_rates ccr
+      WHERE ccr.BudgetID = o.BudgetID
+        AND ccr.FromCurrency = a2.Currency
+        AND ccr.ToCurrency = a.Currency
+        AND ccr.StartDate <= o.DueDate
+        AND (ccr.EndDate IS NULL OR ccr.EndDate >= o.DueDate)
+      ORDER BY ccr.StartDate DESC LIMIT 1
+    ),
+    (
+      SELECT cr.Rate FROM currency_rates cr
+      WHERE cr.BudgetID = o.BudgetID
+        AND cr.FromCurrency = a.Currency
+        AND cr.ToCurrency = a2.Currency
+        AND cr.RateDate <= CASE
+          WHEN o.DueDate > date('now', 'localtime') THEN date('now', 'localtime')
+          ELSE o.DueDate
+        END
+      ORDER BY cr.RateDate DESC LIMIT 1
+    ),
+    (
+      SELECT 1.0 / cr.Rate FROM currency_rates cr
+      WHERE cr.BudgetID = o.BudgetID
+        AND cr.FromCurrency = a2.Currency
+        AND cr.ToCurrency = a.Currency
+        AND cr.RateDate <= CASE
+          WHEN o.DueDate > date('now', 'localtime') THEN date('now', 'localtime')
+          ELSE o.DueDate
+        END
+      ORDER BY cr.RateDate DESC LIMIT 1
+    ),
+    1
+  ) END
 `;
+
+// All identifiers below are fixed query aliases; the currency codes come
+// from the same registry used by convertScaled for posted transactions.
+const cryptoCodesSql = listCryptoCurrencies()
+  .map(({ code }) => `'${code}'`)
+  .join(', ');
+
+function currencyScaleSql(column: string): string {
+  return `(CASE WHEN UPPER(${column}) IN (${cryptoCodesSql}) THEN ${CRYPTO_SCALE} ELSE ${FIAT_SCALE} END)`;
+}
+
+function projectedAmountSql(rate: string, destinationCurrency: string): string {
+  return `CAST(ROUND(r.Amount * (${rate}) *
+    (1.0 * ${currencyScaleSql(destinationCurrency)} / ${currencyScaleSql('a.Currency')})) AS INTEGER)`;
+}
+
+/** Budget amounts shared by occurrence cards, transaction rows and analytics. */
+export const PROJECTION_AMOUNT_SQL = projectedAmountSql(PROJECTION_RATE_SQL, 'b.DisplayCurrency');
+const TRANSFER_LEG_AMOUNT_SQL = projectedAmountSql(TRANSFER_LEG_RATE_SQL, 'a2.Currency');
 
 const occurrenceColumns = `
   o.ID AS OccurrenceID,
@@ -596,12 +696,14 @@ export class RecurringTransactionService {
       this.db,
       `SELECT ${occurrenceColumns}, ${templateColumns},
          CASE WHEN r.ToAccountID IS NULL THEN NULL
-           ELSE CAST(ROUND(r.Amount * ${TRANSFER_LEG_RATE_SQL}) AS INTEGER)
-         END AS TemplateDestinationAmount
+           ELSE ${TRANSFER_LEG_AMOUNT_SQL}
+         END AS TemplateDestinationAmount,
+         ${PROJECTION_AMOUNT_SQL} AS TemplateBudgetAmount
        FROM recurring_transaction_occurrences o
        JOIN recurring_transactions r ON r.ID = o.RecurringTransactionID
        JOIN accounts a ON a.ID = r.AccountID
        LEFT JOIN accounts a2 ON a2.ID = r.ToAccountID
+       JOIN budgets b ON b.ID = o.BudgetID
        WHERE o.BudgetID = ? ${whereClause}
        ORDER BY o.DueDate ASC, o.ID ASC`,
       ...params
@@ -612,7 +714,8 @@ export class RecurringTransactionService {
   /**
    * Returns scheduled (not ready, not skipped) occurrences of active templates
    * projected into a transaction-like shape. Budget-currency amounts use the
-   * latest known exchange rate; future months never have rates of their own.
+   * effective custom or official exchange rate; future months use the latest
+   * known rate no later than today because they do not have rates of their own.
    */
   listProjectedTransactions(
     budgetId: number,
@@ -673,9 +776,9 @@ export class RecurringTransactionService {
            ELSE transfer_destination.Name
          END AS Payee,
          CASE WHEN r.Direction = 'inflow'
-           THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS InflowConverted,
+           THEN ${PROJECTION_AMOUNT_SQL} ELSE 0 END AS InflowConverted,
          CASE WHEN r.Direction = 'outflow'
-           THEN CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) ELSE 0 END AS OutflowConverted,
+           THEN ${PROJECTION_AMOUNT_SQL} ELSE 0 END AS OutflowConverted,
          CASE WHEN r.Direction = 'inflow' THEN r.Amount ELSE 0 END AS InflowNative,
          CASE WHEN r.Direction = 'outflow' THEN r.Amount ELSE 0 END AS OutflowNative
        FROM recurring_transaction_occurrences o
@@ -706,9 +809,9 @@ export class RecurringTransactionService {
            WHEN COALESCE(a.OnBudget, 1) <> 0 AND COALESCE(a2.OnBudget, 1) = 0 THEN a2.Name
            ELSE a.Name
          END AS Payee,
-         CAST(ROUND(r.Amount * ${PROJECTION_RATE_SQL}) AS INTEGER) AS InflowConverted,
+         ${PROJECTION_AMOUNT_SQL} AS InflowConverted,
          0 AS OutflowConverted,
-         CAST(ROUND(r.Amount * ${TRANSFER_LEG_RATE_SQL}) AS INTEGER) AS InflowNative,
+         ${TRANSFER_LEG_AMOUNT_SQL} AS InflowNative,
          0 AS OutflowNative
        FROM recurring_transaction_occurrences o
        JOIN recurring_transactions r ON r.ID = o.RecurringTransactionID
@@ -1132,6 +1235,10 @@ export class RecurringTransactionService {
         row.DestinationAmount !== null && row.DestinationAmount !== undefined
           ? asMilli(Number(row.DestinationAmount))
           : null,
+      budgetAmount:
+        row.BudgetAmount !== null && row.BudgetAmount !== undefined
+          ? asMilli(Number(row.BudgetAmount))
+          : null,
       categoryId:
         row.CategoryID !== null && row.CategoryID !== undefined ? Number(row.CategoryID) : null,
       name: row.Name,
@@ -1179,6 +1286,7 @@ export class RecurringTransactionService {
       AccountID: row.TemplateAccountID as number | bigint,
       ToAccountID: row.TemplateToAccountID ?? null,
       DestinationAmount: row.TemplateDestinationAmount ?? null,
+      BudgetAmount: row.TemplateBudgetAmount ?? null,
       CategoryID: row.TemplateCategoryID ?? null,
       Name: row.TemplateName as string,
       Memo: row.TemplateMemo ?? null,

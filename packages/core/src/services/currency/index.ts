@@ -136,17 +136,22 @@ export class CurrencyService {
   ): number | null {
     if (fromCurrency === toCurrency) return 1;
 
-    const exact = this.resolveAndCacheRate(fromCurrency, toCurrency, rateDate, budgetId);
+    // Future transactions use today's official rates. Keep the freshness
+    // window anchored to today too, rather than rejecting today's rate as
+    // stale relative to a payment scheduled weeks or months from now.
+    const today = getLocalDateString();
+    const effectiveDate = rateDate > today ? today : rateDate;
+    const exact = this.resolveAndCacheRate(fromCurrency, toCurrency, effectiveDate, budgetId);
     if (exact) return exact;
 
     const windowStart = CurrencyService.addDays(
-      rateDate,
+      effectiveDate,
       -CurrencyService.RATE_FALLBACK_WINDOW_DAYS
     );
     const direct = this.queries.getLatestCurrencyRateOnOrBefore(
       fromCurrency,
       toCurrency,
-      rateDate,
+      effectiveDate,
       budgetId
     );
     if (direct && direct.RateDate >= windowStart) return direct.Rate;
@@ -154,7 +159,7 @@ export class CurrencyService {
     const reciprocal = this.queries.getLatestCurrencyRateOnOrBefore(
       toCurrency,
       fromCurrency,
-      rateDate,
+      effectiveDate,
       budgetId
     );
     if (reciprocal && reciprocal.RateDate >= windowStart) return 1 / reciprocal.Rate;
@@ -336,7 +341,9 @@ export class CurrencyService {
 
     // STEP 2: Fetch from the API (the dataset serves any base directly)
     try {
-      await this.fetchAndStoreRates([toCurrency], fromCurrency, rateDate, budgetId);
+      const today = getLocalDateString();
+      const effectiveDate = rateDate > today ? today : rateDate;
+      await this.fetchAndStoreRates([toCurrency], fromCurrency, effectiveDate, budgetId);
       const fetched = this.findNearbyRate(fromCurrency, toCurrency, rateDate, budgetId);
       if (fetched) {
         debugLog(`Successfully fetched rate: ${fromCurrency} → ${toCurrency} = ${fetched}`);
@@ -354,19 +361,22 @@ export class CurrencyService {
 
   /**
    * Fetch and store daily exchange rates from the server proxy. The server
-   * caches per (pair, date) and may serve a slightly earlier dataset date;
-   * rows are stored under the requested date so lookups stay stable.
+   * caches per (pair, date) and may clamp a future request or serve a slightly
+   * earlier dataset date. Use the response date when the server clamps a
+   * request so a current rate never gets stored as a future day's rate.
    * @private - Use getOrFetchRate instead to ensure proper error handling
    */
   private async fetchAndStoreRates(
     currencies: string[],
     baseCurrency: string,
     rateDate: string,
-    budgetId: number
+    budgetId: number,
+    forceRefresh = false
   ): Promise<void> {
     try {
       const currencyList = currencies.filter((c) => c !== baseCurrency).join(',');
-      const url = `/api/v1/exchange-rates?base=${encodeURIComponent(baseCurrency)}&symbols=${encodeURIComponent(currencyList)}&date=${encodeURIComponent(rateDate)}`;
+      const refreshParam = forceRefresh ? '&refresh=true' : '';
+      const url = `/api/v1/exchange-rates?base=${encodeURIComponent(baseCurrency)}&symbols=${encodeURIComponent(currencyList)}&date=${encodeURIComponent(rateDate)}${refreshParam}`;
 
       const response = await this.fetchExchangeRatesWithPacing(url);
       if (!response.ok) {
@@ -378,6 +388,10 @@ export class CurrencyService {
 
       const data = await response.json();
       const quotes = data.quotes as Record<string, number> | undefined;
+      const responseRateDate =
+        typeof data.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.date)
+          ? data.date
+          : rateDate;
 
       // Prune before saving so an explicitly requested historical rate is
       // available to the caller and reusable by the rest of the current pass.
@@ -390,15 +404,16 @@ export class CurrencyService {
         const quoteKey = `${baseCurrency}${currency}`;
         const rate = quotes ? quotes[quoteKey] : undefined;
         if (typeof rate === 'number' && isFinite(rate) && rate > 0) {
-          this.saveRate(baseCurrency, currency, rate, rateDate, budgetId);
-          this.saveRate(currency, baseCurrency, 1 / rate, rateDate, budgetId);
+          this.saveRate(baseCurrency, currency, rate, responseRateDate, budgetId);
+          this.saveRate(currency, baseCurrency, 1 / rate, responseRateDate, budgetId);
         }
       }
 
-      debugLog(`Fetched and stored daily exchange rates for ${rateDate}`, {
+      debugLog(`Fetched and stored daily exchange rates for ${responseRateDate}`, {
         baseCurrency,
         currencies: currencies.length,
-        rateDate,
+        requestedRateDate: rateDate,
+        rateDate: responseRateDate,
       });
     } catch (error) {
       debugLog('Failed to fetch exchange rates', { error, level: 'error' });
@@ -557,23 +572,27 @@ export class CurrencyService {
   }
 
   /**
-   * Discard today's cached rates and refetch official ones from the server,
-   * then revalue accounts. Recovers from locally tampered/simulated rates
-   * without waiting for tomorrow's dataset. Returns accounts revalued.
+   * Refetch today's official rates from the server.
+   * The server-side refresh bypasses its cache. Existing local rates are kept
+   * until the replacement succeeds, so a temporary provider outage cannot
+   * erase the last usable rate.
    */
-  async restoreOfficialRates(budgetId: number): Promise<number> {
+  async refreshOfficialRates(budgetId: number): Promise<void> {
     const displayCurrency = this.getBudgetDisplayCurrency(budgetId);
-    if (!displayCurrency) return 0;
+    if (!displayCurrency) return;
 
     const today = getLocalDateString();
-    this.queries.deleteRatesOnDate(today, budgetId);
-
     const currencies = this.queries
       .getAllCurrenciesUsed(budgetId)
       .filter((currency) => currency && currency !== displayCurrency);
-    for (const currency of currencies) {
-      await this.getOrFetchRate(currency, displayCurrency, today, budgetId);
+    if (currencies.length > 0) {
+      await this.fetchAndStoreRates(currencies, displayCurrency, today, budgetId, true);
     }
+  }
+
+  /** Refetch today's official rates and revalue foreign-currency accounts. */
+  async restoreOfficialRates(budgetId: number): Promise<number> {
+    await this.refreshOfficialRates(budgetId);
 
     return this.revalueAccounts(budgetId);
   }
