@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -39,7 +40,9 @@ export const AccountDateRangeControls = React.memo(function AccountDateRangeCont
               <CalendarDays className="h-4 w-4" />
               <span className="truncate">{periodLabel}</span>
             </span>
-            <span className="text-muted-foreground text-xs">Adjust</span>
+            <span className="text-muted-foreground text-xs">
+              <Trans>Adjust</Trans>
+            </span>
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-4" align="start">
@@ -56,9 +59,13 @@ export const AccountDateRangeControls = React.memo(function AccountDateRangeCont
           <span className="flex items-center gap-2">
             <CalendarDays className="h-4 w-4" />
             <span className="hidden lg:inline">{periodLabel}</span>
-            <span className="lg:hidden">Date Range</span>
+            <span className="lg:hidden">
+              <Trans>Date Range</Trans>
+            </span>
           </span>
-          <span className="text-muted-foreground text-xs">Adjust</span>
+          <span className="text-muted-foreground text-xs">
+            <Trans>Adjust</Trans>
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-4" align="end">

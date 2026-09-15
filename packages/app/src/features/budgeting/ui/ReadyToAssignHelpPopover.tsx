@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -52,6 +53,8 @@ export function ReadyToAssignHelpPopover({
   budgetId,
   month,
 }: ReadyToAssignHelpPopoverProps) {
+  const { t } = useLingui();
+
   const { data: breakdown } = useReadyToAssignBreakdown(budgetId ?? 0, month);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
   const mask = useUiStore((s) => s.privacyMaskNumbers);
@@ -67,37 +70,41 @@ export function ReadyToAssignHelpPopover({
             'inline-flex items-center justify-center rounded-full transition hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             triggerClassName
           )}
-          aria-label="What does Ready to Assign mean?"
+          aria-label={t`What does Ready to Assign mean?`}
         >
           <HelpCircle className="h-3 w-3" />
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-72 text-xs" side={side} align={align}>
-        <p className="font-medium text-sm">Ready to Assign</p>
+        <p className="font-medium text-sm">
+          <Trans>Ready to Assign</Trans>
+        </p>
         <p className="mt-1 text-muted-foreground">
-          Money you can still assign to categories. Positive means funds to allocate; negative means
-          you&apos;ve over-budgeted.
+          <Trans>
+            Money you can still assign to categories. Positive means funds to allocate; negative
+            means you've over-budgeted.
+          </Trans>
         </p>
 
         {breakdown && (
           <div className="mt-3 border-t border-border pt-2">
             <p className="mb-1 flex items-center justify-between">
               <span className="font-medium">
-                {isMonthly ? 'Monthly calculation' : 'Cumulative calculation'}
+                {isMonthly ? t`Monthly calculation` : t`Cumulative calculation`}
               </span>
               <span className="text-muted-foreground">
-                {isMonthly ? 'through this month' : 'all time'}
+                {isMonthly ? t`through this month` : t`all time`}
               </span>
             </p>
             <div className="space-y-1">
               <MathRow
-                label="Income"
+                label={t`Income`}
                 value={breakdown.income}
                 localizer={globalLocalizer}
                 mask={mask}
               />
               <MathRow
-                label={isMonthly ? 'Assigned through this month' : 'Assigned to categories'}
+                label={isMonthly ? t`Assigned through this month` : t`Assigned to categories`}
                 value={breakdown.assignments}
                 localizer={globalLocalizer}
                 mask={mask}
@@ -105,7 +112,7 @@ export function ReadyToAssignHelpPopover({
               />
               {isMonthly && breakdown.futureAssignments !== 0 && (
                 <MathRow
-                  label="Assigned in future months"
+                  label={t`Assigned in future months`}
                   value={breakdown.futureAssignments}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -114,7 +121,7 @@ export function ReadyToAssignHelpPopover({
               )}
               {breakdown.offBudgetTransfers !== 0 && (
                 <MathRow
-                  label="Transfers off budget"
+                  label={t`Transfers off budget`}
                   value={breakdown.offBudgetTransfers}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -123,7 +130,7 @@ export function ReadyToAssignHelpPopover({
               )}
               {breakdown.inBudgetTransfers !== 0 && (
                 <MathRow
-                  label="Transfers onto budget"
+                  label={t`Transfers onto budget`}
                   value={breakdown.inBudgetTransfers}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -132,7 +139,7 @@ export function ReadyToAssignHelpPopover({
               )}
               {breakdown.revaluations !== 0 && (
                 <MathRow
-                  label="Currency rate changes"
+                  label={t`Currency rate changes`}
                   value={breakdown.revaluations}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -141,7 +148,7 @@ export function ReadyToAssignHelpPopover({
               )}
               {isMonthly && breakdown.priorCashOverspend !== 0 && (
                 <MathRow
-                  label="Last month's overspending"
+                  label={t`Last month's overspending`}
                   value={breakdown.priorCashOverspend}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -150,7 +157,7 @@ export function ReadyToAssignHelpPopover({
               )}
               <div className="mt-1 border-t border-border pt-1">
                 <MathRow
-                  label="Ready to Assign"
+                  label={t`Ready to Assign`}
                   value={breakdown.readyToAssign}
                   localizer={globalLocalizer}
                   mask={mask}
@@ -161,18 +168,20 @@ export function ReadyToAssignHelpPopover({
 
             <p className="mt-2 text-muted-foreground">
               {isMonthly
-                ? 'Income counts as it arrives, money assigned in future months is already spoken for, and last month’s overspending is pulled from this month (YNAB-style).'
-                : 'Income and assignments accumulate across all time, so this figure is the same in every month.'}
+                ? t`Income counts as it arrives, money assigned in future months is already spoken for, and last month’s overspending is pulled from this month (YNAB-style).`
+                : t`Income and assignments accumulate across all time, so this figure is the same in every month.`}
             </p>
             <p className="mt-2 text-muted-foreground">
-              Switch between Monthly and Cumulative in{' '}
-              <Link
-                to="/settings/budget"
-                className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
-              >
-                Settings → Budget Settings
-              </Link>
-              .
+              <Trans>
+                Switch between Monthly and Cumulative in{' '}
+                <Link
+                  to="/settings/budget"
+                  className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+                >
+                  <Trans>Settings → Budget Settings</Trans>
+                </Link>
+                .
+              </Trans>
             </p>
           </div>
         )}

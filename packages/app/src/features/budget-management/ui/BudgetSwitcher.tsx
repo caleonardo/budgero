@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -16,6 +17,8 @@ import {
 import { useActiveSpace } from '@shared/runtime/runtime-provider';
 
 export function BudgetSwitcher() {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const activeSpace = useActiveSpace();
   const canManageBudgets = activeSpace?.role === 'owner';
@@ -54,14 +57,14 @@ export function BudgetSwitcher() {
     (_budgetId: number) => {
       const createdBudget = useUiStore.getState().selectedBudget;
       setCreateDialogOpen(false);
-      toast.success('Budget created', {
+      toast.success(t`Budget created`, {
         description: createdBudget
-          ? `Switched to "${createdBudget.Name}".`
-          : 'Switched to your new budget.',
+          ? t`Switched to "${createdBudget.Name}".`
+          : t`Switched to your new budget.`,
       });
       void navigate('/', { replace: true });
     },
-    [navigate]
+    [navigate, t]
   );
 
   return (
@@ -86,7 +89,7 @@ export function BudgetSwitcher() {
           <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto p-2 sm:p-4">
             <DialogTitle className="sr-only">Create New Budget</DialogTitle>
             <DialogDescription className="sr-only">
-              Set up a new budget to track your finances
+              <Trans>Set up a new budget to track your finances</Trans>
             </DialogDescription>
             <BudgetWizard onCreated={handleBudgetCreated} />
           </DialogContent>
@@ -102,8 +105,12 @@ export function BudgetSwitcher() {
           }}
         >
           <DialogContent>
-            <DialogTitle>Manage Budget</DialogTitle>
-            <DialogDescription>Edit or delete your budget</DialogDescription>
+            <DialogTitle>
+              <Trans>Manage Budget</Trans>
+            </DialogTitle>
+            <DialogDescription>
+              <Trans>Edit or delete your budget</Trans>
+            </DialogDescription>
 
             {error && (
               <div className="rounded-md bg-destructive-foreground/10 px-4 py-3 text-sm text-destructive">
@@ -131,7 +138,7 @@ export function BudgetSwitcher() {
                 onError={setError}
               />
               <Button type="submit" form="budget-form" variant="default">
-                Update Budget
+                <Trans>Update Budget</Trans>
               </Button>
             </div>
           </DialogContent>

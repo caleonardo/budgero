@@ -12,8 +12,7 @@ export interface CreateReportData {
 }
 
 export interface CreateReportMutationPayload
-  extends Omit<CreateReportData, 'charts'>,
-    Record<string, unknown> {
+  extends Omit<CreateReportData, 'charts'>, Record<string, unknown> {
   id: string;
   charts: ChartConfiguration[];
 }

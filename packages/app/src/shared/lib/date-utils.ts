@@ -1,4 +1,6 @@
+import { t } from '@lingui/core/macro';
 import { parseISO, isValid, isAfter, endOfDay } from 'date-fns';
+import { getLocaleTag } from '@shared/i18n';
 
 /**
  * Normalize any date-like value to a Date object.
@@ -255,7 +257,7 @@ export function formatMonthLabel(
 ): string {
   const date = parseMonthKey(monthKey);
   if (!date) return monthKey;
-  return date.toLocaleDateString('en-US', options);
+  return date.toLocaleDateString(getLocaleTag(), options);
 }
 
 export interface DateKeyGroup<T> {
@@ -312,7 +314,7 @@ export function formatShortDate(
 ): string {
   const { hideCurrentYear = false, weekday } = options;
   const showYear = !hideCurrentYear || date.getFullYear() !== new Date().getFullYear();
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(getLocaleTag(), {
     ...(weekday ? { weekday } : {}),
     month: 'short',
     day: 'numeric',
@@ -334,9 +336,5 @@ export function formatDueLabel(dateKey: string, now: Date = new Date()): string 
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const startOfDue = new Date(due.getFullYear(), due.getMonth(), due.getDate());
   const days = Math.round((startOfDue.getTime() - startOfToday.getTime()) / 86_400_000);
-  if (days === 0) return 'today';
-  if (days === 1) return 'tomorrow';
-  if (days === -1) return 'yesterday';
-  if (days > 1) return `in ${days} days`;
-  return `${-days} days ago`;
+  return new Intl.RelativeTimeFormat(getLocaleTag(), { numeric: 'auto' }).format(days, 'day');
 }

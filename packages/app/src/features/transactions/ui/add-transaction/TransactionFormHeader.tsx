@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 /**
  * Transaction Form Header
  *
@@ -58,7 +60,7 @@ export const TransactionFormHeader = React.memo(function TransactionFormHeader({
               htmlFor="remember-last"
               className="text-[11px] sm:text-xs font-normal text-muted-foreground"
             >
-              Remember last category, payee, account
+              <Trans>Remember last category, payee, account</Trans>
             </Label>
           </div>
         )}
@@ -75,7 +77,7 @@ export const TransactionFormHeader = React.memo(function TransactionFormHeader({
             htmlFor="make-recurring"
             className="text-[11px] sm:text-xs font-normal text-muted-foreground"
           >
-            Make recurring
+            <Trans>Make recurring</Trans>
           </Label>
         </div>
       </div>

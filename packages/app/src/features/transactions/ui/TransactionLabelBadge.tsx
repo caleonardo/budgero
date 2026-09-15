@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { Badge } from '@shared/ui/badge';
 import { hexToRgba } from '@shared/lib/color/hex';
 import { cn } from '@shared/lib/utils';
@@ -18,6 +19,8 @@ export function TransactionLabelBadge({
   className,
   hideTextOnSmallScreens = false,
 }: TransactionLabelBadgeProps) {
+  const { t } = useLingui();
+
   const labelColor = color || DEFAULT_LABEL_COLOR;
 
   return (
@@ -29,7 +32,7 @@ export function TransactionLabelBadge({
         borderColor: hexToRgba(labelColor, 0.4),
       }}
       title={label}
-      aria-label={`Label: ${label}`}
+      aria-label={t`Label: ${label}`}
     >
       <span
         className="inline-block h-2 w-2 shrink-0 rounded-full border border-white/60"

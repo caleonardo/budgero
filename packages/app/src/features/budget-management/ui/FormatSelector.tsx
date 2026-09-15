@@ -1,5 +1,7 @@
 'use client';
 
+import { useLingui } from '@lingui/react/macro';
+
 import React, { useId } from 'react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@shared/ui/select';
 import { formatOptions } from '@shared/lib/number-format';
@@ -17,6 +19,8 @@ export const FormatSelector: React.FC<FormatSelectorProps> = ({
   label = 'Number Format',
   currency,
 }) => {
+  const { t } = useLingui();
+
   const triggerId = useId();
   // Let React Compiler handle this optimization automatically
   const formattedOptions = formatOptions.map((option) => {
@@ -40,7 +44,7 @@ export const FormatSelector: React.FC<FormatSelectorProps> = ({
       </label>
       <Select value={value} onValueChange={onValueChange}>
         <SelectTrigger id={triggerId} size="sm" className="w-full">
-          <SelectValue placeholder="Select format" />
+          <SelectValue placeholder={t`Select format`} />
         </SelectTrigger>
         <SelectContent>
           {formattedOptions.map((option) => (

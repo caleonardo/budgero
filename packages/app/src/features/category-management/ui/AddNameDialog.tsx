@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -85,7 +86,7 @@ export const AddNameDialog: React.FC<AddNameDialogProps> = ({
 
         <DialogFooter className="flex-col sm:flex-row gap-2">
           <Button variant="outline" onClick={onClose} disabled={isSaving}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button onClick={handleSave} disabled={isSaving || !name.trim()}>
             {isSaving ? savingLabel : confirmLabel}

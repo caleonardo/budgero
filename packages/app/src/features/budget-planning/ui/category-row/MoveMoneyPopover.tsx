@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { CalculatorCell } from '@shared/ui/calculator-cell';
@@ -45,6 +46,8 @@ export function MoveMoneyPopover({
   align = 'end',
   triggerClassName,
 }: MoveMoneyPopoverProps) {
+  const { t } = useLingui();
+
   const formatAmount = useFormatMaskedMilli(globalLocalizer);
 
   const handleOpenChange = (open: boolean) => {
@@ -64,7 +67,7 @@ export function MoveMoneyPopover({
             availableAmountClass(available),
             triggerClassName
           )}
-          title="Move money"
+          title={t`Move money`}
           onClick={(e) => {
             e.stopPropagation();
             setMoveOpen(true);
@@ -75,10 +78,14 @@ export function MoveMoneyPopover({
       </PopoverTrigger>
       <PopoverContent className={cn('w-72 p-3', className)} align={align}>
         <div className="space-y-3">
-          <div className="text-sm font-medium">Move Money</div>
+          <div className="text-sm font-medium">
+            <Trans>Move Money</Trans>
+          </div>
           <div className="space-y-1">
             {/* Caption, not a <label>: CalculatorCell exposes no labelable control. */}
-            <span className="text-xs text-muted-foreground">Amount</span>
+            <span className="text-xs text-muted-foreground">
+              <Trans>Amount</Trans>
+            </span>
             <CalculatorCell
               value={moveAmount}
               onCommit={setMoveAmount}
@@ -91,17 +98,19 @@ export function MoveMoneyPopover({
               inputClassName="h-9"
             />
             <div className="text-[10px] text-muted-foreground">
-              Available: {formatAmount(Math.max(0, available || 0))}
+              <Trans>Available: {formatAmount(Math.max(0, available || 0))}</Trans>
             </div>
           </div>
           <div className="space-y-1">
             {/* Caption, not a <label>: SearchableCategorySelect exposes no labelable control. */}
-            <span className="text-xs text-muted-foreground">Move to</span>
+            <span className="text-xs text-muted-foreground">
+              <Trans>Move to</Trans>
+            </span>
             <SearchableCategorySelect
               budgetId={selectedBudgetId}
               selectedCategoryId={moveTarget}
               onCategorySelect={(id) => setMoveTarget(id)}
-              placeholder="Select target"
+              placeholder={t`Select target`}
               triggerClassName="h-8 w-full justify-start"
               popoverContentClassName="w-72"
               includeReadyToAssign
@@ -112,14 +121,14 @@ export function MoveMoneyPopover({
           </div>
           <div className="flex items-center justify-end gap-2 pt-1">
             <Button variant="ghost" size="sm" onClick={() => setMoveOpen(false)}>
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               size="sm"
               onClick={onConfirmMove}
               disabled={!isMoveValid(moveAmount, available, moveTarget)}
             >
-              Move
+              <Trans>Move</Trans>
             </Button>
           </div>
         </div>

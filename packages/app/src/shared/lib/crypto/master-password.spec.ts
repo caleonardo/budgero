@@ -72,8 +72,7 @@ describe('MasterPasswordManager IndexedDB persistence', () => {
   const sessionStorageState = new Map<string, string>();
   const getSessionPayload = () =>
     fakeIndexedDB.read(MASTER_PASSWORD_INDEXEDDB_STORE, MASTER_PASSWORD_INDEXEDDB_RECORD_KEY) as
-      | SessionPayload
-      | undefined;
+      SessionPayload | undefined;
 
   beforeAll(() => {
     setGlobalStorage('localStorage', createStorageMock(localStorageState));

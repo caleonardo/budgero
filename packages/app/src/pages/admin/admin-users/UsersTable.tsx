@@ -1,3 +1,5 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@shared/ui/table';
@@ -20,12 +22,21 @@ export const UsersTable = React.memo(function UsersTable({
   onAction,
   onCopyId,
 }: UsersTableProps) {
+  const { t } = useLingui();
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Users</CardTitle>
+        <CardTitle>
+          <Trans>All Users</Trans>
+        </CardTitle>
         <CardDescription>
-          {loading ? 'Loading...' : `${users.length} user${users.length !== 1 ? 's' : ''} found`}
+          {loading
+            ? t`Loading...`
+            : plural(users.length, {
+                one: `# user found`,
+                other: `# users found`,
+              })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -34,18 +45,32 @@ export const UsersTable = React.memo(function UsersTable({
             <RefreshCw className="w-6 h-6 animate-spin text-muted-foreground" />
           </div>
         ) : users.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">No users found</div>
+          <div className="text-center py-8 text-muted-foreground">
+            <Trans>No users found</Trans>
+          </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Subscription</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead>Details</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>
+                  <Trans>User</Trans>
+                </TableHead>
+                <TableHead>
+                  <Trans>Status</Trans>
+                </TableHead>
+                <TableHead>
+                  <Trans>Subscription</Trans>
+                </TableHead>
+                <TableHead>
+                  <Trans>Joined</Trans>
+                </TableHead>
+                <TableHead>
+                  <Trans>Details</Trans>
+                </TableHead>
+                <TableHead className="text-right">
+                  <Trans>Actions</Trans>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

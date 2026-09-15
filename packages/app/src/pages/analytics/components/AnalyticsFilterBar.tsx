@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { CalendarRange } from 'lucide-react';
@@ -18,18 +19,20 @@ interface AnalyticsFilterBarProps {
 }
 
 export function AnalyticsFilterBar({ state, data, showCategoryFilters }: AnalyticsFilterBarProps) {
+  const { t } = useLingui();
+
   const { selections, update } = state;
 
   const accountGroups = useMemo(() => {
     const budget = data.accounts.filter((account) => account.onBudget);
     const tracking = data.accounts.filter((account) => !account.onBudget);
     return [
-      { key: 'budget', heading: 'Budget accounts', items: budget },
+      { key: 'budget', heading: t`Budget accounts`, items: budget },
       ...(tracking.length
-        ? [{ key: 'tracking', heading: 'Tracking accounts', items: tracking }]
+        ? [{ key: 'tracking', heading: t`Tracking accounts`, items: tracking }]
         : []),
     ];
-  }, [data.accounts]);
+  }, [data.accounts, t]);
 
   const categoryGroupsList = useMemo(
     () =>
@@ -74,7 +77,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
         <SelectContent>
           {(Object.keys(PERIOD_LABELS) as PeriodKey[]).map((key) => (
             <SelectItem key={key} value={key}>
-              {PERIOD_LABELS[key]}
+              {t(PERIOD_LABELS[key])}
             </SelectItem>
           ))}
         </SelectContent>
@@ -87,7 +90,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
               <CalendarRange className="h-4 w-4" />
               {customRange?.from && customRange?.to
                 ? `${formatShortDate(customRange.from)} – ${formatShortDate(customRange.to)}`
-                : 'Pick range'}
+                : t`Pick range`}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
@@ -114,15 +117,15 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
         hasItems={data.accounts.length > 0}
         buttonLabel={
           selections.accountIds.length === 0
-            ? 'All accounts'
+            ? t`All accounts`
             : `${selections.accountIds.length} account${selections.accountIds.length > 1 ? 's' : ''}`
         }
         triggerWidthClassName="w-[150px]"
         contentClassName="w-[240px]"
         listClassName="max-h-[280px]"
-        searchPlaceholder="Search accounts…"
-        emptyText="No accounts found."
-        allOptionLabel="All accounts"
+        searchPlaceholder={t`Search accounts…`}
+        emptyText={t`No accounts found.`}
+        allOptionLabel={t`All accounts`}
         allOptionValue="all-accounts"
       />
 
@@ -138,19 +141,19 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             hasItems={data.categories.length > 0}
             buttonLabel={
               selections.categoryIds.length === 0
-                ? 'All categories'
+                ? t`All categories`
                 : `${selections.categoryIds.length} categor${selections.categoryIds.length > 1 ? 'ies' : 'y'}`
             }
             triggerWidthClassName="w-[150px]"
             contentClassName="w-[260px]"
             listClassName="max-h-[280px]"
-            searchPlaceholder="Search categories…"
-            emptyText="No categories found."
-            allOptionLabel="All categories"
+            searchPlaceholder={t`Search categories…`}
+            emptyText={t`No categories found.`}
+            allOptionLabel={t`All categories`}
             allOptionValue="all-categories"
           />
           <MultiSelectFilterControl
-            groups={[{ key: 'payees', heading: 'Payees', items: payeeItems }]}
+            groups={[{ key: 'payees', heading: t`Payees`, items: payeeItems }]}
             selectedIds={selectedPayeeIds}
             onChange={(ids) => update({ payees: ids.map((index) => data.payees[index]) })}
             getId={(payee) => payee.id}
@@ -159,19 +162,19 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             hasItems={payeeItems.length > 0}
             buttonLabel={
               selections.payees.length === 0
-                ? 'All payees'
+                ? t`All payees`
                 : `${selections.payees.length} payee${selections.payees.length > 1 ? 's' : ''}`
             }
             triggerWidthClassName="w-[140px]"
             contentClassName="w-[240px]"
             listClassName="max-h-[280px]"
-            searchPlaceholder="Search payees…"
-            emptyText="No payees found."
-            allOptionLabel="All payees"
+            searchPlaceholder={t`Search payees…`}
+            emptyText={t`No payees found.`}
+            allOptionLabel={t`All payees`}
             allOptionValue="all-payees"
           />
           <MultiSelectFilterControl
-            groups={[{ key: 'labels', heading: 'Labels', items: data.labels }]}
+            groups={[{ key: 'labels', heading: t`Labels`, items: data.labels }]}
             selectedIds={selections.labelIds}
             onChange={(ids) => update({ labelIds: ids })}
             getId={(label) => label.id}
@@ -180,15 +183,15 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
             hasItems={data.labels.length > 0}
             buttonLabel={
               selections.labelIds.length === 0
-                ? 'All labels'
+                ? t`All labels`
                 : `${selections.labelIds.length} label${selections.labelIds.length > 1 ? 's' : ''}`
             }
             triggerWidthClassName="w-[130px]"
             contentClassName="w-[220px]"
             listClassName="max-h-[280px]"
-            searchPlaceholder="Search labels…"
-            emptyText="No labels found."
-            allOptionLabel="All labels"
+            searchPlaceholder={t`Search labels…`}
+            emptyText={t`No labels found.`}
+            allOptionLabel={t`All labels`}
             allOptionValue="all-labels"
           />
         </>

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Label } from '@shared/ui/label';
 import { Input } from '@shared/ui/input';
 import { Button } from '@shared/ui/button';
@@ -28,10 +29,14 @@ export function ConnectionTestPanel({
   onApiKeyChange,
   onTestConnection,
 }: ConnectionTestPanelProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="endpoint">Server URL</Label>
+        <Label htmlFor="endpoint">
+          <Trans>Server URL</Trans>
+        </Label>
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Server className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -53,7 +58,9 @@ export function ConnectionTestPanel({
             ) : (
               <RefreshCw className="h-4 w-4" />
             )}
-            <span className="ml-2 hidden sm:inline">Test</span>
+            <span className="ml-2 hidden sm:inline">
+              <Trans>Test</Trans>
+            </span>
           </Button>
         </div>
         <ConnectionStatusMessage
@@ -65,7 +72,9 @@ export function ConnectionTestPanel({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="apiKey">API Key</Label>
+        <Label htmlFor="apiKey">
+          <Trans>API Key</Trans>
+        </Label>
         <div className="relative">
           <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -73,15 +82,17 @@ export function ConnectionTestPanel({
             type="password"
             value={apiKey}
             onChange={(e) => onApiKeyChange(e.target.value)}
-            placeholder="Optional — required by most cloud providers"
+            placeholder={t`Optional — required by most cloud providers`}
             className="pl-10"
             autoComplete="off"
           />
         </div>
         <p className="text-xs text-muted-foreground">
-          Leave empty for local servers (Ollama, LM Studio). Sent as a{' '}
-          <code className="rounded bg-muted px-1 py-0.5 text-[11px]">Bearer</code> token to your
-          chosen provider.
+          <Trans>
+            Leave empty for local servers (Ollama, LM Studio). Sent as a{' '}
+            <code className="rounded bg-muted px-1 py-0.5 text-[11px]">Bearer</code>token to your
+            chosen provider.
+          </Trans>
         </p>
       </div>
     </div>
@@ -104,8 +115,10 @@ function ConnectionStatusMessage({
   if (status === 'success') {
     return (
       <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
-        <CheckCircle2 className="h-4 w-4" />
-        Connected - {modelCount} models available
+        <Trans>
+          <CheckCircle2 className="h-4 w-4" />
+          Connected - {modelCount} models available
+        </Trans>
       </p>
     );
   }
@@ -125,14 +138,16 @@ function ConnectionStatusMessage({
         </p>
         {isCorsLikely && (
           <p className="text-xs text-muted-foreground">
-            If you're accessing Budgero over HTTPS, Ollama needs to allow your origin. Start Ollama
-            with{' '}
-            <code className="rounded bg-muted px-1 py-0.5 text-[11px]">
-              OLLAMA_ORIGINS=* ollama serve
-            </code>{' '}
-            or set the{' '}
-            <code className="rounded bg-muted px-1 py-0.5 text-[11px]">OLLAMA_ORIGINS</code>{' '}
-            environment variable in your Ollama service config.
+            <Trans>
+              If you're accessing Budgero over HTTPS, Ollama needs to allow your origin. Start
+              Ollama with{' '}
+              <code className="rounded bg-muted px-1 py-0.5 text-[11px]">
+                OLLAMA_ORIGINS=* ollama serve
+              </code>{' '}
+              or set the{' '}
+              <code className="rounded bg-muted px-1 py-0.5 text-[11px]">OLLAMA_ORIGINS</code>{' '}
+              environment variable in your Ollama service config.
+            </Trans>
           </p>
         )}
       </div>

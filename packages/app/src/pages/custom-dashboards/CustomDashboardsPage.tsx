@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -25,9 +27,11 @@ import { AddWidgetDialog } from './components/AddWidgetDialog';
 import { PinChartDialog } from './components/PinChartDialog';
 import { EditWidgetChartDialog } from './components/EditWidgetChartDialog';
 
-const DEFAULT_DASHBOARD_NAME = 'My Dashboard';
+const DEFAULT_DASHBOARD_NAME = msg`My Dashboard`;
 
 export default function CustomDashboardsPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const budgetId = selectedBudget?.ID ?? 0;
   const isMobile = useIsMobile();
@@ -89,15 +93,22 @@ export default function CustomDashboardsPage() {
     }
     defaultCreatedRef.current = true;
     void createDashboardMutation
-      .mutateAsync({ budgetId, name: DEFAULT_DASHBOARD_NAME })
+      .mutateAsync({ budgetId, name: t(DEFAULT_DASHBOARD_NAME) })
       .then((dashboard) => {
         void navigate(`/reports/dashboards/${dashboard.id}`, { replace: true });
       })
       .catch((error) => {
         defaultCreatedRef.current = false;
-        toast.error(getErrorMessage(error, 'Failed to create default dashboard'));
+        toast.error(getErrorMessage(error, t`Failed to create default dashboard`));
       });
-  }, [budgetId, dashboardsQuery.isLoading, dashboards.length, createDashboardMutation, navigate]);
+  }, [
+    budgetId,
+    dashboardsQuery.isLoading,
+    dashboards.length,
+    createDashboardMutation,
+    navigate,
+    t,
+  ]);
 
   useEffect(() => {
     if (!activeDashboardId || !dashboards.length) return;
@@ -137,7 +148,7 @@ export default function CustomDashboardsPage() {
 
     const created = await createDashboardMutation.mutateAsync({
       budgetId,
-      name: DEFAULT_DASHBOARD_NAME,
+      name: t(DEFAULT_DASHBOARD_NAME),
     });
     await navigate(`/reports/dashboards/${created.id}`, { replace: true });
   };
@@ -256,7 +267,7 @@ export default function CustomDashboardsPage() {
     return (
       <div className="px-6 py-6">
         <p className="text-sm text-muted-foreground">
-          Select a budget to manage custom dashboards.
+          <Trans>Select a budget to manage custom dashboards.</Trans>
         </p>
       </div>
     );
@@ -266,10 +277,14 @@ export default function CustomDashboardsPage() {
     <div className="space-y-4 px-4 py-6 pb-[calc(var(--mobile-bottom-nav-height,96px)+1.5rem)] sm:pb-8 md:px-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Custom Dashboards</h1>
+          <h1 className="text-2xl font-semibold">
+            <Trans>Custom Dashboards</Trans>
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Build dashboard layouts from Explorer charts. Drag to reorder, resize on desktop, and
-            use size presets on mobile.
+            <Trans>
+              Build dashboard layouts from Explorer charts. Drag to reorder, resize on desktop, and
+              use size presets on mobile.
+            </Trans>
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -278,10 +293,10 @@ export default function CustomDashboardsPage() {
             onClick={() => setIsEditMode((prev) => !prev)}
             disabled={!activeDashboard}
           >
-            {isEditMode ? 'Done Editing' : 'Edit Layout'}
+            {isEditMode ? t`Done Editing` : t`Edit Layout`}
           </Button>
           <Button onClick={() => setAddWidgetDialogOpen(true)} disabled={!activeDashboard}>
-            Add Widget
+            <Trans>Add Widget</Trans>
           </Button>
         </div>
       </div>
@@ -297,7 +312,7 @@ export default function CustomDashboardsPage() {
 
       {!activeDashboard && (dashboardsQuery.isLoading || activeDashboardQuery.isLoading) && (
         <div className="rounded-md border p-6 text-sm text-muted-foreground">
-          Loading dashboards...
+          <Trans>Loading dashboards...</Trans>
         </div>
       )}
 
@@ -338,8 +353,8 @@ export default function CustomDashboardsPage() {
         defaultReportId={pinWidget?.reportId}
         defaultChartId={pinWidget?.chartId}
         confirmLabel="Update Widget"
-        title="Select New Chart"
-        description="Choose a different source chart for this widget."
+        title={t`Select New Chart`}
+        description={t`Choose a different source chart for this widget.`}
         onPin={handlePinSelectionForWidget}
       />
 

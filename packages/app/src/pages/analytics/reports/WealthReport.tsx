@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
@@ -44,7 +46,7 @@ const MAX_RUNWAY_PROJECTION = 36;
 
 function formatRunway(months: number | null): string {
   if (months === null) return '∞';
-  if (months >= 120) return '10+ years';
+  if (months >= 120) return t`10+ years`;
   return months >= 10 ? `${Math.round(months)} mo` : `${months.toFixed(1)} mo`;
 }
 
@@ -60,6 +62,8 @@ interface WealthReportProps {
  * runway your spendable funds buy at the current burn.
  */
 export function WealthReport({ data, months, accountIds }: WealthReportProps) {
+  const { t } = useLingui();
+
   const [mode, setMode] = useState<WealthMode>('assets-debt');
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const { data: assetHistory = [] } = useMonthlyAssetHistory(
@@ -142,7 +146,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
               const point = points[index];
               return point
                 ? tooltipHtml(shortMonthLabel(point.monthKey), [
-                    { color: lineColor, name: 'Net worth', value: money.amount(point.netWorth) },
+                    { color: lineColor, name: t`Net worth`, value: money.amount(point.netWorth) },
                   ])
                 : '';
             }
@@ -151,7 +155,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             return tooltipHtml(`${shortMonthLabel(axisKeys[index])} (forecast)`, [
               {
                 color: assetColor,
-                name: 'Predicted',
+                name: t`Predicted`,
                 value: money.amount(Math.round(fp.predicted)),
               },
               {
@@ -164,7 +168,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         },
         series: [
           {
-            name: 'Net worth',
+            name: t`Net worth`,
             type: 'line',
             data: axisKeys.map((_, index) =>
               index <= lastIndex ? points[index].netWorth / 1000 : null
@@ -208,7 +212,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             areaStyle: { color: assetColor, opacity: 0.12 },
           },
           {
-            name: 'Forecast',
+            name: t`Forecast`,
             type: 'line',
             data: axisKeys.map((_, index) =>
               index >= lastIndex
@@ -239,9 +243,9 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           const point = points[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           return tooltipHtml(shortMonthLabel(point.monthKey), [
-            { color: lineColor, name: 'Net worth', value: money.amount(point.netWorth) },
-            { color: assetColor, name: 'Assets', value: money.amount(point.assets) },
-            { color: debtColor, name: 'Debt', value: money.amount(-point.debt) },
+            { color: lineColor, name: t`Net worth`, value: money.amount(point.netWorth) },
+            { color: assetColor, name: t`Assets`, value: money.amount(point.assets) },
+            { color: debtColor, name: t`Debt`, value: money.amount(-point.debt) },
           ]);
         },
       },
@@ -251,7 +255,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         ...shared,
         series: [
           {
-            name: 'Assets',
+            name: t`Assets`,
             type: 'bar',
             stack: 'worth',
             data: points.map((point) => point.assets / 1000),
@@ -259,7 +263,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             itemStyle: { color: assetColor, borderRadius: BAR_RADIUS_TOP },
           },
           {
-            name: 'Debt',
+            name: t`Debt`,
             type: 'bar',
             stack: 'worth',
             data: points.map((point) => -point.debt / 1000),
@@ -267,7 +271,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             itemStyle: { color: debtColor, borderRadius: BAR_RADIUS_BOTTOM },
           },
           {
-            name: 'Net worth',
+            name: t`Net worth`,
             type: 'line',
             data: points.map((point) => point.netWorth / 1000),
             lineStyle: { color: lineColor, width: 2 },
@@ -295,7 +299,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           return tooltipHtml(shortMonthLabel(months[index]), [
             {
               color: delta >= 0 ? palette.flow.positive : palette.flow.negative,
-              name: 'Change vs previous month',
+              name: t`Change vs previous month`,
               value: money.amount(delta),
             },
           ]);
@@ -303,7 +307,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
       },
       series: [
         {
-          name: 'Change',
+          name: t`Change`,
           type: 'bar',
           data: deltas.map((delta) => ({
             value: delta / 1000,
@@ -316,7 +320,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         },
       ],
     };
-  }, [mode, months, points, forecast, palette, money, assetColor, debtColor, lineColor]);
+  }, [mode, months, points, forecast, palette, money, assetColor, debtColor, lineColor, t]);
 
   const monthlyRows = useMemo(
     () =>
@@ -337,7 +341,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
 
   return (
     <ReportShell
-      title="Wealth"
+      title={t`Wealth`}
       hero={
         current ? (
           <AnimatedNumber
@@ -349,17 +353,17 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           '—'
         )
       }
-      subtitle="What you own, what you owe, and where it's heading"
+      subtitle={t`What you own, what you owe, and where it's heading`}
       controls={
         <ModeToggle
           value={mode}
           onChange={setMode}
           ariaLabel="Wealth chart mode"
           options={[
-            { value: 'assets-debt', label: 'Assets vs Debt' },
-            { value: 'by-type', label: 'By Type' },
-            { value: 'change', label: 'Change' },
-            { value: 'forecast', label: 'Forecast' },
+            { value: 'assets-debt', label: t`Assets vs Debt` },
+            { value: 'by-type', label: t`By Type` },
+            { value: 'change', label: t`Change` },
+            { value: 'forecast', label: t`Forecast` },
           ]}
         />
       }
@@ -368,16 +372,16 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         mode === 'assets-debt' ? (
           <LegendChips
             items={[
-              { color: assetColor, label: 'Assets' },
-              { color: debtColor, label: 'Debt' },
-              { color: lineColor, label: 'Net worth' },
+              { color: assetColor, label: t`Assets` },
+              { color: debtColor, label: t`Debt` },
+              { color: lineColor, label: t`Net worth` },
             ]}
           />
         ) : mode === 'forecast' ? (
           <LegendChips
             items={[
-              { color: lineColor, label: 'Net worth' },
-              { color: assetColor, label: 'Forecast (95% interval shaded)' },
+              { color: lineColor, label: t`Net worth` },
+              { color: assetColor, label: t`Forecast (95% interval shaded)` },
             ]}
           />
         ) : null
@@ -392,7 +396,10 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             />
             {accountIds.length > 0 && (
               <p className="mt-2 text-[11px] text-muted-foreground">
-                The by-type view always covers all accounts — the account filter doesn't apply here.
+                <Trans>
+                  The by-type view always covers all accounts — the account filter doesn't apply
+                  here.
+                </Trans>
               </p>
             )}
           </>
@@ -401,21 +408,25 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
             <EChart option={option} ariaLabel="Wealth over time" />
             <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-dashed border-border/60 pt-3 text-sm">
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Runway
+                <Trans>Runway</Trans>
               </span>
               <span className="font-semibold">{formatRunway(runway.runwayMonths)}</span>
               {runsOut ? (
                 <span className="text-muted-foreground">
-                  funds last until <span className="font-medium text-foreground">{runsOut}</span> if
-                  income stopped
+                  <Trans>
+                    funds last until <span className="font-medium text-foreground">{runsOut}</span>
+                    if income stopped
+                  </Trans>
                 </span>
               ) : null}
               <span className="text-muted-foreground">
-                burn{' '}
-                <span className="font-medium text-foreground">
-                  {money.amount(runway.avgMonthlySpend)}
-                </span>
-                /month
+                <Trans>
+                  burn{' '}
+                  <span className="font-medium text-foreground">
+                    {money.amount(runway.avgMonthlySpend)}
+                  </span>
+                  /month
+                </Trans>
               </span>
             </div>
           </>
@@ -423,20 +434,20 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
       }
       isLoading={data.isLoading}
       isEmpty={isEmpty}
-      emptyText="No account activity in this period."
+      emptyText={t`No account activity in this period.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
-            <StatTile label="Net worth" value={current ? money.tile(current.netWorth) : '—'} />
+            <StatTile label={t`Net worth`} value={current ? money.tile(current.netWorth) : '—'} />
             <StatTile
-              label="Change"
+              label={t`Change`}
               value={money.tile(change)}
               valueClassName={trendTextClass(change)}
               detail={first ? `vs ${shortMonthLabel(first.monthKey)}` : undefined}
             />
-            <StatTile label="Assets" value={current ? money.tile(current.assets) : '—'} />
+            <StatTile label={t`Assets`} value={current ? money.tile(current.assets) : '—'} />
             <StatTile
-              label="Debt"
+              label={t`Debt`}
               value={current ? money.tile(current.debt) : '—'}
               valueClassName={
                 current && current.debt > 0 ? 'text-red-600 dark:text-red-300' : undefined
@@ -445,14 +456,18 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           </div>
           {forecast ? (
             <p className="mt-3 text-xs text-muted-foreground">
-              Forecast: OLS over {points.length} months, slope{' '}
-              {money.amount(Math.round(forecast.slope))}/mo ±{' '}
-              {money.amount(Math.round(forecast.slopeSE))}, p{' '}
-              {forecast.pValue < 0.001 ? '< 0.001' : `= ${forecast.pValue.toFixed(3)}`}, R²{' '}
-              {forecast.rSquared.toFixed(2)}. Shaded band is the 95% prediction interval.
+              <Trans>
+                Forecast: OLS over {points.length} months, slope{' '}
+                {money.amount(Math.round(forecast.slope))}/mo ±{' '}
+                {money.amount(Math.round(forecast.slopeSE))}, p{' '}
+                {forecast.pValue < 0.001 ? '< 0.001' : `= ${forecast.pValue.toFixed(3)}`}, R²{' '}
+                {forecast.rSquared.toFixed(2)}. Shaded band is the 95% prediction interval.
+              </Trans>
             </p>
           ) : null}
-          <PanelSectionTitle>Monthly</PanelSectionTitle>
+          <PanelSectionTitle>
+            <Trans>Monthly</Trans>
+          </PanelSectionTitle>
           <div className="divide-y divide-border/50">
             {monthlyRows.map(({ point, delta }) => (
               <MonthRow

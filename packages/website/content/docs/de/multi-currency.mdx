@@ -1,0 +1,107 @@
+---
+title: "Multi-Währung"
+summary: "Verwalte Konten in über 120 Fiat-Währungen – oder Krypto – in einem Budget. Erfahre, wie die Umrechnung funktioniert, woher die Kurse stammen und wie du sie überschreibst, wenn die Realität davon abweicht."
+section: accounts-and-imports
+topicId: multi-currency
+takeaways:
+  - "Wie jede ausländische Transaktion sowohl einen Original- als auch einen umgerechneten Betrag speichert."
+  - "Die Kurs-Hierarchie – Überschreibungen pro Transaktion, benutzerdefinierte Kurse, abgerufene Kurse, manuelle Kurse."
+  - "Workflows für den Abgleich von Kontoauszügen, Reiseausgaben und Offline-Budgetierung."
+---
+
+Multi-Währung ist in Budgero keine Anzeigeoption — sie ist Kernbestandteil der Buchhaltung. Du kannst Konten in jeder der 168 Währungen innerhalb eines einzigen Budgets führen, und alle Zahlen stimmen trotzdem an einem Ort überein. Dieser Leitfaden behandelt die Umrechnungsmechanik; zum Auswählen und Ändern der Ankerwährung selbst siehe [Budget-Währung](/docs/budget-currency).
+
+## Zwei Beträge pro Transaktion
+
+Jede Transaktion auf einem Fremdwährungskonto speichert zwei Werte:
+
+- der **Originalbetrag** — was tatsächlich passiert ist, in der Währung des Kontos. Das ist die tatsächliche Grundlage und ändert sich nie.
+- der **umgerechnete Betrag** — dieselbe Transaktion, ausgedrückt in deiner Budgetwährung. Das ist es, was Kategorien, [Zu budgetieren](/docs/ready-to-assign) und Berichte verwenden.
+
+Zusätzlich speichert Budgero den verwendeten **Wechselkurs** und ob du ihn überschrieben hast. Die Historie deines CHF-Kontos bleibt in Franken; dein Budget wird in Euro geführt; dazwischen geht nichts verloren. Kontostände funktionieren genauso — jedes Fremdwährungskonto kennt sowohl seinen ursprünglichen Saldo als auch seinen umgerechneten Beitrag zu deinem Nettovermögen.
+
+## Woher die Kurse kommen
+
+Wenn eine Transaktion umgerechnet werden muss, ermittelt Budgero den Kurs über eine strikte Hierarchie — die erste zutreffende Quelle gewinnt:
+
+<table>
+  <thead>
+    <tr>
+      <th>Priorität</th>
+      <th>Quelle</th>
+      <th>Wann sie greift</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>Überschreibung pro Transaktion</strong></td>
+      <td>Du legst den genauen Kurs für diese eine Transaktion fest</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>Eigene Kurse</strong></td>
+      <td>Ein Kurs, den du für einen Zeitraum definiert hast, der die Transaktion abdeckt</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>Abgerufene Kurse</strong></td>
+      <td>Tageskurse, die Budgero automatisch abruft</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><strong>Manuelle Kurse</strong></td>
+      <td>Feste Kurse, die du selbst eingegeben hast — ohne Internet</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><strong>Nächstgelegener zurückliegender Kurs</strong></td>
+      <td>Der Kurs des nächstgelegenen vorherigen Tages (bis zu eine Woche zurück), wenn der genaue Tag nicht zwischengespeichert ist</td>
+    </tr>
+  </tbody>
+</table>
+
+Für die meisten Menschen erledigen abgerufene Kurse die ganze Arbeit unsichtbar. Die Ebenen darüber existieren für die Momente, in denen der „Marktdurchschnitt" nicht deine Wahrheit ist.
+
+## Eigene Kurse: dein Kurs, dein Zeitraum
+
+**Einstellungen → Währungen** ist das Kontrollzentrum. Dort definierst du **eigene Wechselkurse**: ein Währungspaar, einen Kurs und einen Zeitraum. Innerhalb dieses Zeitraums hat dein Kurs Vorrang vor dem abgerufenen.
+
+Typische Anwendungsfälle:
+
+- **Du hast Geld zu einem bekannten Kurs bewegt.** Du hast am 3. März 10.000 € zu 1,0845 umgetauscht — fixiere diesen Kurs auf diese Woche und deine Bücher stimmen mit der Überweisungsbestätigung überein.
+- **Eine verwaltete oder fixierte Währung.** Wenn du mit einer Währung arbeitest, bei der der offizielle Kurs vom tatsächlichen abweicht, lege den Kurs fest, der deiner Realität entspricht.
+- **Historische Bereinigung.** Jahre an Auslandstransaktionen importiert? Definiere eigene Kurse pro Zeitraum, anstatt Zeile für Zeile zu bearbeiten.
+
+Eigene Kurse sind aktive Einstellungen, keine einmaligen Zeitstempel: Wenn du einen hinzufügst, bearbeitest oder löschst, **berechnet Budgero die umgerechneten Beträge** jeder Transaktion in diesem Zeitraum neu — mit Ausnahme von Transaktionen, die du individuell überschrieben hast, diese behalten immer ihren fixierten Kurs.
+
+## Überschreibungen pro Transaktion: Übereinstimmung mit dem Kontoauszug
+
+Marktkurse sind Durchschnittswerte; der Abrechnungskurs deiner Karte ist es nie ganz. Wenn der umgerechnete Betrag auf den Cent genau mit einem Kontoauszug übereinstimmen muss, überschreibe den Kurs bei der einzelnen Transaktion — gib entweder den Kurs oder den genauen Abrechnungsbetrag ein, und die Transaktion ist ab dann von allen automatischen Neuberechnungen ausgenommen.
+
+Das ist das Werkzeug für: Karteneinkäufe im Ausland (Banken schlagen ihre eigene Marge auf), Umbuchungen, bei denen die Quittung den genauen Kurs ausweist, und jede Zeile, die dein Buchhalter irgendwann mit einem Kontoauszug abgleichen wird.
+
+## Manuelle Kurse: Budgetierung ohne Kurs-Feed
+
+Manuelle Kurse sind feste Kurse, die du selbst eingibst. Sie werden verwendet, wenn abgerufene Kurse nicht verfügbar sind — [offline](/docs/offline) oder auf einer [Self-Hosting](/docs/self-hosting-guide)-Instanz, die du nicht mit einer Kurs-API verbunden hast. Leg sie einmal für die Währungspaare fest, die du nutzt, und Multi-Währung funktioniert auch ohne Netzwerkverbindung. Einzelne Transaktionen kannst du später jederzeit mit Overrides korrigieren.
+
+## Tägliche Abläufe
+
+**Der grenzüberschreitende Haushalt.** Das Gehalt kommt in GBP an, die Miete geht in EUR raus. Jedes Konto behält seine eigene Währung; Zuweisungen und Ausgabeentscheidungen finden alle in der Budget-Währung statt. Kein mentales Währungsumrechnen — die Kurs-Hierarchie erledigt das.
+
+**Reisen.** Zahle mit deiner heimischen Karte im Ausland und die Transaktion kommt wie gewohnt in der Währung des Kontos an — gib ein, was das Terminal in der Fremdwährung angezeigt hat, oder was deine Banking-App als abgerechnet zeigt, je nachdem, was du zur Hand hast; ein Override gleicht die Differenz ab, wenn der Kontoauszug eintrifft.
+
+**Fremde Konten abgleichen.** Der [Abgleich](/docs/accounts) vergleicht *ursprüngliche* Beträge mit deiner Bank — Franken gegen Franken. Die Umrechnung beeinflusst nie, ob dein Kontostand stimmt; sie bestimmt nur, wie dieser Kontostand in deiner Budget-Währung angezeigt wird.
+
+## Was die Umrechnung unangetastet lässt
+
+Ein wichtiger Grundsatz: Kurse beeinflussen, wie Fremdbeträge *ausgedrückt* werden, niemals, was *passiert ist*. Ursprüngliche Beträge sind unveränderliche Fakten; umgerechnete Beträge sind Interpretationen, die sich verbessern, sobald bessere Kursdaten vorliegen. Das Löschen eines benutzerdefinierten Kurses verfälscht nicht die Historie — es leitet die betreffenden Transaktionen lediglich in der Hierarchie weiter zum nächsten anwendbaren Kurs.
+
+## Krypto-Konten
+
+Konten können auch auf Kryptowährung lauten — Bitcoin, Ethereum und rund zwei Dutzend weitere wichtige Coins. Einige Dinge funktionieren anders als bei Fiat-Währungen:
+
+- **Satoshi-Genauigkeit.** Krypto-Beträge werden mit acht Nachkommastellen gespeichert, sodass 0,00000001 BTC darstellbar ist. Die Genauigkeit bei Fiat-Währungen bleibt unverändert.
+- **Standardmäßig nur zur Verfolgung.** Neue Krypto-Konten starten als Nicht im Budget: Ihr Wert zählt zum Nettovermögen, aber tägliche Marktschwankungen verändern nicht den Zu budgetieren-Betrag. Schalte das Konto auf Im Budget, wenn du *möchtest*, dass dein Budget mit dem Markt atmet.
+- **Tägliche Neubewertung.** Jeden Tag wird der umgerechnete Kontostand an den Ursprungssaldo mal den aktuellen Kurs angepasst und die Änderung wird im Journal erfasst. Deine Transaktionen behalten den Kurs vom Tag ihrer Entstehung — Ausgabenberichte schreiben die Historie niemals um —, während Salden stets den heutigen Markt widerspiegeln.
+- **Kein 1:1-Fallback.** Eine Fiat-Transaktion ohne bekannten Kurs greift auf eine temporäre 1:1-Umrechnung zurück und korrigiert sich später selbst; bei Krypto wäre das katastrophal, daher verweigert Budgero die Erfassung der Transaktion, bis ein Kurs verfügbar ist (füge einen manuellen Kurs hinzu oder stelle die Verbindung wieder her).

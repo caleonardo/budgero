@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { CalendarRange, ChartPie, BarChartHorizontal, LayoutGrid } from 'lucide-react';
@@ -29,13 +30,6 @@ import { InsightStrip, PanelSectionTitle, ProportionRow, StatTile } from '../com
 type SpendingView = 'time' | 'share';
 type ShareStyle = 'donut' | 'columns' | 'treemap';
 
-const DIM_LABELS: Record<SpendingDimension, string> = {
-  category: 'Categories',
-  group: 'Groups',
-  payee: 'Payees',
-  label: 'Labels',
-};
-
 const MAX_SLICES = 8;
 
 interface SpendingReportProps {
@@ -50,6 +44,18 @@ interface SpendingReportProps {
  * the hidden entries together when that bucket is selected.
  */
 export function SpendingReport({ data, months }: SpendingReportProps) {
+  const { t } = useLingui();
+
+  const DIM_LABELS: Record<SpendingDimension, string> = useMemo(
+    () => ({
+      category: t`Categories`,
+      group: t`Groups`,
+      payee: t`Payees`,
+      label: t`Labels`,
+    }),
+    [t]
+  );
+
   const [view, setView] = useState<SpendingView>('time');
   const [shareStyle, setShareStyle] = useState<ShareStyle>('donut');
   const [dim, setDim] = useState<SpendingDimension>('category');
@@ -92,13 +98,13 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
     const foldedCount = totals.length - folded.top.length;
     return rows.map((row, index) => ({
       ...row,
-      name: row.key === 'other' ? `Other (${foldedCount} more)` : row.name,
+      name: row.key === 'other' ? t`Other (${foldedCount} more)` : row.name,
       color:
         row.key === 'other'
           ? palette.chrome.other
           : (row.ownColor ?? palette.series[index % palette.series.length]),
     }));
-  }, [folded, totals, palette, showingOther]);
+  }, [folded, totals, palette, showingOther, t]);
 
   const expandedPanelRows = useMemo(
     () =>
@@ -113,13 +119,13 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
     const foldedCount = totals.length - folded.top.length;
     return rows.map((row, index) => ({
       ...row,
-      name: row.key === 'other' ? `Other (${foldedCount} more) — inspect` : row.name,
+      name: row.key === 'other' ? t`Other (${foldedCount} more) — inspect` : row.name,
       color:
         row.key === 'other'
           ? palette.chrome.other
           : (row.ownColor ?? palette.series[index % palette.series.length]),
     }));
-  }, [folded, totals.length, palette]);
+  }, [folded, totals.length, palette, t]);
 
   const total = folded.grandTotal;
   const monthCount = Math.max(1, months.length);
@@ -272,11 +278,11 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
         },
       ],
     };
-  }, [view, shareStyle, dim, months, coloredTrend, slices, total, palette, money]);
+  }, [view, shareStyle, dim, months, coloredTrend, slices, total, palette, money, DIM_LABELS]);
 
   return (
     <ReportShell
-      title="Spending"
+      title={t`Spending`}
       hero={
         <AnimatedNumber
           value={total}
@@ -284,7 +290,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
           rounding="integer"
         />
       }
-      subtitle="Where the money goes"
+      subtitle={t`Where the money goes`}
       controls={
         <>
           <ModeToggle
@@ -295,10 +301,10 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
             }}
             ariaLabel="Spending dimension"
             options={[
-              { value: 'category', label: 'Categories' },
-              { value: 'group', label: 'Groups' },
-              { value: 'payee', label: 'Payees' },
-              { value: 'label', label: 'Labels' },
+              { value: 'category', label: t`Categories` },
+              { value: 'group', label: t`Groups` },
+              { value: 'payee', label: t`Payees` },
+              { value: 'label', label: t`Labels` },
             ]}
           />
           <ModeToggle
@@ -306,8 +312,8 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
             onChange={setView}
             ariaLabel="Spending view"
             options={[
-              { value: 'time', label: 'Over time', icon: CalendarRange },
-              { value: 'share', label: 'Share', icon: ChartPie },
+              { value: 'time', label: t`Over time`, icon: CalendarRange },
+              { value: 'share', label: t`Share`, icon: ChartPie },
             ]}
           />
           {view === 'share' ? (
@@ -316,9 +322,9 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
               onChange={setShareStyle}
               ariaLabel="Share chart style"
               options={[
-                { value: 'donut', label: 'Donut', icon: ChartPie },
-                { value: 'columns', label: 'Columns', icon: BarChartHorizontal },
-                { value: 'treemap', label: 'Treemap', icon: LayoutGrid },
+                { value: 'donut', label: t`Donut`, icon: ChartPie },
+                { value: 'columns', label: t`Columns`, icon: BarChartHorizontal },
+                { value: 'treemap', label: t`Treemap`, icon: LayoutGrid },
               ]}
             />
           ) : null}
@@ -340,15 +346,15 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
       isLoading={data.isLoading}
       isEmpty={isEmpty}
       emptyText={
-        dim === 'label' ? 'No labeled spending in this period.' : 'No spending in this period.'
+        dim === 'label' ? t`No labeled spending in this period.` : t`No spending in this period.`
       }
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
-            <StatTile label="Total" value={money.tile(total)} />
-            <StatTile label="Avg / month" value={money.tile(Math.round(total / monthCount))} />
+            <StatTile label={t`Total`} value={money.tile(total)} />
+            <StatTile label={t`Avg / month`} value={money.tile(Math.round(total / monthCount))} />
             <StatTile
-              label={`Top ${DIM_LABELS[dim].replace(/s$/, '').toLowerCase()}`}
+              label={t`Top ${DIM_LABELS[dim].replace(/s$/, '').toLowerCase()}`}
               value={top?.name ?? '—'}
               detail={
                 top && total > 0
@@ -370,7 +376,9 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
           </div>
           {dim === 'label' ? (
             <p className="mt-3 text-xs text-muted-foreground">
-              A transaction with several labels counts in full under each, so labels can overlap.
+              <Trans>
+                A transaction with several labels counts in full under each, so labels can overlap.
+              </Trans>
             </p>
           ) : null}
           {showingOther ? (
@@ -379,11 +387,11 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
               onClick={() => setOtherOpen(false)}
               className="mt-4 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              ← Collapse Other
+              <Trans>← Collapse Other</Trans>
             </button>
           ) : null}
           <PanelSectionTitle>
-            {showingOther ? `${DIM_LABELS[dim]} · Other expanded` : DIM_LABELS[dim]}
+            {showingOther ? t`${DIM_LABELS[dim]} · Other expanded` : DIM_LABELS[dim]}
           </PanelSectionTitle>
           <div className="max-h-[420px] overflow-y-auto pr-1">
             {visiblePanelRows.map((row) => {

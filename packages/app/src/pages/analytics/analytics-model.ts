@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 /**
  * Pure aggregation model for the Analytics page. Everything here operates on
  * plain adapted shapes (AnalyticsTxn / AnalyticsAccount) so it can be unit
@@ -168,13 +169,13 @@ export interface DimensionTotal {
 function dimensionKey(txn: AnalyticsTxn, dim: SpendingDimension): { key: string; name: string } {
   switch (dim) {
     case 'category':
-      return { key: `c:${txn.categoryId ?? 'none'}`, name: txn.category || 'Uncategorized' };
+      return { key: `c:${txn.categoryId ?? 'none'}`, name: txn.category || t`Uncategorized` };
     case 'group':
-      return { key: `g:${txn.groupName || 'none'}`, name: txn.groupName || 'Ungrouped' };
+      return { key: `g:${txn.groupName || 'none'}`, name: txn.groupName || t`Ungrouped` };
     case 'payee':
-      return { key: `p:${txn.payee || 'none'}`, name: txn.payee || 'No payee' };
+      return { key: `p:${txn.payee || 'none'}`, name: txn.payee || t`No payee` };
     case 'label':
-      return { key: `l:${txn.labelId ?? 'none'}`, name: txn.label || 'Unlabeled' };
+      return { key: `l:${txn.labelId ?? 'none'}`, name: txn.label || t`Unlabeled` };
   }
 }
 
@@ -220,7 +221,7 @@ export function foldTopN(items: DimensionTotal[], n: number): FoldedTotals {
   const otherTotal = grandTotal - top.reduce((sum, item) => sum + item.total, 0);
   return {
     top,
-    other: { key: 'other', name: 'Other', total: otherTotal, ownColor: null },
+    other: { key: 'other', name: t`Other`, total: otherTotal, ownColor: null },
     grandTotal,
   };
 }
@@ -408,14 +409,14 @@ export function buildFlowGraph(
   for (const txn of txns) {
     if (isNeutralTransfer(txn) || !onBudgetAccountIds.has(txn.accountId)) continue;
     if (txn.isIncome) {
-      const name = txn.category || 'Other income';
+      const name = txn.category || t`Other income`;
       const amount = txn.inflow - txn.outflow;
       incomeBySource.set(name, (incomeBySource.get(name) ?? 0) + amount);
     } else {
       const name =
         spendingDimension === 'category'
-          ? txn.category || 'Uncategorized'
-          : txn.groupName || 'Ungrouped';
+          ? txn.category || t`Uncategorized`
+          : txn.groupName || t`Ungrouped`;
       const amount = txn.outflow - txn.inflow;
       spendingByDestination.set(name, (spendingByDestination.get(name) ?? 0) + amount);
     }
@@ -588,7 +589,7 @@ export function buildCategoryPivot(
   if (uncategorized && !selectedSet) {
     addRow(PIVOT_UNCATEGORIZED_GROUP_ID, 'Other categories', {
       id: null,
-      name: 'Uncategorized',
+      name: t`Uncategorized`,
       values: uncategorized,
       total: uncategorized.reduce((sum, value) => sum + value, 0),
     });

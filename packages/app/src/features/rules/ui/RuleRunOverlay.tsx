@@ -1,3 +1,5 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   Dialog,
   DialogContent,
@@ -20,30 +22,6 @@ type Step = {
   label: string;
   description?: string;
 };
-
-const executeSteps: Step[] = [
-  {
-    id: 'run',
-    label: 'Applying rule to transactions',
-  },
-  {
-    id: 'refresh',
-    label: 'Refreshing budget data',
-    description: 'Updating cached queries so everything reflects the new changes',
-  },
-];
-
-const undoSteps: Step[] = [
-  {
-    id: 'run',
-    label: 'Restoring previous values',
-  },
-  {
-    id: 'refresh',
-    label: 'Refreshing budget data',
-    description: 'Updating cached queries so everything reflects the new changes',
-  },
-];
 
 function stepState(
   phase: RuleRunPhase,
@@ -126,6 +104,32 @@ export function RuleRunOverlay({
   error,
   onClose,
 }: RuleRunOverlayProps) {
+  const { t } = useLingui();
+
+  const undoSteps: Step[] = [
+    {
+      id: 'run',
+      label: t`Restoring previous values`,
+    },
+    {
+      id: 'refresh',
+      label: t`Refreshing budget data`,
+      description: t`Updating cached queries so everything reflects the new changes`,
+    },
+  ];
+
+  const executeSteps: Step[] = [
+    {
+      id: 'run',
+      label: t`Applying rule to transactions`,
+    },
+    {
+      id: 'refresh',
+      label: t`Refreshing budget data`,
+      description: t`Updating cached queries so everything reflects the new changes`,
+    },
+  ];
+
   const progressValue = (() => {
     switch (phase) {
       case 'running':
@@ -150,18 +154,24 @@ export function RuleRunOverlay({
 
   const summaryText = (() => {
     if (phase === 'error') {
-      return error || 'We could not apply this rule. Try again in a moment.';
+      return error || t`We could not apply this rule. Try again in a moment.`;
     }
 
     if (mode === 'undo') {
-      if (phase === 'running') return 'Restoring transactions to their previous values...';
-      if (phase === 'refreshing') return 'Updating cached data...';
-      return `Restored ${restoredCount} transaction${restoredCount === 1 ? '' : 's'}.`;
+      if (phase === 'running') return t`Restoring transactions to their previous values...`;
+      if (phase === 'refreshing') return t`Updating cached data...`;
+      return plural(restoredCount, {
+        one: `Restored # transaction.`,
+        other: `Restored # transactions.`,
+      });
     }
 
-    if (phase === 'running') return 'Evaluating matching transactions...';
-    if (phase === 'refreshing') return 'Updating cached data...';
-    return `${matchedCount} transaction${matchedCount === 1 ? '' : 's'} updated.`;
+    if (phase === 'running') return t`Evaluating matching transactions...`;
+    if (phase === 'refreshing') return t`Updating cached data...`;
+    return plural(matchedCount, {
+      one: `# transaction updated.`,
+      other: `# transactions updated.`,
+    });
   })();
 
   const handleOpenChange = (next: boolean) => {
@@ -175,14 +185,14 @@ export function RuleRunOverlay({
         <DialogHeader className="space-y-2">
           <DialogTitle>
             {phase === 'error'
-              ? 'Rule execution failed'
+              ? t`Rule execution failed`
               : phase === 'done'
                 ? mode === 'undo'
-                  ? 'Undo completed'
-                  : 'Rule execution completed'
+                  ? t`Undo completed`
+                  : t`Rule execution completed`
                 : mode === 'undo'
-                  ? 'Undoing automation run'
-                  : 'Running automation rule'}
+                  ? t`Undoing automation run`
+                  : t`Running automation rule`}
           </DialogTitle>
           <DialogDescription className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <Badge variant="outline" className="uppercase">
@@ -205,8 +215,14 @@ export function RuleRunOverlay({
             <div className="rounded-md border border-green-500/30 bg-green-500/5 p-3 text-sm text-foreground">
               <p>
                 {mode === 'undo'
-                  ? `Restored ${restoredCount} transaction${restoredCount === 1 ? '' : 's'} across this budget.`
-                  : `Updated ${matchedCount} transaction${matchedCount === 1 ? '' : 's'} across this budget.`}
+                  ? plural(restoredCount, {
+                      one: `Restored # transaction across this budget.`,
+                      other: `Restored # transactions across this budget.`,
+                    })
+                  : plural(matchedCount, {
+                      one: `Updated # transaction across this budget.`,
+                      other: `Updated # transactions across this budget.`,
+                    })}
               </p>
             </div>
           ) : null}
@@ -224,7 +240,7 @@ export function RuleRunOverlay({
                 onClick={onClose}
                 autoFocus
               >
-                Close
+                <Trans>Close</Trans>
               </Button>
             </div>
           )}

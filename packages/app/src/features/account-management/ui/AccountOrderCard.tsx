@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -23,6 +24,8 @@ interface ReorderListProps {
 }
 
 function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
+  const { t } = useLingui();
+
   if (accounts.length === 0) return null;
 
   const move = (index: number, direction: -1 | 1) => {
@@ -56,7 +59,7 @@ function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7"
-                  aria-label={`Move ${account.Name} up`}
+                  aria-label={t`Move ${account.Name} up`}
                   disabled={busy || index === 0}
                   onClick={() => move(index, -1)}
                 >
@@ -66,7 +69,7 @@ function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7"
-                  aria-label={`Move ${account.Name} down`}
+                  aria-label={t`Move ${account.Name} down`}
                   disabled={busy || index === accounts.length - 1}
                   onClick={() => move(index, 1)}
                 >
@@ -82,6 +85,8 @@ function ReorderList({ title, accounts, onMove, busy }: ReorderListProps) {
 }
 
 export function AccountOrderCard() {
+  const { t } = useLingui();
+
   const budgetId = useUiStore((state) => state.selectedBudget?.ID || 0);
   const { data: accounts } = useActiveAccounts(budgetId);
   const reorder = useReorderAccounts();
@@ -105,27 +110,33 @@ export function AccountOrderCard() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <ArrowUpDown className="h-5 w-5" />
-          Account order
+          <Trans>
+            <ArrowUpDown className="h-5 w-5" />
+            Account order
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Reorder how accounts appear in the sidebar and the mobile navigation. On-budget and
-          off-budget accounts are ordered separately.
+          <Trans>
+            Reorder how accounts appear in the sidebar and the mobile navigation. On-budget and
+            off-budget accounts are ordered separately.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {!hasAccounts ? (
-          <p className="text-sm text-muted-foreground">No accounts to reorder yet.</p>
+          <p className="text-sm text-muted-foreground">
+            <Trans>No accounts to reorder yet.</Trans>
+          </p>
         ) : (
           <>
             <ReorderList
-              title="On budget"
+              title={t`On budget`}
               accounts={onBudget}
               onMove={handleReorder}
               busy={reorder.isPending}
             />
             <ReorderList
-              title="Off budget"
+              title={t`Off budget`}
               accounts={offBudget}
               onMove={handleReorder}
               busy={reorder.isPending}

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import {
   Landmark,
@@ -22,20 +23,6 @@ import { PlanRealityReport } from './reports/PlanRealityReport';
 import { ScenarioReport } from './reports/ScenarioReport';
 import { VsExpenseReport } from './reports/VsExpenseReport';
 
-/**
- * Question-based reports: each answers something a household asks, rather
- * than naming a chart type.
- */
-const REPORTS: { key: ReportKey; label: string; question: string; icon: LucideIcon }[] = [
-  { key: 'wealth', label: 'Wealth', question: 'Am I growing?', icon: Landmark },
-  { key: 'spending', label: 'Spending', question: 'Where does it go?', icon: Tag },
-  { key: 'in-out', label: 'In vs Out', question: 'Within our means?', icon: ArrowLeftRight },
-  { key: 'plan', label: 'Plan vs Reality', question: 'Did the budget hold?', icon: ClipboardCheck },
-  { key: 'money-map', label: 'Money Map', question: 'How does it move?', icon: Waypoints },
-  { key: 'scenario', label: 'Scenario', question: 'What if?', icon: FlaskConical },
-  { key: 'ledger', label: 'Ledger', question: 'Every category, every month', icon: Table2 },
-];
-
 /** Wealth is account-scoped; everything else takes the full filter set. */
 const CATEGORY_FILTER_REPORTS = new Set<ReportKey>([
   'spending',
@@ -46,6 +33,27 @@ const CATEGORY_FILTER_REPORTS = new Set<ReportKey>([
 ]);
 
 export default function AnalyticsPage() {
+  const { t } = useLingui();
+
+  /**
+   * Question-based reports: each answers something a household asks, rather
+   * than naming a chart type.
+   */
+  const REPORTS: { key: ReportKey; label: string; question: string; icon: LucideIcon }[] = [
+    { key: 'wealth', label: t`Wealth`, question: t`Am I growing?`, icon: Landmark },
+    { key: 'spending', label: t`Spending`, question: t`Where does it go?`, icon: Tag },
+    { key: 'in-out', label: t`In vs Out`, question: t`Within our means?`, icon: ArrowLeftRight },
+    {
+      key: 'plan',
+      label: t`Plan vs Reality`,
+      question: t`Did the budget hold?`,
+      icon: ClipboardCheck,
+    },
+    { key: 'money-map', label: t`Money Map`, question: t`How does it move?`, icon: Waypoints },
+    { key: 'scenario', label: t`Scenario`, question: t`What if?`, icon: FlaskConical },
+    { key: 'ledger', label: t`Ledger`, question: t`Every category, every month`, icon: Table2 },
+  ];
+
   const [report, setReport] = useState<ReportKey>('wealth');
   const state = useAnalyticsPageState();
   const data = useAnalyticsData(state.filters);
@@ -62,7 +70,9 @@ export default function AnalyticsPage() {
 
   return (
     <div className="w-full space-y-4 p-4 pb-24 sm:p-6 md:pb-6">
-      <h1 className="text-2xl font-bold tracking-tight">Prebuilt</h1>
+      <h1 className="text-2xl font-bold tracking-tight">
+        <Trans>Prebuilt</Trans>
+      </h1>
 
       <div className="grid grid-cols-2 gap-1 rounded-xl border border-dashed border-border/70 bg-card p-1 sm:grid-cols-3 lg:grid-cols-7">
         {REPORTS.map(({ key, label, question, icon: Icon }) => (
@@ -70,18 +80,20 @@ export default function AnalyticsPage() {
             key={key}
             variant={report === key ? 'default' : 'ghost'}
             className={cn(
-              'h-auto flex-col items-start gap-0.5 px-3 py-2',
+              // min-w-0 + truncation: long translations shrink into their
+              // grid cell instead of blowing the 7-column strip open.
+              'h-auto min-w-0 flex-col items-start gap-0.5 px-3 py-2',
               report !== key && 'text-muted-foreground'
             )}
             onClick={() => setReport(key)}
           >
-            <span className="flex items-center gap-1.5 text-sm font-semibold">
-              <Icon className="h-4 w-4" />
-              {label}
+            <span className="flex w-full min-w-0 items-center gap-1.5 text-sm font-semibold">
+              <Icon className="h-4 w-4 shrink-0" />
+              <span className="truncate">{label}</span>
             </span>
             <span
               className={cn(
-                'text-[11px] font-normal',
+                'w-full min-w-0 truncate text-left text-[11px] font-normal',
                 report === key ? 'text-primary-foreground/75' : 'text-muted-foreground'
               )}
             >

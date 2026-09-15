@@ -1,0 +1,109 @@
+---
+title: "Aperçu de l'API Push"
+summary: "Envoyez des transactions chiffrées dans Budgero depuis n'importe quel système via l'API Push ou le SDK Python."
+section: integrations
+topicId: push-api
+badge: "Nouveau"
+order: 10
+takeaways:
+  - "Générez un jeton d'API Push et exportez la clé de chiffrement de votre espace depuis Paramètres → Intégrations → API Push."
+  - "Chiffrez une charge utile transactions.add avec AES-GCM, encodez-la en Base64, et envoyez une requête POST à /api/v1/push avec un jeton bearer ; utilisez message_id pour dédupliquer les tentatives."
+  - "Utilisez le SDK Python pour gérer le chiffrement, les identifiants de message et la visibilité de la file d'attente (en attente/traités/échoués)."
+---
+
+L'API Push vous permet d'envoyer des transactions vers Budgero depuis d'autres systèmes tout en conservant un chiffrement de bout en bout. Vous générez un jeton, chiffrez la charge utile avec votre clé de l'espace, et l'envoyez en POST au point de terminaison Push via HTTPS.
+
+## Configuration rapide
+
+1. Dans **Paramètres → Intégrations → API Push**, générez un jeton d'API Push.  
+2. Exportez votre **clé de chiffrement de l'espace** (Budgero ne la stocke jamais côté serveur).  
+3. Créez une charge utile JSON (voir le format ci-dessous), chiffrez-la avec **AES-256-GCM**, encodez-la en Base64, et envoyez-la en POST au point de terminaison Push avec votre jeton bearer.  
+4. Incluez facultativement un **message_id** afin que les nouvelles tentatives soient dédupliquées.  
+5. Surveillez les statistiques de file d'attente dans l'application ou via l'API pour confirmer le traitement.
+
+## Spécifications du point de terminaison et de la charge utile
+
+- Point de terminaison : `POST /api/v1/push` (utilisez votre URL de base ; par défaut `https://my.budgero.app`)
+- Authentification : `Authorization: Bearer <push-api-token>`
+- Champs du corps :
+  - `encrypted_payload` (chaîne, Base64) : charge utile JSON chiffrée en AES-GCM (IV + texte chiffré + tag d'authentification).
+  - `message_id` (chaîne, facultatif) : identifiant généré par le client pour dédupliquer les nouvelles tentatives.
+
+### Format de la charge utile déchiffrée (avant chiffrement)
+
+```json
+{
+  "v": 2,
+  "op": "transactions.add",
+  "args": {
+    "accountId": 1,
+    "categoryId": 5,
+    "budgetId": 1,
+    "date": "2024-11-27",
+    "inflow": 0,
+    "outflow": 42500,
+    "memo": "API push",
+    "payee": "Vendor",
+    "transferId": ""
+  },
+  "message_id": "optional-unique-id"
+}
+```
+
+Les valeurs monétaires sont des milliunités entières (1/1000 d'une unité monétaire), donc 42,50 est envoyé sous la forme `42500`. Incluez toujours `"v": 2` ; les charges utiles héritées sans ce champ sont traitées comme le format 1 (montants décimaux) et mises à niveau lors de l'import, mais les nouvelles intégrations devraient envoyer le format 2. Le SDK Python gère à la fois l'indicateur de format et la conversion pour vous.
+
+### Opération prise en charge à ce jour
+
+- `transactions.add` — envoyez un revenu ou une dépense. Utilisez `inflow` pour les revenus et `outflow` pour les dépenses (un seul doit être non nul). Indiquez vos identifiants de budget, de compte et de catégorie existants.
+
+## Exigences de chiffrement
+
+- Algorithme : AES-256-GCM  
+- IV : 12 octets (à placer avant le texte chiffré)  
+- Tag d'authentification : 16 octets (à ajouter après le texte chiffré)  
+- Encodage : Base64 de IV + texte chiffré + tag  
+- Clé : Votre **clé de chiffrement de l'espace** (exportée depuis les Paramètres).
+
+## Démarrage rapide du SDK Python
+
+```python
+from budgero import BudgeroClient
+
+client = BudgeroClient(
+    api_key="your-push-token",
+    encryption_key="your-space-key",
+    base_url="https://my.budgero.app",
+)
+
+result = client.add_transaction(
+    account_id=1,
+    category_id=5,
+    budget_id=1,
+    date="2024-11-27",
+    outflow=42.50,
+    memo="Example push",
+    payee="API Demo",
+)
+
+print("Queued id:", result.queue_id)
+```
+
+Assistants SDK :
+
+- `get_queue()` — lister les éléments en attente  
+- `get_queue_stats()` — décomptes des éléments en attente/traités/échoués  
+- `clear_queue()` — effacer les éléments en attente (ou tous avec un indicateur)
+
+- **Dédoublonnage :** Fournissez un `message_id` stable lors des nouvelles tentatives pour éviter les insertions en double.  
+- **Visibilité de la file d'attente :** Consultez les statistiques de la file d'attente dans l'application ou via `/push/queue` et `/push/stats` pour vérifier la livraison.  
+- **Hygiène des jetons :** Renouvelez/régénérez en cas d'exposition. Désactivez ou révoquez depuis les Paramètres si nécessaire.  
+- **Hygiène des clés :** Ne stockez pas le jeton/la clé dans le contrôle de version.  
+  <figure>
+    <img src="/gandalf_keep_it_secret.gif" alt="« Gardez-le secret, gardez-le en sécurité » — Gandalf le rappelant à Frodo" />
+    <figcaption>Gardez-le secret, gardez-le en sécurité.</figcaption>
+  </figure>
+  
+  Utilisez des variables d'environnement (par ex., `BUDGERO_PUSH_TOKEN`, `BUDGERO_SPACE_KEY`) ou le gestionnaire de secrets de votre système d'exploitation, restreignez les permissions des fichiers et évitez de les journaliser.  
+- **Transport :** Utilisez toujours HTTPS pour que le jeton bearer et les métadonnées restent protégés.  
+- **Contrôle d'accès :** Restreignez l'accès en lecture au jeton/à la clé. Traitez-les comme des identifiants d'authentification dont la portée est limitée à votre budget.  
+- **Gestion des erreurs :** En cas de 409 avec message_id, considérez-le comme une nouvelle tentative dédoublonnée. En cas de 401/403, régénérez/activez le jeton. Surveillez les échecs de file d'attente et effacez ou remettez en file d'attente si nécessaire.

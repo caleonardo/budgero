@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans, useLingui } from '@lingui/react/macro';
+
 import { useId, useMemo, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@shared/ui/button';
@@ -45,6 +47,8 @@ export function CCPaymentCoverPopover({
   align = 'end',
   triggerClassName,
 }: CCPaymentCoverPopoverProps) {
+  const { t } = useLingui();
+
   const sourceAccountTriggerId = useId();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState<MilliUnits>(ZERO_MILLI);
@@ -103,9 +107,8 @@ export function CCPaymentCoverPopover({
             selectedBudget.ID
           );
           if (!localOrManual) {
-            toast.error('No exchange rate available', {
-              description:
-                'Please add a manual exchange rate in Settings → Currencies, or create this transfer from the transaction form.',
+            toast.error(t`No exchange rate available`, {
+              description: t`Please add a manual exchange rate in Settings → Currencies, or create this transfer from the transaction form.`,
             });
             setIsConfirming(false);
             return;
@@ -178,8 +181,8 @@ export function CCPaymentCoverPopover({
         transferId,
       });
 
-      toast.success('Card payment recorded', {
-        description: `${formatAmount(sourceOutflow)} ${sourceAccount.Currency} transferred to ${ccAccount.Name}.`,
+      toast.success(t`Card payment recorded`, {
+        description: t`${formatAmount(sourceOutflow)} ${sourceAccount.Currency} transferred to ${ccAccount.Name}.`,
       });
       setOpen(false);
     } catch (err) {
@@ -188,6 +191,7 @@ export function CCPaymentCoverPopover({
       setIsConfirming(false);
     }
   }, [
+    t,
     amount,
     ccAccount,
     sourceAccount,
@@ -208,7 +212,7 @@ export function CCPaymentCoverPopover({
             availableAmountClass(available),
             triggerClassName
           )}
-          title="Cover this card"
+          title={t`Cover this card`}
           onClick={(e) => {
             e.stopPropagation();
             handleOpenChange(true);
@@ -219,17 +223,21 @@ export function CCPaymentCoverPopover({
       </PopoverTrigger>
       <PopoverContent className={cn('w-72 p-3', className)} align={align}>
         <div className="space-y-3">
-          <div className="text-sm font-medium">Cover {ccAccount?.Name || 'card'}</div>
+          <div className="text-sm font-medium">
+            <Trans>Cover {ccAccount?.Name || 'card'}</Trans>
+          </div>
 
           {sourceAccounts.length === 0 ? (
             <div className="text-xs text-muted-foreground">
-              No on-budget checking/savings accounts available to pay from.
+              <Trans>No on-budget checking/savings accounts available to pay from.</Trans>
             </div>
           ) : (
             <>
               <div className="space-y-1">
                 {/* Caption, not a <label>: CalculatorCell exposes no labelable control. */}
-                <span className="text-xs text-muted-foreground">Amount</span>
+                <span className="text-xs text-muted-foreground">
+                  <Trans>Amount</Trans>
+                </span>
                 <CalculatorCell
                   value={amount}
                   onCommit={setAmount}
@@ -242,7 +250,7 @@ export function CCPaymentCoverPopover({
                   inputClassName="h-9"
                 />
                 <div className="text-[10px] text-muted-foreground">
-                  Available to cover: {formatAmount(Math.max(0, available || 0))}
+                  <Trans>Available to cover: {formatAmount(Math.max(0, available || 0))}</Trans>
                 </div>
               </div>
 
@@ -251,14 +259,14 @@ export function CCPaymentCoverPopover({
                   htmlFor={sourceAccountTriggerId}
                   className="font-normal text-xs text-muted-foreground"
                 >
-                  From account
+                  <Trans>From account</Trans>
                 </Label>
                 <Select
                   value={sourceAccountId !== null ? String(sourceAccountId) : ''}
                   onValueChange={(v) => setSourceAccountId(Number(v))}
                 >
                   <SelectTrigger id={sourceAccountTriggerId} className="h-8 w-full">
-                    <SelectValue placeholder="Select account" />
+                    <SelectValue placeholder={t`Select account`} />
                   </SelectTrigger>
                   <SelectContent>
                     {sourceAccounts.map((a) => (
@@ -272,10 +280,10 @@ export function CCPaymentCoverPopover({
 
               <div className="flex items-center justify-end gap-2 pt-1">
                 <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </Button>
                 <Button size="sm" onClick={handleConfirm} disabled={!canConfirm}>
-                  {addTransaction.isPending || isConfirming ? 'Recording…' : 'Pay'}
+                  {addTransaction.isPending || isConfirming ? t`Recording…` : t`Pay`}
                 </Button>
               </div>
             </>

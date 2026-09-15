@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { Extension } from '@codemirror/state';
 import { useTheme } from 'next-themes';
@@ -15,6 +16,8 @@ import {
 } from './sql-explorer.utils';
 
 export function useSqlExplorerState() {
+  const { t } = useLingui();
+
   const { theme, resolvedTheme } = useTheme();
   const {
     getDatabaseTables,
@@ -94,14 +97,14 @@ export function useSqlExplorerState() {
       setTableSchema(schema.sort((a, b) => a.name.localeCompare(b.name)));
     } catch (err) {
       const errorMessage =
-        (err as ApiError)?.message || 'Failed to load database schema from server';
-      toast.error('Schema Load Failed', {
+        (err as ApiError)?.message || t`Failed to load database schema from server`;
+      toast.error(t`Schema Load Failed`, {
         description: errorMessage,
       });
     } finally {
       setIsLoadingSchema(false);
     }
-  }, []);
+  }, [t]);
 
   const loadSavedQueries = useCallback(async () => {
     setIsLoadingSavedQueries(true);
@@ -127,61 +130,64 @@ export function useSqlExplorerState() {
     async (name: string) => {
       const trimmedName = name.trim();
       if (!trimmedName) {
-        toast.error('Name required', {
-          description: 'Please enter a name for this query.',
+        toast.error(t`Name required`, {
+          description: t`Please enter a name for this query.`,
         });
         return;
       }
       const currentQuery = sqlQueryRef.current.trim();
       if (!currentQuery) {
-        toast.error('No query', {
-          description: 'Please enter a SQL query to save.',
+        toast.error(t`No query`, {
+          description: t`Please enter a SQL query to save.`,
         });
         return;
       }
 
       try {
         await saveQuery(trimmedName, currentQuery);
-        toast.success('Query saved', { description: `Saved as "${trimmedName}"` });
+        toast.success(t`Query saved`, { description: t`Saved as "${trimmedName}"` });
         setSaveQueryName('');
         await loadSavedQueries();
       } catch (err) {
         console.error('Failed to save query', err);
-        toast.error('Save failed', {
-          description: 'Could not save the query.',
+        toast.error(t`Save failed`, {
+          description: t`Could not save the query.`,
         });
       }
     },
-    [saveQuery, loadSavedQueries]
+    [saveQuery, loadSavedQueries, t]
   );
 
-  const handleLoadSavedQuery = useCallback((query: SavedQueryItem) => {
-    setSqlQuery(query.query);
-    toast.success('Query loaded', { description: `Loaded "${query.name}"` });
-  }, []);
+  const handleLoadSavedQuery = useCallback(
+    (query: SavedQueryItem) => {
+      setSqlQuery(query.query);
+      toast.success(t`Query loaded`, { description: t`Loaded "${query.name}"` });
+    },
+    [t]
+  );
 
   const handleDeleteSavedQuery = useCallback(
     async (name: string) => {
       try {
         await deleteSavedQuery(name);
-        toast.success('Query deleted', { description: `Deleted "${name}"` });
+        toast.success(t`Query deleted`, { description: t`Deleted "${name}"` });
         await loadSavedQueries();
       } catch (err) {
         console.error('Failed to delete query', err);
-        toast.error('Delete failed', {
-          description: 'Could not delete the query.',
+        toast.error(t`Delete failed`, {
+          description: t`Could not delete the query.`,
         });
       }
     },
-    [deleteSavedQuery, loadSavedQueries]
+    [deleteSavedQuery, loadSavedQueries, t]
   );
 
   const executeQuery = useCallback(
     async (overrideQuery?: string) => {
       const queryToRun = (overrideQuery ?? sqlQueryRef.current).trim();
       if (!queryToRun) {
-        toast.error('No Query', {
-          description: 'Please enter a SQL query.',
+        toast.error(t`No Query`, {
+          description: t`Please enter a SQL query.`,
         });
         return;
       }
@@ -208,27 +214,27 @@ export function useSqlExplorerState() {
         setQueryResult(result as QueryResult);
 
         if (isWrite && isDryRun) {
-          toast.success('Dry Run Complete', {
-            description: 'Showing what would be affected. No changes were made.',
+          toast.success(t`Dry Run Complete`, {
+            description: t`Showing what would be affected. No changes were made.`,
           });
         } else if (isWrite && !isDryRun) {
-          toast.success('Query Executed', {
-            description: 'Changes have been applied to the database.',
+          toast.success(t`Query Executed`, {
+            description: t`Changes have been applied to the database.`,
           });
         }
       } catch (err) {
         const apiError = err as ApiError;
-        const errorMessage = apiError?.message || 'Failed to execute query';
+        const errorMessage = apiError?.message || t`Failed to execute query`;
         setError(errorMessage);
         setShowErrorDialog(true);
-        toast.error('Query Failed', {
+        toast.error(t`Query Failed`, {
           description: errorMessage,
         });
       } finally {
         setIsExecuting(false);
       }
     },
-    [runDatabaseQuery, isDryRun]
+    [runDatabaseQuery, isDryRun, t]
   );
 
   const extensions = useMemo((): Extension[] => {
@@ -317,17 +323,17 @@ export function useSqlExplorerState() {
     navigator.clipboard
       .writeText(csvContent)
       .then(() => {
-        toast.success('CSV Copied', {
-          description: `${queryResult.fetchedRows.toLocaleString()} rows x ${queryResult.columns.length} columns copied to clipboard`,
+        toast.success(t`CSV Copied`, {
+          description: t`${queryResult.fetchedRows.toLocaleString()} rows x ${queryResult.columns.length} columns copied to clipboard`,
         });
       })
       .catch((err) => {
         console.error('Failed to copy CSV', err);
-        toast.error('Copy Failed', {
-          description: 'Failed to write to clipboard. Please try again.',
+        toast.error(t`Copy Failed`, {
+          description: t`Failed to write to clipboard. Please try again.`,
         });
       });
-  }, [queryResult]);
+  }, [queryResult, t]);
 
   const formatSQL = useCallback(() => {
     setSqlQuery((prev) => formatSQLUtil(prev));

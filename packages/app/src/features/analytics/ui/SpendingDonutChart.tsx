@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { buttonizeProps } from '@shared/lib/a11y';
@@ -106,7 +107,9 @@ export function SpendingDonutChart<T extends SpendingDonutDatum>({
   if (isLoading) {
     return (
       <div className="flex h-[300px] items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="text-muted-foreground">
+          <Trans>Loading...</Trans>
+        </div>
       </div>
     );
   }

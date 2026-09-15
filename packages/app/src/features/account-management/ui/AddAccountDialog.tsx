@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import {
@@ -42,6 +43,8 @@ export function AddAccountDialog({
   onOpenChange,
   onSuccess,
 }: AddAccountDialogProps = {}) {
+  const { t } = useLingui();
+
   const { selectedBudget, globalLocalizer } = useUiStore();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlOpen ?? internalOpen;
@@ -184,8 +187,8 @@ export function AddAccountDialog({
         on_budget: onBudget,
       });
 
-      toast.success('Account created', {
-        description: `${name} has been added successfully.`,
+      toast.success(t`Account created`, {
+        description: t`${name} has been added successfully.`,
       });
 
       // Reset the form and close the modal first
@@ -226,8 +229,10 @@ export function AddAccountDialog({
           }}
           data-testid="add-account-trigger"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          New Account
+          <Trans>
+            <Plus className="h-4 w-4 mr-2" />
+            New Account
+          </Trans>
         </button>
       )}
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -238,9 +243,11 @@ export function AddAccountDialog({
           data-testid="add-account-modal"
         >
           <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">Add New Account</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">
+              <Trans>Add New Account</Trans>
+            </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm">
-              Fill in the details below to create a new account.
+              <Trans>Fill in the details below to create a new account.</Trans>
             </DialogDescription>
           </DialogHeader>
           <form
@@ -253,12 +260,12 @@ export function AddAccountDialog({
           >
             <div className="grid gap-3 sm:gap-4">
               {/* Account Name */}
-              <Field label="Account Name" htmlFor="accountName" className="space-y-1">
+              <Field label={t`Account Name`} htmlFor="accountName" className="space-y-1">
                 <Input
                   className="h-8 sm:h-9"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter account name"
+                  placeholder={t`Enter account name`}
                   required
                   data-testid="account-name-input"
                 />
@@ -275,14 +282,14 @@ export function AddAccountDialog({
 
               {/* Account Type */}
               <Field
-                label="Account Type"
+                label={t`Account Type`}
                 htmlFor="accountType"
                 className="space-y-1"
                 hint={
                   <span className="hidden sm:block">
                     {onBudget
-                      ? 'Showing account types that can affect your budget'
-                      : 'Showing account types for net worth tracking'}
+                      ? t`Showing account types that can affect your budget`
+                      : t`Showing account types for net worth tracking`}
                   </span>
                 }
               >
@@ -309,7 +316,7 @@ export function AddAccountDialog({
                   }}
                 >
                   <SelectTrigger size="sm" className="w-full" data-testid="account-type-select">
-                    <SelectValue placeholder="Select account type" />
+                    <SelectValue placeholder={t`Select account type`} />
                   </SelectTrigger>
                   <SelectContent>
                     {getAccountTypesByBudgetType(onBudget ? 'on' : 'off').map((type) => (
@@ -324,13 +331,19 @@ export function AddAccountDialog({
               {/* Liability Details */}
               {isLiability && (
                 <div className="grid gap-2 sm:gap-3 p-2 sm:p-3 rounded-md border border-border/50 bg-muted/20">
-                  <div className="text-xs text-muted-foreground">Liability details</div>
+                  <div className="text-xs text-muted-foreground">
+                    <Trans>Liability details</Trans>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                     <Field
-                      label="Original Debt"
+                      label={t`Original Debt`}
                       htmlFor="debtTotal"
                       className="space-y-1"
-                      help={<p>Total amount borrowed at origination. Required.</p>}
+                      help={
+                        <p>
+                          <Trans>Total amount borrowed at origination. Required.</Trans>
+                        </p>
+                      }
                     >
                       <LiabilityNumberCell
                         value={debtTotal}
@@ -340,10 +353,14 @@ export function AddAccountDialog({
                       />
                     </Field>
                     <Field
-                      label="Interest % (APR)"
+                      label={t`Interest % (APR)`}
                       htmlFor="interestRate"
                       className="space-y-1"
-                      help={<p>Annual percentage rate, e.g., 5 for 5%.</p>}
+                      help={
+                        <p>
+                          <Trans>Annual percentage rate, e.g., 5 for 5%.</Trans>
+                        </p>
+                      }
                     >
                       <LiabilityNumberCell
                         value={interestRate}
@@ -356,10 +373,14 @@ export function AddAccountDialog({
                   {accType === 'Credit' ? (
                     <div className="grid grid-cols-1 gap-2 sm:gap-3">
                       <Field
-                        label="Minimum Monthly Payment"
+                        label={t`Minimum Monthly Payment`}
                         htmlFor="minPayment"
                         className="space-y-1"
-                        help={<p>Enter your card’s minimum payment from statements.</p>}
+                        help={
+                          <p>
+                            <Trans>Enter your card’s minimum payment from statements.</Trans>
+                          </p>
+                        }
                       >
                         <LiabilityNumberCell
                           value={minPayment}
@@ -373,29 +394,37 @@ export function AddAccountDialog({
                     <>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                         {/* Computed Minimum Monthly Payment (read-only) */}
-                        <Field label="Min. Monthly Payment (calculated)" className="space-y-1">
+                        <Field label={t`Min. Monthly Payment (calculated)`} className="space-y-1">
                           <Input
                             className="h-8 sm:h-9"
                             value={computedMinPayment !== null ? computedMinPayment.toFixed(2) : ''}
-                            placeholder="Select target date to calculate"
+                            placeholder={t`Select target date to calculate`}
                             disabled
                           />
                         </Field>
                         <Field
-                          label="Start Date"
+                          label={t`Start Date`}
                           htmlFor="startDate"
                           className="space-y-1"
-                          help={<p>Date the loan started or was disbursed.</p>}
+                          help={
+                            <p>
+                              <Trans>Date the loan started or was disbursed.</Trans>
+                            </p>
+                          }
                         >
                           <DatePickerButton value={startDate} onChange={setStartDate} />
                         </Field>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                         <Field
-                          label="Original Term (years)"
+                          label={t`Original Term (years)`}
                           htmlFor="termYears"
                           className="space-y-1"
-                          help={<p>Total loan duration (e.g., 30 for mortgages, up to 40).</p>}
+                          help={
+                            <p>
+                              <Trans>Total loan duration (e.g., 30 for mortgages, up to 40).</Trans>
+                            </p>
+                          }
                         >
                           <LiabilityNumberCell
                             value={termYears}
@@ -410,10 +439,14 @@ export function AddAccountDialog({
                   )}
                   {accType !== 'Credit' && (
                     <Field
-                      label="Target Payoff Date (optional)"
+                      label={t`Target Payoff Date (optional)`}
                       htmlFor="targetDate"
                       className="space-y-1"
-                      help={<p>Your desired payoff date, used for planning.</p>}
+                      help={
+                        <p>
+                          <Trans>Your desired payoff date, used for planning.</Trans>
+                        </p>
+                      }
                     >
                       <DatePickerButton value={targetDate} onChange={setTargetDate} />
                     </Field>
@@ -431,14 +464,14 @@ export function AddAccountDialog({
               </div>
               {/* Balance / Value Field */}
               <Field
-                label={isLiability ? 'Paid So Far (optional)' : 'Starting Balance'}
+                label={isLiability ? t`Paid So Far (optional)` : t`Starting Balance`}
                 htmlFor="balance"
                 className="space-y-1"
                 help={
                   <p>
                     {isLiability
-                      ? 'Amount already repaid on this debt.'
-                      : 'Opening balance for this account.'}
+                      ? t`Amount already repaid on this debt.`
+                      : t`Opening balance for this account.`}
                   </p>
                 }
               >
@@ -450,7 +483,7 @@ export function AddAccountDialog({
                     formatter={accountCurrencyFormatter.format}
                     localizer={accountCurrencyFormatter}
                     inputAlign="left"
-                    placeholder={isLiability ? 'e.g. amount you have already paid' : '0.00'}
+                    placeholder={isLiability ? t`e.g. amount you have already paid` : '0.00'}
                     zeroAsEmpty
                     useFormatterForDisplay
                     onEditingChange={setIsBalanceEditing}
@@ -465,11 +498,13 @@ export function AddAccountDialog({
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button size="sm" type="button" className="opacity-50 cursor-not-allowed">
-                        Add Account
+                        <Trans>Add Account</Trans>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-3" side="top">
-                      <p className="text-sm">Please select an account type first</p>
+                      <p className="text-sm">
+                        <Trans>Please select an account type first</Trans>
+                      </p>
                     </PopoverContent>
                   </Popover>
                 ) : (
@@ -479,7 +514,7 @@ export function AddAccountDialog({
                     disabled={addAccountMutation.isPending}
                     data-testid="add-account-submit"
                   >
-                    {addAccountMutation.isPending ? 'Adding...' : 'Add Account'}
+                    {addAccountMutation.isPending ? t`Adding...` : t`Add Account`}
                   </Button>
                 )}
               </div>

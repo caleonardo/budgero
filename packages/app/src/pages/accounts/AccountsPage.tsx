@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useAccounts } from '@entities/account/api/useAccounts';
 import { useNetWorthHistory } from '@entities/account/api/useNetWorthHistory';
@@ -43,6 +44,8 @@ const CHART_COLORS = {
 } as const;
 
 export default function AccountsPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
   const privacyMaskNumbers = useUiStore((s) => s.privacyMaskNumbers);
@@ -270,7 +273,9 @@ export default function AccountsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <h1 className="text-xl sm:text-2xl font-bold">Accounts</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">
+            <Trans>Accounts</Trans>
+          </h1>
           <PeriodTabs value={dateRange} onChange={setDateRange} defaultPeriod="1M" />
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -278,7 +283,7 @@ export default function AccountsPage() {
             <div className="flex shrink-0 items-center gap-2 rounded-md bg-destructive/10 px-3 py-1.5 text-destructive">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span className="whitespace-nowrap text-sm font-medium">
-                {uncategorizedData.total} uncategorized
+                <Trans>{uncategorizedData.total} uncategorized</Trans>
               </span>
             </div>
           )}
@@ -290,7 +295,7 @@ export default function AccountsPage() {
               className="gap-1.5"
             >
               <ArchiveIcon className="h-4 w-4" />
-              {showArchived ? 'Hide Archived' : 'Show Archived'}
+              {showArchived ? t`Hide Archived` : t`Show Archived`}
               <span className="text-xs text-muted-foreground">({archivedAccountsData.length})</span>
             </Button>
           )}
@@ -318,16 +323,16 @@ export default function AccountsPage() {
             <Input
               value={accountQuery}
               onChange={(e) => setAccountQuery(e.target.value)}
-              placeholder="Search accounts…"
+              placeholder={t`Search accounts…`}
               className="pl-9"
-              aria-label="Search accounts"
+              aria-label={t`Search accounts`}
             />
           </div>
 
           {/* Account Groups */}
           <div className="space-y-4">
             <AccountGroupSection
-              title="Cash"
+              title={t`Cash`}
               accounts={filteredGroups.cash}
               isOpen={isSearching || openSections.cash}
               onToggle={() => toggleSection('cash')}
@@ -339,7 +344,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Credit Cards"
+              title={t`Credit Cards`}
               accounts={filteredGroups.credit}
               isOpen={isSearching || openSections.credit}
               onToggle={() => toggleSection('credit')}
@@ -352,7 +357,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Investments"
+              title={t`Investments`}
               accounts={filteredGroups.investments}
               isOpen={isSearching || openSections.investments}
               onToggle={() => toggleSection('investments')}
@@ -364,7 +369,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Crypto"
+              title={t`Crypto`}
               accounts={filteredGroups.crypto}
               isOpen={isSearching || openSections.crypto}
               onToggle={() => toggleSection('crypto')}
@@ -376,7 +381,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Retirement"
+              title={t`Retirement`}
               accounts={filteredGroups.retirement}
               isOpen={isSearching || openSections.retirement}
               onToggle={() => toggleSection('retirement')}
@@ -388,7 +393,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Loans & Mortgages"
+              title={t`Loans & Mortgages`}
               accounts={filteredGroups.loans}
               isOpen={isSearching || openSections.loans}
               onToggle={() => toggleSection('loans')}
@@ -401,7 +406,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Real Estate"
+              title={t`Real Estate`}
               accounts={filteredGroups.realEstate}
               isOpen={isSearching || openSections.realEstate}
               onToggle={() => toggleSection('realEstate')}
@@ -413,7 +418,7 @@ export default function AccountsPage() {
             />
 
             <AccountGroupSection
-              title="Other Assets"
+              title={t`Other Assets`}
               accounts={filteredGroups.otherAssets}
               isOpen={isSearching || openSections.otherAssets}
               onToggle={() => toggleSection('otherAssets')}
@@ -426,7 +431,7 @@ export default function AccountsPage() {
 
             {showArchived && visibleArchived.length > 0 && (
               <AccountGroupSection
-                title="Archived"
+                title={t`Archived`}
                 accounts={visibleArchived}
                 isOpen={isSearching || (openSections.archived ?? true)}
                 onToggle={() => toggleSection('archived')}
@@ -441,7 +446,7 @@ export default function AccountsPage() {
             {noMatches && (
               <Card>
                 <CardContent className="py-8 text-center text-sm text-muted-foreground">
-                  No accounts match “{accountQuery.trim()}”.
+                  <Trans>No accounts match “{accountQuery.trim()}”.</Trans>
                 </CardContent>
               </Card>
             )}
@@ -516,6 +521,8 @@ function SidebarContent({
   formatCurrency,
   monthlyAssetHistory,
 }: SidebarContentProps) {
+  const { t } = useLingui();
+
   const getGroupTotal = (
     group: { BalanceConverted?: number; Balance?: number }[],
     absolute = false
@@ -545,42 +552,42 @@ function SidebarContent({
 
   const assetCategories = [
     {
-      label: 'Investments',
+      label: t`Investments`,
       color: '#22d3ee',
       value: investmentsTotal,
       show: accountGroups.investments.length > 0,
     },
     {
-      label: 'Crypto',
+      label: t`Crypto`,
       color: '#f7931a',
       value: cryptoTotal,
       show: accountGroups.crypto.length > 0,
     },
     {
-      label: 'Retirement',
+      label: t`Retirement`,
       color: '#f59e0b',
       value: retirementTotal,
       show: accountGroups.retirement.length > 0,
     },
     {
-      label: 'Real Estate',
+      label: t`Real Estate`,
       color: '#a855f7',
       value: realEstateTotal,
       show: accountGroups.realEstate.length > 0,
     },
     {
-      label: 'Other Assets',
+      label: t`Other Assets`,
       color: '#64748b',
       value: otherAssetsTotal,
       show: accountGroups.otherAssets.length > 0,
     },
-    { label: 'Cash', color: '#06b6d4', value: cashTotal, show: true },
+    { label: t`Cash`, color: '#06b6d4', value: cashTotal, show: true },
   ].filter((c) => c.show);
 
   const liabilityCategories = [
-    { label: 'Loans', color: '#eab308', value: loansTotal, show: accountGroups.loans.length > 0 },
+    { label: t`Loans`, color: '#eab308', value: loansTotal, show: accountGroups.loans.length > 0 },
     {
-      label: 'Credit Cards',
+      label: t`Credit Cards`,
       color: '#ef4444',
       value: creditTotal,
       show: accountGroups.credit.length > 0,
@@ -602,7 +609,9 @@ function SidebarContent({
       {showNetWorth && (
         <div>
           <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <span className="text-xs sm:text-sm font-medium">Net Worth</span>
+            <span className="text-xs sm:text-sm font-medium">
+              <Trans>Net Worth</Trans>
+            </span>
             <span className="text-sm sm:text-xl font-bold tabular-nums">
               {formatCurrency(netWorth)}
             </span>
@@ -612,7 +621,7 @@ function SidebarContent({
 
       {/* Assets Section */}
       <BreakdownSection
-        title={showNetWorth ? 'Total Assets' : 'Assets'}
+        title={showNetWorth ? t`Total Assets` : t`Assets`}
         total={totalAssets}
         categories={assetCategories}
         showPercent={showPercent}
@@ -623,7 +632,7 @@ function SidebarContent({
       {/* Liabilities Section */}
       {totalLiabilities > 0 && (
         <BreakdownSection
-          title={showNetWorth ? 'Total Liabilities' : 'Liabilities'}
+          title={showNetWorth ? t`Total Liabilities` : t`Liabilities`}
           total={totalLiabilities}
           categories={liabilityCategories}
           showPercent={showPercent}

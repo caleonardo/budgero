@@ -122,9 +122,7 @@ export const ruleOps = {
         const undoOps: { op: string; args: Record<string, unknown> }[] = [];
         const execResult = result as RuleExecutionResult | undefined;
         const snapshot = before as
-          | { lastRunAt?: string | null; oneTimeConsumed?: boolean }
-          | null
-          | undefined;
+          { lastRunAt?: string | null; oneTimeConsumed?: boolean } | null | undefined;
         const changes = execResult?.changes ?? [];
 
         if (changes.length > 0) {

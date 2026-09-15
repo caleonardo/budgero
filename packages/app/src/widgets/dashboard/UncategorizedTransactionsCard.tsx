@@ -1,7 +1,10 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { AlertTriangle, Tag, Sparkles } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 
 import type { GetAllTransactions, GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@shared/ui/card';
@@ -40,6 +43,8 @@ export function UncategorizedTransactionsCard({
   budgetId,
   globalLocalizer,
 }: UncategorizedTransactionsCardProps) {
+  const { t } = useLingui();
+
   const { data: transactions = [], isLoading } = useAllTransactions(budgetId);
   const { data: accounts = [] } = useAccounts(budgetId);
   const { data: llmSettings } = useLLMSettings(budgetId);
@@ -93,7 +98,7 @@ export function UncategorizedTransactionsCard({
 
   const toTransactionCardRow = (transaction: GetAllTransactions): TransactionCardRow => {
     const accountId = transaction.AccountId ?? 0;
-    const accountName = accountById.get(accountId) || transaction.AccountName || 'Unknown account';
+    const accountName = accountById.get(accountId) || transaction.AccountName || t`Unknown account`;
 
     return {
       ID: transaction.ID,
@@ -150,8 +155,8 @@ export function UncategorizedTransactionsCard({
         transactionId: Number(quickViewTx.ID),
         accountId,
       });
-      toast.success('Transaction deleted', {
-        description: 'The transaction has been permanently removed.',
+      toast.success(t`Transaction deleted`, {
+        description: t`The transaction has been permanently removed.`,
       });
       setConfirmDeleteOpen(false);
       setQuickViewOpen(false);
@@ -172,8 +177,10 @@ export function UncategorizedTransactionsCard({
         <CardHeader className="pb-1">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-base font-semibold">
-              <AlertTriangle className="h-5 w-5 text-muted-foreground" />
-              Needs categorising
+              <Trans>
+                <AlertTriangle className="h-5 w-5 text-muted-foreground" />
+                Needs categorising
+              </Trans>
             </CardTitle>
             {llmSettings?.Enabled && totalCount > 0 && (
               <Button
@@ -182,8 +189,10 @@ export function UncategorizedTransactionsCard({
                 onClick={() => setAiCategorizeOpen(true)}
                 className="h-8 px-2 text-xs"
               >
-                <Sparkles className="h-3.5 w-3.5 mr-1" />
-                AI Categorize
+                <Trans>
+                  <Sparkles className="h-3.5 w-3.5 mr-1" />
+                  AI Categorize
+                </Trans>
               </Button>
             )}
           </div>
@@ -199,13 +208,13 @@ export function UncategorizedTransactionsCard({
               {uncategorized.map((transaction) => {
                 const dateLabel = transaction.Date
                   ? format(parseISO(transaction.Date), 'MMM d')
-                  : 'Unknown date';
-                const memo = transaction.Memo?.trim() ? transaction.Memo : 'No memo';
+                  : t`Unknown date`;
+                const memo = transaction.Memo?.trim() ? transaction.Memo : t`No memo`;
                 const accountName =
                   accountById.get(transaction.AccountId ?? 0) ||
                   transaction.AccountName ||
                   String((transaction as { Account?: string }).Account ?? '') ||
-                  'Unknown account';
+                  t`Unknown account`;
                 const inflow = Number(transaction.InflowConverted || 0);
                 const outflow = Number(transaction.OutflowConverted || 0);
                 const amount = inflow > 0 ? inflow : outflow;
@@ -247,7 +256,7 @@ export function UncategorizedTransactionsCard({
                           variant="outline"
                           className="text-[10px] sm:text-xs px-1.5 sm:px-2.5 py-0 sm:py-0.5"
                         >
-                          Uncategorised
+                          <Trans>Uncategorised</Trans>
                         </Badge>
                       </div>
                     </div>
@@ -257,15 +266,18 @@ export function UncategorizedTransactionsCard({
             </ul>
           ) : (
             <EmptyStateRow icon={AlertTriangle}>
-              Great job! No uncategorised transactions left.
+              <Trans>Great job! No uncategorised transactions left.</Trans>
             </EmptyStateRow>
           )}
         </CardContent>
         <CardFooter className="pt-0 text-xs text-muted-foreground">
           <span>
             {totalCount > 0
-              ? `${totalCount} transaction${totalCount === 1 ? '' : 's'} waiting`
-              : 'All caught up'}
+              ? plural(totalCount, {
+                  one: `# transaction waiting`,
+                  other: `# transactions waiting`,
+                })
+              : t`All caught up`}
           </span>
         </CardFooter>
       </Card>

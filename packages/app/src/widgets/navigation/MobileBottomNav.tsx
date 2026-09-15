@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useLocation, Link } from 'react-router-dom';
 import { cn } from '@shared/lib/utils';
 import {
@@ -51,6 +52,8 @@ import {
 } from '@shared/model/nav-registry';
 
 export function MobileBottomNav() {
+  const { t } = useLingui();
+
   const location = useLocation();
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const spaceId = useActiveSpaceId();
@@ -77,8 +80,8 @@ export function MobileBottomNav() {
   });
 
   const safeAreaInsetBottom = isStandaloneMode
-    ? 'max(calc(env(safe-area-inset-bottom, 0px) - 12px), 0px)'
-    : 'env(safe-area-inset-bottom, 0px)';
+    ? t`max(calc(env(safe-area-inset-bottom, 0px) - 12px), 0px)`
+    : t`env(safe-area-inset-bottom, 0px)`;
 
   const toggleSettingsSection = (section: string) => {
     setOpenSettingsSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -201,45 +204,50 @@ export function MobileBottomNav() {
 
   const navItems = [
     {
-      title: 'Budgeting',
+      id: 'budgeting',
+      title: t`Budgeting`,
       icon: ClipboardList,
       path: dashboardPath,
       isActive: location.pathname === dashboardPath || location.pathname.startsWith(budgetingPath),
       options: [
         {
-          title: 'Dashboard',
+          title: t`Dashboard`,
           path: dashboardPath,
           icon: Home,
         },
         {
-          title: 'Planning',
+          title: t`Planning`,
           path: budgetingPath,
           icon: ClipboardList,
         },
       ],
     },
     {
-      title: 'Accounts',
+      id: 'accounts',
+      title: t`Accounts`,
       icon: CreditCard,
       path: accountsPath,
       isActive: location.pathname.startsWith(accountsPath),
       hasDropdown: true,
     },
     {
-      title: 'Add',
+      id: 'add',
+      title: t`Add`,
       icon: Plus,
       path: '#',
       isAction: true,
     },
     {
-      title: 'Reports',
+      id: 'reports',
+      title: t`Reports`,
       icon: ChartPie,
       path: reportsPath,
       isActive: location.pathname.startsWith(reportsPath),
       hasDropdown: true,
     },
     {
-      title: 'Settings',
+      id: 'settings',
+      title: t`Settings`,
       icon: Settings2,
       path: settingsPath,
       isActive:
@@ -248,7 +256,8 @@ export function MobileBottomNav() {
     },
   ];
 
-  const triggerContainerClassName = 'group relative flex flex-col items-center gap-0';
+  const triggerContainerClassName =
+    'group relative flex min-w-0 flex-1 flex-col items-center gap-0 px-0.5';
 
   const getTriggerButtonClassName = (isActive: boolean) =>
     cn(
@@ -258,7 +267,7 @@ export function MobileBottomNav() {
 
   const getTriggerLabelClassName = (isActive: boolean) =>
     cn(
-      'text-xs font-medium transition-colors',
+      'max-w-full truncate text-center text-xs font-medium transition-colors',
       isActive ? 'text-foreground' : 'text-muted-foreground'
     );
 
@@ -331,14 +340,10 @@ export function MobileBottomNav() {
         {navItems.map((item) => {
           if (item.isAction) {
             return (
-              <Dialog
-                key={item.title}
-                open={addTransactionOpen}
-                onOpenChange={setAddTransactionOpen}
-              >
+              <Dialog key={item.id} open={addTransactionOpen} onOpenChange={setAddTransactionOpen}>
                 <DialogTrigger asChild>
                   <div
-                    className="flex flex-col items-center gap-0"
+                    className="flex min-w-0 flex-1 flex-col items-center gap-0 px-0.5"
                     data-testid="mobile-add-transaction-button"
                   >
                     <button
@@ -347,7 +352,9 @@ export function MobileBottomNav() {
                     >
                       <item.icon className="h-6 w-6 text-foreground" />
                     </button>
-                    <span className="text-xs text-muted-foreground font-medium">{item.title}</span>
+                    <span className="max-w-full truncate text-center text-xs text-muted-foreground font-medium">
+                      {item.title}
+                    </span>
                   </div>
                 </DialogTrigger>
                 <DialogContent onInteractOutside={(e) => e.preventDefault()}>
@@ -366,11 +373,11 @@ export function MobileBottomNav() {
           if (item.options) {
             return (
               <DropdownMenu
-                key={item.title}
-                open={openDropdown === item.title}
-                onOpenChange={(open) => setOpenDropdown(open ? item.title : null)}
+                key={item.id}
+                open={openDropdown === item.id}
+                onOpenChange={(open) => setOpenDropdown(open ? item.id : null)}
               >
-                {renderTrigger(item, { testId: item.title.toLowerCase() })}
+                {renderTrigger(item, { testId: item.id })}
                 <DropdownMenuContent align="center" className="w-[200px] mb-4">
                   {item.options.map((option) => (
                     <DropdownMenuItem
@@ -394,12 +401,12 @@ export function MobileBottomNav() {
           }
 
           if (item.hasDropdown) {
-            if (item.title === 'Settings') {
+            if (item.id === 'settings') {
               return (
                 <DropdownMenu
-                  key={item.title}
-                  open={openDropdown === item.title}
-                  onOpenChange={(open) => setOpenDropdown(open ? item.title : null)}
+                  key={item.id}
+                  open={openDropdown === item.id}
+                  onOpenChange={(open) => setOpenDropdown(open ? item.id : null)}
                 >
                   {renderTrigger(item)}
                   <DropdownMenuContent align="center" className="w-[220px] mb-4">
@@ -411,13 +418,15 @@ export function MobileBottomNav() {
                       >
                         <CollapsibleTrigger asChild>
                           <button className="flex w-full items-center justify-between px-2 py-1.5 text-sm font-medium hover:bg-accent rounded-sm">
-                            Account
-                            <ChevronDown
-                              className={cn(
-                                'h-4 w-4 transition-transform',
-                                openSettingsSections.account && 'rotate-180'
-                              )}
-                            />
+                            <Trans>
+                              Account
+                              <ChevronDown
+                                className={cn(
+                                  'h-4 w-4 transition-transform',
+                                  openSettingsSections.account && 'rotate-180'
+                                )}
+                              />
+                            </Trans>
                           </button>
                         </CollapsibleTrigger>
                         <CollapsibleContent className="space-y-0.5">
@@ -429,7 +438,7 @@ export function MobileBottomNav() {
                             >
                               <Link to={link.to} className="flex items-center gap-2">
                                 <link.icon className="h-4 w-4" />
-                                {link.label}
+                                {t(link.label)}
                               </Link>
                             </DropdownMenuItem>
                           ))}
@@ -440,8 +449,10 @@ export function MobileBottomNav() {
                     {IS_SELF_HOSTABLE_BUILD && (
                       <DropdownMenuItem asChild onSelect={() => setOpenDropdown(null)}>
                         <Link to="/settings/security" className="flex items-center gap-2">
-                          <Shield className="h-4 w-4" />
-                          Security & Privacy
+                          <Trans>
+                            <Shield className="h-4 w-4" />
+                            Security & Privacy
+                          </Trans>
                         </Link>
                       </DropdownMenuItem>
                     )}
@@ -453,13 +464,15 @@ export function MobileBottomNav() {
                     >
                       <CollapsibleTrigger asChild>
                         <button className="flex w-full items-center justify-between px-2 py-1.5 text-sm font-medium hover:bg-accent rounded-sm">
-                          Budgets & Data
-                          <ChevronDown
-                            className={cn(
-                              'h-4 w-4 transition-transform',
-                              openSettingsSections.budgets && 'rotate-180'
-                            )}
-                          />
+                          <Trans>
+                            Budgets & Data
+                            <ChevronDown
+                              className={cn(
+                                'h-4 w-4 transition-transform',
+                                openSettingsSections.budgets && 'rotate-180'
+                              )}
+                            />
+                          </Trans>
                         </button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="space-y-0.5">
@@ -471,7 +484,7 @@ export function MobileBottomNav() {
                           >
                             <Link to={link.to} className="flex items-center gap-2">
                               <link.icon className="h-4 w-4" />
-                              {link.label}
+                              {t(link.label)}
                             </Link>
                           </DropdownMenuItem>
                         ))}
@@ -486,13 +499,15 @@ export function MobileBottomNav() {
                     >
                       <CollapsibleTrigger asChild>
                         <button className="flex w-full items-center justify-between px-2 py-1.5 text-sm font-medium hover:bg-accent rounded-sm">
-                          Automation
-                          <ChevronDown
-                            className={cn(
-                              'h-4 w-4 transition-transform',
-                              openSettingsSections.automation && 'rotate-180'
-                            )}
-                          />
+                          <Trans>
+                            Automation
+                            <ChevronDown
+                              className={cn(
+                                'h-4 w-4 transition-transform',
+                                openSettingsSections.automation && 'rotate-180'
+                              )}
+                            />
+                          </Trans>
                         </button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="space-y-0.5">
@@ -504,7 +519,7 @@ export function MobileBottomNav() {
                           >
                             <Link to={link.to} className="flex items-center gap-2">
                               <link.icon className="h-4 w-4" />
-                              {link.label}
+                              {t(link.label)}
                             </Link>
                           </DropdownMenuItem>
                         ))}
@@ -519,13 +534,15 @@ export function MobileBottomNav() {
                     >
                       <CollapsibleTrigger asChild>
                         <button className="flex w-full items-center justify-between px-2 py-1.5 text-sm font-medium hover:bg-accent rounded-sm">
-                          Preferences
-                          <ChevronDown
-                            className={cn(
-                              'h-4 w-4 transition-transform',
-                              openSettingsSections.preferences && 'rotate-180'
-                            )}
-                          />
+                          <Trans>
+                            Preferences
+                            <ChevronDown
+                              className={cn(
+                                'h-4 w-4 transition-transform',
+                                openSettingsSections.preferences && 'rotate-180'
+                              )}
+                            />
+                          </Trans>
                         </button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="space-y-0.5">
@@ -537,7 +554,7 @@ export function MobileBottomNav() {
                           >
                             <Link to={link.to} className="flex items-center gap-2">
                               <link.icon className="h-4 w-4" />
-                              {link.label}
+                              {t(link.label)}
                             </Link>
                           </DropdownMenuItem>
                         ))}
@@ -558,7 +575,7 @@ export function MobileBottomNav() {
                         className="flex items-center gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
                       >
                         <LogOut className="h-4 w-4" />
-                        {logout.isPending ? 'Signing out...' : 'Sign out'}
+                        {logout.isPending ? t`Signing out...` : t`Sign out`}
                       </DropdownMenuItem>
                     </>
                   </DropdownMenuContent>
@@ -566,12 +583,12 @@ export function MobileBottomNav() {
               );
             }
 
-            if (item.title === 'Reports') {
+            if (item.id === 'reports') {
               return (
                 <DropdownMenu
-                  key={item.title}
-                  open={openDropdown === item.title}
-                  onOpenChange={(open) => setOpenDropdown(open ? item.title : null)}
+                  key={item.id}
+                  open={openDropdown === item.id}
+                  onOpenChange={(open) => setOpenDropdown(open ? item.id : null)}
                 >
                   {renderTrigger(item)}
                   <DropdownMenuContent align="center" className="w-[200px] mb-4">
@@ -583,7 +600,7 @@ export function MobileBottomNav() {
                       >
                         <Link to={link.to} className="flex items-center gap-2">
                           <link.icon className="h-4 w-4" />
-                          {link.label}
+                          {t(link.label)}
                         </Link>
                       </DropdownMenuItem>
                     ))}
@@ -594,9 +611,9 @@ export function MobileBottomNav() {
 
             return (
               <DropdownMenu
-                key={item.title}
-                open={openDropdown === item.title}
-                onOpenChange={(open) => setOpenDropdown(open ? item.title : null)}
+                key={item.id}
+                open={openDropdown === item.id}
+                onOpenChange={(open) => setOpenDropdown(open ? item.id : null)}
               >
                 {renderTrigger(item, {
                   testId: 'accounts',
@@ -616,8 +633,10 @@ export function MobileBottomNav() {
                       className="flex items-center gap-2 font-medium"
                       data-testid="mobile-nav-all-accounts"
                     >
-                      <Wallet className="h-4 w-4" />
-                      All Accounts
+                      <Trans>
+                        <Wallet className="h-4 w-4" />
+                        All Accounts
+                      </Trans>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild onSelect={() => setOpenDropdown(null)}>
@@ -626,14 +645,18 @@ export function MobileBottomNav() {
                       className="flex items-center gap-2"
                       data-testid="mobile-nav-all-transactions"
                     >
-                      <List className="h-4 w-4" />
-                      All Transactions
+                      <Trans>
+                        <List className="h-4 w-4" />
+                        All Transactions
+                      </Trans>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild onSelect={() => setOpenDropdown(null)}>
                     <Link to="/warranties" className="flex items-center gap-2">
-                      <ShieldCheck className="h-4 w-4" />
-                      Warranties
+                      <Trans>
+                        <ShieldCheck className="h-4 w-4" />
+                        Warranties
+                      </Trans>
                     </Link>
                   </DropdownMenuItem>
                   {(onBudgetAccounts.length > 0 || offBudgetAccounts.length > 0) && (
@@ -641,7 +664,9 @@ export function MobileBottomNav() {
                   )}
                   {onBudgetAccounts.length > 0 && (
                     <>
-                      <DropdownMenuLabel>On Budget</DropdownMenuLabel>
+                      <DropdownMenuLabel>
+                        <Trans>On Budget</Trans>
+                      </DropdownMenuLabel>
                       {displayedOnBudget.map(renderAccountItem)}
                     </>
                   )}
@@ -650,7 +675,9 @@ export function MobileBottomNav() {
                   )}
                   {offBudgetAccounts.length > 0 && (
                     <>
-                      <DropdownMenuLabel>Off Budget</DropdownMenuLabel>
+                      <DropdownMenuLabel>
+                        <Trans>Off Budget</Trans>
+                      </DropdownMenuLabel>
                       {displayedOffBudget.map(renderAccountItem)}
                     </>
                   )}
@@ -661,8 +688,10 @@ export function MobileBottomNav() {
                         className="flex items-center gap-2 font-medium text-muted-foreground"
                         data-testid="mobile-nav-search-accounts"
                       >
-                        <Search className="h-4 w-4" />
-                        Search all {totalAccountsCount} accounts
+                        <Trans>
+                          <Search className="h-4 w-4" />
+                          Search all {totalAccountsCount} accounts
+                        </Trans>
                       </Link>
                     </DropdownMenuItem>
                   )}
@@ -676,7 +705,7 @@ export function MobileBottomNav() {
           }
 
           return (
-            <Link key={item.title} to={item.path} className="flex flex-col items-center gap-0">
+            <Link key={item.id} to={item.path} className="flex flex-col items-center gap-0">
               <div
                 className={cn(
                   'p-2 transition-all duration-200 active:scale-95',

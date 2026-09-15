@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { cn } from '@shared/lib/utils';
 import { maskFormattedIfEnabled } from '@shared/lib/privacy/mask-numbers';
 import { useUiStore } from '@shared/store/useUiStore';
@@ -25,6 +26,8 @@ export function CalculatorDisplay({
   onStartEditing,
   editOnFocus,
 }: CalculatorDisplayProps) {
+  const { t } = useLingui();
+
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const displayValue = displayFormatter(value);
   const maskedDisplayValue = maskFormattedIfEnabled(displayValue, privacyMaskNumbers);
@@ -53,7 +56,7 @@ export function CalculatorDisplay({
       }}
       tabIndex={0}
       role="button"
-      title={`Click to edit - Calculator: 100 + 50, 1000 * 0.3${shortcuts ? ' - Shortcuts: Ctrl+H (half), Ctrl+D (double), Ctrl+Z (zero), Ctrl+T (10%)' : ''}`}
+      title={t`Click to edit - Calculator: 100 + 50, 1000 * 0.3${shortcuts ? ' - Shortcuts: Ctrl+H (half), Ctrl+D (double), Ctrl+Z (zero), Ctrl+T (10%)' : ''}`}
     >
       {value === 0 && zeroAsEmpty ? (
         <span className="text-muted-foreground">{placeholder}</span>

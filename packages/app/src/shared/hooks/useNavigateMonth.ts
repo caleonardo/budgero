@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { addMonths, format, parse } from 'date-fns';
+import { addMonths, parse } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { useUiStore } from '@shared/store/useUiStore';
 
 /**

@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
+
 import { useImportDialogState } from './useImportDialogState';
 import { ImportStepHeader } from './ImportStepHeader';
 
@@ -16,7 +18,11 @@ export function CSVPDFImportDialog() {
           {state.error}
         </p>
       )}
-      {state.isChecking && <p role="status">Checking for duplicates…</p>}
+      {state.isChecking && (
+        <p role="status">
+          <Trans>Checking for duplicates…</Trans>
+        </p>
+      )}
 
       {state.currentStep === 'upload' && (
         <UploadStep

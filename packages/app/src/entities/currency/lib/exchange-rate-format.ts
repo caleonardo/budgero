@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { assertValidExchangeRate, convertScaled } from '@budgero/core/browser';
 
 /** Keep enough decimal places for small FX and crypto rates without rounding on commit. */
@@ -27,7 +28,7 @@ export function validateExchangeRateConversions(
     }
     return null;
   } catch (error) {
-    return error instanceof Error ? error.message : 'Invalid exchange rate.';
+    return error instanceof Error ? error.message : t`Invalid exchange rate.`;
   }
 }
 

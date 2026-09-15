@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { asMilli, ZERO_MILLI } from '@budgero/core/browser';
 import { capitalize } from '@shared/lib/utils';
 import { getTodayISO } from '@shared/lib/date-utils';
@@ -13,7 +14,8 @@ export const accountOps = {
         args.currency as string,
         asMilli(Number(args.balance ?? 0)),
         (args.metadata as Record<string, unknown>) || undefined,
-        !!args.onBudget
+        !!args.onBudget,
+        t`Initial Balance`
       );
     },
     invalidates: [

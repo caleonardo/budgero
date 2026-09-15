@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { TransactionSelectionCheckbox } from '@features/transactions/ui/TransactionSelectionCheckbox';
@@ -27,6 +28,8 @@ export const TransactionTableHeader = React.memo(function TransactionTableHeader
   columnWidths,
   onResize,
 }: TransactionTableHeaderProps) {
+  const { t } = useLingui();
+
   return (
     <TableHeader className="sticky top-0 z-20 bg-background shadow-[0_1px_0_hsl(var(--border))]">
       <TableRow>
@@ -39,64 +42,84 @@ export const TransactionTableHeader = React.memo(function TransactionTableHeader
               fillCell
               checked={somePageRowsSelected ? 'indeterminate' : allPageRowsSelected}
               onCheckedChange={(checked) => onToggleSelectPage(checked === true)}
-              aria-label="Select all transactions on this page"
+              aria-label={t`Select all transactions on this page`}
             />
           </div>
           <ResizeHandle column="checkbox" onResize={onResize} />
         </TableHead>
         <TableHead style={{ width: columnWidths.date }} className="relative group">
-          Date
-          <ResizeHandle column="date" onResize={onResize} />
+          <Trans>
+            Date
+            <ResizeHandle column="date" onResize={onResize} />
+          </Trans>
         </TableHead>
         <TableHead style={{ width: columnWidths.memo }} className="relative group">
-          Memo
-          <ResizeHandle column="memo" onResize={onResize} />
+          <Trans>
+            Memo
+            <ResizeHandle column="memo" onResize={onResize} />
+          </Trans>
         </TableHead>
         {!hideAccountColumn && (
           <TableHead style={{ width: columnWidths.account }} className="relative group">
-            Account
-            <ResizeHandle column="account" onResize={onResize} />
+            <Trans>
+              Account
+              <ResizeHandle column="account" onResize={onResize} />
+            </Trans>
           </TableHead>
         )}
         <TableHead style={{ width: columnWidths.payee }} className="relative group">
-          Payee
-          <ResizeHandle column="payee" onResize={onResize} />
+          <Trans>
+            Payee
+            <ResizeHandle column="payee" onResize={onResize} />
+          </Trans>
         </TableHead>
         {showLabelColumn && (
           <TableHead style={{ width: columnWidths.label }} className="relative group">
-            Label
-            <ResizeHandle column="label" onResize={onResize} />
+            <Trans>
+              Label
+              <ResizeHandle column="label" onResize={onResize} />
+            </Trans>
           </TableHead>
         )}
         <TableHead style={{ width: columnWidths.category }} className="relative group">
-          Category
-          <ResizeHandle column="category" onResize={onResize} />
+          <Trans>
+            Category
+            <ResizeHandle column="category" onResize={onResize} />
+          </Trans>
         </TableHead>
         <TableHead style={{ width: columnWidths.inflow }} className="text-right relative group">
-          Inflow
-          <ResizeHandle column="inflow" onResize={onResize} />
+          <Trans>
+            Inflow
+            <ResizeHandle column="inflow" onResize={onResize} />
+          </Trans>
         </TableHead>
         <TableHead style={{ width: columnWidths.outflow }} className="text-right relative group">
-          Outflow
-          <ResizeHandle column="outflow" onResize={onResize} />
+          <Trans>
+            Outflow
+            <ResizeHandle column="outflow" onResize={onResize} />
+          </Trans>
         </TableHead>
         {showExchangeRateColumn && (
           <TableHead
             style={{ width: columnWidths.exchangeRate }}
             className="text-right relative group"
           >
-            Budget rate
-            <ResizeHandle column="exchangeRate" onResize={onResize} />
+            <Trans>
+              Budget rate
+              <ResizeHandle column="exchangeRate" onResize={onResize} />
+            </Trans>
           </TableHead>
         )}
         {showBalanceColumn && (
           <TableHead style={{ width: columnWidths.balance }} className="text-right relative group">
-            Balance
-            <ResizeHandle column="balance" onResize={onResize} />
+            <Trans>
+              Balance
+              <ResizeHandle column="balance" onResize={onResize} />
+            </Trans>
           </TableHead>
         )}
         <TableHead style={{ width: columnWidths.status }} className="text-center">
-          Status
+          <Trans>Status</Trans>
         </TableHead>
       </TableRow>
     </TableHeader>

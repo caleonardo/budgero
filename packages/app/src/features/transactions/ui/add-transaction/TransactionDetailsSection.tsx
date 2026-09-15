@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans, useLingui } from '@lingui/react/macro';
+
 /**
  * Transaction Details Section
  *
@@ -170,6 +172,8 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
   payeeCategoryApplied = false,
   payeeCategorySource = null,
 }: TransactionDetailsSectionProps) {
+  const { t } = useLingui();
+
   // Names the payee and when it was last filed here, so the softer amber cue
   // reads differently from a rule's "Auto-filled by rule".
   const payeeMemoryLabel = React.useMemo(() => {
@@ -177,9 +181,9 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
     if (!name) return undefined;
     const lastUsed = payeeCategorySource ? parseDateKey(payeeCategorySource.Date) : null;
     return lastUsed
-      ? `Last used for "${name}" on ${formatShortDate(lastUsed)}`
-      : `From your last transaction for "${name}"`;
-  }, [payee, payeeCategorySource]);
+      ? t`Last used for "${name}" on ${formatShortDate(lastUsed)}`
+      : t`From your last transaction for "${name}"`;
+  }, [payee, payeeCategorySource, t]);
 
   const selectedCategoryId = React.useMemo(() => {
     const category = categories.find((cat) => cat.Name === selectedCategory);
@@ -289,7 +293,7 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
                 budgetId={budgetId}
                 value={selectedLabelId}
                 onChange={onLabelChange}
-                placeholder="No label"
+                placeholder={t`No label`}
                 triggerClassName="h-8 sm:h-10 rounded-full border-border/70 bg-muted/20 hover:bg-muted/40"
               />
             </div>
@@ -319,7 +323,7 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
                 budgetId={budgetId}
                 selectedCategoryId={selectedCategoryId}
                 onCategorySelect={handleCategorySelect}
-                placeholder={categoriesLoading ? 'Loading categories...' : 'Select category'}
+                placeholder={categoriesLoading ? t`Loading categories...` : t`Select category`}
                 triggerClassName="w-full h-8 sm:h-10 bg-background border-input hover:bg-accent hover:text-accent-foreground transition-colors"
                 popoverContentClassName="w-[320px] max-w-[90vw]"
                 includeTransfers={transferInvolvesOffBudget}
@@ -328,8 +332,10 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
           </div>
           {transferInvolvesOffBudget && (
             <p className="text-xs text-muted-foreground ml-6">
-              Use &apos;Transfers&apos; to deduct from Ready to Assign, or select a category to
-              treat as spending
+              <Trans>
+                Use 'Transfers' to deduct from Ready to Assign, or select a category to treat as
+                spending
+              </Trans>
             </p>
           )}
         </div>
@@ -350,7 +356,7 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
             type="text"
             value={memo}
             onChange={(e) => onMemoChange(e.target.value)}
-            placeholder={isTransfer ? 'Add a note for this transfer...' : 'Add a description...'}
+            placeholder={isTransfer ? t`Add a note for this transfer...` : t`Add a description...`}
             className="h-8 sm:h-10 bg-background border-input transition-colors focus:border-primary/50 focus:ring-primary/20"
             data-testid="transaction-memo-input"
           />

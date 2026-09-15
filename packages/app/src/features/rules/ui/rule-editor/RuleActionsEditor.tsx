@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { Category, Account } from '@budgero/core/browser';
 import type { RuleFormAction } from './rule-editor.utils';
@@ -23,10 +24,12 @@ export const RuleActionsEditor = React.memo(function RuleActionsEditor({
   onUpdate,
   onRemove,
 }: RuleActionsEditorProps) {
+  const { t } = useLingui();
+
   return (
     <RuleEditorSection
-      title="Actions"
-      description="Actions run in order after all conditions pass."
+      title={t`Actions`}
+      description={t`Actions run in order after all conditions pass.`}
       addLabel="Add action"
       onAdd={onAdd}
     >

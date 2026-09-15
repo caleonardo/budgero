@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { toDecimal, ZERO_MILLI } from '@budgero/core/browser';
 import { Button } from '@shared/ui/button';
@@ -28,13 +29,13 @@ import {
   GoalType,
   GoalPurpose,
   getCycleMonths,
-  describeGoalCycle,
   isValidCycleMonths,
   MIN_GOAL_CYCLE_MONTHS,
   MAX_GOAL_CYCLE_MONTHS,
   GOAL_CYCLE_MONTHS_ERROR,
 } from '@budgero/core/browser';
 import { cn } from '@shared/lib/utils';
+import { describeLocalizedGoalCycle } from '../lib/goal-cycle-label';
 
 interface GoalFormProps {
   goal?: Goal | null;
@@ -66,83 +67,6 @@ type GoalPreset =
   | 'yearly-available'
   | 'periodic-allocation'
   | 'periodic-available';
-
-const GOAL_PRESETS: {
-  key: GoalPreset;
-  type: GoalType;
-  purpose: GoalPurpose;
-  icon: React.ReactNode;
-  title: string;
-  subtitle: string;
-  buildExample: (amount: string, date: string) => string;
-  /** Yearly presets: pick a target date (optionally repeating every year). */
-  needsDate: boolean;
-  /** Periodic presets: pick a start date + cadence; the target date is derived. */
-  periodic?: boolean;
-}[] = [
-  {
-    key: 'monthly-available',
-    type: GoalType.MONTHLY,
-    purpose: GoalPurpose.SPENDING,
-    icon: <Wallet className="h-5 w-5" />,
-    title: 'Monthly Available Target',
-    subtitle: 'Start each month with a certain amount available',
-    buildExample: (amount) => `e.g. Groceries — start each month with ${amount}`,
-    needsDate: false,
-  },
-  {
-    key: 'monthly-allocation',
-    type: GoalType.MONTHLY_SAVINGS,
-    purpose: GoalPurpose.SAVINGS,
-    icon: <ArrowUpFromLine className="h-5 w-5" />,
-    title: 'Monthly Allocation Target',
-    subtitle: 'Assign a fixed amount every month, regardless of spending',
-    buildExample: (amount) => `e.g. Savings — put aside ${amount} each month`,
-    needsDate: false,
-  },
-  {
-    key: 'yearly-allocation',
-    type: GoalType.TARGET_DATE,
-    purpose: GoalPurpose.SAVINGS,
-    icon: <CalendarClock className="h-5 w-5" />,
-    title: 'Yearly Allocation Target',
-    subtitle: 'Allocate a total amount over a period by a target date',
-    buildExample: (amount, date) => `e.g. Vacation — allocate ${amount} total by ${date}`,
-    needsDate: true,
-  },
-  {
-    key: 'yearly-available',
-    type: GoalType.YEARLY,
-    purpose: GoalPurpose.SPENDING,
-    icon: <PiggyBank className="h-5 w-5" />,
-    title: 'Yearly Available Target',
-    subtitle: 'Have a specific amount available by a target date',
-    buildExample: (amount, date) => `e.g. Car registration — need ${amount} ready by ${date}`,
-    needsDate: true,
-  },
-  {
-    key: 'periodic-allocation',
-    type: GoalType.TARGET_DATE,
-    purpose: GoalPurpose.SAVINGS,
-    icon: <Repeat className="h-5 w-5" />,
-    title: 'Periodic Allocation Target',
-    subtitle: 'Allocate a total amount every few months, cycle after cycle',
-    buildExample: (amount) => `e.g. Quarterly tax — allocate ${amount} every 3 months`,
-    needsDate: false,
-    periodic: true,
-  },
-  {
-    key: 'periodic-available',
-    type: GoalType.YEARLY,
-    purpose: GoalPurpose.SPENDING,
-    icon: <RefreshCw className="h-5 w-5" />,
-    title: 'Periodic Available Target',
-    subtitle: 'Have an amount available at the end of every period',
-    buildExample: (amount) => `e.g. Insurance — have ${amount} ready every 6 months`,
-    needsDate: false,
-    periodic: true,
-  },
-];
 
 function presetFromGoal(goal: Goal): GoalPreset {
   if (goal.Type === GoalType.MONTHLY) return 'monthly-available';
@@ -186,6 +110,85 @@ export function GoalForm({
   isDeleting = false,
   asCard = true,
 }: GoalFormProps) {
+  const { t } = useLingui();
+
+  const GOAL_PRESETS: {
+    key: GoalPreset;
+    type: GoalType;
+    purpose: GoalPurpose;
+    icon: React.ReactNode;
+    title: string;
+    subtitle: string;
+    buildExample: (amount: string, date: string) => string;
+    /** Yearly presets: pick a target date (optionally repeating every year). */
+    needsDate: boolean;
+    /** Periodic presets: pick a start date + cadence; the target date is derived. */
+    periodic?: boolean;
+  }[] = [
+    {
+      key: 'monthly-available',
+      type: GoalType.MONTHLY,
+      purpose: GoalPurpose.SPENDING,
+      icon: <Wallet className="h-5 w-5" />,
+      title: t`Monthly Available Target`,
+      subtitle: t`Start each month with a certain amount available`,
+      buildExample: (amount) => t`e.g. Groceries — start each month with ${amount}`,
+      needsDate: false,
+    },
+    {
+      key: 'monthly-allocation',
+      type: GoalType.MONTHLY_SAVINGS,
+      purpose: GoalPurpose.SAVINGS,
+      icon: <ArrowUpFromLine className="h-5 w-5" />,
+      title: t`Monthly Allocation Target`,
+      subtitle: t`Assign a fixed amount every month, regardless of spending`,
+      buildExample: (amount) => t`e.g. Savings — put aside ${amount} each month`,
+      needsDate: false,
+    },
+    {
+      key: 'yearly-allocation',
+      type: GoalType.TARGET_DATE,
+      purpose: GoalPurpose.SAVINGS,
+      icon: <CalendarClock className="h-5 w-5" />,
+      title: t`Yearly Allocation Target`,
+      subtitle: t`Allocate a total amount over a period by a target date`,
+      buildExample: (amount, date) => t`e.g. Vacation — allocate ${amount} total by ${date}`,
+      needsDate: true,
+    },
+    {
+      key: 'yearly-available',
+      type: GoalType.YEARLY,
+      purpose: GoalPurpose.SPENDING,
+      icon: <PiggyBank className="h-5 w-5" />,
+      title: t`Yearly Available Target`,
+      subtitle: t`Have a specific amount available by a target date`,
+      buildExample: (amount, date) => t`e.g. Car registration — need ${amount} ready by ${date}`,
+      needsDate: true,
+    },
+    {
+      key: 'periodic-allocation',
+      type: GoalType.TARGET_DATE,
+      purpose: GoalPurpose.SAVINGS,
+      icon: <Repeat className="h-5 w-5" />,
+      title: t`Periodic Allocation Target`,
+      subtitle: t`Allocate a total amount every few months, cycle after cycle`,
+      buildExample: (amount) => t`e.g. Quarterly tax — allocate ${amount} every 3 months`,
+      needsDate: false,
+      periodic: true,
+    },
+    {
+      key: 'periodic-available',
+      type: GoalType.YEARLY,
+      purpose: GoalPurpose.SPENDING,
+      icon: <RefreshCw className="h-5 w-5" />,
+      title: t`Periodic Available Target`,
+      subtitle: t`Have an amount available at the end of every period`,
+      buildExample: (amount) => t`e.g. Insurance — have ${amount} ready every 6 months`,
+      needsDate: false,
+      periodic: true,
+    },
+  ];
+
   const isEditing = !!goal;
 
   const [selectedPreset, setSelectedPreset] = useState<GoalPreset>(
@@ -333,10 +336,14 @@ export function GoalForm({
     <div className="w-full">
       <CardHeader className={asCard ? undefined : 'px-0 sm:px-6'}>
         <CardTitle className="flex items-center gap-2">
-          <Target className="h-5 w-5" />
-          {isEditing ? 'Edit Goal' : 'Create Goal'} for {categoryName}
+          <Trans>
+            <Target className="h-5 w-5" />
+            {isEditing ? t`Edit Goal` : t`Create Goal`} for {categoryName}
+          </Trans>
         </CardTitle>
-        <CardDescription>Choose how you want to track this category.</CardDescription>
+        <CardDescription>
+          <Trans>Choose how you want to track this category.</Trans>
+        </CardDescription>
       </CardHeader>
 
       <CardContent className={asCard ? undefined : 'px-0 sm:px-6'}>
@@ -344,7 +351,7 @@ export function GoalForm({
           {/* ── Goal Type Selection ── */}
           <div className="space-y-2">
             <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-              Goal Type
+              <Trans>Goal Type</Trans>
             </Label>
             <div className="grid gap-2">
               {GOAL_PRESETS.map((preset) => {
@@ -410,7 +417,7 @@ export function GoalForm({
           {/* ── Target Amount ── */}
           <div className="space-y-2">
             <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-              Target Amount
+              <Trans>Target Amount</Trans>
             </Label>
             <CalculatorCell
               value={target}
@@ -418,7 +425,7 @@ export function GoalForm({
               formatter={formatter.format}
               localizer={formatter}
               inputAlign="center"
-              placeholder="Enter amount"
+              placeholder={t`Enter amount`}
               zeroAsEmpty
               useFormatterForDisplay
               displayClassName="text-sm font-medium border-2 rounded-md px-3 py-2 h-10 flex items-center justify-center bg-background hover:border-primary/40 transition-colors"
@@ -426,17 +433,17 @@ export function GoalForm({
             />
             <p className="text-xs text-muted-foreground">
               {selectedPreset === 'monthly-available' &&
-                'The available balance you want in this category each month.'}
+                t`The available balance you want in this category each month.`}
               {selectedPreset === 'monthly-allocation' &&
-                'How much you want to assign to this category every month.'}
+                t`How much you want to assign to this category every month.`}
               {selectedPreset === 'yearly-allocation' &&
-                'The total amount to allocate across the period. Monthly target is calculated automatically.'}
+                t`The total amount to allocate across the period. Monthly target is calculated automatically.`}
               {selectedPreset === 'yearly-available' &&
-                'The amount you need available in this category by the target date.'}
+                t`The amount you need available in this category by the target date.`}
               {selectedPreset === 'periodic-allocation' &&
-                'The total to allocate in each cycle. Monthly target is calculated automatically.'}
+                t`The total to allocate in each cycle. Monthly target is calculated automatically.`}
               {selectedPreset === 'periodic-available' &&
-                'The amount you need available by the end of each cycle.'}
+                t`The amount you need available by the end of each cycle.`}
             </p>
           </div>
 
@@ -444,7 +451,7 @@ export function GoalForm({
           {activePreset.needsDate && (
             <div className="space-y-3">
               <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-                Target Date
+                <Trans>Target Date</Trans>
               </Label>
               <Popover open={dateOpen} onOpenChange={setDateOpen}>
                 <PopoverTrigger asChild>
@@ -472,7 +479,7 @@ export function GoalForm({
 
               <div className="space-y-2">
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-                  Repeats
+                  <Trans>Repeats</Trans>
                 </Label>
                 <Select
                   value={repeatsYearly ? '12' : 'never'}
@@ -482,18 +489,24 @@ export function GoalForm({
                     className="w-full min-w-0 sm:w-56"
                     data-testid="goal-repeat-select"
                   >
-                    <SelectValue placeholder="Never" />
+                    <SelectValue placeholder={t`Never`} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="never">Never</SelectItem>
-                    <SelectItem value="12">Every year</SelectItem>
+                    <SelectItem value="never">
+                      <Trans>Never</Trans>
+                    </SelectItem>
+                    <SelectItem value="12">
+                      <Trans>Every year</Trans>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 {repeatsYearly && cyclePreview && (
                   <p className="text-xs text-muted-foreground" data-testid="goal-cycle-preview">
-                    Repeats yearly. Current cycle: {cyclePreview.rangeLabel} · this cycle&apos;s
-                    target {format(cyclePreview.targetDate, 'PPP')}. Cycles are counted from the
-                    target date; the goal amount applies to each cycle.
+                    <Trans>
+                      Repeats yearly. Current cycle: {cyclePreview.rangeLabel} · this cycle&apos;s
+                      target {format(cyclePreview.targetDate, 'PPP')}. Cycles are counted from the
+                      target date; the goal amount applies to each cycle.
+                    </Trans>
                   </p>
                 )}
               </div>
@@ -506,7 +519,7 @@ export function GoalForm({
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-                    Repeats every
+                    <Trans>Repeats every</Trans>
                   </Label>
                   <div className="flex flex-wrap items-center gap-2">
                     <Select
@@ -517,9 +530,15 @@ export function GoalForm({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="3">Quarter (3 months)</SelectItem>
-                        <SelectItem value="6">6 months</SelectItem>
-                        <SelectItem value="custom">N months…</SelectItem>
+                        <SelectItem value="3">
+                          <Trans>Quarter (3 months)</Trans>
+                        </SelectItem>
+                        <SelectItem value="6">
+                          <Trans>6 months</Trans>
+                        </SelectItem>
+                        <SelectItem value="custom">
+                          <Trans>N months…</Trans>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     {periodMode === 'custom' && (
@@ -534,17 +553,19 @@ export function GoalForm({
                           value={customCycleMonths}
                           onChange={(e) => setCustomCycleMonths(e.target.value)}
                           className="w-20"
-                          aria-label="Repeat every N months"
+                          aria-label={t`Repeat every N months`}
                           data-testid="goal-repeat-custom-input"
                         />
-                        <span className="text-sm text-muted-foreground">months</span>
+                        <span className="text-sm text-muted-foreground">
+                          <Trans>months</Trans>
+                        </span>
                       </div>
                     )}
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-                    Starting
+                    <Trans>Starting</Trans>
                   </Label>
                   <Popover open={periodStartOpen} onOpenChange={setPeriodStartOpen}>
                     <PopoverTrigger asChild>
@@ -574,10 +595,12 @@ export function GoalForm({
               </div>
               {cycleMonthsValid && cyclePreview && (
                 <p className="text-xs text-muted-foreground" data-testid="goal-cycle-preview">
-                  Repeats {describeGoalCycle(cycleMonths as number)} from{' '}
-                  {format(periodStart, 'MMM yyyy')}. Current cycle: {cyclePreview.rangeLabel} · this
-                  cycle&apos;s target {format(cyclePreview.targetDate, 'PPP')}. The goal amount
-                  applies to each cycle.
+                  <Trans>
+                    Repeats {describeLocalizedGoalCycle(cycleMonths as number)} from{' '}
+                    {format(periodStart, 'MMM yyyy')}. Current cycle: {cyclePreview.rangeLabel} ·
+                    this cycle&apos;s target {format(cyclePreview.targetDate, 'PPP')}. The goal
+                    amount applies to each cycle.
+                  </Trans>
                 </p>
               )}
             </div>
@@ -608,13 +631,13 @@ export function GoalForm({
                   onClick={onDelete}
                   disabled={isDeleting}
                 >
-                  {isDeleting ? 'Deleting...' : 'Delete Goal'}
+                  {isDeleting ? t`Deleting...` : t`Delete Goal`}
                 </Button>
               )}
             </div>
             <Button type="submit" disabled={isSaving || isDeleting}>
               <Save className="h-4 w-4 mr-2" />
-              {isSaving ? 'Saving...' : isEditing ? 'Update Goal' : 'Create Goal'}
+              {isSaving ? t`Saving...` : isEditing ? t`Update Goal` : t`Create Goal`}
             </Button>
           </div>
         </form>

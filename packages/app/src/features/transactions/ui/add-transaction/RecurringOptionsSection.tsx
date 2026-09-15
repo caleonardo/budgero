@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, BellRing, Repeat2 } from 'lucide-react';
@@ -26,6 +27,8 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
   settings,
   onChange,
 }: RecurringOptionsSectionProps) {
+  const { t } = useLingui();
+
   const [endDateOpen, setEndDateOpen] = React.useState(false);
   const frequencyOptions = React.useMemo(
     () => frequencyOptionsFor(settings.frequency),
@@ -49,15 +52,17 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
       <div className="flex items-start gap-3">
         <Repeat2 className="mt-0.5 h-4 w-4 text-primary" />
         <div>
-          <p className="text-sm font-medium">Recurring schedule</p>
+          <p className="text-sm font-medium">
+            <Trans>Recurring schedule</Trans>
+          </p>
           <p className="text-xs text-muted-foreground">
-            The transaction date above is the first occurrence.
+            <Trans>The transaction date above is the first occurrence.</Trans>
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Cadence" className="space-y-2">
+        <Field label={t`Cadence`} className="space-y-2">
           <Select value={settings.frequency} onValueChange={(value) => update('frequency', value)}>
             <SelectTrigger data-testid="recurring-frequency-select">
               <SelectValue placeholder="Select cadence" />
@@ -72,30 +77,36 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
           </Select>
         </Field>
 
-        <Field label="Ends" className="space-y-2">
+        <Field label={t`Ends`} className="space-y-2">
           <Select
             value={settings.endMode}
             onValueChange={(value) => update('endMode', value as RecurringEndMode)}
           >
             <SelectTrigger data-testid="recurring-end-mode-select">
-              <SelectValue placeholder="Never" />
+              <SelectValue placeholder={t`Never`} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="never">Never</SelectItem>
-              <SelectItem value="date">On a date</SelectItem>
-              <SelectItem value="count">After N occurrences</SelectItem>
+              <SelectItem value="never">
+                <Trans>Never</Trans>
+              </SelectItem>
+              <SelectItem value="date">
+                <Trans>On a date</Trans>
+              </SelectItem>
+              <SelectItem value="count">
+                <Trans>After N occurrences</Trans>
+              </SelectItem>
             </SelectContent>
           </Select>
         </Field>
       </div>
 
       {settings.endMode === 'date' && (
-        <Field label="Last occurrence on or before" className="space-y-2">
+        <Field label={t`Last occurrence on or before`} className="space-y-2">
           <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
             <PopoverTrigger asChild>
               <Button type="button" variant="outline" className="w-full justify-start gap-2">
                 <CalendarIcon className="h-4 w-4 opacity-70" />
-                {selectedEndDate ? format(selectedEndDate, 'PPP') : 'Pick a date'}
+                {selectedEndDate ? format(selectedEndDate, 'PPP') : t`Pick a date`}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start" modal>
@@ -116,7 +127,7 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
 
       {settings.endMode === 'count' && (
         <Field
-          label="Number of occurrences"
+          label={t`Number of occurrences`}
           hint="Includes occurrences already posted or skipped."
           className="space-y-2"
         >
@@ -135,7 +146,7 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
 
       <div className="grid gap-3 sm:grid-cols-2">
         <Field
-          label="Notify me"
+          label={t`Notify me`}
           hint="Days before the due date; use 0 for the same day."
           className="space-y-2"
         >
@@ -153,7 +164,9 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
         </Field>
 
         <div className="space-y-2">
-          <Label htmlFor="recurring-active">Status</Label>
+          <Label htmlFor="recurring-active">
+            <Trans>Status</Trans>
+          </Label>
           <div className="flex h-10 items-center gap-2 rounded-md border border-input px-3">
             <Switch
               id="recurring-active"
@@ -161,7 +174,7 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
               onCheckedChange={(checked) => update('active', checked)}
             />
             <span className="text-sm text-muted-foreground">
-              {settings.active ? 'Active' : 'Paused'}
+              {settings.active ? t`Active` : t`Paused`}
             </span>
           </div>
         </div>

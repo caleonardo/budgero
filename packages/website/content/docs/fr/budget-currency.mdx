@@ -1,0 +1,51 @@
+---
+title: "Devise du budget"
+summary: "Choisissez la devise qui sert de référence à votre budget et découvrez comment Budgero garde vos comptes multidevise et rapports synchronisés."
+section: getting-started
+topicId: budget-currency
+takeaways:
+  - "Sachez ce que la devise du budget contrôle au niveau de l'À affecter, des tableaux de bord et des rapports."
+  - "Comprenez comment Budgero convertit les comptes multidevise à l'aide des taux de change quotidiens et de valeurs de repli manuelles."
+  - "Changez la devise du budget en toute confiance et apprenez comment se comporte le recalcul."
+---
+
+La devise de votre budget est l'unité unique que Budgero utilise pour les totaux, les analyses et l'À affecter. Même si votre argent se trouve dans des comptes dans différentes devises, Budgero convertit tout vers cette référence afin que chaque décision se prenne dans une seule langue.
+
+## Ce que contrôle la devise du budget
+
+- **À affecter et soldes des catégories.** Tous les totaux du budget s'affichent dans la devise du budget, même lorsque le compte sous-jacent utilise une autre devise.
+- **Tableaux de bord et rapports.** Le patrimoine net, les graphiques de trésorerie et les rapports de dépenses sont consolidés dans la devise du budget pour que les comparaisons restent cohérentes d'un mois à l'autre.
+- **Aperçus des comptes.** Chaque compte affiche à la fois le solde d'origine et un solde converti rapporté à la devise du budget pour des comparaisons rapides et directes.
+
+## Choisir la bonne devise
+
+- Choisissez la devise que vous utilisez pour gérer votre foyer ou votre entreprise. La plupart des gens optent pour la devise de leur pays de résidence afin que les valeurs correspondent aux factures et aux salaires.
+- Lors d'un import depuis YNAB, utilisez la même devise d'affichage que celle que vous y utilisiez. Budgero reproduira les totaux plus fidèlement et facilitera la migration des objectifs.
+- Si vous dépensez régulièrement dans plusieurs devises, définissez comme devise du budget celle dans laquelle vous souhaitez évaluer vos performances — généralement la devise dans laquelle vous gagnez ou payez des impôts.
+
+## Utiliser des comptes multidevise
+
+Budgero permet à chaque compte de conserver sa devise d'origine. Lorsque des transactions sont enregistrées, Budgero stocke à la fois le montant d'origine et un montant converti dans la devise du budget :
+
+- Budgero récupère les taux de change officiels quotidiennement et les met en cache dans le fichier de budget. La durée de conservation du cache est configurable dans Paramètres → Devises (30 jours par défaut) — les taux plus anciens sont supprimés pour garder le fichier de budget léger et récupérés à la demande.
+- Lorsqu’un nouveau taux est nécessaire, Budgero le récupère auprès du service de change et le stocke. À la première session en ligne réussie de chaque jour civil, il actualise aussi les taux officiels du jour pour éviter que le cache reste obsolète. Hors ligne, sans taux en cache, vous pouvez saisir un taux manuel. Il sera remplacé à la reconnexion, sauf si vous désactivez la mise à jour des taux hors ligne ; les taux fixés sur une transaction ne sont jamais modifiés.
+- Les soldes convertis se mettent à jour automatiquement lorsque vous modifiez une transaction, rapprochez un compte ou importez un historique, afin que l'À affecter et les rapports restent exacts.
+
+## Changer la devise du budget ultérieurement
+
+Vous pouvez changer la devise du budget à tout moment :
+
+Budgero efface les taux de change en cache, recalcule chaque transaction et convertit les affectations et les montants cibles des objectifs dans la nouvelle devise. L'application affiche une brève superposition d'état de conversion pendant le traitement. Après le changement, Budgero récupère des taux de change actualisés la prochaine fois que vous consultez un mois qui en nécessite.
+
+Les historiques volumineux peuvent prendre un instant pendant l'actualisation des conversions. Vous pouvez continuer à travailler dans le budget une fois la superposition disparue.
+
+## Mode hors ligne et taux de change manuels
+
+- Vous passez en mode hors ligne ? Saisissez des taux de change manuels pour que Budgero puisse maintenir des conversions exactes sans appel réseau. Budgero stocke à la fois le taux et son inverse pour une réutilisation facile.
+- Lorsque vous vous reconnectez, Budgero remplace automatiquement les conversions hors ligne par les taux officiels — une option activée par défaut et modifiable dans Paramètres → Devises ou directement dans l'invite de taux hors ligne.
+- Si le jour exact n'est pas en cache, Budgero utilise le taux antérieur le plus proche, jusqu'à une semaine en arrière. Au-delà, il vous demande un taux, pré-rempli avec le taux en cache le plus proche.
+
+## Dépannage
+
+- **Les totaux convertis semblent incorrects :** Vérifiez qu'un taux existe pour la date de la transaction. Rouvrez le compte ou actualisez le tableau de bord pour que Budgero récupère ou recalcule le taux.
+- **Les affectations ont changé après le changement de devise :** Budgero multiplie les affectations et les montants cibles des objectifs par le taux de la nouvelle devise afin que leur pouvoir d'achat reste intact. Ajustez les catégories manuellement si vous souhaitez fixer un montant différent.

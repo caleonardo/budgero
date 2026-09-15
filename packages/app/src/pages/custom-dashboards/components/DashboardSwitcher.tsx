@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { CustomDashboard } from '@budgero/core/browser';
 import { Button } from '@shared/ui/button';
@@ -26,6 +27,8 @@ export function DashboardSwitcher({
   onRenameDashboard,
   onDeleteDashboard,
 }: DashboardSwitcherProps) {
+  const { t } = useLingui();
+
   const activeDashboard =
     dashboards.find((dashboard) => dashboard.id === activeDashboardId) ?? null;
   const [createOpen, setCreateOpen] = useState(false);
@@ -48,7 +51,7 @@ export function DashboardSwitcher({
   const handleCreate = async () => {
     const name = createName.trim();
     if (!name) {
-      toast.error('Dashboard name cannot be empty');
+      toast.error(t`Dashboard name cannot be empty`);
       return;
     }
     setPendingAction('create');
@@ -56,7 +59,7 @@ export function DashboardSwitcher({
       await onCreateDashboard(name);
       setCreateOpen(false);
     } catch (error) {
-      toast.error(getErrorMessage(error, 'Failed to create dashboard'));
+      toast.error(getErrorMessage(error, t`Failed to create dashboard`));
     } finally {
       setPendingAction(null);
     }
@@ -66,7 +69,7 @@ export function DashboardSwitcher({
     if (!activeDashboard) return;
     const nextName = renameName.trim();
     if (!nextName) {
-      toast.error('Dashboard name cannot be empty');
+      toast.error(t`Dashboard name cannot be empty`);
       return;
     }
     if (nextName === activeDashboard.name) {
@@ -78,7 +81,7 @@ export function DashboardSwitcher({
       await onRenameDashboard(activeDashboard.id, nextName);
       setRenameOpen(false);
     } catch (error) {
-      toast.error(getErrorMessage(error, 'Failed to rename dashboard'));
+      toast.error(getErrorMessage(error, t`Failed to rename dashboard`));
     } finally {
       setPendingAction(null);
     }
@@ -91,7 +94,7 @@ export function DashboardSwitcher({
       await onDeleteDashboard(activeDashboard.id);
       setDeleteOpen(false);
     } catch (error) {
-      toast.error(getErrorMessage(error, 'Failed to delete dashboard'));
+      toast.error(getErrorMessage(error, t`Failed to delete dashboard`));
     } finally {
       setPendingAction(null);
     }
@@ -105,7 +108,7 @@ export function DashboardSwitcher({
         disabled={dashboards.length === 0}
       >
         <SelectTrigger className="w-[240px]">
-          <SelectValue placeholder="Select dashboard" />
+          <SelectValue placeholder={t`Select dashboard`} />
         </SelectTrigger>
         <SelectContent>
           {dashboards.map((dashboard) => (
@@ -119,22 +122,30 @@ export function DashboardSwitcher({
       <Popover open={createOpen} onOpenChange={setCreateOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" disabled={pendingAction !== null}>
-            <Plus className="h-4 w-4 mr-1" />
-            New
+            <Trans>
+              <Plus className="h-4 w-4 mr-1" />
+              New
+            </Trans>
           </Button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-80 space-y-3">
           <div className="space-y-1">
-            <p className="text-sm font-medium">Create dashboard</p>
-            <p className="text-xs text-muted-foreground">Name your new custom dashboard.</p>
+            <p className="text-sm font-medium">
+              <Trans>Create dashboard</Trans>
+            </p>
+            <p className="text-xs text-muted-foreground">
+              <Trans>Name your new custom dashboard.</Trans>
+            </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="new-dashboard-name">Name</Label>
+            <Label htmlFor="new-dashboard-name">
+              <Trans>Name</Trans>
+            </Label>
             <Input
               id="new-dashboard-name"
               value={createName}
               onChange={(event) => setCreateName(event.target.value)}
-              placeholder="My Dashboard"
+              placeholder={t`My Dashboard`}
             />
           </div>
           <div className="flex justify-end gap-2">
@@ -144,14 +155,14 @@ export function DashboardSwitcher({
               onClick={() => setCreateOpen(false)}
               disabled={pendingAction === 'create'}
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               size="sm"
               onClick={() => void handleCreate()}
               disabled={pendingAction === 'create'}
             >
-              {pendingAction === 'create' ? 'Creating...' : 'Create'}
+              {pendingAction === 'create' ? t`Creating...` : t`Create`}
             </Button>
           </div>
         </PopoverContent>
@@ -160,24 +171,32 @@ export function DashboardSwitcher({
       <Popover open={renameOpen} onOpenChange={setRenameOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" disabled={!activeDashboard || pendingAction !== null}>
-            <Pencil className="h-4 w-4 mr-1" />
-            Rename
+            <Trans>
+              <Pencil className="h-4 w-4 mr-1" />
+              Rename
+            </Trans>
           </Button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-80 space-y-3">
           <div className="space-y-1">
-            <p className="text-sm font-medium">Rename dashboard</p>
+            <p className="text-sm font-medium">
+              <Trans>Rename dashboard</Trans>
+            </p>
             <p className="text-xs text-muted-foreground">
-              Update the name for <span className="font-medium">{activeDashboard?.name}</span>.
+              <Trans>
+                Update the name for <span className="font-medium">{activeDashboard?.name}</span>.
+              </Trans>
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="rename-dashboard-name">Name</Label>
+            <Label htmlFor="rename-dashboard-name">
+              <Trans>Name</Trans>
+            </Label>
             <Input
               id="rename-dashboard-name"
               value={renameName}
               onChange={(event) => setRenameName(event.target.value)}
-              placeholder="Dashboard name"
+              placeholder={t`Dashboard name`}
             />
           </div>
           <div className="flex justify-end gap-2">
@@ -187,14 +206,14 @@ export function DashboardSwitcher({
               onClick={() => setRenameOpen(false)}
               disabled={pendingAction === 'rename'}
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               size="sm"
               onClick={() => void handleRename()}
               disabled={pendingAction === 'rename'}
             >
-              {pendingAction === 'rename' ? 'Saving...' : 'Save'}
+              {pendingAction === 'rename' ? t`Saving...` : t`Save`}
             </Button>
           </div>
         </PopoverContent>
@@ -203,16 +222,22 @@ export function DashboardSwitcher({
       <Popover open={deleteOpen} onOpenChange={setDeleteOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" disabled={!activeDashboard || pendingAction !== null}>
-            <Trash2 className="h-4 w-4 mr-1" />
-            Delete
+            <Trans>
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete
+            </Trans>
           </Button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-80 space-y-3">
           <div className="space-y-1">
-            <p className="text-sm font-medium">Delete dashboard</p>
+            <p className="text-sm font-medium">
+              <Trans>Delete dashboard</Trans>
+            </p>
             <p className="text-xs text-muted-foreground">
-              Delete <span className="font-medium">{activeDashboard?.name}</span>? This removes all
-              widgets on it.
+              <Trans>
+                Delete <span className="font-medium">{activeDashboard?.name}</span>? This removes
+                all widgets on it.
+              </Trans>
             </p>
           </div>
           <div className="flex justify-end gap-2">
@@ -222,7 +247,7 @@ export function DashboardSwitcher({
               onClick={() => setDeleteOpen(false)}
               disabled={pendingAction === 'delete'}
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               variant="destructive"
@@ -230,7 +255,7 @@ export function DashboardSwitcher({
               onClick={() => void handleDelete()}
               disabled={pendingAction === 'delete'}
             >
-              {pendingAction === 'delete' ? 'Deleting...' : 'Delete'}
+              {pendingAction === 'delete' ? t`Deleting...` : t`Delete`}
             </Button>
           </div>
         </PopoverContent>

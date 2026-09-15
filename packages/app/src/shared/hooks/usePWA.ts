@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
@@ -46,17 +48,22 @@ function detectInstallSupport(): InstallSupport {
 function getInstallInstructions(support: InstallSupport) {
   switch (support) {
     case 'manual-ios':
-      return '1. Tap the Share icon (square with arrow)\n2. Choose "Add to Home Screen"\n3. Confirm the name and tap Add';
+      return t`1. Tap the Share icon (square with arrow)
+2. Choose "Add to Home Screen"
+3. Confirm the name and tap Add`;
     case 'manual-firefox':
-      return 'Firefox does not expose the “beforeinstallprompt” API on desktop. Use the browser menu → “Install” if available, or switch to Chrome/Edge for install support.';
+      return t`Firefox does not expose the “beforeinstallprompt” API on desktop. Use the browser menu → “Install” if available, or switch to Chrome/Edge for install support.`;
     case 'unsupported':
-      return 'This browser does not support the automatic install prompt.\nTry browser menu options like “Install app” or “Add to Home Screen”, or use Chrome/Edge for the best install flow.';
+      return t`This browser does not support the automatic install prompt.
+Try browser menu options like “Install app” or “Add to Home Screen”, or use Chrome/Edge for the best install flow.`;
     default:
       return undefined;
   }
 }
 
 export function usePWA() {
+  const { t } = useLingui();
+
   const [isInstallable, setIsInstallable] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const deferredPromptRef = useRef<BeforeInstallPromptEvent | null>(null);
@@ -93,7 +100,7 @@ export function usePWA() {
       setIsInstallable(false);
       deferredPromptRef.current = null;
       window.deferredPrompt = undefined;
-      toast.success('Budgero has been installed successfully!');
+      toast.success(t`Budgero has been installed successfully!`);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
@@ -103,7 +110,7 @@ export function usePWA() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, []);
+  }, [t]);
 
   const installApp = async () => {
     // Try both ref and window stored prompt
@@ -116,9 +123,9 @@ export function usePWA() {
         const { outcome } = await deferredPrompt.userChoice;
 
         if (outcome === 'accepted') {
-          toast.success('Installing Budgero...');
+          toast.success(t`Installing Budgero...`);
         } else {
-          toast.info('You can install Budgero anytime from your browser menu');
+          toast.info(t`You can install Budgero anytime from your browser menu`);
           // Suppress auto prompts for 3 days after rejection
           suppressFor3Days();
         }
@@ -129,7 +136,9 @@ export function usePWA() {
         setIsInstallable(false);
       } catch (error) {
         console.error('Error showing install prompt:', error);
-        toast.error('Failed to show install prompt. Please try installing from your browser menu.');
+        toast.error(
+          t`Failed to show install prompt. Please try installing from your browser menu.`
+        );
       }
     } else {
       const userAgent = navigator.userAgent.toLowerCase();

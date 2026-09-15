@@ -1,3 +1,4 @@
+import { i18n } from '@lingui/core';
 /**
  * Klaro lifecycle for the app shell.
  *
@@ -9,7 +10,12 @@
  */
 
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
-import { klaroConfig, type KlaroApi, type KlaroManager } from '@shared/lib/analytics/klaro-config';
+import {
+  klaroConfig,
+  refreshKlaroLocale,
+  type KlaroApi,
+  type KlaroManager,
+} from '@shared/lib/analytics/klaro-config';
 import {
   disableAnalytics,
   enableAnalytics,
@@ -52,6 +58,7 @@ export async function setupKlaro(): Promise<KlaroApi | null> {
       delete klaroConfig.cookieDomain;
     }
 
+    refreshKlaroLocale();
     window.klaroConfig = klaroConfig;
     await import('klaro/dist/klaro.css');
     await import('@shared/lib/analytics/klaro-theme.css');
@@ -59,6 +66,10 @@ export async function setupKlaro(): Promise<KlaroApi | null> {
     const api = (mod as unknown as { default?: KlaroApi }).default ?? (mod as unknown as KlaroApi);
     api.setup(klaroConfig);
     window.klaro = api;
+    i18n.on('change', () => {
+      refreshKlaroLocale();
+      api.render(klaroConfig);
+    });
     manager = api.getManager();
 
     // Analytics is opt-in, so an undecided user reads as disabled. Pre-seed

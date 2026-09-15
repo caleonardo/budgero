@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -49,6 +50,8 @@ export function WorkspaceBudgetList({
   onEditBudget,
   onCreateBudget,
 }: WorkspaceBudgetListProps) {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const runtime = useRuntime();
   const queryClient = useQueryClient();
@@ -103,7 +106,7 @@ export function WorkspaceBudgetList({
   const handleChangeBudget = (budget: Budget) => {
     if (selectedBudget?.ID !== budget.ID) {
       setSelectedBudget(budget);
-      toast.success('Budget switched', { description: `Switched to "${budget.Name}".` });
+      toast.success(t`Budget switched`, { description: t`Switched to "${budget.Name}".` });
       void navigate('/', { replace: true });
     }
     onItemSelected?.();
@@ -114,12 +117,12 @@ export function WorkspaceBudgetList({
     setDefaultBudgetId(nextId);
     setStoredDefaultBudgetId(nextId);
     if (nextId) {
-      toast.success('Default budget set', {
-        description: `${budget.Name} will open automatically next time.`,
+      toast.success(t`Default budget set`, {
+        description: t`${budget.Name} will open automatically next time.`,
       });
     } else {
-      toast.success('Default budget cleared', {
-        description: 'Budgets will open in list order.',
+      toast.success(t`Default budget cleared`, {
+        description: t`Budgets will open in list order.`,
       });
     }
   };
@@ -133,13 +136,13 @@ export function WorkspaceBudgetList({
         queryClient,
         spaceId: space.space_id,
       });
-      toast.success('Workspace switched', {
-        description: `You are now in "${space.display_name}".`,
+      toast.success(t`Workspace switched`, {
+        description: t`You are now in "${space.display_name}".`,
       });
       void navigate('/', { replace: true });
     } catch (error) {
-      const message = getErrorMessage(error, 'Unable to switch workspace. Please try again.');
-      toast.error('Unable to switch workspace', { description: message });
+      const message = getErrorMessage(error, t`Unable to switch workspace. Please try again.`);
+      toast.error(t`Unable to switch workspace`, { description: message });
     } finally {
       setSwitchingSpaceId(null);
     }
@@ -163,7 +166,7 @@ export function WorkspaceBudgetList({
       <section className="space-y-1">
         <div className="flex items-center gap-2 px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           <Users className="h-3.5 w-3.5" />
-          <span className="truncate">{activeSpace?.display_name ?? 'Workspace'}</span>
+          <span className="truncate">{activeSpace?.display_name ?? t`Workspace`}</span>
         </div>
 
         {budgetsLoading ? (
@@ -172,7 +175,9 @@ export function WorkspaceBudgetList({
             <Skeleton className="h-8 w-full" />
           </div>
         ) : budgets.length === 0 ? (
-          <div className="px-2 py-1.5 text-xs text-muted-foreground">No budgets yet</div>
+          <div className="px-2 py-1.5 text-xs text-muted-foreground">
+            <Trans>No budgets yet</Trans>
+          </div>
         ) : (
           <div className="space-y-0.5">
             {budgets.map((budget) => {
@@ -203,7 +208,7 @@ export function WorkspaceBudgetList({
                     <Button
                       variant="ghost"
                       size="icon"
-                      aria-label={isDefault ? 'Clear default budget' : 'Set as default budget'}
+                      aria-label={isDefault ? t`Clear default budget` : t`Set as default budget`}
                       className={cn(
                         'h-6 w-6 text-muted-foreground',
                         isDefault && 'text-amber-500 dark:text-amber-300'
@@ -220,7 +225,7 @@ export function WorkspaceBudgetList({
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label="Manage budget"
+                        aria-label={t`Manage budget`}
                         data-testid="manage-budget-button"
                         className="h-6 w-6"
                         onClick={(e) => {
@@ -248,8 +253,10 @@ export function WorkspaceBudgetList({
             })}
           >
             <span className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Create New Budget
+              <Trans>
+                <Plus className="h-4 w-4" />
+                Create New Budget
+              </Trans>
             </span>
           </div>
         )}
@@ -259,7 +266,7 @@ export function WorkspaceBudgetList({
       {otherSpaces.length > 0 && (
         <section className="space-y-1 border-t border-border pt-3">
           <div className="px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Other workspaces
+            <Trans>Other workspaces</Trans>
           </div>
           <div className="space-y-0.5">
             {otherSpaces.map((space) => {
@@ -280,7 +287,9 @@ export function WorkspaceBudgetList({
                   {isSwitching ? (
                     <Spinner className="h-3.5 w-3.5 text-muted-foreground" />
                   ) : (
-                    <span className="text-xs text-muted-foreground">Switch</span>
+                    <span className="text-xs text-muted-foreground">
+                      <Trans>Switch</Trans>
+                    </span>
                   )}
                 </div>
               );
@@ -302,8 +311,10 @@ export function WorkspaceBudgetList({
                 )}
               >
                 <span className="flex items-center gap-1.5">
-                  <Lock className="h-3.5 w-3.5" />
-                  Locked ({lockedSpaces.length})
+                  <Trans>
+                    <Lock className="h-3.5 w-3.5" />
+                    Locked ({lockedSpaces.length})
+                  </Trans>
                 </span>
                 <ChevronDown className="h-3.5 w-3.5 transition-transform [[data-state=open]_&]:rotate-180" />
               </div>
@@ -317,7 +328,7 @@ export function WorkspaceBudgetList({
                     'cursor-not-allowed text-muted-foreground opacity-60'
                   )}
                   aria-disabled
-                  title="This workspace is currently inaccessible"
+                  title={t`This workspace is currently inaccessible`}
                 >
                   <div className="flex min-w-0 items-center gap-2">
                     <Lock className="h-4 w-4 shrink-0" />
@@ -334,7 +345,7 @@ export function WorkspaceBudgetList({
       {pendingSpaces.length > 0 && (
         <section className="space-y-1 border-t border-border pt-3">
           <div className="px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Pending invitations
+            <Trans>Pending invitations</Trans>
           </div>
           <div className="space-y-0.5">
             {pendingSpaces.map((space) => (
@@ -342,7 +353,7 @@ export function WorkspaceBudgetList({
                 key={space.space_id}
                 className={cn(rowBaseClass, rowHoverClass)}
                 {...buttonizeProps(handleOpenWorkspaceSettings)}
-                title="Open workspace settings to complete the invitation"
+                title={t`Open workspace settings to complete the invitation`}
               >
                 <div className="flex min-w-0 items-center gap-2">
                   <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -364,8 +375,10 @@ export function WorkspaceBudgetList({
           {...buttonizeProps(handleOpenWorkspaceSettings)}
         >
           <span className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            Manage workspaces
+            <Trans>
+              <Settings className="h-4 w-4" />
+              Manage workspaces
+            </Trans>
           </span>
         </div>
       </div>

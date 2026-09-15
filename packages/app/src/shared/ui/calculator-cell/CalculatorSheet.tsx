@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Delete } from 'lucide-react';
 import { Drawer, DrawerContent } from '@shared/ui/drawer';
 import { Button } from '@shared/ui/button';
@@ -38,6 +39,8 @@ export function CalculatorSheet({
   onCommit,
   onClose,
 }: CalculatorSheetProps) {
+  const { t } = useLingui();
+
   const decimalButton = decimalSep || '.';
 
   const handleButtonClick = (item: { label: React.ReactNode; value?: string; action?: string }) => {
@@ -109,7 +112,7 @@ export function CalculatorSheet({
     { label: '0', value: '0', key: '0', type: 'number' },
     { label: decimalButton, value: decimalButton, key: 'dot', type: 'number' },
     {
-      label: 'Enter',
+      label: t`Enter`,
       action: 'enter',
       key: 'enter',
       colSpan: 2,
@@ -144,7 +147,9 @@ export function CalculatorSheet({
               {mobileError ? (
                 <div className="text-xs text-destructive">{mobileError}</div>
               ) : hasError && mobileText ? (
-                <div className="text-xs text-destructive">Error</div>
+                <div className="text-xs text-destructive">
+                  <Trans>Error</Trans>
+                </div>
               ) : evaluatedValue !== null && mobileText ? (
                 <div className="text-sm text-foreground/65 font-mono">
                   = {formatter(evaluatedValue)}
@@ -176,7 +181,7 @@ export function CalculatorSheet({
                   variant={item.action === 'enter' ? 'default' : 'secondary'}
                   data-calculator-key="true"
                   data-key-type={item.type}
-                  aria-label={typeof item.label === 'string' ? undefined : 'Delete'}
+                  aria-label={typeof item.label === 'string' ? undefined : t`Delete`}
                   className={cn(
                     'h-12 text-lg font-semibold active:scale-[0.985] transition-transform',
                     item.action === 'enter' ? 'rounded-md' : 'rounded-full',

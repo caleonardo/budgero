@@ -1,7 +1,8 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import { useEffect } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import {
   ArrowRight,
   Check,
@@ -21,16 +22,17 @@ import { BudgetPreview } from './BudgetPreview';
 import { SharedBudgeting } from './SharedBudgeting';
 import { ReportShowcase } from './ReportShowcase';
 
-const features = [
-  'Encrypted sync across your devices',
-  'Up to five people in your workspace',
-  'Accounts in multiple currencies',
-  'YNAB and CSV imports',
-  'Savings goals and spending reports',
-  'Hosting and automatic updates handled for you',
+const features = (copy: CopyTranslator) => [
+  copy('u_25ec18da53ea'),
+  copy('u_4576c9445ae6'),
+  copy('u_6691dee65511'),
+  copy('u_55909602692b'),
+  copy('u_52e816dab6a6'),
+  copy('u_892baab19fba'),
 ];
 
 export default function LandingPage() {
+  const copy = useTranslations('updates');
   useEffect(() => {
     track('Homepage Viewed', { variant: HOMEPAGE_VARIANT });
   }, []);
@@ -44,19 +46,20 @@ export default function LandingPage() {
         />
         <div className="mx-auto max-w-6xl text-center">
           <p className="mb-5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            A clearer plan for your money
+            {' '}
+            {copy('u_5fccd591a577')}{' '}
           </p>
           <h1
             id="hero-heading"
             className="text-balance text-[clamp(2rem,4.8vw,4.25rem)] font-bold leading-[1.12] tracking-tight"
           >
-            Know what you can spend.
-            <br className="hidden sm:block" />{' '}
-            <span className="text-primary">Keep your budget private.</span>
+            {' '}
+            {copy('u_f06fb5c3e210')} <br className="hidden sm:block" />{' '}
+            <span className="text-primary">{copy('u_70f89fb1c00f')}</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Plan your spending, manage accounts across currencies, and budget together—with a
-            private budgeting app that works in your browser.
+            {' '}
+            {copy('u_d7d50565a944')}{' '}
           </p>
           <Button
             asChild
@@ -64,7 +67,8 @@ export default function LandingPage() {
             className="mt-7 h-auto min-h-12 w-full max-w-sm whitespace-normal rounded-full px-4 py-3 text-sm sm:w-auto sm:max-w-none sm:px-7 sm:text-base"
           >
             <TrialLink placement="hero">
-              Start your 35-day free trial{' '}
+              {' '}
+              {copy('u_c413547eb1fa')}{' '}
               <ArrowRight
                 className="ml-2 hidden size-4 shrink-0 min-[360px]:block"
                 aria-hidden="true"
@@ -72,17 +76,21 @@ export default function LandingPage() {
             </TrialLink>
           </Button>
           <p className="mt-3 text-sm text-muted-foreground">
-            No credit card required.{' '}
+            {' '}
+            {copy('u_020d69600973')}{' '}
             <span className="block sm:inline">
-              Then {pricing.monthly}/month or {pricing.yearly}/year, tax included.
+              {' '}
+              {copy('u_0597f441dcca')} {pricing.monthly}
+              {copy('u_f02908f678e5')} {pricing.yearly}
+              {copy('u_1b5a38379cfe')}{' '}
             </span>
           </p>
           <p className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
-              <LockKeyhole className="size-3.5" aria-hidden="true" /> End-to-end encrypted
+              <LockKeyhole className="size-3.5" aria-hidden="true" /> {copy('u_f01afb7a9c04')}{' '}
             </span>
-            <span>Open source</span>
-            <span>Up to five people included</span>
+            <span>{copy('u_67a0d2e0dab4')}</span>
+            <span>{copy('u_4133418a0708')}</span>
           </p>
         </div>
         <BudgetPreview />
@@ -100,90 +108,88 @@ export default function LandingPage() {
         <div id="features" className="mx-auto max-w-6xl scroll-mt-28">
           <div className="mx-auto mb-10 max-w-2xl text-center">
             <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">
-              Make room for what matters
+              {' '}
+              {copy('u_2be2070095bb')}{' '}
             </p>
             <h2
               id="benefits-heading"
               className="text-balance text-3xl font-bold tracking-tight sm:text-4xl"
             >
-              A budget you can use every day.
+              {' '}
+              {copy('u_a7aee0a2a54f')}{' '}
             </h2>
           </div>
           <div className="grid gap-6 lg:grid-cols-3">
             <article className="flex flex-col rounded-2xl border border-border bg-card p-6">
               <Wallet className="mb-5 size-6 text-primary" aria-hidden="true" />
-              <h3 className="text-xl font-semibold">See what is left to spend</h3>
+              <h3 className="text-xl font-semibold">{copy('u_7ca513b71c72')}</h3>
               <p className="mb-6 mt-3 text-sm leading-6 text-muted-foreground">
-                Give your money a job, record your spending, and see what is still available for
-                groceries, bills, and the things you are saving for.
+                {' '}
+                {copy('u_07e60fdd33c7')}{' '}
               </p>
               <div
                 className="mt-auto rounded-xl bg-muted/50 p-5"
-                aria-label="Example: groceries, $450 assigned, $128.40 spent, $321.60 available"
+                aria-label={copy('u_23ad9399e119')}
               >
                 <div className="flex justify-between text-sm">
-                  <span>Groceries</span>
-                  <span className="font-medium text-primary">$321.60 left</span>
+                  <span>{copy('u_2742b7b24a49')}</span>
+                  <span className="font-medium text-primary">{copy('u_87ba3f7ab1e8')}</span>
                 </div>
                 <div className="my-3 h-2 overflow-hidden rounded-full bg-primary/15">
                   <div className="h-full w-[29%] rounded-full bg-primary" />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  $128.40 spent of $450 assigned · Example
-                </p>
+                <p className="text-xs text-muted-foreground"> {copy('u_323bb90dd1c8')} </p>
               </div>
             </article>
             <article className="flex flex-col rounded-2xl border border-border bg-card p-6">
               <Coins className="mb-5 size-6 text-primary" aria-hidden="true" />
-              <h3 className="text-xl font-semibold">Keep currencies together</h3>
+              <h3 className="text-xl font-semibold">{copy('u_f8d7b671420e')}</h3>
               <p className="mb-6 mt-3 text-sm leading-6 text-muted-foreground">
-                Keep each account in its own currency and plan in your budget currency. See
-                converted balances and handle transfers without a separate spreadsheet.
+                {' '}
+                {copy('u_803e7107fbc1')}{' '}
               </p>
               <div className="mt-auto rounded-xl bg-muted/50 p-5 text-sm">
                 <div className="flex justify-between border-b border-border pb-3">
-                  <span>Everyday account</span>
+                  <span>{copy('u_81dbfecfb484')}</span>
                   <span className="font-medium">EUR</span>
                 </div>
                 <div className="flex justify-between pt-3">
-                  <span>Travel account</span>
+                  <span>{copy('u_20a9efe099d0')}</span>
                   <span className="font-medium">USD</span>
                 </div>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Different account currencies. One budget.
-                </p>
+                <p className="mt-3 text-xs text-muted-foreground"> {copy('u_a9ce5db1b5ab')} </p>
               </div>
               <Link
                 href="/multi-currency-budgeting"
                 className="mt-5 text-sm font-medium text-primary underline underline-offset-4"
               >
-                Explore multi-currency budgeting
+                {' '}
+                {copy('u_ebe45f8df8c0')}{' '}
               </Link>
             </article>
             <article className="flex flex-col rounded-2xl border border-border bg-card p-6">
               <FileInput className="mb-5 size-6 text-primary" aria-hidden="true" />
-              <h3 className="text-xl font-semibold">Bring your YNAB budget</h3>
+              <h3 className="text-xl font-semibold">{copy('u_c3f88d9cc0f7')}</h3>
               <p className="mb-6 mt-3 text-sm leading-6 text-muted-foreground">
-                Bring your accounts, categories, and history through a direct YNAB connection or an
-                export. Review the import, reconcile balances, and pick up your plan.
+                {' '}
+                {copy('u_61e98975e45e')}{' '}
               </p>
               <ol className="mt-auto space-y-3 rounded-xl bg-muted/50 p-5 text-sm">
-                {[
-                  'Connect YNAB or upload an export',
-                  'Review your imported budget',
-                  'Check balances and start budgeting',
-                ].map((step, index) => (
-                  <li key={step} className="flex gap-3">
-                    <span className="text-primary">{index + 1}.</span>
-                    {step}
-                  </li>
-                ))}
+                {[copy('u_97532853dcc3'), copy('u_7536e2ff767b'), copy('u_052d785539e3')].map(
+                  (step, index) => (
+                    <li key={step} className="flex gap-3">
+                      <span className="text-primary">{index + 1}.</span>
+                      {step}
+                    </li>
+                  )
+                )}
               </ol>
               <Link
                 href="/vs-ynab"
                 className="mt-5 text-sm font-medium text-primary underline underline-offset-4"
               >
-                Compare Budgero and YNAB
+                {' '}
+                {copy('u_fe533e59a56f')}{' '}
               </Link>
             </article>
           </div>
@@ -191,13 +197,14 @@ export default function LandingPage() {
             id="security"
             className="mx-auto mt-8 max-w-2xl scroll-mt-28 text-center text-sm leading-6 text-muted-foreground"
           >
-            Your financial data is encrypted on your device before it syncs. Only you and the people
-            you share with can read it.{' '}
+            {' '}
+            {copy('u_4aa2dc278a6e')}{' '}
             <Link
               href="/encrypted-budgeting"
               className="underline underline-offset-4 hover:text-foreground"
             >
-              How Budgero protects your budget
+              {' '}
+              {copy('u_37b610c67574')}{' '}
             </Link>
           </p>
         </div>
@@ -214,14 +221,16 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2">
             <div className="min-w-0 p-6 sm:p-10">
               <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">
-                Budgero Cloud
+                {' '}
+                {copy('u_3ffc9f1dabd5')}{' '}
               </p>
               <h2 id="pricing-heading" className="text-3xl font-bold tracking-tight">
-                Your first 35 days are free.
+                {' '}
+                {copy('u_f7d90458cc36')}{' '}
               </h2>
               <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                Try the full app with your own budget. No card, no server setup, and no plan to
-                choose today.
+                {' '}
+                {copy('u_63fc5238e13b')}{' '}
               </p>
               <Button
                 asChild
@@ -229,7 +238,8 @@ export default function LandingPage() {
                 className="mt-6 h-auto min-h-12 w-full max-w-full whitespace-normal rounded-full px-3 py-3"
               >
                 <TrialLink placement="pricing">
-                  Start your 35-day free trial{' '}
+                  {' '}
+                  {copy('u_c413547eb1fa')}{' '}
                   <ArrowRight
                     className="ml-2 hidden size-4 shrink-0 min-[360px]:block"
                     aria-hidden="true"
@@ -237,25 +247,22 @@ export default function LandingPage() {
                 </TrialLink>
               </Button>
               <p className="mt-3 text-center text-xs text-muted-foreground">
-                No automatic charge when your trial ends.
+                {' '}
+                {copy('u_e8130c02993b')}{' '}
               </p>
             </div>
             <div className="min-w-0 bg-muted/30 p-6 sm:p-10">
-              <p className="text-sm text-muted-foreground">
-                After your trial, choose what suits you:
-              </p>
+              <p className="text-sm text-muted-foreground"> {copy('u_17400e3266f0')} </p>
               <p className="mt-3 flex flex-wrap items-baseline gap-x-2">
                 <strong className="text-3xl tracking-tight">{pricing.monthly}</strong>
-                <span className="text-sm text-muted-foreground">/month</span>
-                <span className="mx-1 text-muted-foreground">or</span>
+                <span className="text-sm text-muted-foreground">{copy('u_eec5d08bc9b2')}</span>
+                <span className="mx-1 text-muted-foreground">{copy('u_7175517a370b')}</span>
                 <strong className="text-3xl tracking-tight">{pricing.yearly}</strong>
-                <span className="text-sm text-muted-foreground">/year</span>
+                <span className="text-sm text-muted-foreground">{copy('u_a2d5f1bcdaab')}</span>
               </p>
-              <p className="mb-6 mt-2 text-xs text-muted-foreground">
-                For your workspace, with up to five people. Tax included.
-              </p>
+              <p className="mb-6 mt-2 text-xs text-muted-foreground"> {copy('u_b5f92b72c014')} </p>
               <ul className="space-y-3">
-                {features.map((feature) => (
+                {features(copy).map((feature) => (
                   <li key={feature} className="flex gap-2.5 text-sm">
                     <Check className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
                     {feature}
@@ -272,10 +279,11 @@ export default function LandingPage() {
         className="mx-auto max-w-3xl px-4 pb-16 sm:px-6 sm:pb-24"
       >
         <h2 id="faq-heading" className="mb-8 text-center text-3xl font-bold tracking-tight">
-          Before you start.
+          {' '}
+          {copy('u_1d5e6e11930b')}{' '}
         </h2>
         <div className="divide-y divide-border border-y border-border">
-          {homepageFaqs.map((faq) => (
+          {homepageFaqs(copy).map((faq) => (
             <details key={faq.question} className="group py-5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-medium [&::-webkit-details-marker]:hidden">
                 {faq.question}
@@ -298,19 +306,18 @@ export default function LandingPage() {
           id="final-heading"
           className="text-balance text-3xl font-bold tracking-tight sm:text-4xl"
         >
-          Make a plan for your next payday.
+          {' '}
+          {copy('u_1dd70a518d09')}{' '}
         </h2>
-        <p className="mx-auto mt-4 max-w-lg text-muted-foreground">
-          Start fresh or bring your YNAB budget. Give Budgero a full month—and a little extra—to see
-          how it fits.
-        </p>
+        <p className="mx-auto mt-4 max-w-lg text-muted-foreground"> {copy('u_fc72aa5acd0c')} </p>
         <Button
           asChild
           size="lg"
           className="mt-7 h-auto min-h-12 w-full max-w-sm whitespace-normal rounded-full px-4 py-3 text-sm sm:w-auto sm:max-w-none sm:px-7"
         >
           <TrialLink placement="final">
-            Start your 35-day free trial{' '}
+            {' '}
+            {copy('u_c413547eb1fa')}{' '}
             <ArrowRight
               className="ml-2 hidden size-4 shrink-0 min-[360px]:block"
               aria-hidden="true"
@@ -318,7 +325,10 @@ export default function LandingPage() {
           </TrialLink>
         </Button>
         <p className="mt-3 text-sm text-muted-foreground">
-          No credit card required. Then {pricing.monthly}/month or {pricing.yearly}/year.
+          {' '}
+          {copy('u_1bc2607003ce')} {pricing.monthly}
+          {copy('u_f02908f678e5')} {pricing.yearly}
+          {copy('u_f13da484761a')}{' '}
         </p>
       </section>
 
@@ -328,19 +338,18 @@ export default function LandingPage() {
         className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6"
       >
         <h2 id="self-host-heading" className="text-2xl font-bold">
-          Open source. Free to self-host.
+          {' '}
+          {copy('u_441ee09daf38')}{' '}
         </h2>
-        <p className="mt-4 text-sm leading-7 text-muted-foreground">
-          Budgero is an open-source product with a managed Cloud option. Prefer your own server?
-          Self-host the same core app for free and manage hosting, updates, and backups yourself.
-        </p>
+        <p className="mt-4 text-sm leading-7 text-muted-foreground"> {copy('u_5d0e5f7d370c')} </p>
         <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm font-medium">
           <Link
             href="/self-hostable"
             onClick={() => track('CTA Clicked - Self Host', { placement: 'bottom', page: 'home' })}
             className="underline underline-offset-4"
           >
-            Explore self-hosting
+            {' '}
+            {copy('u_2d66856f887a')}{' '}
           </Link>
           <Link
             href="/docs/self-hosting-guide"
@@ -349,7 +358,8 @@ export default function LandingPage() {
             }
             className="underline underline-offset-4"
           >
-            Self-hosting guide
+            {' '}
+            {copy('u_65858866917e')}{' '}
           </Link>
           <a
             href="https://github.com/tombadilo-bombadilo/budgero"
@@ -357,28 +367,34 @@ export default function LandingPage() {
             rel="noopener noreferrer"
             className="underline underline-offset-4"
           >
-            Source on GitHub
+            {' '}
+            {copy('u_11506c59ef23')}{' '}
           </a>
         </div>
         <p className="mt-5 text-sm text-muted-foreground">
-          Already self-hosting?{' '}
+          {' '}
+          {copy('u_6ee5aeed4e5e')}{' '}
           <Link
             href="/donate"
             onClick={() => track('Self-Host - Donate (Homepage)')}
             className="underline underline-offset-4"
           >
-            Support Budgero with an optional donation
+            {' '}
+            {copy('u_5249abeadafe')}{' '}
           </Link>
           .
         </p>
         <p className="mt-10 text-xs leading-6 text-muted-foreground">
-          Still comparing?{' '}
+          {' '}
+          {copy('u_01153b01e297')}{' '}
           <Link href="/best-ynab-alternatives" className="underline underline-offset-4">
-            Explore YNAB alternatives
+            {' '}
+            {copy('u_747348072d50')}{' '}
           </Link>{' '}
-          or see{' '}
+          {copy('u_9e9fc5a91a3d')}{' '}
           <Link href="/monarch-money-europe-alternative" className="underline underline-offset-4">
-            Budgero for people considering Monarch Money in Europe
+            {' '}
+            {copy('u_e4e8120d4daa')}{' '}
           </Link>
           .
         </p>
@@ -386,3 +402,4 @@ export default function LandingPage() {
     </main>
   );
 }
+type CopyTranslator = (key: string, values?: Record<string, string | number>) => string;

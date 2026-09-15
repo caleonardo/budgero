@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans, useLingui } from '@lingui/react/macro';
+
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { parseISO } from 'date-fns';
@@ -73,6 +75,7 @@ interface SelectedTransactionData extends GetTransactionsByAccountRow {
 const COMMAND_PALETTE_TRANSACTION_LIMIT = 200;
 
 export function CommandPalette() {
+  const { t } = useLingui();
   const shortcuts = getKeyboardShortcutLabels();
   const [showTransactionDialog, setShowTransactionDialog] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
@@ -452,15 +455,17 @@ export function CommandPalette() {
         }}
       >
         <CommandInput
-          placeholder="Type a command or search..."
+          placeholder={t`Type a command or search...`}
           value={searchValue}
           onValueChange={setSearchValue}
         />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>
+            <Trans>No results found.</Trans>
+          </CommandEmpty>
 
           {/* Quick Actions */}
-          <CommandGroup heading="Quick Actions">
+          <CommandGroup heading={t`Quick Actions`}>
             <CommandItem
               onSelect={() => {
                 setCommandPaletteOpen(false);
@@ -468,7 +473,9 @@ export function CommandPalette() {
               }}
             >
               <Plus className="mr-2 h-4 w-4" />
-              <span>Add Transaction</span>
+              <span>
+                <Trans>Add Transaction</Trans>
+              </span>
               {/* Handler listens for (Cmd|Ctrl)+Alt+T — plain Cmd/Ctrl+T is
                   reserved by the browser for "new tab" and can't be overridden. */}
               <CommandShortcut>{shortcuts.addTransaction}</CommandShortcut>
@@ -478,34 +485,48 @@ export function CommandPalette() {
           <CommandSeparator />
 
           {/* Main Pages */}
-          <CommandGroup heading="Pages">
+          <CommandGroup heading={t`Pages`}>
             <CommandItem onSelect={() => handleNavigation('/dashboard')}>
               <Home className="mr-2 h-4 w-4" />
-              <span>Dashboard</span>
+              <span>
+                <Trans>Dashboard</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/budgeting')}>
               <Calculator className="mr-2 h-4 w-4" />
-              <span>Budget Planning</span>
+              <span>
+                <Trans>Budget Planning</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/accounts')}>
               <Wallet className="mr-2 h-4 w-4" />
-              <span>Accounts</span>
+              <span>
+                <Trans>Accounts</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/reports/prebuilt')}>
               <PieChart className="mr-2 h-4 w-4" />
-              <span>Reports</span>
+              <span>
+                <Trans>Reports</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/reports/explorer')}>
               <TrendingUp className="mr-2 h-4 w-4" />
-              <span>Explorer</span>
+              <span>
+                <Trans>Explorer</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/reports/dashboards')}>
               <LayoutGrid className="mr-2 h-4 w-4" />
-              <span>Custom Dashboards</span>
+              <span>
+                <Trans>Custom Dashboards</Trans>
+              </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/settings/recurring')}>
               <Clock className="mr-2 h-4 w-4" />
-              <span>Recurring</span>
+              <span>
+                <Trans>Recurring</Trans>
+              </span>
             </CommandItem>
           </CommandGroup>
 
@@ -513,41 +534,45 @@ export function CommandPalette() {
 
           {/* Settings Pages — sourced from the shared nav registry so routes/icons/labels
               stay in sync with the sidebar and mobile nav. */}
-          <CommandGroup heading="Settings">
+          <CommandGroup heading={t`Settings`}>
             <CommandItem onSelect={() => handleNavigation('/settings/appearance')}>
               <Palette className="mr-2 h-4 w-4" />
-              <span>Appearance</span>
+              <span>
+                <Trans>Appearance</Trans>
+              </span>
             </CommandItem>
             {!IS_SELF_HOSTABLE_BUILD &&
               NAV_SETTINGS_ACCOUNT.map((item) => (
                 <CommandItem key={item.to} onSelect={() => handleNavigation(item.to)}>
                   <item.icon className="mr-2 h-4 w-4" />
-                  <span>{item.label}</span>
+                  <span>{t(item.label)}</span>
                 </CommandItem>
               ))}
             {IS_SELF_HOSTABLE_BUILD && (
               <CommandItem onSelect={() => handleNavigation('/settings/security')}>
                 <Shield className="mr-2 h-4 w-4" />
-                <span>Security & Privacy</span>
+                <span>
+                  <Trans>Security & Privacy</Trans>
+                </span>
               </CommandItem>
             )}
             {NAV_SETTINGS_DATA.map((item) => (
               <CommandItem key={item.to} onSelect={() => handleNavigation(item.to)}>
                 <item.icon className="mr-2 h-4 w-4" />
-                <span>{item.label}</span>
+                <span>{t(item.label)}</span>
               </CommandItem>
             ))}
             {NAV_SETTINGS_AUTOMATION.map((item) => (
               <CommandItem key={item.to} onSelect={() => handleNavigation(item.to)}>
                 <item.icon className="mr-2 h-4 w-4" />
-                <span>{item.label}</span>
+                <span>{t(item.label)}</span>
               </CommandItem>
             ))}
             {NAV_SETTINGS_PREFERENCES.filter((item) => item.to !== '/settings/appearance').map(
               (item) => (
                 <CommandItem key={item.to} onSelect={() => handleNavigation(item.to)}>
                   <item.icon className="mr-2 h-4 w-4" />
-                  <span>{item.label}</span>
+                  <span>{t(item.label)}</span>
                 </CommandItem>
               )
             )}
@@ -558,7 +583,7 @@ export function CommandPalette() {
           {/* Categories */}
           {categories.length > 0 && (
             <>
-              <CommandGroup heading="Categories">
+              <CommandGroup heading={t`Categories`}>
                 {displayedCategories.map((category) => (
                   <CommandItem
                     key={category.ID}
@@ -576,7 +601,9 @@ export function CommandPalette() {
                     className="text-muted-foreground"
                   >
                     <Search className="mr-2 h-4 w-4" />
-                    <span>View all categories...</span>
+                    <span>
+                      <Trans>View all categories...</Trans>
+                    </span>
                   </CommandItem>
                 )}
               </CommandGroup>
@@ -586,7 +613,7 @@ export function CommandPalette() {
 
           {/* Accounts */}
           {accounts.length > 0 && (
-            <CommandGroup heading="Accounts">
+            <CommandGroup heading={t`Accounts`}>
               {displayedAccounts.map((account) => (
                 <CommandItem
                   key={account.ID}
@@ -604,7 +631,9 @@ export function CommandPalette() {
                   className="text-muted-foreground"
                 >
                   <Search className="mr-2 h-4 w-4" />
-                  <span>View all accounts...</span>
+                  <span>
+                    <Trans>View all accounts...</Trans>
+                  </span>
                 </CommandItem>
               )}
             </CommandGroup>
@@ -614,7 +643,7 @@ export function CommandPalette() {
           {displayedTransactions.length > 0 && (
             <>
               <CommandSeparator />
-              <CommandGroup heading="Recent Transactions">
+              <CommandGroup heading={t`Recent Transactions`}>
                 {displayedTransactions.map((transaction) => {
                   const rawAmount =
                     transaction.InflowConverted > 0
@@ -635,7 +664,7 @@ export function CommandPalette() {
                       <Receipt className="mr-2 h-4 w-4" />
                       <div className="flex flex-1 items-center justify-between">
                         <div>
-                          <span className="font-medium">{transaction.Memo || 'No memo'}</span>
+                          <span className="font-medium">{transaction.Memo || t`No memo`}</span>
                           <span className="ml-2 text-xs text-muted-foreground">
                             {transaction.Category}
                           </span>
@@ -690,7 +719,9 @@ export function CommandPalette() {
           selectedTransaction ? (
             <div className="pt-3 pb-4">
               <div className="text-center text-xs text-muted-foreground">
-                Transaction from {parseISO(selectedTransaction.Date).toLocaleDateString()}
+                <Trans>
+                  Transaction from {parseISO(selectedTransaction.Date).toLocaleDateString()}
+                </Trans>
               </div>
             </div>
           ) : null

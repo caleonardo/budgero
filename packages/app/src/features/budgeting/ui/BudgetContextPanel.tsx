@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useGoalFundingSettings } from '@entities/budget/api/useGoalFundingSettings';
 import { FundingPriorityEditor } from '@features/category-management/ui/FundingPriorityEditor';
 import { useMemo } from 'react';
@@ -28,7 +29,6 @@ import {
   useCycleFinancialsForGoals,
 } from '@entities/goal/api/useGoals';
 import {
-  format,
   eachMonthOfInterval,
   parse,
   subMonths,
@@ -40,6 +40,7 @@ import {
   isSameMonth,
   parseISO,
 } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import type { BudgetRow } from '@features/budget-planning/lib/budget-transforms';
 import {
   calculateUnderfundedGoals,
@@ -87,7 +88,8 @@ interface BudgetContextPanelProps {
 const cardClass = 'gap-2 py-3 rounded-xl';
 const headerClass = 'px-3';
 const contentClass = 'px-3';
-const titleClass = 'text-sm';
+// leading-snug so titles that wrap to two lines in longer languages stay legible.
+const titleClass = 'text-sm leading-snug';
 
 interface QuickActionButtonProps {
   icon: LucideIcon;
@@ -116,10 +118,14 @@ function QuickActionButton({
       disabled={pending || disabled}
       className="justify-start gap-2"
     >
-      {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}
-      {label}
+      {pending ? (
+        <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
+      ) : (
+        <Icon className="h-4 w-4 shrink-0" />
+      )}
+      <span className="min-w-0 flex-1">{label}</span>
       {suffix !== undefined && (
-        <span className="ml-auto font-mono text-xs text-muted-foreground">{suffix}</span>
+        <span className="shrink-0 font-mono text-xs text-muted-foreground">{suffix}</span>
       )}
     </Button>
   );
@@ -134,6 +140,8 @@ export function BudgetContextPanel({
   transformedRows,
   monthsBack = 6,
 }: BudgetContextPanelProps) {
+  const { t } = useLingui();
+
   const batchUpsertAssignments = useBatchUpsertAssignments();
   const { data: allowOverAssignment = false } = useAllowOverAssignment();
   // Every amount in this panel (budget rows, goals, analytics totals) is
@@ -469,11 +477,11 @@ export function BudgetContextPanel({
           const datum = points[items[0]?.dataIndex ?? 0];
           if (!datum) return '';
           const rows: TooltipRow[] = [
-            { color: cumulativeColor, name: 'Cumulative', value: formatAmount(datum.cumulative) },
-            { color: paceColor, name: 'Budget Pace', value: formatAmount(datum.budgetPace) },
+            { color: cumulativeColor, name: t`Cumulative`, value: formatAmount(datum.cumulative) },
+            { color: paceColor, name: t`Budget Pace`, value: formatAmount(datum.budgetPace) },
             {
               color: datum.isOverPace ? palette.flow.negative : palette.flow.positive,
-              name: datum.isOverPace ? 'Over pace' : 'Under pace',
+              name: datum.isOverPace ? t`Over pace` : t`Under pace`,
               value: formatAmount(Math.abs(datum.budgetPace - datum.cumulative)),
             },
           ];
@@ -482,7 +490,7 @@ export function BudgetContextPanel({
       },
       series: [
         {
-          name: 'Cumulative Spending',
+          name: t`Cumulative Spending`,
           type: 'line' as const,
           data: points.map((datum) => datum.cumulative),
           lineStyle: { color: cumulativeColor, width: 2 },
@@ -491,7 +499,7 @@ export function BudgetContextPanel({
           areaStyle: { color: cumulativeColor, opacity: 0.1 },
         },
         {
-          name: 'Budget Pace',
+          name: t`Budget Pace`,
           type: 'line' as const,
           data: points.map((datum) => datum.budgetPace),
           lineStyle: { color: paceColor, width: 2, opacity: 0.7, type: [5, 5] },
@@ -500,7 +508,7 @@ export function BudgetContextPanel({
         },
       ],
     };
-  }, [budgetPacingData, palette, formatAmount]);
+  }, [budgetPacingData, palette, formatAmount, t]);
 
   const historyOption = useMemo<EChartsCoreOption>(() => {
     const { chrome } = palette;
@@ -528,21 +536,21 @@ export function BudgetContextPanel({
           const datum = combinedChartData[items[0]?.dataIndex ?? 0];
           if (!datum) return '';
           return tooltipHtml(datum.month, [
-            { color: spendingColor, name: 'Spending', value: formatAmount(datum.spending) },
-            { color: assignedColor, name: 'Assigned', value: formatAmount(datum.assigned) },
+            { color: spendingColor, name: t`Spending`, value: formatAmount(datum.spending) },
+            { color: assignedColor, name: t`Assigned`, value: formatAmount(datum.assigned) },
           ]);
         },
       },
       series: [
         {
-          name: 'Spending',
+          name: t`Spending`,
           type: 'bar' as const,
           data: combinedChartData.map((datum) => datum.spending),
           barMaxWidth: BAR_MAX_WIDTH,
           itemStyle: { color: spendingColor, borderRadius: BAR_RADIUS_TOP },
         },
         {
-          name: 'Assigned',
+          name: t`Assigned`,
           type: 'bar' as const,
           data: combinedChartData.map((datum) => datum.assigned),
           barMaxWidth: BAR_MAX_WIDTH,
@@ -550,14 +558,14 @@ export function BudgetContextPanel({
         },
       ],
     };
-  }, [combinedChartData, palette, formatAmount]);
+  }, [combinedChartData, palette, formatAmount, t]);
 
   const handleApplyAssignments = (
     assignments: { categoryId: number; amount: number }[],
     message: string
   ) => {
     if (!assignments.length) {
-      toast.error('Select at least one category.');
+      toast.error(t`Select at least one category.`);
       return;
     }
     batchUpsertAssignments.mutate(
@@ -608,7 +616,7 @@ export function BudgetContextPanel({
     // Falling through would hit the misleading "Select at least one
     // category" guard.
     if (effectiveCategoryIds.length > 0 && assignments.length === 0) {
-      toast.info('Nothing to apply — no assignments last month.');
+      toast.info(t`Nothing to apply — no assignments last month.`);
       return;
     }
     handleApplyAssignments(assignments, 'Applied last month totals');
@@ -672,7 +680,7 @@ export function BudgetContextPanel({
     return (
       <Card className="h-full">
         <CardContent className="flex h-full items-center justify-center text-muted-foreground">
-          Add budget categories to view context insights.
+          <Trans>Add budget categories to view context insights.</Trans>
         </CardContent>
       </Card>
     );
@@ -682,55 +690,67 @@ export function BudgetContextPanel({
     <Card className={cardClass}>
       <CardHeader className={headerClass}>
         <CardTitle className={titleClass}>
-          {selectedCategory ? `${selectedCategory.name} Summary` : 'Summary'}
+          {selectedCategory ? t`${selectedCategory.name} Summary` : t`Summary`}
         </CardTitle>
       </CardHeader>
       <CardContent className={cn(contentClass, 'space-y-1.5 text-sm')}>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-blue-500/10 text-blue-500">
-              <Layers className="h-3.5 w-3.5" />
-            </span>
-            Categories
+            <Trans>
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-blue-500/10 text-blue-500">
+                <Layers className="h-3.5 w-3.5" />
+              </span>
+              Categories
+            </Trans>
           </span>
-          <span className="font-medium">{isUsingAllCategories ? 'All' : selectedRows.length}</span>
+          <span className="font-medium">{isUsingAllCategories ? t`All` : selectedRows.length}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-500">
-              <Wallet className="h-3.5 w-3.5" />
-            </span>
-            Assigned
+            <Trans>
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-500">
+                <Wallet className="h-3.5 w-3.5" />
+              </span>
+              Assigned
+            </Trans>
           </span>
           <span className="font-medium">{formatAmount(summaryTotals.assigned)}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-rose-500/10 text-rose-500">
-              <ArrowLeftRight className="h-3.5 w-3.5" />
-            </span>
-            Activity
+            <Trans>
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-rose-500/10 text-rose-500">
+                <ArrowLeftRight className="h-3.5 w-3.5" />
+              </span>
+              Activity
+            </Trans>
           </span>
           <span className="font-medium">{formatAmount(summaryTotals.activity)}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-violet-500/10 text-violet-500">
-              <Coins className="h-3.5 w-3.5" />
-            </span>
-            Available
+            <Trans>
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-violet-500/10 text-violet-500">
+                <Coins className="h-3.5 w-3.5" />
+              </span>
+              Available
+            </Trans>
           </span>
           <span className="font-medium">{formatAmount(summaryTotals.available)}</span>
         </div>
         <div className="flex items-center justify-between" data-testid="summary-underfunded-goals">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-500/10 text-amber-500">
-              <Target className="h-3.5 w-3.5" />
-            </span>
-            Underfunded goals
-            {underfundedSummary.count > 0 && (
-              <span className="text-xs text-muted-foreground/70">· {underfundedSummary.count}</span>
-            )}
+            <Trans>
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-500/10 text-amber-500">
+                <Target className="h-3.5 w-3.5" />
+              </span>
+              Underfunded goals
+              {underfundedSummary.count > 0 && (
+                <span className="text-xs text-muted-foreground/70">
+                  · {underfundedSummary.count}
+                </span>
+              )}
+            </Trans>
           </span>
           <span
             className={cn(
@@ -748,12 +768,14 @@ export function BudgetContextPanel({
   const quickActionsCard = (
     <Card className={cardClass}>
       <CardHeader className={headerClass}>
-        <CardTitle className={titleClass}>Quick Actions</CardTitle>
+        <CardTitle className={titleClass}>
+          <Trans>Quick Actions</Trans>
+        </CardTitle>
       </CardHeader>
       <CardContent className={cn(contentClass, 'flex flex-col gap-1.5')}>
         <QuickActionButton
           icon={AlertTriangle}
-          label="Cover overspending"
+          label={t`Cover overspending`}
           onClick={handleCoverOverspending}
           pending={batchUpsertAssignments.isPending}
           disabled={
@@ -764,7 +786,7 @@ export function BudgetContextPanel({
         {!selectedCategory && (
           <QuickActionButton
             icon={Target}
-            label="Fund underfunded"
+            label={t`Fund underfunded`}
             onClick={handleFundUnderfunded}
             pending={batchUpsertAssignments.isPending}
             disabled={
@@ -778,7 +800,7 @@ export function BudgetContextPanel({
         {goalQuickActions?.underfunded && (
           <QuickActionButton
             icon={Target}
-            label="Fund goal"
+            label={t`Fund goal`}
             onClick={handleFundGoal}
             pending={batchUpsertAssignments.isPending}
             disabled={!fundingReady || (readyToAssign <= 0 && !allowOverAssignment)}
@@ -788,7 +810,7 @@ export function BudgetContextPanel({
         {goalQuickActions?.overfunded && (
           <QuickActionButton
             icon={TrendingDown}
-            label="Reduce overfunding"
+            label={t`Reduce overfunding`}
             onClick={handleReduceOverfunding}
             pending={batchUpsertAssignments.isPending}
             suffix={`-${formatAmount(goalQuickActions.overfunded.safeReduction)}`}
@@ -796,25 +818,25 @@ export function BudgetContextPanel({
         )}
         <QuickActionButton
           icon={RotateCcw}
-          label="Reset allocations"
+          label={t`Reset allocations`}
           onClick={handleResetAllocations}
           pending={batchUpsertAssignments.isPending}
         />
         <QuickActionButton
           icon={RefreshCcw}
-          label="Reset available"
+          label={t`Reset available`}
           onClick={handleResetAvailable}
           pending={batchUpsertAssignments.isPending}
         />
         <QuickActionButton
           icon={TrendingUp}
-          label="Apply average assigned"
+          label={t`Apply average assigned`}
           onClick={handleApplyAverage}
           pending={batchUpsertAssignments.isPending || helpersQuery.isLoading}
         />
         <QuickActionButton
           icon={CalendarRange}
-          label="Apply last month assigned"
+          label={t`Apply last month assigned`}
           onClick={handleApplyLastMonth}
           pending={batchUpsertAssignments.isPending || helpersQuery.isLoading}
         />
@@ -848,7 +870,9 @@ export function BudgetContextPanel({
       {selectedCategory && (
         <Card className={cardClass}>
           <CardHeader className={headerClass}>
-            <CardTitle className={titleClass}>{selectedCategory.name} Goal</CardTitle>
+            <CardTitle className={titleClass}>
+              <Trans>{selectedCategory.name} Goal</Trans>
+            </CardTitle>
           </CardHeader>
           <CardContent className={contentClass}>
             <GoalSection
@@ -871,20 +895,28 @@ export function BudgetContextPanel({
       {budgetPacingData && (
         <Card className={cardClass}>
           <CardHeader className={headerClass}>
-            <CardTitle className={titleClass}>Budget Pacing</CardTitle>
+            <CardTitle className={titleClass}>
+              <Trans>Budget Pacing</Trans>
+            </CardTitle>
           </CardHeader>
           <CardContent className={contentClass}>
             <div className="mb-3 text-sm space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Total Spent:</span>
+                <span className="text-muted-foreground">
+                  <Trans>Total Spent:</Trans>
+                </span>
                 <span className="font-medium">{formatAmount(budgetPacingData.totalSpent)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Monthly Goal:</span>
+                <span className="text-muted-foreground">
+                  <Trans>Monthly Goal:</Trans>
+                </span>
                 <span className="font-medium">{formatAmount(budgetPacingData.goal)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Progress:</span>
+                <span className="text-muted-foreground">
+                  <Trans>Progress:</Trans>
+                </span>
                 <span
                   className={`font-medium ${budgetPacingData.totalSpent > budgetPacingData.goal ? 'text-red-600' : 'text-green-600'}`}
                 >
@@ -905,14 +937,18 @@ export function BudgetContextPanel({
 
       <Card className={cardClass}>
         <CardHeader className={headerClass}>
-          <CardTitle className={titleClass}>Spending & Assignments History</CardTitle>
+          <CardTitle className={titleClass}>
+            <Trans>Spending & Assignments History</Trans>
+          </CardTitle>
         </CardHeader>
         <CardContent className={contentClass}>
           <div className="mb-2 text-sm text-muted-foreground">
-            Average monthly spend:{' '}
-            <span className="font-medium text-foreground">
-              {formatAmount(averageMonthlySpending)}
-            </span>
+            <Trans>
+              Average monthly spend:{' '}
+              <span className="font-medium text-foreground">
+                {formatAmount(averageMonthlySpending)}
+              </span>
+            </Trans>
           </div>
           {spendingQuery.isLoading || assignmentsQuery.isLoading ? (
             <Skeleton className="h-[200px] w-full" />

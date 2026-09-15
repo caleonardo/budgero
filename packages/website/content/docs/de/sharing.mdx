@@ -1,0 +1,69 @@
+---
+title: "Budget-Freigabe"
+summary: "Lade deinen Partner oder deinen Haushalt ein, halte alle auf dem gleichen Stand und erfahre, wie Verschlüsselungsschlüssel geteilt werden, ohne jemals den Server zu berühren."
+section: collaboration
+topicId: sharing
+takeaways:
+  - "Wie Einladungslinks funktionieren und warum das Geheimnis nie den Server erreicht."
+  - "Was Eigentümer und Mitglieder in einem geteilten Budget jeweils tun können."
+  - "Praktische Konventionen, die verhindern, dass ein geteiltes Budget zu einem geteilten Chaos wird."
+---
+
+Budgets sind für die meisten Haushalte ein Team-Sport — und bei der Freigabe geben die meisten „privaten" Apps ihre Datenschutzversprechen leise auf. Budgero teilt Budgets, ohne die Verschlüsselung zu schwächen: Deine Daten bleiben Ende-zu-Ende-verschlüsselt, und die Schlüssel werden so übertragen, dass der Server sie nicht abfangen kann.
+
+## So funktioniert die Freigabe
+
+1. Der **Besitzer** des Budgets öffnet das Freigabe-Panel und erstellt einen **Einladungslink**.
+2. Der Link enthält ein einmaliges Geheimnis im **URL-Fragment** — dem Teil nach `#`. Fragmente werden nie in HTTP-Anfragen gesendet, sodass der Server die Einladung weiterleitet, ohne das Geheimnis jemals zu sehen.
+3. Der Eingeladene öffnet den Link, meldet sich an und richtet sein eigenes [Master-Passwort](/docs/master-password) ein, falls er noch keines hat.
+4. Sein Gerät verwendet das Einladungsgeheimnis, um den gemeinsamen Schlüssel des Budgets zu entschlüsseln, und verpackt ihn dann unter seinem eigenen Master-Passwort neu.
+
+Das Ergebnis: Jedes Mitglied entsperrt dasselbe Budget mit seinem *eigenen* Master-Passwort, der Server speichert nur verpackte Schlüssel, die er nicht öffnen kann, und es wurden keine Passwörter zwischen Menschen geteilt. Behandle den Einladungslink selbst als sensibel, solange er aktiv ist — jeder, der ihn hat, kann ihn einlösen — und sende ihn über einen Kanal, dem du vertraust.
+
+Jedes Budgero-Abo umfasst **5 Plätze**, was für einen Haushalt mehr als ausreicht.
+
+## Rollen
+
+<table>
+  <thead>
+    <tr>
+      <th>Rolle</th>
+      <th>Wer</th>
+      <th>Was sie können</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Besitzer</strong></td>
+      <td>Wer das Budget erstellt hat</td>
+      <td>Alles — plus Einladungen erstellen und Mitglieder entfernen</td>
+    </tr>
+    <tr>
+      <td><strong>Mitglied</strong></td>
+      <td>Alle Eingeladenen</td>
+      <td>Tägliche Budgetierung: Transaktionen, Zuweisungen, Kategorien</td>
+    </tr>
+  </tbody>
+</table>
+
+Mitgliedschaft und Einladungen werden über das Freigabe-Panel verwaltet; der Besitzer kann den Zugriff eines Mitglieds jederzeit widerrufen, wodurch die Möglichkeit zum Synchronisieren neuer Daten entfällt.
+
+## Jeder synchronisiert, überall
+
+Sobald sie beigetreten sind, sehen Mitglieder dasselbe Live-Budget. Eine Lebensmittel-Transaktion, die dein Partner an der Kasse eingibt, erscheint auf deinem Laptop, sobald sie synchronisiert wird; die Zuweisung, die du an deinem Schreibtisch änderst, erscheint auf seinem Telefon. Der [Offline-Modus](/docs/offline) funktioniert pro Gerät — ihr beide könnt Ausgaben im Flugzeug erfassen, und die Änderungen werden zusammengeführt, wenn ihr wieder online seid.
+
+## Konventionen, die geteilte Budgets gesund halten
+
+Die Software kümmert sich um die Synchronisation; die Menschen müssen sich trotzdem um die Einigung kümmern. Drei Konventionen erledigen den Großteil der Arbeit:
+
+1. **Mach den Plan im Budget selbst sichtbar.** Hänge an jede Kategorie, für die ihr eine Zahl vereinbart habt, ein [Ziel](/docs/goals) an — der Zielbetrag und sein Fortschrittsbalken sind der Vertrag, synchronisiert und für euch beide sichtbar. Für feinere Konventionen kannst du sie im Kategorienamen verankern („Essen gehen (ohne Ausflüge)").
+2. **Eine Person ist für die Zuweisung zuständig.** Beide Partner Transaktionen erfassen zu lassen funktioniert hervorragend; beide Partner unabhängig voneinander Geld hin- und herzuschieben funktioniert in der Regel nicht. Einigt euch, wer die [Zuweisungsroutine](/docs/assign-money) übernimmt — oder macht es gemeinsam jeden Monat.
+3. **Erfasse Ausgaben in dem Moment, in dem sie entstehen.** Geteilte Budgets verstärken Veraltung: Wenn die Dienstags-Ausgaben einer Person erst am Freitag auftauchen, hat die andere Person am Mittwoch Entscheidungen auf Basis falscher Zahlen getroffen. Je schneller alle erfassen, desto mehr kann man den geteilten Verfügbar-Zahlen vertrauen.
+
+## Verlassen und Entfernen
+
+Wenn ein Mitglied entfernt wird (oder geht), endet sein Zugriff auf zukünftige Synchronisationen. Beachte die ehrlichen Grenzen jedes Freigabesystems: Daten, die ein Mitglied bereits auf sein Gerät synchronisiert hat, gehörten per Definition zu dem, was es sehen konnte — Verschlüsselung schützt dich vor dem Server, nicht vor Menschen, denen du Vertrauen geschenkt hast. Teile entsprechend.
+
+## Was die Freigabe nicht ändert
+
+Die Freigabe fügt keine serverseitige Sichtbarkeit hinzu. Die Sicht des Servers auf ein freigegebenes Budget ist derselbe Chiffretext wie bei einem einzelnen, zuzüglich der minimalen Metadaten, die zur Weiterleitung nötig sind: wer Mitglied ist und welche verschlüsselten Blobs zu welchem Arbeitsbereich gehören. Das vollständige Bild dessen, was der Server sehen kann und was nicht, findest du im [Sicherheitsmodell](/docs/security).

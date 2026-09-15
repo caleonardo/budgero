@@ -60,6 +60,12 @@ jobs:
       - name: Lint app
         run: pnpm run lint:app
 
+      - name: Check translation catalogs
+        run: pnpm run i18n:check
+
+      - name: Audit untranslated strings
+        run: pnpm run i18n:sweep
+
       - name: Test core
         run: pnpm run test:core
 
@@ -74,6 +80,12 @@ jobs:
 
       - name: Build website
         run: pnpm run build:website
+
+      - name: Type-check website
+        run: pnpm --dir packages/website exec tsc --noEmit
+
+      - name: Audit translated website pages
+        run: node scripts/i18n/audit-website.mjs --max 0
 
   server:
     if: github.server_url == 'https://github.com'

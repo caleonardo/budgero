@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { Badge } from '@shared/ui/badge';
@@ -140,7 +141,7 @@ export const MobileTransactionCard = React.memo(function MobileTransactionCard({
                   {transaction.Memo || transaction.Payee}
                 </span>
                 <Badge variant="secondary" className="shrink-0 text-[9px] uppercase tracking-wide">
-                  Projected
+                  <Trans>Projected</Trans>
                 </Badge>
               </div>
               <div className="truncate text-[11px] text-muted-foreground">

@@ -7,6 +7,7 @@ packages:
 allowBuilds:
   '@clerk/shared': true
   '@parcel/watcher': true
+  '@swc/core': true
   '@tailwindcss/oxide': true
   contentlayer2: true
   core-js: true

@@ -1,0 +1,107 @@
+---
+title: "Multidivisa"
+summary: "Mantén cuentas en más de 120 monedas fiduciarias —o criptomonedas— dentro de un presupuesto. Aprende cómo funciona la conversión, de dónde provienen los tipos de cambio y cómo sobrescribirlos cuando la realidad no coincida."
+section: accounts-and-imports
+topicId: multi-currency
+takeaways:
+  - "Cómo cada transacción en moneda extranjera guarda tanto el importe original como el convertido."
+  - "La jerarquía de tipos de cambio: sobrescrituras por transacción, tipos personalizados, tipos obtenidos y tipos manuales."
+  - "Flujos de trabajo para cuadrar extractos, gastos de viaje y presupuestar sin conexión."
+---
+
+La función Multidivisa no es una opción de visualización en Budgero: es contabilidad pura. Puedes tener cuentas en cualquiera de las 168 divisas dentro de un solo presupuesto, y todos los números siguen sumando en un solo lugar. Esta guía cubre el mecanismo de conversión; para elegir y cambiar la divisa ancla, consulta [Divisa del presupuesto](/docs/budget-currency).
+
+## Dos importes por transacción
+
+Cada transacción en una cuenta en divisa extranjera almacena dos valores:
+
+- el **importe original**: lo que ocurrió realmente, en la divisa de la cuenta. Es el dato real y nunca cambia.
+- el **importe convertido**: la misma transacción expresada en la divisa de tu presupuesto, que es lo que consumen las categorías, [Por asignar](/docs/ready-to-assign) y los informes.
+
+Junto a ellos, Budgero registra el **tipo de cambio** utilizado y si lo sobreescribiste. El historial de tu cuenta en CHF se mantiene en francos; tu presupuesto se lee en euros; no se pierde nada en el camino. Los saldos de las cuentas funcionan igual: cada cuenta extranjera conoce tanto su saldo nativo como su contribución convertida a tu patrimonio neto.
+
+## De dónde provienen los tipos de cambio
+
+Cuando una transacción necesita conversión, Budgero resuelve el tipo de cambio mediante una jerarquía estricta: la primera fuente que aplique es la que prevalece:
+
+<table>
+  <thead>
+    <tr>
+      <th>Prioridad</th>
+      <th>Fuente</th>
+      <th>Cuándo se aplica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>Sobrescritura por transacción</strong></td>
+      <td>Estableces el tipo exacto en esa transacción concreta</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>Tipos personalizados</strong></td>
+      <td>Un tipo que definiste para un rango de fechas que cubre la transacción</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>Tipos obtenidos</strong></td>
+      <td>Tipos diarios que Budgero recupera automáticamente</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><strong>Tipos manuales</strong></td>
+      <td>Tipos fijos que introdujiste tú mismo, sin necesidad de conexión a internet</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><strong>Tipo reciente más cercano</strong></td>
+      <td>El tipo del día anterior más cercano (hasta una semana atrás), cuando el día exacto no está en caché</td>
+    </tr>
+  </tbody>
+</table>
+
+Para la mayoría de la gente, las tasas obtenidas hacen todo el trabajo de forma invisible. Las capas por encima de ellas existen para los momentos en que "la media del mercado" no es tu realidad.
+
+## Tasas personalizadas: tu tasa, tu rango de fechas
+
+**Ajustes → Divisas** es la sala de control. Allí defines **Tasas de cambio personalizadas**: un par de divisas, una tasa y un rango de fechas. Dentro de ese rango, tu tasa prevalece sobre la obtenida automáticamente.
+
+Usos típicos:
+
+- **Moviste dinero a una tasa conocida.** Convertiste 10.000 € a 1,0845 el 3 de marzo — fija esa tasa a esa semana y la contabilidad cuadrará con el justificante de la transferencia.
+- **Una divisa gestionada o fijada.** Si operas con una divisa en la que la tasa oficial y la tasa real difieren, configura la que refleje tu situación.
+- **Limpieza histórica.** ¿Has importado años de transacciones en moneda extranjera? Define tasas personalizadas por periodo en lugar de editar filas una por una.
+
+Las tasas personalizadas son ajustes dinámicos, no marcas puntuales: cuando añades, editas o eliminas una, Budgero **recalcula los importes convertidos** de cada transacción en ese rango — excepto las transacciones que has sobrescrito individualmente, que siempre conservan su tasa fijada.
+
+## Sobrescrituras por transacción: cuadrar con el extracto
+
+Las tasas de mercado son medias; la tasa de liquidación de tu tarjeta nunca lo es del todo. Cuando el importe convertido necesita coincidir con un extracto hasta el último céntimo, sobrescribe la tasa en la transacción individual — introduce la tasa o el importe liquidado exacto, y la transacción quedará exenta de todo recálculo automático a partir de ese momento.
+
+Esta es la herramienta para: compras con tarjeta en el extranjero (los bancos añaden su propio margen), transferencias en las que el recibo muestra el tipo de cambio exacto, y cualquier línea que tu contable acabará comparando con un extracto.
+
+## Tipos de cambio manuales: presupuestar sin fuente de tipos de cambio
+
+Los tipos de cambio manuales son tipos fijos que introduces tú mismo, que se usan cuando no hay tipos obtenidos automáticamente — [sin conexión](/docs/offline), o en una instancia [autoalojada](/docs/self-hosting-guide) que no has conectado a una API de tipos de cambio. Configúralos una vez para los pares que uses y multidivisa sigue funcionando sin red alguna; siempre puedes ajustar transacciones individuales con sustituciones más tarde.
+
+## Flujos de trabajo del día a día
+
+**El hogar transfronterizo.** El salario entra en GBP, el alquiler sale en EUR. Cada cuenta mantiene su propia divisa; las decisiones de asignación y gasto se hacen todas en la divisa del presupuesto. Nada de cálculos mentales de cambio en ningún momento — la jerarquía de tipos se encarga.
+
+**Viajes.** Gasta con tu tarjeta de origen en el extranjero y la transacción llega en la divisa de la cuenta como siempre — introduce lo que mostró el datáfono en la divisa extranjera o lo que tu app bancaria muestra como liquidado, lo que tengas; una sustitución concilia la diferencia cuando llega el extracto.
+
+**Conciliación de cuentas extranjeras.** La [conciliación](/docs/accounts) compara los importes *originales* con tu banco — francos contra francos. La conversión nunca interfiere con si el saldo de tu cuenta es correcto; solo determina cómo se lee ese saldo en la divisa de tu presupuesto.
+
+## Lo que la conversión nunca toca
+
+Un principio que conviene conocer: los tipos de cambio afectan cómo se *expresan* los importes extranjeros, nunca lo que *ocurrió*. Los importes originales son hechos inmutables; los importes convertidos son interpretaciones que mejoran a medida que lo hacen tus datos de tipos. Eliminar un tipo personalizado no corrompe el historial — simplemente envía esas transacciones de vuelta por la jerarquía al siguiente tipo aplicable.
+
+## Cuentas de criptomonedas
+
+Las cuentas también pueden estar denominadas en criptomonedas — Bitcoin, Ethereum y unas dos docenas de monedas principales. Algunas cosas funcionan de manera diferente respecto a las monedas fiat:
+
+- **Precisión a nivel de satoshi.** Los importes en criptomonedas se almacenan con ocho decimales, por lo que 0.00000001 BTC es representable. La precisión de las monedas fiat no cambia.
+- **Solo seguimiento por defecto.** Las nuevas cuentas de criptomonedas comienzan fuera del presupuesto: su valor cuenta para el patrimonio neto, pero las fluctuaciones diarias del mercado no afectan a Por asignar. Pasa la cuenta al presupuesto si *quieres* que tu presupuesto respire con el mercado.
+- **Reevaluación diaria.** Cada día el saldo convertido de la cuenta se ajusta a su saldo nativo multiplicado por el último tipo de cambio, y la variación se registra en el diario. Tus transacciones conservan el tipo del día en que ocurrieron — los informes de gasto nunca reescriben el historial — mientras que los saldos siempre reflejan el mercado de hoy.
+- **Sin conversión 1:1 de respaldo.** Una transacción en moneda fiat sin tipo conocido recurre a una conversión temporal 1:1 y se corrige más tarde; para las criptomonedas eso sería catastrófico, así que Budgero se niega a registrar la transacción hasta que haya un tipo disponible (añade un tipo manual o reconecta).

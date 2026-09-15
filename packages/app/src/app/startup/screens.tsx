@@ -1,3 +1,7 @@
+import type { MessageDescriptor } from '@lingui/core';
+import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -54,17 +58,21 @@ import type { MasterPasswordStartupSnapshot, WorkspaceStartupSnapshot } from './
 import { StartupLayout } from './StartupLayout';
 
 interface StartupSplashScreenProps {
-  message?: string;
-  detail?: string;
+  message?: MessageDescriptor;
+  detail?: MessageDescriptor;
 }
 
 export function StartupSplashScreen({ message, detail }: StartupSplashScreenProps) {
+  const { t } = useLingui();
+
   return (
     <div className="budgero-route-loader">
-      <img className="budgero-route-loader__logo" src="/logo_128.png" alt="Budgero logo" />
-      <p className="budgero-route-loader__text">{message ?? 'Preparing Budgero…'}</p>
+      <img className="budgero-route-loader__logo" src="/logo_128.png" alt={t`Budgero logo`} />
+      <p className="budgero-route-loader__text">
+        {message ? i18n._(message) : t`Preparing Budgero…`}
+      </p>
       <div className="budgero-route-loader__progress" aria-hidden="true" />
-      {detail ? <p className="text-xs text-muted-foreground">{detail}</p> : null}
+      {detail ? <p className="text-xs text-muted-foreground">{i18n._(detail)}</p> : null}
     </div>
   );
 }
@@ -76,18 +84,6 @@ export function AccessBlockedScreen({ mode }: { mode: 'shared-locked' | 'subscri
 export function IntroRequiredScreen({ acknowledgeIntro }: { acknowledgeIntro: () => void }) {
   return <OnboardingFlow onComplete={acknowledgeIntro} />;
 }
-
-const PASSWORD_RULES = [
-  { key: 'length', label: 'At least 12 characters', test: (p: string) => p.length >= 12 },
-  { key: 'upper', label: 'One uppercase letter', test: (p: string) => /[A-Z]/.test(p) },
-  { key: 'lower', label: 'One lowercase letter', test: (p: string) => /[a-z]/.test(p) },
-  { key: 'number', label: 'One number', test: (p: string) => /\d/.test(p) },
-  {
-    key: 'special',
-    label: 'One special character (!@#$%...)',
-    test: (p: string) => /[^A-Za-z0-9]/.test(p),
-  },
-] as const;
 
 function PasswordRequirement({ met, label }: { met: boolean; label: string }) {
   return (
@@ -105,6 +101,20 @@ function PasswordRequirement({ met, label }: { met: boolean; label: string }) {
 }
 
 function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnapshot }) {
+  const { t } = useLingui();
+
+  const PASSWORD_RULES = [
+    { key: 'length', label: t`At least 12 characters`, test: (p: string) => p.length >= 12 },
+    { key: 'upper', label: t`One uppercase letter`, test: (p: string) => /[A-Z]/.test(p) },
+    { key: 'lower', label: t`One lowercase letter`, test: (p: string) => /[a-z]/.test(p) },
+    { key: 'number', label: t`One number`, test: (p: string) => /\d/.test(p) },
+    {
+      key: 'special',
+      label: t`One special character (!@#$%...)`,
+      test: (p: string) => /[^A-Za-z0-9]/.test(p),
+    },
+  ] as const;
+
   const showSetup = !snapshot.isOffline && snapshot.isFirstTimeSetup;
   const password = snapshot.inputPassword;
   const allRulesMet = showSetup && PASSWORD_RULES.every((r) => r.test(password));
@@ -119,13 +129,15 @@ function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnaps
       className="space-y-4"
     >
       <div className="space-y-2">
-        <Label htmlFor="startup-master-password">Master Password</Label>
+        <Label htmlFor="startup-master-password">
+          <Trans>Master Password</Trans>
+        </Label>
         <Input
           id="startup-master-password"
           type="password"
           value={snapshot.inputPassword}
           onChange={(event) => snapshot.setInputPassword(event.target.value)}
-          placeholder="Enter your master password"
+          placeholder={t`Enter your master password`}
           autoFocus
         />
       </div>
@@ -137,26 +149,30 @@ function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnaps
             ))}
           </ul>
           <div className="space-y-2">
-            <Label htmlFor="startup-master-password-confirm">Confirm Master Password</Label>
+            <Label htmlFor="startup-master-password-confirm">
+              <Trans>Confirm Master Password</Trans>
+            </Label>
             <Input
               id="startup-master-password-confirm"
               type="password"
               value={snapshot.confirmPassword}
               onChange={(event) => snapshot.setConfirmPassword(event.target.value)}
-              placeholder="Confirm your master password"
+              placeholder={t`Confirm your master password`}
             />
             {snapshot.confirmPassword.length > 0 ? (
               <div className="flex items-center gap-2 text-xs">
                 {passwordsMatch ? (
                   <>
                     <CheckCircle className="h-3.5 w-3.5 text-emerald-500" />
-                    <span className="text-emerald-600 dark:text-emerald-400">Passwords match</span>
+                    <span className="text-emerald-600 dark:text-emerald-400">
+                      <Trans>Passwords match</Trans>
+                    </span>
                   </>
                 ) : (
                   <>
                     <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
                     <span className="text-amber-600 dark:text-amber-400">
-                      Passwords do not match
+                      <Trans>Passwords do not match</Trans>
                     </span>
                   </>
                 )}
@@ -175,13 +191,15 @@ function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnaps
         className="w-full"
         disabled={showSetup && (!allRulesMet || !passwordsMatch)}
       >
-        {showSetup ? 'Set Master Password' : 'Unlock'}
+        {showSetup ? t`Set Master Password` : t`Unlock`}
       </Button>
     </form>
   );
 }
 
 function MasterPasswordResetDialog({ snapshot }: { snapshot: MasterPasswordStartupSnapshot }) {
+  const { t } = useLingui();
+
   return (
     <Dialog
       open={snapshot.showResetDialog}
@@ -193,26 +211,32 @@ function MasterPasswordResetDialog({ snapshot }: { snapshot: MasterPasswordStart
     >
       <DialogTrigger asChild>
         <Button variant="ghost" type="button" className="w-full text-destructive">
-          Reset Budgero
+          <Trans>Reset Budgero</Trans>
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Reset Budgero?</DialogTitle>
+          <DialogTitle>
+            <Trans>Reset Budgero?</Trans>
+          </DialogTitle>
           <DialogDescription>
-            This permanently deletes your encrypted budgets and queued sync state. This cannot be
-            undone.
+            <Trans>
+              This permanently deletes your encrypted budgets and queued sync state. This cannot be
+              undone.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Type RESET to confirm that you want to wipe local and server state.
+              <Trans>Type RESET to confirm that you want to wipe local and server state.</Trans>
             </AlertDescription>
           </Alert>
           <div className="space-y-2">
-            <Label htmlFor="startup-reset-confirm">Type RESET to confirm</Label>
+            <Label htmlFor="startup-reset-confirm">
+              <Trans>Type RESET to confirm</Trans>
+            </Label>
             <Input
               id="startup-reset-confirm"
               value={snapshot.resetConfirmation}
@@ -233,7 +257,7 @@ function MasterPasswordResetDialog({ snapshot }: { snapshot: MasterPasswordStart
             onClick={() => snapshot.setShowResetDialog(false)}
             disabled={snapshot.isResetting}
           >
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             variant="destructive"
@@ -241,12 +265,12 @@ function MasterPasswordResetDialog({ snapshot }: { snapshot: MasterPasswordStart
             disabled={snapshot.isResetting || snapshot.resetConfirmation !== 'RESET'}
           >
             {snapshot.isResetting ? (
-              <>
+              <Trans>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Resetting...
-              </>
+              </Trans>
             ) : (
-              'Delete everything'
+              t`Delete everything`
             )}
           </Button>
         </DialogFooter>
@@ -260,6 +284,8 @@ export function MasterPasswordRequiredScreen({
 }: {
   snapshot: MasterPasswordStartupSnapshot;
 }) {
+  const { t } = useLingui();
+
   const logout = useLogout();
 
   if (!snapshot.isOffline && snapshot.isFirstTimeSetup) {
@@ -267,9 +293,11 @@ export function MasterPasswordRequiredScreen({
       <StartupLayout currentStep={1}>
         <Card>
           <CardHeader>
-            <CardTitle>Create Your Master Password</CardTitle>
+            <CardTitle>
+              <Trans>Create Your Master Password</Trans>
+            </CardTitle>
             <CardDescription>
-              This is the encryption key for all your financial data.
+              <Trans>This is the encryption key for all your financial data.</Trans>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -280,28 +308,40 @@ export function MasterPasswordRequiredScreen({
               className="rounded-lg border border-border/60 bg-muted/30 px-4"
             >
               <AccordionItem value="why">
-                <AccordionTrigger>Why do I need a master password?</AccordionTrigger>
+                <AccordionTrigger>
+                  <Trans>Why do I need a master password?</Trans>
+                </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Your master password encrypts all your financial data before it ever leaves your
-                  device. We never see or store it, only you can unlock your budgets. Even if our
-                  servers were compromised, your data stays completely private.
+                  <Trans>
+                    Your master password encrypts all your financial data before it ever leaves your
+                    device. We never see or store it, only you can unlock your budgets. Even if our
+                    servers were compromised, your data stays completely private.
+                  </Trans>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="login">
-                <AccordionTrigger>How is this different from my login?</AccordionTrigger>
+                <AccordionTrigger>
+                  <Trans>How is this different from my login?</Trans>
+                </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Your login credentials verify your identity with our server. Your master password
-                  is a separate encryption key that scrambles your data on your device. You can
-                  reset your master password, but doing so permanently destroys all existing
-                  encrypted data, there is no way to carry it over.
+                  <Trans>
+                    Your login credentials verify your identity with our server. Your master
+                    password is a separate encryption key that scrambles your data on your device.
+                    You can reset your master password, but doing so permanently destroys all
+                    existing encrypted data, there is no way to carry it over.
+                  </Trans>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="forget">
-                <AccordionTrigger>What happens if I forget it?</AccordionTrigger>
+                <AccordionTrigger>
+                  <Trans>What happens if I forget it?</Trans>
+                </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Your encrypted data is permanently lost. You can reset your master password to
-                  start fresh, but all previous budgets and history will be wiped. Choose something
-                  strong and store it safely, a password manager is a great option.
+                  <Trans>
+                    Your encrypted data is permanently lost. You can reset your master password to
+                    start fresh, but all previous budgets and history will be wiped. Choose
+                    something strong and store it safely, a password manager is a great option.
+                  </Trans>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -311,10 +351,10 @@ export function MasterPasswordRequiredScreen({
     );
   }
 
-  const title = 'Enter Master Password';
+  const title = t`Enter Master Password`;
   const description = snapshot.isOffline
-    ? 'Unlock to decrypt your budget data (offline mode)'
-    : 'Your master password is required to decrypt your budget data';
+    ? t`Unlock to decrypt your budget data (offline mode)`
+    : t`Your master password is required to decrypt your budget data`;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
@@ -326,7 +366,7 @@ export function MasterPasswordRequiredScreen({
               <CardDescription>{description}</CardDescription>
             </div>
             <Button onClick={() => logout.mutate()} variant="ghost" className="text-gray-500">
-              Sign Out
+              <Trans>Sign Out</Trans>
             </Button>
           </div>
         </CardHeader>
@@ -335,7 +375,10 @@ export function MasterPasswordRequiredScreen({
             <Alert className="mb-4">
               <ShieldCheck className="h-4 w-4" />
               <AlertDescription>
-                Your master password changed on another device. Enter the new password to continue.
+                <Trans>
+                  Your master password changed on another device. Enter the new password to
+                  continue.
+                </Trans>
               </AlertDescription>
             </Alert>
           ) : null}
@@ -349,12 +392,12 @@ export function MasterPasswordRequiredScreen({
 
 function workspaceMessage(accessStatus: AccessStatus | null, isSelfHost: boolean) {
   if (isSelfHost) {
-    return 'Create your first workspace to start storing budgets on this instance.';
+    return t`Create your first workspace to start storing budgets on this instance.`;
   }
   if (accessStatus?.level === AccessLevel.COLLABORATOR) {
-    return 'Redeem a shared invite or upgrade to create your own workspace.';
+    return t`Redeem a shared invite or upgrade to create your own workspace.`;
   }
-  return 'You need an active subscription, trial, or free access before creating a workspace.';
+  return t`You need an active subscription, trial, or free access before creating a workspace.`;
 }
 
 export function WorkspaceRequiredScreen({
@@ -366,6 +409,8 @@ export function WorkspaceRequiredScreen({
   profile: User | undefined;
   accessStatus: AccessStatus | null;
 }) {
+  const { t } = useLingui();
+
   const logout = useLogout();
   const queryClient = useQueryClient();
   const isSelfHost = IS_SELF_HOSTABLE_BUILD;
@@ -379,26 +424,26 @@ export function WorkspaceRequiredScreen({
   const redeemInvite = useRedeemSpaceInvite();
   const defaultWorkspaceName = React.useMemo(() => {
     const rawName = (profile?.name ?? '').trim();
-    if (!rawName) return 'Personal Budget Space';
-    const first = rawName.split(/\s+/)[0] ?? 'My';
-    return `${first}'s Budget Space`;
-  }, [profile?.name]);
+    if (!rawName) return t`Personal Budget Space`;
+    const first = rawName.split(/\s+/)[0] ?? t`My`;
+    return t`${first}'s Budget Space`;
+  }, [profile?.name, t]);
   const workspaceName = userEditedName ?? defaultWorkspaceName;
   const createWorkspace = useMutation({
     mutationFn: (displayName: string) => spaceApi.createSpace(displayName),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: BUDGET_SPACES_QUERY_KEY });
-      toast.success('Workspace created');
+      toast.success(t`Workspace created`);
     },
     onError: (error: Error) => {
-      setFormError(error.message || 'Unable to create workspace.');
+      setFormError(error.message || t`Unable to create workspace.`);
     },
   });
 
   const handleCreate = async () => {
     const trimmed = workspaceName.trim();
     if (!trimmed) {
-      setFormError('Enter a name for your workspace.');
+      setFormError(t`Enter a name for your workspace.`);
       return;
     }
     setFormError(null);
@@ -409,7 +454,7 @@ export function WorkspaceRequiredScreen({
     event?.preventDefault();
     const trimmedSecret = inviteSecret.trim();
     if (!trimmedSecret) {
-      setRedeemError('Enter the invite secret you received.');
+      setRedeemError(t`Enter the invite secret you received.`);
       return;
     }
 
@@ -419,14 +464,14 @@ export function WorkspaceRequiredScreen({
         inviteSecret: trimmedSecret,
         masterPassword: masterPassword || undefined,
       });
-      toast.success('Workspace joined');
+      toast.success(t`Workspace joined`);
       setInviteDialogOpen(false);
       setInviteSecret('');
       setMasterPassword('');
       await queryClient.invalidateQueries({ queryKey: BUDGET_SPACES_QUERY_KEY });
     } catch (error) {
       setRedeemError(
-        getErrorMessage(error, 'Unable to redeem invite. Double-check the secret and try again.')
+        getErrorMessage(error, t`Unable to redeem invite. Double-check the secret and try again.`)
       );
     }
   };
@@ -436,13 +481,17 @@ export function WorkspaceRequiredScreen({
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Card className="w-full max-w-lg">
           <CardHeader>
-            <CardTitle>Unable to load workspaces</CardTitle>
+            <CardTitle>
+              <Trans>Unable to load workspaces</Trans>
+            </CardTitle>
             <CardDescription>{snapshot.error}</CardDescription>
           </CardHeader>
           <CardFooter className="flex gap-3">
-            <Button onClick={() => void snapshot.spacesQuery.refetch()}>Retry</Button>
+            <Button onClick={() => void snapshot.spacesQuery.refetch()}>
+              <Trans>Retry</Trans>
+            </Button>
             <Button variant="ghost" onClick={() => logout.mutate()}>
-              Sign Out
+              <Trans>Sign Out</Trans>
             </Button>
           </CardFooter>
         </Card>
@@ -455,27 +504,37 @@ export function WorkspaceRequiredScreen({
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Card className="w-full max-w-lg">
           <CardHeader>
-            <CardTitle>No workspace available</CardTitle>
+            <CardTitle>
+              <Trans>No workspace available</Trans>
+            </CardTitle>
             <CardDescription>{workspaceMessage(accessStatus, isSelfHost)}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 text-sm text-muted-foreground">
-            <p>Redeem a shared invite to regain access instantly.</p>
+            <p>
+              <Trans>Redeem a shared invite to regain access instantly.</Trans>
+            </p>
           </CardContent>
           <CardFooter className="flex flex-col gap-3 sm:flex-row">
             <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="secondary">Redeem invite</Button>
+                <Button variant="secondary">
+                  <Trans>Redeem invite</Trans>
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Redeem shared workspace access</DialogTitle>
+                  <DialogTitle>
+                    <Trans>Redeem shared workspace access</Trans>
+                  </DialogTitle>
                   <DialogDescription>
-                    Enter the invite secret you received from the workspace owner.
+                    <Trans>Enter the invite secret you received from the workspace owner.</Trans>
                   </DialogDescription>
                 </DialogHeader>
                 <form className="space-y-4" onSubmit={handleRedeemInvite}>
                   <div className="space-y-2">
-                    <Label htmlFor="workspace-invite-secret">Invite secret</Label>
+                    <Label htmlFor="workspace-invite-secret">
+                      <Trans>Invite secret</Trans>
+                    </Label>
                     <Input
                       id="workspace-invite-secret"
                       value={inviteSecret}
@@ -484,13 +543,15 @@ export function WorkspaceRequiredScreen({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="workspace-invite-master">Master password</Label>
+                    <Label htmlFor="workspace-invite-master">
+                      <Trans>Master password</Trans>
+                    </Label>
                     <Input
                       id="workspace-invite-master"
                       type="password"
                       value={masterPassword}
                       onChange={(event) => setMasterPassword(event.target.value)}
-                      placeholder="Your Budgero master password"
+                      placeholder={t`Your Budgero master password`}
                     />
                   </div>
                   {redeemError ? <p className="text-sm text-destructive">{redeemError}</p> : null}
@@ -500,20 +561,22 @@ export function WorkspaceRequiredScreen({
                       variant="outline"
                       onClick={() => setInviteDialogOpen(false)}
                     >
-                      Cancel
+                      <Trans>Cancel</Trans>
                     </Button>
                     <Button type="submit" disabled={redeemInvite.isPending || !inviteSecret.trim()}>
-                      {redeemInvite.isPending ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : null}
-                      Redeem invite
+                      <Trans>
+                        {redeemInvite.isPending ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : null}
+                        Redeem invite
+                      </Trans>
                     </Button>
                   </DialogFooter>
                 </form>
               </DialogContent>
             </Dialog>
             <Button variant="ghost" onClick={() => logout.mutate()}>
-              Sign Out
+              <Trans>Sign Out</Trans>
             </Button>
           </CardFooter>
         </Card>
@@ -525,29 +588,39 @@ export function WorkspaceRequiredScreen({
     <StartupLayout currentStep={2}>
       <Card>
         <CardHeader>
-          <CardTitle>Create Your Workspace</CardTitle>
+          <CardTitle>
+            <Trans>Create Your Workspace</Trans>
+          </CardTitle>
           <CardDescription>
-            A workspace keeps your budgets, accounts, and collaborators organized in one place.
+            <Trans>
+              A workspace keeps your budgets, accounts, and collaborators organized in one place.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4 text-sm">
             <Users className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
             <div>
-              <p className="font-medium text-foreground">One subscription, up to 5 people</p>
+              <p className="font-medium text-foreground">
+                <Trans>One subscription, up to 5 people</Trans>
+              </p>
               <p className="mt-1 text-muted-foreground">
-                Invite your partner, family, or friends to share a workspace, they get full access
-                without needing their own subscription.
+                <Trans>
+                  Invite your partner, family, or friends to share a workspace, they get full access
+                  without needing their own subscription.
+                </Trans>
               </p>
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="workspace-name">Workspace name</Label>
+            <Label htmlFor="workspace-name">
+              <Trans>Workspace name</Trans>
+            </Label>
             <Input
               id="workspace-name"
               value={workspaceName}
               onChange={(event) => setUserEditedName(event.target.value)}
-              placeholder="Personal Budget Space"
+              placeholder={t`Personal Budget Space`}
             />
           </div>
           {formError ? (
@@ -561,25 +634,38 @@ export function WorkspaceRequiredScreen({
             className="rounded-lg border border-border/60 bg-muted/30 px-4"
           >
             <AccordionItem value="what">
-              <AccordionTrigger>What is a workspace?</AccordionTrigger>
+              <AccordionTrigger>
+                <Trans>What is a workspace?</Trans>
+              </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
-                A workspace organizes your budgets and lets you share them with others. Think of it
-                as a shared folder, everything inside is accessible to anyone you invite.
+                <Trans>
+                  A workspace organizes your budgets and lets you share them with others. Think of
+                  it as a shared folder, everything inside is accessible to anyone you invite.
+                </Trans>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="share">
-              <AccordionTrigger>How do I invite someone?</AccordionTrigger>
+              <AccordionTrigger>
+                <Trans>How do I invite someone?</Trans>
+              </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
                 We&apos;ll walk you through sharing your workspace once you&apos;ve set up your
                 first budget. You can always find it later under{' '}
-                <span className="font-medium text-foreground">Settings &rarr; Workspaces</span>.
+                <span className="font-medium text-foreground">
+                  <Trans>Settings → Workspaces</Trans>
+                </span>
+                .
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="multiple">
-              <AccordionTrigger>Can I have more than one workspace?</AccordionTrigger>
+              <AccordionTrigger>
+                <Trans>Can I have more than one workspace?</Trans>
+              </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
-                Absolutely. You might keep a personal workspace and a shared household one. Each
-                workspace is independently encrypted and completely separate.
+                <Trans>
+                  Absolutely. You might keep a personal workspace and a shared household one. Each
+                  workspace is independently encrypted and completely separate.
+                </Trans>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -591,12 +677,12 @@ export function WorkspaceRequiredScreen({
             disabled={createWorkspace.isPending}
           >
             {createWorkspace.isPending ? (
-              <>
+              <Trans>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Creating workspace...
-              </>
+              </Trans>
             ) : (
-              'Create Workspace'
+              t`Create Workspace`
             )}
           </Button>
         </CardFooter>
@@ -604,27 +690,6 @@ export function WorkspaceRequiredScreen({
     </StartupLayout>
   );
 }
-
-const BUDGET_SOURCES = [
-  {
-    key: 'manual' as const,
-    icon: NotebookPen,
-    title: 'Start fresh',
-    description: 'Create a new budget from scratch',
-  },
-  {
-    key: 'import' as const,
-    icon: UploadCloud,
-    title: 'Import from YNAB',
-    description: 'Bring your categories, accounts, and history',
-  },
-  {
-    key: 'core' as const,
-    icon: HardDriveDownload,
-    title: 'Restore backup',
-    description: 'Upload a Budgero database backup',
-  },
-] as const;
 
 export function BudgetRequiredScreen({
   alternativeWorkspaces,
@@ -635,6 +700,29 @@ export function BudgetRequiredScreen({
   switchingWorkspaceId: string | null;
   onSwitchWorkspace: (spaceId: string) => void;
 }) {
+  const { t } = useLingui();
+
+  const BUDGET_SOURCES = [
+    {
+      key: 'manual' as const,
+      icon: NotebookPen,
+      title: t`Start fresh`,
+      description: t`Create a new budget from scratch`,
+    },
+    {
+      key: 'import' as const,
+      icon: UploadCloud,
+      title: t`Import from YNAB`,
+      description: t`Bring your categories, accounts, and history`,
+    },
+    {
+      key: 'core' as const,
+      icon: HardDriveDownload,
+      title: t`Restore backup`,
+      description: t`Upload a Budgero database backup`,
+    },
+  ] as const;
+
   const { status: onboardingStatus } = useOnboardingState();
   const { mutateAsync: updateOnboardingAsync } = useUpdateOnboarding();
   const isBudgetImporting = useUiStore((state) => state.isBudgetImporting);
@@ -661,16 +749,20 @@ export function BudgetRequiredScreen({
   );
 
   const handleBudgetCreated = React.useCallback(() => {
-    toast.success('Budget created');
-  }, []);
+    toast.success(t`Budget created`);
+  }, [t]);
 
   if (!selectedSource) {
     return (
       <StartupLayout currentStep={3}>
         <Card>
           <CardHeader>
-            <CardTitle>Create Your First Budget</CardTitle>
-            <CardDescription>How would you like to get started?</CardDescription>
+            <CardTitle>
+              <Trans>Create Your First Budget</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>How would you like to get started?</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {BUDGET_SOURCES.map((source) => {
@@ -695,7 +787,7 @@ export function BudgetRequiredScreen({
             {alternativeWorkspaces.length > 0 ? (
               <div className="space-y-2 border-t border-border/60 pt-3">
                 <p className="text-xs text-muted-foreground">
-                  Or open one of your other workspaces instead:
+                  <Trans>Or open one of your other workspaces instead:</Trans>
                 </p>
                 {alternativeWorkspaces.map((workspace) => {
                   const isSwitching = switchingWorkspaceId === workspace.space_id;
@@ -706,9 +798,11 @@ export function BudgetRequiredScreen({
                     >
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium">
-                          {workspace.display_name || 'Unnamed workspace'}
+                          {workspace.display_name || t`Unnamed workspace`}
                         </div>
-                        <div className="text-xs text-muted-foreground">Role: {workspace.role}</div>
+                        <div className="text-xs text-muted-foreground">
+                          <Trans>Role: {workspace.role}</Trans>
+                        </div>
                       </div>
                       <Button
                         variant="outline"
@@ -716,12 +810,14 @@ export function BudgetRequiredScreen({
                         disabled={isSwitching}
                         onClick={() => onSwitchWorkspace(workspace.space_id)}
                       >
-                        {isSwitching ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <ArrowRightLeft className="mr-2 h-4 w-4" />
-                        )}
-                        Switch
+                        <Trans>
+                          {isSwitching ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <ArrowRightLeft className="mr-2 h-4 w-4" />
+                          )}
+                          Switch
+                        </Trans>
                       </Button>
                     </div>
                   );
@@ -741,17 +837,17 @@ export function BudgetRequiredScreen({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>
-                {selectedSource === 'manual' && 'Create a New Budget'}
-                {selectedSource === 'import' && 'Import from YNAB'}
-                {selectedSource === 'core' && 'Restore Budgero Backup'}
+                {selectedSource === 'manual' && t`Create a New Budget`}
+                {selectedSource === 'import' && t`Import from YNAB`}
+                {selectedSource === 'core' && t`Restore Budgero Backup`}
               </CardTitle>
               <CardDescription>
                 {selectedSource === 'manual' &&
-                  'Fill in the details below to set up your first budget.'}
+                  t`Fill in the details below to set up your first budget.`}
                 {selectedSource === 'import' &&
-                  'Bring your YNAB data into Budgero without re-entering anything.'}
+                  t`Bring your YNAB data into Budgero without re-entering anything.`}
                 {selectedSource === 'core' &&
-                  'Upload a Budgero database file to restore your data.'}
+                  t`Upload a Budgero database file to restore your data.`}
               </CardDescription>
             </div>
             <Button
@@ -763,7 +859,7 @@ export function BudgetRequiredScreen({
                 if (!useUiStore.getState().isBudgetImporting) setSelectedSource(null);
               }}
             >
-              Back
+              <Trans>Back</Trans>
             </Button>
           </div>
         </CardHeader>
@@ -776,8 +872,10 @@ export function BudgetRequiredScreen({
           />
           {isBudgetImporting ? (
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Importing your budget...
+              <Trans>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Importing your budget...
+              </Trans>
             </div>
           ) : null}
         </CardContent>
@@ -795,25 +893,33 @@ export function BudgetBlockedScreen({
   switchingWorkspaceId: string | null;
   onSwitchWorkspace: (spaceId: string) => void;
 }) {
+  const { t } = useLingui();
+
   const logout = useLogout();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-xl">
         <CardHeader>
-          <CardTitle>This workspace has no budgets yet</CardTitle>
+          <CardTitle>
+            <Trans>This workspace has no budgets yet</Trans>
+          </CardTitle>
           <CardDescription>
-            Only a workspace owner can create the first budget here.
+            <Trans>Only a workspace owner can create the first budget here.</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg border border-border/70 bg-muted/30 p-4 text-sm text-muted-foreground">
-            Ask an owner to create a budget in this workspace, or switch to another workspace you
-            can already access.
+            <Trans>
+              Ask an owner to create a budget in this workspace, or switch to another workspace you
+              can already access.
+            </Trans>
           </div>
           {alternativeWorkspaces.length > 0 ? (
             <div className="space-y-3">
-              <div className="text-sm font-medium text-foreground">Other available workspaces</div>
+              <div className="text-sm font-medium text-foreground">
+                <Trans>Other available workspaces</Trans>
+              </div>
               <div className="space-y-2">
                 {alternativeWorkspaces.map((workspace) => {
                   const isSwitching = switchingWorkspaceId === workspace.space_id;
@@ -824,9 +930,11 @@ export function BudgetBlockedScreen({
                     >
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium">
-                          {workspace.display_name || 'Unnamed workspace'}
+                          {workspace.display_name || t`Unnamed workspace`}
                         </div>
-                        <div className="text-xs text-muted-foreground">Role: {workspace.role}</div>
+                        <div className="text-xs text-muted-foreground">
+                          <Trans>Role: {workspace.role}</Trans>
+                        </div>
                       </div>
                       <Button
                         variant="outline"
@@ -834,12 +942,14 @@ export function BudgetBlockedScreen({
                         disabled={isSwitching}
                         onClick={() => onSwitchWorkspace(workspace.space_id)}
                       >
-                        {isSwitching ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <ArrowRightLeft className="mr-2 h-4 w-4" />
-                        )}
-                        Switch
+                        <Trans>
+                          {isSwitching ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <ArrowRightLeft className="mr-2 h-4 w-4" />
+                          )}
+                          Switch
+                        </Trans>
                       </Button>
                     </div>
                   );
@@ -848,13 +958,13 @@ export function BudgetBlockedScreen({
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
-              No other accessible workspaces are available right now.
+              <Trans>No other accessible workspaces are available right now.</Trans>
             </p>
           )}
         </CardContent>
         <CardFooter className="flex gap-3">
           <Button variant="ghost" onClick={() => logout.mutate()}>
-            Sign Out
+            <Trans>Sign Out</Trans>
           </Button>
         </CardFooter>
       </Card>
@@ -869,13 +979,17 @@ export function StartupErrorScreen({ error, onRetry }: { error: string; onRetry:
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Budgero couldn&apos;t finish starting</CardTitle>
+          <CardTitle>
+            <Trans>Budgero couldn't finish starting</Trans>
+          </CardTitle>
           <CardDescription>{error}</CardDescription>
         </CardHeader>
         <CardFooter className="flex gap-3">
-          <Button onClick={onRetry}>Retry startup</Button>
+          <Button onClick={onRetry}>
+            <Trans>Retry startup</Trans>
+          </Button>
           <Button variant="ghost" onClick={() => logout.mutate()}>
-            Sign Out
+            <Trans>Sign Out</Trans>
           </Button>
         </CardFooter>
       </Card>
@@ -888,7 +1002,7 @@ export function StartupSyncStatus({
   message,
 }: {
   phase: 'hidden' | 'syncing' | 'warning' | 'complete';
-  message: string;
+  message: MessageDescriptor | string;
 }) {
   if (phase === 'hidden') return null;
 
@@ -902,7 +1016,7 @@ export function StartupSyncStatus({
         ) : (
           <Wifi className="h-4 w-4 animate-pulse text-primary" />
         )}
-        <span>{message}</span>
+        <span>{typeof message === 'string' ? message : i18n._(message)}</span>
       </div>
     </div>
   );

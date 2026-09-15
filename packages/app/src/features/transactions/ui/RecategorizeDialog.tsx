@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Dialog, DialogContent } from '@shared/ui/dialog';
 import { SearchableCategorySelect } from '@features/category-management/ui/SearchableCategorySelect';
 
@@ -27,7 +28,9 @@ export function RecategorizeDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[420px]">
         <div className="space-y-3">
-          <div className="text-sm font-medium">Reassign Category</div>
+          <div className="text-sm font-medium">
+            <Trans>Reassign Category</Trans>
+          </div>
           {hasTransaction && (
             <SearchableCategorySelect
               budgetId={budgetId}

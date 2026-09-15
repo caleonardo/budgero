@@ -1,17 +1,20 @@
+import { useLingui } from '@lingui/react/macro';
 import { CheckCircle, ShieldCheck, FolderPlus, Wallet } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
-
-const STEPS = [
-  { label: 'Security', icon: ShieldCheck },
-  { label: 'Workspace', icon: FolderPlus },
-  { label: 'Budget', icon: Wallet },
-] as const;
 
 interface StartupStepperProps {
   currentStep: number;
 }
 
 export function StartupStepper({ currentStep }: StartupStepperProps) {
+  const { t } = useLingui();
+
+  const STEPS = [
+    { label: t`Security`, icon: ShieldCheck },
+    { label: t`Workspace`, icon: FolderPlus },
+    { label: t`Budget`, icon: Wallet },
+  ] as const;
+
   return (
     <div className="flex items-center justify-center gap-0">
       {STEPS.map((step, index) => {

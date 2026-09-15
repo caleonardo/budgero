@@ -1,9 +1,10 @@
 'use client';
 
+import { useLingui } from '@lingui/react/macro';
+
 import { useMemo, useState } from 'react';
 import {
   addDays,
-  format,
   addMonths,
   endOfMonth,
   endOfYear,
@@ -13,6 +14,7 @@ import {
   subMonths,
   subYears,
 } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { DateRange } from 'react-day-picker';
 
 import { cn } from '@shared/lib/utils';
@@ -111,6 +113,8 @@ export function DateRangePicker({
   disableFuture = false,
   className,
 }: DateRangePickerProps) {
+  const { t } = useLingui();
+
   const today = useMemo(() => new Date(), []);
   const presets = useMemo(() => createPresets(today), [today]);
 
@@ -197,7 +201,7 @@ export function DateRangePicker({
           <div className="flex flex-col">
             <div className="flex items-center gap-2 border-b px-3 py-2">
               {(['from', 'to'] as const).map((field) => {
-                const label = field === 'from' ? 'Start' : 'End';
+                const label = field === 'from' ? t`Start` : t`End`;
                 const fieldDate = field === 'from' ? date?.from : date?.to;
                 const isArmed = armed === field;
                 return (
@@ -217,7 +221,7 @@ export function DateRangePicker({
                       {label}
                     </span>
                     <span className="whitespace-nowrap">
-                      {fieldDate ? format(fieldDate, "MMM d, ''yy") : 'Pick a date'}
+                      {fieldDate ? format(fieldDate, "MMM d, ''yy") : t`Pick a date`}
                     </span>
                   </button>
                 );

@@ -1,6 +1,8 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { asMilli, fromDecimal, toDecimal, ZERO_MILLI } from '@budgero/core/browser';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent } from '@shared/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@shared/ui/dialog';
@@ -64,6 +66,8 @@ const emptyForm: FormState = {
 };
 
 export default function WarrantiesPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const budgetId = selectedBudget?.ID ?? 0;
   const currencyCode = selectedBudget?.DisplayCurrency || 'USD';
@@ -164,12 +168,12 @@ export default function WarrantiesPage() {
       e.preventDefault();
       const file = e.dataTransfer.files?.[0];
       if (!file || !isValidImageFile(file)) {
-        toast.error('Please drop an image file');
+        toast.error(t`Please drop an image file`);
         return;
       }
       await setReceiptFromFile(file);
     },
-    [setReceiptFromFile]
+    [setReceiptFromFile, t]
   );
 
   const handleReceiptDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -192,7 +196,7 @@ export default function WarrantiesPage() {
 
   const handleSubmit = useCallback(async () => {
     if (!form.name.trim() || !form.expiresAt) {
-      toast.error('Name and expiry date are required');
+      toast.error(t`Name and expiry date are required`);
       return;
     }
     setSubmitting(true);
@@ -220,7 +224,7 @@ export default function WarrantiesPage() {
           notes: form.notes,
           ...(receiptImage !== undefined ? { receiptImage } : {}),
         });
-        toast.success('Warranty updated');
+        toast.success(t`Warranty updated`);
       } else {
         await createWarranty.mutateAsync({
           budgetId,
@@ -231,27 +235,27 @@ export default function WarrantiesPage() {
           notes: form.notes,
           receiptImage: receiptImage ?? null,
         });
-        toast.success('Warranty created');
+        toast.success(t`Warranty created`);
       }
       setDialogOpen(false);
     } catch (err) {
-      toast.error('Failed to save warranty');
+      toast.error(t`Failed to save warranty`);
       console.error(err);
     } finally {
       setSubmitting(false);
     }
-  }, [form, editingWarranty, budgetId, createWarranty, updateWarranty]);
+  }, [form, editingWarranty, budgetId, createWarranty, updateWarranty, t]);
 
   const handleDelete = useCallback(async () => {
     if (!deleteTarget) return;
     try {
       await deleteWarranty.mutateAsync({ id: deleteTarget.ID, budgetId });
-      toast.success('Warranty deleted');
+      toast.success(t`Warranty deleted`);
     } catch {
-      toast.error('Failed to delete warranty');
+      toast.error(t`Failed to delete warranty`);
     }
     setDeleteTarget(null);
-  }, [deleteTarget, budgetId, deleteWarranty]);
+  }, [deleteTarget, budgetId, deleteWarranty, t]);
 
   const transactionLabel = useCallback(
     (transactionId: number | null) => {
@@ -286,7 +290,9 @@ export default function WarrantiesPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Loading warranties...</p>
+        <p className="text-muted-foreground">
+          <Trans>Loading warranties...</Trans>
+        </p>
       </div>
     );
   }
@@ -297,11 +303,15 @@ export default function WarrantiesPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-6 w-6" />
-          <h1 className="text-2xl font-bold">Warranties</h1>
+          <h1 className="text-2xl font-bold">
+            <Trans>Warranties</Trans>
+          </h1>
         </div>
         <Button onClick={openCreate} size="sm">
-          <Plus className="h-4 w-4 mr-1" />
-          Add Warranty
+          <Trans>
+            <Plus className="h-4 w-4 mr-1" />
+            Add Warranty
+          </Trans>
         </Button>
       </div>
 
@@ -310,19 +320,25 @@ export default function WarrantiesPage() {
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <p className="text-2xl font-bold">{statusCounts.active}</p>
-            <p className="text-sm text-muted-foreground">Active</p>
+            <p className="text-sm text-muted-foreground">
+              <Trans>Active</Trans>
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <p className="text-2xl font-bold text-amber-500">{statusCounts.expiring}</p>
-            <p className="text-sm text-muted-foreground">Expiring Soon</p>
+            <p className="text-sm text-muted-foreground">
+              <Trans>Expiring Soon</Trans>
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 pb-4 text-center">
             <p className="text-2xl font-bold text-destructive">{statusCounts.expired}</p>
-            <p className="text-sm text-muted-foreground">Expired</p>
+            <p className="text-sm text-muted-foreground">
+              <Trans>Expired</Trans>
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -332,7 +348,9 @@ export default function WarrantiesPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <ShieldCheck className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-            <p className="text-muted-foreground">No warranties yet. Add one to get started.</p>
+            <p className="text-muted-foreground">
+              <Trans>No warranties yet. Add one to get started.</Trans>
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -403,9 +421,11 @@ export default function WarrantiesPage() {
       <Dialog open={!!viewingReceipt} onOpenChange={(open) => !open && setViewingReceipt(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Receipt</DialogTitle>
+            <DialogTitle>
+              <Trans>Receipt</Trans>
+            </DialogTitle>
           </DialogHeader>
-          {viewerUrl && <img src={viewerUrl} alt="Receipt" className="w-full rounded" />}
+          {viewerUrl && <img src={viewerUrl} alt={t`Receipt`} className="w-full rounded" />}
         </DialogContent>
       </Dialog>
 
@@ -413,11 +433,13 @@ export default function WarrantiesPage() {
       <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Delete Warranty"
+        title={t`Delete Warranty`}
         description={
-          <>Are you sure you want to delete "{deleteTarget?.Name}"? This action cannot be undone.</>
+          <Trans>
+            Are you sure you want to delete "{deleteTarget?.Name}"? This action cannot be undone.
+          </Trans>
         }
-        confirmText="Delete"
+        confirmText={t`Delete`}
         onConfirm={handleDelete}
       />
     </div>

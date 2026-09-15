@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useRuntime } from '@shared/runtime/runtime-provider';
@@ -7,6 +8,8 @@ import type { SqlDatabase, SqliteColumnInfo, TableInfo } from '../types';
 
 /** Loads the DuckDB table/view schema on mount and tracks sidebar expand/collapse state. */
 export function useSchemaLoader() {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const [tableSchema, setTableSchema] = useState<TableInfo[]>([]);
   const [expandedTables, setExpandedTables] = useState<Set<string>>(new Set());
@@ -114,11 +117,11 @@ export function useSchemaLoader() {
 
       setTableSchema(schema);
     } catch {
-      toast.error('Schema Load Failed', {
-        description: 'Failed to load database schema',
+      toast.error(t`Schema Load Failed`, {
+        description: t`Failed to load database schema`,
       });
     }
-  }, [runtime]);
+  }, [runtime, t]);
 
   // Load schema on mount
   useEffect(() => {

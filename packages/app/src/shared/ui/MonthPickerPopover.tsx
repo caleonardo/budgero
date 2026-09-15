@@ -1,5 +1,7 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { format, parse } from 'date-fns';
+import { parse } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { Button } from '@shared/ui/button';
@@ -39,6 +41,8 @@ export default function MonthPickerPopover({
   align = 'center',
   labelFormat = 'MMMM yyyy',
 }: MonthPickerPopoverProps) {
+  const { t } = useLingui();
+
   const [open, setOpen] = useState(false);
 
   const selectedDate = useMemo(() => parse(`${value}-01`, 'yyyy-MM-dd', new Date()), [value]);
@@ -73,7 +77,7 @@ export default function MonthPickerPopover({
       <PopoverTrigger asChild>
         <button
           type="button"
-          aria-label={`Change month — currently ${fullLabel}`}
+          aria-label={t`Change month — currently ${fullLabel}`}
           className={cn(
             'inline-flex min-w-0 items-center justify-center gap-1 rounded-md px-1.5 py-1 font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             triggerClassName
@@ -90,7 +94,7 @@ export default function MonthPickerPopover({
             variant="ghost"
             size="icon"
             className="h-7 w-7"
-            aria-label="Previous year"
+            aria-label={t`Previous year`}
             onClick={() => setViewYear((y) => y - 1)}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -100,7 +104,7 @@ export default function MonthPickerPopover({
             variant="ghost"
             size="icon"
             className="h-7 w-7"
-            aria-label="Next year"
+            aria-label={t`Next year`}
             onClick={() => setViewYear((y) => y + 1)}
           >
             <ChevronRight className="h-4 w-4" />
@@ -133,7 +137,7 @@ export default function MonthPickerPopover({
         </div>
 
         <Button variant="outline" size="sm" className="mt-3 w-full" onClick={jumpToToday}>
-          Jump to today
+          <Trans>Jump to today</Trans>
         </Button>
       </PopoverContent>
     </Popover>

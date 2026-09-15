@@ -1,3 +1,5 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
 import { ScrollArea } from '@shared/ui/scroll-area';
@@ -13,7 +15,7 @@ import type {
   TransactionRuleRun,
   TransactionRuleRunChange,
 } from '@budgero/core/browser';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
 import { toDecimal } from '@shared/lib/currency/milli';
 import { roundMilli } from '@shared/lib/currency/round-amount';
 import { Loader2, RotateCcw } from 'lucide-react';
@@ -39,6 +41,8 @@ export function RuleHistoryDrawer({
   onUndoRun,
   undoingRunId,
 }: RuleHistoryDrawerProps) {
+  const { t } = useLingui();
+
   const ruleId = rule?.id ?? 0;
   const { data: runs = [], isLoading } = useRuleRuns(ruleId, 25, open);
   // Runs are newest-first. Only the newest run whose changes are still applied
@@ -51,18 +55,22 @@ export function RuleHistoryDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-3xl">
         <SheetHeader className="space-y-2 text-left">
-          <SheetTitle>Run history</SheetTitle>
+          <SheetTitle>
+            <Trans>Run history</Trans>
+          </SheetTitle>
           <SheetDescription>
             {rule ? (
               <span className="text-sm text-muted-foreground">
-                {rule.name} •{' '}
-                {{ continuous: 'Continuous', one_time: 'One time', autofill: 'Autofill' }[
-                  rule.mode
-                ] ?? 'Continuous'}{' '}
-                rule
+                <Trans>
+                  {rule.name} •{' '}
+                  {{ continuous: 'Continuous', one_time: 'One time', autofill: 'Autofill' }[
+                    rule.mode
+                  ] ?? t`Continuous`}{' '}
+                  rule
+                </Trans>
               </span>
             ) : (
-              'Automation run details'
+              t`Automation run details`
             )}
           </SheetDescription>
         </SheetHeader>
@@ -75,7 +83,7 @@ export function RuleHistoryDrawer({
             </div>
           ) : runs.length === 0 ? (
             <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-              No runs recorded yet. Trigger this rule to see execution details.
+              <Trans>No runs recorded yet. Trigger this rule to see execution details.</Trans>
             </div>
           ) : (
             <ScrollArea className="h-[calc(100vh-200px)] pr-4">
@@ -115,6 +123,8 @@ function RunAccordionItem({
   onUndoRun: (params: { runId: number; ruleId: number; budgetId: number }) => Promise<void>;
   undoingRunId: number | null;
 }) {
+  const { t } = useLingui();
+
   const statusVariant = getStatusVariant(run.status);
   const { data: changes = [], isLoading } = useRuleRunChanges(run.id, true);
 
@@ -122,9 +132,12 @@ function RunAccordionItem({
     const completedDate = parseUtcDate(run.completedAt);
     const relative = completedDate
       ? formatDistanceToNow(completedDate, { addSuffix: true })
-      : 'in progress';
-    return `${run.status.toUpperCase()} • ${run.transactionCount} transaction${run.transactionCount === 1 ? '' : 's'} • ${relative}`;
-  }, [run.completedAt, run.status, run.transactionCount]);
+      : t`in progress`;
+    return plural(run.transactionCount, {
+      one: `${run.status.toUpperCase()} • # transaction • ${relative}`,
+      other: `${run.status.toUpperCase()} • # transactions • ${relative}`,
+    });
+  }, [run.completedAt, run.status, run.transactionCount, t]);
 
   const canUndo =
     isLatest &&
@@ -153,8 +166,8 @@ function RunAccordionItem({
             {(() => {
               const startedDate = parseUtcDate(run.startedAt);
               return startedDate
-                ? `Started ${formatDistanceToNow(startedDate, { addSuffix: true })}`
-                : 'Started —';
+                ? t`Started ${formatDistanceToNow(startedDate, { addSuffix: true })}`
+                : t`Started —`;
             })()}
           </div>
         </div>
@@ -163,33 +176,39 @@ function RunAccordionItem({
         {run.notes ? <p className="mb-3 text-sm text-muted-foreground">{run.notes}</p> : null}
         {run.status === 'undone' ? (
           <div className="mb-3 rounded-md border border-dashed bg-muted/40 p-3 text-xs text-muted-foreground">
-            This run has been undone. Transactions were restored to their prior values.
+            <Trans>
+              This run has been undone. Transactions were restored to their prior values.
+            </Trans>
           </div>
         ) : null}
         {canUndo ? (
           <div className="mb-3 flex flex-col gap-3 rounded-md border border-dashed bg-muted/40 p-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-sm text-muted-foreground">
-              Restore {run.transactionCount} transaction{run.transactionCount === 1 ? '' : 's'} to
-              their pre-run values.
+              <Trans>
+                Restore {run.transactionCount} transaction{run.transactionCount === 1 ? '' : 's'} to
+                their pre-run values.
+              </Trans>
             </div>
             <ConfirmDialog
               trigger={
                 <Button size="sm" disabled={!canUndo || isUndoing}>
-                  {isUndoing ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <RotateCcw className="mr-2 h-4 w-4" />
-                  )}
-                  Undo changes
+                  <Trans>
+                    {isUndoing ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <RotateCcw className="mr-2 h-4 w-4" />
+                    )}
+                    Undo changes
+                  </Trans>
                 </Button>
               }
-              title="Undo this rule run?"
-              description="Budgero will revert every transaction touched by this run back to its original values. You can re-run the rule afterward if needed."
+              title={t`Undo this rule run?`}
+              description={t`Budgero will revert every transaction touched by this run back to its original values. You can re-run the rule afterward if needed.`}
               confirmText={
-                <>
+                <Trans>
                   <RotateCcw className="mr-2 h-4 w-4" />
                   Undo run
-                </>
+                </Trans>
               }
               confirmDisabled={isUndoing}
               onConfirm={() => {
@@ -205,7 +224,9 @@ function RunAccordionItem({
             ))}
           </div>
         ) : changes.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No recorded changes for this run.</p>
+          <p className="text-sm text-muted-foreground">
+            <Trans>No recorded changes for this run.</Trans>
+          </p>
         ) : (
           <div className="space-y-3">
             {changes.map((change) => (
@@ -223,7 +244,9 @@ function RuleChangeRow({ change }: { change: TransactionRuleRunChange }) {
   return (
     <div className="rounded-lg border bg-muted/40 p-3 text-sm">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="secondary">tx #{change.transactionId}</Badge>
+        <Badge variant="secondary">
+          <Trans>tx #{change.transactionId}</Trans>
+        </Badge>
         <Badge variant="outline" className="capitalize">
           {change.field || change.actionType}
         </Badge>
@@ -233,7 +256,9 @@ function RuleChangeRow({ change }: { change: TransactionRuleRunChange }) {
       <div className="space-y-1 text-xs text-muted-foreground">
         {change.field === 'memo' ? (
           <div>
-            <span className="font-medium text-foreground">Memo:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Memo:</Trans>
+            </span>{' '}
             <DiffText
               before={metadata.oldMemo ?? change.oldValue}
               after={metadata.newMemo ?? change.newValue}
@@ -242,21 +267,27 @@ function RuleChangeRow({ change }: { change: TransactionRuleRunChange }) {
         ) : null}
         {change.field === 'categoryId' ? (
           <div>
-            <span className="font-medium text-foreground">Category:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Category:</Trans>
+            </span>{' '}
             {String(metadata.previousCategoryId ?? change.oldValue ?? '')} →{' '}
             {String(metadata.nextCategoryId ?? change.newValue ?? '')}
           </div>
         ) : null}
         {change.field === 'accountId' ? (
           <div>
-            <span className="font-medium text-foreground">Account:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Account:</Trans>
+            </span>{' '}
             {String(metadata.previousAccountId ?? change.oldValue ?? '')} →{' '}
             {String(metadata.nextAccountId ?? change.newValue ?? '')}
           </div>
         ) : null}
         {change.field === 'payee' ? (
           <div>
-            <span className="font-medium text-foreground">Payee:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Payee:</Trans>
+            </span>{' '}
             <DiffText
               before={metadata.previousPayee ?? change.oldValue}
               after={metadata.nextPayee ?? change.newValue}
@@ -265,12 +296,18 @@ function RuleChangeRow({ change }: { change: TransactionRuleRunChange }) {
         ) : null}
         {change.field === 'amount' ? (
           <div>
-            <span className="font-medium text-foreground">Amount:</span>{' '}
+            <span className="font-medium text-foreground">
+              <Trans>Amount:</Trans>
+            </span>{' '}
             {displayAmount(metadata.oldAmount ?? change.oldValue)} →{' '}
             {displayAmount(metadata.newAmount ?? change.newValue)}
           </div>
         ) : null}
-        {!change.field ? <div className="text-muted-foreground">Action completed.</div> : null}
+        {!change.field ? (
+          <div className="text-muted-foreground">
+            <Trans>Action completed.</Trans>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -281,7 +318,11 @@ function DiffText({ before, after }: { before?: unknown; after?: unknown }) {
   const afterText = (after ?? '').toString();
 
   if (!beforeText && !afterText) {
-    return <span className="text-muted-foreground">(cleared)</span>;
+    return (
+      <span className="text-muted-foreground">
+        <Trans>(cleared)</Trans>
+      </span>
+    );
   }
 
   if (beforeText === afterText) {

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import {
   AlertDialog,
@@ -37,14 +38,20 @@ export function UpdateRequiredDialog() {
     <AlertDialog open>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Update required</AlertDialogTitle>
+          <AlertDialogTitle>
+            <Trans>Update required</Trans>
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Your budget was modified by a newer version of Budgero. To keep your data safe, this
-            device has stopped syncing until the app is updated.
+            <Trans>
+              Your budget was modified by a newer version of Budgero. To keep your data safe, this
+              device has stopped syncing until the app is updated.
+            </Trans>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={handleUpdate}>Update now</AlertDialogAction>
+          <AlertDialogAction onClick={handleUpdate}>
+            <Trans>Update now</Trans>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

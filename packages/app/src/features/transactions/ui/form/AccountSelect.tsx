@@ -1,3 +1,4 @@
+import { useLingui, Trans } from '@lingui/react/macro';
 /**
  * Account Select Components
  *
@@ -44,6 +45,8 @@ function AccountCombobox({
   placeholder,
   testId,
 }: AccountComboboxProps) {
+  const { t } = useLingui();
+
   const [open, setOpen] = React.useState(false);
   const selectedAccount = accounts.find((account) => account.ID.toString() === value);
 
@@ -76,13 +79,15 @@ function AccountCombobox({
         align="start"
       >
         <Command loop>
-          <CommandInput placeholder="Search accounts…" />
+          <CommandInput placeholder={t`Search accounts…`} />
           <CommandList className="max-h-[44dvh] overscroll-contain">
-            <CommandEmpty>No matching accounts.</CommandEmpty>
-            <CommandGroup heading="Accounts">
+            <CommandEmpty>
+              <Trans>No matching accounts.</Trans>
+            </CommandEmpty>
+            <CommandGroup heading={t`Accounts`}>
               {accounts.map((account) => {
                 const accountId = account.ID.toString();
-                const accountName = account.Name || 'Unnamed account';
+                const accountName = account.Name || t`Unnamed account`;
                 return (
                   <CommandItem
                     key={account.ID}
@@ -121,6 +126,8 @@ export function FromAccountSelect({
   transactionType,
   showAutofillIndicator = false,
 }: FromAccountSelectProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-1.5 sm:space-y-2 w-full">
       <div className="flex items-center gap-2">
@@ -143,7 +150,7 @@ export function FromAccountSelect({
             disabled={isLoading}
             placeholder={
               isLoading
-                ? 'Loading accounts...'
+                ? t`Loading accounts...`
                 : transactionType === 'transfer'
                   ? 'Select from account'
                   : 'Select account'
@@ -171,6 +178,8 @@ export function ToAccountSelect({
   excludeAccountId,
   isLoading,
 }: ToAccountSelectProps) {
+  const { t } = useLingui();
+
   const filteredAccounts = accounts.filter((account) => account.ID.toString() !== excludeAccountId);
 
   return (
@@ -183,7 +192,7 @@ export function ToAccountSelect({
             onChange={onChange}
             accounts={filteredAccounts}
             disabled={isLoading}
-            placeholder={isLoading ? 'Loading accounts...' : 'Select to account'}
+            placeholder={isLoading ? t`Loading accounts...` : 'Select to account'}
             testId="transaction-to-account-select"
           />
         </div>

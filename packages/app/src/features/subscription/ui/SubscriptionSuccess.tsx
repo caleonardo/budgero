@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -51,20 +52,22 @@ export default function SubscriptionSuccess() {
         </div>
 
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          Welcome to Budgero!
+          <Trans>Welcome to Budgero!</Trans>
         </h1>
 
         <p className="text-gray-600 dark:text-gray-300 mb-8">
-          Your subscription is now active. You have full access to all features of Budgero. Start
-          managing your finances with confidence!
+          <Trans>
+            Your subscription is now active. You have full access to all features of Budgero. Start
+            managing your finances with confidence!
+          </Trans>
         </p>
 
         <Button onClick={handleContinue} size="lg" className="w-full">
-          Start Using Budgero
+          <Trans>Start Using Budgero</Trans>
         </Button>
 
         <p className="text-sm text-gray-500 mt-4">
-          You can manage your subscription anytime from your account settings.
+          <Trans>You can manage your subscription anytime from your account settings.</Trans>
         </p>
       </Card>
     </div>

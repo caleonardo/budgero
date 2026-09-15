@@ -10,8 +10,7 @@ export interface DirectoryColumn<TItem, TDraft> {
 }
 
 export type DirectoryDraftResult<TDraft> =
-  | { draft: TDraft }
-  | { error: { title: string; description: string } };
+  { draft: TDraft } | { error: { title: string; description: string } };
 
 export interface DirectoryToastCopy<TItem, TDraft> {
   addSuccess: (draft: TDraft) => { title: string; description: string };

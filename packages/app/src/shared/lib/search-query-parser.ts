@@ -1,3 +1,4 @@
+import { plural, t } from '@lingui/core/macro';
 import {
   startOfDay,
   endOfDay,
@@ -63,7 +64,7 @@ const DATE_PATTERNS: {
       const today = new Date();
       return { from: startOfWeek(today, { weekStartsOn }), to: endOfDay(today) };
     },
-    getLabel: () => 'This week',
+    getLabel: () => t`This week`,
   },
   {
     pattern: /^last\s*week$/i,
@@ -74,7 +75,7 @@ const DATE_PATTERNS: {
         to: endOfWeek(lastWeek, { weekStartsOn }),
       };
     },
-    getLabel: () => 'Last week',
+    getLabel: () => t`Last week`,
   },
   {
     pattern: /^this\s*month$/i,
@@ -82,7 +83,7 @@ const DATE_PATTERNS: {
       const today = new Date();
       return { from: startOfMonth(today), to: endOfDay(today) };
     },
-    getLabel: () => 'This month',
+    getLabel: () => t`This month`,
   },
   {
     pattern: /^last\s*month$/i,
@@ -90,7 +91,7 @@ const DATE_PATTERNS: {
       const lastMonth = subMonths(new Date(), 1);
       return { from: startOfMonth(lastMonth), to: endOfMonth(lastMonth) };
     },
-    getLabel: () => 'Last month',
+    getLabel: () => t`Last month`,
   },
   {
     pattern: /^this\s*year$/i,
@@ -98,7 +99,7 @@ const DATE_PATTERNS: {
       const today = new Date();
       return { from: startOfYear(today), to: endOfDay(today) };
     },
-    getLabel: () => 'This year',
+    getLabel: () => t`This year`,
   },
   {
     pattern: /^last\s*year$/i,
@@ -106,7 +107,7 @@ const DATE_PATTERNS: {
       const lastYear = subYears(new Date(), 1);
       return { from: startOfYear(lastYear), to: endOfYear(lastYear) };
     },
-    getLabel: () => 'Last year',
+    getLabel: () => t`Last year`,
   },
   {
     pattern: /^last\s*(\d+)\s*days?$/i,
@@ -117,7 +118,10 @@ const DATE_PATTERNS: {
     },
     getLabel: (match) => {
       const days = parseInt(match[1], 10);
-      return `Last ${days} day${days === 1 ? '' : 's'}`;
+      return plural(days, {
+        one: `Last # day`,
+        other: `Last # days`,
+      });
     },
   },
 ];
@@ -548,6 +552,6 @@ export function getTransactionTypeLabel(type: 'inflows' | 'outflows' | 'transfer
 export function getAmountFilterLabel(filter: AmountFilter, formatter?: Intl.NumberFormat): string {
   const formattedAmount = formatter ? formatter.format(filter.amount) : String(filter.amount);
   const operatorLabel =
-    filter.operator === 'over' ? 'Over' : filter.operator === 'under' ? 'Under' : 'Exactly';
+    filter.operator === 'over' ? t`Over` : filter.operator === 'under' ? t`Under` : t`Exactly`;
   return `${operatorLabel} ${formattedAmount}`;
 }

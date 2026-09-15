@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { DateRange } from 'react-day-picker';
@@ -67,7 +68,9 @@ export function DashboardPageDesktop() {
     <div className="px-8 py-6 space-y-6">
       {/* Top Header Bar */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-foreground">
+          <Trans>Dashboard</Trans>
+        </h1>
         <PeriodTabs value={dateRange} onChange={setDateRange} />
       </div>
 
@@ -75,14 +78,16 @@ export function DashboardPageDesktop() {
       <Card className="bg-primary/[0.03] dark:bg-primary/[0.06] border-primary/20">
         <CardContent className="pt-6">
           <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-            Cash Balance
+            <Trans>Cash Balance</Trans>
           </div>
           <div className="flex items-center gap-8">
             <div className="shrink-0">
               <div className="text-4xl font-semibold text-foreground tabular-nums">
                 {formatMilliAmount(totalBalance)}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">checking, savings & cash</div>
+              <div className="text-sm text-muted-foreground mt-1">
+                <Trans>checking, savings & cash</Trans>
+              </div>
               {balanceTrend.change !== 0 && (
                 <TrendIndicator
                   change={balanceTrend.change}
@@ -120,7 +125,7 @@ export function DashboardPageDesktop() {
       <div className="flex items-center gap-4">
         <div className="flex-1 border-t border-border/40" />
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Spending Analysis
+          <Trans>Spending Analysis</Trans>
         </span>
         <div className="flex-1 border-t border-border/40" />
       </div>
@@ -129,14 +134,18 @@ export function DashboardPageDesktop() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Spending Breakdown</CardTitle>
+            <CardTitle className="text-base font-semibold">
+              <Trans>Spending Breakdown</Trans>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
               <div className="text-2xl font-semibold text-foreground tabular-nums">
                 {formatMilliAmount(totalSpending)}
               </div>
-              <div className="text-sm text-muted-foreground">total spent</div>
+              <div className="text-sm text-muted-foreground">
+                <Trans>total spent</Trans>
+              </div>
               {spendingTrend.change !== 0 && (
                 <TrendIndicator
                   change={spendingTrend.change}
@@ -151,16 +160,20 @@ export function DashboardPageDesktop() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Spending Overview</CardTitle>
+            <CardTitle className="text-base font-semibold">
+              <Trans>Spending Overview</Trans>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
               <div className="text-foreground tabular-nums">
                 <span className="text-2xl font-semibold">{formatMilliAmount(budgetRemaining)}</span>{' '}
-                <span className="text-lg font-normal text-muted-foreground">left</span>
+                <span className="text-lg font-normal text-muted-foreground">
+                  <Trans>left</Trans>
+                </span>
               </div>
               <div className="text-sm text-muted-foreground">
-                out of {formatMilliAmount(totalAssignedAmount || 0)} budgeted
+                <Trans>out of {formatMilliAmount(totalAssignedAmount || 0)} budgeted</Trans>
               </div>
             </div>
             <SpendingOverviewContent />
@@ -172,7 +185,7 @@ export function DashboardPageDesktop() {
       <div className="flex items-center gap-4">
         <div className="flex-1 border-t border-border/40" />
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Action Items
+          <Trans>Action Items</Trans>
         </span>
         <div className="flex-1 border-t border-border/40" />
       </div>

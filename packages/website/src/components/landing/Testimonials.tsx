@@ -1,64 +1,65 @@
+import { useTranslations } from 'next-intl';
 import { pricing } from '@/lib/pricing';
 
-const testimonials = [
+const testimonials = (copy: CopyTranslator) => [
   {
-    quote:
-      "I used YNAB for years and love zero-based budgeting. Budgero nails the same methodology with a design I actually enjoy using. I keep coming back because I'm a budget geek. The SQL Explorer is a dream if you have a technical background.",
-    highlight: 'a design I actually enjoy using',
-    name: 'Developer & self-described budget geek',
-    detail: 'Switched from YNAB',
+    quote: copy('u_850a28825069'),
+    highlight: copy('u_04fa0c6b64c5'),
+    name: copy('u_1b96f7ab151b'),
+    detail: copy('u_d69473594a8a'),
     initial: 'D',
-    badge: 'Ex-YNAB',
+    badge: copy('u_fdd1b2770302'),
   },
   {
-    quote:
-      'I started with YNAB and then tried a bunch of different tools over the past year. Budgero is the closest to perfect for my use case while also matching what I want visually. Transaction entry is fast, the savings goals with sub-sections are exactly what I need, and the whole experience just feels right.',
-    highlight: 'the closest to perfect for my use case',
-    name: 'Savings-focused budgeter',
-    detail: 'Tried 5+ apps before Budgero',
+    quote: copy('u_0bee6454e8f1'),
+    highlight: copy('u_8a4a44dca35b'),
+    name: copy('u_9820252f1739'),
+    detail: copy('u_3bf7824191ea'),
     initial: 'S',
-    badge: 'Ex-YNAB',
+    badge: copy('u_fdd1b2770302'),
   },
   {
-    quote:
-      'The app is really advanced in both functionality and UI. I was impressed by how polished the whole experience feels. This is a serious budgeting tool with a design that competes with anything on the market.',
-    highlight: 'really advanced in both functionality and UI',
-    name: 'Personal finance enthusiast',
-    detail: 'Evaluated multiple budgeting tools',
+    quote: copy('u_02ebbfaa26ae'),
+    highlight: copy('u_18afca059f45'),
+    name: copy('u_9e10e99aa921'),
+    detail: copy('u_153a0213cba7'),
     initial: 'B',
   },
   {
-    quote:
-      'The latest update made a noticeable difference. Animations are smoother, everything feels faster. Nice to see a budgeting tool where the developer actually cares about performance.',
-    highlight: 'animations are smoother, everything feels faster',
-    name: 'Long-time Budgero user',
-    detail: 'Self-hosted',
+    quote: copy('u_c30fa43c6230'),
+    highlight: copy('u_0566bc95dfef'),
+    name: copy('u_dcc67b0988c3'),
+    detail: copy('u_beafec79ffdd'),
     initial: 'M',
   },
 ];
 
-const trustStats = [
-  { value: '168', label: 'Currencies supported' },
-  { value: '100%', label: 'Zero-knowledge encrypted' },
-  { value: pricing.monthly, label: '/mo for Cloud' },
-  { value: '0', label: 'Third parties see your data' },
+const trustStats = (copy: CopyTranslator) => [
+  { value: '168', label: copy('u_e2d064d8f587') },
+  { value: '100%', label: copy('u_e86c7848315e') },
+  { value: pricing.monthly, label: copy('u_0af4cb6af2a8') },
+  { value: '0', label: copy('u_d1da9755b6e7') },
 ];
 
 export function FeaturedTestimonial() {
+  const copy = useTranslations('updates');
   return (
     <figure className="mx-auto max-w-3xl px-6 py-14 text-center sm:py-20">
       <blockquote className="text-xl font-medium leading-relaxed sm:text-2xl">
-        “Was looking for an alternative to YNAB. What a wonderful app.”
+        {' '}
+        {copy('u_ccf91cb14049')}{' '}
       </blockquote>
       <figcaption className="mt-5 text-sm text-muted-foreground">
-        A Budgero community member ·{' '}
+        {' '}
+        {copy('u_ee597b534ca6')}{' '}
         <a
           href="https://www.reddit.com/r/budgero/comments/1vx27fi/comment/p65w8u3/?context=3"
           target="_blank"
           rel="noopener noreferrer"
           className="underline underline-offset-4 hover:text-foreground"
         >
-          Read the public comment
+          {' '}
+          {copy('u_8ea266fd2a78')}{' '}
         </a>
       </figcaption>
     </figure>
@@ -80,7 +81,13 @@ function HighlightedQuote({ text, highlight }: { text: string; highlight: string
   );
 }
 
-function Card({ item, className }: { item: (typeof testimonials)[number]; className?: string }) {
+function Card({
+  item,
+  className,
+}: {
+  item: ReturnType<typeof testimonials>[number];
+  className?: string;
+}) {
   return (
     <div
       className={`bg-card rounded-2xl border border-border/70 p-6 sm:p-7 flex flex-col gap-4 transition-colors hover:border-border ${className ?? ''}`}
@@ -108,28 +115,29 @@ function Card({ item, className }: { item: (typeof testimonials)[number]; classN
  * Shared testimonials section. Drop into any page.
  */
 export function TestimonialsSection() {
+  const copy = useTranslations('updates');
   return (
     <section className="py-16 max-w-5xl mx-auto px-4 sm:px-6">
       <div className="text-center mb-12">
         <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">
-          Real Users, Real Budgets
+          {' '}
+          {copy('u_9a0a2bf3b079')}{' '}
         </p>
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-          What Budgero Users Are Saying
+          {' '}
+          {copy('u_8753daf607e8')}{' '}
         </h2>
-        <p className="text-foreground/60 max-w-lg mx-auto">
-          People who switched from YNAB and other tools share their experience.
-        </p>
+        <p className="text-foreground/60 max-w-lg mx-auto"> {copy('u_62cddaa70ffd')} </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-5 max-w-lg md:max-w-none mx-auto">
-        {testimonials.map((t) => (
+        {testimonials(copy).map((t) => (
           <Card key={t.initial} item={t} />
         ))}
       </div>
 
       <div className="flex justify-center gap-10 sm:gap-14 flex-wrap mt-10 pt-6 border-t border-border/60">
-        {trustStats.map((stat) => (
+        {trustStats(copy).map((stat) => (
           <div key={stat.label} className="text-center">
             <div className="text-2xl font-bold text-foreground">{stat.value}</div>
             <div className="text-xs text-foreground/55 mt-1">{stat.label}</div>
@@ -139,3 +147,4 @@ export function TestimonialsSection() {
     </section>
   );
 }
+type CopyTranslator = (key: string, values?: Record<string, string | number>) => string;

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -30,11 +31,12 @@ import {
   type GoalProgress,
   GoalCalculations,
   getCycleMonths,
-  describeGoalCycle,
 } from '@budgero/core/browser';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { AnimatedNumber } from '@shared/ui/animated-number';
 import { GoalMessageFormatter } from '@features/goal-management/ui/GoalMessageFormatter';
+import { translateGoalText } from '@features/goal-management/lib/core-goal-text';
+import { describeLocalizedGoalCycle } from '../lib/goal-cycle-label';
 
 function getStatusColor(status: string) {
   switch (status) {
@@ -83,7 +85,7 @@ function GoalStatusBadge({ progress, formatter, className = '' }: GoalStatusBadg
     >
       {getStatusIcon(progress.status)}
       <GoalMessageFormatter
-        message={progress.statusMessage}
+        message={translateGoalText(progress.statusMessage)}
         values={progress.statusValues}
         formatter={formatter}
       />
@@ -93,6 +95,7 @@ function GoalStatusBadge({ progress, formatter, className = '' }: GoalStatusBadg
 
 interface BreakdownItemsListProps {
   items: GoalProgress['breakdown']['items'];
+  values?: GoalProgress['breakdown']['values'];
   formatter: Intl.NumberFormat;
   /** Full-view variant: larger rows, muted labels, optional per-item descriptions. */
   showDescriptions?: boolean;
@@ -100,37 +103,47 @@ interface BreakdownItemsListProps {
 
 function BreakdownItemsList({
   items,
+  values,
   formatter,
   showDescriptions = false,
 }: BreakdownItemsListProps) {
   return (
     <div className="space-y-1">
       {items.map((item, idx) => {
-        const isMonthsCount = item.label === 'Months Left' || item.label === 'Months Remaining';
-        // Currency values are milliunits; month counts are dimensionless.
+        // Currency values are milliunits; counts and percentages are dimensionless.
         const animatedValue = (
           <AnimatedNumber
             value={item.value}
             formatter={(v) =>
-              isMonthsCount ? `${Math.round(v)}` : formatter.format(toDecimal(roundMilli(v)))
+              item.unit === 'months'
+                ? `${Math.round(v)}`
+                : item.unit === 'percent'
+                  ? `${Math.round(v)}%`
+                  : formatter.format(toDecimal(roundMilli(v)))
             }
-            rounding={isMonthsCount ? 'integer' : 'none'}
+            rounding={item.unit ? 'integer' : 'none'}
             className="font-mono tabular-nums"
           />
         );
         return showDescriptions ? (
           <div key={idx} className="flex justify-between text-sm">
-            <span className="text-muted-foreground">{item.label}:</span>
+            <span className="text-muted-foreground">{translateGoalText(item.label)}:</span>
             <div className="text-right">
               {animatedValue}
               {item.description && (
-                <div className="text-xs text-muted-foreground">{item.description}</div>
+                <div className="text-xs text-muted-foreground">
+                  <GoalMessageFormatter
+                    message={translateGoalText(item.description)}
+                    values={values}
+                    formatter={formatter}
+                  />
+                </div>
               )}
             </div>
           </div>
         ) : (
           <div key={idx} className="flex justify-between">
-            <span>{item.label}:</span>
+            <span>{translateGoalText(item.label)}:</span>
             {animatedValue}
           </div>
         );
@@ -154,6 +167,8 @@ function GoalControls({
   onExpand,
   className = '',
 }: GoalControlsProps) {
+  const { t } = useLingui();
+
   return (
     <div className={cn('flex items-center gap-1 text-muted-foreground', className)}>
       <Popover>
@@ -167,18 +182,31 @@ function GoalControls({
         </PopoverTrigger>
         <PopoverContent className="w-72 p-4" side="top" align="start" modal>
           <div className="space-y-3">
-            <div className="text-sm font-medium">{progress.breakdown.title}</div>
+            <div className="text-sm font-medium">{translateGoalText(progress.breakdown.title)}</div>
 
             <div className="space-y-3 text-xs">
               <div className="space-y-2 rounded-lg bg-muted/50 p-3">
-                <BreakdownItemsList items={progress.breakdown.items} formatter={formatter} />
+                <BreakdownItemsList
+                  items={progress.breakdown.items}
+                  values={progress.breakdown.values}
+                  formatter={formatter}
+                />
               </div>
 
               <div className="text-muted-foreground">
-                <div className="mb-2 font-medium">How it works:</div>
+                <div className="mb-2 font-medium">
+                  <Trans>How it works:</Trans>
+                </div>
                 <ul className="space-y-1 text-xs">
                   {progress.breakdown.explanation.map((item, idx) => (
-                    <li key={idx}>• {item}</li>
+                    <li key={idx}>
+                      •{' '}
+                      <GoalMessageFormatter
+                        message={translateGoalText(item)}
+                        values={progress.breakdown.values}
+                        formatter={formatter}
+                      />
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -192,7 +220,7 @@ function GoalControls({
         size="icon"
         className="h-7 w-7"
         onClick={onExpand}
-        title="Show detailed view"
+        title={t`Show detailed view`}
       >
         <ChevronDown className="h-3 w-3" />
       </Button>
@@ -236,12 +264,14 @@ export function GoalCard({
   className,
   highlightCreate = false,
 }: GoalCardProps) {
+  const { t } = useLingui();
+
   const [localExpanded, setLocalExpanded] = useState(false);
 
   // Use GoalCalculations for pure calculations without database access
   const progress = GoalCalculations.calculateProgress(goal, finances, currentMonth);
   const cycleMonths = goal ? getCycleMonths(goal) : null;
-  const cadenceLabel = cycleMonths === null ? null : describeGoalCycle(cycleMonths);
+  const cadenceLabel = cycleMonths === null ? null : describeLocalizedGoalCycle(cycleMonths);
   const roundedPercentage = Math.round(progress.percentage);
 
   if (!goal) {
@@ -255,11 +285,13 @@ export function GoalCard({
       >
         <div className="flex items-center gap-1.5 text-muted-foreground">
           <Target className="h-3.5 w-3.5" />
-          <span>No goal set for {categoryName}</span>
+          <span>
+            <Trans>No goal set for {categoryName}</Trans>
+          </span>
         </div>
         {onCreate && (
           <Button onClick={onCreate} variant="ghost" size="sm" className="h-6 px-2 text-xs">
-            Create Goal
+            <Trans>Create Goal</Trans>
           </Button>
         )}
       </div>
@@ -270,13 +302,13 @@ export function GoalCard({
   const getGoalTypeLabel = () => {
     switch (goal.Type) {
       case 'monthly':
-        return 'Monthly Available Target';
+        return t`Monthly Available Target`;
       case 'monthly-savings':
-        return 'Monthly Allocation Target';
+        return t`Monthly Allocation Target`;
       case 'target-date':
-        return isPeriodic ? 'Periodic Allocation Target' : 'Yearly Allocation Target';
+        return isPeriodic ? t`Periodic Allocation Target` : t`Yearly Allocation Target`;
       case 'yearly':
-        return isPeriodic ? 'Periodic Available Target' : 'Yearly Available Target';
+        return isPeriodic ? t`Periodic Available Target` : t`Yearly Available Target`;
       default:
         return 'Goal';
     }
@@ -314,7 +346,7 @@ export function GoalCard({
               <Badge
                 variant="outline"
                 className="hidden text-[9px] uppercase tracking-wide md:inline-flex"
-                title={`Repeats ${cadenceLabel}`}
+                title={t`Repeats ${cadenceLabel}`}
               >
                 {cadenceLabel}
               </Badge>
@@ -367,7 +399,7 @@ export function GoalCard({
               {getGoalTypeLabel()}
               {cadenceLabel && (
                 <Badge variant="outline" className="text-[9px] uppercase tracking-wide">
-                  Repeats {cadenceLabel}
+                  <Trans>Repeats {cadenceLabel}</Trans>
                 </Badge>
               )}
             </CardTitle>
@@ -380,7 +412,7 @@ export function GoalCard({
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => setLocalExpanded(false)}
-                title="Show compact view"
+                title={t`Show compact view`}
               >
                 <ChevronUp className="h-4 w-4" />
               </Button>
@@ -398,7 +430,9 @@ export function GoalCard({
         {/* Main Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Progress</span>
+            <span className="text-muted-foreground">
+              <Trans>Progress</Trans>
+            </span>
             <AnimatedNumber
               value={progress.percentage}
               formatter={(v) => `${Math.round(v)}%`}
@@ -412,7 +446,9 @@ export function GoalCard({
               formatter={(v) => formatter.format(toDecimal(roundMilli(v)))}
               className="tabular-nums"
             />
-            <span className="text-muted-foreground">of {formatMilli(formatter, goal.Target)}</span>
+            <span className="text-muted-foreground">
+              <Trans>of {formatMilli(formatter, goal.Target)}</Trans>
+            </span>
           </div>
         </div>
 
@@ -424,14 +460,14 @@ export function GoalCard({
               <div className="space-y-1">
                 <div className="font-medium">
                   <GoalMessageFormatter
-                    message={progress.statusMessage}
+                    message={translateGoalText(progress.statusMessage)}
                     values={progress.statusValues}
                     formatter={formatter}
                   />
                 </div>
                 <div className="text-xs opacity-90">
                   <GoalMessageFormatter
-                    message={progress.recommendation}
+                    message={translateGoalText(progress.recommendation)}
                     values={progress.recommendationValues}
                     formatter={formatter}
                   />
@@ -444,9 +480,10 @@ export function GoalCard({
         {/* Breakdown Details - Always show when expanded */}
         <div className="space-y-3 pt-2 border-t">
           <div className="space-y-2">
-            <h4 className="text-sm font-medium">{progress.breakdown.title}</h4>
+            <h4 className="text-sm font-medium">{translateGoalText(progress.breakdown.title)}</h4>
             <BreakdownItemsList
               items={progress.breakdown.items}
+              values={progress.breakdown.values}
               formatter={formatter}
               showDescriptions
             />
@@ -456,27 +493,37 @@ export function GoalCard({
           {progress.timeMetrics && (
             <div className="space-y-2 pt-2 border-t">
               <h4 className="text-sm font-medium flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                Timeline
+                <Trans>
+                  <Calendar className="h-4 w-4" />
+                  Timeline
+                </Trans>
               </h4>
               <div className="space-y-1 text-sm">
                 {progress.timeMetrics.targetDate && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Target Date:</span>
+                    <span className="text-muted-foreground">
+                      <Trans>Target Date:</Trans>
+                    </span>
                     <span>{progress.timeMetrics.targetDate.toLocaleDateString()}</span>
                   </div>
                 )}
                 {progress.timeMetrics.monthsRemaining !== undefined && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Months Remaining:</span>
+                    <span className="text-muted-foreground">
+                      <Trans>Months Remaining:</Trans>
+                    </span>
                     <span>{progress.timeMetrics.monthsRemaining}</span>
                   </div>
                 )}
                 {progress.timeMetrics.currentStreak !== undefined &&
                   progress.timeMetrics.currentStreak > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Current Streak:</span>
-                      <span>{progress.timeMetrics.currentStreak} months</span>
+                      <span className="text-muted-foreground">
+                        <Trans>Current Streak:</Trans>
+                      </span>
+                      <span>
+                        <Trans>{progress.timeMetrics.currentStreak} months</Trans>
+                      </span>
                     </div>
                   )}
               </div>
@@ -485,10 +532,19 @@ export function GoalCard({
 
           {/* Explanation */}
           <div className="space-y-2 pt-2 border-t">
-            <h4 className="text-sm font-medium">How it works</h4>
+            <h4 className="text-sm font-medium">
+              <Trans>How it works</Trans>
+            </h4>
             <ul className="space-y-1 text-xs text-muted-foreground">
               {progress.breakdown.explanation.map((item, idx) => (
-                <li key={idx}>• {item}</li>
+                <li key={idx}>
+                  •{' '}
+                  <GoalMessageFormatter
+                    message={translateGoalText(item)}
+                    values={progress.breakdown.values}
+                    formatter={formatter}
+                  />
+                </li>
               ))}
             </ul>
           </div>
@@ -499,8 +555,10 @@ export function GoalCard({
           <div className="flex justify-end gap-2 pt-2 border-t">
             {onDelete && (
               <Button variant="outline" size="sm" onClick={onDelete}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
+                <Trans>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Trans>
               </Button>
             )}
           </div>

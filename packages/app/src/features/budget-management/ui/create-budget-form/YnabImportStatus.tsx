@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type {
   YNABImportProgressUpdate,
   YNABImportStage,
@@ -35,21 +36,6 @@ interface ImportStep {
   stage: YNABImportStage;
   label: string;
 }
-
-const baseSteps: ImportStep[] = [
-  { stage: 'source-verification', label: 'Verify YNAB source data' },
-  { stage: 'preparing', label: 'Create the Budgero budget' },
-  { stage: 'categories', label: 'Import categories' },
-  { stage: 'accounts', label: 'Import accounts' },
-  { stage: 'assignments', label: 'Import assignments' },
-  { stage: 'transactions', label: 'Import transactions and splits' },
-];
-
-const verificationSteps: ImportStep[] = [
-  { stage: 'account-verification', label: 'Verify account balances' },
-  { stage: 'category-verification', label: 'Verify category history' },
-  { stage: 'rta-verification', label: 'Verify Ready to Assign by month' },
-];
 
 type StepStatus = 'pending' | 'running' | 'passed' | 'warning' | 'failed';
 
@@ -95,10 +81,27 @@ export function YnabImportStatus({
   onAcceptWarnings,
   onCancelPending,
 }: YnabImportStatusProps) {
+  const { t } = useLingui();
+
+  const verificationSteps: ImportStep[] = [
+    { stage: 'account-verification', label: t`Verify account balances` },
+    { stage: 'category-verification', label: t`Verify category history` },
+    { stage: 'rta-verification', label: t`Verify Ready to Assign by month` },
+  ];
+
+  const baseSteps: ImportStep[] = [
+    { stage: 'source-verification', label: t`Verify YNAB source data` },
+    { stage: 'preparing', label: 'Create the Budgero budget' },
+    { stage: 'categories', label: t`Import categories` },
+    { stage: 'accounts', label: t`Import accounts` },
+    { stage: 'assignments', label: t`Import assignments` },
+    { stage: 'transactions', label: t`Import transactions and splits` },
+  ];
+
   const steps = [
     ...baseSteps.filter((step) => sourceMode === 'api' || step.stage !== 'source-verification'),
     ...(sourceMode === 'api' ? verificationSteps : []),
-    { stage: 'complete' as const, label: 'Save imported budget' },
+    { stage: 'complete' as const, label: t`Save imported budget` },
   ];
   const latestByStage = new Map<YNABImportStage, YNABImportProgressUpdate>();
   for (const update of updates) latestByStage.set(update.stage, update);
@@ -113,31 +116,31 @@ export function YnabImportStatus({
       <div className="space-y-1">
         <h3 className="text-base font-semibold">
           {isPendingReview
-            ? 'Review YNAB differences'
+            ? t`Review YNAB differences`
             : isSaved
               ? hasWarning
-                ? 'YNAB import saved with warnings'
-                : 'YNAB import verified'
+                ? t`YNAB import saved with warnings`
+                : t`YNAB import verified`
               : error
-                ? 'YNAB import stopped'
-                : 'Importing from YNAB'}
+                ? t`YNAB import stopped`
+                : t`Importing from YNAB`}
         </h3>
         <p className="text-xs text-muted-foreground">
           {isPendingReview
-            ? 'Source rows and account balances reconcile. Review the reporting differences before deciding whether to keep this budget.'
+            ? t`Source rows and account balances reconcile. Review the reporting differences before deciding whether to keep this budget.`
             : isSaved
               ? hasWarning
-                ? 'You accepted the differences below. They are saved in Import History for later review.'
-                : 'Budgero finished the import and passed every available integrity check.'
+                ? t`You accepted the differences below. They are saved in Import History for later review.`
+                : t`Budgero finished the import and passed every available integrity check.`
               : error
-                ? 'Review the failed check below before trying again.'
-                : 'You can follow each import and verification stage here.'}
+                ? t`Review the failed check below before trying again.`
+                : t`You can follow each import and verification stage here.`}
         </p>
       </div>
 
       <div className="space-y-1.5">
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span>{lastUpdate?.label ?? 'Waiting to start'}</span>
+          <span>{lastUpdate?.label ?? t`Waiting to start`}</span>
           <span>{Math.round(progress)}%</span>
         </div>
         <Progress value={progress} className="h-2" />
@@ -183,7 +186,9 @@ export function YnabImportStatus({
       {error && (
         <Alert variant="destructive">
           <XCircle className="h-4 w-4" />
-          <AlertTitle>Integrity check failed</AlertTitle>
+          <AlertTitle>
+            <Trans>Integrity check failed</Trans>
+          </AlertTitle>
           <AlertDescription className="break-words text-xs">{error}</AlertDescription>
         </Alert>
       )}
@@ -191,15 +196,21 @@ export function YnabImportStatus({
       {verification && (
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-md border bg-emerald-50/70 p-3 dark:bg-emerald-950/20">
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Source</p>
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              <Trans>Source</Trans>
+            </p>
             <p className="mt-1 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
-              {verification.source.registerRows.toLocaleString()} rows exact
+              <Trans>{verification.source.registerRows.toLocaleString()} rows exact</Trans>
             </p>
           </div>
           <div className="rounded-md border bg-emerald-50/70 p-3 dark:bg-emerald-950/20">
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Accounts</p>
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              <Trans>Accounts</Trans>
+            </p>
             <p className="mt-1 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
-              {verification.accounts.matched} of {verification.accounts.checked} exact
+              <Trans>
+                {verification.accounts.matched} of {verification.accounts.checked} exact
+              </Trans>
             </p>
           </div>
           <div
@@ -209,9 +220,13 @@ export function YnabImportStatus({
                 : 'bg-amber-50/70 dark:bg-amber-950/20'
             }`}
           >
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Categories</p>
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              <Trans>Categories</Trans>
+            </p>
             <p className="mt-1 text-sm font-semibold">
-              {verification.categories.matched} of {verification.categories.checked} values exact
+              <Trans>
+                {verification.categories.matched} of {verification.categories.checked} values exact
+              </Trans>
             </p>
           </div>
           <div
@@ -222,11 +237,13 @@ export function YnabImportStatus({
             }`}
           >
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              Ready to Assign
+              <Trans>Ready to Assign</Trans>
             </p>
             <p className="mt-1 text-sm font-semibold">
-              {verification.readyToAssign.matched} of {verification.readyToAssign.checked} months
-              exact
+              <Trans>
+                {verification.readyToAssign.matched} of {verification.readyToAssign.checked} months
+                exact
+              </Trans>
             </p>
           </div>
         </div>
@@ -235,16 +252,22 @@ export function YnabImportStatus({
       {verification && verification.accounts.debtBalanceAdjustments.length > 0 && (
         <Alert>
           <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-          <AlertTitle>YNAB-managed debt interest preserved</AlertTitle>
+          <AlertTitle>
+            <Trans>YNAB-managed debt interest preserved</Trans>
+          </AlertTitle>
           <AlertDescription className="space-y-1 text-xs">
             <p>
-              YNAB applies loan interest to balances without exporting a separate transaction.
-              Budgero added visible ledger adjustments so these balances remain exact.
+              <Trans>
+                YNAB applies loan interest to balances without exporting a separate transaction.
+                Budgero added visible ledger adjustments so these balances remain exact.
+              </Trans>
             </p>
             {verification.accounts.debtBalanceAdjustments.map((adjustment) => (
               <p key={`${adjustment.accountName}-${adjustment.date}`}>
-                {adjustment.accountName}: {formatMilli(adjustment.amount, currency)} on{' '}
-                {adjustment.date}
+                <Trans>
+                  {adjustment.accountName}: {formatMilli(adjustment.amount, currency)} on{' '}
+                  {adjustment.date}
+                </Trans>
               </p>
             ))}
           </AlertDescription>
@@ -254,9 +277,11 @@ export function YnabImportStatus({
       {verification && verification.readyToAssign.mismatches.length > 0 && (
         <div className="space-y-2 rounded-md border border-amber-500/50 bg-amber-50/60 p-3 dark:bg-amber-950/20">
           <div>
-            <p className="text-xs font-semibold">Ready to Assign differences</p>
+            <p className="text-xs font-semibold">
+              <Trans>Ready to Assign differences</Trans>
+            </p>
             <p className="text-[11px] text-muted-foreground">
-              Budgero did not alter the ledger to force these values to match.
+              <Trans>Budgero did not alter the ledger to force these values to match.</Trans>
             </p>
           </div>
           <div className="max-h-52 space-y-2 overflow-y-auto pr-1">
@@ -269,14 +294,18 @@ export function YnabImportStatus({
                   </span>
                 </div>
                 <p className="mt-1 text-muted-foreground">
-                  YNAB {formatMilli(mismatch.expectedReadyToAssign, currency)} · Budgero{' '}
-                  {formatMilli(mismatch.computedReadyToAssign, currency)}
+                  <Trans>
+                    YNAB {formatMilli(mismatch.expectedReadyToAssign, currency)} · Budgero{' '}
+                    {formatMilli(mismatch.computedReadyToAssign, currency)}
+                  </Trans>
                 </p>
                 <p className="mt-1 text-muted-foreground">
-                  Income {formatMilli(mismatch.breakdown.income, currency)} · Assigned{' '}
-                  {formatMilli(mismatch.breakdown.assignments, currency)} · Off-budget{' '}
-                  {formatMilli(mismatch.breakdown.offBudgetTransfers, currency)} · Prior cash
-                  overspend {formatMilli(mismatch.breakdown.priorCashOverspend, currency)}
+                  <Trans>
+                    Income {formatMilli(mismatch.breakdown.income, currency)} · Assigned{' '}
+                    {formatMilli(mismatch.breakdown.assignments, currency)} · Off-budget{' '}
+                    {formatMilli(mismatch.breakdown.offBudgetTransfers, currency)} · Prior cash
+                    overspend {formatMilli(mismatch.breakdown.priorCashOverspend, currency)}
+                  </Trans>
                 </p>
               </div>
             ))}
@@ -286,7 +315,9 @@ export function YnabImportStatus({
 
       {verification && verification.categories.mismatches.length > 0 && (
         <div className="space-y-2 rounded-md border border-amber-500/50 bg-amber-50/60 p-3 dark:bg-amber-950/20">
-          <p className="text-xs font-semibold">Category-history differences</p>
+          <p className="text-xs font-semibold">
+            <Trans>Category-history differences</Trans>
+          </p>
           <div className="max-h-52 space-y-1 overflow-y-auto pr-1">
             {verification.categories.mismatches.slice(0, 20).map((mismatch, index) => (
               <div
@@ -298,9 +329,11 @@ export function YnabImportStatus({
                     {mismatch.categoryGroup} › {mismatch.category}
                   </p>
                   <p className="text-muted-foreground">
-                    {mismatch.month} · {mismatch.field} · YNAB{' '}
-                    {formatMilli(mismatch.expectedAmount, currency)} · Budgero{' '}
-                    {formatMilli(mismatch.computedAmount, currency)}
+                    <Trans>
+                      {mismatch.month} · {mismatch.field} · YNAB{' '}
+                      {formatMilli(mismatch.expectedAmount, currency)} · Budgero{' '}
+                      {formatMilli(mismatch.computedAmount, currency)}
+                    </Trans>
                   </p>
                 </div>
                 <span className="text-amber-700 dark:text-amber-400">
@@ -311,8 +344,10 @@ export function YnabImportStatus({
           </div>
           {verification.categories.checked - verification.categories.matched > 20 && (
             <p className="text-[11px] text-muted-foreground">
-              Showing 20 of {verification.categories.checked - verification.categories.matched}{' '}
-              differences.
+              <Trans>
+                Showing 20 of {verification.categories.checked - verification.categories.matched}{' '}
+                differences.
+              </Trans>
             </p>
           )}
         </div>
@@ -320,32 +355,40 @@ export function YnabImportStatus({
 
       {error && (
         <Button type="button" variant="outline" className="w-full" onClick={onBack}>
-          <RotateCcw className="h-4 w-4" />
-          Back to import
+          <Trans>
+            <RotateCcw className="h-4 w-4" />
+            Back to import
+          </Trans>
         </Button>
       )}
 
       {isPendingReview && (
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <Button type="button" variant="outline" disabled={isFinalizing} onClick={onCancelPending}>
-            <Trash2 className="h-4 w-4" />
-            Cancel and remove
+            <Trans>
+              <Trash2 className="h-4 w-4" />
+              Cancel and remove
+            </Trans>
           </Button>
           <Button type="button" disabled={isFinalizing} onClick={onAcceptWarnings}>
-            {isFinalizing ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <AlertTriangle className="h-4 w-4" />
-            )}
-            Import anyway
+            <Trans>
+              {isFinalizing ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <AlertTriangle className="h-4 w-4" />
+              )}
+              Import anyway
+            </Trans>
           </Button>
         </div>
       )}
 
       {summary && !isPendingReview && isSaved && (
         <Button type="button" className="w-full" onClick={onContinue}>
-          <CheckCircle2 className="h-4 w-4" />
-          Open imported budget
+          <Trans>
+            <CheckCircle2 className="h-4 w-4" />
+            Open imported budget
+          </Trans>
         </Button>
       )}
     </div>

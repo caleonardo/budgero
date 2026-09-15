@@ -1,3 +1,5 @@
+import { useLingui } from '@lingui/react';
+import { getDateLocale } from '@shared/i18n';
 import * as React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
@@ -13,6 +15,7 @@ function Calendar({
   components: userComponents,
   ...props
 }: React.ComponentProps<typeof DayPicker>) {
+  useLingui();
   const weekStartsOn = useWeekStartsOn();
   const defaultClassNames = {
     months: 'relative flex flex-col sm:flex-row gap-4',
@@ -76,6 +79,7 @@ function Calendar({
 
   return (
     <DayPicker
+      locale={getDateLocale()}
       weekStartsOn={weekStartsOn}
       showOutsideDays={showOutsideDays}
       className={cn('w-fit', className)}

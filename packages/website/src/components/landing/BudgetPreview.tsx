@@ -1,16 +1,18 @@
+import { useTranslations } from 'next-intl';
 import { getImageProps } from 'next/image';
 
 export function BudgetPreview() {
+  const copy = useTranslations('updates');
   const { props: desktop } = getImageProps({
     src: '/demo-budget-desktop.png',
-    alt: 'A demo household budget in Budgero, with everyday spending, home bills, and savings goals.',
+    alt: copy('u_b83e43a2b18b'),
     width: 2880,
     height: 1920,
     sizes: '(min-width: 1200px) 1152px, calc(100vw - 48px)',
   });
   const { props: mobile } = getImageProps({
     src: '/demo-budget-mobile.png',
-    alt: 'The same demo budget on a phone, showing groceries spending and the amount still available.',
+    alt: copy('u_5cc452d6a9f6'),
     width: 780,
     height: 1687,
     sizes: '(min-width: 392px) 360px, calc(100vw - 32px)',
@@ -38,7 +40,8 @@ export function BudgetPreview() {
         </picture>
       </div>
       <figcaption className="mt-3 text-center text-xs leading-5 text-muted-foreground">
-        A plan for everyday spending and the things ahead. Shown with demo data.
+        {' '}
+        {copy('u_30be50b17781')}{' '}
       </figcaption>
     </figure>
   );

@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useIsMobile } from '@shared/hooks/useIsMobile';
 import {
@@ -65,6 +66,8 @@ export function useCalculatorState({
   commitPrecision = 2,
   commitUnchanged = false,
 }: UseCalculatorStateOptions): CalculatorState {
+  const { t } = useLingui();
+
   const { groupSep, decimalSep } = getSeparators(localizer);
 
   const normalizeForEvalWithLocalizer = useCallback(
@@ -369,7 +372,7 @@ export function useCalculatorState({
     (text: string) => {
       const rawValue = evaluateText(text);
       if (rawValue === null) {
-        setMobileError('Invalid value');
+        setMobileError(t`Invalid value`);
         return;
       }
       const finalValue = roundForCommit(rawValue);
@@ -380,7 +383,7 @@ export function useCalculatorState({
       setMobileError(null);
       closeMobile();
     },
-    [evaluateText, onCommit, onEditingChange, closeMobile, roundForCommit]
+    [evaluateText, onCommit, onEditingChange, closeMobile, roundForCommit, t]
   );
 
   return {

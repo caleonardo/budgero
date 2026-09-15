@@ -1,0 +1,272 @@
+---
+title: "Schuldenoverzicht"
+summary: "Houd creditcards, leningen en hypotheken bij in Budgero. Leer hoe elk type schuld jouw budget anders beïnvloedt en hoe je gericht schulden aflost."
+section: accounts-and-imports
+topicId: debt-tracking
+takeaways:
+  - "Begrijp hoe creditcards verschillen van leningen en hypotheken."
+  - "Leer hoe creditcard-betalingscategorieën automatisch geld bijhouden dat voor je kaart is gereserveerd."
+  - "Beheers het aflossen van schulden door te budgetteren voor leningcategorieën."
+---
+
+Budgero verwerkt schuldrekeningen, maar creditcards werken fundamenteel anders dan leningen en hypotheken. Als je dit verschil begrijpt, helpt dat je om nauwkeurig te budgetteren.
+
+## Creditcards versus leningen
+
+Het belangrijkste verschil gaat over **wanneer uitgaven je budget raken**:
+
+<table>
+  <thead>
+    <tr>
+      <th>Schuldtype</th>
+      <th>Wanneer uitgaven worden geregistreerd</th>
+      <th>Betaaleffect</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Creditcard</strong></td>
+      <td>Wanneer je met de kaart betaalt</td>
+      <td>Neutrale overboeking</td>
+    </tr>
+    <tr>
+      <td><strong>Lening / hypotheek</strong></td>
+      <td>Wanneer je een betaling doet</td>
+      <td>Creëert uitgaven in de gekoppelde categorie</td>
+    </tr>
+  </tbody>
+</table>
+
+### Creditcards
+
+Wanneer je boodschappen met je creditcard betaalt, verschijnen die $50 onmiddellijk als uitgaven in je categorie Boodschappen. De creditcard is slechts een betaalmethode — de impact op je budget vindt plaats op het moment van aankoop.
+
+Je creditcardrekening later afbetalen is simpelweg geld verplaatsen om uitgaven te dekken die je al hebt geregistreerd. Het creëert geen extra uitgaven in je budget.
+
+### Leningen en hypotheken
+
+Leningen werken precies andersom. Je doet je boodschappen niet met je hypotheek. De maandelijkse aflossing zelf is de uitgave. Budgero maakt een gekoppelde categorie aan (zoals "Hypotheek" of "Autolening") en registreert elke betaling als uitgave in die categorie.
+
+## Categorieën voor creditcardbetalingen
+
+Wanneer je een creditcardrekening aanmaakt, stelt Budgero automatisch een **Creditcardbetaling**-categorie in voor die kaart. Deze categorie gebruikt een mechanisme in de stijl van YNAB om bij te houden hoeveel geld je beschikbaar hebt om je kaart te betalen.
+
+### Hoe het werkt
+
+1. **Automatische instelling:** Wanneer je een creditcard aanmaakt, maakt Budgero een categoriegroep "Creditcardbetalingen" aan en een betalingscategorie vernoemd naar je kaart (bijv. "Chase CC").
+
+2. **Automatische financiering vanuit uitgaven:** Wanneer je aankopen doet met de kaart, wordt er automatisch geld "gefinancierd" vanuit je uitgavencategorieën naar de CC-betalingscategorie. Dit laat precies zien hoeveel je apart hebt gezet om de rekening te betalen.
+
+3. **Alleen gebudgetteerde uitgaven financieren de categorie:** Als je in een categorie overschreden bent, financiert alleen het gebudgetteerde deel je CC-betaling. Het overschreden bedrag wordt creditcardschuld.
+
+### Voorbeelden van financiering
+
+<table>
+  <thead>
+    <tr>
+      <th>Categoriebudget</th>
+      <th>CC-uitgaven</th>
+      <th>Gefinancierd naar CC-betaling</th>
+      <th>CC-schuld aangemaakt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>$100</td>
+      <td>$50</td>
+      <td>$50</td>
+      <td>$0</td>
+    </tr>
+    <tr>
+      <td>$100</td>
+      <td>$150</td>
+      <td>$100</td>
+      <td>$50</td>
+    </tr>
+    <tr>
+      <td>$0</td>
+      <td>$50</td>
+      <td>$0</td>
+      <td>$50</td>
+    </tr>
+    <tr>
+      <td>$30</td>
+      <td>$50</td>
+      <td>$30</td>
+      <td>$20</td>
+    </tr>
+  </tbody>
+</table>
+
+Wanneer meerdere creditcards in dezelfde categorie uitgeven, wordt het gefinancierde bedrag verdeeld over hun CC-betalingscategorieën, in verhouding tot het aandeel van elke kaart in de uitgaven van die categorie.
+
+### De CC-betalingscategorie lezen
+
+De CC-betalingscategorie toont:
+
+- **Toegewezen:** Geld dat je handmatig hebt gebudgetteerd om schuld af te lossen
+- **Activiteit:** Betalingen aan de kaart (weergegeven als negatief)
+- **Beschikbaar:** Hoeveel je klaar hebt staan om de kaart te betalen
+
+Klik op het infopictogram naast het Beschikbaar-bedrag om een **financieringsoverzicht** te zien — precies welke categorieën hebben bijgedragen en hoeveel. Voor elke kaart weerspiegelt het overzicht alleen de uitgaven van die kaart zelf.
+
+<Callout variant="tip" title="Funding breakdown">
+Het financieringsoverzicht helpt je begrijpen waar je CC-betalingsgeld vandaan kwam. Als je $60 aan boodschappen en $30 aan benzine hebt uitgegeven met je kaart, zie je beide categorieën vermeld met hun bijdragen.
+</Callout>
+
+## Hoe aanvangssaldi werken
+
+Wanneer je een schuldrekening instelt, staat het openingssaldo voor geld dat je al verschuldigd bent. Deze initiële schuld heeft geen invloed op je budgetcategorieën of Te verdelen.
+
+**Voorbeeld:** Je maakt een creditcard aan met een saldo van $2.000. Budgero toont -$2.000 op de rekening, maar je categoriatesaldo's en Te verdelen blijven ongewijzigd. De schuld bestond al voordat je begon met budgetteren.
+
+<Callout variant="note" title="Starting fresh">
+Als je al een deel van een schuld hebt afbetaald voordat je Budgero ging gebruiken, voer dan het oorspronkelijke schuldbedrag en het tot nu toe betaalde bedrag in bij het aanmaken van de rekening. Budgero berekent je huidige saldo automatisch.
+</Callout>
+
+## Creditcard-workflow
+
+Zo werkt een typische creditcardcyclus:
+
+1. **Betaal met je kaart** voor $50 aan boodschappen
+2. **Categoriseer de transactie** onder Boodschappen (of laat automatische categorisatie het afhandelen)
+3. **Categorie Boodschappen** toont -$50 activiteit, Beschikbaar neemt af
+4. **CC-betalingscategorie** krijgt $50 bij Beschikbaar (automatisch gevuld vanuit Boodschappen)
+5. **Creditcardsaldo** toont -$50
+
+Wanneer je de kaart betaalt:
+
+1. **Overboeking** van $50 van betaalrekening naar creditcard
+2. **CC-betalingscategorie** toont -$50 activiteit (de betaling)
+3. **CC-betaling Beschikbaar** keert terug naar $0
+4. **Creditcardsaldo** keert terug naar $0
+
+De belangrijkste conclusie: je uitgavencategorieën weerspiegelen al de werkelijke uitgaven. De categorie voor creditcardbetalingen houdt alleen het geld bij dat is gereserveerd om dit te dekken.
+
+## Bestaande schuld aflossen
+
+Als je al een creditcardschuld hebt wanneer je Budgero gaat gebruiken:
+
+1. De oorspronkelijke schuld wordt geregistreerd als uitgaven onder de categorie "Overboekingen". Als je "Tot nu toe betaald" invult bij het aanmaken van de rekening, registreert Budgero dat ook als inkomsten, zodat het resterende saldo gelijk is aan oorspronkelijk − betaald.
+2. Beide boekingen beïnvloeden alleen het rekeningsaldo, niet een budgetcategorie.
+3. Je categorie voor creditcardbetalingen begint op $0 (er is nog niets gereserveerd voor uitgaven).
+
+**Om bestaande schuld af te lossen:**
+
+1. Wijs geld direct toe aan de categorie voor creditcardbetalingen
+2. Boek dat geld over naar de creditcard
+3. Zie hoe je creditcardsaldo daalt
+
+Als je meer betaalt dan er "gereserveerd" is voor uitgaven, wordt het Beschikbaar voor creditcardbetalingen negatief. Dit is verwacht — het laat zien dat je oude schuld aflost, niet alleen huidige uitgaven dekt.
+
+## Workflow voor leningen en hypotheken
+
+Leningen en hypotheken werken anders omdat de betaling zélf de uitgave is:
+
+1. **Budgero maakt een gekoppelde categorie** aan wanneer je de lening toevoegt (bijv. "Autolening")
+2. **Budget voor betalingen** door maandelijks geld aan die categorie toe te wijzen
+3. **Doe de betaling** door over te boeken van je betaalrekening naar de leningsrekening
+4. **Betaling verschijnt als uitgave** in de gekoppelde categorie
+
+**Voorbeeld:** Je hebt een autolening van $10.000 met maandelijkse betalingen van $300.
+
+1. Wijs $300 toe aan de categorie "Autolening" wanneer je je salaris krijgt
+2. Boek $300 over van je betaalrekening naar de autoleningrekening
+3. De categorie "Autolening" toont -$300 activiteit
+4. Het leningsaldo daalt met $300
+
+### De uitgavenlimiet
+
+Bij leningen en hypotheken beperkt Budgero de uitgaven tot het werkelijke schuldbedrag. Als je te veel betaalt:
+
+**Voorbeeld:** Het saldo van je autolening is -$100. Je boekt $300 over om hem vervroegd af te lossen.
+- De rekening ontvangt $300, waardoor het saldo op +$200 komt
+- Slechts $100 telt als uitgave in de categorie "Autolening"
+- De resterende $200 wordt geregistreerd als een gewone overboeking (geen categorie-uitgave)
+
+Hierdoor blijven je uitgavenrapporten accuraat wanneer je schulden vervroegd aflost.
+
+## Rekening- en categorielevenscyclus
+
+### Creditcard-betalingscategorieën
+
+Wanneer je een creditcard aanmaakt:
+- Er wordt een categoriegroep "Creditcard-betalingen" aangemaakt (als deze nog niet bestaat)
+- Er wordt een betalingscategorie aangemaakt die is vernoemd naar je kaart
+- De categorie wordt automatisch verwijderd wanneer je de rekening verwijdert
+
+### Gekoppelde categorieën (alleen leningen/hypotheken)
+
+Wanneer je een lening of hypotheek aanmaakt, maakt Budgero een gekoppelde categorie onder de groep **Lasten**. Deze categorie:
+- Deelt de naam van de rekening (hernoem de rekening en de categorie wordt bijgewerkt)
+- Wordt automatisch verwijderd wanneer je de rekening verwijdert
+- Kan niet worden verwijderd zolang de rekening bestaat
+
+### Rekeningen hernoemen
+
+Wanneer je een schuldenrekening hernoemt, werkt Budgero alle overboekingsnotities bij die naar de oude naam verwijzen. Voor creditcards wordt ook de naam van de CC-betalingscategorie bijgewerkt.
+
+## In budget vs buiten budget
+
+De meeste schuldenrekeningen moeten **in budget** blijven. Voor leningen en hypotheken betekent dit dat betalingen uitgaven creëren in de gekoppelde categorie. Creditcards en leningen staan standaard in budget; hypotheken staan standaard buiten budget maar kunnen worden omgezet.
+
+Schuldenrekeningen buiten budget:
+- Volgen nog steeds je schuldsaldo nauwkeurig
+- Betalingen zijn altijd neutrale overboekingen — er worden geen uitgaven geregistreerd in een categorie
+- Voor leningen/hypotheken wordt de gekoppelde categorie nog steeds aangemaakt bij het instellen, maar blijft leeg zolang de rekening buiten budget blijft
+
+Gebruik buiten budget voor schulden waar je niet maandelijks een budget voor wilt maken (bijvoorbeeld een hypotheek die je alleen aan de nettovermogen-kant wilt zien).
+
+## Budgetteren voor aflossen van schulden
+
+### Creditcards
+
+Voor lopende uitgaven is geen speciaal budget nodig. Maak gewoon een budget voor je uitgavencategorieën (boodschappen, benzine, etc.) en de CC-betalingscategorie laat automatisch zien wat je beschikbaar hebt om te betalen.
+
+**Om bestaande schulden sneller af te lossen:**
+1. Wijs extra geld toe aan de CC-betalingscategorie
+2. Boek dat geld over naar de kaart
+3. Als Beschikbaar voor de CC-betalingscategorie negatief wordt, betekent dit dat je meer betaalt dan je huidige uitgaven
+
+### Leningen en hypotheken
+
+1. **Stel een financieringsdoel** in op de gekoppelde categorie voor je maandelijkse aflossingsbedrag
+2. **Wijs geld toe** aan de categorie elke maand wanneer je betaald krijgt
+3. **Doe de overboeking** van je betaalrekening naar de schuldenrekening
+4. **Kijk hoe het saldo daalt** naarmate je betalingen verminderen wat je verschuldigd bent
+
+De gekoppelde categorie werkt als elke andere uitgavencategorie. Maak er een budget voor, financier het en geef eruit door betalingen te doen.
+
+## Veelgestelde vragen
+
+### Waarom wordt mijn creditcardbetaling niet weergegeven als uitgaven?
+
+Omdat de uitgaven al plaatsvonden toen je de kaart gebruikte. De rekening betalen verplaatst alleen geld om kosten te dekken die je al hebt geregistreerd. Dit voorkomt dubbele telling.
+
+### Wat betekent het als Beschikbaar voor je creditcardbetaling negatief is?
+
+Het betekent dat je meer aan de kaart hebt betaald dan er is gefinancierd vanuit je gebudgetteerde uitgaven. Dit gebeurt meestal wanneer:
+- Je oude schulden aflost van voordat je begon met budgetteren
+- Je in categorieën bent overgeschreden en die schuld nu afdekt
+- Je een extra betaling hebt gedaan bovenop je uitgaven van de huidige maand
+
+### Mijn Beschikbaar voor creditcardbetaling komt niet overeen met mijn kaartsaldo. Is dat fout?
+
+Dat is te verwachten. Je beschikbare creditcardbetaling laat het geld zien dat is gereserveerd voor uitgaven uit je **budget**. Je creditcardsaldo omvat:
+- Uitgaven van de huidige maand (mogelijk inclusief nog niet gedekte overschrijdingen)
+- Oude schulden van voordat je begon met budgetteren
+- Rentekosten
+
+Het verschil vertegenwoordigt schuld waarvoor je nog moet budgetteren.
+
+### Kan ik een lening volgen zonder budgetuitgaven te creëren?
+
+Ja. Markeer de rekening als buiten budget bij het aanmaken, of bewerk een bestaande rekening om deze instelling te wijzigen. Leningen buiten budget volgen saldi zonder invloed op je budgetcategorieën.
+
+### Waar zie ik welke categorieën mijn creditcardbetaling hebben gefinancierd?
+
+Klik op het infopictogram naast het Beschikbare bedrag in de rij van de creditcardbetaling. Er verschijnt een popover met de financieringsverdeling, met elke bijdragende categorie en het bijbehorende bedrag, specifiek voor die kaart.
+
+## Volgende stappen
+
+Het Schuldenoverzicht werkt het beste in combinatie met doelen en regelmatige budgetbeoordelingen. Houd bij creditcards het Beschikbare bedrag voor je creditcardbetaling in de gaten om er zeker van te zijn dat je de rekening kunt betalen. Stel bij leningen en hypotheken maandelijkse financieringsdoelen in en zie hoe je saldo's in de loop van de tijd afnemen.

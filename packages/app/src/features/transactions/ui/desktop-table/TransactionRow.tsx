@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { isFutureDate } from '@shared/lib/date-utils';
@@ -126,6 +127,8 @@ export const TransactionRow = React.memo(function TransactionRow({
   onActivateCell,
   onDeactivateCell,
 }: TransactionRowProps) {
+  const { t } = useLingui();
+
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const selectedAccount = useUiStore((state) => state.selectedAccount);
   const selectedBudget = useUiStore((state) => state.selectedBudget);
@@ -162,7 +165,7 @@ export const TransactionRow = React.memo(function TransactionRow({
         )}
         title={
           isProjectedBalance
-            ? 'Projected balance — includes scheduled recurring entries'
+            ? t`Projected balance — includes scheduled recurring entries`
             : undefined
         }
       >
@@ -203,8 +206,13 @@ export const TransactionRow = React.memo(function TransactionRow({
             </PopoverTrigger>
             <PopoverContent className="w-60 text-sm">
               <p>
-                This is the total of the split lines. To change it, click{' '}
-                <span className="font-medium">View splits</span>.
+                <Trans>
+                  This is the total of the split lines. To change it, click{' '}
+                  <span className="font-medium">
+                    <Trans>View splits</Trans>
+                  </span>
+                  .
+                </Trans>
               </p>
             </PopoverContent>
           </Popover>
@@ -231,7 +239,7 @@ export const TransactionRow = React.memo(function TransactionRow({
         ) : (
           <CellDisplayButton
             value={formatAmount(currentFormatter, getPrimary(transaction) || 0)}
-            title={`Edit ${kind}`}
+            title={t`Edit ${kind}`}
             onClick={() => activateCell(kind)}
             className={cn('text-right font-medium font-mono', colorClass)}
           />
@@ -263,7 +271,7 @@ export const TransactionRow = React.memo(function TransactionRow({
             <TransactionSelectionCheckbox
               fillCell
               disabled
-              aria-label="Projected transactions cannot be selected"
+              aria-label={t`Projected transactions cannot be selected`}
             />
           </div>
         </TableCell>
@@ -358,7 +366,7 @@ export const TransactionRow = React.memo(function TransactionRow({
         ) : (
           <CellDisplayButton
             value={transaction.Date}
-            title="Edit date"
+            title={t`Edit date`}
             onClick={() => activateCell('date')}
           />
         )}
@@ -379,7 +387,7 @@ export const TransactionRow = React.memo(function TransactionRow({
         ) : (
           <CellDisplayButton
             value={transaction.Memo || '—'}
-            title={transaction.Memo || 'Edit memo'}
+            title={transaction.Memo || t`Edit memo`}
             onClick={() => activateCell('memo')}
           />
         )}
@@ -402,7 +410,7 @@ export const TransactionRow = React.memo(function TransactionRow({
           ) : (
             <CellDisplayButton
               value={transaction.Account || '—'}
-              title={transaction.Account || 'Edit account'}
+              title={transaction.Account || t`Edit account`}
               onClick={() => activateCell('account')}
             />
           )}
@@ -426,7 +434,7 @@ export const TransactionRow = React.memo(function TransactionRow({
         ) : (
           <CellDisplayButton
             value={transaction.Payee || '—'}
-            title={transaction.Payee || 'Edit payee'}
+            title={transaction.Payee || t`Edit payee`}
             onClick={() => activateCell('payee')}
           />
         )}
@@ -456,7 +464,7 @@ export const TransactionRow = React.memo(function TransactionRow({
                   'No label'
                 )
               }
-              title={transaction.Label || 'Edit label'}
+              title={transaction.Label || t`Edit label`}
               onClick={() => activateCell('label')}
               className={cn(
                 transaction.Label && 'flex items-center',
@@ -471,7 +479,9 @@ export const TransactionRow = React.memo(function TransactionRow({
       <TableCell className="max-w-[240px] overflow-hidden">
         {isSplitCategory ? (
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">Split</Badge>
+            <Badge variant="secondary">
+              <Trans>Split</Trans>
+            </Badge>
             <Button
               variant="ghost"
               size="sm"
@@ -481,7 +491,7 @@ export const TransactionRow = React.memo(function TransactionRow({
                 onSplitView(transaction);
               }}
             >
-              View splits
+              <Trans>View splits</Trans>
             </Button>
           </div>
         ) : (
@@ -490,9 +500,9 @@ export const TransactionRow = React.memo(function TransactionRow({
               {isTransferCategoryReadOnly ? (
                 <div
                   className="h-8 min-w-0 w-full truncate rounded-md bg-muted/30 px-2 py-1.5 text-muted-foreground"
-                  title="Category is set automatically for on-budget transfers"
+                  title={t`Category is set automatically for on-budget transfers`}
                 >
-                  {transaction.Category || 'Transfers'}
+                  {transaction.Category || t`Transfers`}
                 </div>
               ) : editingColumn === 'category' ? (
                 <CategorySelectCell
@@ -513,7 +523,7 @@ export const TransactionRow = React.memo(function TransactionRow({
               ) : (
                 <CellDisplayButton
                   value={transaction.Category || 'Uncategorized'}
-                  title={transaction.Category || 'Edit category'}
+                  title={transaction.Category || t`Edit category`}
                   onClick={() => activateCell('category')}
                 />
               )}
@@ -528,7 +538,7 @@ export const TransactionRow = React.memo(function TransactionRow({
                   onSplitCreate(transaction);
                 }}
               >
-                Split
+                <Trans>Split</Trans>
               </Button>
             )}
             {isTransfer && transaction.TransferID && (
@@ -572,7 +582,7 @@ export const TransactionRow = React.memo(function TransactionRow({
             ) : (
               <CellDisplayButton
                 value={formatExchangeRate(transaction.ExchangeRate || 0)}
-                title={`Edit budget rate${selectedAccount?.Currency && selectedBudget?.DisplayCurrency ? `: 1 ${selectedAccount.Currency} in ${selectedBudget.DisplayCurrency}` : ''}`}
+                title={t`Edit budget rate${selectedAccount?.Currency && selectedBudget?.DisplayCurrency ? `: 1 ${selectedAccount.Currency} in ${selectedBudget.DisplayCurrency}` : ''}`}
                 onClick={() => activateCell('exchangeRate')}
                 className="text-right font-mono text-muted-foreground"
               />

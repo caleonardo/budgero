@@ -1,8 +1,11 @@
+import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useUndoStore } from '@shared/mutations/UndoStore';
 import { toast } from 'sonner';
 
 export function GlobalUndoHotkeys() {
+  const { t } = useLingui();
+
   const undo = useUndoStore((s) => s.undo);
   const redo = useUndoStore((s) => s.redo);
   const canUndo = useUndoStore((s) => s.canUndo);
@@ -28,15 +31,15 @@ export function GlobalUndoHotkeys() {
           e.preventDefault();
           undo()
             .then(() => {
-              toast.success('Undid last action', {
+              toast.success(t`Undid last action`, {
                 action: {
-                  label: 'Redo',
+                  label: t`Redo`,
                   onClick: () => void (canRedo() && redo()),
                 },
               });
             })
             .catch(() => {
-              toast.error('Failed to undo last action');
+              toast.error(t`Failed to undo last action`);
             });
         }
       } else if ((k === 'z' && e.shiftKey) || k === 'y') {
@@ -44,10 +47,10 @@ export function GlobalUndoHotkeys() {
           e.preventDefault();
           redo()
             .then(() => {
-              toast.success('Redid action');
+              toast.success(t`Redid action`);
             })
             .catch(() => {
-              toast.error('Failed to redo action');
+              toast.error(t`Failed to redo action`);
             });
         }
       }
@@ -55,7 +58,7 @@ export function GlobalUndoHotkeys() {
 
     window.addEventListener('keydown', handler, { capture: true });
     return () => window.removeEventListener('keydown', handler, { capture: true });
-  }, [undo, redo, canUndo, canRedo]);
+  }, [undo, redo, canUndo, canRedo, t]);
 
   return null;
 }

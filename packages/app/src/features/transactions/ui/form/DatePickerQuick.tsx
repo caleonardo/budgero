@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Date Picker with Quick Buttons Component
  *
@@ -5,7 +6,7 @@
  */
 
 import { useCallback } from 'react';
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -19,6 +20,8 @@ interface DatePickerQuickProps {
 }
 
 export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePickerQuickProps) {
+  const { t } = useLingui();
+
   const handleDateSelect = useCallback(
     (date: Date | undefined) => {
       onChange(date || null);
@@ -55,7 +58,7 @@ export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePic
                   variant="outline"
                   className="w-full justify-start text-left h-8 sm:h-10 px-3 sm:px-4 bg-background border-input hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
-                  {value ? format(value, 'PPP') : 'Select date'}
+                  {value ? format(value, 'PPP') : t`Select date`}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start" modal>
@@ -74,7 +77,7 @@ export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePic
           className="h-8 sm:h-9 w-full justify-center"
           onClick={setDateToday}
         >
-          Today
+          <Trans>Today</Trans>
         </Button>
         <Button
           type="button"
@@ -83,7 +86,7 @@ export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePic
           className="h-8 sm:h-9 w-full justify-center"
           onClick={() => setDateRelative(-1)}
         >
-          -1 day
+          <Trans>-1 day</Trans>
         </Button>
         <Button
           type="button"
@@ -92,7 +95,7 @@ export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePic
           className="h-8 sm:h-9 w-full justify-center"
           onClick={() => setDateRelative(1)}
         >
-          +1 day
+          <Trans>+1 day</Trans>
         </Button>
       </div>
     </>

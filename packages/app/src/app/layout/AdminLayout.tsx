@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useProfile } from '@entities/user/api/useAuth';
 import { getUserAccessStatus, canAccessAdmin } from '@shared/model/access';
@@ -13,14 +14,18 @@ export default function AdminLayout() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse">Loading admin panel...</div>
+        <div className="animate-pulse">
+          <Trans>Loading admin panel...</Trans>
+        </div>
       </div>
     );
   }
   if (IS_SELF_HOSTABLE_BUILD && !connectivityKnown && !user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse">Loading admin panel...</div>
+        <div className="animate-pulse">
+          <Trans>Loading admin panel...</Trans>
+        </div>
       </div>
     );
   }

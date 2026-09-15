@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { FundingPriorityBadge } from '@features/category-management/ui/FundingPriorityBadge';
 import { FundingPriorityEditor } from '@features/category-management/ui/FundingPriorityEditor';
 import { Edit3, Trash, ChevronRight, EyeOff } from 'lucide-react';
@@ -188,7 +189,9 @@ export function CategoryRowTableLayout({
         >
           {/* Activity row */}
           <div className="flex items-center justify-between gap-2 py-1">
-            <span className="text-muted-foreground">Activity</span>
+            <span className="text-muted-foreground">
+              <Trans>Activity</Trans>
+            </span>
             <ActivityButton
               item={item}
               globalLocalizer={globalLocalizer}
@@ -207,7 +210,9 @@ export function CategoryRowTableLayout({
 
           {/* Actions row */}
           <div className="flex items-center justify-between gap-2 py-1 border-t border-border/20">
-            <span className="text-muted-foreground">Actions</span>
+            <span className="text-muted-foreground">
+              <Trans>Actions</Trans>
+            </span>
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
@@ -215,8 +220,10 @@ export function CategoryRowTableLayout({
                 className="h-6 px-2 text-[11px]"
                 onClick={() => onEditCategory(item)}
               >
-                <Edit3 className="h-3 w-3 mr-1" />
-                Edit
+                <Trans>
+                  <Edit3 className="h-3 w-3 mr-1" />
+                  Edit
+                </Trans>
               </Button>
               {onHideCategory && (
                 <Button
@@ -228,8 +235,10 @@ export function CategoryRowTableLayout({
                     onHideCategory(item);
                   }}
                 >
-                  <EyeOff className="h-3 w-3 mr-1" />
-                  Hide
+                  <Trans>
+                    <EyeOff className="h-3 w-3 mr-1" />
+                    Hide
+                  </Trans>
                 </Button>
               )}
               <Button
@@ -238,8 +247,10 @@ export function CategoryRowTableLayout({
                 className="h-6 px-2 text-[11px] text-destructive hover:text-destructive"
                 onClick={() => onDeleteCategory(item)}
               >
-                <Trash className="h-3 w-3 mr-1" />
-                Delete
+                <Trans>
+                  <Trash className="h-3 w-3 mr-1" />
+                  Delete
+                </Trans>
               </Button>
             </div>
           </div>

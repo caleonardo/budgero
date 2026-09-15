@@ -3,7 +3,8 @@ import { useAccounts } from '@entities/account/api/useAccounts';
 import { useAllTransactions } from '@entities/transaction/api/useTransactions';
 import { LIABILITY_ACCOUNT_TYPES } from '@entities/account/model/accountTypes';
 import { computeDailyBalances, groupTransactionsByAccount } from '@entities/account/lib/history';
-import { eachDayOfInterval, format, parseISO, isAfter } from 'date-fns';
+import { eachDayOfInterval, parseISO, isAfter } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 
 export interface NetWorthPoint {
   date: string;

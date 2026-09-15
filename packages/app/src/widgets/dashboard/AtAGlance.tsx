@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { useUiStore } from '@shared/store/useUiStore';
@@ -25,6 +26,8 @@ import { focusCategoryNavState } from '@shared/hooks/useFocusCategoryFromNavStat
 import { getBiggestOnBudgetOutflows } from './at-a-glance.utils';
 
 export function AtAGlance() {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
@@ -63,7 +66,7 @@ export function AtAGlance() {
     )
   );
 
-  const monthSpent = monthTx.reduce((sum: number, t) => sum + (t.OutflowConverted || 0), 0);
+  const monthSpent = monthTx.reduce((sum: number, txn) => sum + (txn.OutflowConverted || 0), 0);
   const spentPct = assignedForMonth ? Math.min(100, (monthSpent / assignedForMonth) * 100) : 0;
 
   const paceDelta = spentPct - elapsedPct;
@@ -88,7 +91,7 @@ export function AtAGlance() {
       const progress = GoalCalculations.calculateProgress(g ?? null, finances, currentMonthString);
       return {
         id: g.ID,
-        name: row?.Category || 'Goal',
+        name: row?.Category || t`Goal`,
         categoryId: g.CategoryID,
         percentage: progress.percentage,
         amountSaved: progress.amountSaved,
@@ -101,11 +104,11 @@ export function AtAGlance() {
 
   // MTD on-budget income/outflow excluding transfers
   const totalIncome = monthTx.reduce(
-    (sum: number, t) => sum + (t.TransferID ? 0 : t.InflowConverted || 0),
+    (sum: number, txn) => sum + (txn.TransferID ? 0 : txn.InflowConverted || 0),
     0
   );
   const totalOutflow = monthTx.reduce(
-    (sum: number, t) => sum + (t.TransferID ? 0 : t.OutflowConverted || 0),
+    (sum: number, txn) => sum + (txn.TransferID ? 0 : txn.OutflowConverted || 0),
     0
   );
   const savingsRate = totalIncome > 0 ? ((totalIncome - totalOutflow) / totalIncome) * 100 : 0;
@@ -131,8 +134,10 @@ export function AtAGlance() {
     <Card className="relative overflow-hidden">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg sm:text-xl font-semibold flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-muted-foreground" />
-          {monthLabel} At a Glance
+          <Trans>
+            <Calendar className="h-5 w-5 text-muted-foreground" />
+            {monthLabel} At a Glance
+          </Trans>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
@@ -141,37 +146,39 @@ export function AtAGlance() {
           {/* Biggest Transactions */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground pb-2 border-b border-border/30">
-              <TrendingDown className="h-4 w-4" />
-              Biggest Transactions
+              <Trans>
+                <TrendingDown className="h-4 w-4" />
+                Biggest Transactions
+              </Trans>
             </div>
             <div className="space-y-2">
               {biggestOutflows.length === 0 ? (
                 <div className="text-sm text-muted-foreground py-2 text-center rounded-lg bg-muted/30">
-                  No outflows
+                  <Trans>No outflows</Trans>
                 </div>
               ) : (
-                biggestOutflows.slice(0, 4).map((t, i) => (
+                biggestOutflows.slice(0, 4).map((txn, i) => (
                   <div
                     key={i}
                     className="p-2 rounded-lg bg-muted/20 hover:bg-muted/40 transition-all duration-200"
                   >
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="truncate" title={t.Category || 'Uncategorized'}>
-                        {format(parseISO(t.Date), 'MMM d')} • {t.Category || 'Uncategorized'}
+                      <span className="truncate" title={txn.Category || t`Uncategorized`}>
+                        {format(parseISO(txn.Date), 'MMM d')} • {txn.Category || t`Uncategorized`}
                       </span>
                       <span className="ml-3 font-semibold text-red-600 whitespace-nowrap">
                         {formatMaskedMilli(
                           globalLocalizer,
-                          t.OutflowConverted || 0,
+                          txn.OutflowConverted || 0,
                           privacyMaskNumbers
                         )}
                       </span>
                     </div>
                     <div
                       className="mt-1 block text-[11px] sm:text-sm text-foreground/90 truncate"
-                      title={t.Memo || 'No memo'}
+                      title={txn.Memo || t`No memo`}
                     >
-                      {t.Memo || 'No memo'}
+                      {txn.Memo || t`No memo`}
                     </div>
                   </div>
                 ))
@@ -182,13 +189,15 @@ export function AtAGlance() {
           {/* Goals Progress */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground pb-2 border-b border-border/30">
-              <Target className="h-4 w-4" />
-              Goals Progress
+              <Trans>
+                <Target className="h-4 w-4" />
+                Goals Progress
+              </Trans>
             </div>
             <div className="space-y-2">
               {goalsWithProgress.length === 0 ? (
                 <div className="text-sm text-muted-foreground py-2 text-center rounded-lg bg-muted/30">
-                  No goals yet
+                  <Trans>No goals yet</Trans>
                 </div>
               ) : (
                 goalsWithProgress.slice(0, 4).map((g) => (
@@ -213,20 +222,26 @@ export function AtAGlance() {
           {/* Budget Pacing */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground pb-2 border-b border-border/30">
-              <Target className="h-4 w-4" />
-              Budget Pacing
+              <Trans>
+                <Target className="h-4 w-4" />
+                Budget Pacing
+              </Trans>
             </div>
             <div className="space-y-2 p-2.5 rounded-lg bg-muted/20">
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Time elapsed</span>
+                  <span className="text-muted-foreground">
+                    <Trans>Time elapsed</Trans>
+                  </span>
                   <span>{Math.round(elapsedPct)}%</span>
                 </div>
                 <Progress value={elapsedPct} className="h-2" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Budget spent</span>
+                  <span className="text-muted-foreground">
+                    <Trans>Budget spent</Trans>
+                  </span>
                   <span>{Math.round(spentPct)}%</span>
                 </div>
                 <Progress
@@ -258,12 +273,12 @@ export function AtAGlance() {
                   }`}
                 >
                   {assignedForMonth === 0
-                    ? 'No budget assigned'
+                    ? t`No budget assigned`
                     : paceState === 'good'
-                      ? 'On track'
+                      ? t`On track`
                       : paceState === 'warn'
-                        ? 'Ahead of pace'
-                        : 'Over pace'}
+                        ? t`Ahead of pace`
+                        : t`Over pace`}
                 </span>
               </div>
             </div>
@@ -272,24 +287,30 @@ export function AtAGlance() {
           {/* Financial Stats */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground pb-2 border-b border-border/30">
-              <PiggyBank className="h-4 w-4" />
-              Financial Stats
+              <Trans>
+                <PiggyBank className="h-4 w-4" />
+                Financial Stats
+              </Trans>
             </div>
             <div className="grid grid-cols-1 gap-2">
               <div className="p-2 rounded-lg bg-gradient-to-br from-muted/30 to-muted/50 border">
                 <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  Savings Rate
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className="text-muted-foreground hover:text-foreground">
-                        <Info className="h-3 w-3" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-64 text-xs" modal>
-                      Percentage of on-budget income not spent this month: (Income -
-                      Outflows)/Income.
-                    </PopoverContent>
-                  </Popover>
+                  <Trans>
+                    Savings Rate
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button className="text-muted-foreground hover:text-foreground">
+                          <Info className="h-3 w-3" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-64 text-xs" modal>
+                        <Trans>
+                          Percentage of on-budget income not spent this month: (Income -
+                          Outflows)/Income.
+                        </Trans>
+                      </PopoverContent>
+                    </Popover>
+                  </Trans>
                 </div>
                 <div className={`text-sm font-bold ${trendTextClass(savingsRate)}`}>
                   {Math.round(savingsRate)}%
@@ -298,33 +319,43 @@ export function AtAGlance() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="p-2 rounded-lg bg-gradient-to-br from-muted/30 to-muted/50 border">
                   <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    Coverage
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <button className="text-muted-foreground hover:text-foreground">
-                          <Info className="h-3 w-3" />
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-64 text-xs" modal>
-                        Months your on-budget balance could cover at current spend rate.
-                      </PopoverContent>
-                    </Popover>
+                    <Trans>
+                      Coverage
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button className="text-muted-foreground hover:text-foreground">
+                            <Info className="h-3 w-3" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-64 text-xs" modal>
+                          <Trans>
+                            Months your on-budget balance could cover at current spend rate.
+                          </Trans>
+                        </PopoverContent>
+                      </Popover>
+                    </Trans>
                   </div>
-                  <div className="text-sm font-bold">{monthsCoverage.toFixed(1)}mo</div>
+                  <div className="text-sm font-bold">
+                    <Trans>{monthsCoverage.toFixed(1)}mo</Trans>
+                  </div>
                 </div>
                 <div className="p-2 rounded-lg bg-gradient-to-br from-muted/30 to-muted/50 border">
                   <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    Runway
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <button className="text-muted-foreground hover:text-foreground">
-                          <Info className="h-3 w-3" />
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-64 text-xs" modal>
-                        Days your Ready to Assign can fund based on average daily spend.
-                      </PopoverContent>
-                    </Popover>
+                    <Trans>
+                      Runway
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button className="text-muted-foreground hover:text-foreground">
+                            <Info className="h-3 w-3" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-64 text-xs" modal>
+                          <Trans>
+                            Days your Ready to Assign can fund based on average daily spend.
+                          </Trans>
+                        </PopoverContent>
+                      </Popover>
+                    </Trans>
                   </div>
                   <div className="text-sm font-bold">{runwayDays}d</div>
                 </div>

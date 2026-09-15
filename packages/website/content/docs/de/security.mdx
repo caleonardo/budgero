@@ -1,0 +1,84 @@
+---
+title: "Sicherheitsmodell"
+summary: "Erkunde Budgeros Design der Ende-zu-Ende-Verschlüsselung, was der Server sehen kann und was nicht, und was passiert, wenn du ein Gerät verlierst."
+section: collaboration
+topicId: security
+takeaways:
+  - "Wie die Umschlagverschlüsselung dein Master-Passwort in funktionierende Schlüssel umwandelt."
+  - "Welche Metadaten der Server genau sieht – und welche Daten er niemals sehen kann."
+  - "Was der Verlust eines Geräts in der Praxis bedeutet und wie du dich darauf vorbereitest."
+---
+
+Die meisten Finanz-Apps verlangen von dir, ihren Absichten zu vertrauen. Budgero ist so gebaut, dass du das nicht musst: Die Architektur macht es uns unmöglich, deine Daten zu lesen – nicht nur verboten. Dieser Leitfaden erklärt das Design präzise – denn "vertrau uns, es ist verschlüsselt" ist genau die Behauptung, die du nicht ohne Details akzeptieren solltest.
+
+## Die Verschlüsselungs-Pipeline
+
+Budgero verwendet **Envelope-Verschlüsselung** – dasselbe Muster, das auch in professionellen Schlüsselverwaltungssystemen zum Einsatz kommt:
+
+1. Dein [Master-Passwort](/docs/master-password) wird auf deinem Gerät durch **PBKDF2-HMAC-SHA256 mit 600.000 Iterationen** geleitet und erzeugt einen **Schlüsselverschlüsselungsschlüssel (KEK)**. Die Iterationszahl dient dazu, jeden Passwort-Versuch rechenintensiv zu machen.
+2. Ein zufällig generierter **Datenverschlüsselungsschlüssel (DEK)** übernimmt die eigentliche Verschlüsselung deines Budgets.
+3. Der KEK umschließt (verschlüsselt) den DEK. Nur der umschlossene DEK wird gespeichert – das Entsperren bedeutet, den KEK aus deinem Passwort abzuleiten und den DEK zu entpacken. Danach muss die aufwendige Ableitung für die restliche Sitzung nicht erneut ausgeführt werden.
+4. Die gesamte Datenverschlüsselung verwendet **AES-256-GCM**, eine authentifizierte Chiffre – sie verbirgt nicht nur Daten, sondern erkennt auch Manipulation.
+
+Jede Budget-Änderung wird auf deinem Gerät verschlüsselt, *bevor* sie synchronisiert wird. Der Server empfängt, speichert und leitet lediglich Chiffretext weiter.
+
+## Was der Server sieht – und was nicht
+
+Ehrliche Zero-Knowledge-Aussagen erfordern, beide Seiten offen zu benennen:
+
+<table>
+  <thead>
+    <tr>
+      <th>Der Server kann sehen</th>
+      <th>Der Server kann niemals sehen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Dass du ein Konto hast (E-Mail, Login-Identität)</td>
+      <td>Transaktionen – Beträge, Empfänger, Notizen, Daten</td>
+    </tr>
+    <tr>
+      <td>Arbeitsbereich-Mitgliedschaften und Rollen (wer teilt mit wem)</td>
+      <td>Kontostände und Kontonamen</td>
+    </tr>
+    <tr>
+      <td>Zeitstempel und Versionsnummern synchronisierter Änderungen</td>
+      <td>Kategorien, Zuweisungen, Ziele – das Budget selbst</td>
+    </tr>
+    <tr>
+      <td>Größe und Häufigkeit verschlüsselter Blobs</td>
+      <td>Dein Master-Passwort oder ein daraus abgeleiteter Schlüssel</td>
+    </tr>
+  </tbody>
+</table>
+
+Die linke Spalte ist das Minimum, das für den Betrieb eines Sync-Dienstes nötig ist: Chiffretext an die richtigen Personen weiterleiten und das richtige Konto belasten. Die rechte Spalte ist dein finanzielles Leben, und sie existiert in lesbarer Form nur auf deinen entsperrten Geräten.
+
+Diese Architektur bestimmt auch, was bei einem Datenleck passiert. Würden Budgeros Server vollständig kompromittiert, erhielte der Angreifer gewrappte Schlüssel und AES-256-GCM-Chiffretext — und müsste dennoch pro Benutzer 600.000 PBKDF2-Iterationen gegen jedes Master-Passwort durchlaufen, um überhaupt irgendwohin zu gelangen. Mit einer starken Passphrase ist „irgendwo" eben „nirgendwo".
+
+## Wo deine Daten liegen
+
+Budgero Cloud wird in **Finnland gehostet, unter EU-Gerichtsbarkeit** — und die App sendet **keine Telemetrie, es sei denn, du stimmst ausdrücklich zu**. Wenn selbst verschlüsselte Datenpakete auf unserer Infrastruktur mehr Vertrauen erfordern, als du aufbringen möchtest, führt [Budgero Self-Host](/docs/self-hosting-guide) die identische Verschlüsselungs-Pipeline auf Hardware aus, die du kontrollierst. Die Verschlüsselung ist kein Cloud-Feature — so funktioniert das Produkt.
+
+## Freigabe ohne das Modell zu schwächen
+
+Geteilte Budgets behalten dieselben Garantien: Schlüssel für geteilte Mitglieder werden über Geheimnisse ausgetauscht, die in den URL-Fragmenten von Einladungslinks übertragen werden (niemals an den Server gesendet) und unter dem eigenen Master-Passwort jedes Mitglieds neu gewrappt. Der Server erfährt, dass zwei Konten einen Arbeitsbereich teilen — niemals, was darin enthalten ist. Details unter [Budgets freigeben](/docs/sharing).
+
+## Ein Gerät verlieren
+
+Was ein Dieb auf deinem Gerät findet, ist genau das, was du durch deine geräteseitigen Entscheidungen dort hinterlassen hast:
+
+- Die lokalen Budgetdaten werden verschlüsselt gespeichert; ohne dein Master-Passwort sind sie reiner Chiffretext.
+- Wenn du **Sitzungsentsperrung** mit langer Dauer aktiviert hast und das Gerät keine PIN hat, ist eine entsperrte Sitzung das realistische Risiko. Die Gegenmaßnahmen sind einfach, aber effektiv: Geräte-PIN/Biometrie und kürzere Sitzungsdauer auf mobilen Geräten (siehe [Master-Passwort](/docs/master-password)).
+- Dein Konto-Login (das den Zugriff auf die Synchronisierung steuert) kann über die normale Identitätswiederherstellung zurückgesetzt werden, ohne dass etwas verloren geht. Das Master-Passwort ist anders: Es kann geändert werden, wenn du es kennst, oder zurückgesetzt werden, wenn nicht — aber ein Zurücksetzen löscht die verschlüsselten Daten, da nichts ohne das alte Passwort entschlüsselt werden kann (siehe [Master-Passwort](/docs/master-password)).
+
+Nach dem Verlust eines Geräts ändere dein *Konto*-Passwort, um das Gerät von zukünftigen Synchronisierungen abzuschneiden, und mach einfach weiter. Die Verschlüsselung hat ihren Zweck erfüllt.
+
+## Support und deine Daten
+
+Eine Konsequenz dieses Designs, die man klar aussprechen sollte: Wenn du den Support kontaktierst, können wir serverseitige Fakten sehen — Synchronisierungsstatus, Abonnement, Fehlerprotokolle — und nichts innerhalb deines Budgets. Der Support wird dich nie nach deinem Master-Passwort fragen; keines unserer Systeme benötigt es.
+
+## Der Audit-Trail
+
+Jede synchronisierte Änderung ist ein verschlüsselter Eintrag in einem Append-Only-Änderungsprotokoll — das ist sowohl die Grundlage für Synchronisierung und [Offline-Zusammenführung](/docs/offline) als auch eine manipulationssichere Historie deines Budgets. Wie alles andere auch sind die Inhalte für den Server nicht einsehbar.

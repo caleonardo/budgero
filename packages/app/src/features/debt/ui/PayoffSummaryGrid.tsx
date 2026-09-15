@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import { roundMilli } from '@shared/lib/currency/round-amount';
 import { formatMilli } from '@shared/lib/currency/milli';
@@ -23,25 +24,35 @@ export function PayoffSummaryGrid({
   formatter,
   leading,
 }: PayoffSummaryGridProps) {
+  const { t } = useLingui();
+
   return (
     <div className="grid grid-cols-2 gap-3 text-sm">
       {leading}
       <div>
-        <div className="text-xs text-muted-foreground">Estimated months</div>
-        <div className="font-mono">{months === null ? 'Payment too low' : months}</div>
+        <div className="text-xs text-muted-foreground">
+          <Trans>Estimated months</Trans>
+        </div>
+        <div className="font-mono">{months === null ? t`Payment too low` : months}</div>
       </div>
       <div>
-        <div className="text-xs text-muted-foreground">Payoff date</div>
+        <div className="text-xs text-muted-foreground">
+          <Trans>Payoff date</Trans>
+        </div>
         <div className="font-mono">{months === null ? '—' : payoffDate || '—'}</div>
       </div>
       <div>
-        <div className="text-xs text-muted-foreground">Total payments</div>
+        <div className="text-xs text-muted-foreground">
+          <Trans>Total payments</Trans>
+        </div>
         <div className="font-mono">
           {totalPaid !== undefined ? formatMilli(formatter, roundMilli(totalPaid)) : '—'}
         </div>
       </div>
       <div>
-        <div className="text-xs text-muted-foreground">Interest (from now)</div>
+        <div className="text-xs text-muted-foreground">
+          <Trans>Interest (from now)</Trans>
+        </div>
         <div className="font-mono">
           {interestPaid !== undefined ? formatMilli(formatter, roundMilli(interestPaid)) : '—'}
         </div>

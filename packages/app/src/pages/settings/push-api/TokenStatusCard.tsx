@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -30,11 +31,13 @@ export function TokenStatusCard({ state }: TokenStatusCardProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Key className="h-5 w-5" />
-          API Token
+          <Trans>
+            <Key className="h-5 w-5" />
+            API Token
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Generate an API token to authenticate requests to the Push API.
+          <Trans>Generate an API token to authenticate requests to the Push API.</Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -43,14 +46,20 @@ export function TokenStatusCard({ state }: TokenStatusCardProps) {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">Status</span>
+                  <span className="text-sm font-medium">
+                    <Trans>Status</Trans>
+                  </span>
                   {tokenStatus.is_enabled ? (
                     <Badge variant="default" className="bg-green-600">
-                      <CheckCircle className="h-3 w-3 mr-1" />
-                      Active
+                      <Trans>
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Active
+                      </Trans>
                     </Badge>
                   ) : (
-                    <Badge variant="secondary">Disabled</Badge>
+                    <Badge variant="secondary">
+                      <Trans>Disabled</Trans>
+                    </Badge>
                   )}
                 </div>
               </div>
@@ -65,18 +74,24 @@ export function TokenStatusCard({ state }: TokenStatusCardProps) {
 
             <div className="grid gap-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Created</span>
+                <span className="text-muted-foreground">
+                  <Trans>Created</Trans>
+                </span>
                 <span>{formatDate(tokenStatus.created_at)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Last Used</span>
+                <span className="text-muted-foreground">
+                  <Trans>Last Used</Trans>
+                </span>
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   {formatDate(tokenStatus.last_used)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Space ID</span>
+                <span className="text-muted-foreground">
+                  <Trans>Space ID</Trans>
+                </span>
                 <code className="text-xs bg-muted px-1 py-0.5 rounded">{tokenStatus.space_id}</code>
               </div>
             </div>
@@ -87,11 +102,18 @@ export function TokenStatusCard({ state }: TokenStatusCardProps) {
                 <Alert>
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Save your token now!</strong> It won't be shown again.
+                    <Trans>
+                      <strong>
+                        <Trans>Save your token now!</Trans>
+                      </strong>
+                      It won't be shown again.
+                    </Trans>
                   </AlertDescription>
                 </Alert>
                 <div className="space-y-2">
-                  <Label>Your API Token</Label>
+                  <Label>
+                    <Trans>Your API Token</Trans>
+                  </Label>
                   <div className="flex gap-2">
                     <Input
                       type={showToken ? 'text' : 'password'}
@@ -113,15 +135,19 @@ export function TokenStatusCard({ state }: TokenStatusCardProps) {
         ) : (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              You haven't generated an API token yet. Generate one to start using the Push API.
+              <Trans>
+                You haven't generated an API token yet. Generate one to start using the Push API.
+              </Trans>
             </p>
             <Button onClick={handleGenerateToken} disabled={generateTokenMutation.isPending}>
-              {generateTokenMutation.isPending ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Key className="h-4 w-4 mr-2" />
-              )}
-              Generate API Token
+              <Trans>
+                {generateTokenMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Key className="h-4 w-4 mr-2" />
+                )}
+                Generate API Token
+              </Trans>
             </Button>
           </div>
         )}

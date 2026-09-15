@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import {
   Dialog,
@@ -35,10 +36,14 @@ export const PlanChangeDialog = React.memo(function PlanChangeDialog({
     <Dialog open={showPlanChangeDialog} onOpenChange={setShowPlanChangeDialog}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-xl">Change Subscription Plan</DialogTitle>
+          <DialogTitle className="text-xl">
+            <Trans>Change Subscription Plan</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Select a new plan. The change will take effect immediately and you'll be charged or
-            credited the difference.
+            <Trans>
+              Select a new plan. The change will take effect immediately and you'll be charged or
+              credited the difference.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -67,7 +72,7 @@ export const PlanChangeDialog = React.memo(function PlanChangeDialog({
                 {isYearly && !isCurrentPlan && (
                   <div className="absolute -top-3 left-4">
                     <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
-                      Save 17%
+                      <Trans>Save 17%</Trans>
                     </span>
                   </div>
                 )}
@@ -78,7 +83,7 @@ export const PlanChangeDialog = React.memo(function PlanChangeDialog({
                       <h4 className="font-semibold text-lg">{plan.name}</h4>
                       {isCurrentPlan && (
                         <Badge variant="secondary" className="text-xs">
-                          Current Plan
+                          <Trans>Current Plan</Trans>
                         </Badge>
                       )}
                     </div>
@@ -90,7 +95,7 @@ export const PlanChangeDialog = React.memo(function PlanChangeDialog({
 
                     {monthlyPrice && (
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Just ${monthlyPrice}/month
+                        <Trans>Just ${monthlyPrice}/month</Trans>
                       </p>
                     )}
                   </div>
@@ -117,7 +122,7 @@ export const PlanChangeDialog = React.memo(function PlanChangeDialog({
               setSelectedPlan(null);
             }}
           >
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             onClick={handlePlanChange}
@@ -125,7 +130,7 @@ export const PlanChangeDialog = React.memo(function PlanChangeDialog({
             loading={updatePlanMutation.isPending}
             className="bg-blue-600 hover:bg-blue-700"
           >
-            Change Plan
+            <Trans>Change Plan</Trans>
           </Button>
         </DialogFooter>
       </DialogContent>

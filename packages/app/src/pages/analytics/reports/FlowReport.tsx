@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Layers3, Tags } from 'lucide-react';
@@ -29,6 +30,8 @@ interface FlowReportProps {
 }
 
 export function FlowReport({ data }: FlowReportProps) {
+  const { t } = useLingui();
+
   const [dimension, setDimension] = useState<FlowSpendingDimension>('group');
   const [drilldown, setDrilldown] = useState<FlowDrilldown | null>(null);
   const palette = usePalette();
@@ -106,7 +109,7 @@ export function FlowReport({ data }: FlowReportProps) {
 
   const drilldownRows = drilldown?.kind === 'group' ? groupCategoryRows : otherRows;
   const showingDrilldown = drilldown !== null && drilldownRows.length > 0;
-  const drilldownTitle = drilldown?.kind === 'group' ? drilldown.name : 'Other spending';
+  const drilldownTitle = drilldown?.kind === 'group' ? drilldown.name : t`Other spending`;
   const drilldownItemLabel = drilldown?.kind === 'group' ? 'categories' : dimensionLabel;
 
   const drillableGroupNames = useMemo(
@@ -271,7 +274,7 @@ export function FlowReport({ data }: FlowReportProps) {
 
   return (
     <ReportShell
-      title="Money Map"
+      title={t`Money Map`}
       hero={
         <AnimatedNumber
           value={graph.totalIncome}
@@ -281,10 +284,12 @@ export function FlowReport({ data }: FlowReportProps) {
       }
       subtitle={
         showingDrilldown
-          ? `Inside ${drilldownTitle} · ${drilldownRows.length} ${drilldownItemLabel}`
+          ? t`Inside ${drilldownTitle} · ${drilldownRows.length} ${drilldownItemLabel}`
           : savingsRate === null
-            ? `Every stream from income to ${dimensionLabel}`
-            : `Income → ${dimensionLabel}; ${savingsRate >= 0 ? `${savingsRate.toFixed(0)}% saved` : `overspent by ${money.amount(-net)}`}`
+            ? t`Every stream from income to ${dimensionLabel}`
+            : savingsRate >= 0
+              ? t`Income → ${dimensionLabel}; ${savingsRate.toFixed(0)}% saved`
+              : t`Income → ${dimensionLabel}; overspent by ${money.amount(-net)}`
       }
       controls={
         <ModeToggle
@@ -295,8 +300,8 @@ export function FlowReport({ data }: FlowReportProps) {
           }}
           ariaLabel="Money Map spending detail"
           options={[
-            { value: 'group', label: 'Groups', icon: Layers3 },
-            { value: 'category', label: 'Categories', icon: Tags },
+            { value: 'group', label: t`Groups`, icon: Layers3 },
+            { value: 'category', label: t`Categories`, icon: Tags },
           ]}
         />
       }
@@ -334,25 +339,25 @@ export function FlowReport({ data }: FlowReportProps) {
       }
       isLoading={data.isLoading}
       isEmpty={isEmpty}
-      emptyText="No income or spending to map in this period."
+      emptyText={t`No income or spending to map in this period.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
-            <StatTile label="Income" value={money.tile(graph.totalIncome)} />
+            <StatTile label={t`Income`} value={money.tile(graph.totalIncome)} />
             <StatTile
-              label="Spending"
+              label={t`Spending`}
               value={money.tile(graph.totalSpending)}
               valueClassName={
                 graph.totalSpending > 0 ? 'text-red-600 dark:text-red-300' : undefined
               }
             />
             <StatTile
-              label={net >= 0 ? 'Saved' : 'Overspent'}
+              label={net >= 0 ? t`Saved` : t`Overspent`}
               value={money.tile(Math.abs(net))}
               valueClassName={trendTextClass(net)}
             />
             <StatTile
-              label="Savings rate"
+              label={t`Savings rate`}
               value={savingsRate === null ? '—' : `${savingsRate.toFixed(0)}%`}
               valueClassName={savingsRate !== null ? trendTextClass(savingsRate) : undefined}
             />
@@ -363,15 +368,15 @@ export function FlowReport({ data }: FlowReportProps) {
               onClick={() => setDrilldown(null)}
               className="mt-4 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              ← Back to Money Map
+              <Trans>← Back to Money Map</Trans>
             </button>
           ) : null}
           <PanelSectionTitle>
             {showingDrilldown
-              ? `Inside ${drilldownTitle} · ${drilldownItemLabel}`
+              ? t`Inside ${drilldownTitle} · ${drilldownItemLabel}`
               : dimension === 'group'
-                ? 'Destination groups'
-                : 'Destination categories'}
+                ? t`Destination groups`
+                : t`Destination categories`}
           </PanelSectionTitle>
           <div className={showingDrilldown ? 'max-h-[300px] overflow-y-auto pr-1' : undefined}>
             {destinationRows.map((row) => {

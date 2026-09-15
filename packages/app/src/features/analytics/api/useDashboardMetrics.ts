@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import {
   subDays,
-  format,
   startOfMonth,
   endOfMonth,
   eachMonthOfInterval,
   differenceInDays,
   parseISO,
 } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import {
   useOnBudgetBalance,
   useOnBudgetBalanceByDates,

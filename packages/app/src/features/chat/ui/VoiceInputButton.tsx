@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Mic, MicOff, Loader2, Download } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui/tooltip';
@@ -13,6 +14,8 @@ interface VoiceInputButtonProps {
 }
 
 export function VoiceInputButton({ disabled = false }: VoiceInputButtonProps) {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const budgetId = selectedBudget?.ID ?? null;
   const { data: chatSettings } = useChatSettings(budgetId);
@@ -57,11 +60,11 @@ export function VoiceInputButton({ disabled = false }: VoiceInputButtonProps) {
 
   const getTooltipContent = () => {
     if (error) return error;
-    if (isModelLoading) return modelLoadMessage || 'Loading speech model...';
+    if (isModelLoading) return modelLoadMessage || t`Loading speech model...`;
     if (isTranscribing) return 'Transcribing...';
-    if (isRecording) return `Recording... ${formatDuration(recordingDuration)} (click to stop)`;
-    if (!isModelReady) return 'Click to start voice input (model will download on first use)';
-    return 'Click to speak';
+    if (isRecording) return t`Recording... ${formatDuration(recordingDuration)} (click to stop)`;
+    if (!isModelReady) return t`Click to start voice input (model will download on first use)`;
+    return t`Click to speak`;
   };
 
   const getButtonIcon = () => {
@@ -98,12 +101,12 @@ export function VoiceInputButton({ disabled = false }: VoiceInputButtonProps) {
             className={cn(isRecording && 'animate-pulse', isModelLoading && 'cursor-wait')}
             aria-label={
               isRecording
-                ? 'Stop recording'
+                ? t`Stop recording`
                 : isModelLoading
-                  ? 'Loading model'
+                  ? t`Loading model`
                   : isTranscribing
-                    ? 'Transcribing'
-                    : 'Start voice input'
+                    ? t`Transcribing`
+                    : t`Start voice input`
             }
           >
             {getButtonIcon()}
@@ -115,7 +118,11 @@ export function VoiceInputButton({ disabled = false }: VoiceInputButtonProps) {
             {isModelLoading && modelLoadProgress > 0 && (
               <Progress value={modelLoadProgress} className="h-1.5 w-32" />
             )}
-            {isRecording && <p className="text-xs text-muted-foreground">Click to stop</p>}
+            {isRecording && (
+              <p className="text-xs text-muted-foreground">
+                <Trans>Click to stop</Trans>
+              </p>
+            )}
           </div>
         </TooltipContent>
       </Tooltip>

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react';
 import { AssignDropdown } from '@features/budget-planning/ui/assign-dropdown';
 import { SearchAndFilterControls } from '@features/budget-planning/ui/SearchAndFilterControls';
@@ -60,6 +61,8 @@ export function BudgetToolbar({
   onToggleHiddenCategories,
   hasHiddenCategories = false,
 }: BudgetToolbarProps) {
+  const { t } = useLingui();
+
   // readyToAssign is stored milliunits; AnimatedNumber interpolates the raw
   // value, so the formatter converts to decimal each frame.
   const formatAmount = useFormatMaskedMilli(globalLocalizer);
@@ -133,15 +136,15 @@ export function BudgetToolbar({
                   className="h-6 px-2 text-xs gap-1"
                 >
                   {controls.collapsedGroups.size === 0 ? (
-                    <>
+                    <Trans>
                       <ChevronUp className="h-3 w-3" />
                       Collapse
-                    </>
+                    </Trans>
                   ) : (
-                    <>
+                    <Trans>
                       <ChevronDown className="h-3 w-3" />
                       Expand
-                    </>
+                    </Trans>
                   )}
                 </Button>
               )}
@@ -153,15 +156,15 @@ export function BudgetToolbar({
                   className="h-6 px-2 text-xs gap-1"
                 >
                   {showHiddenCategories ? (
-                    <>
+                    <Trans>
                       <EyeOff className="h-3 w-3" />
                       Hide hidden
-                    </>
+                    </Trans>
                   ) : (
-                    <>
+                    <Trans>
                       <Eye className="h-3 w-3" />
                       Show hidden
-                    </>
+                    </Trans>
                   )}
                 </Button>
               )}
@@ -198,7 +201,7 @@ export function BudgetToolbar({
                 <div className="flex items-center gap-1">
                   <span className={cn('h-1.5 w-1.5 rounded-full', rtaTone.dot)} />
                   <span className="text-[10px] font-medium uppercase tracking-[0.08em] leading-none text-muted-foreground">
-                    Ready to assign
+                    <Trans>Ready to assign</Trans>
                   </span>
                   <ReadyToAssignHelpPopover
                     budgetId={budgetId}
@@ -264,17 +267,23 @@ export function BudgetToolbar({
                   size="sm"
                   onClick={onToggleHiddenCategories}
                   className="h-8 shrink-0 gap-1.5 rounded-lg px-2.5 text-xs text-muted-foreground"
-                  title={showHiddenCategories ? 'Hide hidden categories' : 'Show hidden categories'}
+                  title={
+                    showHiddenCategories ? t`Hide hidden categories` : t`Show hidden categories`
+                  }
                 >
                   {showHiddenCategories ? (
                     <>
                       <EyeOff className="h-3.5 w-3.5" />
-                      <span className="hidden xl:inline">Hide hidden</span>
+                      <span className="hidden xl:inline">
+                        <Trans>Hide hidden</Trans>
+                      </span>
                     </>
                   ) : (
                     <>
                       <Eye className="h-3.5 w-3.5" />
-                      <span className="hidden xl:inline">Show hidden</span>
+                      <span className="hidden xl:inline">
+                        <Trans>Show hidden</Trans>
+                      </span>
                     </>
                   )}
                 </Button>

@@ -168,8 +168,10 @@ export function DesktopBudgetGroupRow({
   );
 }
 
-interface SortableDesktopBudgetGroupRowProps
-  extends Omit<DesktopBudgetGroupRowProps, 'dragHandleProps'> {
+interface SortableDesktopBudgetGroupRowProps extends Omit<
+  DesktopBudgetGroupRowProps,
+  'dragHandleProps'
+> {
   overId: string | null;
 }
 

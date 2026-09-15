@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -18,6 +19,8 @@ import { useClearCategorySelectionOnMount } from '@shared/hooks/useClearCategory
 import { useNavigateMonth } from '@shared/hooks/useNavigateMonth';
 
 export function BudgetingPageMobile() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
   const currentMonth = useUiStore((state) => state.currentMonth);
@@ -57,7 +60,7 @@ export function BudgetingPageMobile() {
       <div className="p-4">
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            Select a budget to get started.
+            <Trans>Select a budget to get started.</Trans>
           </CardContent>
         </Card>
       </div>
@@ -65,7 +68,7 @@ export function BudgetingPageMobile() {
   }
 
   const contextButtonLabel =
-    selectedCategories.length > 0 ? `Context (${selectedCategories.length})` : 'View context';
+    selectedCategories.length > 0 ? t`Context (${selectedCategories.length})` : t`View context`;
 
   return (
     <div className="flex h-[calc(100dvh-6rem)] flex-col p-4">
@@ -162,7 +165,9 @@ export function BudgetingPageMobile() {
       <Drawer open={contextOpen} onOpenChange={setContextOpen}>
         <DrawerContent className="h-[85vh] data-[vaul-drawer-direction=bottom]:max-h-[85vh] max-w-full px-0 pb-6">
           <DrawerHeader className="px-6 pt-2">
-            <DrawerTitle>Budget Context</DrawerTitle>
+            <DrawerTitle>
+              <Trans>Budget Context</Trans>
+            </DrawerTitle>
           </DrawerHeader>
           <div className="h-full overflow-y-auto px-6 pt-2">
             <BudgetContextPanel

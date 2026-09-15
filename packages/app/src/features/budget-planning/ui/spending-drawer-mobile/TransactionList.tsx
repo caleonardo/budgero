@@ -1,5 +1,7 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { memo, useMemo } from 'react';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { ChevronLeft, ChevronRight, ArrowUpRight, ChevronDown, ChevronUp } from 'lucide-react';
@@ -41,19 +43,27 @@ export const TransactionList = memo(function TransactionList({
   }, [paginatedTransactions]);
 
   if (loading) {
-    return <div className="text-center py-8">Loading transactions...</div>;
+    return (
+      <div className="text-center py-8">
+        <Trans>Loading transactions...</Trans>
+      </div>
+    );
   }
 
   return (
     <div className="max-w-full">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium">Transactions</h3>
-        <div className="text-xs text-muted-foreground">{transactions.length} total</div>
+        <h3 className="text-sm font-medium">
+          <Trans>Transactions</Trans>
+        </h3>
+        <div className="text-xs text-muted-foreground">
+          <Trans>{transactions.length} total</Trans>
+        </div>
       </div>
 
       {transactions.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground text-sm">
-          No transactions found for this category.
+          <Trans>No transactions found for this category.</Trans>
         </div>
       ) : (
         <div className="max-w-full">
@@ -128,8 +138,10 @@ const DateCard = memo(function DateCard({
               <div className="flex items-center gap-2 text-xs text-muted-foreground min-w-0">
                 <span className="flex-shrink-0">-</span>
                 <span className="truncate">
-                  {dateTransactions.length} transaction
-                  {dateTransactions.length !== 1 ? 's' : ''}
+                  <Trans>
+                    {dateTransactions.length} transaction
+                    {dateTransactions.length !== 1 ? 's' : ''}
+                  </Trans>
                 </span>
                 <span className="flex-shrink-0">-</span>
                 <span className="font-mono font-medium whitespace-nowrap">
@@ -180,6 +192,8 @@ const TransactionRow = memo(function TransactionRow({
   onRecategorize,
   onDelete,
 }: TransactionRowProps) {
+  const { t } = useLingui();
+
   const signedAmount = getTransactionSignedAmount(transaction);
 
   return (
@@ -192,7 +206,7 @@ const TransactionRow = memo(function TransactionRow({
       <div className="flex items-center justify-between py-2 px-2 rounded-md hover:bg-muted/40 cursor-pointer transition-colors group max-w-full overflow-hidden">
         <div className="flex-1 min-w-0 pr-2">
           <div className="block max-w-[10rem] sm:max-w-[14rem] md:max-w-[18rem] lg:max-w-[22rem] text-[11px] leading-tight text-current truncate">
-            {transaction.Memo || 'No memo'}
+            {transaction.Memo || t`No memo`}
           </div>
           <div className="text-xs text-muted-foreground truncate">{transaction.Account}</div>
         </div>
@@ -235,8 +249,10 @@ const Pagination = memo(function Pagination({ page, totalPages, onPageChange }: 
         disabled={page === 0}
         className="flex items-center gap-1"
       >
-        <ChevronLeft className="h-3 w-3" />
-        Previous
+        <Trans>
+          <ChevronLeft className="h-3 w-3" />
+          Previous
+        </Trans>
       </Button>
 
       <div className="flex items-center gap-1">
@@ -263,8 +279,10 @@ const Pagination = memo(function Pagination({ page, totalPages, onPageChange }: 
         disabled={page >= totalPages - 1}
         className="flex items-center gap-1"
       >
-        Next
-        <ChevronRight className="h-3 w-3" />
+        <Trans>
+          Next
+          <ChevronRight className="h-3 w-3" />
+        </Trans>
       </Button>
     </div>
   );

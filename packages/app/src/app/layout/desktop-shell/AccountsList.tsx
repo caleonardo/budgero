@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Search } from 'lucide-react';
@@ -147,6 +148,8 @@ export const AccountsList = React.memo(function AccountsList({
   onToggleShowAll,
   globalLocalizer,
 }: AccountsListProps) {
+  const { t } = useLingui();
+
   const location = useLocation();
   const [query, setQuery] = useState('');
 
@@ -205,21 +208,21 @@ export const AccountsList = React.memo(function AccountsList({
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search accounts…"
+            placeholder={t`Search accounts…`}
             className="h-8 pl-8 text-sm"
-            aria-label="Search accounts"
+            aria-label={t`Search accounts`}
           />
         </div>
       )}
       <AccountSection
-        title="On Budget"
+        title={t`On Budget`}
         accounts={displayOnBudget}
         uncategorizedData={uncategorizedData}
         globalLocalizer={globalLocalizer}
         pathname={location.pathname}
       />
       <AccountSection
-        title="Off Budget"
+        title={t`Off Budget`}
         accounts={displayOffBudget}
         uncategorizedData={uncategorizedData}
         globalLocalizer={globalLocalizer}
@@ -227,7 +230,7 @@ export const AccountsList = React.memo(function AccountsList({
       />
       {noMatches && (
         <div className="mx-2 px-3 py-2 text-xs text-muted-foreground">
-          No accounts match “{query.trim()}”.
+          <Trans>No accounts match “{query.trim()}”.</Trans>
         </div>
       )}
       {hasMoreAccounts && (
@@ -236,7 +239,7 @@ export const AccountsList = React.memo(function AccountsList({
             onClick={onToggleShowAll}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1 rounded-md hover:bg-muted"
           >
-            {showAllAccounts ? 'Show Less' : `Show All (${accounts.length})`}
+            {showAllAccounts ? t`Show Less` : t`Show All (${accounts.length})`}
           </button>
         </div>
       )}

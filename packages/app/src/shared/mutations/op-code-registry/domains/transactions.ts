@@ -506,8 +506,7 @@ export const transactionOps = {
           return {
             CategoryID: (s.CategoryID ?? s.category_id ?? null) as number | null,
             TransferAccountID: (s.TransferAccountID ?? s.transfer_account_id ?? null) as
-              | number
-              | null,
+              number | null,
             Memo: String(s.Memo ?? s.memo ?? ''),
             Payee: String(s.Payee ?? s.payee ?? ''),
             InflowConverted: asMilli(Number(s.InflowConverted ?? s.Inflow ?? s.inflow ?? 0)),

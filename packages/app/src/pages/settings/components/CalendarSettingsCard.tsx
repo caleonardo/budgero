@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { CalendarDays } from 'lucide-react';
 import { toast } from 'sonner';
 import { useWeekStartsOnPreference } from '@shared/hooks/useUserPreferences';
@@ -6,6 +7,8 @@ import { Label } from '@shared/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 
 export function CalendarSettingsCard() {
+  const { t } = useLingui();
+
   const { weekStartsOn, updateWeekStartsOn, isLoading, isError, isUpdating } =
     useWeekStartsOnPreference();
 
@@ -13,23 +16,29 @@ export function CalendarSettingsCard() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CalendarDays className="h-5 w-5" />
-          Calendar
+          <Trans>
+            <CalendarDays className="h-5 w-5" />
+            Calendar
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Choose the first day of the week for calendars, weekly reports, and “this week” and “last
-          week” searches in this workspace.
+          <Trans>
+            Choose the first day of the week for calendars, weekly reports, and “this week” and
+            “last week” searches in this workspace.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
-        <Label htmlFor="week-starts-on">First day of the week</Label>
+        <Label htmlFor="week-starts-on">
+          <Trans>First day of the week</Trans>
+        </Label>
         <Select
           value={String(weekStartsOn)}
           disabled={isLoading || isError || isUpdating}
           onValueChange={(value) => {
             if (value !== '0' && value !== '1') return;
             updateWeekStartsOn(value === '1' ? 1 : 0, {
-              onError: () => toast.error('Could not save the first day of the week'),
+              onError: () => toast.error(t`Could not save the first day of the week`),
             });
           }}
         >
@@ -37,13 +46,17 @@ export function CalendarSettingsCard() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="0">Sunday</SelectItem>
-            <SelectItem value="1">Monday</SelectItem>
+            <SelectItem value="0">
+              <Trans>Sunday</Trans>
+            </SelectItem>
+            <SelectItem value="1">
+              <Trans>Monday</Trans>
+            </SelectItem>
           </SelectContent>
         </Select>
         {isError && (
           <p role="alert" className="text-sm text-destructive">
-            Could not load calendar settings.
+            <Trans>Could not load calendar settings.</Trans>
           </p>
         )}
       </CardContent>

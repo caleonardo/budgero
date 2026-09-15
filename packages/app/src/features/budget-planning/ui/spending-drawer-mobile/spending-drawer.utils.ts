@@ -5,8 +5,8 @@ import {
   endOfMonth,
   endOfToday,
   isSameMonth,
-  format,
 } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { extractDateKey, getMonthKey, getTodayISO } from '@shared/lib/date-utils';
 import { asMilli, toDecimal, ZERO_MILLI, type MilliUnits } from '@shared/lib/currency/milli';

@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Account } from '@budgero/core/browser';
 // Use runtime services directly instead of db-ops wrappers
@@ -96,6 +97,8 @@ export type EditAccountInput = {
 
 export type AccountCurrencyChangeMode = 'convert' | 'reinterpret';
 export function useEditAccount() {
+  const { t } = useLingui();
+
   const qc = useQueryClient();
   const { setCurrencyConversion, resetCurrencyConversion } = useUiStore.getState();
   const runtime = useRuntime();
@@ -117,7 +120,7 @@ export function useEditAccount() {
       if (isCurrencyChanging) {
         setCurrencyConversion({
           isActive: true,
-          message: 'Updating account currency and recalculating transactions...',
+          message: t`Updating account currency and recalculating transactions...`,
         });
       }
 

@@ -1,4 +1,5 @@
-import { format } from 'date-fns';
+import { t } from '@lingui/core/macro';
+import { formatDate as format } from '@shared/lib/date-format';
 import type { DateRange } from 'react-day-picker';
 import type { Account, Category } from '@budgero/core/browser';
 
@@ -23,7 +24,7 @@ export function formatPeriodLabel(dateRange: DateRange | undefined): string {
   if (dateRange?.to) {
     return format(dateRange.to, 'MMM d, yyyy');
   }
-  return 'All transactions';
+  return t`All transactions`;
 }
 
 /**

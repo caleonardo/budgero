@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Group Name Edit Popover
  *
@@ -39,6 +40,8 @@ export function GroupNameEditPopover({
   align,
   children,
 }: GroupNameEditPopoverProps) {
+  const { t } = useLingui();
+
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -48,7 +51,7 @@ export function GroupNameEditPopover({
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
             className="w-full"
-            placeholder="Group name"
+            placeholder={t`Group name`}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 onSave();
@@ -64,15 +67,15 @@ export function GroupNameEditPopover({
               disabled={isDeleting}
             >
               <Trash className="h-4 w-4" />
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? t`Deleting...` : t`Delete`}
             </Button>
 
             <div className="flex gap-2">
               <Button variant="secondary" size="sm" onClick={() => onOpenChange(false)}>
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
               <Button onClick={onSave} size="sm" disabled={isUpdating}>
-                {isUpdating ? 'Saving...' : 'Save'}
+                {isUpdating ? t`Saving...` : t`Save`}
               </Button>
             </div>
           </div>

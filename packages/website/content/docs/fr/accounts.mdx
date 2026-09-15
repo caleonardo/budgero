@@ -1,0 +1,107 @@
+---
+title: "Comptes"
+summary: "Ajoutez vos comptes courants, d'épargne, espèces, de crédit et de suivi en toute confiance. Découvrez comment les soldes, les devises et le rapprochement fonctionnent ensemble."
+section: accounts-and-imports
+topicId: accounts
+takeaways:
+  - "Quels types de comptes sont dans le budget, hors budget, ou laissés à votre choix."
+  - "Comment les comptes multidevise sont convertis dans la devise de votre budget."
+  - "Le processus de rapprochement et ce que l'archivage d'un compte préserve."
+---
+
+Les comptes sont l'endroit où votre argent se trouve physiquement ; le budget est le plan que vous appliquez par-dessus. Budgero maintient cette distinction nette — c'est pourquoi choisir le bon type de compte a plus d'importance qu'il n'y paraît au premier abord.
+
+## Types de comptes
+
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Nature</th>
+      <th>Participation au budget</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Compte courant</strong></td>
+      <td>Actif</td>
+      <td>Toujours dans le budget</td>
+    </tr>
+    <tr>
+      <td><strong>Épargne</strong></td>
+      <td>Actif</td>
+      <td>Toujours dans le budget</td>
+    </tr>
+    <tr>
+      <td><strong>Espèces</strong></td>
+      <td>Actif</td>
+      <td>Toujours dans le budget</td>
+    </tr>
+    <tr>
+      <td><strong>Carte de crédit</strong></td>
+      <td>Passif</td>
+      <td>Votre choix</td>
+    </tr>
+    <tr>
+      <td><strong>Prêt</strong></td>
+      <td>Passif</td>
+      <td>Votre choix</td>
+    </tr>
+    <tr>
+      <td><strong>Hypothèque</strong></td>
+      <td>Passif</td>
+      <td>Toujours hors budget</td>
+    </tr>
+    <tr>
+      <td><strong>Investissement / Retraite</strong></td>
+      <td>Actif</td>
+      <td>Toujours hors budget</td>
+    </tr>
+    <tr>
+      <td><strong>Immobilier / Autre actif</strong></td>
+      <td>Actif</td>
+      <td>Toujours hors budget</td>
+    </tr>
+  </tbody>
+</table>
+
+Les comptes **dans le budget** alimentent votre budget : leur argent apparaît dans [À affecter](/docs/ready-to-assign) et leurs dépenses impactent les catégories. Les comptes **hors budget** (de suivi) contribuent au patrimoine net mais restent en dehors des calculs liés à la méthode des enveloppes — vous ne budgétez pas les fluctuations boursières de votre fonds de retraite.
+
+Les cartes de crédit et les prêts sont **flexibles** : dans le budget si vous souhaitez que les mécanismes de gestion de dettes de Budgero s'occupent des paiements et du remboursement (voir [Suivi des dettes](/docs/debt-tracking)), hors budget si vous souhaitez uniquement suivre le solde.
+
+## Soldes initiaux
+
+Lorsque vous créez un compte avec un solde, Budgero l'enregistre comme une transaction d'ouverture afin que les comptes soient équilibrés dès le premier jour :
+
+- Les **comptes d'actif** reçoivent une entrée (« Solde initial ») qui atterrit dans les revenus — ce qui signifie que votre argent existant devient immédiatement affectable.
+- Les **comptes de dette** peuvent enregistrer à la fois le total emprunté et ce que vous avez déjà remboursé, de sorte que le solde reflète ce que vous devez réellement aujourd'hui.
+
+## Comptes multidevise
+
+Chaque compte peut être libellé dans plus de 120 devises fiduciaires ou 25 cryptomonnaies majeures, indépendamment de votre [devise du budget](/docs/budget-currency). Pour un compte en devise étrangère, chaque transaction stocke deux montants : le montant **original** (ce qui s'est réellement passé, dans la devise du compte) et la valeur **convertie** (ce que votre budget voit), ainsi que le taux de change utilisé.
+
+Les taux sont résolus dans un ordre défini :
+
+1. **Taux personnalisés** que vous avez fixés sur une période — utiles lorsque vous avez déplacé de l'argent à un taux connu.
+2. **Taux récupérés** — Budgero récupère automatiquement les taux quotidiens.
+3. **Taux manuels** que vous avez saisis — ils permettent également au multidevise de fonctionner entièrement hors ligne et sur des configurations auto-hébergées sans API de taux.
+4. **Taux le plus proche** — le taux du jour antérieur le plus proche (jusqu'à une semaine en arrière) lorsque le jour exact n'est pas en cache.
+
+Vous pouvez également remplacer le taux sur n'importe quelle transaction individuelle — l'outil idéal lorsque le taux de règlement réel de votre carte diffère de la moyenne du marché et que vous souhaitez que le montant converti corresponde à votre relevé au centime près.
+
+## Rapprochement
+
+Le rapprochement est l'habitude qui maintient la fiabilité d'un budget géré manuellement : comparer le solde de Budgero avec celui de votre banque et confirmer qu'ils concordent.
+
+1. Ouvrez le compte et comparez son solde à votre application bancaire ou votre relevé.
+2. S'ils diffèrent, trouvez l'écart — généralement une transaction oubliée, un doublon, ou une charge en attente que la banque n'a pas encore réglée.
+3. Ajoutez une transaction d'ajustement si un petit écart ne justifie pas de fouiller.
+4. **Rapprochez** le compte — Budgero marque toutes les transactions jusqu'à cette date comme rapprochées et horodate le compte avec l'heure du rapprochement.
+
+Les transactions rapprochées constituent votre historique vérifié ; le tampon vous indique à quand remonte cette vérification. Le rapprochement hebdomadaire prend environ deux minutes par compte. Un rythme mensuel fonctionne aussi. « Jamais » est la façon dont les budgets manuels meurent — voir [À affecter](/docs/ready-to-assign) pour comprendre comment la dérive non rapprochée se manifeste dans vos chiffres.
+
+## Fermer un compte
+
+Les comptes sont **archivés**, pas supprimés. Un compte archivé disparaît des sélecteurs et des listes quotidiennes, mais toutes les transactions qu'il a jamais contenues restent dans vos rapports et votre historique — fermez votre ancien compte bancaire sans perdre cinq ans de relevés. L'archivage est réversible ; désarchivez-le et il revient exactement comme il était.
+
+Avant l'archivage, ramenez le solde à zéro (transférez les fonds restants vers un autre compte) pour que votre patrimoine net et votre À affecter ne portent pas un solde fantôme.

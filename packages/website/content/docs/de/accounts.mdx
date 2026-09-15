@@ -1,0 +1,107 @@
+---
+title: "Konten"
+summary: "Lege Giro-, Spar-, Bargeld-, Kreditkarten- und Tracking-Konten mit Zuversicht an. Erfahre, wie Salden, Währungen und der Abgleich zusammenwirken."
+section: accounts-and-imports
+topicId: accounts
+takeaways:
+  - "Welche Kontotypen im Budget oder nicht im Budget geführt werden – und welche du selbst zuordnen kannst."
+  - "Wie Multi-Währung-Konten in deine Budgetwährung umgerechnet werden."
+  - "Der Abgleich-Workflow und was beim Archivieren eines Kontos erhalten bleibt."
+---
+
+Konten sind der Ort, an dem sich dein Geld physisch befindet; das Budget ist der Plan, der darübergelegt wird. Budgero hält diese Unterscheidung klar — weshalb die Wahl des richtigen Kontotyps wichtiger ist, als es zunächst erscheint.
+
+## Kontotypen
+
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Art</th>
+      <th>Budget-Zugehörigkeit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Girokonto</strong></td>
+      <td>Aktiv</td>
+      <td>Immer im Budget</td>
+    </tr>
+    <tr>
+      <td><strong>Sparkonto</strong></td>
+      <td>Aktiv</td>
+      <td>Immer im Budget</td>
+    </tr>
+    <tr>
+      <td><strong>Bargeld</strong></td>
+      <td>Aktiv</td>
+      <td>Immer im Budget</td>
+    </tr>
+    <tr>
+      <td><strong>Kreditkarte</strong></td>
+      <td>Passiv</td>
+      <td>Deine Wahl</td>
+    </tr>
+    <tr>
+      <td><strong>Kredit</strong></td>
+      <td>Passiv</td>
+      <td>Deine Wahl</td>
+    </tr>
+    <tr>
+      <td><strong>Hypothek</strong></td>
+      <td>Passiv</td>
+      <td>Immer nicht im Budget</td>
+    </tr>
+    <tr>
+      <td><strong>Anlage / Altersvorsorge</strong></td>
+      <td>Aktiv</td>
+      <td>Immer nicht im Budget</td>
+    </tr>
+    <tr>
+      <td><strong>Immobilien / Sonstiges Vermögen</strong></td>
+      <td>Aktiv</td>
+      <td>Immer nicht im Budget</td>
+    </tr>
+  </tbody>
+</table>
+
+**Im Budget**-Konten speisen dein Budget: Ihr Geld erscheint unter [Zu budgetieren](/docs/ready-to-assign) und ihre Ausgaben landen in Kategorien. **Nicht im Budget** (Tracking)-Konten tragen zum Nettovermögen bei, bleiben aber aus der Umschlag-Rechnung heraus — du budgetierst nicht die Marktschwankungen deines Altersvorsorgefonds.
+
+Kreditkarten und Kredite sind **flexibel**: im Budget, wenn du möchtest, dass Budgeros Schulden-System Zahlungen und Tilgung verwaltet (siehe [Schuldenübersicht](/docs/debt-tracking)), nicht im Budget, wenn du nur den Saldo verfolgen möchtest.
+
+## Eröffnungssalden
+
+Wenn du ein Konto mit einem Saldo erstellst, zeichnet Budgero diesen als Eröffnungstransaktion auf, damit die Bücher ab dem ersten Tag ausgeglichen sind:
+
+- **Aktivkonten** erhalten eine Einnahme („Eröffnungssaldo"), die unter Einnahmen landet — was bedeutet, dass dein vorhandenes Geld sofort zuweisbar wird.
+- **Schuldenkonten** können sowohl die insgesamt geliehene Summe als auch bereits geleistete Zahlungen erfassen, sodass der Saldo widerspiegelt, was du heute tatsächlich schuldest.
+
+## Multi-Währung-Konten
+
+Jedes Konto kann in über 120 Fiat-Währungen oder 25 wichtigen Kryptowährungen geführt werden, unabhängig von deiner [Budget-Währung](/docs/budget-currency). Bei einem Fremdwährungskonto speichert jede Transaktion zwei Beträge: den **ursprünglichen** Betrag (was tatsächlich passiert ist, in der Währung des Kontos) und den **umgerechneten** Wert (was dein Budget sieht), zusammen mit dem verwendeten Wechselkurs.
+
+Wechselkurse werden in einer festgelegten Reihenfolge ermittelt:
+
+1. **Benutzerdefinierte Kurse**, die du für einen Zeitraum festgelegt hast — nützlich, wenn du Geld zu einem bekannten Kurs bewegt hast.
+2. **Abgerufene Kurse** — Budgero ruft Tageskurse automatisch ab.
+3. **Manuelle Kurse**, die du eingegeben hast — diese ermöglichen auch, dass Multi-Währung vollständig offline und auf Self-Hosting-Setups ohne Kurs-API funktioniert.
+4. **Nächstgelegener aktueller Kurs** — der Kurs des nächstgelegenen vergangenen Tages (bis zu eine Woche zurück), wenn der genaue Tag nicht zwischengespeichert ist.
+
+Du kannst den Kurs auch für jede einzelne Transaktion überschreiben — das richtige Werkzeug, wenn der tatsächliche Abrechnungskurs deiner Karte vom Marktdurchschnitt abweicht und der umgerechnete Betrag auf den Cent genau mit deinem Kontoauszug übereinstimmen soll.
+
+## Abgleichen
+
+Der Abgleich ist die Gewohnheit, die ein manuell geführtes Budget vertrauenswürdig hält: Du vergleichst den Saldo in Budgero mit dem deiner Bank und bestätigst, dass sie übereinstimmen.
+
+1. Öffne das Konto und vergleiche den Saldo mit deiner Banking-App oder deinem Kontoauszug.
+2. Wenn sie abweichen, finde die Lücke — meist eine fehlende Transaktion, ein Duplikat oder eine vorgemerkte Belastung, die die Bank noch nicht abgerechnet hat.
+3. Füge eine Korrekturtransaktion hinzu, wenn eine kleine Abweichung keine tiefere Recherche wert ist.
+4. Konto **abgleichen** — Budgero markiert alle Transaktionen bis zu diesem Datum als abgeglichen und versieht das Konto mit dem Zeitpunkt des Abgleichs.
+
+Abgeglichene Transaktionen sind deine verifizierte Historie; der Stempel zeigt dir, wie aktuell diese Verifizierung ist. Der wöchentliche Abgleich dauert etwa zwei Minuten pro Konto. Monatlich funktioniert auch. „Nie" ist, wie manuelle Budgets zugrunde gehen — siehe [Zu budgetieren](/docs/ready-to-assign), um zu sehen, wie nicht abgeglichene Abweichungen in deinen Zahlen auftauchen.
+
+## Konto schließen
+
+Konten werden **archiviert**, nicht gelöscht. Ein archiviertes Konto verschwindet aus Auswahlmenüs und Alltagslisten, aber jede Transaktion, die es jemals enthielt, bleibt in deinen Berichten und deiner Historie — schließe dein altes Bankkonto, ohne fünf Jahre an Aufzeichnungen zu verlieren. Die Archivierung ist umkehrbar; hebe sie auf und es kehrt genau so zurück, wie es war.
+
+Bringe vor dem Archivieren den Saldo auf null (buche verbleibende Gelder auf ein anderes Konto um), damit dein Nettovermögen und Zu budgetieren keinen Geistersaldo mitschleppen.

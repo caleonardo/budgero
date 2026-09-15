@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React, { useState, memo, useRef, useCallback, useEffect } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { Trash2, Tag } from 'lucide-react';
@@ -22,26 +23,6 @@ export interface SwipeRowAction {
   /** Color classes for the pill (border + background). */
   pillClassName: string;
 }
-
-/** Default left action (revealed by swiping right): reassign category. */
-const SWIPE_REASSIGN_ACTION: SwipeRowAction = {
-  icon: <Tag className="h-3.5 w-3.5" />,
-  label: 'Reassign',
-  hintLabel: 'Move',
-  tintGradient:
-    'linear-gradient(90deg, hsl(208 92% 44% / 0.36) 0%, hsl(208 92% 44% / 0.22) 62%, transparent 100%)',
-  pillClassName: 'border-sky-100/55 bg-sky-600/95',
-};
-
-/** Default right action (revealed by swiping left): delete. */
-const SWIPE_DELETE_ACTION: SwipeRowAction = {
-  icon: <Trash2 className="h-3.5 w-3.5" />,
-  label: 'Delete',
-  hintLabel: 'Remove',
-  tintGradient:
-    'linear-gradient(270deg, hsl(0 78% 44% / 0.4) 0%, hsl(0 78% 44% / 0.24) 62%, transparent 100%)',
-  pillClassName: 'border-red-100/55 bg-red-600/95',
-};
 
 export interface SwipeRowProps {
   children: React.ReactNode;
@@ -83,9 +64,34 @@ export const SwipeRow = memo(function SwipeRow({
   captureClicks = false,
   ignoreVerticalSwipes = false,
   animatedSnapBack = false,
-  leftAction = SWIPE_REASSIGN_ACTION,
-  rightAction = SWIPE_DELETE_ACTION,
+  leftAction: leftActionProp,
+  rightAction: rightActionProp,
 }: SwipeRowProps) {
+  const { t } = useLingui();
+
+  /** Default right action (revealed by swiping left): delete. */
+  const SWIPE_DELETE_ACTION: SwipeRowAction = {
+    icon: <Trash2 className="h-3.5 w-3.5" />,
+    label: t`Delete`,
+    hintLabel: 'Remove',
+    tintGradient:
+      'linear-gradient(270deg, hsl(0 78% 44% / 0.4) 0%, hsl(0 78% 44% / 0.24) 62%, transparent 100%)',
+    pillClassName: 'border-red-100/55 bg-red-600/95',
+  };
+
+  /** Default left action (revealed by swiping right): reassign category. */
+  const SWIPE_REASSIGN_ACTION: SwipeRowAction = {
+    icon: <Tag className="h-3.5 w-3.5" />,
+    label: t`Reassign`,
+    hintLabel: 'Move',
+    tintGradient:
+      'linear-gradient(90deg, hsl(208 92% 44% / 0.36) 0%, hsl(208 92% 44% / 0.22) 62%, transparent 100%)',
+    pillClassName: 'border-sky-100/55 bg-sky-600/95',
+  };
+
+  const leftAction = leftActionProp ?? SWIPE_REASSIGN_ACTION;
+  const rightAction = rightActionProp ?? SWIPE_DELETE_ACTION;
+
   const [dx, setDx] = useState(0);
   const [dragging, setDragging] = useState(false);
   const dxRef = useRef(0);

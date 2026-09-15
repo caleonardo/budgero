@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { ArrowUpRight, ArrowDownRight, CheckCircle2 } from 'lucide-react';
@@ -24,11 +25,15 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
   formatter,
   valueChangeSlot,
 }: AccountSummaryCardsProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-3 mb-4">
       <div className="flex items-center gap-6 flex-wrap">
         <div>
-          <span className="text-xs text-muted-foreground">Balance</span>
+          <span className="text-xs text-muted-foreground">
+            <Trans>Balance</Trans>
+          </span>
           <p className="text-base font-bold tabular-nums text-foreground">
             {formatSafeMilli(formatter, displayBalanceToday)}
           </p>
@@ -38,18 +43,18 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
 
         <FlowStat
           icon={ArrowUpRight}
-          label="Inflow"
+          label={t`Inflow`}
           value={formatSafeMilli(formatter, transactionStats.totalInflow)}
           color="success"
-          tooltip={`Total inflow from recent ${transactionStats.recentCount} transactions`}
+          tooltip={t`Total inflow from recent ${transactionStats.recentCount} transactions`}
         />
 
         <FlowStat
           icon={ArrowDownRight}
-          label="Outflow"
+          label={t`Outflow`}
           value={formatSafeMilli(formatter, transactionStats.totalOutflow)}
           color="destructive"
-          tooltip={`Total outflow from recent ${transactionStats.recentCount} transactions`}
+          tooltip={t`Total outflow from recent ${transactionStats.recentCount} transactions`}
         />
 
         {valueChangeSlot && (
@@ -69,9 +74,14 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="font-medium text-success">Paid off - congratulations!</div>
+                  <div className="font-medium text-success">
+                    <Trans>Paid off - congratulations!</Trans>
+                  </div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    This liability now has a positive balance. There's nothing to pay off right now.
+                    <Trans>
+                      This liability now has a positive balance. There's nothing to pay off right
+                      now.
+                    </Trans>
                   </div>
                 </div>
               </div>

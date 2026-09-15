@@ -1,0 +1,59 @@
+---
+title: "Offlinemodus"
+summary: "Budgetteer tijdens vluchten of uitstapjes naar afgelegen gebieden. Begrijp hoe Budgero wijzigingen in de wachtrij plaatst, gelijktijdige bewerkingen samenvoegt en grootboeken consistent houdt zodra je weer verbinding maakt."
+section: collaboration
+topicId: offline
+takeaways:
+  - "Hoe offline bewerkingen lokaal in de wachtrij worden geplaatst en opnieuw worden toegepast bij herverbinding."
+  - "Wat er gebeurt als twee personen hetzelfde budget offline bewerken."
+  - "De paar dingen die echt een verbinding vereisen - en de workarounds daarvoor."
+---
+
+Budgero is een offline-first app, geen online app met een cache. Je volledige budget staat op je apparaat, elke functie werkt zonder verbinding, en synchroniseren is iets dat *met* jouw wijzigingen gebeurt — niet iets waarop jouw wijzigingen wachten.
+
+## Hoe het werkt
+
+Budgero draait als een Progressive Web App met je budget lokaal opgeslagen (in de IndexedDB van je browser). Elke actie — een transactie toevoegen, geld verplaatsen, een categorie bewerken — wordt direct op de lokale database toegepast. Dat geldt of je nu online bent of niet; het enige verschil dat verbinding maakt, is wat er daarna gebeurt:
+
+- **Online:** elke wijziging wordt versleuteld en direct naar de server gestuurd, waar andere apparaten deze oppakken.
+- **Offline:** wijzigingen hopen zich op in een lokale **wachtrij van versleutelde mutaties**. Zodra de verbinding terugkeert, wordt de wachtrij in volgorde naar de server afgespeeld, en je andere apparaten ontvangen de wijzigingen alsof ze live zijn doorgevoerd.
+
+Er is geen "offlinemodus" om in te schakelen, geen alleen-lezen degradatie, en geen limiet aan wat je offline kunt doen. De transacties van een reis van twee weken synchroniseren op dezelfde manier als die van twee minuten.
+
+## Hoe synchroniseren eruitziet
+
+Synchroniseren is ontworpen om saai te zijn. Wijzigingen worden gedupliceerd op basis van unieke ID's — dus een onstabiele verbinding die een synchronisatie opnieuw probeert, kan geen dubbele transacties creëren — en toegepast in een deterministische volgorde. Periodiek maakt Budgero ook een momentopname van de hele versleutelde database naar de server, wat voorkomt dat nieuwe apparaten jaren aan geschiedenis moeten afspelen om in te halen.
+
+Alles wordt end-to-end versleuteld voordat het je apparaat verlaat; offline in de wachtrij plaatsen verandert niets aan het [beveiligingsmodel](/docs/security).
+
+## Twee personen, allebei offline
+
+Het interessante scenario voor [gedeelde budgetten](/docs/sharing): jij zit in een vliegtuig je lunch vast te leggen, je partner is thuis categorieën aan het herverdelen, en geen van beide apparaten kan de andere zien.
+
+Wanneer beide weer verbinding maken, worden de wachtende wijzigingen samengevoegd door ze op volgorde af te spelen:
+
+- **Verschillende dingen bewerkt** — veruit het meest voorkomende geval — en alles combineert gewoon. Jouw transacties komen binnen, hun toewijzingen komen binnen, niemand merkt een overgang.
+- **Hetzelfde bewerkt** — jullie hebben allebei de toewijzing van *dezelfde* categorie gewijzigd, zeg maar — en de meest recente wijziging wint. Er is geen conflictdialoog om op te lossen; het budget convergeert naar één consistente staat, en de wiskunde met de drie getallen (Toegewezen, Activiteit, Beschikbaar) wordt opnieuw berekend op basis van de samengevoegde geschiedenis.
+
+Praktisch advies voor huishoudens waar gelijktijdig offline bewerken routine is: laat iedereen vrij *transacties vastleggen* (die conflicteren nooit — het zijn aparte boekingen), en bewaar *herstructureren* — categorieën hernoemen, in bulk herverdelen — voor momenten dat je online en gesynchroniseerd bent. Dat gaat minder over dataveiligheid en meer over elkaar niet verrassen.
+
+## De weinige dingen die verbinding nodig hebben
+
+Alles wat essentieel is werkt offline. Het eerlijke overzicht van uitzonderingen:
+
+- **Opgehaalde wisselkoersen.** Live koersopzoeken hebben het netwerk nodig. Als je in meerdere valuta budgetteert en reist, stel dan **handmatige koersen** in voor de valuta die je gebruikt (zie [Rekeningen](/docs/accounts)) — handmatige koersen werken volledig offline. Als er geen koers in de cache staat, vraagt Budgero je met de dichtstbijzijnde koers uit de cache vooraf ingevuld, en standaard worden conversies automatisch bijgewerkt naar officiële koersen zodra je weer verbinding maakt.
+- **Nieuwe leden uitnodigen.** Uitnodigingslinks genereren en inwisselen is een online bewerking.
+- **De Push API.** Van nature server-side — hoewel pushes die worden verzonden terwijl je apparaat offline is gewoon in de serverwachtrij wachten tot je de volgende keer synchroniseert.
+
+## Voordat je bewust de verbinding verbreekt
+
+Ga je naar een plek zonder verbinding? Twee gewoontes maken het probleemloos:
+
+1. **Open de app één keer terwijl je online bent** op het apparaat dat je meeneemt, zodat deze de laatst gesynchroniseerde status behoudt — vooral als iemand anders recent heeft gebudgetteerd.
+2. **Verbind dat apparaat eerst weer** wanneer je terug bent, voordat je grote wijzigingen aanbrengt vanaf een ander apparaat.
+
+Geen van beide is vereist — de samenvoeging vangt wanorde op — maar ze houden de tijdlijn overzichtelijk.
+
+## Als synchronisatie vast lijkt te lopen
+
+Offline bewerkingen zijn duurzaam: ze blijven in de lokale wachtrij staan tot de server ze bevestigt, en overleven app-herstarts en systeemherstarts. Als wijzigingen niet op een ander apparaat verschijnen, ligt de oorzaak vrijwel altijd in het feit dat een van de twee apparaten niet daadwerkelijk online is geweest met de app open. Open Budgero op beide apparaten, geef ze even tijd, en de wachtrijen lopen leeg. Je gegevens zijn niet in het ongewisse — ze zijn versleuteld, lokaal en wachten.

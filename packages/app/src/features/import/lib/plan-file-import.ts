@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   planImportRows,
   importSourceKey,
@@ -46,7 +47,7 @@ export async function buildFileImportPreview({
     const valid = plan.status === 'ready' && !skippedRowIndices.has(plan.index);
     if (valid && !account && destinationId !== -1)
       throw new Error(
-        `Choose a destination account in Configuration for row ${plan.index + 1}${accountName ? ` (${accountName})` : ''}.`
+        t`Choose a destination account in Configuration for row ${plan.index + 1}${accountName ? ` (${accountName})` : ''}.`
       );
     const currency = account?.Currency ?? importConfig.accountCurrency;
     if (
@@ -56,7 +57,7 @@ export async function buildFileImportPreview({
       row.Currency !== currency
     ) {
       throw new Error(
-        `Row ${plan.index + 1} is in ${row.Currency}; choose an account in that currency.`
+        t`Row ${plan.index + 1} is in ${row.Currency}; choose an account in that currency.`
       );
     }
     const interpretation = [

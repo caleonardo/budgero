@@ -1,3 +1,5 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { EditAccountDialog } from '@features/account-management/ui/EditAccountDialog';
 import { ReconcileAccountDialog } from '@features/account-management/ui/ReconcileAccountDialog';
@@ -60,6 +62,8 @@ import { AccountTransactionsSection } from './components/AccountTransactionsSect
 import { RecurringTransactionsPanel } from './components/RecurringTransactionsPanel';
 
 export default function AccountPage() {
+  const { t } = useLingui();
+
   const { accountId } = useParams<{ accountId: string }>();
   const numericId = Number(accountId);
   const { isProcessingTransfer } = useLoading();
@@ -320,18 +324,18 @@ export default function AccountPage() {
         // Post dated on the due date, matching the recurring settings page.
         const result = await markRecurringReady.mutateAsync({ occurrenceId });
         const { template } = result.occurrence;
-        toast.success('Transaction posted', {
-          description: `${template.name} was added to your register.`,
+        toast.success(t`Transaction posted`, {
+          description: t`${template.name} was added to your register.`,
         });
       } else {
         await skipRecurring.mutateAsync({ id: occurrenceId });
-        toast.success('Occurrence skipped', {
-          description: 'We will remind you again next time.',
+        toast.success(t`Occurrence skipped`, {
+          description: t`We will remind you again next time.`,
         });
       }
     } catch (error) {
-      const message = getErrorMessage(error, 'Something went wrong.');
-      toast.error('Action failed', { description: message });
+      const message = getErrorMessage(error, t`Something went wrong.`);
+      toast.error(t`Action failed`, { description: message });
     } finally {
       setProcessingOccurrenceId(null);
     }
@@ -400,7 +404,7 @@ export default function AccountPage() {
   useJumpToTransaction(transactionsData.length);
 
   if (isAccountsLoading) {
-    return <CenteredLoader className="flex-1 p-4" label="Loading account information..." />;
+    return <CenteredLoader className="flex-1 p-4" label={t`Loading account information...`} />;
   }
 
   if (!selectedAccount && !isAccountsLoading) {
@@ -410,9 +414,11 @@ export default function AccountPage() {
           <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center mb-4 mx-auto">
             <Wallet className="w-8 h-8 text-muted-foreground" />
           </div>
-          <p className="text-lg font-medium text-muted-foreground mb-2">Account not found</p>
+          <p className="text-lg font-medium text-muted-foreground mb-2">
+            <Trans>Account not found</Trans>
+          </p>
           <p className="text-sm text-muted-foreground/70">
-            The account you're looking for doesn't exist or has been deleted.
+            <Trans>The account you're looking for doesn't exist or has been deleted.</Trans>
           </p>
         </div>
       </div>
@@ -458,12 +464,14 @@ export default function AccountPage() {
                 {selectedAccount?.Currency}
                 {' · '}
                 {mobilePageStats
-                  ? `Page ${mobilePageStats.pageNumber + 1}/${mobilePageStats.totalPages}`
+                  ? t`Page ${mobilePageStats.pageNumber + 1}/${mobilePageStats.totalPages}`
                   : `${transactionStats.recentCount} txns`}
                 {selectedAccount?.ReconciledAt && (
                   <span>
-                    {' '}
-                    · Reconciled {new Date(selectedAccount.ReconciledAt).toLocaleDateString()}
+                    <Trans>
+                      {' '}
+                      · Reconciled {new Date(selectedAccount.ReconciledAt).toLocaleDateString()}
+                    </Trans>
                   </span>
                 )}
               </p>
@@ -483,7 +491,9 @@ export default function AccountPage() {
 
           <div className="flex items-center gap-4 flex-wrap">
             <div>
-              <span className="text-[10px] text-muted-foreground">Balance</span>
+              <span className="text-[10px] text-muted-foreground">
+                <Trans>Balance</Trans>
+              </span>
               <p className="text-sm font-bold tabular-nums text-foreground">
                 {formatMilliAmount(displayBalanceToday)}
               </p>
@@ -491,14 +501,14 @@ export default function AccountPage() {
             <div className="w-px h-6 bg-border" />
             <FlowStat
               icon={ArrowUpRight}
-              label="Inflow"
+              label={t`Inflow`}
               value={formatMilliAmount(transactionStats.totalInflow)}
               color="success"
               size="sm"
             />
             <FlowStat
               icon={ArrowDownRight}
-              label="Outflow"
+              label={t`Outflow`}
               value={formatMilliAmount(transactionStats.totalOutflow)}
               color="destructive"
               size="sm"
@@ -531,9 +541,11 @@ export default function AccountPage() {
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-xs font-medium text-success">Paid off!</div>
+                    <div className="text-xs font-medium text-success">
+                      <Trans>Paid off!</Trans>
+                    </div>
                     <div className="text-[10px] text-muted-foreground">
-                      This liability has a positive balance.
+                      <Trans>This liability has a positive balance.</Trans>
                     </div>
                   </div>
                 </div>
@@ -607,11 +619,16 @@ export default function AccountPage() {
           <div className="px-3 pb-3 sm:px-6">
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Exchange-rate data needs attention</AlertTitle>
+              <AlertTitle>
+                <Trans>Exchange-rate data needs attention</Trans>
+              </AlertTitle>
               <AlertDescription>
                 {unsafeTransactionCount > 0
-                  ? `${unsafeTransactionCount} transaction${unsafeTransactionCount === 1 ? '' : 's'} contain an amount outside Budgero's exact money range. Correct the exchange rate in the highlighted row; the converted amount and account balance will then be recalculated.`
-                  : 'This account balance is outside Budgero’s exact money range. Correct the offending transaction exchange rate to recalculate it.'}
+                  ? plural(unsafeTransactionCount, {
+                      one: `# transaction contains an amount outside Budgero's exact money range. Correct the exchange rate in the highlighted row; the converted amount and account balance will then be recalculated.`,
+                      other: `# transactions contain an amount outside Budgero's exact money range. Correct the exchange rate in the highlighted row; the converted amount and account balance will then be recalculated.`,
+                    })
+                  : t`This account balance is outside Budgero’s exact money range. Correct the offending transaction exchange rate to recalculate it.`}
               </AlertDescription>
             </Alert>
           </div>

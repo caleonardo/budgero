@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
 import {
@@ -10,10 +11,13 @@ import { ChartEmptyState } from '@shared/ui/ChartEmptyState';
 import { useSpendingByDates } from '@features/analytics/api/useAnalyticsQueries';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useMemo } from 'react';
-import { format, eachDayOfInterval, differenceInDays, subDays } from 'date-fns';
+import { eachDayOfInterval, differenceInDays, subDays } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { asMilli, toDecimal } from '@shared/lib/currency/milli';
 
 export function SpendingOverviewContent() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
   const dateRange = useUiStore((state) => state.dateRange);
@@ -123,18 +127,18 @@ export function SpendingOverviewContent() {
           const datum = formattedData[items[0]?.dataIndex ?? 0];
           if (!datum) return '';
           const rows: TooltipRow[] = [
-            { color: currentColor, name: 'Current', value: globalLocalizer.format(datum.amount) },
+            { color: currentColor, name: t`Current`, value: globalLocalizer.format(datum.amount) },
           ];
           if (datum.previousAmount > 0) {
             rows.push({
               color: previousColor,
-              name: 'Previous',
+              name: t`Previous`,
               value: globalLocalizer.format(datum.previousAmount),
             });
           }
           rows.push({
             color: chrome.inkPrimary,
-            name: 'Daily',
+            name: t`Daily`,
             value: globalLocalizer.format(datum.dailySpending),
           });
           return tooltipHtml(datum.date, rows);
@@ -143,7 +147,7 @@ export function SpendingOverviewContent() {
       series: [
         // Previous period line - rendered first so it appears behind
         {
-          name: 'Previous Period',
+          name: t`Previous Period`,
           type: 'line' as const,
           data: formattedData.map((datum) => datum.previousAmount),
           lineStyle: { color: previousColor, width: 2, opacity: 0.5 },
@@ -152,7 +156,7 @@ export function SpendingOverviewContent() {
           areaStyle: { color: previousColor, opacity: 0.05 },
         },
         {
-          name: 'Current Period',
+          name: t`Current Period`,
           type: 'line' as const,
           data: formattedData.map((datum) => datum.amount),
           lineStyle: { color: currentColor, width: 2 },
@@ -166,12 +170,14 @@ export function SpendingOverviewContent() {
         },
       ],
     };
-  }, [formattedData, palette, globalLocalizer]);
+  }, [formattedData, palette, globalLocalizer, t]);
 
   if (isLoadingSpending) {
     return (
       <div className="flex items-center justify-center h-[300px]">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="text-muted-foreground">
+          <Trans>Loading...</Trans>
+        </div>
       </div>
     );
   }

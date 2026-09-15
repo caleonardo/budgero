@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState, useEffect, useMemo, useCallback, type MouseEvent } from 'react';
 import { cn } from '@shared/lib/utils';
 import { Plus } from 'lucide-react';
@@ -451,8 +452,10 @@ export function BudgetTable({
           size="sm"
           className="mb-1.5 mt-0.5 h-7 justify-start gap-1.5 rounded-md px-2 text-xs font-medium text-muted-foreground hover:text-foreground"
         >
-          <Plus className="h-3.5 w-3.5" />
-          Add Category Group
+          <Trans>
+            <Plus className="h-3.5 w-3.5" />
+            Add Category Group
+          </Trans>
         </Button>
       )}
 

@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 export const SUPPORTED_IMPORT_EXTENSIONS = [
   '.csv',
   '.tsv',
@@ -19,4 +21,4 @@ export function isSupportedImportFile(file: File): boolean {
 }
 
 /** Human-readable list of supported import formats, shared by upload/drop UI copy. */
-export const SUPPORTED_IMPORT_FORMATS_LABEL = 'CSV, TSV, TXT, PDF, OFX, QFX, QIF, or CAMT.053 XML';
+export const SUPPORTED_IMPORT_FORMATS_LABEL = msg`CSV, TSV, TXT, PDF, OFX, QFX, QIF, or CAMT.053 XML`;

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, ArrowRight, PartyPopper } from 'lucide-react';
@@ -47,8 +48,10 @@ export function OverspentCategoriesCard() {
     <Card className="h-full">
       <CardHeader className="pb-1">
         <CardTitle className="flex items-center gap-2 text-base font-semibold">
-          <AlertTriangle className="h-5 w-5 text-destructive" />
-          Overspent categories
+          <Trans>
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+            Overspent categories
+          </Trans>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -56,7 +59,9 @@ export function OverspentCategoriesCard() {
           <div className="flex items-center justify-between rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-sm text-success shadow-sm">
             <div className="flex items-center gap-2">
               <PartyPopper className="h-4 w-4 text-success" />
-              <span>No overspending — nice work!</span>
+              <span>
+                <Trans>No overspending — nice work!</Trans>
+              </span>
             </div>
             <Badge variant="secondary" className="border-success/30 bg-success/20 text-success">
               ✓
@@ -92,8 +97,10 @@ export function OverspentCategoriesCard() {
           onClick={() => goToCategory(overspent[0]?.id)}
           disabled={overspent.length === 0}
         >
-          Review budget
-          <ArrowRight className="h-4 w-4" />
+          <Trans>
+            Review budget
+            <ArrowRight className="h-4 w-4" />
+          </Trans>
         </Button>
       </CardFooter>
     </Card>

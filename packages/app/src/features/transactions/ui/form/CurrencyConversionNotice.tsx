@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Currency Conversion Notice Component
  *
@@ -42,6 +43,8 @@ export function CurrencyConversionNotice({
   onEditingChange,
   localizer,
 }: CurrencyConversionNoticeProps) {
+  const { t } = useLingui();
+
   const numberFormatter = usePlainNumberFormatter(localizer);
   const suggestedAmount = convertedAmount ?? 0;
   const displayedReceivedAmount = receivedAmount ?? suggestedAmount;
@@ -51,11 +54,15 @@ export function CurrencyConversionNotice({
       <div className="flex items-start gap-2">
         <Info className="h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400 mt-0.5 flex-shrink-0" />
         <div className="text-xs sm:text-sm flex-1">
-          <p className="font-medium text-sky-900 dark:text-sky-200">Currency Conversion</p>
+          <p className="font-medium text-sky-900 dark:text-sky-200">
+            <Trans>Currency Conversion</Trans>
+          </p>
           {isLoadingRate ? (
             <div className="mt-2 flex items-center gap-2 text-sky-700 dark:text-sky-300">
               <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-              <span>Fetching exchange rate...</span>
+              <span>
+                <Trans>Fetching exchange rate...</Trans>
+              </span>
             </div>
           ) : convertedAmount !== null ? (
             <div className="mt-2 rounded bg-sky-100 dark:bg-sky-900/40 p-2">
@@ -65,19 +72,25 @@ export function CurrencyConversionNotice({
               </p>
               {exchangeRate != null && (
                 <p className="text-xs text-sky-700 dark:text-sky-300 mt-1">
-                  Rate: 1 {fromCurrency} = {formatExchangeRate(exchangeRate)} {toCurrency}
+                  <Trans>
+                    Rate: 1 {fromCurrency} = {formatExchangeRate(exchangeRate)} {toCurrency}
+                  </Trans>
                 </p>
               )}
             </div>
           ) : amount > 0 ? (
-            <p className="mt-1 text-sky-700 dark:text-sky-300">Exchange rate not available</p>
+            <p className="mt-1 text-sky-700 dark:text-sky-300">
+              <Trans>Exchange rate not available</Trans>
+            </p>
           ) : (
-            <p className="mt-1 text-sky-700 dark:text-sky-300">Enter an amount to see conversion</p>
+            <p className="mt-1 text-sky-700 dark:text-sky-300">
+              <Trans>Enter an amount to see conversion</Trans>
+            </p>
           )}
           <div className="mt-2 space-y-1.5 border-t border-sky-200 pt-2 dark:border-sky-900/60">
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-medium text-sky-900 dark:text-sky-200">
-                Received amount ({toCurrency})
+                <Trans>Received amount ({toCurrency})</Trans>
               </span>
               {receivedAmount !== null && (
                 <Button
@@ -87,7 +100,7 @@ export function CurrencyConversionNotice({
                   className="h-6 px-2 text-[11px] text-sky-700 hover:text-sky-900 dark:text-sky-300"
                   onClick={() => onReceivedAmountChange(null)}
                 >
-                  Use suggested
+                  <Trans>Use suggested</Trans>
                 </Button>
               )}
             </div>
@@ -99,7 +112,7 @@ export function CurrencyConversionNotice({
               onCommit={(value) => onReceivedAmountChange(value > 0 ? value : null)}
               formatter={numberFormatter.format}
               localizer={numberFormatter}
-              placeholder="Optional final amount"
+              placeholder={t`Optional final amount`}
               inputAlign="right"
               inputClassName="h-8 bg-background text-right"
               displayClassName="rounded-md border border-sky-200 bg-background px-2 py-1.5 text-right dark:border-sky-900/60"
@@ -108,13 +121,15 @@ export function CurrencyConversionNotice({
             />
             <p className="text-[11px] text-sky-700 dark:text-sky-300">
               {receivedAmount === null
-                ? 'Optional — edit this if the bank deposited a different amount.'
-                : 'The implied exchange rate will be saved with this transfer.'}
+                ? t`Optional — edit this if the bank deposited a different amount.`
+                : t`The implied exchange rate will be saved with this transfer.`}
             </p>
           </div>
           {!canUseCurrencyApi && (
             <p className="mt-1 text-xs text-sky-600 dark:text-sky-300">
-              ℹ️ Offline or unauthorized – conversions will use cached or manual rates.
+              <Trans>
+                ℹ️ Offline or unauthorized – conversions will use cached or manual rates.
+              </Trans>
             </p>
           )}
         </div>

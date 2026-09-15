@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Badge } from '@shared/ui/badge';
 import { CalendarClock, type LucideIcon } from 'lucide-react';
@@ -41,8 +42,10 @@ export const AccountHeader = React.memo(function AccountHeader({
             <>
               <span className="text-border">·</span>
               <span className="flex items-center gap-1">
-                <CalendarClock className="w-3 h-3" />
-                Reconciled {new Date(reconciledAt).toLocaleDateString()}
+                <Trans>
+                  <CalendarClock className="w-3 h-3" />
+                  Reconciled {new Date(reconciledAt).toLocaleDateString()}
+                </Trans>
               </span>
             </>
           )}

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
@@ -24,6 +25,8 @@ function readPersistedDismiss(trialEndsAtIso: string): boolean {
  * across trials). Shows the time left + a checkout CTA.
  */
 export function TrialEndingBanner() {
+  const { t } = useLingui();
+
   const [now] = useState(() => Date.now());
   const [explicitlyDismissed, setExplicitlyDismissed] = useState(false);
   const { data: user } = useProfile();
@@ -64,8 +67,8 @@ export function TrialEndingBanner() {
   };
 
   const timeLabel =
-    daysLeft === 0 ? 'Less than a day' : daysLeft === 1 ? '1 day' : `${daysLeft} days`;
-  const message = `${timeLabel} left in your trial`;
+    daysLeft === 0 ? t`Less than a day` : daysLeft === 1 ? '1 day' : `${daysLeft} days`;
+  const message = t`${timeLabel} left in your trial`;
 
   return (
     <div className="bg-amber-500 text-white w-full">
@@ -76,12 +79,12 @@ export function TrialEndingBanner() {
             to="/settings/subscription"
             className="text-sm font-semibold underline whitespace-nowrap hover:opacity-90"
           >
-            Subscribe
+            <Trans>Subscribe</Trans>
           </Link>
           <button
             onClick={handleDismiss}
             className="p-1 hover:bg-white/20 rounded transition-colors"
-            aria-label="Dismiss banner"
+            aria-label={t`Dismiss banner`}
           >
             <X className="h-4 w-4" />
           </button>

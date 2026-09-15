@@ -1,5 +1,9 @@
 'use client';
 
+import { plural } from '@lingui/core/macro';
+
+import { Trans, useLingui } from '@lingui/react/macro';
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { CSVPDFImportDialog } from '@features/import/ui/csv-pdf-dialog';
@@ -27,6 +31,8 @@ type PendingAction =
   | null;
 
 export default function ImportsPage() {
+  const { t } = useLingui();
+
   const { selectedBudget } = useUiStore();
   const budgetId = selectedBudget?.ID ?? 0;
   const { data: history = [], isLoading } = useImportHistory(budgetId);
@@ -44,28 +50,32 @@ export default function ImportsPage() {
       if (pendingAction.type === 'undo') {
         const result = await undoMutation.mutateAsync({ id: pendingAction.id, budgetId });
         if (result.alreadyUndone) {
-          toast.info('Import already undone');
+          toast.info(t`Import already undone`);
         } else {
-          toast.success('Import undone', {
-            description: `Removed ${result.transactionsRemoved} transactions${
+          toast.success(t`Import undone`, {
+            description: t`Removed ${result.transactionsRemoved} transactions${
               result.accountsRemoved
-                ? `, ${result.accountsRemoved} account${result.accountsRemoved === 1 ? '' : 's'}`
+                ? plural(result.accountsRemoved, {
+                    one: `, # account`,
+                    other: `, # accounts`,
+                  })
                 : ''
             }${
               result.categoriesRemoved
-                ? `, ${result.categoriesRemoved} categor${
-                    result.categoriesRemoved === 1 ? 'y' : 'ies'
-                  }`
+                ? plural(result.categoriesRemoved, {
+                    one: `, # category`,
+                    other: `, # categories`,
+                  })
                 : ''
             }`,
           });
         }
       } else if (pendingAction.type === 'delete') {
         await deleteMutation.mutateAsync({ id: pendingAction.id, budgetId });
-        toast.success('Import entry removed');
+        toast.success(t`Import entry removed`);
       }
     } catch (error: unknown) {
-      const message = getErrorMessage(error, 'Action failed');
+      const message = getErrorMessage(error, t`Action failed`);
       toast.error(message);
     } finally {
       setPendingAction(null);
@@ -77,18 +87,22 @@ export default function ImportsPage() {
   return (
     <div className="container max-w-5xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Imports"
-        description={`Import transactions from ${SUPPORTED_IMPORT_FORMATS_LABEL} files and manage previous imports.`}
+        title={t`Imports`}
+        description={t`Import transactions from ${SUPPORTED_IMPORT_FORMATS_LABEL} files and manage previous imports.`}
       />
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <UploadIcon size={20} />
-            New Import
+            <Trans>
+              <UploadIcon size={20} />
+              New Import
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Map your file columns, preview the data, and bring transactions into your budget.
+            <Trans>
+              Map your file columns, preview the data, and bring transactions into your budget.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 sm:p-6">
@@ -99,38 +113,58 @@ export default function ImportsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Inbox size={20} />
-            Import History
+            <Trans>
+              <Inbox size={20} />
+              Import History
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Review recent imports and undo or archive them if something looks off.
+            <Trans>Review recent imports and undo or archive them if something looks off.</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           {budgetId === 0 ? (
             <div className="p-6 text-sm text-muted-foreground flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              Select a budget to view its import history.
+              <Trans>
+                <AlertTriangle className="h-4 w-4" />
+                Select a budget to view its import history.
+              </Trans>
             </div>
           ) : isLoading ? (
-            <InlineLoadingRow label="Loading import history..." />
+            <InlineLoadingRow label={t`Loading import history...`} />
           ) : history.length === 0 ? (
             <div className="p-6 text-sm text-muted-foreground">
-              No imports yet. When you import transactions they will appear here for quick undo or
-              cleanup.
+              <Trans>
+                No imports yet. When you import transactions they will appear here for quick undo or
+                cleanup.
+              </Trans>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="min-w-[180px]">Imported</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead className="text-center">Transactions</TableHead>
-                    <TableHead className="text-center">Accounts Created</TableHead>
-                    <TableHead className="text-center">Categories Created</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="min-w-[180px]">
+                      <Trans>Imported</Trans>
+                    </TableHead>
+                    <TableHead>
+                      <Trans>Source</Trans>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Trans>Transactions</Trans>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Trans>Accounts Created</Trans>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <Trans>Categories Created</Trans>
+                    </TableHead>
+                    <TableHead>
+                      <Trans>Status</Trans>
+                    </TableHead>
+                    <TableHead className="text-right">
+                      <Trans>Actions</Trans>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -147,20 +181,24 @@ export default function ImportsPage() {
                         <div>{run.sourceName || run.sourceType}</div>
                         {run.summary.acceptedWithWarnings && run.summary.verification && (
                           <div className="mt-1 text-[11px] normal-case text-amber-700 dark:text-amber-400">
-                            {run.summary.verification.readyToAssign.mismatches.length} RTA ·{' '}
-                            {run.summary.verification.categories.checked -
-                              run.summary.verification.categories.matched}{' '}
-                            category differences
+                            <Trans>
+                              {run.summary.verification.readyToAssign.mismatches.length} RTA ·{' '}
+                              {run.summary.verification.categories.checked -
+                                run.summary.verification.categories.matched}{' '}
+                              category differences
+                            </Trans>
                           </div>
                         )}
                       </TableCell>
                       <TableCell className="text-center">
                         {run.summary.transactionsImported}
                         <div className="text-xs text-muted-foreground">
-                          {run.summary.duplicatesSkipped ?? 0} duplicates ·{' '}
-                          {run.summary.userSkipped ?? 0} user skipped ·{' '}
-                          {run.summary.invalidRows ?? 0} invalid · {run.summary.failedRows ?? 0}{' '}
-                          failed
+                          <Trans>
+                            {run.summary.duplicatesSkipped ?? 0} duplicates ·{' '}
+                            {run.summary.userSkipped ?? 0} user skipped ·{' '}
+                            {run.summary.invalidRows ?? 0} invalid · {run.summary.failedRows ?? 0}{' '}
+                            failed
+                          </Trans>
                         </div>
                       </TableCell>
                       <TableCell className="text-center">
@@ -172,12 +210,12 @@ export default function ImportsPage() {
                       <TableCell>
                         <Badge variant={run.status === 'undone' ? 'outline' : 'secondary'}>
                           {run.status === 'undone'
-                            ? 'Undone'
+                            ? t`Undone`
                             : run.status === 'completed_with_warnings'
-                              ? 'Warning accepted'
+                              ? t`Warning accepted`
                               : run.status === 'in_progress'
-                                ? 'In progress / interrupted'
-                                : 'Completed'}
+                                ? t`In progress / interrupted`
+                                : t`Completed`}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
@@ -195,7 +233,10 @@ export default function ImportsPage() {
                                 })
                               }
                             >
-                              <Undo2 className="h-4 w-4 mr-1" /> Undo
+                              <Trans>
+                                <Undo2 className="h-4 w-4 mr-1" />
+                                Undo
+                              </Trans>
                             </Button>
                           )}
                           <Button
@@ -210,7 +251,10 @@ export default function ImportsPage() {
                               })
                             }
                           >
-                            <Trash2 className="h-4 w-4 mr-1" /> Delete
+                            <Trans>
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Delete
+                            </Trans>
                           </Button>
                         </div>
                       </TableCell>
@@ -226,15 +270,15 @@ export default function ImportsPage() {
       <ConfirmDialog
         open={pendingAction !== null}
         onOpenChange={(open) => !open && setPendingAction(null)}
-        title={pendingAction?.type === 'undo' ? 'Undo this import?' : 'Delete history entry?'}
+        title={pendingAction?.type === 'undo' ? t`Undo this import?` : t`Delete history entry?`}
         description={
           <>
             {pendingAction?.label && (
               <span className="block font-medium text-foreground mb-2">{pendingAction.label}</span>
             )}
             {pendingAction?.type === 'undo'
-              ? 'This will remove transactions (and any empty accounts or categories created by this import).'
-              : 'This removes the history entry only. Your transactions remain untouched.'}
+              ? t`This will remove transactions (and any empty accounts or categories created by this import).`
+              : t`This removes the history entry only. Your transactions remain untouched.`}
           </>
         }
         loadingText="Working..."

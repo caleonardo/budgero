@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans, useLingui } from '@lingui/react/macro';
+
 /**
  * Transaction Form Actions
  *
@@ -33,6 +35,8 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   recurringMode = null,
   isSubmitting = false,
 }: TransactionFormActionsProps) {
+  const { t } = useLingui();
+
   const submitButtonClassName = React.useMemo(() => {
     const base = 'h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial transition-colors';
     if (isInflow) {
@@ -47,23 +51,23 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   const submitButtonLabel = React.useMemo(() => {
     if (isCalculatingTransfer || isSubmitting) {
       return (
-        <>
+        <Trans>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Processing...
-        </>
+        </Trans>
       );
     }
     if (recurringMode === 'edit') {
-      return 'Save recurring transaction';
+      return t`Save recurring transaction`;
     }
     if (recurringMode === 'create') {
-      return 'Create recurring transaction';
+      return t`Create recurring transaction`;
     }
     if (isTransfer) {
-      return 'Add Transfer';
+      return t`Add Transfer`;
     }
-    return `Add ${isInflow ? 'Income' : 'Expense'}`;
-  }, [isCalculatingTransfer, isSubmitting, recurringMode, isTransfer, isInflow]);
+    return isInflow ? t`Add Income` : t`Add Expense`;
+  }, [isCalculatingTransfer, isSubmitting, recurringMode, isTransfer, isInflow, t]);
 
   return (
     <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between gap-2 sm:gap-3">
@@ -74,10 +78,10 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
           onClick={onCancel}
           className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
         >
-          Cancel
+          <Trans>Cancel</Trans>
         </Button>
         <span className="hidden sm:inline-block text-[10px] text-muted-foreground ml-2">
-          Press Cmd+Enter to save
+          <Trans>Press Cmd+Enter to save</Trans>
         </span>
       </div>
       <div className="flex gap-2 order-1 sm:order-2">
@@ -89,7 +93,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
             type="button"
             className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
           >
-            Quick Add
+            <Trans>Quick Add</Trans>
           </Button>
         )}
         <Button

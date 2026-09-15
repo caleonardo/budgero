@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Fragment, useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Plus, Save, Trash2 } from 'lucide-react';
@@ -66,6 +67,8 @@ function nextOneOffId(): string {
  * where the balance goes — including the month it would break.
  */
 export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps) {
+  const { t } = useLingui();
+
   const palette = usePalette();
   const money = useMoneyFormatters();
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
@@ -239,15 +242,15 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
         const point = chartedPoints[index];
         if (!point) return '';
         const rows = [
-          { color: scenarioColor, name: 'Balance', value: money.amount(point.balance) },
-          { color: palette.flow.positive, name: 'Income', value: money.amount(point.income) },
-          { color: palette.flow.negative, name: 'Spending', value: money.amount(-point.spending) },
+          { color: scenarioColor, name: t`Balance`, value: money.amount(point.balance) },
+          { color: palette.flow.positive, name: t`Income`, value: money.amount(point.income) },
+          { color: palette.flow.negative, name: t`Spending`, value: money.amount(-point.spending) },
         ];
         for (const oneOff of payload.oneOffs) {
           if (oneOff.monthKey !== point.monthKey || oneOff.amount <= 0) continue;
           rows.push({
             color: oneOff.kind === 'inflow' ? palette.flow.positive : palette.flow.negative,
-            name: oneOff.label.trim() || 'One-off',
+            name: oneOff.label.trim() || t`One-off`,
             value: money.amount(oneOff.kind === 'inflow' ? oneOff.amount : -oneOff.amount),
           });
         }
@@ -287,7 +290,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
     })();
 
     const balanceLine = {
-      name: 'Balance',
+      name: t`Balance`,
       type: 'line' as const,
       data: chartedPoints.map((point) => point.balance / 1000),
       lineStyle: { color: scenarioColor, width: 2 },
@@ -355,7 +358,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
       tooltip,
       series: [
         {
-          name: 'Income',
+          name: t`Income`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartedPoints.map((point) => point.income / 1000),
@@ -368,7 +371,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
           },
         },
         {
-          name: 'One-off in',
+          name: t`One-off in`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartedPoints.map((point) => (point.oneOff > 0 ? point.oneOff / 1000 : 0)),
@@ -381,7 +384,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
           },
         },
         {
-          name: 'Spending',
+          name: t`Spending`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartedPoints.map((point) => -point.spending / 1000),
@@ -394,7 +397,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
           },
         },
         {
-          name: 'One-off out',
+          name: t`One-off out`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartedPoints.map((point) => (point.oneOff < 0 ? point.oneOff / 1000 : 0)),
@@ -409,7 +412,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
         { ...balanceLine, yAxisIndex: 1 },
       ],
     };
-  }, [view, chartedMonths, chartedPoints, payload.oneOffs, palette, money, scenarioColor]);
+  }, [view, chartedMonths, chartedPoints, payload.oneOffs, palette, money, scenarioColor, t]);
 
   // Gross one-off in/out per month (ScenarioPoint carries only the net).
   const oneOffGrossByMonth = useMemo(() => {
@@ -468,13 +471,13 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
 
   return (
     <ReportShell
-      title="Scenario Planner"
+      title={t`Scenario Planner`}
       hero={money.amount(chartedEnd)}
       heroClassName={trendTextClass(chartedEnd)}
       subtitle={
         scenario.breakMonthKey
-          ? `This scenario breaks in ${shortMonthLabel(scenario.breakMonthKey)}${breakBeyondChart ? ' (beyond the charted window)' : ''}`
-          : `Balance after ${payload.horizon} months under this scenario`
+          ? t`This scenario breaks in ${shortMonthLabel(scenario.breakMonthKey)}${breakBeyondChart ? ' (beyond the charted window)' : ''}`
+          : t`Balance after ${payload.horizon} months under this scenario`
       }
       controls={
         <>
@@ -483,8 +486,8 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             onChange={setView}
             ariaLabel="Scenario chart view"
             options={[
-              { value: 'balance', label: 'Balance' },
-              { value: 'flow', label: 'Composition' },
+              { value: 'balance', label: t`Balance` },
+              { value: 'flow', label: t`Composition` },
             ]}
           />
           <Select
@@ -495,12 +498,20 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="average">Flat average</SelectItem>
-              <SelectItem value="linear">Linear trend (OLS)</SelectItem>
-              <SelectItem value="robust">Robust trend (Theil–Sen)</SelectItem>
-              <SelectItem value="holt">Damped trend (Holt)</SelectItem>
+              <SelectItem value="average">
+                <Trans>Flat average</Trans>
+              </SelectItem>
+              <SelectItem value="linear">
+                <Trans>Linear trend (OLS)</Trans>
+              </SelectItem>
+              <SelectItem value="robust">
+                <Trans>Robust trend (Theil–Sen)</Trans>
+              </SelectItem>
+              <SelectItem value="holt">
+                <Trans>Damped trend (Holt)</Trans>
+              </SelectItem>
               <SelectItem value="seasonal" disabled={!seasonalReady}>
-                Seasonal average{seasonalReady ? '' : ' (needs 12+ mo)'}
+                <Trans>Seasonal average{seasonalReady ? '' : t` (needs 12+ mo)`}</Trans>
               </SelectItem>
             </SelectContent>
           </Select>
@@ -514,7 +525,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             <SelectContent>
               {[12, 24, 36, 60].map((horizon) => (
                 <SelectItem key={horizon} value={String(horizon)}>
-                  {horizon} months
+                  <Trans>{horizon} months</Trans>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -525,15 +536,15 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
         view === 'flow' ? (
           <LegendChips
             items={[
-              { color: palette.flow.positive, label: 'Income' },
-              { color: palette.flow.negative, label: 'Spending' },
+              { color: palette.flow.positive, label: t`Income` },
+              { color: palette.flow.negative, label: t`Spending` },
               ...(payload.oneOffs.some((row) => row.kind === 'inflow')
-                ? [{ color: palette.series[4], label: 'One-off in' }]
+                ? [{ color: palette.series[4], label: t`One-off in` }]
                 : []),
               ...(payload.oneOffs.some((row) => row.kind === 'outflow')
-                ? [{ color: palette.series[5], label: 'One-off out' }]
+                ? [{ color: palette.series[5], label: t`One-off out` }]
                 : []),
-              { color: scenarioColor, label: 'Balance' },
+              { color: scenarioColor, label: t`Balance` },
             ]}
           />
         ) : null
@@ -546,7 +557,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             <div>
               <div className="flex items-baseline justify-between">
                 <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Monthly income
+                  <Trans>Monthly income</Trans>
                 </span>
                 <span className="text-sm font-semibold tabular-nums">
                   {payload.incomePct}% ·{' '}
@@ -565,7 +576,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             <div>
               <div className="flex items-baseline justify-between">
                 <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Monthly spending
+                  <Trans>Monthly spending</Trans>
                 </span>
                 <span className="text-sm font-semibold tabular-nums">
                   {payload.spendingPct}% ·{' '}
@@ -588,16 +599,20 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
           <div className="mt-4 border-t border-dashed border-border/60 pt-4">
             <div className="mb-2 flex items-center justify-between">
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                One-off inflows / outflows
+                <Trans>One-off inflows / outflows</Trans>
               </span>
               <Button variant="outline" size="sm" onClick={addOneOff}>
-                <Plus className="mr-1 h-3.5 w-3.5" />
-                Add
+                <Trans>
+                  <Plus className="mr-1 h-3.5 w-3.5" />
+                  Add
+                </Trans>
               </Button>
             </div>
             {payload.oneOffs.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                Nothing yet — add a car repair, a bonus, a tax bill… and watch the line react.
+                <Trans>
+                  Nothing yet — add a car repair, a bonus, a tax bill… and watch the line react.
+                </Trans>
               </p>
             ) : (
               <div className="space-y-2">
@@ -624,8 +639,12 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="outflow">Outflow</SelectItem>
-                        <SelectItem value="inflow">Inflow</SelectItem>
+                        <SelectItem value="outflow">
+                          <Trans>Outflow</Trans>
+                        </SelectItem>
+                        <SelectItem value="inflow">
+                          <Trans>Inflow</Trans>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <CalculatorCell
@@ -635,7 +654,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                       }
                       localizer={globalLocalizer}
                       formatter={(value) => globalLocalizer.format(value)}
-                      placeholder="Amount"
+                      placeholder={t`Amount`}
                       inputAlign="right"
                       zeroAsEmpty
                       className="w-[170px] shrink-0 overflow-hidden"
@@ -643,7 +662,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                     />
                     <Input
                       value={row.label}
-                      placeholder="Label (optional)"
+                      placeholder={t`Label (optional)`}
                       onChange={(event) => updateOneOff(row.id, { label: event.target.value })}
                       className="h-8 min-w-[120px] flex-1"
                     />
@@ -652,7 +671,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                       size="icon"
                       className="h-8 w-8 text-muted-foreground"
                       onClick={() => removeOneOff(row.id)}
-                      aria-label="Remove one-off"
+                      aria-label={t`Remove one-off`}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -665,23 +684,23 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
       }
       isLoading={data.isLoading}
       isEmpty={isEmpty}
-      emptyText="Pick a period with some history to project from."
+      emptyText={t`Pick a period with some history to project from.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
             <StatTile
-              label="End balance"
+              label={t`End balance`}
               value={money.tile(chartedEnd)}
               valueClassName={trendTextClass(chartedEnd)}
             />
             <StatTile
-              label="Lowest point"
+              label={t`Lowest point`}
               value={money.tile(chartedMin.balance)}
               valueClassName={trendTextClass(chartedMin.balance)}
               detail={chartedMin.monthKey ? shortMonthLabel(chartedMin.monthKey) : undefined}
             />
             <StatTile
-              label="Breaks"
+              label={t`Breaks`}
               value={scenario.breakMonthKey ? shortMonthLabel(scenario.breakMonthKey) : 'Never'}
               valueClassName={
                 scenario.breakMonthKey ? 'text-red-600 dark:text-red-300' : 'text-green-600'
@@ -694,15 +713,17 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                     : 'net stays positive for 50 years'
               }
             />
-            <StatTile label="Starting funds" value={money.tile(startBalance)} />
+            <StatTile label={t`Starting funds`} value={money.tile(startBalance)} />
           </div>
 
-          <PanelSectionTitle>Save scenario</PanelSectionTitle>
+          <PanelSectionTitle>
+            <Trans>Save scenario</Trans>
+          </PanelSectionTitle>
           <div className="flex gap-2">
             <Input
               value={scenarioName}
               onChange={(event) => setScenarioName(event.target.value)}
-              placeholder="Scenario name"
+              placeholder={t`Scenario name`}
               className="h-8"
             />
             <Button
@@ -712,7 +733,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
               disabled={!scenarioName.trim() || saveMutation.isPending}
             >
               <Save className="mr-1 h-3.5 w-3.5" />
-              {loadedId ? 'Update' : 'Save'}
+              {loadedId ? t`Update` : t`Save`}
             </Button>
           </div>
           {saveMutation.isError ? (
@@ -723,7 +744,9 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
 
           {saved.length > 0 ? (
             <>
-              <PanelSectionTitle>Saved scenarios</PanelSectionTitle>
+              <PanelSectionTitle>
+                <Trans>Saved scenarios</Trans>
+              </PanelSectionTitle>
               <div className="divide-y divide-border/50">
                 {saved.map((record) => (
                   <div key={record.ID} className="flex items-center gap-1 py-1">
@@ -743,7 +766,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
                         deleteMutation.mutate({ id: record.ID });
                         if (record.ID === loadedId) setLoadedId(null);
                       }}
-                      aria-label={`Delete scenario ${record.Name}`}
+                      aria-label={t`Delete scenario ${record.Name}`}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -753,20 +776,22 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
             </>
           ) : null}
 
-          <PanelSectionTitle>Projection</PanelSectionTitle>
+          <PanelSectionTitle>
+            <Trans>Projection</Trans>
+          </PanelSectionTitle>
           <div className="max-h-[360px] overflow-y-auto pr-1">
             <div className="grid grid-cols-[auto_1fr_1fr_1.2fr] gap-x-3 text-[11px]">
               <span className="sticky top-0 z-10 bg-card pb-1 font-medium uppercase tracking-wide text-muted-foreground">
-                Month
+                <Trans>Month</Trans>
               </span>
               <span className="sticky top-0 z-10 bg-card pb-1 text-right font-medium uppercase tracking-wide text-muted-foreground">
-                In
+                <Trans>In</Trans>
               </span>
               <span className="sticky top-0 z-10 bg-card pb-1 text-right font-medium uppercase tracking-wide text-muted-foreground">
-                Out
+                <Trans>Out</Trans>
               </span>
               <span className="sticky top-0 z-10 bg-card pb-1 text-right font-medium uppercase tracking-wide text-muted-foreground">
-                Balance
+                <Trans>Balance</Trans>
               </span>
               {chartedPoints.map((point) => {
                 const gross = oneOffGrossByMonth.get(point.monthKey);

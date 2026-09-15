@@ -1,0 +1,110 @@
+---
+title: "Transacciones recurrentes"
+summary: "Planifica facturas, nóminas y gastos futuros antes de que se produzcan. Configura programaciones recurrentes con recordatorios, o fecha una transacción única en el futuro — y ve ambas llegar en el panel."
+section: integrations
+topicId: recurring-transactions
+takeaways:
+  - "Cómo funcionan conjuntamente las plantillas recurrentes, las ocurrencias y el flujo Marcar como listo."
+  - "Programar una transacción futura única directamente desde el formulario de transacción."
+  - "Qué muestra la tarjeta de Próximas transacciones del panel y con cuánta antelación mira hacia el futuro."
+  - "Cómo las filas proyectadas y los rangos de fechas futuras convierten el registro de cuenta y los informes en una previsión de flujo de caja."
+---
+
+La mayoría de los movimientos de dinero no son sorpresas. El alquiler vence el día uno, la nómina llega el 25, y ya sabes que el mes que viene tienes cita con el dentista. Budgero te da dos formas de incorporar ese conocimiento al presupuesto antes de que el dinero se mueva: **transacciones recurrentes** para cosas que se repiten, y **pagos únicos programados** para cosas que ocurren una sola vez. Ambas aparecen en tu panel, así que las próximas semanas nunca son un misterio.
+
+Fiel a la filosofía de manual primero de Budgero, ninguna de las dos registra nada a tus espaldas: las transacciones recurrentes esperan tu confirmación, y los pagos únicos son entradas que has creado tú mismo.
+
+## Transacciones recurrentes
+
+Una transacción recurrente es una plantilla: qué pagar (o recibir), desde qué cuenta, en qué categoría y con qué frecuencia. Las gestionas en **Ajustes → Transacciones recurrentes**.
+
+Cada plantilla define:
+
+- **Nombre y nota** — "Alquiler", "Nómina", "Gimnasio".
+- **Dirección** — una **Factura** (gasto) o un **Ingreso** (ingreso).
+- **Importe, cuenta y categoría** — exactamente igual que una transacción normal.
+- **Periodicidad** — diaria, semanal, cada 2 semanas, mensual, cada 2 meses, trimestral, cada 6 meses o anual, anclada a una fecha de inicio.
+- **Finaliza**: nunca, en una fecha o tras un número de repeticiones (desde la primera, incluidas las registradas u omitidas). Útil para préstamos, pagos a plazos y suscripciones de duración limitada.
+- **Recordatorio** — cuántos días antes de la fecha de vencimiento quieres recibir una notificación.
+
+A partir de la periodicidad, Budgero genera **ocurrencias** — las próximas fechas de vencimiento individuales — aproximadamente seis meses hacia adelante. La página de ajustes muestra lo que viene a continuación, y para cada ocurrencia tienes dos opciones:
+
+- **Marcar como lista** crea la transacción real y ejecuta tus [reglas continuas](/docs/rules-engine) sobre ella automáticamente — de modo que la limpieza de beneficiario, categoría y nota que has automatizado también se aplica a las entradas recurrentes. La transacción siempre lleva la fecha de vencimiento de la ocurrencia, aunque la confirmes unos días antes.
+- **Saltar esta vez** elimina una sola ocurrencia sin tocar la periodicidad. La serie continúa con la siguiente fecha.
+
+Nada se registra nunca de forma automática. Una transacción recurrente es un recordatorio con un botón de "hacerla real" con un clic, no una orden permanente — tú sigues siendo el último control entre el plan y el registro.
+
+Las plantillas se pueden **pausar** y **reanudar** en cualquier momento, y eliminar una quita los próximos recordatorios sin afectar a las transacciones que ya se habían registrado.
+
+### Recordatorios
+
+Activa las notificaciones en la página de Transacciones recurrentes y Budgero te recordará antes de cada fecha de vencimiento, usando la configuración de "días de antelación" de cada plantilla. Las notificaciones son locales en tu dispositivo — de acuerdo con el [modelo zero-knowledge](/docs/security), ningún servidor conoce nunca cuáles son tus facturas.
+
+## Transacciones puntuales programadas
+
+No todo se repite. Para un gasto futuro conocido y único — un pago de vuelo, una prima de seguro anual, una compra planificada — solo tienes que introducir una transacción normal y darle una **fecha futura**. No hay ninguna función aparte que aprender: el formulario de transacción normal en cualquier página de cuenta es todo lo que necesitas.
+
+Una transacción con fecha futura es un asiento real del registro que simplemente aún no ha llegado a su fecha. Puedes editarla o eliminarla como cualquier otra transacción, y aparece en el panel como **Programada** para que no te pille por sorpresa.
+
+## La tarjeta de Próximas transacciones
+
+La tarjeta de **Próximas transacciones** del panel combina ambos tipos de actividad planificada en una sola línea temporal:
+
+- Las **series recurrentes** muestran solo su *próxima* ocurrencia — una factura mensual aparece una vez, no seis. Los elementos recurrentes llevan una insignia **Recurrente** (o **Listo para publicar** una vez que los hayas marcado como listos).
+- Los **pagos únicos programados** muestran cada transacción con fecha futura dentro de los **próximos 3 meses**, marcados con una insignia **Programado**.
+
+La tarjeta muestra los seis elementos más próximos, cada uno con su importe, cuenta y una cuenta atrás de vencimiento. Los elementos son interactivos:
+
+- Haz clic en un elemento **recurrente** para ir a la página de su cuenta.
+- Haz clic en un elemento **programado** para abrir un diálogo de edición rápida donde puedes ajustar la fecha, el importe, el beneficiario o la categoría — o eliminarlo — sin salir del panel.
+
+El enlace **Gestionar automatizaciones** en la parte inferior te lleva a la página de configuración de transacciones recurrentes.
+
+## Previsión de tu flujo de caja
+
+Saber lo que tienes programado es la mitad del panorama — la otra mitad es ver qué efecto tiene en tu saldo. Budgero proyecta las transacciones recurrentes que aún no has marcado como listas en dos vistas de lectura, para que puedas mirar unos meses por delante sin publicar nada.
+
+### En la página de la cuenta
+
+Cada página de cuenta tiene una barra compacta de **Próximas transacciones** sobre el registro que muestra cuántas entradas recurrentes y programadas están próximas, junto con sus ingresos y gastos combinados. Haz clic en ella para expandir la lista completa — desde ahí puedes marcar ocurrencias como listas o saltarlas. Recuerda si la dejaste abierta o cerrada.
+
+El registro mismo se convierte en una previsión cuando se lo pides. Amplía el rango de fechas de la página más allá de hoy y las próximas ocurrencias recurrentes aparecen en línea como **filas proyectadas** — marcadas con una insignia, mostradas junto a tus transacciones reales, pero de solo lectura: una proyección no es un registro, así que no hay nada que editar. Para cambiar una, edita la plantilla recurrente o marca la ocurrencia como lista. Una ocurrencia cuya fecha de vencimiento ha pasado sin ser marcada como lista también permanece en el registro, marcada como **Vencida** en el panel de próximas hasta que la registres o la saltes.
+
+Las filas proyectadas se integran en la **columna de saldo** del registro, así que puedes desplazarte hasta el mes próximo y ver hacia dónde se dirige la cuenta. Los valores de saldo proyectado están marcados con **≈** para dejar claro que son estimaciones. El saldo principal de la cuenta y los saldos de la barra lateral nunca incluyen proyecciones ni transacciones con fecha futura — esos siempre muestran dinero realizado, a fecha de hoy.
+
+### En informes
+
+La página de informes acepta rangos de fechas futuros — el selector incluye los presets **Próximos 30 días** y **Próximos 3 meses**. Cuando tu rango se extiende más allá de hoy, las ocurrencias recurrentes que no están marcadas como listas se cuentan como si se hubieran registrado en sus fechas de vencimiento, y la página muestra un aviso de **Incluye transacciones recurrentes proyectadas**. Las tendencias de gasto, los desgloses por categoría y beneficiario, y el resumen del período las incorporan todas, así que "¿cómo se ve mi flujo de caja hasta finales de trimestre?" es una selección de fecha, no un ejercicio de hoja de cálculo.
+
+Las proyecciones se autocorrigen: se calculan en tiempo real a partir de tus plantillas recurrentes, así que marcar una ocurrencia como lista, saltarla o editar la plantilla actualiza cada previsión al instante. Una proyección es tan exacta como el importe de la plantilla — las facturas variables se desviarán un poco hasta que se registren, y entonces el importe real toma el relevo.
+
+## ¿Qué herramienta para cada tarea?
+
+<table>
+  <thead>
+    <tr>
+      <th>Sabes que…</th>
+      <th>Usa</th>
+      <th>Por qué</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Se repite con un ritmo (alquiler, salario, suscripciones)</td>
+      <td><strong>Transacción recurrente</strong></td>
+      <td>Una plantilla cubre cada instancia futura, con recordatorios</td>
+    </tr>
+    <tr>
+      <td>Ocurre una vez, en una fecha conocida</td>
+      <td><strong>Transacción con fecha futura</strong></td>
+      <td>Una entrada real, ya en el libro, visible en el panel</td>
+    </tr>
+    <tr>
+      <td>Estás ahorrando para ello pero no te has comprometido con una fecha o beneficiario</td>
+      <td><strong>Un objetivo</strong></td>
+      <td>Es un plan de financiación, no una transacción todavía — ver <a href="/docs/goals">Objetivos</a></td>
+    </tr>
+  </tbody>
+</table>
+
+Un patrón habitual combina las tres: un objetivo con fecha objetivo acumula el dinero, un recordatorio recurrente te avisa cuando se acerca la factura, y marcarlo como listo registra la transacción en la categoría que el objetivo ha estado llenando todo este tiempo.

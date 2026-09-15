@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Budget } from '@budgero/core/browser';
 import {
@@ -87,6 +88,8 @@ export function useUpdateBudgetName() {
 
 export type UpdateBudgetCurrencyInput = { id: number; currency: string };
 export function useUpdateBudgetCurrency() {
+  const { t } = useLingui();
+
   const qc = useQueryClient();
   const { setCurrencyConversion, resetCurrencyConversion } = useUiStore.getState();
   const runtime = useRuntime();
@@ -95,7 +98,7 @@ export function useUpdateBudgetCurrency() {
     mutationFn: async ({ id, currency }: UpdateBudgetCurrencyInput) => {
       setCurrencyConversion({
         isActive: true,
-        message: 'Updating budget currency and recalculating all transactions...',
+        message: t`Updating budget currency and recalculating all transactions...`,
       });
 
       try {

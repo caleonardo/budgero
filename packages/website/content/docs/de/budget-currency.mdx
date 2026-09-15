@@ -1,0 +1,51 @@
+---
+title: "Budgetwährung"
+summary: "Wähle die Währung, die dein Budget verankert, und erfahre, wie Budgero Multi-Währung-Konten und -Berichte synchron hält."
+section: getting-started
+topicId: budget-currency
+takeaways:
+  - "Erfahre, was die Budgetwährung bei Zu budgetieren, Dashboards und Berichten steuert."
+  - "Verstehe, wie Budgero Multi-Währung-Konten mithilfe täglicher Wechselkurse und manueller Fallbacks umrechnet."
+  - "Wechsle die Budgetwährung mit Sicherheit und erfahre, wie sich die Neuberechnung verhält."
+---
+
+Deine Budgetwährung ist die einheitliche Währung, die Budgero für Summen, Auswertungen und Zu budgetieren verwendet. Auch wenn dein Geld auf Konten in verschiedenen Währungen liegt, rechnet Budgero alles auf diesen Ankerwert um, sodass jede Entscheidung in einer gemeinsamen Sprache stattfindet.
+
+## Was die Budgetwährung steuert
+
+- **Zu budgetieren und Kategoriesalden.** Alle Budgetsummen werden in der Budgetwährung angezeigt, auch wenn das zugrunde liegende Konto eine andere Währung verwendet.
+- **Dashboards und Berichte.** Nettovermögen, Cashflow-Diagramme und Ausgabenberichte werden in der Budgetwährung zusammengefasst, sodass Vergleiche von Monat zu Monat konsistent bleiben.
+- **Kontoübersichten.** Jedes Konto zeigt sowohl den ursprünglichen Saldo als auch einen auf die Budgetwährung umgerechneten Saldo für schnelle, direkte Vergleiche.
+
+## Die richtige Währung wählen
+
+- Wähle die Währung, mit der du deinen Haushalt oder dein Unternehmen führst. Die meisten Menschen entscheiden sich für die Währung ihres Heimatlandes, damit die Werte mit Rechnungen und Gehältern übereinstimmen.
+- Wenn du aus YNAB importierst, verwende dieselbe Anzeigewährung, die du dort genutzt hast. Budgero wird die Summen genauer abbilden und die Migration von Zielen einfacher machen.
+- Wenn du regelmäßig in mehreren Währungen ausgibst, lege als Budgetwährung diejenige fest, in der du deine Performance bewerten möchtest – normalerweise die Währung, in der du verdienst oder Steuern zahlst.
+
+## Mit Multi-Währungs-Konten arbeiten
+
+Budgero ermöglicht es jedem Konto, seine ursprüngliche Währung zu behalten. Wenn Transaktionen gebucht werden, speichert Budgero sowohl den ursprünglichen Betrag als auch einen umgerechneten Betrag in der Budgetwährung:
+
+- Budgero ruft täglich offizielle Wechselkurse ab und speichert sie in der Budgetdatei. Wie lange der Cache aufbewahrt wird, kannst du unter Einstellungen → Währungen konfigurieren (standardmäßig 30 Tage) – ältere Kurse werden entfernt, um die Budgetdatei klein zu halten, und bei Bedarf neu abgerufen.
+- Wenn ein neuer Kurs benötigt wird, ruft Budgero ihn vom Wechselkursdienst ab und speichert ihn. In der ersten erfolgreichen Online-Sitzung jedes Kalendertags aktualisiert es außerdem die offiziellen Tageskurse, damit gespeicherte Kurse nicht unbemerkt veralten. Bist du offline und fehlt ein gespeicherter Kurs, kannst du einen manuellen Kurs eingeben. Dieser wird nach dem Wiederverbinden automatisch ersetzt, sofern du „Offline-Kurse aktualisieren“ nicht deaktivierst. An Transaktionen festgelegte Kurse bleiben immer unverändert.
+- Umgerechnete Salden werden automatisch aktualisiert, wenn du eine Transaktion bearbeitest, ein Konto abgleichst oder historische Daten importierst, damit Zu budgetieren und Berichte korrekt bleiben.
+
+## Die Budget-Währung später ändern
+
+Du kannst die Budget-Währung jederzeit wechseln:
+
+Budgero löscht zwischengespeicherte Wechselkurse, berechnet jede Transaktion neu und wandelt Zuweisungen und Ziele in die neue Währung um. Die App zeigt währenddessen ein kurzes Overlay mit dem Umrechnungsstatus an. Nach der Änderung ruft Budgero frische Wechselkurse ab, sobald du einen Monat aufrufst, der sie benötigt.
+
+Bei umfangreichen Verläufen kann die Aktualisierung der Umrechnungen einen Moment dauern. Du kannst im Budget weiterarbeiten, sobald das Overlay verschwindet.
+
+## Offline und manuelle Wechselkurse
+
+- Du gehst offline? Gib manuelle Wechselkurse ein, damit Budgero die Umrechnungen auch ohne Netzwerkverbindung präzise halten kann. Budgero speichert sowohl den Kurs als auch seinen Kehrwert zur einfachen Wiederverwendung.
+- Wenn du wieder online bist, ersetzt Budgero Offline-Umrechnungen automatisch durch offizielle Kurse – eine standardmäßig aktivierte Option, die du unter Einstellungen → Währungen oder direkt in der Offline-Kurs-Abfrage ändern kannst.
+- Falls der genaue Tag nicht zwischengespeichert ist, verwendet Budgero den nächstgelegenen früheren Kurs bis zu einer Woche zurück. Darüber hinaus wird dich Budgero nach einem Kurs fragen, vorausgefüllt mit dem am nächsten liegenden zwischengespeicherten Kurs.
+
+## Fehlerbehebung
+
+- **Umgerechnete Summen wirken falsch:** Prüfe, ob für das Transaktionsdatum ein Kurs existiert. Öffne das Konto erneut oder aktualisiere das Dashboard, damit Budgero den Kurs abruft oder neu berechnet.
+- **Zuweisungen haben sich nach dem Währungswechsel geändert:** Budgero multipliziert Zuweisungen und Ziele mit dem neuen Währungskurs, damit ihre Kaufkraft erhalten bleibt. Passe Kategorien manuell an, wenn du einen anderen Wert festlegen möchtest.

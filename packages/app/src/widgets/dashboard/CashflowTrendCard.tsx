@@ -1,5 +1,7 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { format, parseISO, differenceInCalendarDays, subDays } from 'date-fns';
+import { parseISO, differenceInCalendarDays, subDays } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { TrendingUp, TrendingDown, ArrowUpRight } from 'lucide-react';
 import type { EChartsCoreOption } from 'echarts/core';
 
@@ -35,6 +37,8 @@ export function CashflowTrendCard({
   startDate,
   endDate,
 }: CashflowTrendCardProps) {
+  const { t } = useLingui();
+
   const compactFormatter = useCompactNumberFormat(globalLocalizer.resolvedOptions().locale);
   const today = new Date();
   const effectiveEndDate = endDate && endDate.length > 0 ? endDate : format(today, 'yyyy-MM-dd');
@@ -124,9 +128,9 @@ export function CashflowTrendCard({
           const point = chartData[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           const rows: TooltipRow[] = [
-            { color: chrome.inkPrimary, name: 'Net', value: formatAmount(point.net) },
-            { color: flow.positive, name: 'Money in', value: formatAmount(point.income) },
-            { color: flow.negative, name: 'Money out', value: formatAmount(-point.expense) },
+            { color: chrome.inkPrimary, name: t`Net`, value: formatAmount(point.net) },
+            { color: flow.positive, name: t`Money in`, value: formatAmount(point.income) },
+            { color: flow.negative, name: t`Money out`, value: formatAmount(-point.expense) },
           ];
           return tooltipHtml(point.label, rows);
         },
@@ -136,7 +140,7 @@ export function CashflowTrendCard({
       // report, so the dashboard and analytics read identically.
       series: [
         {
-          name: 'Money in',
+          name: t`Money in`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartData.map((item) => item.income),
@@ -144,7 +148,7 @@ export function CashflowTrendCard({
           itemStyle: { color: flow.positive, borderRadius: BAR_RADIUS_TOP },
         },
         {
-          name: 'Money out',
+          name: t`Money out`,
           type: 'bar' as const,
           stack: 'flow',
           data: chartData.map((item) => -item.expense),
@@ -152,7 +156,7 @@ export function CashflowTrendCard({
           itemStyle: { color: flow.negative, borderRadius: BAR_RADIUS_BOTTOM },
         },
         {
-          name: 'Net',
+          name: t`Net`,
           type: 'line' as const,
           data: chartData.map((item) => item.net),
           lineStyle: { color: chrome.inkPrimary, width: 2 },
@@ -163,34 +167,42 @@ export function CashflowTrendCard({
         },
       ],
     };
-  }, [chartData, palette, compactFormatter, formatAmount]);
+  }, [chartData, palette, compactFormatter, formatAmount, t]);
 
   return (
     <Card className="h-full">
       <CardHeader className="pb-1">
         <CardTitle className="flex items-center gap-2 text-base font-semibold">
-          <ArrowUpRight className="h-5 w-5 text-muted-foreground" />
-          Cashflow trends
+          <Trans>
+            <ArrowUpRight className="h-5 w-5 text-muted-foreground" />
+            Cashflow trends
+          </Trans>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="rounded-lg bg-muted/30 px-3 py-2.5 text-sm space-y-1.5">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-xs text-muted-foreground">Income</span>
+            <span className="text-xs text-muted-foreground">
+              <Trans>Income</Trans>
+            </span>
             <span className="font-semibold tabular-nums text-foreground">
               {formatAmount(totals.income)}
             </span>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-xs text-muted-foreground">Spending</span>
+            <span className="text-xs text-muted-foreground">
+              <Trans>Spending</Trans>
+            </span>
             <span className="font-semibold tabular-nums text-foreground">
               {formatAmount(totals.expense)}
             </span>
           </div>
           <div className="border-t border-border/40 pt-1.5 flex items-center justify-between gap-4">
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
-              Net cashflow
-              <DeltaIcon className={`h-3.5 w-3.5 ${netClass}`} />
+              <Trans>
+                Net cashflow
+                <DeltaIcon className={`h-3.5 w-3.5 ${netClass}`} />
+              </Trans>
             </span>
             <span className={`font-semibold tabular-nums ${netClass}`}>
               {netPositive ? '+' : '−'}
@@ -203,9 +215,9 @@ export function CashflowTrendCard({
 
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
           {[
-            { color: palette.flow.positive, label: 'Money in' },
-            { color: palette.flow.negative, label: 'Money out' },
-            { color: palette.chrome.inkPrimary, label: 'Net' },
+            { color: palette.flow.positive, label: t`Money in` },
+            { color: palette.flow.negative, label: t`Money out` },
+            { color: palette.chrome.inkPrimary, label: t`Net` },
           ].map((item) => (
             <span
               key={item.label}
@@ -222,7 +234,9 @@ export function CashflowTrendCard({
         </div>
 
         {isLoading && (
-          <div className="text-xs text-muted-foreground text-center">Loading cashflow data…</div>
+          <div className="text-xs text-muted-foreground text-center">
+            <Trans>Loading cashflow data…</Trans>
+          </div>
         )}
       </CardContent>
     </Card>

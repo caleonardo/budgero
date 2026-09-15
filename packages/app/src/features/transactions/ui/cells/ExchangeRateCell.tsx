@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Input } from '@shared/ui/input';
 import { cn } from '@shared/lib/utils';
@@ -36,6 +37,8 @@ export function ExchangeRateCell({
   onEditingChange,
   validateRate,
 }: ExchangeRateCellProps) {
+  const { t } = useLingui();
+
   const [isEditing, setIsEditing] = React.useState(autoFocus);
   const [text, setText] = React.useState(() => (autoFocus && value ? String(value) : ''));
   const [error, setError] = React.useState<string | null>(null);
@@ -63,7 +66,7 @@ export function ExchangeRateCell({
   const commit = (confirmUnusual = false) => {
     const parsed = Number(text.replace(',', '.'));
     if (!Number.isFinite(parsed) || parsed <= 0) {
-      setError('Enter an exchange rate greater than zero.');
+      setError(t`Enter an exchange rate greater than zero.`);
       setPendingUnusualRate(null);
       return;
     }
@@ -77,7 +80,7 @@ export function ExchangeRateCell({
 
     if (!confirmUnusual && parsed !== value && isUnusualExchangeRateChange(value, parsed)) {
       setPendingUnusualRate(parsed);
-      setError('This rate is over 1,000× different. Check the decimal point or confirm it.');
+      setError(t`This rate is over 1,000× different. Check the decimal point or confirm it.`);
       return;
     }
 
@@ -130,7 +133,7 @@ export function ExchangeRateCell({
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => finishCommit(pendingUnusualRate)}
                 >
-                  Use anyway
+                  <Trans>Use anyway</Trans>
                 </button>
                 <button
                   type="button"
@@ -138,7 +141,7 @@ export function ExchangeRateCell({
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={cancel}
                 >
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </button>
               </div>
             )}

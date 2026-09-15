@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Layers, Percent } from 'lucide-react';
@@ -55,6 +56,8 @@ interface InOutReportProps {
  * target line.
  */
 export function InOutReport({ data, months }: InOutReportProps) {
+  const { t } = useLingui();
+
   const [mode, setMode] = useState<InOutMode>('flow');
   const [target, setTarget] = useState<number | null>(() => loadTarget(data.budgetId));
   const palette = usePalette();
@@ -121,15 +124,15 @@ export function InOutReport({ data, months }: InOutReportProps) {
             const point = points[items[0]?.dataIndex ?? 0];
             if (!point) return '';
             return tooltipHtml(shortMonthLabel(point.monthKey), [
-              { color: netColor, name: 'Net', value: money.amount(point.net) },
-              { color: inColor, name: 'Money in', value: money.amount(point.income) },
-              { color: outColor, name: 'Money out', value: money.amount(-point.spending) },
+              { color: netColor, name: t`Net`, value: money.amount(point.net) },
+              { color: inColor, name: t`Money in`, value: money.amount(point.income) },
+              { color: outColor, name: t`Money out`, value: money.amount(-point.spending) },
             ]);
           },
         },
         series: [
           {
-            name: 'Money in',
+            name: t`Money in`,
             type: 'bar',
             stack: 'flow',
             data: points.map((point) => point.income / 1000),
@@ -137,7 +140,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
             itemStyle: { color: inColor, borderRadius: BAR_RADIUS_TOP },
           },
           {
-            name: 'Money out',
+            name: t`Money out`,
             type: 'bar',
             stack: 'flow',
             data: points.map((point) => -point.spending / 1000),
@@ -145,7 +148,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
             itemStyle: { color: outColor, borderRadius: BAR_RADIUS_BOTTOM },
           },
           {
-            name: 'Net',
+            name: t`Net`,
             type: 'line',
             data: points.map((point) => point.net / 1000),
             lineStyle: { color: netColor, width: 2 },
@@ -181,7 +184,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
           return tooltipHtml(shortMonthLabel(months[index]), [
             {
               color: rate !== null && rate >= 0 ? palette.flow.positive : palette.flow.negative,
-              name: 'Savings rate',
+              name: t`Savings rate`,
               value: rate === null ? 'no income' : `${rate.toFixed(1)}%`,
             },
           ]);
@@ -189,7 +192,7 @@ export function InOutReport({ data, months }: InOutReportProps) {
       },
       series: [
         {
-          name: 'Savings rate',
+          name: t`Savings rate`,
           type: 'line',
           data: monthlyRates,
           lineStyle: { color: palette.series[0], width: 2 },
@@ -228,13 +231,13 @@ export function InOutReport({ data, months }: InOutReportProps) {
         },
       ],
     };
-  }, [mode, months, points, monthlyRates, target, palette, money, inColor, outColor, netColor]);
+  }, [mode, months, points, monthlyRates, target, palette, money, inColor, outColor, netColor, t]);
 
   const monthlyRows = useMemo(() => [...points].reverse().slice(0, 12), [points]);
 
   return (
     <ReportShell
-      title="In vs Out"
+      title={t`In vs Out`}
       hero={
         <AnimatedNumber
           value={totalNet}
@@ -245,26 +248,28 @@ export function InOutReport({ data, months }: InOutReportProps) {
       heroClassName={trendTextClass(totalNet)}
       subtitle={
         savingsRate === null
-          ? 'Do we live within our means?'
+          ? t`Do we live within our means?`
           : savingsRate >= 0
-            ? `Keeping ${savingsRate.toFixed(0)}% of income${target !== null ? ` (target ${target}%)` : ''}`
-            : `Spending ${Math.abs(savingsRate).toFixed(0)}% more than income`
+            ? t`Keeping ${savingsRate.toFixed(0)}% of income${target !== null ? ` (target ${target}%)` : ''}`
+            : t`Spending ${Math.abs(savingsRate).toFixed(0)}% more than income`
       }
       controls={
         <>
           {mode === 'rate' ? (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              Target
-              <Input
-                type="number"
-                min={1}
-                max={100}
-                value={target ?? ''}
-                placeholder="—"
-                onChange={(event) => updateTarget(event.target.value)}
-                className="h-8 w-16 text-right"
-              />
-              %
+              <Trans>
+                Target
+                <Input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={target ?? ''}
+                  placeholder="—"
+                  onChange={(event) => updateTarget(event.target.value)}
+                  className="h-8 w-16 text-right"
+                />
+                %
+              </Trans>
             </div>
           ) : null}
           <ModeToggle
@@ -272,8 +277,8 @@ export function InOutReport({ data, months }: InOutReportProps) {
             onChange={setMode}
             ariaLabel="In vs Out chart mode"
             options={[
-              { value: 'flow', label: 'Inflow vs Outflow', icon: Layers },
-              { value: 'rate', label: 'Savings rate', icon: Percent },
+              { value: 'flow', label: t`Inflow vs Outflow`, icon: Layers },
+              { value: 'rate', label: t`Savings rate`, icon: Percent },
             ]}
           />
         </>
@@ -283,9 +288,9 @@ export function InOutReport({ data, months }: InOutReportProps) {
         mode === 'flow' ? (
           <LegendChips
             items={[
-              { color: inColor, label: 'Money in' },
-              { color: outColor, label: 'Money out' },
-              { color: netColor, label: 'Net' },
+              { color: inColor, label: t`Money in` },
+              { color: outColor, label: t`Money out` },
+              { color: netColor, label: t`Net` },
             ]}
           />
         ) : null
@@ -293,30 +298,32 @@ export function InOutReport({ data, months }: InOutReportProps) {
       chart={<EChart option={option} ariaLabel="Monthly money in versus money out" />}
       isLoading={data.isLoading}
       isEmpty={isEmpty}
-      emptyText="No income or spending in this period."
+      emptyText={t`No income or spending in this period.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
             <StatTile
-              label="Net"
+              label={t`Net`}
               value={`${totalNet >= 0 ? '+' : ''}${money.tile(totalNet)}`}
               valueClassName={trendTextClass(totalNet)}
             />
             <StatTile
-              label="Savings rate"
+              label={t`Savings rate`}
               value={savingsRate === null ? '—' : `${savingsRate.toFixed(0)}%`}
               valueClassName={savingsRate !== null ? trendTextClass(savingsRate) : undefined}
               detail={target !== null ? `target ${target}%` : undefined}
             />
-            <StatTile label="Money in" value={money.tile(totalIncome)} />
+            <StatTile label={t`Money in`} value={money.tile(totalIncome)} />
             <StatTile
-              label="Money out"
+              label={t`Money out`}
               value={money.tile(totalSpending)}
               valueClassName={totalSpending > 0 ? 'text-red-600 dark:text-red-300' : undefined}
               detail={`avg ${money.tile(Math.round(totalSpending / monthCount))}/mo`}
             />
           </div>
-          <PanelSectionTitle>Monthly</PanelSectionTitle>
+          <PanelSectionTitle>
+            <Trans>Monthly</Trans>
+          </PanelSectionTitle>
           <div className="divide-y divide-border/50">
             {monthlyRows.map((point) => (
               <MonthRow

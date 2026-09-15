@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { FundingPriorityBadge } from '@features/category-management/ui/FundingPriorityBadge';
 import { FundingPriorityEditor } from '@features/category-management/ui/FundingPriorityEditor';
 /**
@@ -48,6 +49,8 @@ export function DesktopBudgetCategoryRow({
   dragHandleProps,
   selectable,
 }: DesktopBudgetCategoryRowProps) {
+  const { t } = useLingui();
+
   const moveAmountInputId = useId();
   const checkboxShiftRef = useRef(false);
   const [movePopoverOpen, setMovePopoverOpen] = useState(false);
@@ -234,7 +237,7 @@ export function DesktopBudgetCategoryRow({
                   className="w-full justify-start text-xs"
                   onClick={() => onEditCategory(row)}
                 >
-                  Edit
+                  <Trans>Edit</Trans>
                 </Button>
                 {onHideCategory && (
                   <Button
@@ -246,8 +249,10 @@ export function DesktopBudgetCategoryRow({
                       onHideCategory(row);
                     }}
                   >
-                    <EyeOff className="mr-2 h-3 w-3" />
-                    Hide
+                    <Trans>
+                      <EyeOff className="mr-2 h-3 w-3" />
+                      Hide
+                    </Trans>
                   </Button>
                 )}
                 <Button
@@ -256,7 +261,7 @@ export function DesktopBudgetCategoryRow({
                   className="w-full justify-start text-xs text-destructive hover:text-destructive"
                   onClick={() => onDeleteCategory(row)}
                 >
-                  Delete
+                  <Trans>Delete</Trans>
                 </Button>
               </div>
             </PopoverContent>
@@ -359,13 +364,15 @@ export function DesktopBudgetCategoryRow({
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-72 space-y-3" align="end">
-                <div className="text-sm font-medium">Move Money</div>
+                <div className="text-sm font-medium">
+                  <Trans>Move Money</Trans>
+                </div>
                 <div className="space-y-1">
                   <Label
                     htmlFor={moveAmountInputId}
                     className="font-normal text-xs text-muted-foreground"
                   >
-                    Amount
+                    <Trans>Amount</Trans>
                   </Label>
                   <Input
                     id={moveAmountInputId}
@@ -377,17 +384,19 @@ export function DesktopBudgetCategoryRow({
                     max={String(toDecimal(row.available > 0 ? row.available : ZERO_MILLI))}
                   />
                   <div className="text-[11px] text-muted-foreground">
-                    Available: {formatAmount(Math.max(0, row.available || 0))}
+                    <Trans>Available: {formatAmount(Math.max(0, row.available || 0))}</Trans>
                   </div>
                 </div>
                 <div className="space-y-1">
                   {/* Caption, not a <label>: SearchableCategorySelect exposes no labelable control. */}
-                  <span className="text-xs text-muted-foreground">Move to</span>
+                  <span className="text-xs text-muted-foreground">
+                    <Trans>Move to</Trans>
+                  </span>
                   <SearchableCategorySelect
                     budgetId={selectedBudgetId}
                     selectedCategoryId={moveTarget}
                     onCategorySelect={(id) => setMoveTarget(id)}
-                    placeholder="Select target"
+                    placeholder={t`Select target`}
                     triggerClassName="justify-start h-8"
                     includeReadyToAssign
                     excludeCategoryId={row.categoryId}
@@ -397,10 +406,10 @@ export function DesktopBudgetCategoryRow({
                 </div>
                 <div className="flex items-center justify-end gap-2 pt-1">
                   <Button variant="ghost" size="sm" onClick={() => setMovePopoverOpen(false)}>
-                    Cancel
+                    <Trans>Cancel</Trans>
                   </Button>
                   <Button size="sm" onClick={handleMove} disabled={moveTarget === null}>
-                    Move
+                    <Trans>Move</Trans>
                   </Button>
                 </div>
               </PopoverContent>
@@ -438,8 +447,10 @@ export function DesktopBudgetCategoryRow({
   );
 }
 
-interface SortableDesktopBudgetCategoryRowProps
-  extends Omit<DesktopBudgetCategoryRowProps, 'dragHandleProps'> {
+interface SortableDesktopBudgetCategoryRowProps extends Omit<
+  DesktopBudgetCategoryRowProps,
+  'dragHandleProps'
+> {
   overId: string | null;
 }
 

@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import { Button } from '@shared/ui/button';
 import { Textarea } from '@shared/ui/textarea';
@@ -27,6 +28,8 @@ export function ChatComposer({
   onAddImages,
   onRemoveImage,
 }: ChatComposerProps) {
+  const { t } = useLingui();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canSend = (inputText.trim().length > 0 || attachedImages.length > 0) && !isGenerating;
 
@@ -58,7 +61,7 @@ export function ChatComposer({
                 type="button"
                 onClick={() => onRemoveImage(i)}
                 className="absolute right-0.5 top-0.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-foreground"
-                aria-label="Remove image"
+                aria-label={t`Remove image`}
               >
                 <X className="h-3 w-3" />
               </button>
@@ -84,8 +87,8 @@ export function ChatComposer({
           size="icon"
           onClick={() => fileInputRef.current?.click()}
           disabled={isGenerating || disabled}
-          aria-label="Attach image"
-          title="Attach image"
+          aria-label={t`Attach image`}
+          title={t`Attach image`}
         >
           <Paperclip className="h-4 w-4" />
         </Button>
@@ -94,7 +97,7 @@ export function ChatComposer({
           onChange={(e) => onInputChange(e.target.value)}
           onKeyDown={onKeyDown}
           onPaste={handlePaste}
-          placeholder="Ask about your budget...  (Shift+Enter for a new line)"
+          placeholder={t`Ask about your budget...  (Shift+Enter for a new line)`}
           disabled={isGenerating || disabled}
           rows={1}
           className="max-h-40 min-h-[2.5rem] flex-1 resize-none"
