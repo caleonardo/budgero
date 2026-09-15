@@ -121,6 +121,22 @@ export class UserMetaQueries {
     run(this.db, `UPDATE user_meta SET DialogBackgroundBlur = ? WHERE ID = 1`, value ? 1 : 0);
   }
 
+  /** First calendar weekday: Sunday (0) or Monday (1). */
+  getWeekStartsOn(): 0 | 1 {
+    this.ensureRow();
+    const row = getRow<{ WeekStartsOn: number }>(
+      this.db,
+      `SELECT WeekStartsOn FROM user_meta WHERE ID = 1`
+    );
+    return row?.WeekStartsOn === 1 ? 1 : 0;
+  }
+
+  setWeekStartsOn(value: 0 | 1): void {
+    if (value !== 0 && value !== 1) throw new Error('Week start must be Sunday or Monday');
+    this.ensureRow();
+    run(this.db, `UPDATE user_meta SET WeekStartsOn = ? WHERE ID = 1`, value);
+  }
+
   setLastBackup(timestamp: string): void {
     this.ensureRow();
     run(

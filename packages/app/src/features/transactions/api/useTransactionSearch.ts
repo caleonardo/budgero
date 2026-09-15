@@ -1,4 +1,5 @@
 import React from 'react';
+import { useWeekStartsOn } from '@shared/contexts/WeekStartsOnContext';
 import type { DateRange } from 'react-day-picker';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import {
@@ -137,11 +138,12 @@ export function useTransactionSearch(
   labelNames: string[],
   onDateRangeChange?: (range: DateRange | undefined) => void
 ) {
+  const weekStartsOn = useWeekStartsOn();
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const parsedQuery = React.useMemo(() => {
-    return parseSearchQuery(searchQuery, categoryNames, labelNames);
-  }, [searchQuery, categoryNames, labelNames]);
+    return parseSearchQuery(searchQuery, categoryNames, labelNames, weekStartsOn);
+  }, [searchQuery, categoryNames, labelNames, weekStartsOn]);
 
   // Sync date range with parent when detected in search query
   const lastSyncedDateRange = React.useRef<string | null>(null);

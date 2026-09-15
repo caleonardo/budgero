@@ -8,6 +8,7 @@ import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 
 /** Service interface for user preferences */
 interface UserMetaService {
+  getWeekStartsOn?(): Promise<0 | 1> | 0 | 1;
   getAllowOverAssignment(): Promise<boolean> | boolean;
   getSuggestCategoryFromPayee?(): Promise<boolean> | boolean;
   getShowGroupPercent?(): Promise<boolean> | boolean;
@@ -312,5 +313,40 @@ export function useDialogBackgroundBlurPreference() {
     isLoading: queryRest.isLoading,
     updateDialogBackgroundBlur: updateMutation.mutate,
     isUpdating: updateMutation.isPending,
+  };
+}
+
+/** Calendar and semantic week-search preference, persisted with the active workspace. */
+export function useWeekStartsOnPreference() {
+  const runtime = useRuntime();
+  const runtimeInitialized = useRuntimeInitialized();
+  const spaceId = useActiveSpaceId();
+  const query = useQuery<0 | 1>({
+    queryKey: ['weekStartsOn', spaceId ?? 'global'],
+    queryFn: async () => {
+      const services = runtime.services() as ServicesWithUserMeta;
+      return (await services.userMeta?.getWeekStartsOn?.()) === 1 ? 1 : 0;
+    },
+    enabled: runtimeInitialized,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+  const mutation = useMutation<void, Error, 0 | 1>({
+    mutationFn: async (value) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'userPreferences.setWeekStartsOn',
+        payload: { value },
+        meta: { label: 'Update first day of the week' },
+      });
+    },
+  });
+
+  return {
+    weekStartsOn: query.data ?? 0,
+    isLoading: !runtimeInitialized || query.isLoading,
+    isError: query.isError,
+    updateWeekStartsOn: mutation.mutate,
+    isUpdating: mutation.isPending,
   };
 }

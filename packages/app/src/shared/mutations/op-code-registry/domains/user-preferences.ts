@@ -1,6 +1,18 @@
 import { S, type OpCodeEntry } from '../shared';
 
 export const userPreferenceOps = {
+  'userPreferences.setWeekStartsOn': {
+    execute: async (args) => {
+      const services = S() as { userMeta?: { setWeekStartsOn(value: 0 | 1): void } };
+      if (!services.userMeta) throw new Error('userMeta service not available');
+      if (args.value !== 0 && args.value !== 1) {
+        throw new Error('Week start must be Sunday or Monday');
+      }
+      services.userMeta.setWeekStartsOn(args.value);
+      return { success: true };
+    },
+    invalidates: [['weekStartsOn'], ['userPreferences']],
+  },
   'userPreferences.setAllowOverAssignment': {
     execute: async (args) => {
       const services = S() as { userMeta?: { setAllowOverAssignment(value: boolean): void } };

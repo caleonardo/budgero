@@ -10,6 +10,7 @@ import type {
   SpendingByLabelRow,
   SpendingByPayeeRow,
 } from '@budgero/core/browser';
+import { useWeekStartsOn } from '@shared/contexts/WeekStartsOnContext';
 import { useSpaceQuery } from '@shared/api/useSpaceQuery';
 import { getTodayISO } from '@shared/lib/date-utils';
 
@@ -127,6 +128,7 @@ export function useIncomeExpenseByPeriod(
   grouping: 'day' | 'week' | 'month' | 'quarter',
   accountIds?: number[]
 ) {
+  const weekStartsOn = useWeekStartsOn();
   const normalizedAccountIds = accountIds?.length
     ? Array.from(new Set(accountIds)).sort((a, b) => a - b)
     : undefined;
@@ -137,6 +139,7 @@ export function useIncomeExpenseByPeriod(
       endDate,
       budgetId,
       grouping,
+      weekStartsOn,
       normalizedAccountIds?.join('_') ?? 'all',
     ],
     enabled: Boolean(startDate) && Boolean(endDate) && Boolean(budgetId),
@@ -160,6 +163,7 @@ export function useSpendingTotalsByPeriod(
   categoryIds?: number[],
   accountIds?: number[]
 ) {
+  const weekStartsOn = useWeekStartsOn();
   const normalizedCategoryIds = categoryIds?.length
     ? Array.from(new Set(categoryIds)).sort((a, b) => a - b)
     : undefined;
@@ -173,6 +177,7 @@ export function useSpendingTotalsByPeriod(
       endDate,
       budgetId,
       grouping,
+      weekStartsOn,
       normalizedCategoryIds?.join('_') ?? 'all-categories',
       normalizedAccountIds?.join('_') ?? 'all-accounts',
     ],
@@ -198,6 +203,7 @@ export function useCategoryTotalsByPeriod(
   categoryIds?: number[],
   accountIds?: number[]
 ) {
+  const weekStartsOn = useWeekStartsOn();
   const normalizedCategoryIds = categoryIds?.length
     ? Array.from(new Set(categoryIds)).sort((a, b) => a - b)
     : undefined;
@@ -211,6 +217,7 @@ export function useCategoryTotalsByPeriod(
       endDate,
       budgetId,
       grouping,
+      weekStartsOn,
       normalizedCategoryIds?.join('_') ?? 'all-categories',
       normalizedAccountIds?.join('_') ?? 'all-accounts',
     ],

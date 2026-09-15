@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
 
+import { useWeekStartsOn } from '@shared/contexts/WeekStartsOnContext';
 import { cn } from '@shared/lib/utils';
 import { buttonVariants } from '@shared/ui/button';
 
@@ -12,6 +13,7 @@ function Calendar({
   components: userComponents,
   ...props
 }: React.ComponentProps<typeof DayPicker>) {
+  const weekStartsOn = useWeekStartsOn();
   const defaultClassNames = {
     months: 'relative flex flex-col sm:flex-row gap-4',
     month: 'w-full',
@@ -74,6 +76,7 @@ function Calendar({
 
   return (
     <DayPicker
+      weekStartsOn={weekStartsOn}
       showOutsideDays={showOutsideDays}
       className={cn('w-fit', className)}
       classNames={mergedClassNames}

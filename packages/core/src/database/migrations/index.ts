@@ -1,5 +1,6 @@
 import { migration062 } from './062-add-import-provenance.js';
 import { migration063 } from './063-add-category-funding-priorities.js';
+import { migration064 } from './064-add-week-start-preference.js';
 import { migration001 } from './001-initial-schema.js';
 import { migration002 } from './002-add-exclude-from-budget-pace-to-categories.js';
 import { migration003 } from './003-add-metadata-column-to-accounts-for-liability-tr.js';
@@ -125,4 +126,5 @@ export const migrations: Migration[] = [
   migration061,
   migration062,
   migration063,
+  migration064,
 ];

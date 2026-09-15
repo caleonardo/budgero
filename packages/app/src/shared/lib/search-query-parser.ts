@@ -38,7 +38,7 @@ export interface ParsedSearchQuery {
 
 const DATE_PATTERNS: {
   pattern: RegExp;
-  getRange: (match: RegExpMatchArray) => { from: Date; to: Date };
+  getRange: (match: RegExpMatchArray, weekStartsOn: 0 | 1) => { from: Date; to: Date };
   getLabel: (match: RegExpMatchArray) => string;
 }[] = [
   {
@@ -59,19 +59,19 @@ const DATE_PATTERNS: {
   },
   {
     pattern: /^this\s*week$/i,
-    getRange: () => {
+    getRange: (_match, weekStartsOn) => {
       const today = new Date();
-      return { from: startOfWeek(today, { weekStartsOn: 1 }), to: endOfDay(today) };
+      return { from: startOfWeek(today, { weekStartsOn }), to: endOfDay(today) };
     },
     getLabel: () => 'This week',
   },
   {
     pattern: /^last\s*week$/i,
-    getRange: () => {
+    getRange: (_match, weekStartsOn) => {
       const lastWeek = subWeeks(new Date(), 1);
       return {
-        from: startOfWeek(lastWeek, { weekStartsOn: 1 }),
-        to: endOfWeek(lastWeek, { weekStartsOn: 1 }),
+        from: startOfWeek(lastWeek, { weekStartsOn }),
+        to: endOfWeek(lastWeek, { weekStartsOn }),
       };
     },
     getLabel: () => 'Last week',
@@ -160,7 +160,8 @@ function tokenize(query: string): string[] {
  */
 function tryMatchDatePattern(
   tokens: string[],
-  startIndex: number
+  startIndex: number,
+  weekStartsOn: 0 | 1
 ): {
   consumed: number;
   range: { from: Date; to: Date };
@@ -176,7 +177,7 @@ function tryMatchDatePattern(
       if (match) {
         return {
           consumed: length,
-          range: getRange(match),
+          range: getRange(match, weekStartsOn),
           label: getLabel(match),
           matchedText: candidateText,
         };
@@ -354,7 +355,8 @@ export function getCategorySuggestions(
 export function parseSearchQuery(
   query: string,
   categoryNames: string[],
-  labelNames: string[] = []
+  labelNames: string[] = [],
+  weekStartsOn: 0 | 1 = 0
 ): ParsedSearchQuery {
   const result: ParsedSearchQuery = {
     textQuery: '',
@@ -380,7 +382,7 @@ export function parseSearchQuery(
   while (i < tokens.length) {
     const token = tokens[i];
 
-    const dateMatch = tryMatchDatePattern(tokens, i);
+    const dateMatch = tryMatchDatePattern(tokens, i, weekStartsOn);
     if (dateMatch) {
       // Use last-specified date range (overwrite previous)
       result.dateRange = dateMatch.range;
@@ -462,7 +464,7 @@ export function removeTokenFromQuery(
 
   let i = 0;
   while (i < tokens.length) {
-    const dateMatch = tryMatchDatePattern(tokens, i);
+    const dateMatch = tryMatchDatePattern(tokens, i, 0);
     if (
       dateMatch &&
       tokenToRemove.type === 'date' &&

@@ -49,7 +49,7 @@ const PROJECTED_TRANSACTIONS_SQL = `
  */
 const PERIOD_START_CASE = `CASE
             WHEN ? = 'day' THEN Date
-            WHEN ? = 'week' THEN DATE(Date, '-' || ((CAST(strftime('%w', Date) AS INTEGER) + 6) % 7) || ' days')
+            WHEN ? = 'week' THEN DATE(Date, '-' || ((CAST(strftime('%w', Date) AS INTEGER) + 7 - COALESCE((SELECT WeekStartsOn FROM user_meta WHERE ID = 1), 0)) % 7) || ' days')
             WHEN ? = 'month' THEN DATE(strftime('%Y-%m-01', Date))
             WHEN ? = 'quarter' THEN DATE(
               strftime('%Y', Date) || '-' || printf(
@@ -68,7 +68,7 @@ const PERIOD_END_CASE = `CASE
 
 const PERIOD_LABEL_CASE = `CASE
             WHEN ? = 'day' THEN strftime('%Y-%m-%d', PeriodStart)
-            WHEN ? = 'week' THEN strftime('%Y', PeriodStart) || '-W' || printf('%02d', CAST(strftime('%W', PeriodStart) AS INTEGER))
+            WHEN ? = 'week' THEN strftime('%Y', PeriodStart) || '-W' || printf('%02d', (CAST(strftime('%j', PeriodStart) AS INTEGER) - 1) / 7 + 1)
             WHEN ? = 'month' THEN strftime('%Y-%m', PeriodStart)
             WHEN ? = 'quarter' THEN strftime('%Y', PeriodStart) || '-Q' || (((CAST(strftime('%m', PeriodStart) AS INTEGER) - 1) / 3) + 1)
           END AS Period`;

@@ -167,7 +167,7 @@ describe('category funding persistence', () => {
       'ShowCategoryPriorities',
     ])
       db.exec(`ALTER TABLE budgets DROP COLUMN ${column}`);
-    db.exec('DELETE FROM schema_migrations WHERE version = 63');
+    db.exec('DELETE FROM schema_migrations WHERE version >= 63');
     db.restoreAndMigrate(db.backup());
     expect(services.categories.getAllCategories(budgetId)).toEqual(before);
     expect(services.goals.getGoalByCategoryID(id).Target).toBe(100_000);

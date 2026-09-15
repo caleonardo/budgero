@@ -60,6 +60,14 @@ export class UserMetaService {
     this.queries.setDialogBackgroundBlur(value);
   }
 
+  getWeekStartsOn(): 0 | 1 {
+    return this.queries.getWeekStartsOn();
+  }
+
+  setWeekStartsOn(value: 0 | 1): void {
+    this.queries.setWeekStartsOn(value);
+  }
+
   getRateCacheRetentionDays(): number {
     return this.queries.getRateCacheRetentionDays();
   }
