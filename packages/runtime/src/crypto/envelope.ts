@@ -20,22 +20,25 @@ const ENVELOPE_MAGIC = new Uint8Array([0x42, 0x47, 0x45, 0x31]); // 'BGE1'
 const ENVELOPE_VERSION = 2;
 const ENVELOPE_KEK_ITERATIONS = 600_000;
 
-// Cached DEK and header to avoid repeated PBKDF2 derivation
-let cachedDekKey: CryptoKey | null = null;
-let cachedHeader: {
-  salt: Uint8Array;
-  kekIv: Uint8Array;
-  encDek: Uint8Array;
-  iterations: number;
-} | null = null;
-let cachedPasswordFingerprint: string | null = null;
+// Publish and capture the key and its wrapping header as one matching entry.
+interface EnvelopeCacheEntry {
+  dekKey: CryptoKey;
+  header: {
+    salt: Uint8Array;
+    kekIv: Uint8Array;
+    encDek: Uint8Array;
+    iterations: number;
+  };
+  passwordFingerprint: string;
+}
+
+let cachedEnvelope: EnvelopeCacheEntry | null = null;
+// A reset must also prevent older in-flight work from repopulating the cache.
+let cacheGeneration = 0;
 
 async function importAesGcmKey(raw: Uint8Array): Promise<CryptoKey> {
   const subtle = getSubtleCrypto();
-  return subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, [
-    'encrypt',
-    'decrypt',
-  ]);
+  return subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
 }
 
 async function deriveKekFromPassword(
@@ -45,13 +48,9 @@ async function deriveKekFromPassword(
 ): Promise<CryptoKey> {
   const subtle = getSubtleCrypto();
   const enc = new TextEncoder();
-  const baseKey = await subtle.importKey(
-    'raw',
-    enc.encode(password),
-    'PBKDF2',
-    false,
-    ['deriveKey']
-  );
+  const baseKey = await subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, [
+    'deriveKey',
+  ]);
   return subtle.deriveKey(
     {
       name: 'PBKDF2',
@@ -108,32 +107,33 @@ function readU32(view: Uint8Array, offset: number): number {
   );
 }
 
-async function ensureEnvelopeHeader(masterPassword: string, iterations: number): Promise<void> {
+async function ensureEnvelopeHeader(
+  masterPassword: string,
+  iterations: number
+): Promise<EnvelopeCacheEntry> {
+  const generation = cacheGeneration;
   const cryptoObj = getGlobalCrypto();
   const subtle = getSubtleCrypto();
   const fp = await fingerprintPassword(masterPassword);
-  if (
-    cachedDekKey &&
-    cachedHeader &&
-    cachedPasswordFingerprint === fp &&
-    cachedHeader.iterations === iterations
-  ) {
-    return;
+  const cached = cachedEnvelope;
+  if (cached && cached.passwordFingerprint === fp && cached.header.iterations === iterations) {
+    return cached;
   }
-  // Generate new DEK and wrap with KEK derived from this password
+  // Keep initialization local: another encryption or decryption may finish
+  // while PBKDF2 or key wrapping is pending.
   const dekRaw = cryptoObj.getRandomValues(new Uint8Array(32));
-  cachedDekKey = await importAesGcmKey(dekRaw);
+  const dekKey = await importAesGcmKey(dekRaw);
   const salt = cryptoObj.getRandomValues(new Uint8Array(16));
   const kek = await deriveKekFromPassword(masterPassword, salt, iterations);
   const kekIv = cryptoObj.getRandomValues(new Uint8Array(12));
-  const encDekBuf = await subtle.encrypt(
-    { name: 'AES-GCM', iv: kekIv },
-    kek,
-    dekRaw
-  );
-  const encDek = new Uint8Array(encDekBuf);
-  cachedHeader = { salt, kekIv, encDek, iterations };
-  cachedPasswordFingerprint = fp;
+  const encDekBuf = await subtle.encrypt({ name: 'AES-GCM', iv: kekIv }, kek, dekRaw);
+  const entry: EnvelopeCacheEntry = {
+    dekKey,
+    header: { salt, kekIv, encDek: new Uint8Array(encDekBuf), iterations },
+    passwordFingerprint: fp,
+  };
+  if (generation === cacheGeneration) cachedEnvelope = entry;
+  return entry;
 }
 
 /**
@@ -143,29 +143,27 @@ export async function encryptEnvelope(
   data: Uint8Array,
   masterPassword: string
 ): Promise<Uint8Array> {
-  await ensureEnvelopeHeader(masterPassword, ENVELOPE_KEK_ITERATIONS);
-  if (!cachedDekKey || !cachedHeader) throw new Error('Envelope header not initialized');
+  const { dekKey, header: envelopeHeader } = await ensureEnvelopeHeader(
+    masterPassword,
+    ENVELOPE_KEK_ITERATIONS
+  );
 
   const cryptoObj = getGlobalCrypto();
   const subtle = getSubtleCrypto();
   const dataIv = cryptoObj.getRandomValues(new Uint8Array(12));
-  const ctBuf = await subtle.encrypt(
-    { name: 'AES-GCM', iv: dataIv },
-    cachedDekKey,
-    data
-  );
+  const ctBuf = await subtle.encrypt({ name: 'AES-GCM', iv: dataIv }, dekKey, data);
   const ct = new Uint8Array(ctBuf);
 
   const header = concatBytes([
     ENVELOPE_MAGIC,
     new Uint8Array([ENVELOPE_VERSION]),
-    u32(cachedHeader.iterations),
-    u16(cachedHeader.salt.length),
-    cachedHeader.salt,
-    new Uint8Array([cachedHeader.kekIv.length]),
-    cachedHeader.kekIv,
-    u16(cachedHeader.encDek.length),
-    cachedHeader.encDek,
+    u32(envelopeHeader.iterations),
+    u16(envelopeHeader.salt.length),
+    envelopeHeader.salt,
+    new Uint8Array([envelopeHeader.kekIv.length]),
+    envelopeHeader.kekIv,
+    u16(envelopeHeader.encDek.length),
+    envelopeHeader.encDek,
     new Uint8Array([dataIv.length]),
     dataIv,
   ]);
@@ -186,6 +184,7 @@ export async function decryptEnvelope(
   encryptedData: Uint8Array,
   masterPassword: string
 ): Promise<DecryptEnvelopeResult> {
+  const generation = cacheGeneration;
   // Check magic
   if (encryptedData.length < 4) {
     throw new Error('Invalid envelope: data too short');
@@ -230,33 +229,30 @@ export async function decryptEnvelope(
   // Derive KEK and unwrap DEK
   const kek = await deriveKekFromPassword(masterPassword, salt, iterations);
   const subtle = getSubtleCrypto();
-  const dekRawBuf = await subtle.decrypt(
-    { name: 'AES-GCM', iv: kekIv },
-    kek,
-    encDek
-  );
+  const dekRawBuf = await subtle.decrypt({ name: 'AES-GCM', iv: kekIv }, kek, encDek);
   const dekRaw = new Uint8Array(dekRawBuf);
 
-  // Cache for subsequent operations
-  cachedDekKey = await importAesGcmKey(dekRaw);
-  cachedHeader = { salt, kekIv, encDek, iterations };
-  cachedPasswordFingerprint = await fingerprintPassword(masterPassword);
-
-  const ptBuf = await subtle.decrypt(
-    { name: 'AES-GCM', iv: dataIv },
-    cachedDekKey,
-    ct
-  );
-  return { decrypted: new Uint8Array(ptBuf), salt, iterations };
+  const dekKey = await importAesGcmKey(dekRaw);
+  const passwordFingerprint = await fingerprintPassword(masterPassword);
+  const ptBuf = await subtle.decrypt({ name: 'AES-GCM', iv: dataIv }, dekKey, ct);
+  // Only authenticated payloads may seed the cache. Always decrypt using the
+  // local key, even if a concurrent operation replaces or clears the cache.
+  if (generation === cacheGeneration) {
+    cachedEnvelope = {
+      dekKey,
+      header: { salt, kekIv, encDek, iterations },
+      passwordFingerprint,
+    };
+  }
+  return { decrypted: new Uint8Array(ptBuf), salt: salt.slice(), iterations };
 }
 
 /**
  * Clear the cached DEK (useful for testing or password changes).
  */
 export function clearEnvelopeCache(): void {
-  cachedDekKey = null;
-  cachedHeader = null;
-  cachedPasswordFingerprint = null;
+  cacheGeneration += 1;
+  cachedEnvelope = null;
 }
 
 /**
@@ -264,5 +260,5 @@ export function clearEnvelopeCache(): void {
  * Used to ensure consistent salt across encryption operations.
  */
 export function getCachedSalt(): Uint8Array | null {
-  return cachedHeader?.salt ?? null;
+  return cachedEnvelope?.header.salt.slice() ?? null;
 }
