@@ -16,11 +16,68 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.12.1',
+    date: 'September 15, 2026',
+    summary:
+      'Adds a configurable first day of the week and fixes currency displays, scheduled conversions, shortcut labels, app caching, encrypted saving, and sync cleanup.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Choose the first day of the week',
+        description:
+          'Choose Sunday or Monday under Budget Settings → Calendar. Calendars, weekly reports, and “this week” and “last week” searches follow the workspace preference.',
+      },
+      {
+        type: 'fixed',
+        title: 'Recurring transaction currencies',
+        description:
+          'Recurring settings and upcoming transactions show amounts in the account currency, with an approximate budget-currency equivalent when currencies differ. Account recurring panels respect the selected currency display.',
+      },
+      {
+        type: 'fixed',
+        title: 'Scheduled currency conversions',
+        description:
+          'Future transactions use current available official rates. Recurring projections respect custom rates for their scheduled dates and correctly calculate cryptocurrency amounts and transfers.',
+      },
+      {
+        type: 'improved',
+        title: 'Exchange-rate refresh reliability',
+        description:
+          'Official rates refresh when opening a budget or reconnecting. Successful refreshes are reused for the rest of the day for that budget and browser. Failed refreshes preserve the last usable rates.',
+      },
+      {
+        type: 'fixed',
+        title: 'Keyboard shortcut labels',
+        description:
+          'Search and Add Transaction labels show Ctrl shortcuts on Windows and Linux and Apple symbols on Apple devices.',
+      },
+      {
+        type: 'fixed',
+        title: 'Stale app pages after updates',
+        description:
+          'Corrected caching rules that could leave browsers loading outdated app pages after a server update.',
+      },
+      {
+        type: 'fixed',
+        title: 'Encrypted saving reliability',
+        description:
+          'Fixed overlapping encryption operations producing unreadable saved data. If local encryption fails, Budgero preserves the previous saved copy instead of writing unencrypted data.',
+      },
+      {
+        type: 'fixed',
+        title: 'Sync session cleanup',
+        description:
+          'Closed sync sessions no longer reconnect or start further updates after shutdown. Delayed saves cannot overwrite a newer session’s sync position.',
+      },
+    ],
+  },
+  {
     version: 'v1.12.0',
     date: 'September 12, 2026',
     summary:
       'Adds category funding priorities and duplicate review for file imports, and fixes YNAB imports, transaction lists, and local saving.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
