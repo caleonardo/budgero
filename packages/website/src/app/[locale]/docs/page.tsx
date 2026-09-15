@@ -104,7 +104,7 @@ export default async function DocsPage({
   });
 
   return (
-    <main className="bg-background text-foreground">
+    <main className="bg-background text-foreground [overflow-wrap:anywhere]">
       <section className="border-b border-border/60 bg-muted/20">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm">
@@ -143,7 +143,7 @@ export default async function DocsPage({
       </section>
 
       <section className="container mx-auto px-4 py-12 sm:py-16 lg:py-20">
-        <div className="grid gap-12 lg:grid-cols-[260px_1fr] lg:gap-16">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-16">
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-2xl border border-border/60 bg-muted/20 p-6 shadow-sm">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -155,7 +155,7 @@ export default async function DocsPage({
                   <div key={section.id}>
                     <a
                       href={`#${section.id}`}
-                      className="group flex items-center justify-between rounded-lg px-3 py-2 text-left font-medium text-foreground transition hover:bg-background"
+                      className="group flex flex-col items-start gap-1 rounded-lg px-3 py-2 text-left font-medium text-foreground transition hover:bg-background"
                     >
                       <span>{section.title}</span>
                       <span className="text-xs text-muted-foreground transition group-hover:text-foreground">
@@ -168,7 +168,7 @@ export default async function DocsPage({
             </div>
           </aside>
 
-          <div className="space-y-16">
+          <div className="min-w-0 space-y-16">
             {sections.map((section) => (
               <article key={section.id} id={section.id} className="scroll-mt-28">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
