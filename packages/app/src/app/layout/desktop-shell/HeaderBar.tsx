@@ -15,6 +15,7 @@ import { Button } from '@shared/ui/button';
 import { ConnectivityStatus } from '@widgets/sync-status/ConnectivityStatus';
 import { openQuackback } from '@features/feedback';
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
+import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 
 import { useUiStore } from '@shared/store/useUiStore';
 import { triggerAddTransaction, triggerCommandPalette } from './desktop-shell.utils';
@@ -28,6 +29,7 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const togglePrivacyMaskNumbers = useUiStore((state) => state.togglePrivacyMaskNumbers);
   const feedbackEnabled = !IS_SELF_HOSTABLE_BUILD;
+  const shortcuts = getKeyboardShortcutLabels();
 
   return (
     <div className="sticky top-0 z-30 bg-background/80 backdrop-blur border-b">
@@ -66,14 +68,13 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             size="sm"
             className="gap-2"
             onClick={triggerAddTransaction}
-            title="Add transaction (⌘⌥T)"
+            title={`Add transaction (${shortcuts.addTransaction})`}
             aria-label="Add transaction"
           >
             <Plus className="h-4 w-4" />
             <span className="hidden lg:inline">Add Transaction</span>
             <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-primary-foreground/30 px-1.5 font-mono text-[10px] font-medium opacity-80 lg:flex">
-              <span className="text-xs">&#8997;</span>
-              <span className="text-xs">&#8984;</span>T
+              {shortcuts.addTransaction}
             </kbd>
           </Button>
           <Button
@@ -105,11 +106,12 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             size="sm"
             className="gap-2 text-muted-foreground"
             onClick={triggerCommandPalette}
+            title={`Search (${shortcuts.search})`}
           >
             <Search className="h-4 w-4" />
             <span className="hidden lg:inline">Search</span>
             <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-              <span className="text-xs">&#8984;</span>K
+              {shortcuts.search}
             </kbd>
           </Button>
           <ConnectivityStatus />

@@ -52,6 +52,7 @@ import { useTransactionCellCommit } from '@features/transactions/api/useTransact
 import { type TransactionColumnName as DbTransactionColumn } from '@entities/transaction/api/mutations';
 import { TransactionQuickViewDialog } from '@features/transactions/ui/TransactionQuickViewDialog';
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
+import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 import { STARTUP_INTENT_KEY } from '@shared/lib/pwa-constants';
 import type {
   MilliUnits,
@@ -72,6 +73,7 @@ interface SelectedTransactionData extends GetTransactionsByAccountRow {
 const COMMAND_PALETTE_TRANSACTION_LIMIT = 200;
 
 export function CommandPalette() {
+  const shortcuts = getKeyboardShortcutLabels();
   const [showTransactionDialog, setShowTransactionDialog] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
   const [selectedTransaction, setSelectedTransaction] =
@@ -469,7 +471,7 @@ export function CommandPalette() {
               <span>Add Transaction</span>
               {/* Handler listens for (Cmd|Ctrl)+Alt+T — plain Cmd/Ctrl+T is
                   reserved by the browser for "new tab" and can't be overridden. */}
-              <CommandShortcut>⌥⌘T</CommandShortcut>
+              <CommandShortcut>{shortcuts.addTransaction}</CommandShortcut>
             </CommandItem>
           </CommandGroup>
 
