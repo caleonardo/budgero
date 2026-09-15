@@ -71,7 +71,7 @@ export function AnalyticsFilterBar({ state, data, showCategoryFilters }: Analyti
         value={selections.period}
         onValueChange={(value) => update({ period: value as PeriodKey })}
       >
-        <SelectTrigger className="h-9 w-[160px]" size="sm">
+        <SelectTrigger className="h-9 w-auto min-w-[160px]" size="sm">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

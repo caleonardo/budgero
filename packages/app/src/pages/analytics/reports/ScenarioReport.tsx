@@ -476,7 +476,7 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
       heroClassName={trendTextClass(chartedEnd)}
       subtitle={
         scenario.breakMonthKey
-          ? t`This scenario breaks in ${shortMonthLabel(scenario.breakMonthKey)}${breakBeyondChart ? ' (beyond the charted window)' : ''}`
+          ? t`This scenario breaks in ${shortMonthLabel(scenario.breakMonthKey)}${breakBeyondChart ? t` (beyond the charted window)` : ''}`
           : t`Balance after ${payload.horizon} months under this scenario`
       }
       controls={
@@ -700,17 +700,17 @@ export function ScenarioReport({ data, months, accountIds }: ScenarioReportProps
               detail={chartedMin.monthKey ? shortMonthLabel(chartedMin.monthKey) : undefined}
             />
             <StatTile
-              label={t`Breaks`}
-              value={scenario.breakMonthKey ? shortMonthLabel(scenario.breakMonthKey) : 'Never'}
+              label={t`Funds run out`}
+              value={scenario.breakMonthKey ? shortMonthLabel(scenario.breakMonthKey) : t`Never`}
               valueClassName={
                 scenario.breakMonthKey ? 'text-red-600 dark:text-red-300' : 'text-green-600'
               }
               detail={
                 breakBeyondChart
-                  ? 'beyond charted window'
+                  ? t`beyond charted window`
                   : scenario.breakMonthKey
                     ? undefined
-                    : 'net stays positive for 50 years'
+                    : t`net stays positive for 50 years`
               }
             />
             <StatTile label={t`Starting funds`} value={money.tile(startBalance)} />

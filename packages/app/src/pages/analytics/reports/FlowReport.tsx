@@ -42,11 +42,25 @@ export function FlowReport({ data }: FlowReportProps) {
     [data.txns, data.onBudgetAccountIds, dimension]
   );
   const graph = collapsedGraph;
+  const nodeLabels = useMemo(() => {
+    const systemLabels = {
+      income: t`Income`,
+      saved: t`Savings`,
+      'from-savings': t`From savings`,
+      'other-spending': t`Other spending`,
+    };
+    return new Map(
+      graph.nodes.map((node) => [
+        node.name,
+        node.systemLabel ? systemLabels[node.systemLabel] : node.name.trim(),
+      ])
+    );
+  }, [graph.nodes, t]);
 
   const net = graph.totalIncome - graph.totalSpending;
   const savingsRate = graph.totalIncome > 0 ? (net / graph.totalIncome) * 100 : null;
   const isEmpty = graph.links.length === 0;
-  const dimensionLabel = dimension === 'group' ? 'groups' : 'categories';
+  const dimensionLabel = dimension === 'group' ? t`groups` : t`categories`;
 
   // Node colors by role: income sources cycle the cool half of the palette,
   // spending groups the fixed slot order; results use the status pair.
@@ -110,7 +124,7 @@ export function FlowReport({ data }: FlowReportProps) {
   const drilldownRows = drilldown?.kind === 'group' ? groupCategoryRows : otherRows;
   const showingDrilldown = drilldown !== null && drilldownRows.length > 0;
   const drilldownTitle = drilldown?.kind === 'group' ? drilldown.name : t`Other spending`;
-  const drilldownItemLabel = drilldown?.kind === 'group' ? 'categories' : dimensionLabel;
+  const drilldownItemLabel = drilldown?.kind === 'group' ? t`categories` : dimensionLabel;
 
   const drillableGroupNames = useMemo(
     () =>
@@ -130,11 +144,12 @@ export function FlowReport({ data }: FlowReportProps) {
       .map((link) => ({
         key: `destination:${link.target}`,
         name: link.target.trim(),
+        label: nodeLabels.get(link.target) ?? link.target.trim(),
         value: link.value,
         color: nodeColors.get(link.target) ?? palette.chrome.other,
       }))
       .sort((a, b) => b.value - a.value);
-  }, [drilldownRows, graph.links, nodeColors, palette.chrome.other, showingDrilldown]);
+  }, [drilldownRows, graph.links, nodeColors, nodeLabels, palette.chrome.other, showingDrilldown]);
 
   const option = useMemo<EChartsCoreOption>(() => {
     const { chrome } = palette;
@@ -151,7 +166,7 @@ export function FlowReport({ data }: FlowReportProps) {
               data: { itemStyle?: { color?: string } };
             };
             const value = Math.round(item.value * 1000);
-            return tooltipHtml(`Inside ${drilldownTitle} · ${drilldownItemLabel}`, [
+            return tooltipHtml(t`Inside ${drilldownTitle} · ${drilldownItemLabel}`, [
               {
                 color: item.data.itemStyle?.color ?? chrome.other,
                 name: item.name,
@@ -205,18 +220,18 @@ export function FlowReport({ data }: FlowReportProps) {
             data: { source?: string; target?: string };
           };
           if (item.dataType === 'edge') {
-            return tooltipHtml('Flow', [
+            return tooltipHtml(t`Flow`, [
               {
                 color: nodeColors.get(item.data.target ?? '') ?? chrome.other,
-                name: `${(item.data.source ?? '').trim()} → ${(item.data.target ?? '').trim()}`,
+                name: `${nodeLabels.get(item.data.source ?? '') ?? ''} → ${nodeLabels.get(item.data.target ?? '') ?? ''}`,
                 value: money.amount(Math.round(item.value * 1000)),
               },
             ]);
           }
-          return tooltipHtml('Total', [
+          return tooltipHtml(t`Total`, [
             {
               color: nodeColors.get(item.name) ?? chrome.other,
-              name: item.name.trim(),
+              name: nodeLabels.get(item.name) ?? item.name.trim(),
               value: money.amount(Math.round(item.value * 1000)),
             },
           ]);
@@ -226,7 +241,7 @@ export function FlowReport({ data }: FlowReportProps) {
         {
           type: 'sankey',
           left: 8,
-          right: 130,
+          right: 180,
           top: 12,
           bottom: 12,
           nodeWidth: 14,
@@ -238,7 +253,10 @@ export function FlowReport({ data }: FlowReportProps) {
           label: {
             color: chrome.inkPrimary,
             fontSize: 12,
-            formatter: (params: { name: string }) => params.name.trim(),
+            width: 168,
+            overflow: 'truncate',
+            formatter: (params: { name: string }) =>
+              nodeLabels.get(params.name) ?? params.name.trim(),
           },
           data: graph.nodes.map((node) => ({
             name: node.name,
@@ -266,7 +284,9 @@ export function FlowReport({ data }: FlowReportProps) {
     graph,
     money,
     nodeColors,
+    nodeLabels,
     palette,
+    t,
     showingDrilldown,
   ]);
 
@@ -298,7 +318,7 @@ export function FlowReport({ data }: FlowReportProps) {
             setDimension(nextDimension);
             setDrilldown(null);
           }}
-          ariaLabel="Money Map spending detail"
+          ariaLabel={t`Money Map spending detail`}
           options={[
             { value: 'group', label: t`Groups`, icon: Layers3 },
             { value: 'category', label: t`Categories`, icon: Tags },
@@ -310,8 +330,8 @@ export function FlowReport({ data }: FlowReportProps) {
           option={option}
           ariaLabel={
             showingDrilldown
-              ? `${drilldownTitle} ${drilldownItemLabel} breakdown`
-              : 'Income to spending flow'
+              ? t`${drilldownTitle} ${drilldownItemLabel} breakdown`
+              : t`Income to spending flow`
           }
           className="h-[440px]"
           onMarkClick={(mark) => {
@@ -352,7 +372,7 @@ export function FlowReport({ data }: FlowReportProps) {
               }
             />
             <StatTile
-              label={net >= 0 ? t`Saved` : t`Overspent`}
+              label={net >= 0 ? t`Savings` : t`Overspent`}
               value={money.tile(Math.abs(net))}
               valueClassName={trendTextClass(net)}
             />
@@ -392,10 +412,12 @@ export function FlowReport({ data }: FlowReportProps) {
                   color={row.color}
                   name={
                     isOther
-                      ? `Other spending (${collapsedGraph.foldedDestinations.length} ${dimensionLabel}) — inspect`
+                      ? t`Other spending (${collapsedGraph.foldedDestinations.length} ${dimensionLabel}) — inspect`
                       : isDrillableGroup
-                        ? `${row.name} — inspect`
-                        : row.name
+                        ? t`${row.name} — inspect`
+                        : 'label' in row
+                          ? row.label
+                          : row.name
                   }
                   value={money.amount(row.value)}
                   fraction={largest && largest.value > 0 ? row.value / largest.value : 0}

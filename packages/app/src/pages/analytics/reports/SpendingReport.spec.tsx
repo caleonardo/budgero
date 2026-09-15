@@ -1,5 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { i18n } from '@lingui/core';
+import { messages as germanMessages } from '@/locales/de/messages.mjs';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { AnalyticsTxn } from '../analytics-model';
 import type { AnalyticsData } from '../useAnalyticsData';
@@ -15,7 +17,10 @@ vi.mock('@shared/ui/echart', () => ({
     return (
       <button
         type="button"
-        onClick={() => onMarkClick?.({ seriesName: 'Other', dataIndex: 0, value: 0 })}
+        onClick={() => {
+          const series = (option as { series: { name: string }[] }).series;
+          onMarkClick?.({ seriesName: series[series.length - 1].name, dataIndex: 0, value: 0 });
+        }}
       >
         Select Other
       </button>
@@ -88,7 +93,14 @@ function chartSeries(): { name: string; color: string }[] {
 }
 
 describe('SpendingReport', () => {
-  it('shows a gray Other bucket by default and colors its categories when expanded', () => {
+  afterEach(() => {
+    cleanup();
+    i18n.activate('en');
+  });
+  it.each(['en', 'de'])('expands the translated Other bucket from the chart (%s)', (locale) => {
+    i18n.load('de', germanMessages);
+    i18n.activate(locale);
+    const otherLabel = locale === 'de' ? 'Sonstige' : 'Other';
     const data: AnalyticsData = {
       budgetId: 1,
       isLoading: false,
@@ -105,17 +117,21 @@ describe('SpendingReport', () => {
     render(<SpendingReport data={data} months={['2026-08']} />);
 
     expect(chartSeries()).toHaveLength(9);
-    expect(chartSeries()).toContainEqual({ name: 'Other', color: '#71717a' });
+    expect(chartSeries()).toContainEqual({ name: otherLabel, color: '#71717a' });
     expect(screen.queryByText('Category 10')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Select Other' }));
 
     expect(chartSeries()).toHaveLength(10);
-    expect(chartSeries().some((series) => series.name === 'Other')).toBe(false);
+    expect(chartSeries().some((series) => series.name === otherLabel)).toBe(false);
     expect(chartSeries().find((series) => series.name === 'Category 10')?.color).not.toBe(
       '#71717a'
     );
     expect(screen.getByText('Category 10')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '← Collapse Other' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: locale === 'de' ? '← Sonstige einklappen' : '← Collapse Other',
+      })
+    ).toBeInTheDocument();
   });
 });

@@ -89,11 +89,11 @@ export default function AnalyticsPage() {
           >
             <span className="flex w-full min-w-0 items-center gap-1.5 text-sm font-semibold">
               <Icon className="h-4 w-4 shrink-0" />
-              <span className="truncate">{label}</span>
+              <span className="whitespace-normal text-left leading-4">{label}</span>
             </span>
             <span
               className={cn(
-                'w-full min-w-0 truncate text-left text-[11px] font-normal',
+                'w-full min-w-0 whitespace-normal text-left text-[11px] font-normal',
                 report === key ? 'text-primary-foreground/75' : 'text-muted-foreground'
               )}
             >

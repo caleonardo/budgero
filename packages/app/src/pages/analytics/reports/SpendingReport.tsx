@@ -56,6 +56,12 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
     [t]
   );
 
+  const topLabels = {
+    category: t`Top category`,
+    group: t`Top group`,
+    payee: t`Top payee`,
+    label: t`Top label`,
+  };
   const [view, setView] = useState<SpendingView>('time');
   const [shareStyle, setShareStyle] = useState<ShareStyle>('donut');
   const [dim, setDim] = useState<SpendingDimension>('category');
@@ -313,7 +319,7 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
             ariaLabel="Spending view"
             options={[
               { value: 'time', label: t`Over time`, icon: CalendarRange },
-              { value: 'share', label: t`Share`, icon: ChartPie },
+              { value: 'share', label: t`Spending share`, icon: ChartPie },
             ]}
           />
           {view === 'share' ? (
@@ -334,10 +340,16 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
       chart={
         <EChart
           option={option}
-          ariaLabel={`Spending by ${DIM_LABELS[dim]}`}
+          ariaLabel={t`Spending by ${DIM_LABELS[dim]}`}
           className="h-[420px]"
           onMarkClick={(mark) => {
-            if (mark.seriesName === 'Other' || mark.name?.startsWith('Other (')) {
+            const isOther =
+              view === 'time'
+                ? coloredTrend.some(
+                    (series) => series.key === 'other' && series.name === mark.seriesName
+                  )
+                : slices[mark.dataIndex]?.key === 'other';
+            if (isOther) {
               setOtherOpen(true);
             }
           }}
@@ -354,11 +366,11 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
             <StatTile label={t`Total`} value={money.tile(total)} />
             <StatTile label={t`Avg / month`} value={money.tile(Math.round(total / monthCount))} />
             <StatTile
-              label={t`Top ${DIM_LABELS[dim].replace(/s$/, '').toLowerCase()}`}
+              label={topLabels[dim]}
               value={top?.name ?? '—'}
               detail={
                 top && total > 0
-                  ? `${((top.total / total) * 100).toFixed(0)}% of spending`
+                  ? t`${((top.total / total) * 100).toFixed(0)}% of spending`
                   : undefined
               }
             />
@@ -368,8 +380,8 @@ export function SpendingReport({ data, months }: SpendingReportProps) {
               detail={
                 folded.other
                   ? showingOther
-                    ? 'all charted'
-                    : `top ${MAX_SLICES} + Other`
+                    ? t`all charted`
+                    : t`top ${MAX_SLICES} + Other`
                   : undefined
               }
             />

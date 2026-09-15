@@ -16,7 +16,7 @@ export const PasswordStep: React.FC<StepProps> = ({ state, set }) => {
     if (/[^A-Za-z0-9]/.test(pw)) s++;
     return s;
   })();
-  const strengthLabel = ['TOO SHORT', 'WEAK', 'OK', 'GOOD', 'STRONG', 'IRON-CLAD'][strength];
+  const strengthLabel = [t`TOO SHORT`, t`WEAK`, t`OK`, t`GOOD`, t`STRONG`, t`IRON-CLAD`][strength];
   const strengthColor = ['#c6392c', '#c6392c', '#f97316', '#facc15', '#2f7d31', '#2f7d31'][
     strength
   ];

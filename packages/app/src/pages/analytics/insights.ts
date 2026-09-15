@@ -39,7 +39,10 @@ export function wealthInsights(
   if (change !== 0) {
     insights.push({
       tone: change > 0 ? 'good' : 'warn',
-      text: t`Net worth ${change > 0 ? 'grew' : 'fell'} ${fmt.money(Math.abs(change))} since ${fmt.monthLabel(first.monthKey)} — about ${fmt.money(Math.abs(perMonth))}/month.`,
+      text:
+        change > 0
+          ? t`Net worth grew ${fmt.money(Math.abs(change))} since ${fmt.monthLabel(first.monthKey)} — about ${fmt.money(Math.abs(perMonth))}/month.`
+          : t`Net worth fell ${fmt.money(Math.abs(change))} since ${fmt.monthLabel(first.monthKey)} — about ${fmt.money(Math.abs(perMonth))}/month.`,
     });
   }
   if (last.debt > 0 && points.length >= 2) {
@@ -47,7 +50,10 @@ export function wealthInsights(
     if (Math.abs(debtChange) > 0) {
       insights.push({
         tone: debtChange < 0 ? 'good' : 'warn',
-        text: t`Debt is ${debtChange < 0 ? 'down' : 'up'} ${fmt.money(Math.abs(debtChange))} over the period.`,
+        text:
+          debtChange < 0
+            ? t`Debt fell ${fmt.money(Math.abs(debtChange))} over the period.`
+            : t`Debt grew ${fmt.money(Math.abs(debtChange))} over the period.`,
       });
     }
   }
@@ -55,7 +61,10 @@ export function wealthInsights(
     if (forecast.pValue < 0.05) {
       insights.push({
         tone: forecast.slope >= 0 ? 'good' : 'warn',
-        text: t`The trend is statistically solid (p = ${formatP(forecast.pValue)}, R² = ${forecast.rSquared.toFixed(2)}): ${fmt.money(Math.round(Math.abs(forecast.slope)))}/month ${forecast.slope >= 0 ? 'upward' : 'downward'}.`,
+        text:
+          forecast.slope >= 0
+            ? t`The upward trend is statistically solid (p = ${formatP(forecast.pValue)}, R² = ${forecast.rSquared.toFixed(2)}): ${fmt.money(Math.round(Math.abs(forecast.slope)))}/month.`
+            : t`The downward trend is statistically solid (p = ${formatP(forecast.pValue)}, R² = ${forecast.rSquared.toFixed(2)}): ${fmt.money(Math.round(Math.abs(forecast.slope)))}/month.`,
       });
     } else {
       insights.push({
@@ -154,7 +163,7 @@ export function planInsights(plan: PlanVsReality, fmt: InsightFormat): Insight[]
   });
   insights.push({
     tone: plan.monthsOnPlan >= 0.5 ? 'good' : 'warn',
-    text: `${Math.round(plan.monthsOnPlan * 100)}% of months closed within plan.`,
+    text: t`${Math.round(plan.monthsOnPlan * 100)}% of months closed within plan.`,
   });
   // A habitual overspender beats a one-off blowout as the third finding.
   const chronic = [...plan.categories]

@@ -116,14 +116,14 @@ function QuickActionButton({
       size="sm"
       onClick={onClick}
       disabled={pending || disabled}
-      className="justify-start gap-2"
+      className="h-auto min-h-8 justify-start gap-2 py-1.5 whitespace-normal text-left"
     >
       {pending ? (
         <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
       ) : (
         <Icon className="h-4 w-4 shrink-0" />
       )}
-      <span className="min-w-0 flex-1">{label}</span>
+      <span className="min-w-0 flex-1 break-words">{label}</span>
       {suffix !== undefined && (
         <span className="shrink-0 font-mono text-xs text-muted-foreground">{suffix}</span>
       )}

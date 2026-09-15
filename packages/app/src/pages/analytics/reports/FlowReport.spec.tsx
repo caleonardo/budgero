@@ -1,5 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { i18n } from '@lingui/core';
+import { messages as germanMessages } from '@/locales/de/messages.mjs';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsTxn } from '../analytics-model';
@@ -100,6 +102,55 @@ function chartType(): string {
 }
 
 describe('FlowReport', () => {
+  afterEach(() => {
+    cleanup();
+    i18n.activate('en');
+  });
+
+  it('translates synthetic graph labels without renaming user data or graph links', () => {
+    i18n.load('de', germanMessages);
+    i18n.activate('de');
+    const data: AnalyticsData = {
+      budgetId: 1,
+      isLoading: false,
+      allTxns: [],
+      txns: [
+        {
+          ...transaction(100),
+          category: 'Saved',
+          groupName: 'Income',
+          inflow: 500_000,
+          outflow: 0,
+          isIncome: true,
+        },
+        { ...transaction(1), groupName: 'Income', outflow: 100_000 },
+      ],
+      accounts: [],
+      onBudgetAccountIds: new Set([1]),
+      categories: [],
+      categoryGroups: [],
+      labels: [],
+      payees: [],
+    };
+    render(<FlowReport data={data} />);
+    const series = (
+      chartState.option as {
+        series: {
+          data: { name: string }[];
+          links: { source: string; target: string }[];
+          label: { formatter: (params: { name: string }) => string };
+        }[];
+      }
+    ).series[0];
+    expect(series.label.formatter({ name: 'Income' })).toBe('Einkommen');
+    expect(series.label.formatter({ name: 'Income ' })).toBe('Income');
+    expect(series.label.formatter({ name: 'Saved' })).toBe('Saved');
+    expect(series.label.formatter({ name: 'Saved ' })).not.toBe('Saved');
+    expect(series.links).toContainEqual(
+      expect.objectContaining({ source: 'Income', target: 'Saved ' })
+    );
+    expect(screen.getByText('Income — Details')).toBeInTheDocument();
+  });
   it('toggles to categories and expands Other into a focused colored breakdown', () => {
     const income: AnalyticsTxn = {
       ...transaction(100),

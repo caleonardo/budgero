@@ -47,7 +47,8 @@ const MAX_RUNWAY_PROJECTION = 36;
 function formatRunway(months: number | null): string {
   if (months === null) return '∞';
   if (months >= 120) return t`10+ years`;
-  return months >= 10 ? `${Math.round(months)} mo` : `${months.toFixed(1)} mo`;
+  const duration = months >= 10 ? String(Math.round(months)) : months.toFixed(1);
+  return t`${duration} mo`;
 }
 
 interface WealthReportProps {
@@ -112,14 +113,11 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
   const debtColor = palette.flow.negative;
   const lineColor = palette.chrome.inkPrimary;
 
-  const insights = useMemo(
-    () =>
-      wealthInsights(points, forecast, {
-        money: (milli) => money.amount(milli),
-        monthLabel: shortMonthLabel,
-      }),
-    [points, forecast, money]
-  );
+  // Resolve copy on every locale render; the three summaries are inexpensive.
+  const insights = wealthInsights(points, forecast, {
+    money: (milli) => money.amount(milli),
+    monthLabel: shortMonthLabel,
+  });
 
   const option = useMemo<EChartsCoreOption>(() => {
     const { chrome } = palette;
@@ -307,7 +305,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
       },
       series: [
         {
-          name: t`Change`,
+          name: t`Net change`,
           type: 'bar',
           data: deltas.map((delta) => ({
             value: delta / 1000,
@@ -358,11 +356,11 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
         <ModeToggle
           value={mode}
           onChange={setMode}
-          ariaLabel="Wealth chart mode"
+          ariaLabel={t`Wealth chart mode`}
           options={[
             { value: 'assets-debt', label: t`Assets vs Debt` },
             { value: 'by-type', label: t`By Type` },
-            { value: 'change', label: t`Change` },
+            { value: 'change', label: t`Net change` },
             { value: 'forecast', label: t`Forecast` },
           ]}
         />
@@ -405,7 +403,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           </>
         ) : (
           <>
-            <EChart option={option} ariaLabel="Wealth over time" />
+            <EChart option={option} ariaLabel={t`Wealth over time`} />
             <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-dashed border-border/60 pt-3 text-sm">
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 <Trans>Runway</Trans>
@@ -440,10 +438,10 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
           <div className="grid grid-cols-2 gap-2">
             <StatTile label={t`Net worth`} value={current ? money.tile(current.netWorth) : '—'} />
             <StatTile
-              label={t`Change`}
+              label={t`Net change`}
               value={money.tile(change)}
               valueClassName={trendTextClass(change)}
-              detail={first ? `vs ${shortMonthLabel(first.monthKey)}` : undefined}
+              detail={first ? t`vs ${shortMonthLabel(first.monthKey)}` : undefined}
             />
             <StatTile label={t`Assets`} value={current ? money.tile(current.assets) : '—'} />
             <StatTile
@@ -477,7 +475,7 @@ export function WealthReport({ data, months, accountIds }: WealthReportProps) {
                 secondary={
                   delta === null
                     ? undefined
-                    : `${delta >= 0 ? '+' : ''}${money.amount(delta)} vs prev`
+                    : t`${delta >= 0 ? '+' : ''}${money.amount(delta)} vs prev`
                 }
               />
             ))}

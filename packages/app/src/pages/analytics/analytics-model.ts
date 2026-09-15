@@ -373,6 +373,8 @@ export function buildNetWorthSeries(
 export interface SankeyNode {
   name: string;
   slot: 'income' | 'hub' | 'group' | 'result';
+  /** Display copy only; node names remain stable graph identities. */
+  systemLabel?: 'income' | 'saved' | 'from-savings' | 'other-spending';
 }
 
 export interface SankeyLink {
@@ -452,25 +454,31 @@ export function buildFlowGraph(
     return name;
   };
 
-  nodes.push({ name: HUB, slot: 'hub' });
+  nodes.push({ name: HUB, slot: 'hub', systemLabel: 'income' });
   for (const [rawName, value] of incomeSources) {
     const name = uniqueName(rawName);
     nodes.push({ name, slot: 'income' });
     links.push({ source: name, target: HUB, value });
   }
-  for (const [rawName, value] of destinations) {
+  for (const [index, [rawName, value]] of destinations.entries()) {
     const name = uniqueName(rawName);
-    nodes.push({ name, slot: 'group' });
+    nodes.push({
+      name,
+      slot: 'group',
+      ...(foldedDestinations.length > 0 && index === destinations.length - 1
+        ? { systemLabel: 'other-spending' as const }
+        : {}),
+    });
     links.push({ source: HUB, target: name, value });
   }
   const net = totalIncome - totalSpending;
   if (net > 0) {
     const name = uniqueName('Saved');
-    nodes.push({ name, slot: 'result' });
+    nodes.push({ name, slot: 'result', systemLabel: 'saved' });
     links.push({ source: HUB, target: name, value: net });
   } else if (net < 0 && totalSpending > 0) {
     const name = uniqueName('From savings');
-    nodes.push({ name, slot: 'income' });
+    nodes.push({ name, slot: 'income', systemLabel: 'from-savings' });
     links.push({ source: name, target: HUB, value: -net });
   }
 

@@ -48,6 +48,10 @@ msgid " · the reverse (1 {0} = {1} {2}) is applied automatically"
 msgstr " · the reverse (1 {0} = {1} {2}) is applied automatically"
 
 #: src/pages/analytics/reports/ScenarioReport.tsx
+msgid " (beyond the charted window)"
+msgstr " (beyond the charted window)"
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
 msgid " (needs 12+ mo)"
 msgstr " (needs 12+ mo)"
 
@@ -338,6 +342,11 @@ msgstr "{0, plural, one {This group contains # category. Please move or delete t
 #: src/pages/onboarding/apply-onboarding.ts
 msgid "{0, plural, one {Verified # account balance against YNAB.} other {Verified # account balances against YNAB.}}"
 msgstr "{0, plural, one {Verified # account balance against YNAB.} other {Verified # account balances against YNAB.}}"
+
+#. placeholder {0}: row.name
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "{0} — inspect"
+msgstr "{0} — inspect"
 
 #. placeholder {0}: mismatch.month
 #. placeholder {1}: mismatch.field
@@ -650,6 +659,12 @@ msgstr "{0} will open automatically next time."
 msgid "{0}: {1} on {2}"
 msgstr "{0}: {1} on {2}"
 
+#. placeholder {0}: delta >= 0 ? '+' : ''
+#. placeholder {1}: money.amount(delta)
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "{0}{1} vs prev"
+msgstr "{0}{1} vs prev"
+
 #. placeholder {0}: cell.active
 #. placeholder {1}: cell.cohort_size
 #: src/pages/admin/StickinessAnalyticsSection.tsx
@@ -660,6 +675,16 @@ msgstr "{0}/{1} active on day {n}"
 #: src/features/budget-planning/ui/spending-drawer-mobile/CategoryHeader.tsx
 msgid "{0}% of goal"
 msgstr "{0}% of goal"
+
+#. placeholder {0}: Math.round(plan.monthsOnPlan * 100)
+#: src/pages/analytics/insights.ts
+msgid "{0}% of months closed within plan."
+msgstr "{0}% of months closed within plan."
+
+#. placeholder {0}: ((top.total / total) * 100).toFixed(0)
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "{0}% of spending"
+msgstr "{0}% of spending"
 
 #. placeholder {0}: clearQueueMutation.isPending ? ( <Loader2 className="h-4 w-4 mr-2 animate-spin" /> ) : ( <Trash2 className="h-4 w-4 mr-2" /> )
 #: src/pages/settings/push-api/QueueStatsPanel.tsx
@@ -819,6 +844,14 @@ msgstr "{diffHours}h ago"
 #: src/pages/settings/AuditLogPage.tsx
 msgid "{diffMins}m ago"
 msgstr "{diffMins}m ago"
+
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "{drilldownTitle} {drilldownItemLabel} breakdown"
+msgstr "{drilldownTitle} {drilldownItemLabel} breakdown"
+
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "{duration} mo"
+msgstr "{duration} mo"
 
 #: src/app/startup/screens.tsx
 msgid "{first}'s Budget Space"
@@ -2934,6 +2967,10 @@ msgstr "All categories already have available amounts at zero!"
 msgid "All caught up"
 msgstr "All caught up"
 
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "all charted"
+msgstr "all charted"
+
 #: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
 msgid "All conditions must match for the rule to fire."
 msgstr "All conditions must match for the rule to fire."
@@ -3736,6 +3773,10 @@ msgstr "Beta Tester"
 msgid "Beta Testers"
 msgstr "Beta Testers"
 
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "beyond charted window"
+msgstr "beyond charted window"
+
 #. placeholder {0}: leak.name
 #. placeholder {1}: fmt.money(leak.spent - leak.assigned)
 #: src/pages/analytics/insights.ts
@@ -3807,8 +3848,8 @@ msgid "Breakdown of user types"
 msgstr "Breakdown of user types"
 
 #: src/pages/analytics/reports/ScenarioReport.tsx
-msgid "Breaks"
-msgstr "Breaks"
+#~ msgid "Breaks"
+#~ msgstr "Breaks"
 
 #: src/app/startup/screens.tsx
 msgid "Bring your categories, accounts, and history"
@@ -4280,6 +4321,10 @@ msgstr "Cash Balance"
 msgid "Cash spending:"
 msgstr "Cash spending:"
 
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "categories"
+msgstr "categories"
+
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 #: src/pages/analytics/reports/FlowReport.tsx
 #: src/pages/analytics/reports/SpendingReport.tsx
@@ -4375,8 +4420,8 @@ msgid "CC Payment Calculation"
 msgstr "CC Payment Calculation"
 
 #: src/pages/analytics/reports/WealthReport.tsx
-msgid "Change"
-msgstr "Change"
+#~ msgid "Change"
+#~ msgstr "Change"
 
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Change account currency?"
@@ -5822,11 +5867,21 @@ msgstr "Debt"
 msgid "Debt created"
 msgstr "Debt created"
 
+#. placeholder {0}: fmt.money(Math.abs(debtChange))
+#: src/pages/analytics/insights.ts
+msgid "Debt fell {0} over the period."
+msgstr "Debt fell {0} over the period."
+
+#. placeholder {0}: fmt.money(Math.abs(debtChange))
+#: src/pages/analytics/insights.ts
+msgid "Debt grew {0} over the period."
+msgstr "Debt grew {0} over the period."
+
 #. placeholder {0}: debtChange < 0 ? 'down' : 'up'
 #. placeholder {1}: fmt.money(Math.abs(debtChange))
 #: src/pages/analytics/insights.ts
-msgid "Debt is {0} {1} over the period."
-msgstr "Debt is {0} {1} over the period."
+#~ msgid "Debt is {0} {1} over the period."
+#~ msgstr "Debt is {0} {1} over the period."
 
 #: src/pages/onboarding/steps/YnabImportStep.tsx
 msgid "Decimal comma (1.234,567)"
@@ -7488,6 +7543,10 @@ msgstr "Flags<0><1><2><3/></2><4>Accepts standard JavaScript regex flags, e.g. <
 msgid "Flat average"
 msgstr "Flat average"
 
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "Flow"
+msgstr "Flow"
+
 #: src/pages/settings/ai/ModelSelectionSection.tsx
 msgid "For categorization and analysis"
 msgstr "For categorization and analysis"
@@ -7633,6 +7692,10 @@ msgstr "From Budgero's official docs/policy:\n"
 "\n"
 "{0}"
 
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "From savings"
+msgstr "From savings"
+
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 msgid "From your last transaction for \"{name}\""
 msgstr "From your last transaction for \"{name}\""
@@ -7676,6 +7739,10 @@ msgstr "Funding priority {priority}"
 #: src/pages/analytics/reports/WealthReport.tsx
 msgid "funds last until <0>{runsOut}</0>if income stopped"
 msgstr "funds last until <0>{runsOut}</0>if income stopped"
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "Funds run out"
+msgstr "Funds run out"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Future reminders for this item were cleared."
@@ -7805,6 +7872,10 @@ msgstr "Goal: start each month with this amount available"
 msgid "Goals"
 msgstr "Goals"
 
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "GOOD"
+msgstr "GOOD"
+
 #: src/pages/settings/ai/ai-settings.constants.ts
 msgid "Good balance of speed and quality"
 msgstr "Good balance of speed and quality"
@@ -7873,6 +7944,10 @@ msgstr "Group name"
 #: src/features/reports/ui/SaveReportDialog.tsx
 msgid "Group: {0}"
 msgstr "Group: {0}"
+
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "groups"
+msgstr "groups"
 
 #: src/pages/analytics/reports/FlowReport.tsx
 #: src/pages/analytics/reports/SpendingReport.tsx
@@ -8092,9 +8167,17 @@ msgstr "I'll add that transaction for you. Please confirm the details above."
 msgid "I'll update that transaction. Please confirm the changes above."
 msgstr "I'll update that transaction. Please confirm the changes above."
 
+#: src/pages/onboarding/steps/StartModeStep.tsx
+msgid "I’m new to zero-based budgeting, or starting clean."
+msgstr "I’m new to zero-based budgeting, or starting clean."
+
 #: src/pages/settings/subscription/subscription.constants.ts
 msgid "I'm switching to another app"
 msgstr "I'm switching to another app"
+
+#: src/pages/onboarding/steps/StartModeStep.tsx
+msgid "I’ve got a budget elsewhere I want to bring over."
+msgstr "I’ve got a budget elsewhere I want to bring over."
 
 #: src/features/budget-sharing/ui/OnboardingInviteShareDialog.tsx
 msgid "I’ve shared them — done"
@@ -8351,6 +8434,10 @@ msgstr "Income counts as it arrives, money assigned in future months is already 
 msgid "Income this month"
 msgstr "Income this month"
 
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "Income to spending flow"
+msgstr "Income to spending flow"
+
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 msgid "Income vs expense trend"
 msgstr "Income vs expense trend"
@@ -8572,6 +8659,10 @@ msgstr "Invite your people"
 #: src/pages/admin/admin-users/user-details/BillingTab.tsx
 msgid "Invoice"
 msgstr "Invoice"
+
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "IRON-CLAD"
+msgstr "IRON-CLAD"
 
 #: src/pages/admin/admin-users/ActionDialog.tsx
 msgid "Irreversible Action"
@@ -9564,6 +9655,10 @@ msgstr "Money in"
 msgid "Money Map"
 msgstr "Money Map"
 
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "Money Map spending detail"
+msgstr "Money Map spending detail"
+
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Money moved"
 msgstr "Money moved"
@@ -9878,6 +9973,10 @@ msgstr "Net amount"
 msgid "Net cashflow<0/>"
 msgstr "Net cashflow<0/>"
 
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "Net change"
+msgstr "Net change"
+
 #. placeholder {0}: netChange >= 0 ? '+' : ''
 #. placeholder {0}: totalChange >= 0 ? '+' : ''
 #. placeholder {1}: formatMilli(globalLocalizer, netChange)
@@ -9898,6 +9997,10 @@ msgstr "Net remaining"
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
 msgid "Net remaining <0>{0}</0>"
 msgstr "Net remaining <0>{0}</0>"
+
+#: src/pages/analytics/reports/ScenarioReport.tsx
+msgid "net stays positive for 50 years"
+msgstr "net stays positive for 50 years"
 
 #. placeholder {0}: draftNet > 0 ? '+' : draftNet < 0 ? '-' : ''
 #. placeholder {1}: formatMilli(editFormatter, asMilli(Math.abs(draftNet)))
@@ -9926,8 +10029,22 @@ msgstr "NET WORTH"
 #. placeholder {2}: fmt.monthLabel(first.monthKey)
 #. placeholder {3}: fmt.money(Math.abs(perMonth))
 #: src/pages/analytics/insights.ts
-msgid "Net worth {0} {1} since {2} — about {3}/month."
-msgstr "Net worth {0} {1} since {2} — about {3}/month."
+#~ msgid "Net worth {0} {1} since {2} — about {3}/month."
+#~ msgstr "Net worth {0} {1} since {2} — about {3}/month."
+
+#. placeholder {0}: fmt.money(Math.abs(change))
+#. placeholder {1}: fmt.monthLabel(first.monthKey)
+#. placeholder {2}: fmt.money(Math.abs(perMonth))
+#: src/pages/analytics/insights.ts
+msgid "Net worth fell {0} since {1} — about {2}/month."
+msgstr "Net worth fell {0} since {1} — about {2}/month."
+
+#. placeholder {0}: fmt.money(Math.abs(change))
+#. placeholder {1}: fmt.monthLabel(first.monthKey)
+#. placeholder {2}: fmt.money(Math.abs(perMonth))
+#: src/pages/analytics/insights.ts
+msgid "Net worth grew {0} since {1} — about {2}/month."
+msgstr "Net worth grew {0} since {1} — about {2}/month."
 
 #: src/pages/accounts/components/NetWorthCard.tsx
 msgid "Net worth performance"
@@ -9935,6 +10052,7 @@ msgstr "Net worth performance"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 #: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+#: src/pages/analytics/reports/ScenarioReport.tsx
 #: src/pages/settings/AutomationRulesPage.tsx
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "Never"
@@ -10774,6 +10892,10 @@ msgstr "Offline"
 msgid "Offline - Changes will sync when connection is restored"
 msgstr "Offline - Changes will sync when connection is restored"
 
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "OK"
+msgstr "OK"
+
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Older rates are pruned and refetched on demand. Longer retention means fewer refetches for historical edits, but a larger budget file — which can slow app load and sync."
 msgstr "Older rates are pruned and refetched on demand. Longer retention means fewer refetches for historical edits, but a larger budget file — which can slow app load and sync."
@@ -11095,6 +11217,11 @@ msgstr "Other income"
 #: src/pages/analytics/reports/FlowReport.tsx
 msgid "Other spending"
 msgstr "Other spending"
+
+#. placeholder {0}: collapsedGraph.foldedDestinations.length
+#: src/pages/analytics/reports/FlowReport.tsx
+msgid "Other spending ({0} {dimensionLabel}) — inspect"
+msgstr "Other spending ({0} {dimensionLabel}) — inspect"
 
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
 msgid "Other workspaces"
@@ -13269,8 +13396,8 @@ msgid "Save your SQL query as a reusable report. Optionally add chart visualizat
 msgstr "Save your SQL query as a reusable report. Optionally add chart visualizations."
 
 #: src/pages/analytics/reports/FlowReport.tsx
-msgid "Saved"
-msgstr "Saved"
+#~ msgid "Saved"
+#~ msgstr "Saved"
 
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "Saved as \"{trimmedName}\""
@@ -13329,6 +13456,7 @@ msgstr "Saving…"
 
 #: src/entities/account/model/accountTypes.ts
 #: src/features/budget-management/model/icon-options.ts
+#: src/pages/analytics/reports/FlowReport.tsx
 #: src/pages/onboarding/onboarding-data.ts
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "Savings"
@@ -13991,8 +14119,8 @@ msgid "Setup failed. Try again or contact support."
 msgstr "Setup failed. Try again or contact support."
 
 #: src/pages/analytics/reports/SpendingReport.tsx
-msgid "Share"
-msgstr "Share"
+#~ msgid "Share"
+#~ msgstr "Share"
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Share feedback"
@@ -14388,6 +14516,11 @@ msgstr "Spending Analysis"
 msgid "Spending Breakdown"
 msgstr "Spending Breakdown"
 
+#. placeholder {0}: DIM_LABELS[dim]
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "Spending by {0}"
+msgstr "Spending by {0}"
+
 #: src/pages/explorer-page/sql-utils.ts
 msgid "Spending by label (90d)"
 msgstr "Spending by label (90d)"
@@ -14415,6 +14548,10 @@ msgstr "Spending Pattern"
 #: src/pages/analytics/insights.ts
 msgid "Spending ran at {0}% of plan — {1} of assigned money went unspent."
 msgstr "Spending ran at {0}% of plan — {1} of assigned money went unspent."
+
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "Spending share"
+msgstr "Spending share"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Spending this month"
@@ -14658,6 +14795,10 @@ msgstr "Store it in a secure password manager"
 #: src/pages/settings/SecurityPage.tsx
 msgid "Storing your master password outside memory lowers security. Anyone with access to this browser profile could decrypt your data until it expires."
 msgstr "Storing your master password outside memory lowers security. Anyone with access to this browser profile could decrypt your data until it expires."
+
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "STRONG"
+msgstr "STRONG"
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Submit a bug report"
@@ -15052,6 +15193,13 @@ msgstr "The decrypted payload should follow this structure. Monetary values are 
 msgid "The direct transfer rate is manually overridden."
 msgstr "The direct transfer rate is manually overridden."
 
+#. placeholder {0}: formatP(forecast.pValue)
+#. placeholder {1}: forecast.rSquared.toFixed(2)
+#. placeholder {2}: fmt.money(Math.round(Math.abs(forecast.slope)))
+#: src/pages/analytics/insights.ts
+msgid "The downward trend is statistically solid (p = {0}, R² = {1}): {2}/month."
+msgstr "The downward trend is statistically solid (p = {0}, R² = {1}): {2}/month."
+
 #: src/features/goal-management/ui/GoalSection.tsx
 msgid "The goal has been permanently removed."
 msgstr "The goal has been permanently removed."
@@ -15130,8 +15278,15 @@ msgstr "The transaction has been permanently removed."
 #. placeholder {2}: fmt.money(Math.round(Math.abs(forecast.slope)))
 #. placeholder {3}: forecast.slope >= 0 ? 'upward' : 'downward'
 #: src/pages/analytics/insights.ts
-msgid "The trend is statistically solid (p = {0}, R² = {1}): {2}/month {3}."
-msgstr "The trend is statistically solid (p = {0}, R² = {1}): {2}/month {3}."
+#~ msgid "The trend is statistically solid (p = {0}, R² = {1}): {2}/month {3}."
+#~ msgstr "The trend is statistically solid (p = {0}, R² = {1}): {2}/month {3}."
+
+#. placeholder {0}: formatP(forecast.pValue)
+#. placeholder {1}: forecast.rSquared.toFixed(2)
+#. placeholder {2}: fmt.money(Math.round(Math.abs(forecast.slope)))
+#: src/pages/analytics/insights.ts
+msgid "The upward trend is statistically solid (p = {0}, R² = {1}): {2}/month."
+msgstr "The upward trend is statistically solid (p = {0}, R² = {1}): {2}/month."
 
 #: src/pages/admin/admin-users/ActionDialog.tsx
 msgid "The user will be forced offline immediately and all API requests will be denied until you unblock them."
@@ -15315,7 +15470,7 @@ msgid "This run has been undone. Transactions were restored to their prior value
 msgstr "This run has been undone. Transactions were restored to their prior values."
 
 #. placeholder {0}: shortMonthLabel(scenario.breakMonthKey)
-#. placeholder {1}: breakBeyondChart ? ' (beyond the charted window)' : ''
+#. placeholder {1}: breakBeyondChart ? t` (beyond the charted window)` : ''
 #: src/pages/analytics/reports/ScenarioReport.tsx
 msgid "This scenario breaks in {0}{1}"
 msgstr "This scenario breaks in {0}{1}"
@@ -15528,20 +15683,45 @@ msgstr "Token copied to clipboard"
 msgid "Too expensive"
 msgstr "Too expensive"
 
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "TOO SHORT"
+msgstr "TOO SHORT"
+
 #. placeholder {0}: DIM_LABELS[dim].replace(/s$/, '').toLowerCase()
 #: src/pages/analytics/reports/SpendingReport.tsx
-msgid "Top {0}"
-msgstr "Top {0}"
+#~ msgid "Top {0}"
+#~ msgstr "Top {0}"
+
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "top {MAX_SLICES} + Other"
+msgstr "top {MAX_SLICES} + Other"
+
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "Top category"
+msgstr "Top category"
 
 #: src/pages/explorer-page/sql-utils.ts
 msgid "Top category spending (30d)"
 msgstr "Top category spending (30d)"
+
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "Top group"
+msgstr "Top group"
+
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "Top label"
+msgstr "Top label"
+
+#: src/pages/analytics/reports/SpendingReport.tsx
+msgid "Top payee"
+msgstr "Top payee"
 
 #: src/pages/explorer-page/sql-utils.ts
 msgid "Top payees by spending (30d)"
 msgstr "Top payees by spending (30d)"
 
 #: src/pages/admin/admin-users/user-details/BillingTab.tsx
+#: src/pages/analytics/reports/FlowReport.tsx
 #: src/pages/analytics/reports/SpendingReport.tsx
 #: src/pages/analytics/reports/VsExpenseReport.tsx
 #: src/pages/settings/push-api/QueueStatsPanel.tsx
@@ -16603,7 +16783,9 @@ msgid "Voice input is not supported in this browser"
 msgstr "Voice input is not supported in this browser"
 
 #. placeholder {0}: monthlyAssetHistory[0].label
+#. placeholder {0}: shortMonthLabel(first.monthKey)
 #: src/pages/accounts/components/AssetLiabilityHistoryChart.tsx
+#: src/pages/analytics/reports/WealthReport.tsx
 msgid "vs {0}"
 msgstr "vs {0}"
 
@@ -16738,10 +16920,22 @@ msgstr "We’ll redeem the invite and unlock the shared workspace."
 msgid "We’ll walk through it together. The idea is simple: every coin you earn gets a job before you spend it. Here’s what we’ll do, in six small steps."
 msgstr "We’ll walk through it together. The idea is simple: every coin you earn gets a job before you spend it. Here’s what we’ll do, in six small steps."
 
+#: src/pages/onboarding/steps/PasswordStep.tsx
+msgid "WEAK"
+msgstr "WEAK"
+
 #: src/pages/analytics/AnalyticsPage.tsx
 #: src/pages/analytics/reports/WealthReport.tsx
 msgid "Wealth"
 msgstr "Wealth"
+
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "Wealth chart mode"
+msgstr "Wealth chart mode"
+
+#: src/pages/analytics/reports/WealthReport.tsx
+msgid "Wealth over time"
+msgstr "Wealth over time"
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Website"

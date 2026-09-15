@@ -16,7 +16,7 @@ export const StartModeStep: React.FC<StepProps> = ({ state, set }) => {
     {
       id: 'fresh',
       title: t`Fresh start`,
-      sub: 'I’m new to zero-based budgeting, or starting clean.',
+      sub: t`I’m new to zero-based budgeting, or starting clean.`,
       bullets: [
         t`Learn ZBB with a short walkthrough`,
         t`Set up accounts & envelopes by hand`,
@@ -27,7 +27,7 @@ export const StartModeStep: React.FC<StepProps> = ({ state, set }) => {
     {
       id: 'ynab',
       title: t`Importing from YNAB`,
-      sub: 'I’ve got a budget elsewhere I want to bring over.',
+      sub: t`I’ve got a budget elsewhere I want to bring over.`,
       bullets: [
         t`Accounts, categories, and balances come with you`,
         t`Transaction history preserved`,
