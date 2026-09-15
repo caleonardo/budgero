@@ -9,6 +9,16 @@ export function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+/** Stable core-adapter error code; encryption failure must never trigger a database reset. */
+export function isLocalEncryptionError(error: unknown): boolean {
+  return (
+    !!error &&
+    typeof error === 'object' &&
+    'code' in error &&
+    error.code === 'LOCAL_ENCRYPTION_FAILED'
+  );
+}
+
 /**
  * Type guard to check if an error indicates a decryption failure.
  */

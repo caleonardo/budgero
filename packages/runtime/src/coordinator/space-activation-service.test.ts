@@ -250,6 +250,74 @@ describe('SpaceActivationService', () => {
     });
   });
 
+  it('does not replace the local snapshot after replay startup encryption fails', async () => {
+    const localStorageMock = createStorageMock();
+    vi.stubGlobal('localStorage', localStorageMock as unknown as Storage);
+    localStorageMock.setItem(`${BLOB_VERSION_STORAGE_PREFIX}s1`, '10');
+    localStorageMock.setItem(`${MUTATION_CURSOR_STORAGE_PREFIX}s1`, '100');
+
+    const db = createDb();
+    const context = createOnlineContext(db);
+    const { encrypted } = await compressAndEncryptDatabase(new Uint8Array([9, 8, 7]), 'passphrase');
+    const downloadBlob = vi.fn(async () => ({ data: encrypted, headers: new Headers() }));
+    const failure = Object.assign(new Error('Failed to encrypt local database'), {
+      code: 'LOCAL_ENCRYPTION_FAILED',
+    });
+    const createDatabase = vi.fn().mockRejectedValueOnce(failure).mockResolvedValue(db);
+
+    const service = new SpaceActivationService({
+      keyVault: {
+        ensureSpaceKey: vi.fn(async () => crypto.getRandomValues(new Uint8Array(32))),
+        getSpacePassphrase: vi.fn(() => 'passphrase'),
+        setEncryptionKeyVersion: vi.fn(),
+      } as never,
+      contextFactory: {
+        createOnlineContext: vi.fn(() => context),
+      } as never,
+      listAvailableSpaces: () => [
+        {
+          space_id: 's1',
+          display_name: 'One',
+          owner_user_id: 'u1',
+          role: 'owner',
+          invitation_status: 'accepted',
+          encrypted_space_key: 'k',
+          created_at: '2024-01-01',
+        },
+      ],
+      createDatabase,
+      downloadBlob,
+      getDatabaseState: vi.fn(async () => ({ version: 15, mutation_version: 108 })),
+      cleanupDatabaseFile: vi.fn(async () => undefined),
+      isE2E: false,
+      opfsSuffix: '_sas',
+    });
+
+    await expect(
+      service.activateSpace({
+        spaceId: 's1',
+        generation: 1,
+        masterPassword: 'master',
+        signal: new AbortController().signal,
+        localPersistenceCipher: {
+          encrypt: vi.fn(async (d: Uint8Array) => d),
+          decrypt: vi.fn(async (d: Uint8Array) => ({ decrypted: d, wasEncrypted: true })),
+        },
+        forceServerDownload: true,
+        onRemoteMutation: vi.fn(async () => undefined),
+        onSyncConnectionChange: vi.fn(),
+      })
+    ).rejects.toBe(failure);
+
+    expect(createDatabase).toHaveBeenCalledTimes(1);
+    expect(localStorageMock.getItem(`${MUTATION_CURSOR_STORAGE_PREFIX}s1`)).toBe('100');
+    expect(downloadBlob).not.toHaveBeenCalled();
+    expect(createDatabase).toHaveBeenCalledWith(undefined, {
+      localPersistence: expect.any(Object),
+      path: 'space_s1_sas.db',
+    });
+  });
+
   it('uses local database startup when authoritative mutation gap is within replay threshold', async () => {
     const localStorageMock = createStorageMock();
     vi.stubGlobal('localStorage', localStorageMock as unknown as Storage);
@@ -923,6 +991,63 @@ describe('SpaceActivationService', () => {
     ).resolves.toBe(context);
     expect(log).toHaveBeenCalledWith('warn', 'Initial migrations failed', expect.any(Object));
   });
+
+  it.each([true, false])(
+    'preserves local storage on encryption failure (skip download: %s)',
+    async (skipServerDownload) => {
+      const db = createDb();
+      const failure = Object.assign(new Error('Local encryption failed'), {
+        code: 'LOCAL_ENCRYPTION_FAILED',
+      });
+      const createDatabase = vi.fn().mockRejectedValueOnce(failure).mockResolvedValueOnce(db);
+      const cleanupDatabaseFile = vi.fn(async () => undefined);
+
+      const service = new SpaceActivationService({
+        keyVault: {
+          ensureSpaceKey: vi.fn(async () => crypto.getRandomValues(new Uint8Array(32))),
+          getSpacePassphrase: vi.fn(() => 'passphrase'),
+          setEncryptionKeyVersion: vi.fn(),
+        } as never,
+        contextFactory: {
+          createOnlineContext: vi.fn(() => createOnlineContext(db)),
+        } as never,
+        listAvailableSpaces: () => [
+          {
+            space_id: 's1',
+            display_name: 'One',
+            owner_user_id: 'u1',
+            role: 'owner',
+            invitation_status: 'accepted',
+            encrypted_space_key: 'k',
+            created_at: '2024-01-01',
+          },
+        ],
+        createDatabase,
+        cleanupDatabaseFile,
+        downloadBlob: vi.fn(async () => null),
+        isE2E: false,
+      });
+
+      await expect(
+        service.activateSpace({
+          spaceId: 's1',
+          generation: 1,
+          masterPassword: 'master',
+          signal: new AbortController().signal,
+          localPersistenceCipher: {
+            encrypt: vi.fn(async (d: Uint8Array) => d),
+            decrypt: vi.fn(async (d: Uint8Array) => ({ decrypted: d, wasEncrypted: true })),
+          },
+          skipServerDownload,
+          onRemoteMutation: vi.fn(async () => undefined),
+          onSyncConnectionChange: vi.fn(),
+        })
+      ).rejects.toBe(failure);
+
+      expect(cleanupDatabaseFile).not.toHaveBeenCalled();
+      expect(createDatabase).toHaveBeenCalledTimes(1);
+    }
+  );
 
   it('falls back by cleaning local db on non-decryption create failures', async () => {
     const db = createDb();

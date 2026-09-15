@@ -1,6 +1,11 @@
 import type { WebDatabaseInstance, SpaceSummary } from '../types';
 import { MutationEncryption, type LocalPersistenceCipher } from '../crypto';
-import { errorMessage, isDecryptionError, checkAbort } from '../utils/diagnostics';
+import {
+  errorMessage,
+  isDecryptionError,
+  isLocalEncryptionError,
+  checkAbort,
+} from '../utils/diagnostics';
 import { readStoredVersion, writeStoredVersion, clearStoredVersion } from '../utils/stored-version';
 import { scopedLogger, type RuntimeLogFn } from '../logging';
 import { BLOB_VERSION_STORAGE_PREFIX, MUTATION_CURSOR_STORAGE_PREFIX } from '../types/storage-keys';
@@ -154,6 +159,7 @@ export class SpaceActivationService {
             maxMutationGap: MAX_MUTATION_GAP_FOR_LOCAL_REPLAY,
           });
         } catch (error) {
+          if (isLocalEncryptionError(error)) throw error;
           this.log('warn', 'Local replay startup unavailable; falling back to full snapshot', {
             spaceId: params.spaceId,
             error: errorMessage(error),
@@ -247,6 +253,7 @@ export class SpaceActivationService {
           }
         } catch (error) {
           checkAbort(params.signal);
+          if (isLocalEncryptionError(error)) throw error;
           if (isDecryptionError(error)) {
             throw new Error('Decryption failed: invalid password or corrupted data', {
               cause: error,
@@ -341,6 +348,9 @@ export class SpaceActivationService {
         path: dbPath,
       });
     } catch (error) {
+      // A failed encrypted rewrite is not a corrupt database. Resetting here
+      // would delete the very snapshot the adapter preserved for recovery.
+      if (isLocalEncryptionError(error)) throw error;
       if (isDecryptionError(error)) {
         if (!resetOnDecryptError) {
           throw new Error('Decryption failed: invalid password or corrupted data', {

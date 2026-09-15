@@ -54,6 +54,30 @@ describe('explicit browser database persistence', () => {
     }
   );
 
+  it.each(['saveToOPFSPublic', 'forceSave'] as const)(
+    '%s preserves encrypted storage and rejects when encryption fails',
+    async (method) => {
+      const encrypted = new Uint8Array([66, 71, 69, 49, 9, 8, 7]);
+      let stored = new Uint8Array();
+      const write = vi.fn(async (blob: Blob) => {
+        stored = new Uint8Array(await blob.arrayBuffer());
+      });
+      installWriter(write);
+      const failure = new Error('Encryption unavailable');
+      const encrypt = vi.fn().mockResolvedValueOnce(encrypted).mockRejectedValueOnce(failure);
+      const adapter = adapterFixture();
+      adapter.updateLocalPersistenceCipher({
+        encrypt,
+        decrypt: async () => ({ decrypted: new Uint8Array(), wasEncrypted: true }),
+      });
+      await adapter[method]();
+      expect(stored).toEqual(encrypted);
+      await expect(adapter[method]()).rejects.toMatchObject({ code: 'LOCAL_ENCRYPTION_FAILED' });
+      expect(write).toHaveBeenCalledTimes(1);
+      expect(stored).toEqual(encrypted);
+    }
+  );
+
   it('reports success after the exported bytes are written and closed', async () => {
     const writes: Blob[] = [];
     const close = vi.fn(async () => undefined);
@@ -148,6 +172,31 @@ describe.each(['restore', 'restoreAndMigrate'] as const)('atomic browser %s', (m
     }
   );
 
+  it('retains the live database and stored file when encryption fails', async () => {
+    const { adapter, original, candidateCloses, bytes } = await restoreFixture();
+    const originalClose = vi.spyOn(original, 'close');
+    const write = vi.fn(async (_blob: Blob) => undefined);
+    installWriter(write);
+    const failure = new Error('Encryption unavailable');
+    adapter.updateLocalPersistenceCipher({
+      encrypt: async () => {
+        throw failure;
+      },
+      decrypt: async () => ({ decrypted: new Uint8Array(), wasEncrypted: true }),
+    });
+    try {
+      await expect(adapter[method](bytes)).rejects.toMatchObject({
+        code: 'LOCAL_ENCRYPTION_FAILED',
+      });
+      expect(adapter.exec('SELECT value FROM marker')[0].values).toEqual([['original']]);
+      expect(originalClose).not.toHaveBeenCalled();
+      expect(candidateCloses[0]).toHaveBeenCalledOnce();
+      expect(write).not.toHaveBeenCalled();
+    } finally {
+      adapter.close();
+    }
+  });
+
   it('switches databases only after persistence finishes and enables foreign keys', async () => {
     const { SQL, adapter, original, candidateCloses, bytes } = await restoreFixture();
     const originalClose = vi.spyOn(original, 'close');
@@ -216,4 +265,53 @@ it('preserves the live database and closes the candidate when backup migration i
   } finally {
     adapter.close();
   }
+});
+
+describe('legacy plaintext database migration', () => {
+  it.each([false, true])(
+    'preserves the stored copy if the encrypted rewrite fails: %s',
+    async (failEncryption) => {
+      const SQL = await sqlPromise;
+      const source = new SQL.Database();
+      source.exec("CREATE TABLE marker (value TEXT); INSERT INTO marker VALUES ('legacy budget')");
+      const plaintext = source.export();
+      source.close();
+      let stored = plaintext;
+      const ciphertext = new Uint8Array([66, 71, 69, 49, 7, 8, 9]);
+      const write = vi.fn(async (blob: Blob) => {
+        stored = new Uint8Array(await blob.arrayBuffer());
+      });
+      vi.stubGlobal('window', { initSqlJs: async () => SQL });
+      vi.stubGlobal('navigator', {
+        storage: {
+          getDirectory: async () => ({
+            getFileHandle: async () => ({
+              getFile: async () => new Blob([stored]),
+              createWritable: async () => ({ write, close: async () => undefined }),
+            }),
+          }),
+        },
+      });
+      const opening = WebDatabaseAdapter.create(undefined, {
+        path: 'legacy.db',
+        localPersistence: {
+          decrypt: async () => ({ decrypted: plaintext, wasEncrypted: false }),
+          encrypt: async () => {
+            if (failEncryption) throw new DOMException('Cipher unavailable', 'OperationError');
+            return ciphertext;
+          },
+        },
+      });
+      if (failEncryption) {
+        await expect(opening).rejects.toMatchObject({ code: 'LOCAL_ENCRYPTION_FAILED' });
+        expect(write).not.toHaveBeenCalled();
+        expect(stored).toEqual(plaintext);
+      } else {
+        const adapter = await opening;
+        expect(adapter.exec('SELECT value FROM marker')[0].values).toEqual([['legacy budget']]);
+        expect(stored).toEqual(ciphertext);
+        adapter.close();
+      }
+    }
+  );
 });

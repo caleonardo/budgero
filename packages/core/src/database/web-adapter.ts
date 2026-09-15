@@ -499,10 +499,14 @@ export class WebDatabaseAdapter extends BaseDatabaseAdapter {
         payload = await this.localPersistenceCipher.encrypt(data);
         payloadWasEncrypted = true;
       } catch (error) {
-        debugLog('Failed to encrypt local persistence payload; falling back to plaintext', {
+        debugLog('Failed to encrypt local persistence payload; save aborted', {
           error,
         });
-        payload = data;
+        // Encrypt before opening a writer so the previous saved file survives.
+        throw new DatabaseError(
+          'Failed to encrypt local database. The previous saved copy was preserved.',
+          'LOCAL_ENCRYPTION_FAILED'
+        );
       }
     }
 
@@ -542,7 +546,8 @@ export class WebDatabaseAdapter extends BaseDatabaseAdapter {
       }
     } catch (error) {
       debugLog('Error checking/enabling foreign keys', { error });
-      // Don't throw - let the app continue
+      if (error instanceof DatabaseError && error.code === 'LOCAL_ENCRYPTION_FAILED') throw error;
+      // Other FK checks remain best-effort.
     }
   }
 
