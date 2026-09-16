@@ -1,10 +1,11 @@
 import Image from 'next/image';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { TrackedLink } from '@/components/TrackedLink';
 import { ManageCookiesButton } from '@/components/ManageCookiesButton';
 
 export async function SiteFooter() {
+  const locale = await getLocale();
   const copy = await getTranslations('updates');
   const t = await getTranslations('common');
   return (
@@ -56,6 +57,16 @@ export async function SiteFooter() {
                   {t('footer_best_alternatives')}
                 </Link>
               </li>
+              {locale === 'en' && (
+                <li>
+                  <Link
+                    href="/actual-budget-alternative"
+                    className="hover:text-[#141414] transition-colors"
+                  >
+                    Actual Budget alternative
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link
                   href="/monarch-money-alternative"

@@ -2,17 +2,10 @@ import type { MetadataRoute } from 'next';
 import { allGuides, allPosts } from 'contentlayer/generated';
 
 import { changelogEntries } from '@/lib/changelog-data';
-import { routing } from '@/i18n/routing';
-
-function normalizeDate(value: string | Date): string | undefined {
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
-}
+import { guideSitemap, localizedRouteSitemap, postSitemap } from '@/lib/content-sitemap';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://budgero.app';
-
-  const publishedGuides = allGuides.filter((guide) => guide.published !== false);
 
   // Only include lastModified when we have an editorial date. Filesystem mtimes
   // and the build time change on deployment even when the content does not.
@@ -134,21 +127,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const posts: MetadataRoute.Sitemap = allPosts
-    .filter((post) => !post.draft && post.published !== false)
-    .map((post) => ({
-      url: `${base}${post.url}`,
-      lastModified: normalizeDate(post.updated || post.date),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    }));
-
-  const guides: MetadataRoute.Sitemap = publishedGuides.map((guide) => ({
-    url: `${base}${guide.url}`,
-    changeFrequency: 'monthly',
-    priority: 0.5,
-  }));
-
   const latestChangelogDate = changelogEntries
     // Changelog dates are written as "September 4, 2026" without a time zone.
     // Interpret them as UTC so deployment environments produce the same date.
@@ -166,28 +144,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const all = [...routes, ...posts, ...guides, ...changelogRoute];
-
-  // Emit every page once per locale, each carrying the full hreflang set so
-  // search engines treat them as translations rather than competing pages.
-  return all.flatMap((entry) => {
-    const pathname = entry.url.replace(base, '') || '/';
-
-    // Blog posts are intentionally English-only. Emitting locale variants with
-    // hreflang would tell search engines translations exist when they do not.
-    if (pathname.startsWith('/blog/')) return [entry];
-
-    const languages = Object.fromEntries(
-      routing.locales.map((locale) => [
-        locale,
-        locale === routing.defaultLocale ? `${base}${pathname}` : `${base}/${locale}${pathname}`,
-      ])
-    );
-
-    return routing.locales.map((locale) => ({
-      ...entry,
-      url: locale === routing.defaultLocale ? `${base}${pathname}` : `${base}/${locale}${pathname}`,
-      alternates: { languages: { ...languages, 'x-default': `${base}${pathname}` } },
-    }));
-  });
+  return [
+    ...localizedRouteSitemap([...routes, ...changelogRoute]),
+    ...postSitemap(allPosts),
+    ...guideSitemap(allGuides),
+    // This comparison is an independent English page, not a translation group.
+    { url: `${base}/actual-budget-alternative`, changeFrequency: 'monthly', priority: 0.8 },
+  ];
 }

@@ -1,4 +1,5 @@
 import { defineDocumentType, makeSource } from 'contentlayer2/source-files';
+import { postPath } from './src/lib/content-routing';
 // MDX plugins similar to taxonomy setup
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
@@ -90,13 +91,17 @@ export const Post = defineDocumentType(() => ({
     draft: { type: 'boolean', required: false, default: false },
   },
   computedFields: {
+    locale: {
+      type: 'string',
+      resolve: (post) => postPath(post._raw.flattenedPath).locale,
+    },
     url: {
       type: 'string',
-      resolve: (post) => `/blog/${removePrefix(post._raw.flattenedPath, 'blog/')}`,
+      resolve: (post) => postPath(post._raw.flattenedPath).url,
     },
     slugAsParams: {
       type: 'string',
-      resolve: (post) => removePrefix(post._raw.flattenedPath, 'blog/'),
+      resolve: (post) => postPath(post._raw.flattenedPath).slugAsParams,
     },
     readingTimeMinutes: {
       type: 'number',

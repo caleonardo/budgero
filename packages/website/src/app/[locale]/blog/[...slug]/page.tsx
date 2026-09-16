@@ -1,22 +1,34 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Image from 'next/image';
 import { allPosts } from 'contentlayer/generated';
 import { Mdx } from '@/components/mdx-components';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { postsForLocale, resolvePost } from '@/lib/content-routing';
 
 interface Params {
   slug: string[];
   locale: string;
 }
 
-export function generateStaticParams(): Omit<Params, 'locale'>[] {
-  return allPosts
-    .filter((p) => !p.draft && p.published !== false)
-    .map((post) => ({ slug: post.slugAsParams.split('/') }));
+export function generateStaticParams({
+  params,
+}: {
+  params: { locale: string };
+}): Omit<Params, 'locale'>[] {
+  return postsForLocale(allPosts, params.locale).map((post) => ({
+    slug: post.slugAsParams.split('/'),
+  }));
+}
+
+function getPost(locale: string, slug: string[]) {
+  const result = resolvePost(allPosts, locale, slug.join('/'));
+  if (result.redirect) permanentRedirect(result.redirect);
+  if (!result.post) notFound();
+  return result.post;
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
@@ -24,10 +36,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     locale: (await params).locale,
     namespace: 'updates',
   });
-  const { slug } = await params;
-  const slugStr = slug.join('/');
-  const post = allPosts.find((p) => p.slugAsParams === slugStr);
-  if (!post) return {};
+  const { slug, locale } = await params;
+  const post = getPost(locale, slug);
   const images = post.image ? [post.image] : ['/logo_144.png'];
   const publishedTime = new Date(post.date).toISOString();
   const modifiedTime = post.updated ? new Date(post.updated).toISOString() : publishedTime;
@@ -39,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       title: post.title,
       description: post.description,
       type: 'article',
-      url: post.url,
+      url: `https://budgero.app${post.url}`,
       images,
       publishedTime,
       modifiedTime,
@@ -65,19 +75,20 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
     locale: (await params).locale,
     namespace: 'blog_slug_',
   });
-  const slugStr = slug.join('/');
-  const post = allPosts.find((p) => p.slugAsParams === slugStr);
-  if (!post || post.draft || post.published === false) return notFound();
+  const post = getPost(locale, slug);
+  const readingCopy = await getTranslations({ locale, namespace: 'docs_slug_' });
 
   const formatDate = (date: string) =>
-    new Date(date).toLocaleDateString('en-US', {
+    new Date(date).toLocaleDateString(locale, {
       timeZone: 'UTC',
       year: 'numeric',
       month: 'long',
       day: '2-digit',
     });
   const readingTime =
-    typeof post.readingTimeMinutes === 'number' ? `${post.readingTimeMinutes} min read` : null;
+    typeof post.readingTimeMinutes === 'number'
+      ? `${post.readingTimeMinutes} ${readingCopy('min_read')}`
+      : null;
 
   const publishedTime = new Date(post.date).toISOString();
   const modifiedTime = post.updated ? new Date(post.updated).toISOString() : publishedTime;
@@ -85,6 +96,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
+    inLanguage: post.locale,
     headline: post.title,
     description: post.description,
     image: post.image ? `https://budgero.app${post.image}` : 'https://budgero.app/logo_512.png',

@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { PenLine, Sparkles, SquareLibrary } from 'lucide-react';
 import { allPosts } from 'contentlayer/generated';
+import { postsForLocale } from '@/lib/content-routing';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -55,9 +56,9 @@ export default async function BlogPage({
     locale: (await params).locale,
     namespace: 'blog',
   });
-  const posts = allPosts
-    .filter((p) => !p.draft && p.published !== false)
-    .sort((a, b) => Number(new Date(b.date)) - Number(new Date(a.date)));
+  const posts = postsForLocale(allPosts, locale).sort(
+    (a, b) => Number(new Date(b.date)) - Number(new Date(a.date))
+  );
 
   const heroHighlights = [
     { icon: Sparkles, label: copy('u_ef4c05efaf50') },
@@ -120,7 +121,7 @@ export default async function BlogPage({
               <article key={post._id} className="group">
                 <Card className="h-full overflow-hidden border-border/70 bg-background/70 transition hover:border-border hover:shadow-lg hover:shadow-black/5">
                   {post.image || post.cover ? (
-                    <Link href={post.url} className="block">
+                    <Link href={`/blog/${post.slugAsParams}`} className="block">
                       <Image
                         src={(post.image || post.cover) as string}
                         alt={post.title}
@@ -133,12 +134,16 @@ export default async function BlogPage({
                   ) : null}
                   <CardHeader>
                     <CardTitle className="text-2xl font-semibold">
-                      <Link href={post.url} className="transition hover:text-primary">
+                      <Link
+                        href={`/blog/${post.slugAsParams}`}
+                        className="transition hover:text-primary"
+                      >
                         {post.title}
                       </Link>
                     </CardTitle>
                     <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                      {new Date(post.date).toLocaleDateString(undefined, {
+                      {new Date(post.date).toLocaleDateString(locale, {
+                        timeZone: 'UTC',
                         year: 'numeric',
                         month: 'short',
                         day: '2-digit',

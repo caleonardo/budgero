@@ -25,4 +25,10 @@ export const routing = defineRouting({
   // English keeps its existing unprefixed URLs; only new locales get a prefix.
   // Moving the indexed English pages would throw away the site's search history.
   localePrefix: 'as-needed',
+  // URLs identify their language. Negotiating unprefixed English URLs from a
+  // cookie would loop when an English-only article redirects to its canonical.
+  localeDetection: false,
+  // Explicit metadata/sitemaps know which translations really exist. Automatic
+  // Link headers would invent translations of independent native articles.
+  alternateLinks: false,
 });

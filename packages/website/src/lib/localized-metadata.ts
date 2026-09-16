@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { routing } from '@/i18n/routing';
+import { localizedPath } from '@/lib/content-routing';
 
 const SITE = 'https://budgero.app';
 
-const urlFor = (locale: string, path: string) =>
-  locale === routing.defaultLocale ? `${SITE}${path || '/'}` : `${SITE}/${locale}${path}`;
+const urlFor = (locale: string, path: string) => `${SITE}${localizedPath(locale, path || '/')}`;
 
 /**
  * Points canonical/og URLs at the current locale's page and lists every
