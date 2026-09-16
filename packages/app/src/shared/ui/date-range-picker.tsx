@@ -13,6 +13,7 @@ import {
   subMonths,
   subYears,
 } from 'date-fns';
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 
 import { cn } from '@shared/lib/utils';
@@ -45,6 +46,9 @@ const PRESET_LABELS: Record<PresetKey, string> = {
 };
 
 const FUTURE_PRESETS: ReadonlySet<PresetKey> = new Set(['next30Days', 'next3Months']);
+
+// Short month labels (Jan…Dec)
+const MONTH_LABELS = Array.from({ length: 12 }, (_, i) => format(new Date(2000, i, 1), 'MMM'));
 
 export interface DateRangePickerProps {
   value?: DateRange;
@@ -121,6 +125,10 @@ export function DateRangePicker({
   const initialMonth = date?.to ?? date?.from ?? today;
   const [month, setMonth] = useState(initialMonth);
 
+  // Calendar view mode: 'day' shows the DayPicker, 'month' shows the MonthPickerPopover-style grid
+  const [calendarView, setCalendarView] = useState<'day' | 'month'>('day');
+  const [viewYear, setViewYear] = useState(initialMonth.getFullYear());
+
   // Track previous date to detect external changes (React-approved pattern)
   // See: https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
   const [prevDate, setPrevDate] = useState(date);
@@ -129,12 +137,17 @@ export function DateRangePicker({
     const newMonth = date?.to ?? date?.from;
     if (newMonth && newMonth.getTime() !== month.getTime()) {
       setMonth(newMonth);
+      setViewYear(newMonth.getFullYear());
     }
   }
 
   const handlePreset = (range: DateRange, preset: PresetKey) => {
     const coerced = coerceRange(range);
-    if (coerced?.to) setMonth(coerced.to);
+    if (coerced?.to) {
+      setMonth(coerced.to);
+      setViewYear(coerced.to.getFullYear());
+    }
+    setCalendarView('day');
     onChange?.(coerced, preset);
   };
 
@@ -145,9 +158,13 @@ export function DateRangePicker({
 
   const armField = (field: 'from' | 'to') => {
     setArmed(field);
+    setCalendarView('day');
     // Bring the armed edge's month into view so it can be adjusted directly.
     const target = field === 'from' ? date?.from : date?.to;
-    if (target) setMonth(target);
+    if (target) {
+      setMonth(target);
+      setViewYear(target.getFullYear());
+    }
   };
 
   const handleDayClick = (day: Date) => {
@@ -223,18 +240,129 @@ export function DateRangePicker({
                 );
               })}
             </div>
-            <Calendar
-              mode="range"
-              selected={date}
-              // Selection is fully controlled by onDayClick (armed field);
-              // react-day-picker's own range proposals are ignored.
-              onSelect={() => {}}
-              onDayClick={handleDayClick}
-              month={month}
-              onMonthChange={setMonth}
-              className="p-2"
-              disabled={disabledRules}
-            />
+
+            {calendarView === 'month' ? (
+              <div className="flex w-[268px] min-h-[304px] flex-col justify-between p-3">
+                <div>
+                  {/* Year stepper */}
+                  <div className="mb-3 flex items-center justify-between">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      aria-label="Previous year"
+                      onClick={() => setViewYear((y) => y - 1)}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <span className="text-sm font-semibold tabular-nums">{viewYear}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      aria-label="Next year"
+                      disabled={disableFuture && viewYear >= today.getFullYear()}
+                      onClick={() => setViewYear((y) => y + 1)}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Month grid */}
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {MONTH_LABELS.map((monthLabel, monthIndex) => {
+                      const isSelected =
+                        monthIndex === month.getMonth() && viewYear === month.getFullYear();
+                      const isCurrent =
+                        monthIndex === today.getMonth() && viewYear === today.getFullYear();
+                      const isDisabled =
+                        disableFuture &&
+                        (viewYear > today.getFullYear() ||
+                          (viewYear === today.getFullYear() && monthIndex > today.getMonth()));
+
+                      return (
+                        <button
+                          key={monthLabel}
+                          type="button"
+                          disabled={isDisabled}
+                          onClick={() => {
+                            const newMonth = new Date(viewYear, monthIndex, 1);
+                            setMonth(newMonth);
+                            setCalendarView('day');
+                          }}
+                          aria-current={isSelected ? 'true' : undefined}
+                          className={cn(
+                            'rounded-md py-2 text-xs font-medium transition-colors',
+                            'hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                            isSelected && 'bg-primary text-primary-foreground hover:bg-primary/90',
+                            !isSelected && isCurrent && 'ring-1 ring-inset ring-primary/60',
+                            isDisabled && 'pointer-events-none opacity-30 line-through'
+                          )}
+                        >
+                          {monthLabel}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Footer buttons */}
+                <div className="mt-3 flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 text-xs"
+                    onClick={() => {
+                      setMonth(today);
+                      setViewYear(today.getFullYear());
+                      setCalendarView('day');
+                    }}
+                  >
+                    Jump to today
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => setCalendarView('day')}
+                  >
+                    Day picker
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Calendar
+                mode="range"
+                selected={date}
+                // Selection is fully controlled by onDayClick (armed field);
+                // react-day-picker's own range proposals are ignored.
+                onSelect={() => {}}
+                onDayClick={handleDayClick}
+                month={month}
+                onMonthChange={(newMonth) => {
+                  setMonth(newMonth);
+                  setViewYear(newMonth.getFullYear());
+                }}
+                className="p-2"
+                disabled={disabledRules}
+                components={{
+                  CaptionLabel: ({ children }) => (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setViewYear(month.getFullYear());
+                        setCalendarView('month');
+                      }}
+                      className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
+                      aria-label={`Change month and year — currently ${format(month, 'MMMM yyyy')}`}
+                    >
+                      <span>{children}</span>
+                      <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                    </button>
+                  ),
+                }}
+              />
+            )}
           </div>
         </div>
       </div>
