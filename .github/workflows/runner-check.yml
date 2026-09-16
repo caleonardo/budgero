@@ -2,11 +2,6 @@ name: Dell runner check
 
 on:
   workflow_dispatch:
-  push:
-    branches: [codex/github-self-hosted-runner]
-    paths:
-      - '.github/workflows/runner-check.yml'
-      - 'infra/github-runner/**'
 
 permissions:
   contents: read

@@ -51,6 +51,9 @@ Registration tokens must be supplied at setup time, never committed.
 - Unset that repository variable, or set it to `false`, to send future master
   jobs back to GitHub-hosted runners. Cancel/re-run jobs already queued for Dell.
 - `runner-check.yml` builds the app and Go server without publishing artifacts.
+- GitHub release jobs require `DELL_RELEASES_ENABLED=true`, a version tag matching
+  `package.json`, and the protected `production` environment. They run both
+  vulnerability scanners before publishing and remove local credential files.
 - Existing Forgejo release workflows stay active until the release credentials
   and GitHub release jobs are migrated and verified. Do not trigger both systems
   for the same release.
