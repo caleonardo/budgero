@@ -141,7 +141,7 @@ msgstr "\"{0}\" is verwijderd en gewist uit transacties."
 #. placeholder {0}: formatMaskedMilli(accountLocalizer, value, privacyMaskNumbers)
 #: src/features/transactions/ui/SecondaryAmount.tsx
 msgid "({0} original)"
-msgstr "({0}origineel)"
+msgstr "({0} oorspronkelijk)"
 
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 msgid "(cleared)"
@@ -1037,12 +1037,12 @@ msgstr "+ Regel"
 #. placeholder {0}: upcomingRecurringOccurrences.length - MAX_VISIBLE_ITEMS
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 msgid "+{0} more in the next month"
-msgstr "+{0}meer in de volgende maand"
+msgstr "+{0} meer in de volgende maand"
 
 #. placeholder {0}: upcomingScheduledTransactions.length - MAX_VISIBLE_ITEMS
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 msgid "+{0} more scheduled"
-msgstr "+{0}meer gepland"
+msgstr "+{0} meer gepland"
 
 #: src/features/transactions/ui/form/DatePickerQuick.tsx
 msgid "+1 day"
@@ -1051,7 +1051,7 @@ msgstr "+1 dag"
 #. placeholder {0}: isEditing ? t`Edit Goal` : t`Create Goal`
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "<0/>{0} for {categoryName}"
-msgstr "<0/>{0}voor {categoryName}"
+msgstr "<0/>{0} voor {categoryName}"
 
 #: src/widgets/dashboard/AtAGlance.tsx
 msgid "<0/>{monthLabel} At a Glance"
@@ -1970,12 +1970,12 @@ msgstr "<0>{0}</0>oprichter, <1>{1}</1>gratis toegang"
 #. placeholder {2}: account.Currency
 #: src/features/account-management/ui/ArchiveAccountDialog.tsx
 msgid "<0>{0}</0>has a current balance of <1>{1} {2}</1>. To archive it, Budgero will create the following adjusting transaction to bring the balance to zero. You can edit the details below, and the transaction will remain editable afterwards."
-msgstr "<0>{0}</0>heeft een huidig saldo van <1>{1} {2}</1>. Om te archiveren, maakt Budgero de volgende correctietransactie aan om het saldo op nul te brengen. Je kunt de details hieronder bewerken, en de transactie blijft daarna bewerkbaar."
+msgstr "<0>{0}</0> heeft een huidig saldo van <1>{1} {2}</1>. Om te archiveren, maakt Budgero de volgende correctietransactie aan om het saldo op nul te brengen. Je kunt de details hieronder bewerken, en de transactie blijft daarna bewerkbaar."
 
 #. placeholder {0}: account.Name
 #: src/features/account-management/ui/ArchiveAccountDialog.tsx
 msgid "<0>{0}</0>has a zero balance and will be archived without any further changes."
-msgstr "<0>{0}</0>heeft een saldo van nul en wordt gearchiveerd zonder verdere wijzigingen."
+msgstr "<0>{0}</0> heeft een saldo van nul en wordt gearchiveerd zonder verdere wijzigingen."
 
 #. placeholder {0}: user.spaceMembershipCount
 #. placeholder {1}: user.ownedSpaceCount
@@ -2256,7 +2256,7 @@ msgstr "⚠️ Streefdatum verstreken - nog {needed} nodig"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "⚠️ Target date passed - need {needed} more available"
-msgstr "⚠️ Streefdatum verstreken - nog {needed} beschikbaar nodig"
+msgstr "⚠️ Streefdatum verstreken — nog {needed} nodig voor het gewenste beschikbare saldo"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "✓ {assigned} allocated this month — on track!"
@@ -2284,7 +2284,7 @@ msgstr "✓ Doelbedrag beschikbaar!"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "✓ Target available!"
-msgstr "✓ Doel beschikbaar!"
+msgstr "✓ Doelbedrag beschikbaar!"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "✓ This month done! {totalAssigned} of {target} allocated"
@@ -2300,7 +2300,7 @@ msgstr "✓ Deze maand {monthlyTarget} toegewezen!"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "✓ This month's {monthlyTarget} saved!"
-msgstr "✓ Deze maand {monthlyTarget} bespaard!"
+msgstr "✓ Deze maand {monthlyTarget} gespaard!"
 
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "✓ ZERO-BASED. EVERY COIN NOW HAS A JOB."
@@ -2444,7 +2444,7 @@ msgstr "Een gids voor zero-based budgetteren."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "A household, a side hustle, a trip — whatever you’re planning for."
-msgstr "Een huishouden, een bijbaantje, een reis — waar je ook voor plant."
+msgstr "Een huishouden, een bijbaantje, een reis — waarvoor je ook wilt budgetteren."
 
 #: src/shared/pwa/PWAUpdatePrompt.tsx
 msgid "A new Budgero build is ready to install. Refresh now to load the latest features and fixes."
@@ -3539,7 +3539,7 @@ msgstr "Minimaal 8 tekens"
 
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "At the start of the month, take your income, and divide it across everything you need to pay for — rent, food, savings, fun. When the pile hits zero, you’re done. That’s the whole trick."
-msgstr "Begin van de maand neem je je inkomen en verdeel je het over alles waar je voor moet betalen — huur, eten, sparen, plezier. Als de stapel op nul staat, ben je klaar. Dat is de hele truc."
+msgstr "Verdeel aan het begin van de maand je inkomen over alles waarvoor je geld nodig hebt — huur, eten, sparen en leuke dingen. Zodra al het geld is toegewezen, ben je klaar. Zo simpel is het."
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "At-a-glance overview of balances, spending, and goals."
@@ -3677,7 +3677,7 @@ msgstr "Gemiddelde maandelijkse uitgaven: <0>{0}</0>"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Average Saved"
-msgstr "Gemiddeld bespaard"
+msgstr "Gemiddeld gespaard"
 
 #: src/pages/admin/admin-users/user-details/MutationsTab.tsx
 #: src/pages/admin/admin-users/user-details/OverviewTab.tsx
@@ -3778,7 +3778,7 @@ msgstr "Basis {0}"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Before we build anything, here’s how Budgero thinks about money."
-msgstr "Voordat we iets opbouwen, zo denkt Budgero over geld."
+msgstr "Voordat we beginnen: zo gaat Budgero met geld om."
 
 #. placeholder {0}: (currentCategoryTotalTransactions ?? 0) > 0 && (currentCategoryAssigned ?? 0) !== 0 ? t` transactions and assignments` : (currentCategoryTotalTransactions ?? 0) > 0 ? ' transactions' : ' assignments'
 #: src/features/category-management/ui/DeleteCategoryDialog.tsx
@@ -3874,10 +3874,6 @@ msgstr "Uitsplitsing"
 #: src/pages/admin/AdminDashboard.tsx
 msgid "Breakdown of user types"
 msgstr "Uitsplitsing van gebruikerstypen"
-
-#: src/pages/analytics/reports/ScenarioReport.tsx
-#~ msgid "Breaks"
-#~ msgstr "Pauzes"
 
 #: src/app/startup/screens.tsx
 msgid "Bring your categories, accounts, and history"
@@ -4065,6 +4061,10 @@ msgstr "Budgetcontext"
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Budget created"
 msgstr "Budget aangemaakt"
+
+#: src/pages/onboarding/onboarding-data.ts
+msgid "Budget currency"
+msgstr "Budgetvaluta"
 
 #: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
 #: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
@@ -4447,10 +4447,6 @@ msgstr "Categorie<0/>"
 msgid "CC Payment Calculation"
 msgstr "Berekening creditcardbetaling"
 
-#: src/pages/analytics/reports/WealthReport.tsx
-#~ msgid "Change"
-#~ msgstr "Wijzigen"
-
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Change account currency?"
 msgstr "Rekeningvaluta wijzigen?"
@@ -4604,7 +4600,7 @@ msgstr "betaal-, spaar- en contant"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Checking, savings, credit"
-msgstr "Betaalrekening, spaarrekening, krediet"
+msgstr "Betaalrekening, spaarrekening, creditcard"
 
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
@@ -4684,6 +4680,10 @@ msgstr "Kies hoe je deze categorie wilt bijhouden."
 #: src/features/budget-management/ui/create-budget-form/YnabCreditPaymentMatching.tsx
 msgid "Choose its payment category"
 msgstr "Betalingscategorie kiezen"
+
+#: src/pages/onboarding/onboarding-data.ts
+msgid "Choose the currency for your budget. You can change the display language in Settings → Appearance."
+msgstr "Kies de valuta voor je budget. Je kunt de weergavetaal wijzigen via Instellingen → Weergave."
 
 #: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
 msgid "Choose the database you exported as a Budgero backup. We'll import every budget, account, and transaction."
@@ -5789,10 +5789,6 @@ msgstr "Gegevensbeheer"
 msgid "Data reset"
 msgstr "Data-reset"
 
-#: src/shared/ui/PeriodTabs.tsx
-#~ msgid "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
-#~ msgstr "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
-
 #: src/app/layout/AdminSidebar.tsx
 #: src/features/subscription/ui/ExportDataCard.tsx
 msgid "Database"
@@ -5916,12 +5912,6 @@ msgstr "De schulden daalden in deze periode met {0}."
 #: src/pages/analytics/insights.ts
 msgid "Debt grew {0} over the period."
 msgstr "De schulden stegen in deze periode met {0}."
-
-#. placeholder {0}: debtChange < 0 ? 'down' : 'up'
-#. placeholder {1}: fmt.money(Math.abs(debtChange))
-#: src/pages/analytics/insights.ts
-#~ msgid "Debt is {0} {1} over the period."
-#~ msgstr "Schuld is {0} {1} over de periode."
 
 #: src/pages/onboarding/steps/YnabImportStep.tsx
 msgid "Decimal comma (1.234,567)"
@@ -6893,7 +6883,7 @@ msgstr "Voorbeelden:"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Exceeded target! Saved {saved} this month"
-msgstr "Doel overschreden! Deze maand {saved} bespaard"
+msgstr "Doel overschreden! Deze maand {saved} gespaard"
 
 #: src/pages/settings/ai/ai-settings.constants.ts
 msgid "Excellent for structured outputs"
@@ -7581,7 +7571,7 @@ msgstr "Fitness & Sportschool"
 
 #: src/pages/onboarding/steps/ShareStep.tsx
 msgid "Five characters tethered to a shared ledger"
-msgstr "Vijf tekens verbonden met een gedeeld grootboek"
+msgstr "Vijf figuren verbonden met een gedeeld kasboek"
 
 #: src/pages/settings/components/GoalFundingSettingsCard.tsx
 msgid "Five levels (default)"
@@ -7914,7 +7904,7 @@ msgstr "Doel bijgewerkt"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Goal: Save {monthlyTarget} every month"
-msgstr "Doel: Bespaar elke maand {monthlyTarget}"
+msgstr "Doel: Spaar elke maand {monthlyTarget}"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Goal: start each month with this amount available"
@@ -7964,7 +7954,7 @@ msgstr "Oprichterstoegang verleend aan {0}"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Great job! Monthly goal achieved. Total saved: {totalSaved}"
-msgstr "Goed gedaan! Maandelijkse doel bereikt. Totaal bespaard: {totalSaved}"
+msgstr "Goed gedaan! Maandelijks doel bereikt. Totaal gespaard: {totalSaved}"
 
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
 msgid "Great job! No uncategorised transactions left."
@@ -8012,7 +8002,7 @@ msgstr "Haar & Schoonheid"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Halfway there! Save {needed} more this month"
-msgstr "Halverwege! Bespaar deze maand nog {needed}"
+msgstr "Halverwege! Spaar deze maand nog {needed}"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Have a specific amount available by a target date"
@@ -8150,7 +8140,7 @@ msgstr "Hoe kan ik iemand uitnodigen?"
 
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "HOW DO YOU WANT TO SAVE?"
-msgstr "HOE WIL JE OPSLAAN?"
+msgstr "HOE WIL JE SPAREN?"
 
 #: src/pages/analytics/AnalyticsPage.tsx
 msgid "How does it move?"
@@ -8176,7 +8166,7 @@ msgstr "Hoeveel maanden budgetgegevens meenemen als context"
 
 #: src/pages/accounts/components/ValueChangeStat.tsx
 msgid "How much this account's worth in {budgetCurrency} moved with exchange rates. Your {accountCurrency} balance itself is unchanged."
-msgstr "Hoeveel deze rekening waard is in {budgetCurrency}, meebewogen met wisselkoersen. Je {accountCurrency}saldo zelf blijft ongewijzigd."
+msgstr "De verandering in de waarde van deze rekening in {budgetCurrency} door wisselkoersschommelingen. Je saldo in {accountCurrency} blijft ongewijzigd."
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "How much you want to assign to this category every month."
@@ -8225,7 +8215,7 @@ msgstr "Ik werk die transactie bij. Bevestig de wijzigingen hierboven."
 
 #: src/pages/onboarding/steps/StartModeStep.tsx
 msgid "I’m new to zero-based budgeting, or starting clean."
-msgstr "Ik ben nieuw met nulbudgetteren of wil opnieuw beginnen."
+msgstr "Ik ben nieuw met zero-based budgetteren of wil opnieuw beginnen."
 
 #: src/pages/settings/subscription/subscription.constants.ts
 msgid "I'm switching to another app"
@@ -8517,7 +8507,7 @@ msgstr "Onvolledige eindvoorwaarde"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Increase savings to reach your {target} monthly goal"
-msgstr "Verhoog je spaargeld om je {target} maandelijkse doel te bereiken"
+msgstr "Spaar meer om je maandelijkse doel van {target} te bereiken"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Indian Rupee"
@@ -8892,10 +8882,6 @@ msgstr "Labels"
 #: src/pages/settings/LabelsPage.tsx
 msgid "Labels ({count})"
 msgstr "Labels ({count})"
-
-#: src/pages/onboarding/onboarding-data.ts
-msgid "Language & money"
-msgstr "Taal & geld"
 
 #: src/pages/analytics/analytics-state.ts
 msgid "Last 12 months"
@@ -9989,7 +9975,7 @@ msgstr "Bijna zover! Voltooi deze maand om je reeks in stand te houden"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Need {needed} more available"
-msgstr "Nog {needed} meer beschikbaar nodig"
+msgstr "Nog {needed} nodig om het gewenste beschikbare saldo te bereiken"
 
 #: src/pages/onboarding/steps/CurrencyStep.tsx
 msgid "NEED A DIFFERENT CURRENCY?"
@@ -10083,14 +10069,6 @@ msgstr "Nettovermogen"
 #: src/pages/accounts/components/NetWorthCard.tsx
 msgid "NET WORTH"
 msgstr "NETTOVERMOGEN"
-
-#. placeholder {0}: change > 0 ? 'grew' : 'fell'
-#. placeholder {1}: fmt.money(Math.abs(change))
-#. placeholder {2}: fmt.monthLabel(first.monthKey)
-#. placeholder {3}: fmt.money(Math.abs(perMonth))
-#: src/pages/analytics/insights.ts
-#~ msgid "Net worth {0} {1} since {2} — about {3}/month."
-#~ msgstr "Nettovermogen {0} {1} sinds {2} — ongeveer {3}/maand."
 
 #. placeholder {0}: fmt.money(Math.abs(change))
 #. placeholder {1}: fmt.monthLabel(first.monthKey)
@@ -11411,7 +11389,7 @@ msgstr "Pagina {0} van {pages}"
 #: src/features/transactions/ui/MobileTransactionList.tsx
 #: src/pages/settings/AuditLogPage.tsx
 msgid "Page {0} of {totalPages}"
-msgstr "Pagina {0}van {totalPages}"
+msgstr "Pagina {0} van {totalPages}"
 
 #. placeholder {0}: mobilePageStats.pageNumber + 1
 #. placeholder {1}: mobilePageStats.totalPages
@@ -11746,10 +11724,6 @@ msgstr "Kies twee verschillende rekeningen voor een overboeking"
 #: src/shared/lib/analytics/klaro-config.ts
 msgid "Pick which cookies are OK with you. Your encrypted budget data is never tracked either way. You can change this any time from Settings → Security."
 msgstr "Kies welke cookies voor jou oké zijn. Je versleutelde budgetgegevens worden hoe dan ook nooit getraceerd. Je kunt dit op elk moment wijzigen via Instellingen → Beveiliging."
-
-#: src/pages/onboarding/onboarding-data.ts
-msgid "Pick your currency and locale. Everything else adapts."
-msgstr "Kies je valuta en regio. De rest past zich aan."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Pick your path"
@@ -12399,7 +12373,7 @@ msgstr "Koers bijgewerkt"
 #. placeholder {0}: formatExchangeRate(exchangeRate)
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "Rate: 1 {fromCurrency} = {0} {toCurrency}"
-msgstr "Koers: 1 {fromCurrency}= {0} {toCurrency}"
+msgstr "Koers: 1 {fromCurrency} = {0} {toCurrency}"
 
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "Reach a total by a date"
@@ -13465,10 +13439,6 @@ msgstr "Instellingen opslaan"
 msgid "Save your SQL query as a reusable report. Optionally add chart visualizations."
 msgstr "Sla je SQL-query op als een herbruikbaar rapport. Voeg optioneel grafische visualisaties toe."
 
-#: src/pages/analytics/reports/FlowReport.tsx
-#~ msgid "Saved"
-#~ msgstr "Opgeslagen"
-
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "Saved as \"{trimmedName}\""
 msgstr "Opgeslagen als \"{trimmedName}\""
@@ -14202,10 +14172,6 @@ msgstr "Installatie mislukt"
 msgid "Setup failed. Try again or contact support."
 msgstr "Instellen mislukt. Probeer het opnieuw of neem contact op met ondersteuning."
 
-#: src/pages/analytics/reports/SpendingReport.tsx
-#~ msgid "Share"
-#~ msgstr "Delen"
-
 #: src/pages/settings/AboutPage.tsx
 msgid "Share feedback"
 msgstr "Feedback delen"
@@ -14245,7 +14211,7 @@ msgstr "Verdeling binnen een prioriteit"
 #: src/features/budget-management/model/icon-options.ts
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Shopping"
-msgstr "Boodschappen"
+msgstr "Winkelen"
 
 #: src/pages/settings/components/GoalFundingSettingsCard.tsx
 msgid "Show a small badge for categories with a priority other than 3. Funding is unaffected."
@@ -14669,7 +14635,7 @@ msgstr "Resterend te splitsen"
 
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
 msgid "Split requires category"
-msgstr "Splitsen vereist Categorie"
+msgstr "Elke splitsing vereist een categorie"
 
 #: src/features/transactions/ui/add-transaction/add-transaction.utils.ts
 msgid "Split total mismatch"
@@ -14685,12 +14651,12 @@ msgstr "Overzicht Gesplitste transacties"
 
 #: src/features/transactions/ui/add-transaction/add-transaction.utils.ts
 msgid "Splits must add up to the transaction total."
-msgstr "Splitsen moeten samen het transactietotaal bedragen."
+msgstr "De deelbedragen moeten samen het transactietotaal vormen."
 
 #. placeholder {0}: formatMilli(editFormatter, asMilli(targetTotal))
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
 msgid "Splits must total {0}."
-msgstr "Splitsen moeten samen {0} zijn."
+msgstr "De deelbedragen moeten samen {0} zijn."
 
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 msgid "Spot how cash flows in and out across the selected period grouping."
@@ -15146,7 +15112,7 @@ msgstr "Doelbedrag is beschikbaar en klaar voor gebruik."
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Target Available"
-msgstr "Doel beschikbaar"
+msgstr "Gewenst beschikbaar saldo"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Target Date"
@@ -15357,14 +15323,6 @@ msgstr "De transactiedatum hierboven is de eerste uitvoering."
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
 msgid "The transaction has been permanently removed."
 msgstr "De transactie is permanent verwijderd."
-
-#. placeholder {0}: formatP(forecast.pValue)
-#. placeholder {1}: forecast.rSquared.toFixed(2)
-#. placeholder {2}: fmt.money(Math.round(Math.abs(forecast.slope)))
-#. placeholder {3}: forecast.slope >= 0 ? 'upward' : 'downward'
-#: src/pages/analytics/insights.ts
-#~ msgid "The trend is statistically solid (p = {0}, R² = {1}): {2}/month {3}."
-#~ msgstr "De trend is statistisch betrouwbaar (p = {0}, R² = {1}): {2}/maand {3}."
 
 #. placeholder {0}: formatP(forecast.pValue)
 #. placeholder {1}: forecast.rSquared.toFixed(2)
@@ -15772,11 +15730,6 @@ msgstr "Te duur"
 msgid "TOO SHORT"
 msgstr "TE KORT"
 
-#. placeholder {0}: DIM_LABELS[dim].replace(/s$/, '').toLowerCase()
-#: src/pages/analytics/reports/SpendingReport.tsx
-#~ msgid "Top {0}"
-#~ msgstr "Top {0}"
-
 #: src/pages/analytics/reports/SpendingReport.tsx
 msgid "top {MAX_SLICES} + Other"
 msgstr "top {MAX_SLICES} + Overige"
@@ -15925,7 +15878,7 @@ msgstr "Tracking-rekeningen"
 
 #: src/pages/accounts/components/ValueChangeStat.tsx
 msgid "Tracking-only account: these changes affect net worth but not Ready to Assign."
-msgstr "Tracking-only rekening: deze wijzigingen beïnvloeden je nettovermogen maar niet Te verdelen."
+msgstr "Rekening buiten budget: deze wijzigingen beïnvloeden je nettovermogen, maar niet «Te verdelen»."
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Tracks the actual balance — spending reduces progress"
@@ -15978,7 +15931,7 @@ msgstr "Transactie succesvol opgeslagen."
 
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
 msgid "Transaction with splits added"
-msgstr "Transactie met splitsen toegevoegd"
+msgstr "Gesplitste transactie toegevoegd"
 
 #: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
 #: src/pages/settings/ImportsPage.tsx
@@ -16168,7 +16121,7 @@ msgstr "Probeer eens \"Ik heb vandaag $20 aan koffie uitgegeven\" of \"Wat is mi
 #. placeholder {0}: total.toLocaleString()
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "Try spreading the {sym}{0} across the three rows until \"left to assign\" hits zero."
-msgstr "Probeer de {sym}{0} over de drie rijen te verdelen tot \"te verdelen\" op nul staat."
+msgstr "Verdeel de {sym}{0} over de drie rijen tot «Nog toe te wijzen» op nul staat."
 
 #. placeholder {0}: change.transactionId
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
@@ -17643,7 +17596,7 @@ msgstr "Je hebt een externe server geconfigureerd. Je financiële gegevens — t
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "You've saved {totalSaved} total"
-msgstr "Je hebt in totaal {totalSaved} bespaard"
+msgstr "Je hebt in totaal {totalSaved} gespaard"
 
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
 msgid "Your account has reached the 5-person collaborator limit across owned workspaces. Remove a member or cancel a pending invite before creating another one."

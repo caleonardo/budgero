@@ -1051,7 +1051,7 @@ msgstr "+1 jour"
 #. placeholder {0}: isEditing ? t`Edit Goal` : t`Create Goal`
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "<0/>{0} for {categoryName}"
-msgstr "<0/>{0}pour {categoryName}"
+msgstr "<0/>{0} pour {categoryName}"
 
 #: src/widgets/dashboard/AtAGlance.tsx
 msgid "<0/>{monthLabel} At a Glance"
@@ -1975,7 +1975,7 @@ msgstr "<0>{0}</0> a un solde actuel de <1>{1} {2}</1>. Pour l'archiver, Budgero
 #. placeholder {0}: account.Name
 #: src/features/account-management/ui/ArchiveAccountDialog.tsx
 msgid "<0>{0}</0>has a zero balance and will be archived without any further changes."
-msgstr "<0>{0}</0>a un solde nul et sera archivé sans autre modification."
+msgstr "<0>{0}</0> a un solde nul et sera archivé sans autre modification."
 
 #. placeholder {0}: user.spaceMembershipCount
 #. placeholder {1}: user.ownedSpaceCount
@@ -2256,7 +2256,7 @@ msgstr "⚠️ Date cible dépassée — il manque {needed}"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "⚠️ Target date passed - need {needed} more available"
-msgstr "⚠️ Date cible dépassée — il manque {needed} de disponible"
+msgstr "⚠️ Date cible dépassée — il manque {needed} au solde disponible visé"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "✓ {assigned} allocated this month — on track!"
@@ -2284,11 +2284,11 @@ msgstr "✓ Montant cible disponible !"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "✓ Target available!"
-msgstr "✓ Cible disponible !"
+msgstr "✓ Montant cible disponible !"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "✓ This month done! {totalAssigned} of {target} allocated"
-msgstr "✓ Ce mois-ci terminé ! {totalAssigned} sur {target} affecté"
+msgstr "✓ Objectif du mois atteint ! {totalAssigned} affectés sur {target}"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "✓ This month funded! {available}/{target} available"
@@ -3539,7 +3539,7 @@ msgstr "Au moins 8 caractères"
 
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "At the start of the month, take your income, and divide it across everything you need to pay for — rent, food, savings, fun. When the pile hits zero, you’re done. That’s the whole trick."
-msgstr "Au début du mois, prenez vos revenus et répartissez-les sur tout ce que vous devez payer — loyer, nourriture, épargne, loisirs. Quand le tas atteint zéro, vous avez terminé. C'est tout le secret."
+msgstr "Au début du mois, répartissez vos revenus entre vos dépenses et vos projets — loyer, alimentation, épargne, loisirs. Une fois tout l’argent affecté, vous avez terminé. C’est aussi simple que cela."
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "At-a-glance overview of balances, spending, and goals."
@@ -3778,7 +3778,7 @@ msgstr "Basique {0}"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Before we build anything, here’s how Budgero thinks about money."
-msgstr "Avant de construire quoi que ce soit, voici comment Budgero envisage l'argent."
+msgstr "Avant de commencer, voici comment Budgero aborde la gestion de l’argent."
 
 #. placeholder {0}: (currentCategoryTotalTransactions ?? 0) > 0 && (currentCategoryAssigned ?? 0) !== 0 ? t` transactions and assignments` : (currentCategoryTotalTransactions ?? 0) > 0 ? ' transactions' : ' assignments'
 #: src/features/category-management/ui/DeleteCategoryDialog.tsx
@@ -3875,10 +3875,6 @@ msgstr "Répartition"
 msgid "Breakdown of user types"
 msgstr "Répartition par type d'utilisateur"
 
-#: src/pages/analytics/reports/ScenarioReport.tsx
-#~ msgid "Breaks"
-#~ msgstr "Pauses"
-
 #: src/app/startup/screens.tsx
 msgid "Bring your categories, accounts, and history"
 msgstr "Importez vos catégories, comptes et historique"
@@ -3943,7 +3939,7 @@ msgstr "Budgero Cloud"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Budgero comes in a few flavors. Pick one that feels like you."
-msgstr "Budgero se décline en plusieurs versions. Choisissez celle qui vous ressemble."
+msgstr "Budgero propose plusieurs styles. Choisissez celui qui vous ressemble."
 
 #: src/app/startup/screens.tsx
 msgid "Budgero couldn't finish starting"
@@ -3987,7 +3983,7 @@ msgstr "Budgero est entièrement synchronisé."
 
 #: src/pages/onboarding/steps/RulesStep.tsx
 msgid "Budgero is opinionated on purpose. These three rules shape everything — read them once, and the rest of the app will make sense."
-msgstr "Budgero est volontairement dogmatique. Ces trois règles structurent tout — lisez-les une fois et le reste de l'application prendra tout son sens."
+msgstr "Budgero repose sur des principes clairs. Ces trois règles guident son fonctionnement — lisez-les une fois et le reste de l’application prendra tout son sens."
 
 #: src/app/startup/screens.tsx
 #: src/app/startup/StartupLayout.tsx
@@ -4065,6 +4061,10 @@ msgstr "Contexte du budget"
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Budget created"
 msgstr "Budget créé"
+
+#: src/pages/onboarding/onboarding-data.ts
+msgid "Budget currency"
+msgstr "Devise du budget"
 
 #: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
 #: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
@@ -4447,10 +4447,6 @@ msgstr "Catégorie<0/>"
 msgid "CC Payment Calculation"
 msgstr "Calcul du remboursement de carte de crédit"
 
-#: src/pages/analytics/reports/WealthReport.tsx
-#~ msgid "Change"
-#~ msgstr "Modifier"
-
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Change account currency?"
 msgstr "Changer la devise du compte ?"
@@ -4604,7 +4600,7 @@ msgstr "compte courant, épargne et espèces"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Checking, savings, credit"
-msgstr "Compte chèque, épargne, crédit"
+msgstr "Compte courant, épargne, carte de crédit"
 
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
@@ -4684,6 +4680,10 @@ msgstr "Choisissez comment vous souhaitez suivre cette catégorie."
 #: src/features/budget-management/ui/create-budget-form/YnabCreditPaymentMatching.tsx
 msgid "Choose its payment category"
 msgstr "Choisir sa catégorie de paiement"
+
+#: src/pages/onboarding/onboarding-data.ts
+msgid "Choose the currency for your budget. You can change the display language in Settings → Appearance."
+msgstr "Choisissez la devise de votre budget. Vous pouvez changer la langue d’affichage dans Paramètres → Apparence."
 
 #: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
 msgid "Choose the database you exported as a Budgero backup. We'll import every budget, account, and transaction."
@@ -4885,7 +4885,7 @@ msgstr "Personnage en pièce tenant un presse-papiers « Votre budget est prêt 
 
 #: src/pages/onboarding/steps/RulesStep.tsx
 msgid "Coin character pointing at a House Rules board"
-msgstr "Personnage en pièce pointant un panneau de règles de la maison"
+msgstr "Personnage en forme de pièce montrant un tableau des règles de base"
 
 #: src/pages/onboarding/steps/PasswordStep.tsx
 msgid "Coin character with a key approaching a Budgero padlock"
@@ -4897,7 +4897,7 @@ msgstr "Personnage en pièce avec un registre et une plaque de budget"
 
 #: src/pages/onboarding/steps/AccountsStep.tsx
 msgid "Coin character with checking register, savings jar, and credit card"
-msgstr "Personnage en pièce avec carnet de chèques, bocal d'épargne et carte de crédit"
+msgstr "Personnage en forme de pièce avec un registre de compte courant, un pot d’épargne et une carte de crédit"
 
 #: src/pages/onboarding/steps/RulesStep.tsx
 msgid "Coin character with hardhat and briefcase"
@@ -5789,10 +5789,6 @@ msgstr "Gestion des données"
 msgid "Data reset"
 msgstr "Réinitialisation des données"
 
-#: src/shared/ui/PeriodTabs.tsx
-#~ msgid "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
-#~ msgstr "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
-
 #: src/app/layout/AdminSidebar.tsx
 #: src/features/subscription/ui/ExportDataCard.tsx
 msgid "Database"
@@ -5916,12 +5912,6 @@ msgstr "Les dettes ont diminué de {0} sur la période."
 #: src/pages/analytics/insights.ts
 msgid "Debt grew {0} over the period."
 msgstr "Les dettes ont augmenté de {0} sur la période."
-
-#. placeholder {0}: debtChange < 0 ? 'down' : 'up'
-#. placeholder {1}: fmt.money(Math.abs(debtChange))
-#: src/pages/analytics/insights.ts
-#~ msgid "Debt is {0} {1} over the period."
-#~ msgstr "La dette est de {0} {1} sur la période."
 
 #: src/pages/onboarding/steps/YnabImportStep.tsx
 msgid "Decimal comma (1.234,567)"
@@ -6865,7 +6855,7 @@ msgstr "Chaque pièce trouve désormais sa place."
 
 #: src/pages/onboarding/steps/RulesStep.tsx
 msgid "Every dollar gets a job"
-msgstr "Chaque dollar a un travail"
+msgstr "Chaque dollar a un rôle"
 
 #: src/pages/analytics/reports/FlowReport.tsx
 msgid "Every stream from income to {dimensionLabel}"
@@ -7581,7 +7571,7 @@ msgstr "Fitness & Salle de sport"
 
 #: src/pages/onboarding/steps/ShareStep.tsx
 msgid "Five characters tethered to a shared ledger"
-msgstr "Cinq caractères liés à un registre partagé"
+msgstr "Cinq personnages reliés à un registre partagé"
 
 #: src/pages/settings/components/GoalFundingSettingsCard.tsx
 msgid "Five levels (default)"
@@ -7854,11 +7844,11 @@ msgstr "Cadeaux & Dons"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Give every coin a job"
-msgstr "Donnez un emploi à chaque pièce"
+msgstr "Donnez un rôle à chaque centime"
 
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "Give every coin a job."
-msgstr "Donnez un emploi à chaque pièce."
+msgstr "Donnez un rôle à chaque centime."
 
 #: src/features/rules/ui/rule-editor/rule-editor.utils.ts
 msgid "Give your rule a name so you can recognise it later."
@@ -8089,7 +8079,7 @@ msgstr "Masquer les catégories masquées"
 
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "Hide label column"
-msgstr "Masquer la colonne des libellés"
+msgstr "Masquer la colonne des étiquettes"
 
 #: src/features/chat/ui/chat-panel/ChatHeader.tsx
 msgid "Hide sidebar"
@@ -8176,7 +8166,7 @@ msgstr "Combien de mois de données budgétaires à inclure pour le contexte"
 
 #: src/pages/accounts/components/ValueChangeStat.tsx
 msgid "How much this account's worth in {budgetCurrency} moved with exchange rates. Your {accountCurrency} balance itself is unchanged."
-msgstr "La valeur de ce compte en {budgetCurrency} est ajustée selon les taux de change. Votre solde en {accountCurrency} reste inchangé."
+msgstr "Variation de la valeur de ce compte en {budgetCurrency} due aux fluctuations des taux de change. Votre solde en {accountCurrency} reste inchangé."
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "How much you want to assign to this category every month."
@@ -8225,7 +8215,7 @@ msgstr "Je vais mettre à jour cette transaction. Veuillez confirmer les modific
 
 #: src/pages/onboarding/steps/StartModeStep.tsx
 msgid "I’m new to zero-based budgeting, or starting clean."
-msgstr "Je découvre le budget à base zéro ou je repars de zéro."
+msgstr "Je découvre le budget base zéro ou je repars de zéro."
 
 #: src/pages/settings/subscription/subscription.constants.ts
 msgid "I'm switching to another app"
@@ -8892,10 +8882,6 @@ msgstr "Étiquettes"
 #: src/pages/settings/LabelsPage.tsx
 msgid "Labels ({count})"
 msgstr "Étiquettes ({count})"
-
-#: src/pages/onboarding/onboarding-data.ts
-msgid "Language & money"
-msgstr "Langue et devise"
 
 #: src/pages/analytics/analytics-state.ts
 msgid "Last 12 months"
@@ -9776,7 +9762,7 @@ msgstr "Cible d'affectation mensuelle"
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Monthly Available Target"
-msgstr "Cible de disponible mensuelle"
+msgstr "Objectif de solde disponible mensuel"
 
 #: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
 msgid "Monthly calculation"
@@ -9989,7 +9975,7 @@ msgstr "Presque ! Terminez ce mois pour maintenir votre série"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Need {needed} more available"
-msgstr "Il vous faut {needed} de Disponible supplémentaire"
+msgstr "Il manque encore {needed} au solde disponible visé"
 
 #: src/pages/onboarding/steps/CurrencyStep.tsx
 msgid "NEED A DIFFERENT CURRENCY?"
@@ -10083,14 +10069,6 @@ msgstr "Patrimoine net"
 #: src/pages/accounts/components/NetWorthCard.tsx
 msgid "NET WORTH"
 msgstr "PATRIMOINE NET"
-
-#. placeholder {0}: change > 0 ? 'grew' : 'fell'
-#. placeholder {1}: fmt.money(Math.abs(change))
-#. placeholder {2}: fmt.monthLabel(first.monthKey)
-#. placeholder {3}: fmt.money(Math.abs(perMonth))
-#: src/pages/analytics/insights.ts
-#~ msgid "Net worth {0} {1} since {2} — about {3}/month."
-#~ msgstr "Patrimoine net {0} {1} depuis {2} — environ {3}/mois."
 
 #. placeholder {0}: fmt.money(Math.abs(change))
 #. placeholder {1}: fmt.monthLabel(first.monthKey)
@@ -11660,7 +11638,7 @@ msgstr "Objectif d'affectation périodique"
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Periodic Available Target"
-msgstr "Objectif de disponible périodique"
+msgstr "Objectif de solde disponible périodique"
 
 #. placeholder {0}: deleteDialog.user?.email
 #: src/pages/admin/SelfHostAdminUsers.tsx
@@ -11746,10 +11724,6 @@ msgstr "Choisissez deux comptes différents pour un virement"
 #: src/shared/lib/analytics/klaro-config.ts
 msgid "Pick which cookies are OK with you. Your encrypted budget data is never tracked either way. You can change this any time from Settings → Security."
 msgstr "Choisissez les cookies qui vous conviennent. Vos données de budget chiffrées ne sont jamais suivies, quel que soit votre choix. Vous pouvez modifier ce paramètre à tout moment dans Paramètres → Sécurité."
-
-#: src/pages/onboarding/onboarding-data.ts
-msgid "Pick your currency and locale. Everything else adapts."
-msgstr "Choisissez votre devise et votre région. Tout le reste s'adapte."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Pick your path"
@@ -12399,7 +12373,7 @@ msgstr "Taux mis à jour"
 #. placeholder {0}: formatExchangeRate(exchangeRate)
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "Rate: 1 {fromCurrency} = {0} {toCurrency}"
-msgstr "Taux : 1 {fromCurrency}= {0} {toCurrency}"
+msgstr "Taux : 1 {fromCurrency} = {0} {toCurrency}"
 
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "Reach a total by a date"
@@ -12614,7 +12588,7 @@ msgstr "Objectif d'affectation annuel récurrent"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Recurring Yearly Available Target"
-msgstr "Objectif Disponible annuel récurrent"
+msgstr "Objectif annuel récurrent de solde disponible"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Reddit"
@@ -13056,7 +13030,7 @@ msgstr "La restauration est indisponible lorsque l'accès à votre espace de tra
 
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 msgid "Restore real rates"
-msgstr "Restaurer les taux réels"
+msgstr "Rétablir les taux de change réels"
 
 #: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
 msgid "Restoring a Budgero backup replaces all data in this workspace. Use it right after setting up Budgero Cloud or when you're ready to move your offline database into sync."
@@ -13464,10 +13438,6 @@ msgstr "Enregistrer les paramètres"
 #: src/features/reports/ui/SaveReportDialog.tsx
 msgid "Save your SQL query as a reusable report. Optionally add chart visualizations."
 msgstr "Enregistrez votre requête SQL en tant que rapport réutilisable. Ajoutez éventuellement des visualisations graphiques."
-
-#: src/pages/analytics/reports/FlowReport.tsx
-#~ msgid "Saved"
-#~ msgstr "Enregistré"
 
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "Saved as \"{trimmedName}\""
@@ -14202,10 +14172,6 @@ msgstr "Échec de la configuration"
 msgid "Setup failed. Try again or contact support."
 msgstr "Échec de la configuration. Réessayez ou contactez l'assistance."
 
-#: src/pages/analytics/reports/SpendingReport.tsx
-#~ msgid "Share"
-#~ msgstr "Partager"
-
 #: src/pages/settings/AboutPage.tsx
 msgid "Share feedback"
 msgstr "Donner votre avis"
@@ -14294,7 +14260,7 @@ msgstr "Afficher les catégories masquées"
 
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "Show label column"
-msgstr "Afficher la colonne des libellés"
+msgstr "Afficher la colonne des étiquettes"
 
 #: src/app/layout/desktop-shell/AccountsList.tsx
 msgid "Show Less"
@@ -14441,7 +14407,7 @@ msgstr "L'intégration SimpleFIN est actuellement en cours de développement. Le
 
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 msgid "Simulate rate move"
-msgstr "Simuler un mouvement de taux"
+msgstr "Simuler une variation des taux de change"
 
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 msgid "Simulated a market move"
@@ -15235,7 +15201,7 @@ msgstr "Le montant dont vous devez disposer à la fin de chaque cycle."
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "The amount you need available in this category by the target date."
-msgstr "Le montant dont vous avez besoin de disponible dans cette catégorie d'ici la date cible."
+msgstr "Le montant qui doit être disponible dans cette catégorie à la date cible."
 
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "The assistant will ask for confirmation before making changes like adding transactions."
@@ -15357,14 +15323,6 @@ msgstr "La date de transaction ci-dessus correspond à la première occurrence."
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
 msgid "The transaction has been permanently removed."
 msgstr "La transaction a été définitivement supprimée."
-
-#. placeholder {0}: formatP(forecast.pValue)
-#. placeholder {1}: forecast.rSquared.toFixed(2)
-#. placeholder {2}: fmt.money(Math.round(Math.abs(forecast.slope)))
-#. placeholder {3}: forecast.slope >= 0 ? 'upward' : 'downward'
-#: src/pages/analytics/insights.ts
-#~ msgid "The trend is statistically solid (p = {0}, R² = {1}): {2}/month {3}."
-#~ msgstr "La tendance est statistiquement solide (p = {0}, R² = {1}) : {2}/mois {3}."
 
 #. placeholder {0}: formatP(forecast.pValue)
 #. placeholder {1}: forecast.rSquared.toFixed(2)
@@ -15675,7 +15633,7 @@ msgstr "Trois règles de base"
 
 #: src/pages/onboarding/steps/RulesStep.tsx
 msgid "Three<0/>house rules."
-msgstr "Trois<0/>règles maison."
+msgstr "Trois<0/>règles de base."
 
 #: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
 msgid "through this month"
@@ -15771,11 +15729,6 @@ msgstr "Trop cher"
 #: src/pages/onboarding/steps/PasswordStep.tsx
 msgid "TOO SHORT"
 msgstr "TROP COURT"
-
-#. placeholder {0}: DIM_LABELS[dim].replace(/s$/, '').toLowerCase()
-#: src/pages/analytics/reports/SpendingReport.tsx
-#~ msgid "Top {0}"
-#~ msgstr "Top {0}"
 
 #: src/pages/analytics/reports/SpendingReport.tsx
 msgid "top {MAX_SLICES} + Other"
@@ -15925,7 +15878,7 @@ msgstr "Comptes de suivi"
 
 #: src/pages/accounts/components/ValueChangeStat.tsx
 msgid "Tracking-only account: these changes affect net worth but not Ready to Assign."
-msgstr "Compte de suivi uniquement : ces modifications affectent le patrimoine net mais pas l'À affecter."
+msgstr "Compte hors budget : ces modifications affectent le patrimoine net, mais pas le montant « À affecter »."
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Tracks the actual balance — spending reduces progress"
@@ -16168,7 +16121,7 @@ msgstr "Essayez de dire « J'ai dépensé 20 $ en café aujourd'hui » ou « Que
 #. placeholder {0}: total.toLocaleString()
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "Try spreading the {sym}{0} across the three rows until \"left to assign\" hits zero."
-msgstr "Essayez de répartir le {sym}{0} sur les trois lignes jusqu'à ce que le « restant à affecter » atteigne zéro."
+msgstr "Essayez de répartir {sym}{0} entre les trois lignes jusqu’à ce que le « restant à affecter » atteigne zéro."
 
 #. placeholder {0}: change.transactionId
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
@@ -17315,7 +17268,7 @@ msgstr "Objectif d'affectation annuel"
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Yearly Available Target"
-msgstr "Objectif disponible annuel"
+msgstr "Objectif annuel de solde disponible"
 
 #: src/pages/settings/DataManagementPage.tsx
 msgid "Yes, Replace All Data"

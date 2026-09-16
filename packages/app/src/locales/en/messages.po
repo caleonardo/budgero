@@ -3877,10 +3877,6 @@ msgstr "Breakdown"
 msgid "Breakdown of user types"
 msgstr "Breakdown of user types"
 
-#: src/pages/analytics/reports/ScenarioReport.tsx
-#~ msgid "Breaks"
-#~ msgstr "Breaks"
-
 #: src/app/startup/screens.tsx
 msgid "Bring your categories, accounts, and history"
 msgstr "Bring your categories, accounts, and history"
@@ -4067,6 +4063,10 @@ msgstr "Budget Context"
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Budget created"
 msgstr "Budget created"
+
+#: src/pages/onboarding/onboarding-data.ts
+msgid "Budget currency"
+msgstr "Budget currency"
 
 #: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
 #: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
@@ -4449,10 +4449,6 @@ msgstr "Category<0/>"
 msgid "CC Payment Calculation"
 msgstr "CC Payment Calculation"
 
-#: src/pages/analytics/reports/WealthReport.tsx
-#~ msgid "Change"
-#~ msgstr "Change"
-
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Change account currency?"
 msgstr "Change account currency?"
@@ -4686,6 +4682,10 @@ msgstr "Choose how you want to track this category."
 #: src/features/budget-management/ui/create-budget-form/YnabCreditPaymentMatching.tsx
 msgid "Choose its payment category"
 msgstr "Choose its payment category"
+
+#: src/pages/onboarding/onboarding-data.ts
+msgid "Choose the currency for your budget. You can change the display language in Settings → Appearance."
+msgstr "Choose the currency for your budget. You can change the display language in Settings → Appearance."
 
 #: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
 msgid "Choose the database you exported as a Budgero backup. We'll import every budget, account, and transaction."
@@ -5791,10 +5791,6 @@ msgstr "Data Management"
 msgid "Data reset"
 msgstr "Data reset"
 
-#: src/shared/ui/PeriodTabs.tsx
-#~ msgid "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
-#~ msgstr "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
-
 #: src/app/layout/AdminSidebar.tsx
 #: src/features/subscription/ui/ExportDataCard.tsx
 msgid "Database"
@@ -5918,12 +5914,6 @@ msgstr "Debt fell {0} over the period."
 #: src/pages/analytics/insights.ts
 msgid "Debt grew {0} over the period."
 msgstr "Debt grew {0} over the period."
-
-#. placeholder {0}: debtChange < 0 ? 'down' : 'up'
-#. placeholder {1}: fmt.money(Math.abs(debtChange))
-#: src/pages/analytics/insights.ts
-#~ msgid "Debt is {0} {1} over the period."
-#~ msgstr "Debt is {0} {1} over the period."
 
 #: src/pages/onboarding/steps/YnabImportStep.tsx
 msgid "Decimal comma (1.234,567)"
@@ -8895,10 +8885,6 @@ msgstr "Labels"
 msgid "Labels ({count})"
 msgstr "Labels ({count})"
 
-#: src/pages/onboarding/onboarding-data.ts
-msgid "Language & money"
-msgstr "Language & money"
-
 #: src/pages/analytics/analytics-state.ts
 msgid "Last 12 months"
 msgstr "Last 12 months"
@@ -10085,14 +10071,6 @@ msgstr "Net Worth"
 #: src/pages/accounts/components/NetWorthCard.tsx
 msgid "NET WORTH"
 msgstr "NET WORTH"
-
-#. placeholder {0}: change > 0 ? 'grew' : 'fell'
-#. placeholder {1}: fmt.money(Math.abs(change))
-#. placeholder {2}: fmt.monthLabel(first.monthKey)
-#. placeholder {3}: fmt.money(Math.abs(perMonth))
-#: src/pages/analytics/insights.ts
-#~ msgid "Net worth {0} {1} since {2} — about {3}/month."
-#~ msgstr "Net worth {0} {1} since {2} — about {3}/month."
 
 #. placeholder {0}: fmt.money(Math.abs(change))
 #. placeholder {1}: fmt.monthLabel(first.monthKey)
@@ -11748,10 +11726,6 @@ msgstr "Pick two different accounts for a transfer"
 #: src/shared/lib/analytics/klaro-config.ts
 msgid "Pick which cookies are OK with you. Your encrypted budget data is never tracked either way. You can change this any time from Settings → Security."
 msgstr "Pick which cookies are OK with you. Your encrypted budget data is never tracked either way. You can change this any time from Settings → Security."
-
-#: src/pages/onboarding/onboarding-data.ts
-msgid "Pick your currency and locale. Everything else adapts."
-msgstr "Pick your currency and locale. Everything else adapts."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Pick your path"
@@ -13467,10 +13441,6 @@ msgstr "Save Settings"
 msgid "Save your SQL query as a reusable report. Optionally add chart visualizations."
 msgstr "Save your SQL query as a reusable report. Optionally add chart visualizations."
 
-#: src/pages/analytics/reports/FlowReport.tsx
-#~ msgid "Saved"
-#~ msgstr "Saved"
-
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "Saved as \"{trimmedName}\""
 msgstr "Saved as \"{trimmedName}\""
@@ -14203,10 +14173,6 @@ msgstr "Setup failed"
 #: src/pages/onboarding/apply-onboarding.ts
 msgid "Setup failed. Try again or contact support."
 msgstr "Setup failed. Try again or contact support."
-
-#: src/pages/analytics/reports/SpendingReport.tsx
-#~ msgid "Share"
-#~ msgstr "Share"
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Share feedback"
@@ -15363,14 +15329,6 @@ msgstr "The transaction has been permanently removed."
 #. placeholder {0}: formatP(forecast.pValue)
 #. placeholder {1}: forecast.rSquared.toFixed(2)
 #. placeholder {2}: fmt.money(Math.round(Math.abs(forecast.slope)))
-#. placeholder {3}: forecast.slope >= 0 ? 'upward' : 'downward'
-#: src/pages/analytics/insights.ts
-#~ msgid "The trend is statistically solid (p = {0}, R² = {1}): {2}/month {3}."
-#~ msgstr "The trend is statistically solid (p = {0}, R² = {1}): {2}/month {3}."
-
-#. placeholder {0}: formatP(forecast.pValue)
-#. placeholder {1}: forecast.rSquared.toFixed(2)
-#. placeholder {2}: fmt.money(Math.round(Math.abs(forecast.slope)))
 #: src/pages/analytics/insights.ts
 msgid "The upward trend is statistically solid (p = {0}, R² = {1}): {2}/month."
 msgstr "The upward trend is statistically solid (p = {0}, R² = {1}): {2}/month."
@@ -15773,11 +15731,6 @@ msgstr "Too expensive"
 #: src/pages/onboarding/steps/PasswordStep.tsx
 msgid "TOO SHORT"
 msgstr "TOO SHORT"
-
-#. placeholder {0}: DIM_LABELS[dim].replace(/s$/, '').toLowerCase()
-#: src/pages/analytics/reports/SpendingReport.tsx
-#~ msgid "Top {0}"
-#~ msgstr "Top {0}"
 
 #: src/pages/analytics/reports/SpendingReport.tsx
 msgid "top {MAX_SLICES} + Other"

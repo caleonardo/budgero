@@ -48,8 +48,8 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
   {
     id: 'currency',
     title: msg`Where do you keep your money?`,
-    subtitle: msg`Pick your currency and locale. Everything else adapts.`,
-    hint: msg`Language & money`,
+    subtitle: msg`Choose the currency for your budget. You can change the display language in Settings → Appearance.`,
+    hint: msg`Budget currency`,
   },
   {
     id: 'zbb',
