@@ -57,7 +57,7 @@ just to test the pipeline.
 In GitHub **Actions → release → Run workflow**, select `master` and leave
 **dry_run** checked. The `production` environment permits `master` for this check.
 It verifies required secrets, Google Cloud bucket listing and Docker login, runs
-both scanners, builds all archives and Docker images locally, and uploads a private
+both scanners, builds all archives and Docker images locally, and uploads a
 workflow artifact containing the archives, checksums and preview notes (7-day
 retention). It does not create/move tags, push images, write to the Google bucket,
 or create a GitHub Release. Snapshot binaries are verification builds, not releases.
