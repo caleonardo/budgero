@@ -106,6 +106,25 @@ jobs:
         with:
           node-version: 22
 
+      - name: Authenticate to Google Cloud (JSON key)
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          install_components: gsutil
+
+      - name: Verify Google Cloud access
+        run: gcloud storage ls gs://budgero_releases/ > /dev/null
+
+      - name: Verify Docker Hub login
+        run: node --input-type=module -e "import { dockerLogin } from './scripts/release-common.mjs'; dockerLogin('budgero', process.env.DOCKER_TOKEN)"
+        env:
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -143,20 +162,6 @@ jobs:
 
       - name: Scan Go dependencies
         run: pnpm run security:go
-
-      - name: Authenticate to Google Cloud (JSON key)
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
-
-      - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          install_components: gsutil
-
-      - name: Verify Google Cloud access
-        run: gcloud storage ls gs://budgero_releases/ > /dev/null
 
       - name: Build or publish selfhost artifacts
         shell: bash
