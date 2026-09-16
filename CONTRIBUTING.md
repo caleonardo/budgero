@@ -5,14 +5,11 @@ explains how the project works and what a good contribution looks like.
 
 ## How this repository works
 
-Budgero's day-to-day development happens on private infrastructure; this GitHub
-repository is the project's public home. Issues and pull requests live here, reviews
-happen here, and CI for pull requests runs here on GitHub-hosted runners.
+GitHub is Budgero's primary repository. Issues, pull requests, reviews, and merges
+happen here, and accepted contributions are merged directly into `master`.
 
-When a PR is accepted, a maintainer merges it into the canonical repository and pushes
-the result back — with your commits and authorship intact, so GitHub marks your PR as
-merged. There may be a short delay between approval and the merge appearing on
-`master`.
+Pull-request CI runs on GitHub-hosted runners. Builds on `master` run on a dedicated
+self-hosted runner. Maintainers retain a separate copy on private infrastructure.
 
 ## Before you start
 

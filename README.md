@@ -5,9 +5,9 @@ transaction tracking, goals, recurring payments, rules, multi-currency support, 
 financial analytics. Data lives in SQLite on the client (browser, via WASM) and syncs
 end-to-end encrypted through a Go backend.
 
-This repository is the **public home** of Budgero. Day-to-day development happens on
-private infrastructure and is published here, and **issues and pull requests are
-welcome** — see [CONTRIBUTING.md](CONTRIBUTING.md). All commits must be DCO-signed
+This is Budgero's **primary repository**. Development, reviews, and merges happen
+here, and **issues and pull requests are welcome** — see
+[CONTRIBUTING.md](CONTRIBUTING.md). All commits must be DCO-signed
 (`git commit -s`).
 
 ## License

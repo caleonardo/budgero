@@ -44,6 +44,13 @@ the VM. Docker caches belong to the VM, not the Dell host.
 and the accompanying unit goes in `/etc/systemd/system/`.
 Registration tokens must be supplied at setup time, never committed.
 
+## Repository workflow
+
+GitHub is the primary remote (`origin`). The previous remote is retained as
+`forgejo`; its private history is untouched. Push development branches and
+`master` to GitHub. A manual `git push forgejo master:master` updates the private
+copy; scheduled reverse mirroring is not configured yet.
+
 ## Migration controls
 
 - `DELL_RUNNER_ENABLED=true` selects this runner for pushes to GitHub `master`.
