@@ -1,0 +1,16 @@
+[Unit]
+Description=Budgero CI virtual machine
+Requires=budgero-ci-firewall.service snap.lxd.daemon.service
+After=budgero-ci-firewall.service snap.lxd.daemon.service
+PartOf=budgero-ci-firewall.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/snap/bin/lxc info budgero-ci | grep -q "Status: RUNNING" || /snap/bin/lxc start budgero-ci'
+ExecStop=/snap/bin/lxc stop budgero-ci --timeout 120
+RemainAfterExit=yes
+TimeoutStartSec=180
+TimeoutStopSec=150
+
+[Install]
+WantedBy=multi-user.target budgero-ci-firewall.service

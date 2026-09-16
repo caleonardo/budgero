@@ -12,7 +12,10 @@ The `budgerobr0` bridge uses `10.203.77.1/24`. The host firewall script blocks
 runner connections to private networks, the tailnet, and host services, except
 for the bridge's DNS and DHCP. Public internet access is allowed. IPv6 routing
 is disabled on the bridge. The systemd unit reapplies the rules at boot and
-when Docker restarts. Do not attach other instances to this dedicated bridge.
+when Docker restarts. `budgero-ci-vm.service` starts the VM only after those
+rules are installed; LXD automatic startup is disabled for this VM. Restarting
+the host Docker service also restarts the VM, interrupting any active job.
+Do not attach other instances to this dedicated bridge.
 
 GitHub requires approval for all outside contributors' workflows. Review
 workflow changes before approving them: a public repository's contributor can
