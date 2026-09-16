@@ -5,7 +5,8 @@
  *
  * A text run that renders identically on /de/... and /... is either brand
  * vocabulary or a missed translation; everything long enough to be a sentence
- * is reported. Blog posts are excluded — they are English-only by design.
+ * is reported. Original native articles have no English counterpart and need
+ * editorial review; historical changelog entries remain in English by design.
  *
  *   pnpm --dir packages/website run build && node scripts/i18n/audit-website.mjs [--max N]
  */
@@ -89,6 +90,8 @@ const title = (html) => decode((html.match(/<title>([^<]*)<\/title>/) || [, ''])
 
 const findings = [];
 let pages = 0;
+let redirects = 0;
+let originalArticles = 0;
 
 for (const locale of LOCALES) {
   const base = join(APP, locale);
@@ -98,11 +101,22 @@ for (const locale of LOCALES) {
   if (existsSync(join(APP, `${locale}.html`)))
     pairs.push({ file: join(APP, `${locale}.html`), rel: 'index.html' });
   for (const { file, rel } of pairs) {
-    // Blog posts, blog-index cards and changelog entries are English-only
-    // content by design; only their (translated) page chrome would ever match.
-    if (rel.startsWith('blog') || rel === 'changelog.html') continue;
+    // Next can emit an HTML artifact containing metadata even for a redirect.
+    // Audit rendered pages, not English metadata in a locale's 308 response.
+    const routeMeta = file.replace(/\.html$/, '.meta');
+    if (existsSync(routeMeta)) {
+      const { status, headers } = JSON.parse(readFileSync(routeMeta, 'utf8'));
+      if (status >= 300 && status < 400 && headers?.location) {
+        redirects += 1;
+        continue;
+      }
+    }
+    if (rel === 'changelog.html') continue;
     const enFile = rel === 'index.html' ? join(APP, 'en.html') : join(APP, 'en', rel);
-    if (!existsSync(enFile)) continue;
+    if (!existsSync(enFile)) {
+      if (rel.startsWith('blog/')) originalArticles += 1;
+      continue;
+    }
     pages += 1;
 
     const loc = readFileSync(file, 'utf8');
@@ -150,6 +164,9 @@ for (const f of findings) {
 
 console.log(
   `Audited ${pages} locale pages. ${findings.length} findings on ${byPage.size} pages.\n`
+);
+console.log(
+  `Skipped ${redirects} redirect artifacts and ${originalArticles} original articles without an English counterpart.\n`
 );
 const sorted = [...byPage.entries()].sort((a, b) => b[1].length - a[1].length);
 for (const [page, list] of sorted) {
