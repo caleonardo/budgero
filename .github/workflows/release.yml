@@ -1,0 +1,212 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Verify credentials and build everything without publishing
+        type: boolean
+        default: true
+        required: true
+
+permissions:
+  contents: write
+  checks: read
+
+concurrency:
+  group: release-publishing
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    if: github.repository == 'tombadilo-bombadilo/budgero' && ((github.event_name == 'workflow_dispatch' && inputs.dry_run && github.ref == 'refs/heads/master') || (vars.DELL_RELEASES_ENABLED == 'true' && startsWith(github.ref, 'refs/tags/v')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Wait for successful CI on the release commit
+        uses: actions/github-script@v7
+        with:
+          script: |
+            for (let attempt = 0; attempt < 180; attempt++) {
+              const checks = await github.paginate(github.rest.checks.listForRef, {
+                ...context.repo, ref: context.sha, per_page: 100,
+              });
+              const required = ['web', 'server'].map(name => checks
+                .filter(check => check.name === name && check.app?.slug === 'github-actions')
+                .sort((a, b) => b.id - a.id)[0]);
+              if (required.every(check => check?.conclusion === 'success')) return;
+              if (required.some(check => check?.status === 'completed' && check.conclusion !== 'success')) {
+                core.setFailed('Required CI failed for this commit.');
+                return;
+              }
+              await new Promise(resolve => setTimeout(resolve, 10000));
+            }
+            core.setFailed('Timed out waiting for web and server CI on this commit.');
+
+  release:
+    needs: gate
+    if: github.repository == 'tombadilo-bombadilo/budgero' && ((github.event_name == 'workflow_dispatch' && inputs.dry_run && github.ref == 'refs/heads/master') || (vars.DELL_RELEASES_ENABLED == 'true' && startsWith(github.ref, 'refs/tags/v')))
+    environment: production
+    runs-on: [self-hosted, linux, x64, budgero-build]
+    timeout-minutes: 120
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && 'true' || 'false' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify release ref and tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected_tag="v$(python3 -c 'import json; print(json.load(open("package.json"))["version"])')"
+          if [[ "$DRY_RUN" != true ]]; then
+            test "$GITHUB_REF_NAME" = "$expected_tag"
+            test "$(git rev-parse HEAD)" = "$(git rev-list -n 1 "$expected_tag")"
+          fi
+          git merge-base --is-ancestor HEAD origin/master
+          docker buildx version
+
+      - name: Isolate credential files
+        shell: bash
+        run: |
+          echo "DOCKER_CONFIG=$RUNNER_TEMP/docker-auth" >> "$GITHUB_ENV"
+          echo "CLOUDSDK_CONFIG=$RUNNER_TEMP/gcloud-config" >> "$GITHUB_ENV"
+
+      - name: Verify publication credentials
+        env:
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+          VITE_POSTHOG_KEY: ${{ secrets.VITE_POSTHOG_KEY }}
+          VITE_POSTHOG_HOST: ${{ secrets.VITE_POSTHOG_HOST }}
+        shell: bash
+        run: |
+          for key in DOCKER_TOKEN GCP_SERVICE_ACCOUNT_KEY GCP_PROJECT_ID VITE_CLERK_PUBLISHABLE_KEY VITE_POSTHOG_KEY VITE_POSTHOG_HOST; do
+            if [[ -z "${!key}" ]]; then
+              echo "Missing production secret: $key" >&2
+              exit 1
+            fi
+          done
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          cache: false
+          go-version-file: packages/server/go.mod
+
+      - name: Test release tooling and render notes
+        run: |
+          node --experimental-strip-types --test scripts/release.test.mjs
+          node --experimental-strip-types scripts/release-notes.mjs "v$(node -p 'require("./package.json").version')" "$RUNNER_TEMP/release-notes.md"
+
+      - name: Install GoReleaser
+        run: |
+          go install github.com/goreleaser/goreleaser/v2@v2.7.0
+          GOBIN="$(go env GOPATH)/bin"
+          echo "$GOBIN" >> "$GITHUB_PATH"
+          "$GOBIN/goreleaser" --version
+
+      - name: Install OSV scanner
+        shell: bash
+        run: |
+          scanner_dir="$RUNNER_TEMP/osv-scanner-bin"
+          mkdir -p "$scanner_dir"
+          curl --fail --location --retry 3 https://github.com/google/osv-scanner/releases/download/v2.3.8/osv-scanner_linux_amd64 -o "$scanner_dir/osv-scanner"
+          printf '%s  %s\n' bc98e15319ed0d515e3f9235287ba53cdc5535d576d24fd573978ecfe9ab92dc "$scanner_dir/osv-scanner" | sha256sum --check -
+          chmod +x "$scanner_dir/osv-scanner"
+          echo "$scanner_dir" >> "$GITHUB_PATH"
+          "$scanner_dir/osv-scanner" --version
+
+      - name: Scan dependencies
+        run: pnpm run security:deps
+
+      - name: Scan Go dependencies
+        run: pnpm run security:go
+
+      - name: Authenticate to Google Cloud (JSON key)
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          install_components: gsutil
+
+      - name: Verify Google Cloud access
+        run: gcloud storage ls gs://budgero_releases/ > /dev/null
+
+      - name: Build or publish selfhost artifacts
+        shell: bash
+        run: |
+          if [[ "$DRY_RUN" == true ]]; then
+            node scripts/release-selfhost.mjs --dry-run
+          else
+            pnpm run release:selfhost
+          fi
+        env:
+          DOCKER_USERNAME: budgero
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_PLATFORMS: linux/amd64,linux/arm64
+
+      - name: Build or publish SaaS image
+        shell: bash
+        run: |
+          if [[ "$DRY_RUN" == true ]]; then
+            node scripts/release-sas.mjs --dry-run
+          else
+            pnpm run release:sas
+          fi
+        env:
+          DOCKER_USERNAME: budgero
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_PLATFORMS: linux/amd64
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+          VITE_POSTHOG_KEY: ${{ secrets.VITE_POSTHOG_KEY }}
+          VITE_POSTHOG_HOST: ${{ secrets.VITE_POSTHOG_HOST }}
+
+      - name: Publish GitHub release and downloads
+        if: env.DRY_RUN != 'true'
+        run: node scripts/publish-github-release.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_NOTES_FILE: ${{ runner.temp }}/release-notes.md
+
+      - name: Upload verification archives
+        if: env.DRY_RUN == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-verification
+          path: |
+            dist/*.zip
+            dist/checksums.txt
+            ${{ runner.temp }}/release-notes.md
+          retention-days: 7
+
+      - name: Remove local authentication files
+        if: always()
+        shell: bash
+        run: |
+          rm -rf -- "$RUNNER_TEMP/docker-auth" "$RUNNER_TEMP/gcloud-config"

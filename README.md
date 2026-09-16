@@ -10,6 +10,11 @@ here, and **issues and pull requests are welcome** — see
 [CONTRIBUTING.md](CONTRIBUTING.md). All commits must be DCO-signed
 (`git commit -s`).
 
+## Releases
+
+Find version notes and downloads on [GitHub Releases](https://github.com/tombadilo-bombadilo/budgero/releases).
+Maintainers: see the [release procedure](docs/releasing.md).
+
 ## License
 
 Budgero is **open source** under the

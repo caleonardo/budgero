@@ -54,6 +54,9 @@ jobs:
       - name: Build runtime
         run: pnpm run build:runtime
 
+      - name: Test release tooling
+        run: node --experimental-strip-types --test scripts/release.test.mjs
+
       - name: Type-check
         run: pnpm run type-check:all
 
