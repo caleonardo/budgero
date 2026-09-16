@@ -10,9 +10,9 @@
 # scripts/release-selfhost.mjs prepares it under dist/docker.
 # To build the image from source instead, use selfhost.Dockerfile.
 
-FROM alpine:3.21
+FROM alpine:3.24 AS runtime
 
-# apk upgrade ensures we get the latest security patches (e.g., busybox CVEs)
+# Apply the security updates currently available from Alpine.
 RUN apk upgrade --no-cache && apk add --no-cache ca-certificates tzdata
 
 RUN addgroup -g 1001 -S budgero && \

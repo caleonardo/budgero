@@ -78,6 +78,9 @@ jobs:
       - name: Build app + server binary
         run: pnpm run build:app
 
+      - name: Check Contentlayer tracing compatibility
+        run: pnpm --dir packages/website run test:tracing
+
       - name: Build website
         run: pnpm run build:website
 

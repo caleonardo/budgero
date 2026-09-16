@@ -89,7 +89,7 @@ async function buildAndPushDocker(tag) {
   // Single multi-platform invocation: buildx assembles and pushes the
   // manifest list directly, no per-arch tags or imagetools step needed.
   run(
-    `${buildCmd} --platform ${DOCKER_PLATFORMS.join(',')} --provenance=false --sbom=false ${imageTags.join(' ')} --push -f selfhost.release.Dockerfile ${stageDir}`
+    `${buildCmd} --pull --no-cache-filter runtime --platform ${DOCKER_PLATFORMS.join(',')} --provenance=false --sbom=false ${imageTags.join(' ')} --push -f selfhost.release.Dockerfile ${stageDir}`
   );
 
   console.log(`==> Docker image pushed: ${DOCKER_IMAGE}:${tag}`);

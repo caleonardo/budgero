@@ -101,7 +101,7 @@ async function buildAndPushDocker(tag) {
     archTags.push(archTag);
     console.log(`==> Building Docker image for ${platform}: ${archTag}`);
     run(
-      `${buildCmd} --platform ${platform} ${buildArgs} --provenance=false --sbom=false --tag ${archTag} --push -f app.Dockerfile .`
+      `${buildCmd} --pull --no-cache-filter runtime --platform ${platform} ${buildArgs} --provenance=false --sbom=false --tag ${archTag} --push -f app.Dockerfile .`
     );
     if (!useDepot) tryRun('docker builder prune -af');
   }
