@@ -270,12 +270,12 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
                 className="absolute -top-0.5 -right-0.5"
               />
             </div>
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <PayeeCombobox
                 budgetId={budgetId}
                 value={payee}
                 onChange={onPayeeChange}
-                placeholder="Select payee"
+                placeholder={t`Select payee`}
                 triggerClassName="h-8 sm:h-10"
               />
             </div>
@@ -288,7 +288,7 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
         <div className="space-y-1.5 sm:space-y-2" data-testid="transaction-label-field">
           <div className="flex items-center gap-2">
             <Tags className="h-4 w-4 text-muted-foreground" />
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <LabelCombobox
                 budgetId={budgetId}
                 value={selectedLabelId}
@@ -318,7 +318,7 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
                 className="absolute -top-0.5 -right-0.5"
               />
             </div>
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <SearchableCategorySelect
                 budgetId={budgetId}
                 selectedCategoryId={selectedCategoryId}

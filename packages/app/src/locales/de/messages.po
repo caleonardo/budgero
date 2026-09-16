@@ -2786,6 +2786,10 @@ msgstr "Neues Konto hinzufügen"
 msgid "Add new payees, rename existing ones, or clear them from your transactions."
 msgstr "Füge neue Empfänger hinzu, benenne bestehende um oder entferne sie aus deinen Transaktionen."
 
+#: src/features/transactions/ui/add-transaction/TransactionFormHeader.tsx
+msgid "Add New Transaction"
+msgstr "Neue Transaktion hinzufügen"
+
 #: src/app/layout/desktop-shell/HeaderBar.tsx
 msgid "Add transaction"
 msgstr "Transaktion hinzufügen"
@@ -5836,6 +5840,10 @@ msgstr "DAU/MAU"
 msgid "Day-N window"
 msgstr "N-Tage-Fenster"
 
+#: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+msgid "Days before the due date; use 0 for the same day."
+msgstr "Tage vor dem Fälligkeitsdatum; 0 bedeutet am selben Tag."
+
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "Days left:"
 msgstr "Verbleibende Tage:"
@@ -6303,6 +6311,10 @@ msgstr "Dauer"
 #: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
 msgid "e.g. \"Personal Budget\" or \"Household\""
 msgstr "z. B. \"Persönliches Budget\" oder \"Haushalt\""
+
+#: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+msgid "e.g. 12"
+msgstr "z. B. 12"
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 msgid "e.g. amount you have already paid"
@@ -7017,6 +7029,10 @@ msgstr "Facebook"
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+msgid "Failed to add transaction"
+msgstr "Transaktion konnte nicht hinzugefügt werden"
+
 #: src/pages/custom-dashboards/components/AddWidgetDialog.tsx
 msgid "Failed to add widget"
 msgstr "Widget konnte nicht hinzugefügt werden"
@@ -7322,6 +7338,10 @@ msgstr "Speichern fehlgeschlagen"
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Failed to save order"
 msgstr "Reihenfolge konnte nicht gespeichert werden"
+
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+msgid "Failed to save recurring transaction"
+msgstr "Wiederkehrende Transaktion konnte nicht gespeichert werden"
 
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
 msgid "Failed to save split transaction"
@@ -8373,6 +8393,10 @@ msgstr "Diese Zeile in den Import einbeziehen"
 #: src/pages/settings/push-api/PushApiPage.tsx
 msgid "Include your API token in the Authorization header:"
 msgstr "Füge dein API-Token im Authorization-Header ein:"
+
+#: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+msgid "Includes occurrences already posted or skipped."
+msgstr "Bereits gebuchte oder übersprungene Termine werden mitgezählt."
 
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/features/budget-management/model/icon-options.ts
@@ -11907,6 +11931,7 @@ msgstr "Versuche es in einem Moment erneut."
 
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 #: src/features/goal-management/ui/GoalSection.tsx
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
 msgid "Please try again."
 msgstr "Bitte versuche es erneut."
@@ -13747,6 +13772,7 @@ msgstr "Gespeicherte Vorlage auswählen"
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
 #: src/features/transactions/ui/cells/AccountSelectCell.tsx
+#: src/features/transactions/ui/form/AccountSelect.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Select account"
 msgstr "Konto auswählen"
@@ -13784,6 +13810,10 @@ msgstr "Wähle ein Konto für die Kontobedingung."
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Select at least one category."
 msgstr "Wähle mindestens eine Kategorie aus."
+
+#: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+msgid "Select cadence"
+msgstr "Rhythmus auswählen"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
@@ -13828,6 +13858,10 @@ msgstr "Datei auswählen"
 msgid "Select format"
 msgstr "Format auswählen"
 
+#: src/features/transactions/ui/form/AccountSelect.tsx
+msgid "Select from account"
+msgstr "Ausgangskonto auswählen"
+
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "Select Header Row:"
 msgstr "Kopfzeile auswählen:"
@@ -13869,6 +13903,7 @@ msgstr "Wähle oder erstelle einen Arbeitsbereich, um Freigabeoptionen zu verwal
 msgid "Select or create payee"
 msgstr "Empfänger auswählen oder erstellen"
 
+#: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Select payee"
 msgstr "Empfänger auswählen"
@@ -13902,6 +13937,10 @@ msgstr "Zieldatum zur Berechnung auswählen"
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 msgid "Select the Budgero backup file you want to restore."
 msgstr "Wähle die Budgero-Backupdatei aus, die du wiederherstellen möchtest."
+
+#: src/features/transactions/ui/form/AccountSelect.tsx
+msgid "Select to account"
+msgstr "Zielkonto auswählen"
 
 #. placeholder {0}: transaction.Memo || 'No memo'
 #. placeholder {1}: formatMilli(accountLocalizer, asMilli(transaction.InflowConverted > 0 ? transaction.InflowConverted : transaction.OutflowConverted))

@@ -226,15 +226,15 @@ function BudgetTransactionForm({
     (addAnother: boolean) => {
       if (recurringEnabled) {
         void submitRecurring().catch((error) => {
-          toastError('Failed to save recurring transaction', error, 'Please try again.');
+          toastError(t`Failed to save recurring transaction`, error, t`Please try again.`);
         });
         return;
       }
       handleSubmit(addAnother).catch((error) => {
-        toastError('Failed to add transaction', error, 'Please try again.');
+        toastError(t`Failed to add transaction`, error, t`Please try again.`);
       });
     },
-    [handleSubmit, recurringEnabled, submitRecurring]
+    [handleSubmit, recurringEnabled, submitRecurring, t]
   );
 
   const onFormSubmit = React.useCallback(
@@ -303,7 +303,7 @@ function BudgetTransactionForm({
   // No accounts prompt
   if (!accountsLoading && accounts.length === 0) {
     return (
-      <div className="max-w-lg w-full mx-auto space-y-4 p-2 sm:p-4">
+      <div className="min-w-0 max-w-lg w-full mx-auto space-y-4 p-2 sm:p-4">
         <DialogHeader className="space-y-1.5">
           <DialogTitle className="text-lg sm:text-xl font-semibold">
             <Trans>Add an account first</Trans>
@@ -345,7 +345,7 @@ function BudgetTransactionForm({
     <form
       onSubmit={onFormSubmit}
       onKeyDownCapture={handleKeyDown}
-      className="max-w-lg w-full mx-auto px-1 sm:px-0"
+      className="min-w-0 max-w-lg w-full mx-auto px-1 sm:px-0"
       data-testid="add-transaction-form"
     >
       {form.showRatePrompt && form.pendingRatePair && (

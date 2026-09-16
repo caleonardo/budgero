@@ -1,6 +1,6 @@
 'use client';
 
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 /**
  * Transaction Form Header
@@ -29,17 +29,20 @@ interface TransactionFormHeaderProps {
 export const TransactionFormHeader = React.memo(function TransactionFormHeader({
   rememberLast,
   onRememberLastChange,
-  title = 'Add New Transaction',
+  title,
   description,
   showRememberLast = true,
   recurringEnabled,
   onRecurringEnabledChange,
   recurringLocked = false,
 }: TransactionFormHeaderProps) {
+  const { t } = useLingui();
   return (
     <>
-      <DialogHeader className="space-y-1.5">
-        <DialogTitle className="text-lg sm:text-xl font-semibold">{title}</DialogTitle>
+      <DialogHeader className="space-y-1.5 pr-6">
+        <DialogTitle className="text-lg sm:text-xl font-semibold">
+          {title ?? t`Add New Transaction`}
+        </DialogTitle>
         {description && (
           <DialogDescription className="hidden sm:block text-xs sm:text-sm text-muted-foreground">
             {description}

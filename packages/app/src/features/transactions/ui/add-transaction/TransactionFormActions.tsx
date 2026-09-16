@@ -38,7 +38,8 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   const { t } = useLingui();
 
   const submitButtonClassName = React.useMemo(() => {
-    const base = 'h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial transition-colors';
+    const base =
+      'h-auto min-h-9 min-w-0 whitespace-normal px-3 py-2 leading-tight transition-colors';
     if (isInflow) {
       return `${base} bg-success hover:bg-success/90 text-white`;
     }
@@ -70,28 +71,15 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   }, [isCalculatingTransfer, isSubmitting, recurringMode, isTransfer, isInflow, t]);
 
   return (
-    <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between gap-2 sm:gap-3">
-      <div className="flex gap-2 order-2 sm:order-1 items-center">
-        <Button
-          variant="outline"
-          type="button"
-          onClick={onCancel}
-          className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
-        >
-          <Trans>Cancel</Trans>
-        </Button>
-        <span className="hidden sm:inline-block text-[10px] text-muted-foreground ml-2">
-          <Trans>Press Cmd+Enter to save</Trans>
-        </span>
-      </div>
-      <div className="flex gap-2 order-1 sm:order-2">
+    <DialogFooter className="mt-4 sm:mt-6 flex min-w-0 flex-col sm:flex-col gap-3">
+      <div className={`grid min-w-0 gap-2 ${recurringMode ? 'grid-cols-1' : 'grid-cols-2'}`}>
         {!recurringMode && (
           <Button
             onClick={onQuickAdd}
             disabled={isCalculatingTransfer || isSubmitting}
             variant="outline"
             type="button"
-            className="h-8 sm:h-9 px-3 sm:px-4 flex-1 sm:flex-initial"
+            className="h-auto min-h-9 min-w-0 whitespace-normal px-3 py-2 leading-tight"
           >
             <Trans>Quick Add</Trans>
           </Button>
@@ -104,6 +92,14 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
         >
           {submitButtonLabel}
         </Button>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Button variant="outline" type="button" onClick={onCancel} className="h-9 px-3 sm:px-4">
+          <Trans>Cancel</Trans>
+        </Button>
+        <span className="hidden sm:inline-block text-xs text-muted-foreground">
+          <Trans>Press Cmd+Enter to save</Trans>
+        </span>
       </div>
     </DialogFooter>
   );

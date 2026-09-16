@@ -65,7 +65,7 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
         <Field label={t`Cadence`} className="space-y-2">
           <Select value={settings.frequency} onValueChange={(value) => update('frequency', value)}>
             <SelectTrigger data-testid="recurring-frequency-select">
-              <SelectValue placeholder="Select cadence" />
+              <SelectValue placeholder={t`Select cadence`} />
             </SelectTrigger>
             <SelectContent>
               {frequencyOptions.map((option) => (
@@ -128,7 +128,7 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
       {settings.endMode === 'count' && (
         <Field
           label={t`Number of occurrences`}
-          hint="Includes occurrences already posted or skipped."
+          hint={t`Includes occurrences already posted or skipped.`}
           className="space-y-2"
         >
           <Input
@@ -138,7 +138,7 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
             step={1}
             value={settings.occurrenceCount}
             onChange={(event) => update('occurrenceCount', event.target.value)}
-            placeholder="e.g. 12"
+            placeholder={t`e.g. 12`}
             data-testid="recurring-occurrence-count-input"
           />
         </Field>
@@ -147,7 +147,7 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
       <div className="grid gap-3 sm:grid-cols-2">
         <Field
           label={t`Notify me`}
-          hint="Days before the due date; use 0 for the same day."
+          hint={t`Days before the due date; use 0 for the same day.`}
           className="space-y-2"
         >
           <div className="relative">

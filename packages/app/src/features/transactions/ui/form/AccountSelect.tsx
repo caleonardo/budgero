@@ -62,6 +62,7 @@ function AccountCombobox({
           type="button"
           variant="outline"
           role="combobox"
+          aria-label={placeholder}
           aria-expanded={open}
           disabled={disabled}
           className={cn(
@@ -142,7 +143,7 @@ export function FromAccountSelect({
             />
           </div>
         )}
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <AccountCombobox
             value={value}
             onChange={onChange}
@@ -152,8 +153,8 @@ export function FromAccountSelect({
               isLoading
                 ? t`Loading accounts...`
                 : transactionType === 'transfer'
-                  ? 'Select from account'
-                  : 'Select account'
+                  ? t`Select from account`
+                  : t`Select account`
             }
             testId="transaction-from-account-select"
           />
@@ -186,13 +187,13 @@ export function ToAccountSelect({
     <div className="space-y-2 w-full">
       <div className="flex items-center gap-2">
         <span className="text-success font-semibold text-lg leading-none">+</span>
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <AccountCombobox
             value={value}
             onChange={onChange}
             accounts={filteredAccounts}
             disabled={isLoading}
-            placeholder={isLoading ? t`Loading accounts...` : 'Select to account'}
+            placeholder={isLoading ? t`Loading accounts...` : t`Select to account`}
             testId="transaction-to-account-select"
           />
         </div>

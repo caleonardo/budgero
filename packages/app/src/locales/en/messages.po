@@ -2788,6 +2788,10 @@ msgstr "Add New Account"
 msgid "Add new payees, rename existing ones, or clear them from your transactions."
 msgstr "Add new payees, rename existing ones, or clear them from your transactions."
 
+#: src/features/transactions/ui/add-transaction/TransactionFormHeader.tsx
+msgid "Add New Transaction"
+msgstr "Add New Transaction"
+
 #: src/app/layout/desktop-shell/HeaderBar.tsx
 msgid "Add transaction"
 msgstr "Add transaction"
@@ -5838,6 +5842,10 @@ msgstr "DAU/MAU"
 msgid "Day-N window"
 msgstr "Day-N window"
 
+#: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+msgid "Days before the due date; use 0 for the same day."
+msgstr "Days before the due date; use 0 for the same day."
+
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "Days left:"
 msgstr "Days left:"
@@ -6305,6 +6313,10 @@ msgstr "Duration"
 #: src/features/budget-management/ui/create-budget-form/ManualBudgetTab.tsx
 msgid "e.g. \"Personal Budget\" or \"Household\""
 msgstr "e.g. \"Personal Budget\" or \"Household\""
+
+#: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+msgid "e.g. 12"
+msgstr "e.g. 12"
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 msgid "e.g. amount you have already paid"
@@ -7019,6 +7031,10 @@ msgstr "Facebook"
 msgid "Failed"
 msgstr "Failed"
 
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+msgid "Failed to add transaction"
+msgstr "Failed to add transaction"
+
 #: src/pages/custom-dashboards/components/AddWidgetDialog.tsx
 msgid "Failed to add widget"
 msgstr "Failed to add widget"
@@ -7324,6 +7340,10 @@ msgstr "Failed to save"
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Failed to save order"
 msgstr "Failed to save order"
+
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+msgid "Failed to save recurring transaction"
+msgstr "Failed to save recurring transaction"
 
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
 msgid "Failed to save split transaction"
@@ -8375,6 +8395,10 @@ msgstr "Include this row in import"
 #: src/pages/settings/push-api/PushApiPage.tsx
 msgid "Include your API token in the Authorization header:"
 msgstr "Include your API token in the Authorization header:"
+
+#: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+msgid "Includes occurrences already posted or skipped."
+msgstr "Includes occurrences already posted or skipped."
 
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/features/budget-management/model/icon-options.ts
@@ -11909,6 +11933,7 @@ msgstr "Please try again in a moment."
 
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 #: src/features/goal-management/ui/GoalSection.tsx
+#: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
 msgid "Please try again."
 msgstr "Please try again."
@@ -13749,6 +13774,7 @@ msgstr "Select a saved template"
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
 #: src/features/transactions/ui/cells/AccountSelectCell.tsx
+#: src/features/transactions/ui/form/AccountSelect.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Select account"
 msgstr "Select account"
@@ -13786,6 +13812,10 @@ msgstr "Select an account for the account condition."
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "Select at least one category."
 msgstr "Select at least one category."
+
+#: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+msgid "Select cadence"
+msgstr "Select cadence"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
@@ -13830,6 +13860,10 @@ msgstr "Select File"
 msgid "Select format"
 msgstr "Select format"
 
+#: src/features/transactions/ui/form/AccountSelect.tsx
+msgid "Select from account"
+msgstr "Select from account"
+
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "Select Header Row:"
 msgstr "Select Header Row:"
@@ -13871,6 +13905,7 @@ msgstr "Select or create a workspace to manage sharing options."
 msgid "Select or create payee"
 msgstr "Select or create payee"
 
+#: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Select payee"
 msgstr "Select payee"
@@ -13904,6 +13939,10 @@ msgstr "Select target date to calculate"
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 msgid "Select the Budgero backup file you want to restore."
 msgstr "Select the Budgero backup file you want to restore."
+
+#: src/features/transactions/ui/form/AccountSelect.tsx
+msgid "Select to account"
+msgstr "Select to account"
 
 #. placeholder {0}: transaction.Memo || 'No memo'
 #. placeholder {1}: formatMilli(accountLocalizer, asMilli(transaction.InflowConverted > 0 ? transaction.InflowConverted : transaction.OutflowConverted))

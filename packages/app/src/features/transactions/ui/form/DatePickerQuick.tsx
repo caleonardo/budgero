@@ -6,7 +6,6 @@ import { Trans, useLingui } from '@lingui/react/macro';
  */
 
 import { useCallback } from 'react';
-import { formatDate as format } from '@shared/lib/date-format';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -20,7 +19,7 @@ interface DatePickerQuickProps {
 }
 
 export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePickerQuickProps) {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
 
   const handleDateSelect = useCallback(
     (date: Date | undefined) => {
@@ -51,14 +50,16 @@ export function DatePickerQuick({ value, open, onOpenChange, onChange }: DatePic
       <div className="space-y-1.5 sm:space-y-2">
         <div className="flex items-center gap-2">
           <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <Popover open={open} onOpenChange={onOpenChange}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className="w-full justify-start text-left h-8 sm:h-10 px-3 sm:px-4 bg-background border-input hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
-                  {value ? format(value, 'PPP') : t`Select date`}
+                  {value
+                    ? new Intl.DateTimeFormat(i18n.locale, { dateStyle: 'long' }).format(value)
+                    : t`Select date`}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start" modal>
