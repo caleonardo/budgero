@@ -1,32 +1,33 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { StepProps } from './shared';
+import { getOnboardingImage } from '../onboarding-images';
 
 export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
 
   const acknowledgeId = React.useId();
   const rules = [
     {
       n: 'I.',
       title: t`Only money you have now`,
-      body: 'No projections, no credit limits. We budget paychecks that have actually landed — never money you hope will arrive.',
+      body: t`No projections, no credit limits. We budget paychecks that have actually landed — never money you hope will arrive.`,
       icon: '/onboarding-rules-wallet.png',
-      alt: 'Wallet with cash',
+      alt: t`Wallet with cash`,
     },
     {
       n: 'II.',
       title: t`Every dollar gets a job`,
-      body: "Rent, groceries, future-you. If a coin walks into Budgero with no assignment, it doesn't leave the front desk.",
+      body: t`Rent, groceries, future-you. If a coin walks into Budgero with no assignment, it doesn't leave the front desk.`,
       icon: '/onboarding-rules-worker.png',
-      alt: 'Coin character with hardhat and briefcase',
+      alt: t`Coin character with hardhat and briefcase`,
     },
     {
       n: 'III.',
       title: t`You are the accountant`,
-      body: "Transactions are entered by hand — no bank sync, no background fetch. Slow is the feature. You'll feel every transaction.",
+      body: t`Transactions are entered by hand — no bank sync, no background fetch. Slow is the feature. You'll feel every transaction.`,
       icon: '/onboarding-rules-clipboard.png',
-      alt: 'Clipboard with checkmarks',
+      alt: t`Clipboard with checkmarks`,
     },
   ];
   return (
@@ -85,7 +86,7 @@ export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
           </p>
         </div>
         <img
-          src="/onboarding-rules-hero.png"
+          src={getOnboardingImage('/onboarding-rules-hero.png', i18n.locale)}
           alt={t`Coin character pointing at a House Rules board`}
           style={{
             width: '100%',

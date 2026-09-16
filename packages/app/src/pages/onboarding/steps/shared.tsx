@@ -10,6 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 // post-onboarding shadcn dashboard.
 import React from 'react';
 import { parseISO } from 'date-fns';
+import { getOnboardingImage } from '../onboarding-images';
 import { CURRENCIES, type OnboardingFormState, type OnboardingStepDef } from '../onboarding-data';
 
 // Repeated palette tokens. Centralized because the same handful of hex
@@ -66,28 +67,34 @@ export interface StepProps {
 }
 
 // Shared full-bleed hero image used at the top of most onboarding steps.
-export const StepHeroImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
-  <div
-    style={{
-      margin: '-20px -24px 20px',
-      display: 'flex',
-      justifyContent: 'center',
-      background: PAPER,
-    }}
-  >
-    <img
-      src={src}
-      alt={alt}
+export const StepHeroImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
+  const { i18n } = useLingui();
+  return (
+    <div
       style={{
-        width: '100%',
-        maxWidth: 520,
-        height: 'auto',
-        display: 'block',
-        mixBlendMode: 'multiply',
+        margin: '-20px -24px 20px',
+        display: 'flex',
+        justifyContent: 'center',
+        background: PAPER,
       }}
-    />
-  </div>
-);
+    >
+      <img
+        src={getOnboardingImage(src, i18n.locale)}
+        alt={alt}
+        style={{
+          width: '100%',
+          maxWidth: 520,
+          height: 'auto',
+          // The localized banner includes white padding; keep the original framing.
+          aspectRatio: src === '/onboarding-share.png' ? '1532 / 415' : undefined,
+          objectFit: 'cover',
+          display: 'block',
+          mixBlendMode: 'multiply',
+        }}
+      />
+    </div>
+  );
+};
 
 export const Title: React.FC<{ h: MessageDescriptor; sub?: MessageDescriptor }> = ({ h, sub }) => {
   const { t } = useLingui();

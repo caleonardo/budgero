@@ -2,11 +2,12 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { msg } from '@lingui/core/macro';
 import React from 'react';
 import { Title, type StepProps } from './shared';
+import { getOnboardingImage } from '../onboarding-images';
 
 const WELCOME_SRC = '/onboarding-welcome.png';
 
 export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
 
   // Invitee shortcut: the user landed here via /join#code=…, so they're
   // joining someone else's workspace, not building their own. Drop the
@@ -95,7 +96,7 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
             step icons across the top + a friendly coin at the bottom. We
             drop the prior numbered text list since the visual covers it. */}
         <img
-          src={WELCOME_SRC}
+          src={getOnboardingImage(WELCOME_SRC, i18n.locale)}
           alt={t`Your journey in six steps: rules, currency, ZBB, name your budget, accounts, password`}
           style={{
             width: '100%',

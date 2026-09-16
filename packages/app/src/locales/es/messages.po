@@ -4837,6 +4837,10 @@ msgstr "Haz clic para detener"
 msgid "Click your budget name in the top-left corner and select <0>Export Budget</0>, then save the ZIP file"
 msgstr "Haz clic en el nombre de tu presupuesto en la esquina superior izquierda y selecciona <0>Exportar presupuesto</0>, luego guarda el archivo ZIP"
 
+#: src/pages/onboarding/steps/RulesStep.tsx
+msgid "Clipboard with checkmarks"
+msgstr "Portapapeles con marcas de verificación"
+
 #: src/features/rules/ui/rule-editor/RuleEditorDialog.tsx
 #: src/features/rules/ui/RuleRunOverlay.tsx
 #: src/pages/admin/sql-explorer/AdminSqlExplorer.tsx
@@ -4894,6 +4898,10 @@ msgstr "Personaje moneda con un libro mayor y una placa de presupuesto"
 #: src/pages/onboarding/steps/AccountsStep.tsx
 msgid "Coin character with checking register, savings jar, and credit card"
 msgstr "Personaje moneda con registro de cuenta corriente, hucha de ahorros y tarjeta de crédito"
+
+#: src/pages/onboarding/steps/RulesStep.tsx
+msgid "Coin character with hardhat and briefcase"
+msgstr "Personaje de moneda con casco y maletín"
 
 #. placeholder {0}: seatUsage.isLoading ? t`Loading…` : `${seatUsage.occupiedSlots}/5`
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
@@ -10633,6 +10641,10 @@ msgstr "No hay invitaciones pendientes."
 msgid "No pending mutations to process"
 msgstr "No hay cambios pendientes que procesar"
 
+#: src/pages/onboarding/steps/RulesStep.tsx
+msgid "No projections, no credit limits. We budget paychecks that have actually landed — never money you hope will arrive."
+msgstr "Sin previsiones ni límites de crédito. Solo presupuestamos el dinero que ya has recibido — nunca el que esperas recibir."
+
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "No query"
 msgstr "Sin consulta"
@@ -12845,6 +12857,10 @@ msgstr "Alquiler"
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Rent / Mortgage"
 msgstr "Alquiler / Hipoteca"
+
+#: src/pages/onboarding/steps/RulesStep.tsx
+msgid "Rent, groceries, future-you. If a coin walks into Budgero with no assignment, it doesn't leave the front desk."
+msgstr "Alquiler, comida, tu futuro. Si una moneda llega a Budgero sin asignación, no pasa de la recepción hasta que tenga una."
 
 #: src/features/account-management/ui/AccountOrderCard.tsx
 msgid "Reorder how accounts appear in the sidebar and the mobile navigation. On-budget and off-budget accounts are ordered separately."
@@ -15979,6 +15995,10 @@ msgstr "Transacciones - {0}"
 msgid "Transactions analytics preview"
 msgstr "Vista previa de análisis de transacciones"
 
+#: src/pages/onboarding/steps/RulesStep.tsx
+msgid "Transactions are entered by hand — no bank sync, no background fetch. Slow is the feature. You'll feel every transaction."
+msgstr "Las transacciones se introducen a mano — sin sincronización bancaria ni consultas en segundo plano. Ir despacio es parte de la idea. Notarás cada transacción."
+
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Transactions converted with a manually entered rate while offline are re-converted with the official rate once you reconnect. Rates you pinned on a transaction are never touched."
 msgstr "Las transacciones convertidas con un tipo de cambio introducido manualmente sin conexión se vuelven a convertir con el tipo oficial cuando te reconectas. Los tipos que fijaste en una transacción nunca se modifican."
@@ -16867,6 +16887,10 @@ msgstr "Esperando tu revisión"
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Waiting to start"
 msgstr "Esperando para empezar"
+
+#: src/pages/onboarding/steps/RulesStep.tsx
+msgid "Wallet with cash"
+msgstr "Cartera con efectivo"
 
 #: src/entities/account/model/accountTypes.ts
 msgid "Wallets and exchange balances held in cryptocurrency"
