@@ -21,11 +21,38 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.13.0',
+    date: 'September 16, 2026',
+    summary:
+      'Adds German, French, Spanish, and Dutch app translations, language-aware dates, and improved layouts for smaller screens.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Use Budgero in four more languages',
+        description:
+          'Use the app in German, French, Spanish, or Dutch, including onboarding, budgeting, transactions, reports, goals, and settings. Budgero detects a supported browser language on first use; change it under Settings → Appearance. The choice is saved on this device.',
+      },
+      {
+        type: 'improved',
+        title: 'Dates follow your display language',
+        description:
+          'Month and weekday names, date labels, and relative times follow the selected app language. Currency and number formatting remain controlled by your budget settings.',
+      },
+      {
+        type: 'fixed',
+        title: 'Dialogs and controls fit smaller screens',
+        description:
+          'Dialogs stay within the screen and scroll when needed. Transaction forms and report controls make room for longer translated labels on smaller screens.',
+      },
+    ],
+  },
+  {
     version: 'v1.12.1',
     date: 'September 15, 2026',
     summary:
       'Adds a configurable first day of the week and fixes currency displays, scheduled conversions, shortcut labels, app caching, encrypted saving, and sync cleanup.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
