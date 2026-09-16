@@ -1,11 +1,14 @@
 name: ci
 
-# PR + master CI for the public GitHub repo. Runs only on GitHub-hosted
-# runners; jobs are skipped when Forgejo picks this file up.
+# PR checks run on GitHub-hosted runners. Enable DELL_RUNNER_ENABLED after
+# runner verification to run master builds on the isolated Dell VM.
 on:
   pull_request:
   push:
     branches: [master]
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -14,11 +17,13 @@ concurrency:
 jobs:
   web:
     if: github.server_url == 'https://github.com'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.DELL_RUNNER_ENABLED == 'true' && '["self-hosted","linux","x64","budgero-build"]' || '["ubuntu-latest"]') }}
     timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -92,7 +97,7 @@ jobs:
 
   server:
     if: github.server_url == 'https://github.com'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.DELL_RUNNER_ENABLED == 'true' && '["self-hosted","linux","x64","budgero-build"]' || '["ubuntu-latest"]') }}
     timeout-minutes: 20
     defaults:
       run:
@@ -100,6 +105,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Go
         uses: actions/setup-go@v5

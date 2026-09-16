@@ -1,0 +1,48 @@
+name: Dell runner check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/github-self-hosted-runner]
+    paths:
+      - '.github/workflows/runner-check.yml'
+      - 'infra/github-runner/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dell-runner-check
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'tombadilo-bombadilo/budgero' && github.event_name != 'pull_request'
+    runs-on: [self-hosted, linux, x64, budgero-build]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check runner tools
+        run: |
+          uname -srm
+          docker version
+          docker buildx version
+          test "$(hostname)" = budgero-ci
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: packages/server/go.mod
+          cache-dependency-path: packages/server/go.sum
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build:core
+      - run: pnpm run build:runtime
+      - run: pnpm run lint:app
+      - run: pnpm run build:app
