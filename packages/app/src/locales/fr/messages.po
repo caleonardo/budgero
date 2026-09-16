@@ -470,7 +470,7 @@ msgstr "{0} pour {1}"
 #. placeholder {0}: selectedCategory.name
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 msgid "{0} Goal"
-msgstr "{0} Objectif"
+msgstr "Objectif de {0}"
 
 #. placeholder {0}: account.Name
 #: src/features/account-management/ui/ArchiveAccountDialog.tsx
@@ -9322,7 +9322,7 @@ msgstr "Faible"
 
 #: src/features/category-management/ui/FundingPriorityInput.tsx
 msgid "Lower numbers are funded first."
-msgstr "Les nombres les plus petits sont financés en premier."
+msgstr "Les catégories avec le plus petit numéro de priorité sont financées en premier."
 
 #: src/pages/analytics/reports/ScenarioReport.tsx
 msgid "Lowest point"
@@ -9762,7 +9762,7 @@ msgstr "Cible d'affectation mensuelle"
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Monthly Available Target"
-msgstr "Objectif de solde disponible mensuel"
+msgstr "Solde cible mensuel"
 
 #: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
 msgid "Monthly calculation"
@@ -9975,7 +9975,7 @@ msgstr "Presque ! Terminez ce mois pour maintenir votre série"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Need {needed} more available"
-msgstr "Il manque encore {needed} au solde disponible visé"
+msgstr "Il vous manque {needed} pour atteindre votre objectif."
 
 #: src/pages/onboarding/steps/CurrencyStep.tsx
 msgid "NEED A DIFFERENT CURRENCY?"
@@ -12533,11 +12533,15 @@ msgid "Recording... {0} (click to stop)"
 msgstr "Enregistrement… {0} (cliquez pour arrêter)"
 
 #: src/app/layout/desktop-shell/constants.ts
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/shared/model/nav-registry.ts
 #: src/widgets/command-palette/CommandPalette.tsx
 msgid "Recurring"
-msgstr "Récurrent"
+msgstr "Transactions récurrentes"
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+msgctxt "transaction-status"
+msgid "Recurring"
+msgstr "Récurrente"
 
 #: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
 msgid "Recurring schedule"

@@ -272,7 +272,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                         <Repeat className="h-3.5 w-3.5 text-primary" />
                         <span>{template.name}</span>
                         <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
-                          <Trans>Recurring</Trans>
+                          <Trans context="transaction-status">Recurring</Trans>
                         </Badge>
                         {isOverdue && (
                           <Badge

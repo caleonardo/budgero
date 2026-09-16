@@ -12533,9 +12533,13 @@ msgid "Recording... {0} (click to stop)"
 msgstr "Registrando... {0} (clic para detener)"
 
 #: src/app/layout/desktop-shell/constants.ts
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/shared/model/nav-registry.ts
 #: src/widgets/command-palette/CommandPalette.tsx
+msgid "Recurring"
+msgstr "Recurrente"
+
+#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+msgctxt "transaction-status"
 msgid "Recurring"
 msgstr "Recurrente"
 
