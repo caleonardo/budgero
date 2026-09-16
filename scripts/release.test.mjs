@@ -1,11 +1,32 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { assertReleaseTag } from './release-common.mjs';
+import { assertReleaseTag, findLinuxBinary } from './release-common.mjs';
 import { releaseNotes } from './release-notes.mjs';
+
+test('Docker staging selects binaries from directories even when archives sort first', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'budgero-artifacts-'));
+  try {
+    for (const [arch, suffix] of [
+      ['amd64', 'v1'],
+      ['arm64', 'v8.0'],
+    ]) {
+      writeFileSync(join(dir, `budgero_linux_${arch}.zip`), 'archive');
+      const buildDir = join(dir, `budgero_linux_${arch}_${suffix}`);
+      mkdirSync(buildDir);
+      writeFileSync(join(buildDir, 'budgero'), 'binary');
+      assert.equal(findLinuxBinary(dir, arch), join(buildDir, 'budgero'));
+    }
+    assert.throws(() => findLinuxBinary(dir, '386'), /Expected one/);
+    mkdirSync(join(dir, 'budgero_linux_amd64_v2'));
+    assert.throws(() => findLinuxBinary(dir, 'amd64'), /Expected one/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
 
 test('publication requires an existing matching tag and never moves it', () => {
   const dir = mkdtempSync(join(tmpdir(), 'budgero-release-'));

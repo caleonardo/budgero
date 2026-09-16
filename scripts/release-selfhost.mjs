@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
-import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
+import { chmodSync, copyFileSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import { assertReleaseTag, dockerLogin } from './release-common.mjs';
+import { assertReleaseTag, dockerLogin, findLinuxBinary } from './release-common.mjs';
 
 const dryRun = process.argv.includes('--dry-run');
 
@@ -61,15 +61,10 @@ async function buildAndPushDocker(tag) {
   rmSync(stageDir, { recursive: true, force: true });
   for (const platform of DOCKER_PLATFORMS) {
     const arch = platform.split('/')[1] || platform.replace('/', '-');
-    const buildDir = readdirSync(path.join(root, 'dist')).find((entry) =>
-      entry.startsWith(`budgero_linux_${arch}`)
-    );
-    if (!buildDir) {
-      throw new Error(`No goreleaser build for linux/${arch} under dist/ — run goreleaser first.`);
-    }
+    const binary = findLinuxBinary(path.join(root, 'dist'), arch);
     mkdirSync(path.join(stageDir, arch), { recursive: true });
     const staged = path.join(stageDir, arch, 'budgero');
-    copyFileSync(path.join(root, 'dist', buildDir, 'budgero'), staged);
+    copyFileSync(binary, staged);
     chmodSync(staged, 0o755);
   }
 
