@@ -45,6 +45,18 @@ export const changelogEntries: ChangelogEntry[] = [
         description:
           'Dialogs stay within the screen and scroll when needed. Transaction forms and report controls make room for longer translated labels on smaller screens.',
       },
+      {
+        type: 'fixed',
+        title: 'Clearer budgeting and transaction wording',
+        description:
+          'Corrected savings terminology, exchange-rate descriptions, goal messages, and spacing in translated labels. French goal titles, funding-priority guidance, and recurring-transaction navigation now use clearer phrasing.',
+      },
+      {
+        type: 'fixed',
+        title: 'Consistent onboarding language',
+        description:
+          'French illustrations now use “vous” throughout. Onboarding text uses consistent budgeting terms and correctly points to Settings → Appearance for changing the display language.',
+      },
     ],
   },
   {
