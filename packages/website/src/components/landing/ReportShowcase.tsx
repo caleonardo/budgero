@@ -1,5 +1,5 @@
 'use client';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { useState } from 'react';
 import Image from 'next/image';
@@ -24,9 +24,10 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { track } from '@/lib/analytics';
+import { demoScreenshot } from './demo-screenshots';
 import { HOMEPAGE_VARIANT, TrialLink } from './TrialLink';
 
-const reports = (copy: CopyTranslator) =>
+const reports = (copy: CopyTranslator, locale: string) =>
   [
     {
       id: 'money-map',
@@ -34,7 +35,7 @@ const reports = (copy: CopyTranslator) =>
       icon: GitFork,
       title: copy('u_f1430f1cc733'),
       description: copy('u_e0c6f737e2a6'),
-      image: '/demo-report-money-map.png',
+      image: demoScreenshot(locale, 'report-money-map'),
       alt: copy('u_f984efd7069b'),
       caption: copy('u_850658ffb64e'),
     },
@@ -44,7 +45,7 @@ const reports = (copy: CopyTranslator) =>
       icon: ChartPie,
       title: copy('u_96a729117270'),
       description: copy('u_12fd696e3387'),
-      image: '/demo-report-spending.png',
+      image: demoScreenshot(locale, 'report-spending'),
       alt: copy('u_53928a71bb94'),
       caption: copy('u_850658ffb64e'),
     },
@@ -54,7 +55,7 @@ const reports = (copy: CopyTranslator) =>
       icon: TrendingUp,
       title: copy('u_440a368ca7f3'),
       description: copy('u_3c4de64fb2b7'),
-      image: '/demo-report-wealth.png',
+      image: demoScreenshot(locale, 'report-wealth'),
       alt: copy('u_ede573c2e73d'),
       caption: copy('u_850658ffb64e'),
     },
@@ -64,17 +65,18 @@ const reports = (copy: CopyTranslator) =>
       icon: FlaskConical,
       title: copy('u_8d21f54036f6'),
       description: copy('u_c38de080eb4d'),
-      image: '/demo-report-scenario.png',
+      image: demoScreenshot(locale, 'report-scenario'),
       alt: copy('u_647294baf1ef'),
       caption: copy('u_21212020439b'),
     },
   ] as const;
 
 export function ReportShowcase() {
+  const locale = useLocale();
   const copy = useTranslations('updates');
   const [selected, setSelected] = useState(0);
   const [zoomed, setZoomed] = useState(true);
-  const report = reports(copy)[selected];
+  const report = reports(copy, locale)[selected];
 
   return (
     <section
@@ -107,7 +109,7 @@ export function ReportShowcase() {
           aria-label={copy('u_061a29ec8561')}
           className="mx-auto mt-8 grid max-w-2xl grid-cols-2 gap-2 rounded-2xl border border-border/60 bg-muted/30 p-2 sm:grid-cols-4"
         >
-          {reports(copy).map((item, index) => (
+          {reports(copy, locale).map((item, index) => (
             <button
               key={item.id}
               type="button"

@@ -1,20 +1,22 @@
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { getImageProps } from 'next/image';
+import { demoScreenshot } from './demo-screenshots';
 
 export function BudgetPreview() {
+  const locale = useLocale();
   const copy = useTranslations('updates');
   const { props: desktop } = getImageProps({
-    src: '/demo-budget-desktop.png',
+    src: demoScreenshot(locale, 'budget-desktop'),
     alt: copy('u_b83e43a2b18b'),
     width: 2880,
     height: 1920,
     sizes: '(min-width: 1200px) 1152px, calc(100vw - 48px)',
   });
   const { props: mobile } = getImageProps({
-    src: '/demo-budget-mobile.png',
+    src: demoScreenshot(locale, 'budget-mobile'),
     alt: copy('u_5cc452d6a9f6'),
     width: 780,
-    height: 1687,
+    height: 1688,
     sizes: '(min-width: 392px) 360px, calc(100vw - 32px)',
   });
 
