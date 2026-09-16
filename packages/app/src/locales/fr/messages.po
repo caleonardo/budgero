@@ -163,14 +163,6 @@ msgstr "(Requis - ou utilisez InflowConverted/OutflowConverted)"
 msgid "(Required)"
 msgstr "(Requis)"
 
-#: src/features/goal-management/lib/core-goal-text.ts
-msgid "{{monthsRemaining}} months remaining"
-msgstr "{{monthsRemaining}} mois restants"
-
-#: src/features/goal-management/lib/core-goal-text.ts
-msgid "{{successfulMonths}}/{{monthsTracked}} months"
-msgstr "{{successfulMonths}}/{{monthsTracked}} mois"
-
 #. placeholder {0}: result.accountsRemoved
 #: src/pages/settings/ImportsPage.tsx
 msgid "{0, plural, one {, # account} other {, # accounts}}"
@@ -812,6 +804,10 @@ msgstr "{count, plural, one {Chaque année} other {Tous les # ans}}"
 msgid "{cycleMonths, plural, one {every # month} other {every # months}}"
 msgstr "{cycleMonths, plural, one {tous les # mois} other {tous les # mois}}"
 
+#: src/pages/accounts/AccountsPage.tsx
+msgid "{days, plural, one {# day} other {# days}}"
+msgstr "{days, plural, one {# jour} other {# jours}}"
+
 #: src/shared/lib/search-query-parser.ts
 msgid "{days, plural, one {Last # day} other {Last # days}}"
 msgstr "{days, plural, one {# dernier jour} other {# derniers jours}}"
@@ -880,6 +876,14 @@ msgstr "{matchedCount, plural, one {# transaction mise à jour.} other {# transa
 msgid "{matchedCount, plural, one {Updated # transaction across this budget.} other {Updated # transactions across this budget.}}"
 msgstr "{matchedCount, plural, one {# transaction mise à jour dans ce budget.} other {# transactions mises à jour dans ce budget.}}"
 
+#: src/pages/accounts/AccountsPage.tsx
+msgid "{months, plural, one {# month} other {# months}}"
+msgstr "{months, plural, one {# mois} other {# mois}}"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "{monthsRemaining} months remaining"
+msgstr "{monthsRemaining} mois restants"
+
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 msgid "{moved, plural, one {{revalued, plural, one {# rate shifted, # account revalued.} other {# rate shifted, # accounts revalued.}}} other {{revalued, plural, one {# rates shifted, # account revalued.} other {# rates shifted, # accounts revalued.}}}}"
 msgstr "{moved, plural, one {{revalued, plural, one {# taux modifié, # compte réévalué.} other {# taux modifié, # comptes réévalués.}}} other {{revalued, plural, one {# taux modifiés, # compte réévalué.} other {# taux modifiés, # comptes réévalués.}}}}"
@@ -945,6 +949,10 @@ msgstr "{selectedCount} sur {0} sélectionné(s) à appliquer"
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} sélectionné(s)"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "{successfulMonths}/{monthsTracked} months"
+msgstr "{successfulMonths}/{monthsTracked} mois"
 
 #: src/features/subscription/ui/TrialEndingBanner.tsx
 msgid "{timeLabel} left in your trial"
@@ -2243,24 +2251,24 @@ msgid "− Already set aside"
 msgstr "− Déjà mis de côté"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "⚠️ Target date passed - need {{needed}} more"
-msgstr "⚠️ Date cible dépassée — il manque {{needed}}"
+msgid "⚠️ Target date passed - need {needed} more"
+msgstr "⚠️ Date cible dépassée — il manque {needed}"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "⚠️ Target date passed - need {{needed}} more available"
-msgstr "⚠️ Date cible dépassée — il manque {{needed}} de disponible"
+msgid "⚠️ Target date passed - need {needed} more available"
+msgstr "⚠️ Date cible dépassée — il manque {needed} de disponible"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "✓ {{assigned}} allocated this month — on track!"
-msgstr "✓ {{assigned}} affecté ce mois-ci — sur la bonne voie !"
+msgid "✓ {assigned} allocated this month — on track!"
+msgstr "✓ {assigned} affecté ce mois-ci — sur la bonne voie !"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "✓ Fully allocated!"
 msgstr "✓ Entièrement affecté !"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "✓ Goal exceeded by {{excess}}"
-msgstr "✓ Objectif dépassé de {{excess}}"
+msgid "✓ Goal exceeded by {excess}"
+msgstr "✓ Objectif dépassé de {excess}"
 
 #: src/pages/onboarding/steps/PasswordStep.tsx
 msgid "✓ MATCH"
@@ -2279,20 +2287,20 @@ msgid "✓ Target available!"
 msgstr "✓ Cible disponible !"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "✓ This month done! {{totalAssigned}} of {{target}} allocated"
-msgstr "✓ Ce mois-ci terminé ! {{totalAssigned}} sur {{target}} affecté"
+msgid "✓ This month done! {totalAssigned} of {target} allocated"
+msgstr "✓ Ce mois-ci terminé ! {totalAssigned} sur {target} affecté"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "✓ This month funded! {{available}}/{{target}} available"
-msgstr "✓ Ce mois-ci financé ! {{available}}/{{target}} disponible"
+msgid "✓ This month funded! {available}/{target} available"
+msgstr "✓ Ce mois-ci financé ! {available}/{target} disponible"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "✓ This month's {{monthlyTarget}} allocated!"
-msgstr "✓ {{monthlyTarget}} de ce mois-ci affecté !"
+msgid "✓ This month's {monthlyTarget} allocated!"
+msgstr "✓ {monthlyTarget} de ce mois-ci affecté !"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "✓ This month's {{monthlyTarget}} saved!"
-msgstr "✓ {{monthlyTarget}} de ce mois-ci économisé !"
+msgid "✓ This month's {monthlyTarget} saved!"
+msgstr "✓ {monthlyTarget} de ce mois-ci économisé !"
 
 #: src/pages/onboarding/steps/ZbbStep.tsx
 msgid "✓ ZERO-BASED. EVERY COIN NOW HAS A JOB."
@@ -2319,9 +2327,14 @@ msgstr "1 jour"
 msgid "1 is highest. New categories start at 3 — Normal. Switching to five levels sets priorities above 5 to 5; you can undo this change."
 msgstr "1 est la priorité la plus élevée. Les nouvelles catégories commencent à 3 — Normale. Le passage à cinq niveaux ramène les priorités supérieures à 5 à 5. Cette modification peut être annulée."
 
+#: src/pages/accounts/AccountsPage.tsx
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "1 month"
 msgstr "1 mois"
+
+#: src/pages/accounts/AccountsPage.tsx
+msgid "1 week"
+msgstr "1 semaine"
 
 #: src/shared/hooks/usePWA.ts
 msgid "1. Tap the Share icon (square with arrow)\n"
@@ -2357,6 +2370,14 @@ msgstr "12 mois"
 msgid "14 days"
 msgstr "14 jours"
 
+#: src/shared/ui/PeriodTabs.tsx
+msgid "1M"
+msgstr "1M"
+
+#: src/shared/ui/PeriodTabs.tsx
+msgid "1W"
+msgstr "1S"
+
 #: src/pages/onboarding/onboarding-data.ts
 msgid "2 min to set up"
 msgstr "2 min de configuration"
@@ -2369,6 +2390,7 @@ msgstr "20–50 % — fort"
 msgid "3 days"
 msgstr "3 jours"
 
+#: src/pages/accounts/AccountsPage.tsx
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "3 months"
 msgstr "3 mois"
@@ -2377,6 +2399,10 @@ msgstr "3 mois"
 #: src/pages/settings/SecurityPage.tsx
 msgid "30 days"
 msgstr "30 jours"
+
+#: src/shared/ui/PeriodTabs.tsx
+msgid "3M"
+msgstr "3M"
 
 #: src/entities/account/model/accountTypes.ts
 msgid "401(k), IRA, pension, and other retirement accounts"
@@ -3063,12 +3089,12 @@ msgid "Alloc."
 msgstr "Affect."
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Allocate {{monthlyNeeded}} more this month"
-msgstr "Affecter {{monthlyNeeded}} de plus ce mois-ci"
+msgid "Allocate {monthlyNeeded} more this month"
+msgstr "Affecter {monthlyNeeded} de plus ce mois-ci"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Allocate {{stillNeeded}} more to complete this month's target"
-msgstr "Affecter {{stillNeeded}} de plus pour atteindre la cible de ce mois-ci"
+msgid "Allocate {stillNeeded} more to complete this month's target"
+msgstr "Affecter {stillNeeded} de plus pour atteindre la cible de ce mois-ci"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Allocate a total amount every few months, cycle after cycle"
@@ -3089,8 +3115,8 @@ msgid "Allocated"
 msgstr "Affecté"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Allocated so far: {{totalAssigned}} of {{target}} ({{pct}})"
-msgstr "Affecté jusqu'à présent : {{totalAssigned}} sur {{target}} ({{pct}})"
+msgid "Allocated so far: {totalAssigned} of {target} ({pct})"
+msgstr "Affecté jusqu'à présent : {totalAssigned} sur {target} ({pct})"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Allocated this month"
@@ -3426,8 +3452,8 @@ msgid "Assign"
 msgstr "Affecter"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Assign {{needed}} to reach your target"
-msgstr "Affecter {{needed}} pour atteindre votre cible"
+msgid "Assign {needed} to reach your target"
+msgstr "Affecter {needed} pour atteindre votre cible"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Assign a fixed amount every month, regardless of spending"
@@ -4553,7 +4579,7 @@ msgstr "Vérifié • {timestamp}"
 #: src/entities/account/model/accountTypes.ts
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Checking"
-msgstr "Compte chèque"
+msgstr "Compte courant"
 
 #: src/app/startup/resolve.ts
 msgid "Checking authentication and connectivity"
@@ -5096,8 +5122,8 @@ msgid "Context: {0} / {1} tokens ({2}%)"
 msgstr "Contexte : {0} / {1} jetons ({2} %)"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Continue allocating {{monthlyTarget}} each month to reach your goal"
-msgstr "Continuez à affecter {{monthlyTarget}} chaque mois pour atteindre votre objectif"
+msgid "Continue allocating {monthlyTarget} each month to reach your goal"
+msgstr "Continuez à affecter {monthlyTarget} chaque mois pour atteindre votre objectif"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
@@ -5676,8 +5702,8 @@ msgid "Customize how Budgero looks on your device"
 msgstr "Personnalisez l'apparence de Budgero sur votre appareil"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Cycle: {{cycleStart}} to {{cycleEnd}}"
-msgstr "Cycle : {{cycleStart}} à {{cycleEnd}}"
+msgid "Cycle: {cycleStart} to {cycleEnd}"
+msgstr "Cycle : {cycleStart} à {cycleEnd}"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Cycle: {start} to {end}"
@@ -5756,8 +5782,8 @@ msgid "Data reset"
 msgstr "Réinitialisation des données"
 
 #: src/shared/ui/PeriodTabs.tsx
-msgid "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
-msgstr "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
+#~ msgid "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
+#~ msgstr "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
 
 #: src/app/layout/AdminSidebar.tsx
 #: src/features/subscription/ui/ExportDataCard.tsx
@@ -6858,8 +6884,8 @@ msgid "Examples:"
 msgstr "Exemples :"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Exceeded target! Saved {{saved}} this month"
-msgstr "Objectif dépassé ! {{saved}} épargnés ce mois-ci"
+msgid "Exceeded target! Saved {saved} this month"
+msgstr "Objectif dépassé ! {saved} épargnés ce mois-ci"
 
 #: src/pages/settings/ai/ai-settings.constants.ts
 msgid "Excellent for structured outputs"
@@ -7502,8 +7528,8 @@ msgid "Filter series..."
 msgstr "Filtrer les séries…"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Final month! Allocate {{stillNeeded}} to complete"
-msgstr "Dernier mois ! Affectez {{stillNeeded}} pour terminer"
+msgid "Final month! Allocate {stillNeeded} to complete"
+msgstr "Dernier mois ! Affectez {stillNeeded} pour terminer"
 
 #: src/pages/settings/push-api/IdReferencePanel.tsx
 msgid "Find the IDs you need for API requests. Click any ID to copy it. Payees are referenced by name, not id."
@@ -7879,8 +7905,8 @@ msgid "Goal updated"
 msgstr "Objectif mis à jour"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Goal: Save {{monthlyTarget}} every month"
-msgstr "Objectif : épargner {{monthlyTarget}} chaque mois"
+msgid "Goal: Save {monthlyTarget} every month"
+msgstr "Objectif : épargner {monthlyTarget} chaque mois"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Goal: start each month with this amount available"
@@ -7929,8 +7955,8 @@ msgid "Granted founding member access to {0}"
 msgstr "Accès membre fondateur accordé à {0}"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Great job! Monthly goal achieved. Total saved: {{totalSaved}}"
-msgstr "Bravo ! Objectif mensuel atteint. Total épargné : {{totalSaved}}"
+msgid "Great job! Monthly goal achieved. Total saved: {totalSaved}"
+msgstr "Bravo ! Objectif mensuel atteint. Total épargné : {totalSaved}"
 
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
 msgid "Great job! No uncategorised transactions left."
@@ -7977,8 +8003,8 @@ msgid "Hair & Beauty"
 msgstr "Coiffure & Beauté"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Halfway there! Save {{needed}} more this month"
-msgstr "À mi-parcours ! Épargnez encore {{needed}} ce mois-ci"
+msgid "Halfway there! Save {needed} more this month"
+msgstr "À mi-parcours ! Épargnez encore {needed} ce mois-ci"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Have a specific amount available by a target date"
@@ -8064,6 +8090,10 @@ msgstr "Masquer la barre latérale"
 #: src/features/ai/ui/AICategorizeDialog.tsx
 msgid "High"
 msgstr "Élevé"
+
+#: src/pages/accounts/AccountsPage.tsx
+msgid "History"
+msgstr "Historique"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Hobbies"
@@ -8478,8 +8508,8 @@ msgid "Incomplete end condition"
 msgstr "Condition de fin incomplète"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Increase savings to reach your {{target}} monthly goal"
-msgstr "Augmentez votre épargne pour atteindre votre objectif mensuel de {{target}}"
+msgid "Increase savings to reach your {target} monthly goal"
+msgstr "Augmentez votre épargne pour atteindre votre objectif mensuel de {target}"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Indian Rupee"
@@ -9950,8 +9980,8 @@ msgid "Nearly there! Complete this month to maintain your streak"
 msgstr "Presque ! Terminez ce mois pour maintenir votre série"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Need {{needed}} more available"
-msgstr "Il vous faut {{needed}} de Disponible supplémentaire"
+msgid "Need {needed} more available"
+msgstr "Il vous faut {needed} de Disponible supplémentaire"
 
 #: src/pages/onboarding/steps/CurrencyStep.tsx
 msgid "NEED A DIFFERENT CURRENCY?"
@@ -10944,12 +10974,12 @@ msgid "On track"
 msgstr "Sur la bonne voie"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "On track — {{needed}} still needed over {{monthsMore}} more months."
-msgstr "Sur la bonne voie — il reste {{needed}} sur {{monthsMore}} mois supplémentaires."
+msgid "On track — {needed} still needed over {monthsMore} more months."
+msgstr "Sur la bonne voie — il reste {needed} sur {monthsMore} mois supplémentaires."
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "On track — {{needed}} still needed over 1 more month."
-msgstr "Sur la bonne voie — il reste {{needed}} sur 1 mois supplémentaire."
+msgid "On track — {needed} still needed over 1 more month."
+msgstr "Sur la bonne voie — il reste {needed} sur 1 mois supplémentaire."
 
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Once the workspace owner renews their plan, your shared workspace access comes back automatically."
@@ -11332,14 +11362,14 @@ msgstr "Dépassé"
 msgid "Overspent by "
 msgstr "Dépassé de "
 
-#: src/features/goal-management/lib/core-goal-text.ts
-msgid "Overspent by {{overspent}}"
-msgstr "Dépassé de {{overspent}}"
-
 #. placeholder {0}: formatAmount(cashOverspend)
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Overspent by {0} in cash"
 msgstr "Dépassé de {0} en espèces"
+
+#: src/features/goal-management/lib/core-goal-text.ts
+msgid "Overspent by {overspent}"
+msgstr "Dépassé de {overspent}"
 
 #: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
 msgid "Overspent on credit by "
@@ -11606,6 +11636,7 @@ msgid "Per month historically"
 msgstr "Par mois historiquement"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/pages/accounts/AccountsPage.tsx
 msgid "Percent"
 msgstr "Pourcentage"
 
@@ -12143,8 +12174,8 @@ msgid "Progress:"
 msgstr "Progression :"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Progress: {{available}} of {{target}} ({{pct}})"
-msgstr "Progression : {{available}} sur {{target}} ({{pct}})"
+msgid "Progress: {available} of {target} ({pct})"
+msgstr "Progression : {available} sur {target} ({pct})"
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Project Resources"
@@ -13343,8 +13374,8 @@ msgid "Save"
 msgstr "Enregistrer"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Save {{needed}} more this month"
-msgstr "Épargnez {{needed}} de plus ce mois-ci"
+msgid "Save {needed} more this month"
+msgstr "Épargnez {needed} de plus ce mois-ci"
 
 #: src/features/reports/ui/SaveReportDialog.tsx
 msgid "Save & Pin"
@@ -14693,12 +14724,12 @@ msgid "Start monthly plan"
 msgstr "Démarrer le plan mensuel"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Start saving {{monthlyTarget}} this month"
-msgstr "Commencez à épargner {{monthlyTarget}} ce mois-ci"
+msgid "Start saving {monthlyTarget} this month"
+msgstr "Commencez à épargner {monthlyTarget} ce mois-ci"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Start this month's savings - aim for {{target}}"
-msgstr "Commencez votre épargne ce mois-ci — visez {{target}}"
+msgid "Start this month's savings - aim for {target}"
+msgstr "Commencez votre épargne ce mois-ci — visez {target}"
 
 #: src/features/subscription/ui/SubscriptionSuccess.tsx
 msgid "Start Using Budgero"
@@ -14949,6 +14980,7 @@ msgid "Sum of assignments in cycle"
 msgstr "Somme des affectations du cycle"
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
+#: src/pages/accounts/AccountsPage.tsx
 msgid "Summary"
 msgstr "Résumé"
 
@@ -15130,12 +15162,12 @@ msgid "Target per remaining month"
 msgstr "Objectif par mois restant"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Target: {{target}} available by {{targetDate}}"
-msgstr "Objectif : {{target}} disponible d'ici le {{targetDate}}"
+msgid "Target: {target} available by {targetDate}"
+msgstr "Objectif : {target} disponible d'ici le {targetDate}"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "Target: allocate {{target}} by {{targetDate}}"
-msgstr "Objectif : affecter {{target}} d'ici le {{targetDate}}"
+msgid "Target: allocate {target} by {targetDate}"
+msgstr "Objectif : affecter {target} d'ici le {targetDate}"
 
 #: src/pages/analytics/reports/InOutReport.tsx
 msgid "Target<0/>%"
@@ -15471,8 +15503,8 @@ msgid "THIS MONTH'S PAYCHECK"
 msgstr "SALAIRE DE CE MOIS"
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "This month's target met! Continue with {{monthlyTarget}}/month to stay on track"
-msgstr "Objectif de ce mois-ci atteint ! Continuez avec {{monthlyTarget}}/mois pour rester sur la bonne voie"
+msgid "This month's target met! Continue with {monthlyTarget}/month to stay on track"
+msgstr "Objectif de ce mois-ci atteint ! Continuez avec {monthlyTarget}/mois pour rester sur la bonne voie"
 
 #: src/features/import/lib/parse-import-file.ts
 msgid "This PDF has no extractable text — it looks like a scanned image. Budgero imports PDFs by reading their text layer, which this file doesn't have. Try exporting the statement as CSV from your bank, or use a text-based PDF generated directly by the bank (not a scan or screenshot)."
@@ -15866,6 +15898,7 @@ msgstr "Total : {0}"
 msgid "Totally optional — it just helps us know where to find more people like you."
 msgstr "Totalement facultatif — cela nous aide simplement à savoir où trouver d'autres personnes comme vous."
 
+#: src/pages/accounts/AccountsPage.tsx
 #: src/pages/analytics/reports/VsExpenseReport.tsx
 msgid "Totals"
 msgstr "Totaux"
@@ -17234,6 +17267,7 @@ msgstr "Axe X"
 msgid "Y-Axis"
 msgstr "Axe Y"
 
+#: src/pages/accounts/AccountsPage.tsx
 #: src/pages/analytics/analytics-state.ts
 msgid "Year to date"
 msgstr "Depuis le début de l'année"
@@ -17584,8 +17618,8 @@ msgid "You've configured a third-party server. Your financial data — transacti
 msgstr "Vous avez configuré un serveur tiers. Vos données financières — transactions, bénéficiaires, soldes, images de reçus et messages de discussion — seront envoyées à ce fournisseur, qui peut les lire et les conserver. Ne continuez que si vous lui faites confiance et avez consulté sa politique de confidentialité. Pour une confidentialité totale, utilisez plutôt un serveur local (Ollama ou LM Studio)."
 
 #: src/features/goal-management/lib/core-goal-text.ts
-msgid "You've saved {{totalSaved}} total"
-msgstr "Vous avez économisé {{totalSaved}} au total"
+msgid "You've saved {totalSaved} total"
+msgstr "Vous avez économisé {totalSaved} au total"
 
 #: src/features/budget-sharing/ui/WorkspaceSharingPanel.tsx
 msgid "Your account has reached the 5-person collaborator limit across owned workspaces. Remove a member or cancel a pending invite before creating another one."
@@ -17748,6 +17782,10 @@ msgstr "Votre espace de travail"
 #: src/pages/onboarding/onboarding-data.ts
 msgid "YouTube"
 msgstr "YouTube"
+
+#: src/shared/ui/PeriodTabs.tsx
+msgid "YTD"
+msgstr "Année"
 
 #: src/features/import/model/types.ts
 msgid "YYYY-MM-DD (2024-01-31)"

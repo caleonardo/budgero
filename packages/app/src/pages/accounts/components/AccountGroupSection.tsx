@@ -1,3 +1,4 @@
+import { AccountTypeLabel } from '@entities/account/ui/AccountTypeLabel';
 import { Trans } from '@lingui/react/macro';
 /**
  * Account Group Section Component
@@ -157,7 +158,7 @@ export function AccountGroupSection({
                           {account.Name}
                         </div>
                         <div className="text-[10px] sm:text-sm text-muted-foreground capitalize">
-                          {account.Type}
+                          <AccountTypeLabel type={account.Type} />
                         </div>
                       </div>
                     </div>

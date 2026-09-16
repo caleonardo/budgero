@@ -1,3 +1,4 @@
+import { AccountTypeLabel } from '@entities/account/ui/AccountTypeLabel';
 import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Badge } from '@shared/ui/badge';
@@ -33,7 +34,7 @@ export const AccountHeader = React.memo(function AccountHeader({
         <div className="flex items-center gap-2">
           <h1 className="text-lg font-bold text-foreground truncate">{accountName}</h1>
           <Badge variant="secondary" className="text-[10px] px-1.5 py-0 shrink-0">
-            {accountType}
+            <AccountTypeLabel type={accountType} />
           </Badge>
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">

@@ -1,3 +1,4 @@
+import { AccountTypeLabel } from '@entities/account/ui/AccountTypeLabel';
 import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
@@ -457,7 +458,7 @@ export default function AccountPage() {
                   />
                 )}
                 <Badge variant="secondary" className="text-[10px] px-1.5 py-0 shrink-0">
-                  {selectedAccount?.Type}
+                  <AccountTypeLabel type={selectedAccount?.Type} />
                 </Badge>
               </div>
               <p className="text-[10px] text-muted-foreground truncate">

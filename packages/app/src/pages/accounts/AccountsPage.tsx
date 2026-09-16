@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useAccounts } from '@entities/account/api/useAccounts';
@@ -75,16 +76,16 @@ export default function AccountsPage() {
   }, [dateRange]);
 
   const periodLabel = useMemo(() => {
-    if (!dateRange?.from || !dateRange?.to) return '1 month';
+    if (!dateRange?.from || !dateRange?.to) return t`1 month`;
     const months = differenceInMonths(dateRange.to, dateRange.from);
     const days = differenceInDays(dateRange.to, dateRange.from);
-    if (days <= 7) return '1 week';
-    if (months < 1) return `${days} days`;
-    if (months === 1) return '1 month';
-    if (months === 3) return '3 months';
-    if (months >= 12) return 'YTD';
-    return `${months} months`;
-  }, [dateRange]);
+    if (days <= 7) return t`1 week`;
+    if (months < 1) return plural(days, { one: '# day', other: '# days' });
+    if (months === 1) return t`1 month`;
+    if (months === 3) return t`3 months`;
+    if (months >= 12) return t`Year to date`;
+    return plural(months, { one: '# month', other: '# months' });
+  }, [dateRange, t]);
 
   const { data: allAccountsData = [], isLoading } = useAccounts(budgetId);
   const [showArchived, setShowArchived] = useState(false);
@@ -458,19 +459,24 @@ export default function AccountsPage() {
           <Card>
             <CardHeader className="pb-3">
               {/* Custom Styled Tabs */}
-              <div className="flex items-center p-1 bg-muted rounded-lg">
-                {['summary', 'totals', 'percent', 'history'].map((tab) => (
+              <div className="flex flex-wrap items-center p-1 bg-muted rounded-lg">
+                {[
+                  { id: 'summary', label: t`Summary` },
+                  { id: 'totals', label: t`Totals` },
+                  { id: 'percent', label: t`Percent` },
+                  { id: 'history', label: t`History` },
+                ].map(({ id: tab, label }) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={cn(
-                      'flex-1 py-1.5 px-2 sm:py-2 sm:px-3 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 capitalize',
+                      'flex-1 py-1.5 px-2 sm:py-2 sm:px-3 text-xs sm:text-sm font-medium rounded-md transition-all duration-200',
                       activeTab === tab
                         ? 'bg-background text-foreground shadow-sm'
                         : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
                     )}
                   >
-                    {tab}
+                    {label}
                   </button>
                 ))}
               </div>

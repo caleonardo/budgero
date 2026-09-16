@@ -1,3 +1,4 @@
+import { AccountTypeLabel } from '@entities/account/ui/AccountTypeLabel';
 import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState, useEffect, useMemo } from 'react';
 import {
@@ -388,7 +389,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                   <SelectContent>
                     {getAccountTypesByBudgetType(onBudget ? 'on' : 'off').map((type) => (
                       <SelectItem key={type} value={type}>
-                        {type}
+                        <AccountTypeLabel type={type} />
                       </SelectItem>
                     ))}
                   </SelectContent>

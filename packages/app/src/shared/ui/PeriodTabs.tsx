@@ -69,7 +69,7 @@ export function PeriodTabs({ value, onChange, defaultPeriod = '1M', className }:
     }
   }, [value, defaultPeriod, onChange, getPeriodDateRange]);
 
-  const TRIGGER_CLASS = t`data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none`;
+  const TRIGGER_CLASS = `data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none`;
 
   return (
     <Tabs
@@ -79,16 +79,16 @@ export function PeriodTabs({ value, onChange, defaultPeriod = '1M', className }:
     >
       <TabsList className="gap-1 bg-transparent">
         <TabsTrigger value="1W" className={TRIGGER_CLASS}>
-          1W
+          {t`1W`}
         </TabsTrigger>
         <TabsTrigger value="1M" className={TRIGGER_CLASS}>
-          1M
+          {t`1M`}
         </TabsTrigger>
         <TabsTrigger value="3M" className={TRIGGER_CLASS}>
-          3M
+          {t`3M`}
         </TabsTrigger>
         <TabsTrigger value="YTD" className={TRIGGER_CLASS}>
-          YTD
+          {t`YTD`}
         </TabsTrigger>
       </TabsList>
     </Tabs>

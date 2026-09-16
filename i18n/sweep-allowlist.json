@@ -2,6 +2,11 @@
   "comment": "Strings audited and intentionally left in English. Every entry needs a reason.",
   "entries": [
     {
+      "file": "src/shared/ui/PeriodTabs.tsx",
+      "text": "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none",
+      "reason": "Tailwind CSS classes for tab styling, not user-visible copy."
+    },
+    {
       "file": "src/features/ai/lib/tools/query-transactions.ts",
       "text": "*",
       "reason": "LLM tool schema \u2014 consumed by the model, not shown to users"
