@@ -38,7 +38,7 @@ ARG APP_BUILD_SHA
 ENV APP_BUILD_SHA=$APP_BUILD_SHA
 
 # Build self-host frontend (run via pnpm workspace to avoid npx resolution issues in containers)
-RUN VITE_SELF_HOSTABLE=true pnpm --filter @budgero/app exec vite build
+RUN VITE_SELF_HOSTABLE=true pnpm --filter @budgero/app exec vite build --config vite.config.ts
 
 
 ### Stage 2: Build Go Server

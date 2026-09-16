@@ -48,7 +48,7 @@ RUN pnpm --filter @budgero/runtime build
 RUN pnpm --filter @budgero/core build
 
 # Build app package (run via pnpm workspace to avoid npx resolution issues in containers)
-RUN pnpm --filter @budgero/app exec vite build
+RUN pnpm --filter @budgero/app exec vite build --config vite.config.ts
 
 # Go builder stage
 FROM golang:1.26.6-alpine AS go-builder

@@ -7,11 +7,11 @@
   "type": "module",
   "scripts": {
     "dev": "node ../../scripts/dev-cloud.mjs",
-    "dev:app": "vite",
+    "dev:app": "vite --config vite.config.ts",
     "setup:dev": "node -e \"const fs=require('fs');const path=require('path');const dir=path.join(__dirname,'../server/dist');fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'index.html'),'<!DOCTYPE html><html><body>Dev mode - Frontend served by Vite</body></html>')\"",
     "build:knowledge": "node scripts/build-knowledge.mjs",
     "prebuild": "pnpm run build:knowledge",
-    "build": "node scripts/check-config-shadow.mjs && lingui compile --strict && vite build",
+    "build": "node scripts/check-config-shadow.mjs && vite build --config vite.config.ts",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -24,6 +24,7 @@
     "i18n:extract": "lingui extract",
     "i18n:compile": "lingui compile",
     "pretest": "lingui compile --strict",
+    "pretest:watch": "lingui compile --strict",
     "pretest:coverage": "lingui compile --strict"
   },
   "devDependencies": {

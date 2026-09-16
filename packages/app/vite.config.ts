@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv, type ProxyOptions } from 'vite';
+import { defineConfig, loadEnv, normalizePath, type Plugin, type ProxyOptions } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
@@ -6,7 +6,35 @@ import { fileURLToPath } from 'url';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 import { VitePWA } from 'vite-plugin-pwa';
 import { createRequire } from 'module';
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
+
+const require = createRequire(import.meta.url);
+
+function compileCatalogs(): void {
+  // Invoke the installed CLI with Node, without relying on a package-manager
+  // lifecycle hook (direct Vite and container builds bypass those hooks).
+  const cli = path.join(path.dirname(require.resolve('@lingui/cli')), 'lingui.js');
+  execFileSync(process.execPath, [cli, 'compile', '--strict'], {
+    cwd: __dirname,
+    stdio: 'inherit',
+  });
+}
+
+function watchCatalogs(): Plugin {
+  const catalogRoot = `${normalizePath(path.join(__dirname, 'src/locales'))}/`;
+  return {
+    name: 'budgero-lingui-catalogs',
+    apply: 'serve',
+    handleHotUpdate({ file, server }) {
+      if (!file.startsWith(catalogRoot) || !file.endsWith('.po')) return;
+      compileCatalogs();
+      // Lingui loads catalogs into its own runtime state, so reload that state
+      // after compiling instead of only replacing the generated JS module.
+      server.ws.send({ type: 'full-reload' });
+      return [];
+    },
+  };
+}
 
 function resolveBuildSha(envSha?: string): string {
   if (envSha) return envSha.trim();
@@ -22,14 +50,16 @@ const ReactCompilerConfig = {
   // For now, we'll use the default configuration
 };
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, isPreview }) => {
+  // Catalogs are intentionally gitignored. Generate them before Vite scans the
+  // dynamic imports, including the first run in a fresh checkout.
+  if (!isPreview) compileCatalogs();
   const env = loadEnv(mode, process.cwd(), '');
   const allowedHosts = (
     env.VITE_ALLOWED_HOSTS?.split(',')
       .map((host) => host.trim())
       .filter(Boolean) ?? []
   ).concat(['.ts.net']);
-  const require = createRequire(import.meta.url);
   const rootPkg = require('../../package.json');
   const baseVersion = env.APP_VERSION || rootPkg.version || '0.0.0';
   const buildSha = resolveBuildSha(env.APP_BUILD_SHA);
@@ -49,6 +79,7 @@ export default defineConfig(({ mode }) => {
     },
   };
   const plugins = [
+    watchCatalogs(),
     react({
       babel: {
         // Lingui macros must expand before React Compiler sees the tree.
