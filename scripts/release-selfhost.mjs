@@ -5,6 +5,9 @@ import { execSync } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { assertReleaseTag, dockerLogin } from './release-common.mjs';
+
+const dryRun = process.argv.includes('--dry-run');
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 
@@ -74,25 +77,27 @@ async function buildAndPushDocker(tag) {
   console.log(`==> Build engine: ${useDepot ? 'Depot' : 'Docker Buildx'}`);
 
   // Login to Docker Hub
-  run(`echo "${DOCKER_TOKEN}" | docker login -u "${DOCKER_USERNAME}" --password-stdin`);
+  dockerLogin(DOCKER_USERNAME, DOCKER_TOKEN);
 
   if (!useDepot) {
     // Create buildx builder if needed (ignore error if exists)
-    tryRun('docker buildx create --name budgero-builder --use 2>/dev/null || docker buildx use budgero-builder');
+    tryRun(
+      'docker buildx create --name budgero-builder --use 2>/dev/null || docker buildx use budgero-builder'
+    );
   }
 
   const buildCmd = useDepot ? 'depot build' : 'docker buildx build';
   const isPrerelease = tag.includes('-');
   const imageTags = [`--tag ${DOCKER_IMAGE}:${tag}`];
-  if (!isPrerelease) imageTags.push(`--tag ${DOCKER_IMAGE}:latest`);
+  if (!dryRun && !isPrerelease) imageTags.push(`--tag ${DOCKER_IMAGE}:latest`);
 
   // Single multi-platform invocation: buildx assembles and pushes the
   // manifest list directly, no per-arch tags or imagetools step needed.
   run(
-    `${buildCmd} --pull --no-cache-filter runtime --platform ${DOCKER_PLATFORMS.join(',')} --provenance=false --sbom=false ${imageTags.join(' ')} --push -f selfhost.release.Dockerfile ${stageDir}`
+    `${buildCmd} --pull --no-cache-filter runtime --platform ${DOCKER_PLATFORMS.join(',')} --provenance=false --sbom=false ${imageTags.join(' ')} ${dryRun ? '--output type=oci,dest=dist/selfhost-verification.oci.tar' : '--push'} -f selfhost.release.Dockerfile ${stageDir}`
   );
 
-  console.log(`==> Docker image pushed: ${DOCKER_IMAGE}:${tag}`);
+  console.log(`==> Docker image ${dryRun ? 'verified locally' : 'pushed'}: ${DOCKER_IMAGE}:${tag}`);
 }
 
 async function main() {
@@ -106,69 +111,41 @@ async function main() {
     process.exit(1);
   }
 
-  let createdTag = false;
-  const existingTag = runCapture(`git tag --list ${tag}`);
-  if (existingTag) {
-    const tagCommit = runCapture(`git rev-list -n 1 ${tag}`);
-    const headCommit = runCapture('git rev-parse HEAD');
-    if (tagCommit === headCommit) {
-      console.log(`\n==> Tag ${tag} already exists on HEAD; reusing it.`);
-    } else {
-      console.log(`\n==> Moving ${tag} to current HEAD`);
-      run(`git tag -f ${tag}`);
-      createdTag = true;
-    }
-  } else {
-    console.log(`\n==> Tagging repository (${tag})`);
-    run(`git tag ${tag}`);
-    createdTag = true;
+  if (!dryRun) assertReleaseTag(tag, root);
+  if (!DOCKER_TOKEN) throw new Error('DOCKER_TOKEN is required');
+  console.log(`Building release artifacts for ${tag}${dryRun ? ' (verification only)' : ''}`);
+  run(`goreleaser release --clean --skip=publish${dryRun ? ' --snapshot' : ''}`);
+  if (!existsSync(path.join(root, 'dist', 'checksums.txt'))) {
+    throw new Error('GoReleaser did not produce checksums.txt');
   }
-
-  console.log(`\n==> Building release artifacts for ${tag}`);
-  try {
-    run('goreleaser build --clean');
-  } catch (err) {
-    console.error('GoReleaser failed; cleaning up.');
-    if (createdTag) {
-      run(`git tag -d ${tag}`);
-    }
-    throw err;
-  }
-
-  const distDir = path.join(root, 'dist');
-  if (!existsSync(distDir)) {
-    console.error('dist/ directory not found. Aborting release.');
-    if (createdTag) {
-      run(`git tag -d ${tag}`);
-    }
-    process.exit(1);
-  }
-  const artifacts = readdirSync(distDir).filter((entry) => !entry.startsWith('.'));
-  if (artifacts.length === 0) {
-    console.error('No artifacts produced under dist/. Aborting release.');
-    if (createdTag) {
-      run(`git tag -d ${tag}`);
-    }
-    process.exit(1);
+  if (dryRun) {
+    await buildAndPushDocker(`${tag}-verification`);
+    console.log('Release verification complete; nothing published and no tags changed.');
+    return;
   }
 
   const bucket = 'budgero_releases';
   const bucketUri = `gs://${bucket}`;
   console.log(`\n==> Ensuring ${bucketUri} allows public downloads`);
   if (!tryRun(`gsutil iam ch allUsers:objectViewer ${bucketUri}`)) {
-    console.warn('   (warning: failed to set public IAM; ensure bucket is world-readable or installs will fail)');
+    console.warn(
+      '   (warning: failed to set public IAM; ensure bucket is world-readable or installs will fail)'
+    );
   }
 
   const dest = `${bucketUri}/${tag}/`;
   console.log(`\n==> Uploading artifacts to ${dest}`);
   run(`gcloud storage cp --recursive dist/* ${dest}`);
 
-  const latestDest = `${bucketUri}/latest/`;
-  console.log(`\n==> Refreshing ${latestDest}`);
-  run(`gcloud storage rsync --recursive --delete-unmatched-destination-objects dist ${latestDest}`);
-
-  console.log('\n==> Updating latest release pointer');
-  run(`printf %s ${tag} | gcloud storage cp --cache-control="no-store" - ${bucketUri}/latest.txt`);
+  if (!tag.includes('-')) {
+    const latestDest = `${bucketUri}/latest/`;
+    run(
+      `gcloud storage rsync --recursive --delete-unmatched-destination-objects dist ${latestDest}`
+    );
+    run(
+      `printf %s ${tag} | gcloud storage cp --cache-control="no-store" - ${bucketUri}/latest.txt`
+    );
+  }
 
   // Build and push Docker image
   await buildAndPushDocker(tag);

@@ -34,6 +34,7 @@ archives:
       - budgero
     files:
       - README.md
+      - LICENSE
       - docs/selfhost-cli.md
       - docs/build-flags.md
 

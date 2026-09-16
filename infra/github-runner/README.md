@@ -62,12 +62,10 @@ copy; scheduled reverse mirroring is not configured yet.
 - GitHub release jobs require `DELL_RELEASES_ENABLED=true`, a version tag matching
   `package.json`, and the protected `production` environment. They run both
   vulnerability scanners before publishing and remove local credential files.
-- Existing Forgejo release workflows stay active until the release credentials
-  and GitHub release jobs are migrated and verified. Do not trigger both systems
-  for the same release.
+- GitHub is the sole release publisher. The old Forgejo release and publishing
+  workflows have been removed; its historical branches are preserved.
 - Preserve Forgejo's private `pre-oss-history` branch. Never use `git push --mirror`
   to publish this checkout to GitHub.
 
-Release migration still requires Docker Hub and Google Cloud credentials, plus
-SaaS build configuration. Configure production credentials in a GitHub environment
-restricted to approved release refs before enabling publication.
+See [the release procedure](../../docs/releasing.md) for credentials, verification,
+publishing, and retries.
