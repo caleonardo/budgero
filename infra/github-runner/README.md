@@ -37,7 +37,8 @@ sudo systemctl status budgero-ci-firewall
 The runner updates itself. Update Ubuntu packages inside the VM periodically.
 Only one runner is registered, so web and server jobs queue rather than running
 simultaneously. Keep at least 30 GiB free on the host and monitor disk use in
-the VM. Docker caches belong to the VM, not the Dell host.
+the VM. Self-hosted jobs retain pnpm and Go caches locally instead of uploading
+them to GitHub; PR jobs continue to use GitHub cache storage. Docker caches belong to the VM, not the Dell host.
 
 `provision-vm.sh` installs the initial runner and dependencies inside the VM.
 `firewall.sh` is installed as `/usr/local/sbin/budgero-ci-firewall` on the Dell,

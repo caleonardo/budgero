@@ -65,7 +65,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -73,6 +72,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
+          cache: false
           go-version-file: packages/server/go.mod
 
       - name: Install GoReleaser
@@ -81,6 +81,17 @@ jobs:
           GOBIN="$(go env GOPATH)/bin"
           echo "$GOBIN" >> "$GITHUB_PATH"
           "$GOBIN/goreleaser" --version
+
+      - name: Install OSV scanner
+        shell: bash
+        run: |
+          scanner_dir="$RUNNER_TEMP/osv-scanner-bin"
+          mkdir -p "$scanner_dir"
+          curl --fail --location --retry 3 https://github.com/google/osv-scanner/releases/download/v2.3.8/osv-scanner_linux_amd64 -o "$scanner_dir/osv-scanner"
+          printf '%s  %s\n' bc98e15319ed0d515e3f9235287ba53cdc5535d576d24fd573978ecfe9ab92dc "$scanner_dir/osv-scanner" | sha256sum --check -
+          chmod +x "$scanner_dir/osv-scanner"
+          echo "$scanner_dir" >> "$GITHUB_PATH"
+          "$scanner_dir/osv-scanner" --version
 
       - name: Scan dependencies
         run: pnpm run security:deps
