@@ -660,7 +660,12 @@
     "meta_title": "Novedades de Budgero - Registro de cambios",
     "meta_description": "Lee las últimas actualizaciones, funciones y correcciones de errores de Budgero.",
     "typeMeta_border_border_60_bg_muted_40": "border-border/60 bg-muted/40 text-foreground",
-    "typeMeta_coming_soon": "Próximamente"
+    "typeMeta_coming_soon": "Próximamente",
+    "pagination": "Páginas del registro de cambios",
+    "newer_releases": "Versiones más recientes",
+    "older_releases": "Versiones anteriores",
+    "page_number": "Página {page}",
+    "page_of": "Página {page} de {total}"
   },
   "everydollar_alternative": {
     "privacy_first_budgeting": "Presupuesto con privacidad ante todo",

@@ -13,7 +13,8 @@
     "test:content": "node --experimental-strip-types --test src/lib/content-routing.test.ts",
     "start": "next start",
     "lint": "eslint",
-    "test:tracing": "node scripts/check-contentlayer-tracing.mjs"
+    "test:tracing": "node scripts/check-contentlayer-tracing.mjs",
+    "test:changelog": "node --experimental-strip-types scripts/check-changelog-pages.mjs"
   },
   "dependencies": {
     "@opentelemetry/api": "1.9.0",
