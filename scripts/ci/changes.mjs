@@ -9,6 +9,12 @@ export function planChanges(paths) {
   for (const path of paths) {
     // Dependency patches affect the shared workspace installation.
     if (path.startsWith('packages/website/patches/')) return all();
+    // The web job invokes the server's package.json build script too.
+    if (path === 'packages/server/package.json') {
+      plan.app = true;
+      plan.server = true;
+      continue;
+    }
     if (path.startsWith('packages/website/') || path === 'scripts/i18n/audit-website.mjs') {
       plan.website = true;
     } else if (/^packages\/(app|core|runtime|eslint-config)\//.test(path) || path.startsWith('scripts/i18n/')) {

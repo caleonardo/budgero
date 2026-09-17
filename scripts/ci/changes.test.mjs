@@ -15,6 +15,7 @@ for (const [name, paths, expected] of [
   ['app and shared libraries', ['packages/app/src/app.ts', 'packages/core/src/index.ts', 'packages/runtime/src/index.ts', 'packages/eslint-config/index.js'], { ...none, app: true }],
   ['app catalogs', ['scripts/i18n/check-catalogs.mjs', 'packages/app/src/locales/de/messages.po'], { ...none, app: true }],
   ['Go server', ['packages/server/internal/application/push.go', 'packages/server/go.sum'], { ...none, server: true }],
+  ['server build script consumed by app build', ['packages/server/package.json'], { ...none, app: true, server: true }],
   ['mixed changes', ['packages/server/go.mod', 'packages/website/package.json'], { ...none, server: true, website: true }],
   ['repository prose', ['README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'docs/development.md', '.github/ISSUE_TEMPLATE/bug_report.yml'], none],
   ['workflow changes', ['.github/workflows/ci.yml'], all],
