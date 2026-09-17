@@ -21,11 +21,44 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.13.1',
+    date: 'September 17, 2026',
+    summary:
+      'Adds faster month and year navigation to date range filters and fixes account transaction views staying stale after changes.',
+    isLatest: true,
+    items: [
+      {
+        type: 'improved',
+        title: 'Faster date range navigation',
+        description:
+          'Select a month and step between years in date range filters, then choose a day. Jump back to the current month without changing the selected range.',
+      },
+      {
+        type: 'fixed',
+        title: 'Account transactions refresh after changes',
+        description:
+          'Account transaction lists, summaries, upcoming transactions, and balance history now refresh after transaction edits and other changes that affect account transactions.',
+      },
+    ],
+    acknowledgements: [
+      {
+        githubUsername: 'caleonardo',
+        pullRequest: 7,
+        contribution: 'Faster month and year navigation in date range filters.',
+      },
+      {
+        githubUsername: 'f-liva',
+        pullRequest: 11,
+        contribution: 'Correcting the Push API documentation’s required encryption salt prefix.',
+      },
+    ],
+  },
+  {
     version: 'v1.13.0',
     date: 'September 16, 2026',
     summary:
       'Adds German, French, Spanish, and Dutch app translations, language-aware dates, and improved layouts for smaller screens.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
