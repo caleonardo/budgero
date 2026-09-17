@@ -33,7 +33,18 @@ pnpm run dev:selfhost
 
 ## Quality gates
 
-CI runs these on every PR; running them locally first saves a round-trip:
+CI selects checks from the files changed across the whole PR (and the full commit
+range on pushes). Website changes run website builds, type-checking, translation
+audits, and validation of the app knowledge generated from the docs. App, core,
+and runtime changes run the app checks; server changes run the Go checks. Shared
+configuration, dependency patches, lockfiles, workflow changes, and unknown paths
+run the full suite. Repository-only prose skips build steps.
+
+The required `web`, `server`, and `dco` checks still report on every PR; a failed
+change-selection job blocks merging. Fork workflow runs may need maintainer
+approval before checks appear.
+
+Run the relevant checks locally before opening a PR:
 
 ```bash
 pnpm run type-check:all   # tsc across core, runtime, app

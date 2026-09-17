@@ -14,29 +14,64 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Do not filter workflow triggers by path: required web/server checks must report.
+# Jobs fail closed if change detection fails; only their expensive steps are skipped.
 jobs:
-  web:
+  changes:
     if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      app: ${{ steps.paths.outputs.app }}
+      website: ${{ steps.paths.outputs.website }}
+      server: ${{ steps.paths.outputs.server }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Test change selection
+        run: node --test scripts/ci/changes.test.mjs
+
+      - name: Select affected checks
+        id: paths
+        run: node scripts/ci/changes.mjs
+
+  web:
+    needs: changes
+    if: always() && github.server_url == 'https://github.com'
     runs-on: ${{ fromJSON(github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.DELL_RUNNER_ENABLED == 'true' && '["self-hosted","linux","x64","budgero-build"]' || '["ubuntu-latest"]') }}
     timeout-minutes: 30
     steps:
+      - name: Verify change selection
+        working-directory: .
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+        run: test "$CHANGES_RESULT" = success
+
       - name: Checkout
+        if: needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true'
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Setup pnpm
+        if: needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true'
         uses: pnpm/action-setup@v4
         with:
           run_install: false
 
       - name: Setup Node.js
+        if: needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: ${{ runner.environment == 'github-hosted' && 'pnpm' || '' }}
 
       - name: Setup Go
+        if: needs.changes.outputs.app == 'true'
         uses: actions/setup-go@v5
         with:
           cache: ${{ runner.environment == 'github-hosted' }}
@@ -44,78 +79,112 @@ jobs:
           cache-dependency-path: packages/server/go.sum
 
       - name: Install dependencies
+        if: needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true'
         run: pnpm install --frozen-lockfile
 
       # core and runtime dist must exist before type-check: app resolves
       # @budgero/core against ../core/dist
       - name: Build core
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run build:core
 
       - name: Build runtime
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run build:runtime
 
       - name: Test release tooling
+        if: needs.changes.outputs.app == 'true'
         run: node --experimental-strip-types --test scripts/release.test.mjs
 
       - name: Type-check
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run type-check:all
 
       - name: Lint core
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run lint:core
 
       - name: Lint runtime
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run lint:runtime
 
       - name: Lint app
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run lint:app
 
       - name: Check translation catalogs
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run i18n:check
 
       - name: Audit untranslated strings
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run i18n:sweep
 
       - name: Test core
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run test:core
 
       - name: Test runtime
+        if: needs.changes.outputs.app == 'true'
         run: pnpm --dir packages/runtime run test
 
       - name: Test app
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run test:app
 
       - name: Build app + server binary
+        if: needs.changes.outputs.app == 'true'
         run: pnpm run build:app
 
       - name: Check Contentlayer tracing compatibility
+        if: needs.changes.outputs.website == 'true'
         run: pnpm --dir packages/website run test:tracing
 
       - name: Build website
+        if: needs.changes.outputs.website == 'true'
         run: pnpm run build:website
 
       - name: Check changelog crawlability
+        if: needs.changes.outputs.website == 'true'
         run: pnpm --dir packages/website run test:changelog
 
       - name: Type-check website
+        if: needs.changes.outputs.website == 'true'
         run: pnpm --dir packages/website exec tsc --noEmit
 
       - name: Audit translated website pages
+        if: needs.changes.outputs.website == 'true'
         run: node scripts/i18n/audit-website.mjs --max 0
 
+      - name: Validate generated app knowledge
+        if: needs.changes.outputs.website == 'true' && needs.changes.outputs.app != 'true'
+        run: |
+          node packages/app/scripts/build-knowledge.mjs
+          node --experimental-strip-types --check packages/app/src/features/ai/lib/knowledge/knowledge-base.generated.ts
+
   server:
-    if: github.server_url == 'https://github.com'
+    needs: changes
+    if: always() && github.server_url == 'https://github.com'
     runs-on: ${{ fromJSON(github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.DELL_RUNNER_ENABLED == 'true' && '["self-hosted","linux","x64","budgero-build"]' || '["ubuntu-latest"]') }}
     timeout-minutes: 20
     defaults:
       run:
         working-directory: packages/server
     steps:
+      - name: Verify change selection
+        working-directory: .
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+        run: test "$CHANGES_RESULT" = success
+
       - name: Checkout
+        if: needs.changes.outputs.server == 'true'
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Setup Go
+        if: needs.changes.outputs.server == 'true'
         uses: actions/setup-go@v5
         with:
           cache: ${{ runner.environment == 'github-hosted' }}
@@ -123,12 +192,15 @@ jobs:
           cache-dependency-path: packages/server/go.sum
 
       - name: Build
+        if: needs.changes.outputs.server == 'true'
         run: go build ./...
 
       - name: Test
+        if: needs.changes.outputs.server == 'true'
         run: go test ./...
 
       - name: Lint
+        if: needs.changes.outputs.server == 'true'
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.7.2
