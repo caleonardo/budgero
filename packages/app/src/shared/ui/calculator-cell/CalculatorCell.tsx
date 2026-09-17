@@ -186,8 +186,10 @@ export function CalculatorCellDecimal({
   );
 }
 
-export interface CalculatorCellProps
-  extends Omit<CalculatorCellDecimalProps, 'value' | 'onCommit' | 'onValueChange'> {
+export interface CalculatorCellProps extends Omit<
+  CalculatorCellDecimalProps,
+  'value' | 'onCommit' | 'onValueChange'
+> {
   value: MilliUnits;
   onCommit: (value: MilliUnits) => void;
   onValueChange?: (value: MilliUnits | null) => void;

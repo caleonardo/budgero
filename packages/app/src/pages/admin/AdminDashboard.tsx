@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -17,7 +18,7 @@ import {
   Send,
 } from 'lucide-react';
 import { useAdminApi } from '@features/admin/api/useAdminApi';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
 import { cn } from '@shared/lib/utils';
 import { toast } from 'sonner';
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
@@ -32,6 +33,8 @@ import type {
 } from '@features/admin/model/admin-dashboard';
 
 export default function AdminDashboard() {
+  const { t } = useLingui();
+
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -60,20 +63,20 @@ export default function AdminDashboard() {
       setSyncingClerk(true);
       const result: ClerkSyncResult = await adminApi.syncClerkUsers();
       setClerkSyncResult(result);
-      toast.success('Clerk sync complete', {
-        description: `Synced ${result.Synced ?? 0} users (${result.Created ?? 0} created, ${
+      toast.success(t`Clerk sync complete`, {
+        description: t`Synced ${result.Synced ?? 0} users (${result.Created ?? 0} created, ${
           result.Migrated ?? 0
         } migrated, ${result.Updated ?? 0} updated).`,
       });
     } catch (error) {
       console.error('Failed to sync Clerk users:', error);
-      toast.error('Clerk sync failed', {
-        description: 'Unable to sync Clerk users. Check server logs for details.',
+      toast.error(t`Clerk sync failed`, {
+        description: t`Unable to sync Clerk users. Check server logs for details.`,
       });
     } finally {
       setSyncingClerk(false);
     }
-  }, [adminApi]);
+  }, [adminApi, t]);
 
   const loadFeedbackStatus = useCallback(async () => {
     try {
@@ -96,21 +99,21 @@ export default function AdminDashboard() {
       setSendingFeedback(true);
       const result = await adminApi.sendFeedbackBroadcast();
       setFeedbackResult(result);
-      toast.success('Feedback broadcast complete', {
-        description: `Sent ${result.sent ?? 0} of ${result.eligible ?? 0}, failed ${
+      toast.success(t`Feedback broadcast complete`, {
+        description: t`Sent ${result.sent ?? 0} of ${result.eligible ?? 0}, failed ${
           result.failed ?? 0
         }${result.dryRun ? ' (dry run)' : ''}.`,
       });
       void loadFeedbackStatus();
     } catch (error) {
       console.error('Failed to send feedback broadcast:', error);
-      toast.error('Feedback broadcast failed', {
-        description: 'Check server logs. Re-sending is safe — delivered users are skipped.',
+      toast.error(t`Feedback broadcast failed`, {
+        description: t`Check server logs. Re-sending is safe — delivered users are skipped.`,
       });
     } finally {
       setSendingFeedback(false);
     }
-  }, [adminApi, feedbackStatus, loadFeedbackStatus]);
+  }, [adminApi, feedbackStatus, loadFeedbackStatus, t]);
 
   useEffect(() => {
     if (!IS_SELF_HOSTABLE_BUILD) {
@@ -144,12 +147,18 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Monitor and manage your Budgero platform</p>
+          <h1 className="text-3xl font-bold">
+            <Trans>Admin Dashboard</Trans>
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            <Trans>Monitor and manage your Budgero platform</Trans>
+          </p>
         </div>
         <Button onClick={loadStats} disabled={refreshing} size="sm">
-          <RefreshCw className={cn('w-4 h-4 mr-2', refreshing && 'animate-spin')} />
-          Refresh
+          <Trans>
+            <RefreshCw className={cn('w-4 h-4 mr-2', refreshing && 'animate-spin')} />
+            Refresh
+          </Trans>
         </Button>
       </div>
 
@@ -157,23 +166,23 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={Users}
-          label="Total Users"
+          label={t`Total Users`}
           value={stats?.totalUsers || 0}
           helper={
-            <>
-              <span className="text-green-600">+{stats?.activeUsers || 0}</span> active
-            </>
+            <Trans>
+              <span className="text-green-600">+{stats?.activeUsers || 0}</span>active
+            </Trans>
           }
         />
 
         <StatCard
           icon={CreditCard}
-          label="Paid Users"
+          label={t`Paid Users`}
           value={stats?.paidUsers || 0}
           helper={
-            <>
-              <span className="text-blue-600">{stats?.trialUsers || 0}</span> on trial
-            </>
+            <Trans>
+              <span className="text-blue-600">{stats?.trialUsers || 0}</span>on trial
+            </Trans>
           }
         />
 
@@ -186,13 +195,13 @@ export default function AdminDashboard() {
 
         <StatCard
           icon={Gift}
-          label="Special Access"
+          label={t`Special Access`}
           value={(stats?.foundingMembers || 0) + (stats?.betaUsers || 0)}
           helper={
-            <>
-              <span className="text-orange-600">{stats?.foundingMembers || 0}</span> founding,{' '}
-              <span className="text-indigo-600">{stats?.betaUsers || 0}</span> free access
-            </>
+            <Trans>
+              <span className="text-orange-600">{stats?.foundingMembers || 0}</span>founding,{' '}
+              <span className="text-indigo-600">{stats?.betaUsers || 0}</span>free access
+            </Trans>
           }
         />
       </div>
@@ -200,8 +209,12 @@ export default function AdminDashboard() {
       {/* Sync Utilities */}
       <Card>
         <CardHeader>
-          <CardTitle>Sync Utilities</CardTitle>
-          <CardDescription>Keep Clerk users aligned with Budgero.</CardDescription>
+          <CardTitle>
+            <Trans>Sync Utilities</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Keep Clerk users aligned with Budgero.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
@@ -209,22 +222,27 @@ export default function AdminDashboard() {
               <div className="flex items-start gap-3">
                 <Users className="h-5 w-5 text-muted-foreground" />
                 <div className="space-y-1">
-                  <p className="font-medium">Sync Clerk -&gt; Budgero</p>
+                  <p className="font-medium">
+                    <Trans>Sync Clerk -&gt; Budgero</Trans>
+                  </p>
                   <p className="text-sm text-muted-foreground">
-                    Create or migrate Budgero users from the latest Clerk directory.
+                    <Trans>Create or migrate Budgero users from the latest Clerk directory.</Trans>
                   </p>
                 </div>
               </div>
               {clerkSyncResult && (
                 <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                  Synced {clerkSyncResult.Synced ?? 0} | Created {clerkSyncResult.Created ?? 0} |
-                  Migrated {clerkSyncResult.Migrated ?? 0} | Updated {clerkSyncResult.Updated ?? 0}
+                  <Trans>
+                    Synced {clerkSyncResult.Synced ?? 0} | Created {clerkSyncResult.Created ?? 0} |
+                    Migrated {clerkSyncResult.Migrated ?? 0} | Updated{' '}
+                    {clerkSyncResult.Updated ?? 0}
+                  </Trans>
                 </div>
               )}
               <div>
                 <Button size="sm" onClick={handleSyncClerkUsers} disabled={syncingClerk}>
                   <RefreshCw className={cn('mr-2 h-4 w-4', syncingClerk && 'animate-spin')} />
-                  {syncingClerk ? 'Syncing...' : 'Sync Clerk Users'}
+                  {syncingClerk ? t`Syncing...` : t`Sync Clerk Users`}
                 </Button>
               </div>
             </div>
@@ -233,23 +251,31 @@ export default function AdminDashboard() {
               <div className="flex items-start gap-3">
                 <MailQuestion className="h-5 w-5 text-muted-foreground" />
                 <div className="space-y-1">
-                  <p className="font-medium">Quarterly Feedback Email</p>
+                  <p className="font-medium">
+                    <Trans>Quarterly Feedback Email</Trans>
+                  </p>
                   <p className="text-sm text-muted-foreground">
-                    Ask everyone active in the last 30 days what's working and what isn't. Replies
-                    go to hello@.
+                    <Trans>
+                      Ask everyone active in the last 30 days what's working and what isn't. Replies
+                      go to hello@.
+                    </Trans>
                   </p>
                 </div>
               </div>
               {feedbackStatus && (
                 <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                  {feedbackStatus.quarter} | Eligible {feedbackStatus.eligible} | Already sent{' '}
-                  {feedbackStatus.alreadySent}
-                  {feedbackStatus.dryRun ? ' | DRY RUN' : ''}
+                  <Trans>
+                    {feedbackStatus.quarter} | Eligible {feedbackStatus.eligible} | Already sent{' '}
+                    {feedbackStatus.alreadySent}
+                    {feedbackStatus.dryRun ? t` | DRY RUN` : ''}
+                  </Trans>
                 </div>
               )}
               {feedbackResult && (
                 <div className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                  Last run: sent {feedbackResult.sent ?? 0} | failed {feedbackResult.failed ?? 0}
+                  <Trans>
+                    Last run: sent {feedbackResult.sent ?? 0} | failed {feedbackResult.failed ?? 0}
+                  </Trans>
                 </div>
               )}
               <div>
@@ -261,10 +287,10 @@ export default function AdminDashboard() {
                 >
                   <Send className={cn('mr-2 h-4 w-4', sendingFeedback && 'animate-pulse')} />
                   {sendingFeedback
-                    ? 'Sending...'
+                    ? t`Sending...`
                     : feedbackStatus && feedbackStatus.eligible === 0
-                      ? 'All caught up'
-                      : 'Send Feedback Email'}
+                      ? t`All caught up`
+                      : t`Send Feedback Email`}
                 </Button>
               </div>
             </div>
@@ -276,43 +302,57 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>User Distribution</CardTitle>
-            <CardDescription>Breakdown of user types</CardDescription>
+            <CardTitle>
+              <Trans>User Distribution</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Breakdown of user types</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <UserCheck className="w-4 h-4 text-green-600" />
-                  <span className="text-sm">Active Subscribers</span>
+                  <span className="text-sm">
+                    <Trans>Active Subscribers</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">{stats?.paidUsers || 0}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm">Trial Users</span>
+                  <span className="text-sm">
+                    <Trans>Trial Users</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">{stats?.trialUsers || 0}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Gift className="w-4 h-4 text-indigo-600" />
-                  <span className="text-sm">Beta Testers</span>
+                  <span className="text-sm">
+                    <Trans>Beta Testers</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">{stats?.betaUsers || 0}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-orange-600" />
-                  <span className="text-sm">Founding Members</span>
+                  <span className="text-sm">
+                    <Trans>Founding Members</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">{stats?.foundingMembers || 0}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <UserX className="w-4 h-4 text-gray-600" />
-                  <span className="text-sm">Inactive</span>
+                  <span className="text-sm">
+                    <Trans>Inactive</Trans>
+                  </span>
                 </div>
                 <Badge variant="secondary">
                   {(stats?.totalUsers || 0) - (stats?.activeUsers || 0)}
@@ -325,8 +365,12 @@ export default function AdminDashboard() {
         {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest user actions</CardDescription>
+            <CardTitle>
+              <Trans>Recent Activity</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Latest user actions</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -351,7 +395,11 @@ export default function AdminDashboard() {
                     <p className="text-xs text-muted-foreground">{activity.details}</p>
                   </div>
                 </div>
-              )) || <p className="text-sm text-muted-foreground">No recent activity</p>}
+              )) || (
+                <p className="text-sm text-muted-foreground">
+                  <Trans>No recent activity</Trans>
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -363,15 +411,21 @@ export default function AdminDashboard() {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Common administrative tasks</CardDescription>
+          <CardTitle>
+            <Trans>Quick Actions</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Common administrative tasks</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
             <Button size="sm" variant="outline" asChild>
               <Link to="/admin/users">
-                <Users className="w-4 h-4 mr-2" />
-                Manage Users
+                <Trans>
+                  <Users className="w-4 h-4 mr-2" />
+                  Manage Users
+                </Trans>
               </Link>
             </Button>
           </div>

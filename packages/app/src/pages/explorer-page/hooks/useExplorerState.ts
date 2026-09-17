@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useState, useCallback, useRef, useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
@@ -18,12 +20,13 @@ WHERE table_schema = 'main' AND table_type IN ('BASE TABLE', 'VIEW')
 ORDER BY table_name;
 `;
 
-const DUCKDB_EXTRA_KEYWORDS = 'qualify pivot unpivot sample using asof lateral recursive';
-const DUCKDB_EXTRA_BUILTINS =
-  'date_trunc time_bucket strftime epoch list array_agg string_agg approx_count_distinct arg_max arg_min';
-const DUCKDB_EXTRA_TYPES = 'utinyint usmallint uinteger ubigint hugeint uhugeint';
+const DUCKDB_EXTRA_KEYWORDS = msg`qualify pivot unpivot sample using asof lateral recursive`;
+const DUCKDB_EXTRA_BUILTINS = msg`date_trunc time_bucket strftime epoch list array_agg string_agg approx_count_distinct arg_max arg_min`;
+const DUCKDB_EXTRA_TYPES = msg`utinyint usmallint uinteger ubigint hugeint uhugeint`;
 
 export function useExplorerState() {
+  const { t } = useLingui();
+
   const [sqlQuery, setSqlQuery] = useState(DEFAULT_QUERY);
   const [queryResult, setQueryResult] = useState<QueryResult | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
@@ -47,8 +50,8 @@ export function useExplorerState() {
     async (overrideQuery?: string) => {
       const queryToRun = overrideQuery ?? sqlQueryRef.current;
       if (!queryToRun.trim()) {
-        toast.error('No Query', {
-          description: 'Please enter a SQL query',
+        toast.error(t`No Query`, {
+          description: t`Please enter a SQL query`,
         });
         return;
       }
@@ -64,8 +67,8 @@ export function useExplorerState() {
           const result = await executeReportQuery(queryToRun, db, { maxRows: MAX_ROWS });
           setQueryResult(result);
           if (result.rowCount > result.rows.length && result.rows.length === MAX_ROWS) {
-            toast.warning('Results Limited', {
-              description: `Showing first ${MAX_ROWS.toLocaleString()} rows. Add a LIMIT clause for better performance.`,
+            toast.warning(t`Results Limited`, {
+              description: t`Showing first ${MAX_ROWS.toLocaleString()} rows. Add a LIMIT clause for better performance.`,
             });
           }
         } else {
@@ -94,21 +97,21 @@ export function useExplorerState() {
           // Raw SQL writes bypass op-code mutation log; finalize as out-of-band mutation.
           await runtime.finalizeOutOfBandMutation({ uploadSnapshot: true });
 
-          toast.success('Query Executed', {
-            description: 'Query executed successfully',
+          toast.success(t`Query Executed`, {
+            description: t`Query executed successfully`,
           });
         }
       } catch (error) {
-        const errorMessage = getErrorMessage(error, 'Failed to execute query');
+        const errorMessage = getErrorMessage(error, t`Failed to execute query`);
         setError(errorMessage);
-        toast.error('Query Failed', {
+        toast.error(t`Query Failed`, {
           description: errorMessage,
         });
       } finally {
         setIsExecuting(false);
       }
     },
-    [runtime]
+    [runtime, t]
   );
 
   const insertTableName = useCallback((tableName: string) => {
@@ -133,17 +136,17 @@ export function useExplorerState() {
       .then(() => {
         const rowCount = queryResult.rows.length;
         const columnCount = queryResult.columns.length;
-        toast.success('CSV Copied!', {
-          description: `${rowCount.toLocaleString()} rows x ${columnCount} columns copied to clipboard`,
+        toast.success(t`CSV Copied!`, {
+          description: t`${rowCount.toLocaleString()} rows x ${columnCount} columns copied to clipboard`,
         });
       })
       .catch((error) => {
         console.error('Failed to copy to clipboard:', error);
-        toast.error('Copy Failed', {
-          description: 'Failed to copy to clipboard. Please try again.',
+        toast.error(t`Copy Failed`, {
+          description: t`Failed to copy to clipboard. Please try again.`,
         });
       });
-  }, [queryResult]);
+  }, [queryResult, t]);
 
   const {
     showReportsDialog,

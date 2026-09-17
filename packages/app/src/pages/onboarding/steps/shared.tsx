@@ -1,3 +1,5 @@
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react/macro';
 /* eslint-disable react-refresh/only-export-components */
 // Shared bits for the onboarding step components: the common prop shape,
 // hand-rolled "paper" primitives (hero image, title, input row, selection
@@ -8,6 +10,7 @@
 // post-onboarding shadcn dashboard.
 import React from 'react';
 import { parseISO } from 'date-fns';
+import { getOnboardingImage } from '../onboarding-images';
 import { CURRENCIES, type OnboardingFormState, type OnboardingStepDef } from '../onboarding-data';
 
 // Repeated palette tokens. Centralized because the same handful of hex
@@ -64,60 +67,69 @@ export interface StepProps {
 }
 
 // Shared full-bleed hero image used at the top of most onboarding steps.
-export const StepHeroImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
-  <div
-    style={{
-      margin: '-20px -24px 20px',
-      display: 'flex',
-      justifyContent: 'center',
-      background: PAPER,
-    }}
-  >
-    <img
-      src={src}
-      alt={alt}
+export const StepHeroImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
+  const { i18n } = useLingui();
+  return (
+    <div
       style={{
-        width: '100%',
-        maxWidth: 520,
-        height: 'auto',
-        display: 'block',
-        mixBlendMode: 'multiply',
-      }}
-    />
-  </div>
-);
-
-export const Title: React.FC<{ h: string; sub?: string }> = ({ h, sub }) => (
-  <div style={{ marginBottom: 28 }}>
-    <h1
-      className="bo-title"
-      style={{
-        margin: 0,
-        fontSize: 34,
-        fontWeight: 700,
-        letterSpacing: -0.5,
-        lineHeight: 1.15,
-        color: INK,
+        margin: '-20px -24px 20px',
+        display: 'flex',
+        justifyContent: 'center',
+        background: PAPER,
       }}
     >
-      {h}
-    </h1>
-    {sub && (
-      <p
-        className="bo-title-sub"
+      <img
+        src={getOnboardingImage(src, i18n.locale)}
+        alt={alt}
         style={{
-          margin: '10px 0 0',
-          fontSize: 14,
-          color: INK_MUTED,
-          lineHeight: 1.55,
+          width: '100%',
           maxWidth: 520,
+          height: 'auto',
+          // The localized banner includes white padding; keep the original framing.
+          aspectRatio: src === '/onboarding-share.png' ? '1532 / 415' : undefined,
+          objectFit: 'cover',
+          display: 'block',
+          mixBlendMode: 'multiply',
+        }}
+      />
+    </div>
+  );
+};
+
+export const Title: React.FC<{ h: MessageDescriptor; sub?: MessageDescriptor }> = ({ h, sub }) => {
+  const { t } = useLingui();
+  return (
+    <div style={{ marginBottom: 28 }}>
+      <h1
+        className="bo-title"
+        style={{
+          margin: 0,
+          fontSize: 34,
+          fontWeight: 700,
+          letterSpacing: -0.5,
+          lineHeight: 1.15,
+          color: INK,
         }}
       >
-        {sub}
-      </p>
-    )}
-  </div>
-);
+        {t(h)}
+      </h1>
+      {sub && (
+        <p
+          className="bo-title-sub"
+          style={{
+            margin: '10px 0 0',
+            fontSize: 14,
+            color: INK_MUTED,
+            lineHeight: 1.55,
+            maxWidth: 520,
+          }}
+        >
+          {sub ? t(sub) : null}
+        </p>
+      )}
+    </div>
+  );
+};
 
 export const InputRow: React.FC<{
   value: string;

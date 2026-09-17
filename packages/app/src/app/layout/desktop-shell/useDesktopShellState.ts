@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLogout } from '@entities/user/api/useAuth';
@@ -14,6 +15,8 @@ export interface UseDesktopShellStateReturn {
 }
 
 export function useDesktopShellState(): UseDesktopShellStateReturn {
+  const { t } = useLingui();
+
   const location = useLocation();
   const logout = useLogout();
   const selectedBudget = useUiStore((state) => state.selectedBudget);
@@ -31,7 +34,7 @@ export function useDesktopShellState(): UseDesktopShellStateReturn {
 
     const dashboardId = decodeURIComponent(dashboardMatch[1]);
     const dashboardName =
-      dashboards.find((dashboard) => dashboard.id === dashboardId)?.name ?? 'Dashboard';
+      dashboards.find((dashboard) => dashboard.id === dashboardId)?.name ?? t`Dashboard`;
     const dashboardPath = `/reports/dashboards/${dashboardId}`;
 
     return generateBreadcrumbs(location.pathname, {
@@ -39,7 +42,7 @@ export function useDesktopShellState(): UseDesktopShellStateReturn {
         [dashboardPath]: dashboardName,
       },
     });
-  }, [location.pathname, dashboards]);
+  }, [location.pathname, dashboards, t]);
 
   return {
     breadcrumbs,

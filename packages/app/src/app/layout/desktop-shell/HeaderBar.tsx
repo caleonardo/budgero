@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Home, Plus, Search } from 'lucide-react';
@@ -26,6 +27,8 @@ interface HeaderBarProps {
 }
 
 export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBarProps) {
+  const { t } = useLingui();
+
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const togglePrivacyMaskNumbers = useUiStore((state) => state.togglePrivacyMaskNumbers);
   const feedbackEnabled = !IS_SELF_HOSTABLE_BUILD;
@@ -42,7 +45,9 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
                 <BreadcrumbLink asChild>
                   <Link to="/dashboard" className="inline-flex items-center gap-1">
                     <Home className="h-3.5 w-3.5" />
-                    <span>Home</span>
+                    <span>
+                      <Trans>Home</Trans>
+                    </span>
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -68,11 +73,13 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             size="sm"
             className="gap-2"
             onClick={triggerAddTransaction}
-            title={`Add transaction (${shortcuts.addTransaction})`}
-            aria-label="Add transaction"
+            title={t`Add transaction (${shortcuts.addTransaction})`}
+            aria-label={t`Add transaction`}
           >
             <Plus className="h-4 w-4" />
-            <span className="hidden lg:inline">Add Transaction</span>
+            <span className="hidden lg:inline">
+              <Trans>Add Transaction</Trans>
+            </span>
             <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-primary-foreground/30 px-1.5 font-mono text-[10px] font-medium opacity-80 lg:flex">
               {shortcuts.addTransaction}
             </kbd>
@@ -82,11 +89,13 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             size="sm"
             className="gap-2"
             onClick={togglePrivacyMaskNumbers}
-            title={privacyMaskNumbers ? 'Disable privacy mode' : 'Enable privacy mode'}
-            aria-label={privacyMaskNumbers ? 'Disable privacy mode' : 'Enable privacy mode'}
+            title={privacyMaskNumbers ? t`Disable privacy mode` : t`Enable privacy mode`}
+            aria-label={privacyMaskNumbers ? t`Disable privacy mode` : t`Enable privacy mode`}
           >
             {privacyMaskNumbers ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            <span className="hidden lg:inline">Privacy</span>
+            <span className="hidden lg:inline">
+              <Trans>Privacy</Trans>
+            </span>
           </Button>
           {feedbackEnabled && (
             <Button
@@ -94,11 +103,13 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
               size="sm"
               className="gap-2 text-muted-foreground"
               onClick={openQuackback}
-              title="Send feedback"
-              aria-label="Send feedback"
+              title={t`Send feedback`}
+              aria-label={t`Send feedback`}
             >
               <FeedbackIcon className="h-4 w-4" />
-              <span className="hidden lg:inline">Feedback</span>
+              <span className="hidden lg:inline">
+                <Trans>Feedback</Trans>
+              </span>
             </Button>
           )}
           <Button
@@ -106,10 +117,12 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
             size="sm"
             className="gap-2 text-muted-foreground"
             onClick={triggerCommandPalette}
-            title={`Search (${shortcuts.search})`}
+            title={t`Search (${shortcuts.search})`}
           >
             <Search className="h-4 w-4" />
-            <span className="hidden lg:inline">Search</span>
+            <span className="hidden lg:inline">
+              <Trans>Search</Trans>
+            </span>
             <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
               {shortcuts.search}
             </kbd>

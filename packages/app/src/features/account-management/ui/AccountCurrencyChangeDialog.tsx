@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { AccountCurrencyChangeMode } from '@entities/account/api/useAccounts';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog';
 import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group';
@@ -27,13 +28,15 @@ export function AccountCurrencyChangeDialog({
   isLoading,
   onConfirm,
 }: AccountCurrencyChangeDialogProps) {
+  const { t } = useLingui();
+
   return (
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Change account currency?"
-      description={`Choose how existing amounts in ${accountName} should be handled when changing from ${oldCurrency} to ${newCurrency}.`}
-      confirmText="Change currency"
+      title={t`Change account currency?`}
+      description={t`Choose how existing amounts in ${accountName} should be handled when changing from ${oldCurrency} to ${newCurrency}.`}
+      confirmText={t`Change currency`}
       loadingText="Changing currency..."
       isLoading={isLoading}
       onConfirm={onConfirm}
@@ -41,7 +44,7 @@ export function AccountCurrencyChangeDialog({
       <RadioGroup
         value={mode}
         onValueChange={(value) => onModeChange(value as AccountCurrencyChangeMode)}
-        aria-label="Existing amount handling"
+        aria-label={t`Existing amount handling`}
       >
         <label
           htmlFor="currency-change-convert"
@@ -49,11 +52,15 @@ export function AccountCurrencyChangeDialog({
         >
           <RadioGroupItem id="currency-change-convert" value="convert" className="mt-0.5" />
           <span className="space-y-1">
-            <span className="block text-sm font-medium">Convert existing amounts</span>
+            <span className="block text-sm font-medium">
+              <Trans>Convert existing amounts</Trans>
+            </span>
             <span className="block text-xs text-muted-foreground">
-              Treat the current amounts as {oldCurrency}. For example, 10 {oldCurrency} becomes the
-              equivalent amount in {newCurrency}, while its budget value stays approximately the
-              same.
+              <Trans>
+                Treat the current amounts as {oldCurrency}. For example, 10 {oldCurrency} becomes
+                the equivalent amount in {newCurrency}, while its budget value stays approximately
+                the same.
+              </Trans>
             </span>
           </span>
         </label>
@@ -64,10 +71,14 @@ export function AccountCurrencyChangeDialog({
         >
           <RadioGroupItem id="currency-change-reinterpret" value="reinterpret" className="mt-0.5" />
           <span className="space-y-1">
-            <span className="block text-sm font-medium">Keep the numbers</span>
+            <span className="block text-sm font-medium">
+              <Trans>Keep the numbers</Trans>
+            </span>
             <span className="block text-xs text-muted-foreground">
-              Correct a mislabeled account. For example, 10 {oldCurrency} becomes 10 {newCurrency},
-              and its value in the budget currency is recalculated.
+              <Trans>
+                Correct a mislabeled account. For example, 10 {oldCurrency} becomes 10 {newCurrency}
+                , and its value in the budget currency is recalculated.
+              </Trans>
             </span>
           </span>
         </label>
@@ -75,8 +86,10 @@ export function AccountCurrencyChangeDialog({
 
       {mode === 'reinterpret' && hasLinkedTransfers ? (
         <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
-          This account contains transfers. Only this account’s amounts will be reinterpreted, so
-          review the linked transfer amounts afterward.
+          <Trans>
+            This account contains transfers. Only this account’s amounts will be reinterpreted, so
+            review the linked transfer amounts afterward.
+          </Trans>
         </p>
       ) : null}
     </ConfirmDialog>

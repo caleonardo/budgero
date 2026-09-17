@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans, useLingui } from '@lingui/react/macro';
+
 /**
  * Transaction Form Header
  *
@@ -27,17 +29,20 @@ interface TransactionFormHeaderProps {
 export const TransactionFormHeader = React.memo(function TransactionFormHeader({
   rememberLast,
   onRememberLastChange,
-  title = 'Add New Transaction',
+  title,
   description,
   showRememberLast = true,
   recurringEnabled,
   onRecurringEnabledChange,
   recurringLocked = false,
 }: TransactionFormHeaderProps) {
+  const { t } = useLingui();
   return (
     <>
-      <DialogHeader className="space-y-1.5">
-        <DialogTitle className="text-lg sm:text-xl font-semibold">{title}</DialogTitle>
+      <DialogHeader className="space-y-1.5 pr-6">
+        <DialogTitle className="text-lg sm:text-xl font-semibold">
+          {title ?? t`Add New Transaction`}
+        </DialogTitle>
         {description && (
           <DialogDescription className="hidden sm:block text-xs sm:text-sm text-muted-foreground">
             {description}
@@ -58,7 +63,7 @@ export const TransactionFormHeader = React.memo(function TransactionFormHeader({
               htmlFor="remember-last"
               className="text-[11px] sm:text-xs font-normal text-muted-foreground"
             >
-              Remember last category, payee, account
+              <Trans>Remember last category, payee, account</Trans>
             </Label>
           </div>
         )}
@@ -75,7 +80,7 @@ export const TransactionFormHeader = React.memo(function TransactionFormHeader({
             htmlFor="make-recurring"
             className="text-[11px] sm:text-xs font-normal text-muted-foreground"
           >
-            Make recurring
+            <Trans>Make recurring</Trans>
           </Label>
         </div>
       </div>

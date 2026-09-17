@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Switch } from '@shared/ui/switch';
 import { Label } from '@shared/ui/label';
@@ -18,22 +19,22 @@ import { GoalFundingSettingsCard } from './components/GoalFundingSettingsCard';
 
 type RtaMode = 'cumulative' | 'monthly';
 
-const RTA_OPTIONS: { value: RtaMode; title: string; blurb: string }[] = [
-  {
-    value: 'cumulative',
-    title: 'Cumulative',
-    blurb:
-      'All income and assignments add up across all time, so Ready to Assign is one running total that ignores the month you are viewing. Overspending stays inside the category and carries forward.',
-  },
-  {
-    value: 'monthly',
-    title: 'Monthly',
-    blurb:
-      'Ready to Assign reflects money received through the month you are viewing, minus anything already assigned in future months, and a category’s overspending is pulled out of the next month’s Ready to Assign instead of carrying inside the category. This matches what people moving from YNAB expect.',
-  },
-];
-
 function RtaModeCard() {
+  const { t } = useLingui();
+
+  const RTA_OPTIONS: { value: RtaMode; title: string; blurb: string }[] = [
+    {
+      value: 'cumulative',
+      title: t`Cumulative`,
+      blurb: t`All income and assignments add up across all time, so Ready to Assign is one running total that ignores the month you are viewing. Overspending stays inside the category and carries forward.`,
+    },
+    {
+      value: 'monthly',
+      title: t`Monthly`,
+      blurb: t`Ready to Assign reflects money received through the month you are viewing, minus anything already assigned in future months, and a category’s overspending is pulled out of the next month’s Ready to Assign instead of carrying inside the category. This matches what people moving from YNAB expect.`,
+    },
+  ];
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const { data: budgets = [] } = useBudgets();
   const updateRtaMode = useUpdateBudgetRtaMode();
@@ -51,10 +52,10 @@ function RtaModeCard() {
         onSuccess: () =>
           toast.success(
             next === 'monthly'
-              ? 'Ready to Assign is now calculated monthly'
-              : 'Ready to Assign is now calculated cumulatively'
+              ? t`Ready to Assign is now calculated monthly`
+              : t`Ready to Assign is now calculated cumulatively`
           ),
-        onError: () => toast.error('Could not change the Ready to Assign calculation'),
+        onError: () => toast.error(t`Could not change the Ready to Assign calculation`),
       }
     );
   };
@@ -63,12 +64,16 @@ function RtaModeCard() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Wallet className="h-5 w-5" />
-          Ready to Assign calculation
+          <Trans>
+            <Wallet className="h-5 w-5" />
+            Ready to Assign calculation
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Choose how this budget computes Ready to Assign. Switching is instant and non-destructive
-          — it only changes the math, never your transactions or assignments.
+          <Trans>
+            Choose how this budget computes Ready to Assign. Switching is instant and
+            non-destructive — it only changes the math, never your transactions or assignments.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -93,7 +98,7 @@ function RtaModeCard() {
                   <span className="font-medium">{opt.title}</span>
                   {opt.value === 'cumulative' && (
                     <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                      Default
+                      <Trans>Default</Trans>
                     </span>
                   )}
                 </div>
@@ -104,18 +109,28 @@ function RtaModeCard() {
         </RadioGroup>
 
         <div className="rounded-lg border bg-muted/50 p-4">
-          <h4 className="mb-2 text-sm font-medium">Which should I pick?</h4>
+          <h4 className="mb-2 text-sm font-medium">
+            <Trans>Which should I pick?</Trans>
+          </h4>
           <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
             <li>
-              <strong className="text-foreground">Cumulative</strong> is best if you think of the
-              budget as one continuous pool and don’t mind Ready to Assign staying the same across
-              months.
+              <Trans>
+                <strong className="text-foreground">
+                  <Trans>Cumulative</Trans>
+                </strong>
+                is best if you think of the budget as one continuous pool and don’t mind Ready to
+                Assign staying the same across months.
+              </Trans>
             </li>
             <li>
-              <strong className="text-foreground">Monthly</strong> is best if you’re coming from
-              YNAB or want each month to stand on its own — income counts as it arrives, money
-              assigned in future months is already spoken for, and last month’s overspending reduces
-              this month’s Ready to Assign.
+              <Trans>
+                <strong className="text-foreground">
+                  <Trans>Monthly</Trans>
+                </strong>
+                is best if you’re coming from YNAB or want each month to stand on its own — income
+                counts as it arrives, money assigned in future months is already spoken for, and
+                last month’s overspending reduces this month’s Ready to Assign.
+              </Trans>
             </li>
           </ul>
         </div>
@@ -132,8 +147,10 @@ function GroupPercentCard() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Percent className="h-5 w-5" />
-          Category Group Percentages
+          <Trans>
+            <Percent className="h-5 w-5" />
+            Category Group Percentages
+          </Trans>
         </CardTitle>
         <CardDescription>
           See how your month&apos;s budget is split across category groups, e.g. Needs 50% / Wants
@@ -144,11 +161,13 @@ function GroupPercentCard() {
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <Label htmlFor="show-group-percent" className="font-medium">
-              Show percentage of assigned on group rows
+              <Trans>Show percentage of assigned on group rows</Trans>
             </Label>
             <p className="text-sm text-muted-foreground max-w-md">
-              Each category group on the Planning page shows its share of everything assigned in the
-              selected month, next to its allocated total.
+              <Trans>
+                Each category group on the Planning page shows its share of everything assigned in
+                the selected month, next to its allocated total.
+              </Trans>
             </p>
           </div>
           <Switch
@@ -165,6 +184,8 @@ function GroupPercentCard() {
 }
 
 export default function BudgetSettingsPage() {
+  const { t } = useLingui();
+
   const { allowOverAssignment, isLoading, updateAllowOverAssignment, isUpdating } =
     useAllowOverAssignmentPreference();
 
@@ -175,8 +196,8 @@ export default function BudgetSettingsPage() {
   return (
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Budget Settings"
-        description="Manage income categories, budget calculations, calendars, and assignment preferences."
+        title={t`Budget Settings`}
+        description={t`Manage income categories, budget calculations, calendars, and assignment preferences.`}
       />
 
       <RtaModeCard />
@@ -191,11 +212,15 @@ export default function BudgetSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <SlidersHorizontal className="h-5 w-5" />
-            Assignment Behavior
+            <Trans>
+              <SlidersHorizontal className="h-5 w-5" />
+              Assignment Behavior
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Control whether Budgero enforces the Ready to Assign limit when funding categories.
+            <Trans>
+              Control whether Budgero enforces the Ready to Assign limit when funding categories.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -203,18 +228,22 @@ export default function BudgetSettingsPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Label htmlFor="allow-over-assignment" className="font-medium">
-                  Allow over-assignment
+                  <Trans>Allow over-assignment</Trans>
                 </Label>
                 {allowOverAssignment && (
                   <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                    <AlertTriangle className="mr-1 h-3 w-3" />
-                    Enabled
+                    <Trans>
+                      <AlertTriangle className="mr-1 h-3 w-3" />
+                      Enabled
+                    </Trans>
                   </span>
                 )}
               </div>
               <p className="text-sm text-muted-foreground max-w-md">
-                When enabled, you can assign more money to categories than you have available in
-                Ready to Assign. This will result in a negative Ready to Assign amount.
+                <Trans>
+                  When enabled, you can assign more money to categories than you have available in
+                  Ready to Assign. This will result in a negative Ready to Assign amount.
+                </Trans>
               </p>
             </div>
             <Switch
@@ -230,17 +259,28 @@ export default function BudgetSettingsPage() {
           </div>
 
           <div className="rounded-lg border bg-muted/50 p-4">
-            <h4 className="text-sm font-medium mb-2">What this means</h4>
+            <h4 className="text-sm font-medium mb-2">
+              <Trans>What this means</Trans>
+            </h4>
             <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
               <li>
-                <strong className="text-foreground">Disabled (default):</strong> Budgero prevents
-                you from assigning more than your Ready to Assign amount. You must have cash
-                available before funding categories.
+                <Trans>
+                  <strong className="text-foreground">
+                    <Trans>Disabled (default):</Trans>
+                  </strong>
+                  Budgero prevents you from assigning more than your Ready to Assign amount. You
+                  must have cash available before funding categories.
+                </Trans>
               </li>
               <li>
-                <strong className="text-foreground">Enabled:</strong> You can assign any amount to
-                categories regardless of Ready to Assign. This creates negative Ready to Assign,
-                indicating you&apos;ve assigned more money than you currently have.
+                <Trans>
+                  <strong className="text-foreground">
+                    <Trans>Enabled:</Trans>
+                  </strong>
+                  You can assign any amount to categories regardless of Ready to Assign. This
+                  creates negative Ready to Assign, indicating you've assigned more money than you
+                  currently have.
+                </Trans>
               </li>
             </ul>
           </div>

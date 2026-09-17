@@ -1,0 +1,59 @@
+---
+title: "Modo sin conexión"
+summary: "Lleva tu Presupuesto en vuelos o escapadas rurales. Entiende cómo Budgero encola los cambios, fusiona ediciones simultáneas y mantiene los registros consistentes al reconectar."
+section: collaboration
+topicId: offline
+takeaways:
+  - "Cómo se encolan localmente las ediciones sin conexión y se reproducen al reconectar."
+  - "Qué ocurre cuando dos personas editan el mismo Presupuesto sin conexión."
+  - "Las pocas cosas que realmente necesitan conexión, y sus soluciones alternativas."
+---
+
+Budgero es una aplicación offline-first, no una aplicación online con caché. El presupuesto completo vive en tu dispositivo, todas las funciones funcionan sin conexión, y la sincronización es algo que le sucede *a* tus cambios, no algo que tus cambios tienen que esperar.
+
+## Cómo funciona
+
+Budgero funciona como una Progressive Web App con tu presupuesto almacenado localmente (en el IndexedDB de tu navegador). Cada acción — añadir una transacción, mover dinero, editar una categoría — se aplica a la base de datos local de inmediato. Esto es así tanto si tienes conexión como si no; la única diferencia que hace la conectividad es lo que ocurre a continuación:
+
+- **Online:** cada cambio se cifra y se envía al servidor de inmediato, donde otros dispositivos lo recogen.
+- **Sin conexión:** los cambios se acumulan en una **cola de mutaciones cifradas** local. Cuando vuelve la conexión, la cola se reproduce en el servidor en orden, y tus otros dispositivos reciben los cambios como si se hubieran hecho en directo.
+
+No hay ningún "modo sin conexión" que activar, no hay degradación a solo lectura, y no hay límite en lo que puedes hacer mientras estás desconectado. Las transacciones de un viaje de dos semanas se sincronizan igual que las de dos minutos.
+
+## Cómo es la sincronización
+
+La sincronización está diseñada para ser aburrida. Los cambios se desduplican por identificadores únicos — así que una conexión inestable que reintenta una sincronización no puede crear transacciones duplicadas — y se aplican en un orden determinista. Periódicamente, Budgero también hace una instantánea de toda la base de datos cifrada al servidor, lo que evita que los dispositivos nuevos tengan que reproducir años de historial para ponerse al día.
+
+Todo se cifra de extremo a extremo antes de salir de tu dispositivo; la cola de cambios sin conexión no altera nada del [modelo de seguridad](/docs/security).
+
+## Dos personas, ambas sin conexión
+
+El caso interesante de los [presupuestos compartidos](/docs/sharing): estás en un avión registrando la comida, tu pareja está en casa reasignando categorías, y ningún dispositivo puede ver al otro.
+
+Cuando ambos se vuelven a conectar, sus cambios en cola se fusionan reproduciéndolos en secuencia:
+
+- **Cosas diferentes editadas** — con diferencia el caso más común — y todo se combina sin más. Tus transacciones se registran, sus asignaciones se registran, nadie nota ningún salto.
+- **La misma cosa editada** — ambos cambiasteis la asignación de *la misma* categoría, por ejemplo — y el cambio más reciente prevalece. No hay ningún diálogo de conflictos que resolver; el presupuesto converge a un estado consistente, y el cálculo de los tres números (Asignado, Actividad, Disponible) se recalcula a partir del historial fusionado.
+
+Consejo práctico para hogares donde la edición simultánea sin conexión es habitual: dejad que todos *registren transacciones* libremente (esas nunca entran en conflicto — son registros separados), y reservad la *reestructuración* — renombrar categorías, reasignar en bloque — para momentos en los que estáis conectados y sincronizados. Se trata menos de seguridad de datos y más de no sorprenderos mutuamente.
+
+## Las pocas cosas que necesitan conexión
+
+Todo lo esencial funciona sin conexión. La lista honesta de excepciones:
+
+- **Tipos de cambio obtenidos.** Las consultas de tipos en vivo necesitan la red. Si gestionas el presupuesto entre varias divisas y viajas, configura **tipos manuales** para las divisas que usas (ver [Cuentas](/docs/accounts)) — los tipos manuales funcionan completamente sin conexión. Cuando no hay ningún tipo en caché, Budgero te muestra un aviso con el tipo en caché más cercano prerrellenado, y por defecto ajusta las conversiones a los tipos oficiales automáticamente cuando te vuelves a conectar.
+- **Invitar a nuevos miembros.** Generar y canjear enlaces de invitación es una operación en línea.
+- **La Push API.** De naturaleza del lado del servidor — aunque los pushes enviados mientras tu dispositivo está sin conexión simplemente esperan en la cola del servidor hasta tu próxima sincronización.
+
+## Antes de desconectarte deliberadamente
+
+¿Vas a algún lugar sin conexión? Dos hábitos lo hacen sin esfuerzo:
+
+1. **Abre la app una vez mientras estés conectado** en el dispositivo que vas a llevar, para que tenga el último estado sincronizado — especialmente si alguien más ha estado haciendo el presupuesto recientemente.
+2. **Reconecta ese dispositivo primero** cuando vuelvas, antes de hacer grandes reorganizaciones desde otro.
+
+Ninguno es obligatorio — la fusión gestiona el desorden — pero mantienen la línea de tiempo ordenada.
+
+## Si la sincronización parece atascada
+
+Las ediciones sin conexión son duraderas: viven en la cola local hasta que el servidor las confirma, sobreviviendo a reinicios de la app y del sistema. Si los cambios no aparecen en otro dispositivo, la causa casi siempre es que uno de los dos dispositivos no ha estado realmente conectado con la app abierta. Abre Budgero en ambos, dales un momento, y las colas se vaciarán. Tus datos no están en el limbo — están cifrados, locales y esperando.

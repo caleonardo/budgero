@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useChatStore } from '@features/chat/model/useChatStore';
 import { useUiStore } from '@shared/store/useUiStore';
@@ -40,6 +41,8 @@ import {
 } from './chat-panel.utils';
 
 export function useChatPanelState() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const globalLocalizer = useUiStore((s) => s.globalLocalizer);
   const budgetId = selectedBudget?.ID ?? null;
@@ -102,7 +105,7 @@ export function useChatPanelState() {
   useEffect(() => {
     if (isOpen && budgetId && !activeConversationId && conversations.length === 0) {
       createConversation.mutate(
-        { budgetId, title: 'New Chat' },
+        { budgetId, title: t`New Chat` },
         {
           onSuccess: (conv) => {
             setActiveConversationId(conv.ID);
@@ -119,6 +122,7 @@ export function useChatPanelState() {
       }
     }
   }, [
+    t,
     isOpen,
     budgetId,
     activeConversationId,
@@ -297,8 +301,8 @@ export function useChatPanelState() {
         const responseContent =
           result.text ||
           (isEdit
-            ? "I'll update that transaction. Please confirm the changes above."
-            : "I'll add that transaction for you. Please confirm the details above.");
+            ? t`I'll update that transaction. Please confirm the changes above.`
+            : t`I'll add that transaction for you. Please confirm the details above.`);
         await addMessage.mutateAsync({
           conversationId: activeConversationId,
           budgetId,
@@ -309,7 +313,7 @@ export function useChatPanelState() {
       } else {
         // No pending tool — save the final text response
         const responseContent =
-          result.text || 'Sorry, I encountered an error generating a response.';
+          result.text || t`Sorry, I encountered an error generating a response.`;
 
         await addMessage.mutateAsync({
           conversationId: activeConversationId,
@@ -405,7 +409,7 @@ export function useChatPanelState() {
   const handleNewChat = () => {
     if (!budgetId) return;
     createConversation.mutate(
-      { budgetId, title: 'New Chat' },
+      { budgetId, title: t`New Chat` },
       {
         onSuccess: (conv) => {
           setActiveConversationId(conv.ID);

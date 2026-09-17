@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Transaction Type Selector Component
  *
@@ -79,7 +80,9 @@ export function TransactionTypeSelector({ value, onChange }: TransactionTypeSele
             className="data-[state=active]:bg-success/10 data-[state=active]:text-success data-[state=active]:border-success/20 data-[state=active]:shadow-sm rounded-md border border-transparent py-1.5 px-2 sm:py-2 sm:px-3 text-xs sm:text-sm transition-all duration-200 hover:bg-muted"
           >
             <span className="mr-1 sm:mr-2 font-semibold text-base leading-none">+</span>
-            <span className="hidden sm:inline">Income</span>
+            <span className="hidden sm:inline">
+              <Trans>Income</Trans>
+            </span>
           </TabsTrigger>
           <TabsTrigger
             value="outflow"
@@ -87,7 +90,9 @@ export function TransactionTypeSelector({ value, onChange }: TransactionTypeSele
             className="data-[state=active]:bg-destructive/10 data-[state=active]:text-destructive data-[state=active]:border-destructive/20 data-[state=active]:shadow-sm rounded-md border border-transparent py-1.5 px-2 sm:py-2 sm:px-3 text-xs sm:text-sm transition-all duration-200 hover:bg-muted"
           >
             <span className="mr-1 sm:mr-2 font-semibold text-base leading-none">−</span>
-            <span className="hidden sm:inline">Expense</span>
+            <span className="hidden sm:inline">
+              <Trans>Expense</Trans>
+            </span>
           </TabsTrigger>
           <TabsTrigger
             value="transfer"
@@ -95,7 +100,9 @@ export function TransactionTypeSelector({ value, onChange }: TransactionTypeSele
             className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary/20 data-[state=active]:shadow-sm rounded-md border border-transparent py-1.5 px-2 sm:py-2 sm:px-3 text-xs sm:text-sm transition-all duration-200 hover:bg-muted"
           >
             <ArrowDownUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-            <span className="hidden sm:inline">Transfer</span>
+            <span className="hidden sm:inline">
+              <Trans>Transfer</Trans>
+            </span>
           </TabsTrigger>
         </TabsList>
       </Tabs>

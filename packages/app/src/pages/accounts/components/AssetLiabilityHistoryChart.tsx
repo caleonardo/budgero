@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
@@ -150,12 +151,12 @@ export function AssetLiabilityHistoryChart({
   return (
     <div className="space-y-4">
       <div className="text-sm font-medium text-muted-foreground">
-        Asset & Liability History (24 months)
+        <Trans>Asset & Liability History (24 months)</Trans>
       </div>
 
       {monthlyAssetHistory.length === 0 ? (
         <div className="text-sm text-muted-foreground text-center py-8">
-          No historical data available
+          <Trans>No historical data available</Trans>
         </div>
       ) : (
         <>
@@ -183,12 +184,16 @@ export function AssetLiabilityHistoryChart({
       {monthlyAssetHistory.length > 0 && (
         <div className="pt-2 border-t">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Current Net Worth</span>
+            <span className="text-muted-foreground">
+              <Trans>Current Net Worth</Trans>
+            </span>
             <span className="font-bold">{formatCurrency(netWorth)}</span>
           </div>
           {monthlyAssetHistory.length >= 2 && (
             <div className="flex items-center justify-between text-xs mt-1">
-              <span className="text-muted-foreground">vs {monthlyAssetHistory[0].label}</span>
+              <span className="text-muted-foreground">
+                <Trans>vs {monthlyAssetHistory[0].label}</Trans>
+              </span>
               <span
                 className={
                   netWorth - monthlyAssetHistory[0].netWorth >= 0

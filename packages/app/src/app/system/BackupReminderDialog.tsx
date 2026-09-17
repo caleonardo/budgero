@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import {
   AlertDialog,
@@ -37,6 +38,8 @@ function downloadFile(data: Uint8Array | string | Blob, filename: string, mimeTy
 }
 
 export default function BackupReminderDialog(props: BackupReminderDialogProps) {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const recordBackup = useRecordBackup();
   const queryClient = useQueryClient();
@@ -75,13 +78,13 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
         console.warn('Failed to record backup timestamp', recordError);
         // Surface it: a silently failing record means this reminder returns
         // on every launch even though the user diligently backs up.
-        toast.warning('Backup saved, but recording it on the server failed', {
-          description: getErrorMessage(recordError, 'The reminder may reappear until this works.'),
+        toast.warning(t`Backup saved, but recording it on the server failed`, {
+          description: getErrorMessage(recordError, t`The reminder may reappear until this works.`),
         });
       }
 
       downloadFile(dbData, filename, 'application/x-sqlite3');
-      toast.success('Database backup downloaded');
+      toast.success(t`Database backup downloaded`);
       if (!recordedOnServer) {
         queryClient.setQueryData<User | undefined>(['profile'], (prev) => {
           if (!prev) return prev;
@@ -94,7 +97,7 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
       props.onBackupRecorded?.(recordedAt);
       setDialogOpen(false);
     } catch (error) {
-      const message = getErrorMessage(error, 'Failed to create backup');
+      const message = getErrorMessage(error, t`Failed to create backup`);
       toast.error(message);
     } finally {
       setIsExporting(false);
@@ -106,16 +109,18 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-destructive" />
-            Back up your data
+            <Trans>
+              <ShieldAlert className="h-5 w-5 text-destructive" />
+              Back up your data
+            </Trans>
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-2">
             <p>
               {props.description ||
-                'You need a fresh backup to recover quickly if the database ever corrupts or you lose your master password.'}
+                t`You need a fresh backup to recover quickly if the database ever corrupts or you lose your master password.`}
             </p>
             <p className="font-medium text-foreground">
-              This reminder isn&apos;t skippable—download a backup now to stay protected.
+              <Trans>This reminder isn't skippable—download a backup now to stay protected.</Trans>
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -126,12 +131,12 @@ export default function BackupReminderDialog(props: BackupReminderDialogProps) {
             className="w-full sm:w-auto"
           >
             {isExporting ? (
-              'Preparing backup…'
+              t`Preparing backup…`
             ) : (
-              <>
+              <Trans>
                 <Database className="h-4 w-4 mr-2" />
                 Download backup
-              </>
+              </Trans>
             )}
           </Button>
         </AlertDialogFooter>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Download } from 'lucide-react';
 
@@ -9,7 +10,9 @@ export function ChartExportButton({ onExport }: ChartExportButtonProps) {
   return (
     <Button variant="outline" size="sm" onClick={onExport} className="flex-shrink-0">
       <Download className="h-3 w-3 mr-1" />
-      <span className="hidden sm:inline">Export CSV</span>
+      <span className="hidden sm:inline">
+        <Trans>Export CSV</Trans>
+      </span>
       <span className="sm:hidden">CSV</span>
     </Button>
   );

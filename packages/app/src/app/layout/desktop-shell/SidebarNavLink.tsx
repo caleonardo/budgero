@@ -1,4 +1,6 @@
 import React from 'react';
+import { useLingui } from '@lingui/react/macro';
+import type { MessageDescriptor } from '@lingui/core';
 import { NavLink, useLocation } from 'react-router-dom';
 import { SidebarMenuItem, SidebarMenuButton } from '@shared/ui/sidebar';
 import { Badge } from '@shared/ui/badge';
@@ -18,7 +20,7 @@ export interface SidebarNavLinkProps {
   /** Leading icon component (e.g. a lucide icon). */
   icon: LucideIcon;
   /** Visible link label. */
-  label: string;
+  label: MessageDescriptor | string;
   /**
    * Active-match behavior:
    * - `'exact'` (default): active when `pathname === to`.
@@ -57,6 +59,7 @@ export function SidebarNavLink({
   badge,
   testId,
 }: SidebarNavLinkProps) {
+  const { t } = useLingui();
   const location = useLocation();
 
   const isActive =
@@ -72,7 +75,9 @@ export function SidebarNavLink({
         data-testid={testId}
       >
         <Icon className="h-4 w-4" />
-        <span className={topLevel ? 'font-medium' : undefined}>{label}</span>
+        <span className={topLevel ? 'font-medium' : undefined}>
+          {typeof label === 'string' ? label : t(label)}
+        </span>
         {badge && (
           <Badge variant={badge.variant} className={badge.className}>
             {badge.label}

@@ -1,8 +1,9 @@
 'use client';
 
-import Link from 'next/link';
+import { Link, usePathname } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
+import { LanguageSwitcher, LanguageMenu } from '@/components/language-switcher';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -34,6 +35,8 @@ function GitHubIcon({ className }: { className?: string }) {
 }
 
 export function SiteHeader() {
+  const copy = useTranslations('updates');
+  const t = useTranslations('common');
   const pathname = usePathname();
   if (pathname === '/') return <HomepageHeader />;
   const isOverlay = pathname === '/' || pathname.startsWith('/privacy');
@@ -55,37 +58,41 @@ export function SiteHeader() {
           >
             <Image
               src="/logo_144.png"
-              alt="Budgero logo"
+              alt={copy('u_ba246edb058d')}
               width={48}
               height={48}
               className="h-10 w-10 rounded-xl"
               priority
             />
             <span className="text-xl sm:text-2xl font-bold tracking-tight truncate max-w-[40vw]">
-              Budgero
+              {' '}
+              {copy('u_045497ff4fcf')}{' '}
             </span>
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden xl:block">
+              <LanguageSwitcher />
+            </div>
             {/* Desktop links */}
-            <div className="hidden sm:flex items-center gap-6 text-sm">
+            <div className="hidden xl:flex items-center gap-6 text-sm">
               <Link
                 href="/docs"
                 className="font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
-                Docs
+                {t('nav_docs')}
               </Link>
               <Link
                 href="/blog"
                 className="font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
-                Blog
+                {t('nav_blog')}
               </Link>
               <Link
                 href="/changelog"
                 className="font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
-                Changelog
+                {t('nav_changelog')}
               </Link>
               <a
                 href="https://feedback.budgero.app"
@@ -94,7 +101,7 @@ export function SiteHeader() {
                 onClick={() => track('Feedback Clicked - Desktop Header')}
                 className="font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
-                Feedback
+                {t('feedback')}
               </a>
               <a
                 href="https://discord.gg/ZgWnzaPqae"
@@ -109,8 +116,8 @@ export function SiteHeader() {
                   width={16}
                   height={16}
                   aria-hidden="true"
-                />
-                Join Discord
+                />{' '}
+                <span className="sr-only">{copy('u_62d97f750910')}</span>
               </a>
               <a
                 href="https://www.reddit.com/r/budgero/"
@@ -120,28 +127,28 @@ export function SiteHeader() {
                 className="inline-flex items-center gap-2 font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Image src="/Reddit_Logo.webp" alt="" width={16} height={16} aria-hidden="true" />
-                Join Reddit
+                <span className="sr-only">{t('join_reddit')}</span>
               </a>
               <a
                 href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('Community Clicked - GitHub (Desktop Header)')}
-                aria-label="View source on GitHub"
+                aria-label={t('aria_github')}
                 className="inline-flex items-center gap-2 font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
                 <GitHubIcon />
-                <span className="hidden lg:inline">GitHub</span>
+                <span className="sr-only">{copy('u_f911e414cf6b')}</span>
               </a>
             </div>
             {/* Mobile community icons */}
-            <div className="sm:hidden flex items-center gap-1">
+            <div className="hidden md:flex xl:hidden items-center gap-1">
               <a
                 href="https://discord.gg/ZgWnzaPqae"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('Community Clicked - Discord (Mobile Header)')}
-                aria-label="Join Discord community"
+                aria-label={t('aria_join_discord')}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Image
@@ -157,7 +164,7 @@ export function SiteHeader() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('Community Clicked - Reddit (Mobile Header)')}
-                aria-label="Join Reddit community"
+                aria-label={t('aria_join_reddit')}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Image src="/Reddit_Logo.webp" alt="" width={16} height={16} aria-hidden="true" />
@@ -167,20 +174,20 @@ export function SiteHeader() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('Community Clicked - GitHub (Mobile Header)')}
-                aria-label="View source on GitHub"
+                aria-label={t('aria_github')}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/70 hover:text-foreground transition-colors"
               >
                 <GitHubIcon />
               </a>
             </div>
             {/* Mobile menu */}
-            <div className="sm:hidden">
+            <div className="xl:hidden">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Open menu"
+                    aria-label={copy('u_b40b3713b43d')}
                     className="text-foreground/70 hover:text-foreground"
                   >
                     <Menu className="size-5" />
@@ -194,19 +201,19 @@ export function SiteHeader() {
                     asChild
                     className="focus:bg-accent focus:text-accent-foreground"
                   >
-                    <Link href="/docs">Docs</Link>
+                    <Link href="/docs">{t('nav_docs')}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     asChild
                     className="focus:bg-accent focus:text-accent-foreground"
                   >
-                    <Link href="/blog">Blog</Link>
+                    <Link href="/blog">{t('nav_blog')}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     asChild
                     className="focus:bg-accent focus:text-accent-foreground"
                   >
-                    <Link href="/changelog">Changelog</Link>
+                    <Link href="/changelog">{t('nav_changelog')}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     asChild
@@ -218,14 +225,16 @@ export function SiteHeader() {
                       rel="noopener noreferrer"
                       onClick={() => track('Feedback Clicked - Mobile Header')}
                     >
-                      Feedback
+                      {' '}
+                      {copy('u_aac77df34720')}{' '}
                     </a>
                   </DropdownMenuItem>
+                  <LanguageMenu />
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
             {/* Prominent CTA (hidden on mobile) */}
-            <div className="hidden sm:block">
+            <div className="hidden md:block">
               <Button
                 asChild
                 className="h-9 px-3 sm:px-4 text-sm bg-[#111c34] text-[#f8fafc] hover:bg-[#1e293b] transition-colors font-medium"
@@ -235,7 +244,7 @@ export function SiteHeader() {
                   onClick={() => track('Cloud Trial - Header', { path: pathname })}
                   className="inline-flex items-center"
                 >
-                  Start free trial
+                  {t('start_free_trial')}
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </a>
               </Button>

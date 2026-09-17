@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@shared/ui/dialog';
 import { Button } from '@shared/ui/button';
@@ -125,7 +126,7 @@ export function TransactionQuickViewDialog({
                 <div className="pt-3 pb-4">
                   <div className="flex justify-center">
                     <Button variant="destructive" onClick={onDeleteClick} disabled={deleteDisabled}>
-                      Delete transaction
+                      <Trans>Delete transaction</Trans>
                     </Button>
                   </div>
                 </div>

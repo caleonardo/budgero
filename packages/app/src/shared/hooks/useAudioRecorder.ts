@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useRef, useCallback } from 'react';
 
 export interface UseAudioRecorderReturn {
@@ -20,6 +21,8 @@ export interface UseAudioRecorderReturn {
  * Returns audio as a Blob suitable for Whisper transcription
  */
 export function useAudioRecorder(): UseAudioRecorderReturn {
+  const { t } = useLingui();
+
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +55,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
 
   const startRecording = useCallback(async () => {
     if (!isSupported) {
-      setError('Audio recording is not supported in this browser');
+      setError(t`Audio recording is not supported in this browser`);
       return;
     }
 
@@ -103,7 +106,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
       mediaRecorder.onerror = (event: Event) => {
         console.error('[AudioRecorder] MediaRecorder error:', event);
         const errorEvent = event as Event & { error?: { message?: string } };
-        setError(errorEvent.error?.message || 'Recording error');
+        setError(errorEvent.error?.message || t`Recording error`);
         cleanup();
         setIsRecording(false);
         setIsPaused(false);
@@ -129,16 +132,16 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
 
       const domError = err as { name?: string; message?: string };
       if (domError.name === 'NotAllowedError' || domError.name === 'PermissionDeniedError') {
-        setError('Microphone permission denied. Please allow microphone access.');
+        setError(t`Microphone permission denied. Please allow microphone access.`);
       } else if (domError.name === 'NotFoundError' || domError.name === 'DevicesNotFoundError') {
-        setError('No microphone found. Please connect a microphone.');
+        setError(t`No microphone found. Please connect a microphone.`);
       } else {
-        setError(domError.message || 'Failed to start recording');
+        setError(domError.message || t`Failed to start recording`);
       }
 
       cleanup();
     }
-  }, [isSupported, cleanup]);
+  }, [isSupported, cleanup, t]);
 
   const stopRecording = useCallback((): Promise<Blob | null> => {
     return new Promise((resolve) => {

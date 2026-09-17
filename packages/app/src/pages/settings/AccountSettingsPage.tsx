@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { UserProfile } from '@clerk/clerk-react';
 import { useIsMobile } from '@shared/hooks/useIsMobile';
 import { useConnectivity } from '@shared/hooks/useConnectivity';
@@ -15,10 +16,14 @@ export default function AccountSettingsPage() {
       <div className={`container max-w-4xl mx-auto p-4 sm:p-6 ${isMobile ? 'pb-1' : 'pb-6'}`}>
         <Alert variant="default" className="border border-dashed">
           <WifiOff className="h-4 w-4" />
-          <AlertTitle>Internet connection required</AlertTitle>
+          <AlertTitle>
+            <Trans>Internet connection required</Trans>
+          </AlertTitle>
           <AlertDescription>
-            Account settings need a live connection to Clerk. Please reconnect to the internet and
-            try again.
+            <Trans>
+              Account settings need a live connection to Clerk. Please reconnect to the internet and
+              try again.
+            </Trans>
           </AlertDescription>
         </Alert>
       </div>

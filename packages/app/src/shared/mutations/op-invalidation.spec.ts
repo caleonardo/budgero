@@ -4,11 +4,70 @@
  * ['budgets', spaceKey] query that useBudgets subscribes to.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryObserver } from '@tanstack/react-query';
 import { MutationExecutor, type QueryClientLike } from '@budgero/runtime';
-import { getInvalidatesForOp } from '@shared/mutations/op-code-registry';
+import { getInvalidatesForOp, opCodeRegistry } from '@shared/mutations/op-code-registry';
 
 describe('op registry invalidation through MutationExecutor', () => {
+  const registerOps = Object.entries(opCodeRegistry)
+    .filter(([, entry]) => entry.invalidates?.some(([root]) => root === 'transactions'))
+    .map(([op]) => op);
+
+  it.each(registerOps)(
+    '%s refreshes active account queries after successive writes',
+    async (op) => {
+      const spaceId = 'space-1';
+      const qc = new QueryClient();
+      let revision = 0;
+      // AccountPage reads these roots instead of the legacy transactions query.
+      // Observe both accounts so moving a transfer refreshes both registers.
+      const keys = [7, 8].flatMap((accountId) => [
+        ['accountTransactionPages', spaceId, accountId, '', '', 200],
+        ['accountTransactionRange', spaceId, accountId, '', ''],
+        ['accountTransactionSummary', spaceId, accountId, '', ''],
+        ['futureAccountTransactions', spaceId, accountId, '2026-09-18'],
+        ['accountBalanceHistory', spaceId, accountId],
+      ]);
+      const observers = keys.map(
+        (queryKey) =>
+          new QueryObserver(qc, {
+            queryKey,
+            queryFn: async () => revision,
+            staleTime: 5 * 60 * 1000,
+          })
+      );
+      const unsubscribe = observers.map((observer) => observer.subscribe(() => {}));
+      const executor = new MutationExecutor({
+        executeOp: async () => {
+          revision += 1;
+        },
+        getUndoSpec: () => undefined,
+        getInvalidatesForOp,
+        getQueryClient: () => qc as unknown as QueryClientLike,
+        pushUndo: () => {},
+        recordHistory: () => {},
+        getActiveSpaceId: () => spaceId,
+        getSpaceRole: () => 'owner',
+      });
+
+      try {
+        await vi.waitFor(() => {
+          expect(observers.every((observer) => observer.getCurrentResult().data === 0)).toBe(true);
+        });
+        for (const expected of [1, 2]) {
+          await executor.execute({ op, payload: {}, spaceId });
+          // No manual refetch: invalidation must reach the mounted observers.
+          for (const key of keys) {
+            expect(qc.getQueryData(key), JSON.stringify(key)).toBe(expected);
+          }
+        }
+      } finally {
+        unsubscribe.forEach((stop) => stop());
+        qc.clear();
+      }
+    }
+  );
+
   it('budgets.updateName invalidates and refetches the space-scoped budgets query', async () => {
     const spaceId = 'space-1';
     const qc = new QueryClient();

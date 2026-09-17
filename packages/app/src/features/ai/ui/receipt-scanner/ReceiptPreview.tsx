@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Trash2 } from 'lucide-react';
 
@@ -8,12 +9,14 @@ interface ReceiptPreviewProps {
 }
 
 export function ReceiptPreview({ imagePreview, fileName, onRemove }: ReceiptPreviewProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-3">
       <div className="relative rounded-lg overflow-hidden border">
         <img
           src={imagePreview}
-          alt="Receipt preview"
+          alt={t`Receipt preview`}
           className="w-full max-h-[300px] object-contain bg-muted/30"
         />
         <Button

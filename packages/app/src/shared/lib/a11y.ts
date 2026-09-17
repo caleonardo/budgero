@@ -2,8 +2,7 @@ import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent
 
 /** Event union for an activation handler shared between click and keyboard. */
 export type ActivationEvent<T extends HTMLElement = HTMLElement> =
-  | ReactMouseEvent<T>
-  | ReactKeyboardEvent<T>;
+  ReactMouseEvent<T> | ReactKeyboardEvent<T>;
 
 /**
  * Returns a keydown handler that mirrors a click action for Enter and Space,

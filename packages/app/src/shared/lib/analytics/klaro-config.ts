@@ -1,3 +1,5 @@
+import { i18n, type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 /**
  * Klaro consent manager config — app (my.budgero.app).
  *
@@ -34,33 +36,31 @@ export const klaroConfig: KlaroConfig = {
       privacyPolicyUrl: 'https://budgero.app/privacy',
       consentNotice: {
         title: '',
-        description:
-          'We use a couple of cookies for product analytics and ad attribution. Your encrypted budget data is never tracked. Up to you whether to allow these.',
-        learnMore: 'Choose what to allow',
+        description: msg`We use a couple of cookies for product analytics and ad attribution. Your encrypted budget data is never tracked. Up to you whether to allow these.`,
+        learnMore: msg`Choose what to allow`,
       },
       consentModal: {
-        title: 'Cookies on Budgero',
-        description:
-          'Pick which cookies are OK with you. Your encrypted budget data is never tracked either way. You can change this any time from Settings → Security.',
+        title: msg`Cookies on Budgero`,
+        description: msg`Pick which cookies are OK with you. Your encrypted budget data is never tracked either way. You can change this any time from Settings → Security.`,
       },
-      acceptAll: 'Accept all',
-      acceptSelected: 'Save choices',
-      decline: 'Reject all',
-      ok: 'Accept all',
-      close: 'Close',
-      save: 'Save',
+      acceptAll: msg`Accept all`,
+      acceptSelected: msg`Save choices`,
+      decline: msg`Reject all`,
+      ok: msg`Accept all`,
+      close: msg`Close`,
+      save: msg`Save`,
       poweredBy: '',
       purposes: {
         analytics: {
-          title: 'Product analytics',
-          description: 'Which features get used. No personal or financial data.',
+          title: msg`Product analytics`,
+          description: msg`Which features get used. No personal or financial data.`,
         },
       },
-      purposeItem: { service: 'service', services: 'services' },
+      purposeItem: { service: msg`service`, services: msg`services` },
       service: {
-        purpose: 'Purpose',
-        purposes: 'Purposes',
-        required: { title: 'Always on', description: 'Required, no consent needed.' },
+        purpose: msg`Purpose`,
+        purposes: msg`Purposes`,
+        required: { title: msg`Always on`, description: msg`Required, no consent needed.` },
         optOut: { title: '(opt-out)', description: '' },
       },
     },
@@ -69,9 +69,8 @@ export const klaroConfig: KlaroConfig = {
   services: [
     {
       name: 'posthog',
-      title: 'PostHog (EU)',
-      description:
-        'Self-hosted-friendly product analytics. Tracks event names and page views, never amounts or personal data.',
+      title: msg`PostHog (EU)`,
+      description: msg`Self-hosted-friendly product analytics. Tracks event names and page views, never amounts or personal data.`,
       purposes: ['analytics'],
       cookies: [
         [/^ph_/, '/', '.budgero.app'],
@@ -129,4 +128,31 @@ export interface KlaroConfig {
   styling?: { theme?: string[] };
   translations?: Record<string, unknown>;
   services?: unknown[];
+}
+
+const sourceTranslations = klaroConfig.translations;
+const sourceServices = klaroConfig.services;
+
+function translateConsent(value: unknown): unknown {
+  if (!value || typeof value !== 'object') return value;
+  if ('id' in value && typeof value.id === 'string') return i18n._(value as MessageDescriptor);
+  if (Array.isArray(value)) return value.map(translateConsent);
+  return Object.fromEntries(
+    Object.entries(value).map(([key, child]) => [key, translateConsent(child)])
+  );
+}
+
+/** Refresh display copy without changing the consent manager or stored choices. */
+export function refreshKlaroLocale(): void {
+  const locale = i18n.locale || 'en';
+  klaroConfig.lang = locale;
+  klaroConfig.translations = { [locale]: translateConsent(sourceTranslations?.en) };
+  klaroConfig.services = sourceServices?.map((service) => {
+    const item = service as Record<string, unknown>;
+    return {
+      ...item,
+      title: translateConsent(item.title),
+      description: translateConsent(item.description),
+    };
+  });
 }

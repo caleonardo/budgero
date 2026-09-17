@@ -1,0 +1,80 @@
+---
+title: "Catégories"
+summary: "Traduisez les emplois réels de votre argent en catégories exploitables, avec des intentions claires et des soldes vérifiables en un coup d'œil."
+section: budget-basics
+topicId: categories
+takeaways:
+  - "Comment les soldes Disponible se reportent de mois en mois, dépassements de budget inclus."
+  - "Pourquoi les dépassements de budget en espèces et à crédit se comportent différemment."
+  - "Ce que la suppression d'une catégorie fait réellement — et quand Budgero vous en empêchera."
+---
+
+Une catégorie est une description du rôle de votre argent. « Courses », « Loyer », « Vacances » — chacune contient un montant affecté, suit les dépenses par rapport à celui-ci, et vous montre ce qu'il reste de **Disponible**. Ce guide explique comment les catégories évoluent au fil du temps, ce qui est à l'origine de la plupart des surprises budgétaires.
+
+## Anatomie d'une catégorie
+
+Chaque catégorie possède :
+
+- **Nom** — gardez-le court ; c'est une étiquette de ligne que vous parcourrez des dizaines de fois par mois. Si une catégorie nécessite une explication, intégrez la convention dans le nom lui-même (« Sorties (hors voyages) »).
+- **Groupe** — l'endroit où elle se trouve dans le tableau budgétaire. Déplacer une catégorie entre les [groupes](/docs/category-groups) ne change rien à son historique.
+- **Exclure du rythme du budget** — une option pour les catégories qui ne doivent pas compter dans vos indicateurs de progression mensuelle, comme les sommes forfaitaires annuelles qui rendraient sinon le rythme de mi-mois alarmant.
+
+## Les trois chiffres
+
+Chaque ligne de catégorie affiche le même trio pour le mois sélectionné :
+
+<table>
+  <thead>
+    <tr>
+      <th>Colonne</th>
+      <th>Signification</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Affecté</strong></td>
+      <td>Ce que vous avez attribué à cette catégorie ce mois-ci</td>
+    </tr>
+    <tr>
+      <td><strong>Activité</strong></td>
+      <td>Les dépenses (et entrées) enregistrées dans cette catégorie ce mois-ci</td>
+    </tr>
+    <tr>
+      <td><strong>Disponible</strong></td>
+      <td>Tout ce qu'il reste : solde des mois précédents + Affecté − Activité</td>
+    </tr>
+  </tbody>
+</table>
+
+Le mot clé dans la formule du Disponible est *mois précédents*. L'argent restant **est automatiquement reporté**. Affectez 100 € à Entretien auto chaque mois sans rien dépenser, et en juin la catégorie détiendra discrètement 600 € — c'est précisément l'intérêt d'anticiper le financement des dépenses réelles.
+
+## Dépassement de budget : espèces vs crédit
+
+Quand l'Activité dépasse ce qui est Disponible, le solde devient négatif et la ligne le signale. Ce qui se passe ensuite dépend de votre moyen de paiement :
+
+- **Dépassement en espèces** (débit, espèces, virement bancaire) : le Disponible négatif se reporte au mois suivant jusqu'à ce que vous le couvriez. Utilisez l'action rapide **Couvrir le dépassement** dans le menu Affecter, ou déplacez de l'argent depuis une autre catégorie. Ne laissez pas le rouge s'installer — une catégorie négative signifie que vos autres catégories surestiment collectivement ce que vous pouvez dépenser.
+- **Dépassement à crédit** (payé par carte de crédit) : la dépense ne prend pas de l'argent que vous n'avez pas — elle crée de la dette. La gestion des cartes de crédit de Budgero déplace automatiquement les dépenses budgétées vers la catégorie de paiement de votre carte ; les dépenses par carte *non budgétées* deviennent quant à elles un solde non financé sur la carte. Les mécanismes sont expliqués en détail dans [Suivi des dettes](/docs/debt-tracking).
+
+La règle pratique : couvrez le dépassement en espèces ce mois-ci ; décidez délibérément si le dépassement à crédit devient une dette ou est financé.
+
+## Catégories saisonnières et irrégulières
+
+Deux approches fonctionnent bien pour les dépenses non mensuelles :
+
+1. **Financer mensuellement, dépenser rarement.** Allouez 25 € à « Cadeaux » chaque mois et laissez le report faire le travail. Associez un [objectif](/docs/goals) pour que Budgero calcule le montant mensuel pour vous.
+2. **Financer quand cela se présente.** Pour les coûts réellement imprévisibles, laissez la catégorie à zéro et déplacez de l'argent quand la dépense apparaît — en le prenant consciemment d'une catégorie flexible comme Sorties au restaurant. Cela rend les arbitrages explicites, ce qui est toute l'idée du budget base zéro.
+
+## Renommer, déplacer et supprimer
+
+**Renommer** et **déplacer entre les groupes** sont des opérations sans risque — l'historique, les affectations et les rapports suivent la catégorie où qu'elle aille et quel que soit son nom.
+
+**La suppression est destructrice.** Budgero n'a pas d'archive de catégories : supprimer une catégorie la retire ainsi que son historique de budget, et ses transactions n'ont plus cette catégorie pour les regrouper. Avant de supprimer, demandez-vous si vous voudrez un jour voir ces dépenses détaillées historiquement. Si oui, conservez la catégorie et contentez-vous de ne plus y affecter de fonds — une catégorie non financée et inutilisée ne coûte rien. Si vous devez consolider, recatégorisez d'abord les transactions qui vous importent.
+
+Deux garde-fous à connaître :
+
+- Les catégories **liées à un compte de dette** (une catégorie de paiement de carte de crédit, ou la catégorie liée d'un prêt) ne peuvent pas être supprimées tant que le compte existe. Budgero vous demandera de supprimer d'abord le compte — c'est généralement le signe que vous ne vouliez pas vraiment supprimer cette catégorie.
+- Les **catégories système** (Revenus, Non catégorisées, Virements) sont gérées par Budgero et ne peuvent pas être supprimées par vous.
+
+## Garder la liste pertinente
+
+Une catégorie à laquelle vous n'avez rien affecté ou depuis laquelle vous n'avez rien dépensé depuis six mois est du bruit. Fusionnez-la, ou supprimez-la si son historique n'a pas d'importance. Le tableau de budget est un outil que vous consultez chaque semaine — chaque ligne doit mériter sa place.

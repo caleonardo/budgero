@@ -1,3 +1,5 @@
+import { AccountTypeLabel } from '@entities/account/ui/AccountTypeLabel';
+import { Trans } from '@lingui/react/macro';
 /**
  * Account Group Section Component
  *
@@ -113,7 +115,9 @@ export function AccountGroupSection({
                       {trend.percentage >= 0 ? '+' : ''}
                       {trend.percentage.toFixed(1)}%
                     </span>
-                    <span className="text-muted-foreground text-xs">{periodLabel} change</span>
+                    <span className="text-muted-foreground text-xs">
+                      <Trans>{periodLabel} change</Trans>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -154,7 +158,7 @@ export function AccountGroupSection({
                           {account.Name}
                         </div>
                         <div className="text-[10px] sm:text-sm text-muted-foreground capitalize">
-                          {account.Type}
+                          <AccountTypeLabel type={account.Type} />
                         </div>
                       </div>
                     </div>

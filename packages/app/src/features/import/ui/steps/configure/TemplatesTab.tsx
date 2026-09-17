@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Templates Tab
  *
@@ -36,14 +37,18 @@ export function TemplatesTab({
   onTemplateNameChange,
   onDeleteTemplate,
 }: TemplatesTabProps) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="template-select">Load from Template</Label>
+        <Label htmlFor="template-select">
+          <Trans>Load from Template</Trans>
+        </Label>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Select value={selectedTemplate} onValueChange={onTemplateSelect}>
             <SelectTrigger className="w-full min-w-0 sm:flex-1">
-              <SelectValue placeholder="Select a saved template" />
+              <SelectValue placeholder={t`Select a saved template`} />
             </SelectTrigger>
             <SelectContent>
               {templates.map((template) => (
@@ -59,7 +64,7 @@ export function TemplatesTab({
             disabled={!selectedTemplate}
             className="w-full sm:w-auto"
           >
-            Apply
+            <Trans>Apply</Trans>
           </Button>
         </div>
       </div>
@@ -74,11 +79,13 @@ export function TemplatesTab({
             checked={saveAsTemplate}
             onChange={(e) => onSaveAsTemplateChange(e.target.checked)}
           />
-          <Label htmlFor="save-template">Save current settings as template</Label>
+          <Label htmlFor="save-template">
+            <Trans>Save current settings as template</Trans>
+          </Label>
         </div>
         {saveAsTemplate && (
           <Input
-            placeholder="Template name"
+            placeholder={t`Template name`}
             value={templateName}
             onChange={(e) => onTemplateNameChange(e.target.value)}
           />
@@ -89,7 +96,9 @@ export function TemplatesTab({
         <>
           <Separator />
           <div className="space-y-2">
-            <Label>Saved Templates</Label>
+            <Label>
+              <Trans>Saved Templates</Trans>
+            </Label>
             <div className="space-y-2">
               {templates.map((template) => (
                 <div
@@ -99,8 +108,10 @@ export function TemplatesTab({
                   <div className="min-w-0">
                     <div className="truncate font-medium">{template.name}</div>
                     <div className="text-sm text-muted-foreground break-words">
-                      Thousand: {template.thousandSeparator || ','} | Decimal:{' '}
-                      {template.decimalSeparator || '.'} | Date: {template.dateFormat}
+                      <Trans>
+                        Thousand: {template.thousandSeparator || ','} | Decimal:{' '}
+                        {template.decimalSeparator || '.'} | Date: {template.dateFormat}
+                      </Trans>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => onDeleteTemplate(template.id)}>

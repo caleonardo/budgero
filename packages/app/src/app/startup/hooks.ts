@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
@@ -118,6 +119,8 @@ export interface BudgetStartupSnapshot {
 }
 
 export function useAuthStartupSnapshot(): AuthStartupSnapshot {
+  const { t } = useLingui();
+
   const location = useLocation();
   const profileQuery = useProfile();
   const user = profileQuery.data;
@@ -288,7 +291,7 @@ export function useAuthStartupSnapshot(): AuthStartupSnapshot {
         user,
         accessStatus: null,
         canProceedOffline: false,
-        error: getErrorMessage(error, 'Failed to load profile.'),
+        error: getErrorMessage(error, t`Failed to load profile.`),
       };
     }
 
@@ -379,7 +382,7 @@ export function useAuthStartupSnapshot(): AuthStartupSnapshot {
       error:
         networkIssue && !offlineAllowed
           ? "You're offline. Reconnect to verify your session."
-          : getErrorMessage(error, 'Unable to load user profile.'),
+          : getErrorMessage(error, t`Unable to load user profile.`),
     };
   }
 
@@ -454,6 +457,8 @@ export function useMasterPasswordStartupSnapshot(
   enabled: boolean,
   profile: User | undefined
 ): MasterPasswordStartupSnapshot {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const queryClient = useQueryClient();
   const connectivity = useConnectivity();
@@ -552,8 +557,7 @@ export function useMasterPasswordStartupSnapshot(
             });
             try {
               return (await Promise.race([MasterPasswordManager.get(), timeoutPromise])) as
-                | string
-                | null;
+                string | null;
             } catch {
               return null;
             }
@@ -676,37 +680,37 @@ export function useMasterPasswordStartupSnapshot(
     setError('');
 
     if (!inputPassword.trim()) {
-      setError('Master password is required');
+      setError(t`Master password is required`);
       return;
     }
 
     if (!isOffline && isFirstTimeSetup) {
       if (!confirmPassword.trim()) {
-        setError('Please confirm your master password');
+        setError(t`Please confirm your master password`);
         return;
       }
       if (inputPassword !== confirmPassword) {
-        setError('Passwords do not match');
+        setError(t`Passwords do not match`);
         return;
       }
       if (inputPassword.length < 12) {
-        setError('Master password must be at least 12 characters long');
+        setError(t`Master password must be at least 12 characters long`);
         return;
       }
       if (!/[A-Z]/.test(inputPassword)) {
-        setError('Master password must contain at least one uppercase letter');
+        setError(t`Master password must contain at least one uppercase letter`);
         return;
       }
       if (!/[a-z]/.test(inputPassword)) {
-        setError('Master password must contain at least one lowercase letter');
+        setError(t`Master password must contain at least one lowercase letter`);
         return;
       }
       if (!/\d/.test(inputPassword)) {
-        setError('Master password must contain at least one number');
+        setError(t`Master password must contain at least one number`);
         return;
       }
       if (!/[^A-Za-z0-9]/.test(inputPassword)) {
-        setError('Master password must contain at least one special character');
+        setError(t`Master password must contain at least one special character`);
         return;
       }
     }
@@ -722,7 +726,7 @@ export function useMasterPasswordStartupSnapshot(
     if (!isFirstTimeSetup && hasLocalState && MasterPasswordManager.canVerifyLocally()) {
       const valid = await MasterPasswordManager.verify(inputPassword);
       if (!valid) {
-        setError('Invalid master password - please try again');
+        setError(t`Invalid master password - please try again`);
         return;
       }
     }
@@ -746,11 +750,11 @@ export function useMasterPasswordStartupSnapshot(
       const message = String(getErrorMessage(submissionError, ''));
       setError(
         message.toLowerCase().includes('invalid master password')
-          ? 'Invalid master password - please try again'
-          : 'Failed to store master password'
+          ? t`Invalid master password - please try again`
+          : t`Failed to store master password`
       );
     }
-  }, [confirmPassword, inputPassword, isFirstTimeSetup, isOffline, profile?.id]);
+  }, [confirmPassword, inputPassword, isFirstTimeSetup, isOffline, profile?.id, t]);
 
   const confirmReset = useCallback(async () => {
     setShowResetDialog(false);
@@ -761,10 +765,10 @@ export function useMasterPasswordStartupSnapshot(
     try {
       await handleAccountReset(runtime, queryClient);
     } catch (resetErr) {
-      setResetError(getErrorMessage(resetErr, 'Failed to reset Budgero.'));
+      setResetError(getErrorMessage(resetErr, t`Failed to reset Budgero.`));
       setIsResetting(false);
     }
-  }, [queryClient, runtime]);
+  }, [queryClient, runtime, t]);
 
   return {
     status,
@@ -794,6 +798,8 @@ export function useWorkspaceStartupSnapshot(
   accessStatus: AccessStatus | null,
   canProceedOffline: boolean
 ): WorkspaceStartupSnapshot {
+  const { t } = useLingui();
+
   const cachedSpaces = useMemo(() => loadCachedSpaces(), []);
   const accessibleCachedSpaces = useMemo(
     () =>
@@ -844,7 +850,7 @@ export function useWorkspaceStartupSnapshot(
       spacesQuery,
       accessibleSpaces,
       allowWorkspaceCreation,
-      error: getErrorMessage(spacesQuery.error, 'Failed to load workspaces.'),
+      error: getErrorMessage(spacesQuery.error, t`Failed to load workspaces.`),
     };
   }
 

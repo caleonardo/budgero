@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Mapping Tab
  *
@@ -29,10 +30,12 @@ interface SkipRowCheckboxProps {
 }
 
 function SkipRowCheckbox({ skipped, onClick, onCheckedChange }: SkipRowCheckboxProps) {
+  const { t } = useLingui();
+
   return (
     <Checkbox
       className="mr-2 size-5 align-middle [&_svg]:size-4"
-      aria-label={skipped ? 'Include this row in import' : 'Skip this row from import'}
+      aria-label={skipped ? t`Include this row in import` : t`Skip this row from import`}
       checked={!skipped}
       onClick={onClick}
       onCheckedChange={onCheckedChange}
@@ -67,6 +70,8 @@ export function MappingTab({
   onSetSkippedRowsInRange,
   onHeaderSelect,
 }: MappingTabProps) {
+  const { t } = useLingui();
+
   const handleColumnChange = (field: keyof ColumnMapping, value: string) => {
     onColumnMappingChange({
       ...columnMapping,
@@ -107,7 +112,7 @@ export function MappingTab({
     const seenLabels = new Set<string>();
     const headers: string[] = row.map((cell: string, i: number) => {
       const trimmed = (cell || '').trim();
-      const base = trimmed.length > 0 ? trimmed : `Column ${i + 1}`;
+      const base = trimmed.length > 0 ? trimmed : t`Column ${i + 1}`;
       // Disambiguate accidental duplicate header labels by suffixing the
       // column index, otherwise the row object below would collapse them.
       let label = base;
@@ -209,10 +214,17 @@ export function MappingTab({
       <Alert className="mb-4">
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription className="break-words">
-          <strong>Required:</strong> Date column + Amount column (or Inflow/Outflow columns)
-          <br />
-          <strong>Optional:</strong> Payee, Account, Category, Memo (will use account selection
-          below if not mapped)
+          <Trans>
+            <strong>
+              <Trans>Required:</Trans>
+            </strong>
+            Date column + Amount column (or Inflow/Outflow columns)
+            <br />
+            <strong>
+              <Trans>Optional:</Trans>
+            </strong>
+            Payee, Account, Category, Memo (will use account selection below if not mapped)
+          </Trans>
         </AlertDescription>
       </Alert>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -222,20 +234,22 @@ export function MappingTab({
               <Label htmlFor={field} className="capitalize">
                 {field}{' '}
                 {field === 'date'
-                  ? '(Required)'
+                  ? t`(Required)`
                   : field === 'amount'
-                    ? '(Required - or use InflowConverted/OutflowConverted)'
-                    : '(Optional)'}
+                    ? t`(Required - or use InflowConverted/OutflowConverted)`
+                    : t`(Optional)`}
               </Label>
               <Select
                 value={columnMapping[field as keyof ColumnMapping] || 'none'}
                 onValueChange={(value) => handleColumnChange(field as keyof ColumnMapping, value)}
               >
                 <SelectTrigger className="w-full min-w-0">
-                  <SelectValue placeholder={`Select ${field} column`} />
+                  <SelectValue placeholder={t`Select ${field} column`} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="none">
+                    <Trans>None</Trans>
+                  </SelectItem>
                   {parsedData?.headers
                     .filter((header) => header && header.trim())
                     .map((header) => (
@@ -257,7 +271,7 @@ export function MappingTab({
         <div className="mt-4 flex flex-wrap items-end gap-3 rounded-lg border border-amber-300/60 bg-amber-50/60 p-3 dark:border-amber-700/40 dark:bg-amber-950/20">
           <div className="space-y-1">
             <Label htmlFor="configure-default-year" className="text-xs font-medium">
-              Default year
+              <Trans>Default year</Trans>
             </Label>
             <Input
               id="configure-default-year"
@@ -270,8 +284,10 @@ export function MappingTab({
             />
           </div>
           <p className="flex-1 min-w-[12rem] text-xs text-muted-foreground">
-            The selected date column has no year (e.g. "Oct 25"). All transactions will be imported
-            using this year. Change it if the statement covers a different year.
+            <Trans>
+              The selected date column has no year (e.g. "Oct 25"). All transactions will be
+              imported using this year. Change it if the statement covers a different year.
+            </Trans>
           </p>
         </div>
       )}
@@ -283,7 +299,7 @@ export function MappingTab({
         <div className="mt-6 flex flex-wrap items-end gap-3 rounded-lg border bg-muted/30 p-3">
           <div className="space-y-1">
             <Label htmlFor="configure-skip-rows" className="text-xs font-medium">
-              Skip first N rows
+              <Trans>Skip first N rows</Trans>
             </Label>
             <Input
               id="configure-skip-rows"
@@ -295,8 +311,10 @@ export function MappingTab({
             />
           </div>
           <p className="flex-1 min-w-[12rem] text-xs text-muted-foreground">
-            Drop garbage rows from the top of the file (titles, blank lines, page banners). Header
-            detection and the previews below update automatically.
+            <Trans>
+              Drop garbage rows from the top of the file (titles, blank lines, page banners). Header
+              detection and the previews below update automatically.
+            </Trans>
           </p>
         </div>
       )}
@@ -304,17 +322,23 @@ export function MappingTab({
       {/* Manual Header Selection for PDFs */}
       {rawTableData && rawTableData.allRows && Array.isArray(rawTableData.allRows) && (
         <div className="mt-6">
-          <h4 className="font-medium mb-2">Select Header Row:</h4>
+          <h4 className="font-medium mb-2">
+            <Trans>Select Header Row:</Trans>
+          </h4>
           <p className="text-sm text-muted-foreground mb-4">
-            Click on the row that contains your table headers.{' '}
-            {visibleSuggestedHeaderIndex !== null &&
-              visibleSuggestedHeaderIndex < visibleRawRows.length &&
-              `Row ${visibleSuggestedHeaderIndex + 1} is suggested.`}{' '}
-            Showing {visibleRawRows.length} of {rawTableData.allRows.length} detected rows
-            {skipRows > 0 ? ` (first ${skipRows} skipped)` : ''}
-            {skippedRowIndices.size > 0 ? `, ${skippedRowIndices.size} excluded from import` : ''}.
-            Once a header is selected, uncheck the box in any data row to exclude it. Hold Shift and
-            click to toggle a range.
+            <Trans>
+              Click on the row that contains your table headers.{' '}
+              {visibleSuggestedHeaderIndex !== null &&
+                visibleSuggestedHeaderIndex < visibleRawRows.length &&
+                t`Row ${visibleSuggestedHeaderIndex + 1} is suggested.`}{' '}
+              Showing {visibleRawRows.length} of {rawTableData.allRows.length} detected rows
+              {skipRows > 0 ? ` (first ${skipRows} skipped)` : ''}
+              {skippedRowIndices.size > 0
+                ? t`, ${skippedRowIndices.size} excluded from import`
+                : ''}
+              . Once a header is selected, uncheck the box in any data row to exclude it. Hold Shift
+              and click to toggle a range.
+            </Trans>
           </p>
           <div className="border rounded-lg overflow-hidden">
             <div className="overflow-auto max-h-96">
@@ -323,7 +347,7 @@ export function MappingTab({
                   <thead className="sticky top-0 z-10">
                     <tr className="bg-primary/15 border-b-2 border-primary">
                       <th className="px-2 py-1 text-xs text-muted-foreground border-r whitespace-nowrap text-left bg-primary/15">
-                        {selectedHeaderIndex + 1} (header)
+                        <Trans>{selectedHeaderIndex + 1} (header)</Trans>
                       </th>
                       {rawTableData.allRows[selectedHeaderIndex].map(
                         (cell: string, cellIndex: number) => (
@@ -374,8 +398,8 @@ export function MappingTab({
                             />
                           )}
                           {absoluteIndex + 1}
-                          {absoluteIndex === rawTableData.suggestedHeaderIndex && ' (suggested)'}
-                          {selectedHeaderIndex === absoluteIndex && ' (selected)'}
+                          {absoluteIndex === rawTableData.suggestedHeaderIndex && t` (suggested)`}
+                          {selectedHeaderIndex === absoluteIndex && t` (selected)`}
                         </td>
                         {row.map((cell: string, cellIndex: number) => (
                           <td
@@ -397,12 +421,16 @@ export function MappingTab({
 
       {parsedData && parsedData.headers.length > 0 && parsedData.rows.length > 0 && (
         <div className="mt-6">
-          <h4 className="font-medium mb-2">Preview of your data:</h4>
+          <h4 className="font-medium mb-2">
+            <Trans>Preview of your data:</Trans>
+          </h4>
           <p className="text-xs text-muted-foreground mb-2">
-            Showing {Math.min(parsedData.rows.length, 500)} of {parsedData.rows.length} rows
-            {skipRows > 0 ? ` (first ${skipRows} skipped)` : ''}
-            {skippedRowIndices.size > 0 ? `, ${skippedRowIndices.size} excluded` : ''}. Uncheck the
-            box to exclude a row from import. Hold Shift and click to toggle a range.
+            <Trans>
+              Showing {Math.min(parsedData.rows.length, 500)} of {parsedData.rows.length} rows
+              {skipRows > 0 ? ` (first ${skipRows} skipped)` : ''}
+              {skippedRowIndices.size > 0 ? `, ${skippedRowIndices.size} excluded` : ''}. Uncheck
+              the box to exclude a row from import. Hold Shift and click to toggle a range.
+            </Trans>
           </p>
           <div className="border rounded-lg overflow-hidden">
             <div className="overflow-auto max-h-96">

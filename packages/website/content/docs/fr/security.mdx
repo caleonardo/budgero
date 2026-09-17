@@ -1,0 +1,84 @@
+---
+title: "Modèle de sécurité"
+summary: "Explorez en détail la conception du chiffrement de bout en bout de Budgero, ce que le serveur peut et ne peut pas voir, et ce qui se passe si vous perdez un appareil."
+section: collaboration
+topicId: security
+takeaways:
+  - "Comment le chiffrement par enveloppe transforme votre mot de passe principal en clés de travail."
+  - "Les métadonnées exactes que voit le serveur - et les données qu'il ne pourra jamais voir."
+  - "Ce que la perte d'un appareil signifie en pratique, et comment s'y préparer."
+---
+
+La plupart des applications financières vous demandent de leur faire confiance. Budgero est conçu pour que vous n'ayez pas à le faire : son architecture rend la lecture de vos données impossible pour nous, et non simplement interdite. Ce guide explique la conception en détail — car « faites-nous confiance, c'est chiffré » est précisément l'affirmation que vous ne devriez pas accepter sans détails.
+
+## Le pipeline de chiffrement
+
+Budgero utilise le **chiffrement par enveloppe**, le même modèle que celui employé dans les systèmes sérieux de gestion de clés :
+
+1. Votre [mot de passe principal](/docs/master-password) est traité via **PBKDF2-HMAC-SHA256 avec 600 000 itérations** sur votre appareil, produisant une **clé de chiffrement de clé (KEK)**. Le nombre d'itérations sert à rendre chaque tentative de devinette de mot de passe coûteuse en calcul.
+2. Une **clé de chiffrement de données (DEK)** générée aléatoirement effectue le travail réel de chiffrement de votre budget.
+3. La KEK enveloppe (chiffre) la DEK. Seule la DEK enveloppée est stockée — le déverrouillage consiste à dériver la KEK à partir de votre mot de passe et à déballer la DEK, après quoi la dérivation coûteuse n'a plus besoin d'être exécutée pendant la session.
+4. Tout le chiffrement des données utilise **AES-256-GCM**, un chiffrement authentifié — il ne se contente pas de masquer les données, il détecte les altérations.
+
+Chaque modification du budget est chiffrée sur votre appareil *avant* d'être synchronisée. Le serveur reçoit, stocke et relaie du texte chiffré.
+
+## Ce que le serveur voit — et ce qu'il ne peut pas voir
+
+Des affirmations honnêtes sur le Zero-knowledge exigent d'énoncer les deux volets explicitement :
+
+<table>
+  <thead>
+    <tr>
+      <th>Le serveur peut voir</th>
+      <th>Le serveur ne peut jamais voir</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Que vous avez un compte (e-mail, identifiant de connexion)</td>
+      <td>Transactions — montants, bénéficiaires, mémos, dates</td>
+    </tr>
+    <tr>
+      <td>Appartenance et rôles dans l'espace de travail (qui partage avec qui)</td>
+      <td>Soldes et noms de comptes</td>
+    </tr>
+    <tr>
+      <td>Horodatages et numéros de version des modifications synchronisées</td>
+      <td>Catégories, affectations, objectifs — le budget lui-même</td>
+    </tr>
+    <tr>
+      <td>La taille et la fréquence des blobs chiffrés</td>
+      <td>Votre mot de passe principal ou toute clé dérivée</td>
+    </tr>
+  </tbody>
+</table>
+
+La colonne de gauche représente le minimum nécessaire pour faire fonctionner un service de synchronisation : acheminer le texte chiffré vers les bonnes personnes et facturer le bon compte. La colonne de droite, c'est votre vie financière, qui n'existe sous forme lisible que sur vos appareils déverrouillés.
+
+Cette architecture définit également le scénario en cas de violation. Si les serveurs de Budgero étaient entièrement compromis, l'attaquant obtiendrait des clés encapsulées et du texte chiffré AES-256-GCM — et se heurterait encore, pour chaque utilisateur, à 600 000 itérations PBKDF2 contre chaque mot de passe principal pour aller quelque part. Avec une phrase de passe robuste, « quelque part » n'est nulle part.
+
+## Où sont stockées vos données
+
+Budgero Cloud est hébergé en **Finlande, sous juridiction de l'UE** — et l'application n'envoie **aucune télémétrie tant que vous n'y consentez pas explicitement**. Si même des blobs chiffrés sur notre infrastructure représentent plus de confiance que vous ne souhaitez en accorder, [Budgero Self-Host](/docs/self-hosting-guide) exécute le même pipeline de chiffrement sur du matériel que vous contrôlez. Le chiffrement n'est pas une fonctionnalité Cloud — c'est ainsi que fonctionne le produit.
+
+## Partage sans affaiblir le modèle
+
+Les budgets partagés conservent les mêmes garanties : les clés des membres du partage sont échangées via des secrets de liens d'invitation transportés dans les fragments d'URL (jamais envoyés au serveur) et reconditionnées sous le mot de passe principal de chaque membre. Le serveur sait que deux comptes partagent un espace de travail — jamais ce qu'il contient. Détails dans [Partage des budgets](/docs/sharing).
+
+## Perte d'un appareil
+
+Ce qu'un voleur récupère de votre appareil est ce que vos choix côté appareil y ont laissé :
+
+- Les données locales du budget sont chiffrées au repos ; sans votre mot de passe principal, ce sont des données chiffrées.
+- Si vous avez activé le **déverrouillage de session** avec une longue durée et que l'appareil n'a pas de code d'accès, une session déverrouillée constitue le risque d'exposition réel. Les mesures d'atténuation sont simples mais efficaces : code d'accès/biométrie de l'appareil, et durées de session plus courtes sur les appareils portables (voir [Mot de passe principal](/docs/master-password)).
+- Votre identifiant de compte (qui contrôle l'accès à la synchronisation) peut être réinitialisé via la procédure normale de récupération d'identité sans rien perdre. Le mot de passe principal est différent : il peut être modifié si vous le connaissez, ou réinitialisé si vous ne le connaissez pas — mais une réinitialisation efface les données chiffrées, car rien ne peut les déchiffrer sans l'ancien mot de passe (voir [Mot de passe principal](/docs/master-password)).
+
+Après la perte d'un appareil, modifiez votre mot de passe de *compte* pour couper l'appareil des futures synchronisations, et continuez. Le chiffrement a fait son travail.
+
+## Support et vos données
+
+Une conséquence de cette conception qu'il vaut la peine d'énoncer clairement : lorsque vous contactez le support, nous pouvons voir les éléments côté service — état de la synchronisation, abonnement, journaux d'erreurs — et rien à l'intérieur de votre budget. Le support ne vous demandera jamais votre mot de passe principal ; rien de ce que nous opérons n'en a l'utilité.
+
+## La piste d'audit
+
+Chaque modification synchronisée est une entrée chiffrée dans un journal des mutations à ajout unique — c'est ainsi que fonctionnent à la fois la synchronisation et la [fusion hors ligne](/docs/offline), ainsi qu'un historique infalsifiable de votre budget. Comme tout le reste, son contenu est opaque pour le serveur.

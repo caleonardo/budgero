@@ -1,7 +1,10 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import type { PreviewRow, ColumnMapping, ImportConfig } from '@features/import/model/types';
+import { translateImportText } from '../../lib/import-display-text';
 
 interface PreviewStepProps {
   busy?: boolean;
@@ -17,12 +20,7 @@ interface PreviewStepProps {
   onDecision: (index: number, decision: 'skip' | 'import') => void;
   onResolveAll: (decision: 'skip' | 'import') => void;
 }
-const labels = {
-  new: 'New',
-  'already-imported': 'Already imported',
-  'needs-review': 'Needs review',
-  invalid: 'Invalid/skipped',
-};
+
 export function PreviewStep({
   busy = false,
   previewData,
@@ -32,6 +30,14 @@ export function PreviewStep({
   onDecision,
   onResolveAll,
 }: PreviewStepProps) {
+  const { t } = useLingui();
+  const labels = {
+    new: t`New`,
+    'already-imported': t`Already imported`,
+    'needs-review': t`Needs review`,
+    invalid: t`Invalid/skipped`,
+  };
+
   const [filter, setFilter] = useState('all');
   const [page, setPage] = useState(0);
   const unresolved = previewData.filter(
@@ -49,14 +55,18 @@ export function PreviewStep({
   return (
     <Card className="mx-auto w-full max-w-5xl overflow-hidden">
       <CardHeader>
-        <CardTitle>Review import</CardTitle>
+        <CardTitle>
+          <Trans>Review import</Trans>
+        </CardTitle>
         <CardDescription>
-          {importing} to import · {previewData.filter((r) => r.decision === 'skip').length} skipped
-          · {unresolved} need a decision
+          <Trans>
+            {importing} to import · {previewData.filter((r) => r.decision === 'skip').length}{' '}
+            skipped · {unresolved} need a decision
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex flex-wrap gap-2" aria-label="Filter import rows">
+        <div className="flex flex-wrap gap-2" aria-label={t`Filter import rows`}>
           {['all', ...Object.keys(labels)].map((key) => (
             <Button
               key={key}
@@ -66,7 +76,7 @@ export function PreviewStep({
                 setPage(0);
               }}
             >
-              {key === 'all' ? 'All' : labels[key as keyof typeof labels]} (
+              {key === 'all' ? t`All` : labels[key as keyof typeof labels]} (
               {previewData.filter((r) => key === 'all' || r.duplicate.status === key).length})
             </Button>
           ))}
@@ -74,15 +84,17 @@ export function PreviewStep({
         {unresolved > 0 && (
           <div className="space-y-2">
             <p className="text-sm">
-              Review possible duplicates before importing. Skipping keeps the existing transaction
-              unchanged.
+              <Trans>
+                Review possible duplicates before importing. Skipping keeps the existing transaction
+                unchanged.
+              </Trans>
             </p>
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={() => onResolveAll('skip')}>
-                Skip all unresolved
+                <Trans>Skip all unresolved</Trans>
               </Button>
               <Button variant="outline" onClick={() => onResolveAll('import')}>
-                Import all unresolved as new
+                <Trans>Import all unresolved as new</Trans>
               </Button>
             </div>
           </div>
@@ -91,10 +103,18 @@ export function PreviewStep({
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left">
-                <th>Row / account</th>
-                <th>Incoming transaction</th>
-                <th>Match / reason</th>
-                <th>Decision</th>
+                <th>
+                  <Trans>Row / account</Trans>
+                </th>
+                <th>
+                  <Trans>Incoming transaction</Trans>
+                </th>
+                <th>
+                  <Trans>Match / reason</Trans>
+                </th>
+                <th>
+                  <Trans>Decision</Trans>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -115,23 +135,29 @@ export function PreviewStep({
                   </td>
                   <td className="p-2">
                     <strong>{labels[row.duplicate.status]}</strong>
-                    <p>{row.duplicate.reason}</p>
+                    <p>{translateImportText(row.duplicate.reason)}</p>
                     {row.duplicate.candidates.map((candidate) => (
                       <p key={candidate.id} className="mt-2">
-                        Existing #{candidate.id}: {candidate.date} ·{' '}
-                        {(candidate.inflow - candidate.outflow) / 1000} {row.input.currency}
-                        <br />
-                        {candidate.payee}
-                        <br />
-                        {candidate.memo}
+                        <Trans>
+                          Existing #{candidate.id}: {candidate.date} ·{' '}
+                          {(candidate.inflow - candidate.outflow) / 1000} {row.input.currency}
+                          <br />
+                          {candidate.payee}
+                          <br />
+                          {candidate.memo}
+                        </Trans>
                       </p>
                     ))}
                     {row.duplicate.sameFileIndex !== undefined && (
-                      <p>Compare with row {row.duplicate.sameFileIndex + 1} in this file.</p>
+                      <p>
+                        <Trans>
+                          Compare with row {row.duplicate.sameFileIndex + 1} in this file.
+                        </Trans>
+                      </p>
                     )}
                     {row.errors.map((message, i) => (
                       <p key={i} className="text-destructive">
-                        {message}
+                        {translateImportText(message)}
                       </p>
                     ))}
                   </td>
@@ -143,7 +169,7 @@ export function PreviewStep({
                           variant={row.decision === 'skip' ? 'default' : 'outline'}
                           onClick={() => onDecision(row.input.index, 'skip')}
                         >
-                          Skip
+                          <Trans>Skip</Trans>
                         </Button>
                         <Button
                           size="sm"
@@ -151,8 +177,8 @@ export function PreviewStep({
                           onClick={() => onDecision(row.input.index, 'import')}
                         >
                           {row.duplicate.status === 'already-imported'
-                            ? 'Import anyway'
-                            : 'Import as new'}
+                            ? t`Import anyway`
+                            : t`Import as new`}
                         </Button>
                       </div>
                     )}
@@ -168,28 +194,37 @@ export function PreviewStep({
             disabled={currentPage === 0}
             onClick={() => setPage(currentPage - 1)}
           >
-            Previous
+            <Trans>Previous</Trans>
           </Button>
           <span>
-            Page {currentPage + 1} of {pages}
+            <Trans>
+              Page {currentPage + 1} of {pages}
+            </Trans>
           </span>
           <Button
             variant="outline"
             disabled={currentPage + 1 >= pages}
             onClick={() => setPage(currentPage + 1)}
           >
-            Next
+            <Trans>Next</Trans>
           </Button>
         </div>
-        {!importing && !unresolved && <p>Nothing new to import.</p>}
+        {!importing && !unresolved && (
+          <p>
+            <Trans>Nothing new to import.</Trans>
+          </p>
+        )}
         <div className="flex justify-between gap-2">
           <Button variant="outline" onClick={onBack} disabled={busy}>
-            Back to Configuration
+            <Trans>Back to Configuration</Trans>
           </Button>
           <Button disabled={busy || !hasBudgetSelected || unresolved > 0} onClick={onStartImport}>
             {importing
-              ? `Import ${importing} ${importing === 1 ? 'transaction' : 'transactions'}`
-              : 'Finish'}
+              ? plural(importing, {
+                  one: `Import # transaction`,
+                  other: `Import # transactions`,
+                })
+              : t`Finish`}
           </Button>
         </div>
       </CardContent>

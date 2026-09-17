@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Loader2, Download, Trash2 } from 'lucide-react';
@@ -15,9 +16,11 @@ export function QueueStatsPanel({ state }: QueueStatsPanelProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Queue Status</CardTitle>
+        <CardTitle>
+          <Trans>Queue Status</Trans>
+        </CardTitle>
         <CardDescription>
-          Pending mutations waiting to be processed when you connect.
+          <Trans>Pending mutations waiting to be processed when you connect.</Trans>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -30,19 +33,27 @@ export function QueueStatsPanel({ state }: QueueStatsPanelProps) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
               <div className="space-y-1">
                 <p className="text-2xl font-bold text-yellow-600">{queueStats?.pending ?? 0}</p>
-                <p className="text-xs text-muted-foreground">Pending</p>
+                <p className="text-xs text-muted-foreground">
+                  <Trans>Pending</Trans>
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-2xl font-bold text-green-600">{queueStats?.processed ?? 0}</p>
-                <p className="text-xs text-muted-foreground">Processed</p>
+                <p className="text-xs text-muted-foreground">
+                  <Trans>Processed</Trans>
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-2xl font-bold text-red-600">{queueStats?.failed ?? 0}</p>
-                <p className="text-xs text-muted-foreground">Failed</p>
+                <p className="text-xs text-muted-foreground">
+                  <Trans>Failed</Trans>
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-2xl font-bold">{queueStats?.total ?? 0}</p>
-                <p className="text-xs text-muted-foreground">Total</p>
+                <p className="text-xs text-muted-foreground">
+                  <Trans>Total</Trans>
+                </p>
               </div>
             </div>
             {(queueStats?.pending ?? 0) > 0 && (
@@ -53,12 +64,14 @@ export function QueueStatsPanel({ state }: QueueStatsPanelProps) {
                   onClick={handlePullMutations}
                   disabled={isProcessingQueue}
                 >
-                  {isProcessingQueue ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <Download className="h-4 w-4 mr-2" />
-                  )}
-                  Pull Mutations
+                  <Trans>
+                    {isProcessingQueue ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4 mr-2" />
+                    )}
+                    Pull Mutations
+                  </Trans>
                 </Button>
                 <Button
                   variant="outline"
@@ -66,12 +79,14 @@ export function QueueStatsPanel({ state }: QueueStatsPanelProps) {
                   onClick={() => clearQueueMutation.mutate()}
                   disabled={clearQueueMutation.isPending}
                 >
-                  {clearQueueMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-4 w-4 mr-2" />
-                  )}
-                  Clear Queue
+                  <Trans>
+                    {clearQueueMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4 mr-2" />
+                    )}
+                    Clear Queue
+                  </Trans>
                 </Button>
               </div>
             )}

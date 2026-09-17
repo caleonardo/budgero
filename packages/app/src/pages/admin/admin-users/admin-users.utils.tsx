@@ -1,5 +1,7 @@
+import { Trans } from '@lingui/react/macro';
 import { Badge } from '@shared/ui/badge';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import {
   getUserAccessStatus,
   getAccessLevelDisplay,
@@ -29,19 +31,23 @@ export function getStatusBadge(user: User) {
 
 export function getSubscriptionInfo(user: User) {
   if (user.is_founding_member) {
-    return <span className="text-xs text-orange-600">Lifetime access</span>;
+    return (
+      <span className="text-xs text-orange-600">
+        <Trans>Lifetime access</Trans>
+      </span>
+    );
   }
   if (user.has_beta_access && user.beta_expires_at) {
     return (
       <span className="text-xs text-indigo-600">
-        Free access until {formatShortDate(user.beta_expires_at)}
+        <Trans>Free access until {formatShortDate(user.beta_expires_at)}</Trans>
       </span>
     );
   }
   if (user.subscription_status === 'active' && user.current_period_end) {
     return (
       <span className="text-xs text-green-600">
-        Renews {formatShortDate(user.current_period_end)}
+        <Trans>Renews {formatShortDate(user.current_period_end)}</Trans>
       </span>
     );
   }
@@ -51,18 +57,22 @@ export function getSubscriptionInfo(user: User) {
   ) {
     return (
       <span className="text-xs text-blue-600">
-        Trial until {formatShortDate(user.trial_ends_at)}
+        <Trans>Trial until {formatShortDate(user.trial_ends_at)}</Trans>
       </span>
     );
   }
   if (user.subscription_status === 'cancelled' && user.subscription_ends_at) {
     return (
       <span className="text-xs text-red-600">
-        Cancelled, ends {formatShortDate(user.subscription_ends_at)}
+        <Trans>Cancelled, ends {formatShortDate(user.subscription_ends_at)}</Trans>
       </span>
     );
   }
-  return <span className="text-xs text-gray-500">No active subscription</span>;
+  return (
+    <span className="text-xs text-gray-500">
+      <Trans>No active subscription</Trans>
+    </span>
+  );
 }
 
 /** Case-insensitive match of a (trimmed) search term against a user's name, email, or id. */

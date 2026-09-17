@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
@@ -24,6 +25,8 @@ interface RedeemInviteDialogProps {
 }
 
 export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogProps) {
+  const { t } = useLingui();
+
   const [inviteSecret, setInviteSecret] = useState('');
   const [masterPassword, setMasterPassword] = useState('');
   const [inspectionSummary, setInspectionSummary] = useState<string | null>(null);
@@ -72,7 +75,7 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
 
   const inspectInvite = useCallback(async () => {
     if (!inviteSecret.trim()) {
-      setInspectionError('Enter the invite secret first.');
+      setInspectionError(t`Enter the invite secret first.`);
       return;
     }
 
@@ -85,12 +88,12 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
       const inspection = await spaceApi.inspectInvite(token);
       setInspectionSummary(`Workspace: ${inspection.space_display_name || inspection.space_id}`);
     } catch (error) {
-      const message = getErrorMessage(error, 'Invite not found.');
+      const message = getErrorMessage(error, t`Invite not found.`);
       setInspectionError(message);
     } finally {
       setIsInspecting(false);
     }
-  }, [inviteSecret]);
+  }, [inviteSecret, t]);
 
   const handleRedeem = async () => {
     setInspectionError(null);
@@ -100,12 +103,12 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
         inviteSecret: inviteSecret.trim(),
         masterPassword: passwordToUse,
       });
-      toast.success('Workspace joined', {
-        description: `Joined workspace "${summary.display_name || summary.space_id}"`,
+      toast.success(t`Workspace joined`, {
+        description: t`Joined workspace "${summary.display_name || summary.space_id}"`,
       });
       onOpenChange(false);
     } catch (error) {
-      const message = getErrorMessage(error, 'Unable to redeem invite. Check the secret again.');
+      const message = getErrorMessage(error, t`Unable to redeem invite. Check the secret again.`);
       setInspectionError(message);
     }
   };
@@ -116,21 +119,27 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Redeem workspace invite</DialogTitle>
+          <DialogTitle>
+            <Trans>Redeem workspace invite</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Enter the invite secret shared with you. Budgero will decrypt the space key locally
-            using your master password.
+            <Trans>
+              Enter the invite secret shared with you. Budgero will decrypt the space key locally
+              using your master password.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="invite-secret">Invite secret</Label>
+            <Label htmlFor="invite-secret">
+              <Trans>Invite secret</Trans>
+            </Label>
             <Input
               id="invite-secret"
               value={inviteSecret}
               onChange={(event) => setInviteSecret(event.target.value)}
-              placeholder="paste secret here"
+              placeholder={t`paste secret here`}
               autoComplete="off"
             />
             <Button
@@ -142,12 +151,12 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
               loading={isInspecting}
             >
               {isInspecting ? (
-                'Checking…'
+                t`Checking…`
               ) : (
-                <>
+                <Trans>
                   <ShieldCheck className="h-4 w-4" />
                   Validate secret
-                </>
+                </Trans>
               )}
             </Button>
             {inspectionSummary && (
@@ -159,17 +168,21 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="master-password">Master password</Label>
+            <Label htmlFor="master-password">
+              <Trans>Master password</Trans>
+            </Label>
             <Input
               id="master-password"
               type="password"
               value={masterPassword}
               onChange={(event) => setMasterPassword(event.target.value)}
-              placeholder={hasCachedPassword ? 'leave blank to use cached password' : 'required'}
+              placeholder={hasCachedPassword ? t`leave blank to use cached password` : 'required'}
             />
             <p className="text-xs text-muted-foreground">
-              Your master password never leaves this device. It wraps the decrypted workspace key
-              before sending it to the server.
+              <Trans>
+                Your master password never leaves this device. It wraps the decrypted workspace key
+                before sending it to the server.
+              </Trans>
             </p>
           </div>
 
@@ -188,7 +201,7 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
             onClick={() => onOpenChange(false)}
             disabled={redeemInvite.isPending}
           >
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             type="button"
@@ -196,7 +209,7 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
             disabled={disableRedeem}
             loading={redeemInvite.isPending}
           >
-            {redeemInvite.isPending ? 'Joining…' : 'Join workspace'}
+            {redeemInvite.isPending ? t`Joining…` : t`Join workspace`}
           </Button>
         </DialogFooter>
       </DialogContent>

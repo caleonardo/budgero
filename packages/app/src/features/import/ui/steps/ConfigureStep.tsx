@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Configure Step Component
  *
@@ -117,6 +118,8 @@ export function ConfigureStep({
   onBack,
   onNext,
 }: ConfigureStepProps) {
+  const { t } = useLingui();
+
   const canProceed =
     columnMapping.date &&
     (columnMapping.amount || columnMapping.inflow || columnMapping.outflow) &&
@@ -127,11 +130,13 @@ export function ConfigureStep({
     <Card className="mx-auto w-full max-w-4xl overflow-x-hidden">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <FileSpreadsheet className="h-5 w-5" />
-          Configure Import Settings
+          <Trans>
+            <FileSpreadsheet className="h-5 w-5" />
+            Configure Import Settings
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Map your file columns to transaction fields and set formatting options
+          <Trans>Map your file columns to transaction fields and set formatting options</Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 overflow-x-hidden">
@@ -141,20 +146,24 @@ export function ConfigureStep({
               value="mapping"
               className="min-w-0 whitespace-normal px-2 py-2 text-xs leading-tight sm:text-sm"
             >
-              <span className="sm:hidden">Mapping</span>
-              <span className="hidden sm:inline">Column Mapping</span>
+              <span className="sm:hidden">
+                <Trans>Mapping</Trans>
+              </span>
+              <span className="hidden sm:inline">
+                <Trans>Column Mapping</Trans>
+              </span>
             </TabsTrigger>
             <TabsTrigger
               value="formatting"
               className="min-w-0 whitespace-normal px-2 py-2 text-xs leading-tight sm:text-sm"
             >
-              Formatting
+              <Trans>Formatting</Trans>
             </TabsTrigger>
             <TabsTrigger
               value="templates"
               className="min-w-0 whitespace-normal px-2 py-2 text-xs leading-tight sm:text-sm"
             >
-              Templates
+              <Trans>Templates</Trans>
             </TabsTrigger>
           </TabsList>
 
@@ -199,35 +208,45 @@ export function ConfigureStep({
         {/* Account Selection for Unmapped Transactions */}
         {!columnMapping.account && hasBudgetSelected && (
           <div className="p-4 border rounded-lg bg-muted/50">
-            <Label className="text-sm font-medium">Default Account for Import</Label>
+            <Label className="text-sm font-medium">
+              <Trans>Default Account for Import</Trans>
+            </Label>
             <p className="text-xs text-muted-foreground mb-3">
-              Since no account column is mapped, transactions will be imported into the selected
-              account:
+              <Trans>
+                Since no account column is mapped, transactions will be imported into the selected
+                account:
+              </Trans>
             </p>
             <DefaultAccountSelect
               accounts={accounts}
               importConfig={importConfig}
               onImportConfigChange={onImportConfigChange}
-              placeholder="Select account"
+              placeholder={t`Select account`}
             />
           </div>
         )}
 
         {columnMapping.account && hasBudgetSelected && (
           <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-950/30">
-            <Label className="text-sm font-medium">Account Column Mapped</Label>
+            <Label className="text-sm font-medium">
+              <Trans>Account Column Mapped</Trans>
+            </Label>
             <p className="text-xs text-muted-foreground">
-              Transactions will use accounts from the "{columnMapping.account}" column. If an
-              account name doesn't match any existing account, you'll need to select a default
-              account below:
+              <Trans>
+                Transactions will use accounts from the "{columnMapping.account}" column. If an
+                account name doesn't match any existing account, you'll need to select a default
+                account below:
+              </Trans>
             </p>
             <div className="mt-3">
-              <Label className="text-xs">Fallback Account (for unmatched account names)</Label>
+              <Label className="text-xs">
+                <Trans>Fallback Account (for unmatched account names)</Trans>
+              </Label>
               <DefaultAccountSelect
                 accounts={accounts}
                 importConfig={importConfig}
                 onImportConfigChange={onImportConfigChange}
-                placeholder="Select fallback account"
+                placeholder={t`Select fallback account`}
                 triggerClassName="mt-1 w-full min-w-0"
               />
             </div>
@@ -236,11 +255,13 @@ export function ConfigureStep({
 
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
           <Button variant="outline" onClick={onBack} className="w-full sm:w-auto">
-            Back
+            <Trans>Back</Trans>
           </Button>
           <Button onClick={onNext} disabled={!canProceed} className="w-full sm:w-auto">
-            Preview Import
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <Trans>
+              Preview Import
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Trans>
           </Button>
         </div>
       </CardContent>

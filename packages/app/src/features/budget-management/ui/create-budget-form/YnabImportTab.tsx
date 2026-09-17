@@ -1,3 +1,5 @@
+import { plural } from "@lingui/core/macro";
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * "YNAB" tab of CreateBudgetForm: import a YNAB ZIP export as a new budget.
  */
@@ -89,6 +91,8 @@ export function YnabImportTab({
   onReset,
   onImport,
 }: YnabImportTabProps) {
+  const { t } = useLingui();
+
   const canImport =
     Boolean(budgetName.trim()) &&
     Boolean(preview) &&
@@ -107,8 +111,10 @@ export function YnabImportTab({
           onClick={() => onSourceModeChange('api')}
           disabled={isImporting || isConnecting}
         >
-          <KeyRound className="h-3.5 w-3.5" />
-          Connect directly
+          <Trans>
+            <KeyRound className="h-3.5 w-3.5" />
+            Connect directly
+          </Trans>
         </Button>
         <Button
           type="button"
@@ -117,8 +123,10 @@ export function YnabImportTab({
           onClick={() => onSourceModeChange('zip')}
           disabled={isImporting || isConnecting}
         >
-          <Upload className="h-3.5 w-3.5" />
-          Export ZIP
+          <Trans>
+            <Upload className="h-3.5 w-3.5" />
+            Export ZIP
+          </Trans>
         </Button>
       </div>
 
@@ -127,7 +135,7 @@ export function YnabImportTab({
           <div className="space-y-1.5">
             <div className="flex items-center gap-1">
               <Label htmlFor="ynabPersonalAccessToken" className="text-xs sm:text-sm">
-                YNAB personal access token
+                <Trans>YNAB personal access token</Trans>
               </Label>
               <YnabPatHelpPopover />
             </div>
@@ -138,7 +146,7 @@ export function YnabImportTab({
                 autoComplete="off"
                 value={personalAccessToken}
                 onChange={(event) => onPersonalAccessTokenChange(event.target.value)}
-                placeholder="Paste token for this import only"
+                placeholder={t`Paste token for this import only`}
                 disabled={isImporting || isConnecting}
                 className="h-8 sm:h-9"
               />
@@ -150,18 +158,20 @@ export function YnabImportTab({
                 className="h-8 sm:h-9"
               >
                 {isConnecting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                {isConnecting ? 'Connecting…' : 'Connect'}
+                {isConnecting ? t`Connecting…` : t`Connect`}
               </Button>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Used in memory for this import and never saved to Budgero or browser storage.
+              <Trans>
+                Used in memory for this import and never saved to Budgero or browser storage.
+              </Trans>
             </p>
           </div>
 
           {plans.length > 0 && (
             <div className="space-y-1.5">
               <Label htmlFor="ynabPlan" className="text-xs sm:text-sm">
-                YNAB plan
+                <Trans>YNAB plan</Trans>
               </Label>
               <Select
                 value={selectedPlanId}
@@ -184,12 +194,19 @@ export function YnabImportTab({
         </div>
       )}
 
-      <Field label={<span className="text-xs sm:text-sm">Budget Name</span>} htmlFor="importName">
+      <Field
+        label={
+          <span className="text-xs sm:text-sm">
+            <Trans>Budget Name</Trans>
+          </span>
+        }
+        htmlFor="importName"
+      >
         <Input
           id="importName"
           value={budgetName}
           onChange={(e) => onBudgetNameChange(e.target.value)}
-          placeholder="Enter a name for your imported budget"
+          placeholder={t`Enter a name for your imported budget`}
           disabled={isImporting}
           className="h-8 sm:h-9"
         />
@@ -200,11 +217,13 @@ export function YnabImportTab({
           <CurrencySelector
             value={currency}
             onValueChange={onCurrencyChange}
-            label="Budget Currency"
+            label={t`Budget Currency`}
           />
           <p className="text-xs text-muted-foreground">
-            The base currency used for categories, assignments, reports, and converted account
-            values.
+            <Trans>
+              The base currency used for categories, assignments, reports, and converted account
+              values.
+            </Trans>
           </p>
         </div>
 
@@ -213,10 +232,10 @@ export function YnabImportTab({
             value={numberFormat}
             currency={currency}
             onValueChange={onNumberFormatChange}
-            label="Number Format"
+            label={t`Number Format`}
           />
           <p className="text-xs text-muted-foreground">
-            How numbers and decimals are displayed throughout the app.
+            <Trans>How numbers and decimals are displayed throughout the app.</Trans>
           </p>
         </div>
 
@@ -224,7 +243,7 @@ export function YnabImportTab({
           <IconPicker
             value={importBadgeIcon}
             onValueChange={onImportBadgeIconChange}
-            label="Budget Icon"
+            label={t`Budget Icon`}
           />
         </div>
       </div>
@@ -232,7 +251,7 @@ export function YnabImportTab({
       {sourceMode === 'zip' && (
         <div className="space-y-1.5">
           <Label htmlFor="importFile" className="text-xs sm:text-sm">
-            YNAB Export File (ZIP)
+            <Trans>YNAB Export File (ZIP)</Trans>
           </Label>
           {/* Native file input is visually hidden and driven by the button
             below so we can show an Upload icon and the chosen filename. */}
@@ -253,29 +272,30 @@ export function YnabImportTab({
               onClick={() => fileInputRef.current?.click()}
               className="h-8 sm:h-9 shrink-0 text-xs sm:text-sm"
             >
-              <Upload className="h-4 w-4" />
-              Choose file
+              <Trans>
+                <Upload className="h-4 w-4" />
+                Choose file
+              </Trans>
             </Button>
             <span className="min-w-0 break-words text-xs sm:text-sm text-muted-foreground">
-              {file ? file.name : 'No file chosen'}
+              {file ? file.name : t`No file chosen`}
             </span>
           </div>
           {isInspecting && (
             <div className="flex items-center gap-2 rounded-md border bg-muted/30 p-3 text-xs text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              Inspecting accounts, categories, and split transactions…
+              <Trans>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Inspecting accounts, categories, and split transactions…
+              </Trans>
             </div>
           )}
           {preview && (
             <div className="space-y-3 rounded-md border bg-muted/20 p-3 text-xs">
-              <p className="font-medium text-foreground">Detected in this export</p>
+              <p className="font-medium text-foreground">
+                <Trans>Detected in this export</Trans>
+              </p>
               <p className="text-muted-foreground">
-                {preview.accountCount.toLocaleString()}{' '}
-                {preview.accountCount === 1 ? 'account' : 'accounts'} ·{' '}
-                {preview.categoryCount.toLocaleString()}{' '}
-                {preview.categoryCount === 1 ? 'category' : 'categories'} ·{' '}
-                {preview.registerRowCount.toLocaleString()} register{' '}
-                {preview.registerRowCount === 1 ? 'row' : 'rows'}
+                {plural(preview.accountCount, { one: "# account", other: "# accounts" })}{' · '}{plural(preview.categoryCount, { one: '# category', other: '# categories' })}{' · '}{plural(preview.registerRowCount, { one: '# register row', other: '# register rows' })}
               </p>
 
               {preview.dateOrderAmbiguous && (
@@ -289,11 +309,15 @@ export function YnabImportTab({
               <div className="flex items-start gap-2 rounded-md border border-amber-300/70 bg-amber-50 p-2.5 text-amber-950 dark:border-amber-900/70 dark:bg-amber-950/30 dark:text-amber-100">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 <div>
-                  <p className="font-medium">Review account types after import</p>
+                  <p className="font-medium">
+                    <Trans>Review account types after import</Trans>
+                  </p>
                   <p className="mt-0.5 text-[11px] opacity-90">
-                    YNAB does not reliably export account types. Budgero recognizes credit cards
-                    where possible and imports other accounts as Checking, so verify every account
-                    before budgeting.
+                    <Trans>
+                      YNAB does not reliably export account types. Budgero recognizes credit cards
+                      where possible and imports other accounts as Checking, so verify every account
+                      before budgeting.
+                    </Trans>
                   </p>
                 </div>
               </div>
@@ -301,16 +325,16 @@ export function YnabImportTab({
               {preview.missingCategories.length > 0 && (
                 <div className="rounded-md border border-amber-300/70 bg-amber-50 p-2.5 text-amber-950 dark:border-amber-900/70 dark:bg-amber-950/30 dark:text-amber-100">
                   <p className="font-medium">
-                    {preview.missingCategories.length} register categor
-                    {preview.missingCategories.length === 1 ? 'y is' : 'ies are'} missing from
-                    Plan.csv
+                    {plural(preview.missingCategories.length, { one: '# register category is missing from Plan.csv', other: '# register categories are missing from Plan.csv' })}
                   </p>
                   <p className="mt-1 text-[11px] opacity-90">
-                    Budgero will create{' '}
-                    {preview.missingCategories
-                      .map((category) => `${category.categoryGroup} › ${category.category}`)
-                      .join(', ')}
-                    .
+                    <Trans>
+                      Budgero will create{' '}
+                      {preview.missingCategories
+                        .map((category) => `${category.categoryGroup} › ${category.category}`)
+                        .join(', ')}
+                      .
+                    </Trans>
                   </p>
                 </div>
               )}
@@ -318,12 +342,13 @@ export function YnabImportTab({
               {preview.splitTransactions.length > 0 && (
                 <div className="rounded-md border p-2.5">
                   <p className="font-medium text-foreground">
-                    {preview.splitTransactions.length} split transaction
-                    {preview.splitTransactions.length === 1 ? '' : 's'} detected
+                    {plural(preview.splitTransactions.length, { one: '# split transaction detected', other: '# split transactions detected' })}
                   </p>
                   <p className="mt-0.5 text-[11px] text-muted-foreground">
-                    Budgero will import complete Split (1/n)…Split (n/n) sequences as split
-                    transactions automatically.
+                    <Trans>
+                      Budgero will import complete Split (1/n)…Split (n/n) sequences as split
+                      transactions automatically.
+                    </Trans>
                   </p>
                 </div>
               )}
@@ -337,20 +362,19 @@ export function YnabImportTab({
         <div className="space-y-3 rounded-md border bg-muted/20 p-3 text-xs">
           {isConnecting && (
             <div className="flex items-center gap-2 text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              Reading the selected YNAB plan…
+              <Trans>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Reading the selected YNAB plan…
+              </Trans>
             </div>
           )}
           {preview && !isConnecting && (
             <>
-              <p className="font-medium text-foreground">Detected through the YNAB API</p>
+              <p className="font-medium text-foreground">
+                <Trans>Detected through the YNAB API</Trans>
+              </p>
               <p className="text-muted-foreground">
-                {preview.accountCount.toLocaleString()}{' '}
-                {preview.accountCount === 1 ? 'account' : 'accounts'} ·{' '}
-                {preview.categoryCount.toLocaleString()}{' '}
-                {preview.categoryCount === 1 ? 'category' : 'categories'} ·{' '}
-                {preview.registerRowCount.toLocaleString()} register{' '}
-                {preview.registerRowCount === 1 ? 'row' : 'rows'}
+                {plural(preview.accountCount, { one: "# account", other: "# accounts" })}{' · '}{plural(preview.categoryCount, { one: '# category', other: '# categories' })}{' · '}{plural(preview.registerRowCount, { one: '# register row', other: '# register rows' })}
               </p>
               {preview.creditPaymentMatching && (
                 <YnabCreditPaymentMatching
@@ -362,7 +386,7 @@ export function YnabImportTab({
                 />
               )}
               <p className="text-[11px] text-muted-foreground">
-                Account types and on-budget status will be preserved from YNAB.
+                <Trans>Account types and on-budget status will be preserved from YNAB.</Trans>
               </p>
             </>
           )}
@@ -378,7 +402,7 @@ export function YnabImportTab({
             disabled={isImporting || isInspecting}
             className="flex-1 h-8 sm:h-9"
           >
-            Reset
+            <Trans>Reset</Trans>
           </Button>
 
           <Button
@@ -390,12 +414,16 @@ export function YnabImportTab({
             {isImporting ? (
               <>
                 <Loader2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                <span className="text-xs sm:text-sm">Importing...</span>
+                <span className="text-xs sm:text-sm">
+                  <Trans>Importing...</Trans>
+                </span>
               </>
             ) : (
               <>
                 <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="text-xs sm:text-sm">Import</span>
+                <span className="text-xs sm:text-sm">
+                  <Trans>Import</Trans>
+                </span>
               </>
             )}
           </Button>

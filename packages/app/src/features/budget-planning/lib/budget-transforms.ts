@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   GoalCalculations,
   type GetMonthlyBudgetRow,
@@ -122,7 +123,7 @@ export function transformBudgetRows(
   const result: BudgetRow[] = [];
 
   grouped.forEach((items, groupKey) => {
-    const groupName = items[0].CategoryGroup || 'Ungrouped';
+    const groupName = items[0].CategoryGroup || t`Ungrouped`;
     const totalTransactionsForGroup = items.reduce(
       (sum, item) => sum + (item.TotalTransactionCount || 0),
       0

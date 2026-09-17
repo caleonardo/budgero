@@ -1,0 +1,164 @@
+---
+title: "Moteur de règles"
+summary: "Automatisez le nettoyage des transactions à l'aide de règles — en fonction du bénéficiaire, de la note, du montant ou du compte — puis catégorisez, renommez et ajustez automatiquement."
+section: integrations
+topicId: rules-engine
+takeaways:
+  - "Les trois modes de règle — Continu, Unique et Remplissage automatique — et le moment de leur exécution."
+  - "Toutes les conditions et actions disponibles, et la façon dont plusieurs règles se combinent."
+  - "Exécutions rétroactives, historique d'exécution et filet de sécurité d'annulation en un clic."
+---
+
+Une approche budgétaire axée d'abord sur la saisie manuelle n'a pas à être répétitive. Le Moteur de règles surveille les transactions au fur et à mesure de leur arrivée — qu'elles proviennent d'imports, d'une saisie manuelle ou de la [Push API](/docs/push-api) — et applique le nettoyage que vous feriez autrement à la main : corriger les noms des bénéficiaires, affecter les catégories, nettoyer les mémos. Vous définissez le modèle une fois ; Budgero l'applique pour toujours.
+
+Les règles se trouvent dans **Paramètres → Règles**.
+
+## Les trois modes
+
+Chaque règle s'exécute dans l'un des trois modes suivants :
+
+<table>
+  <thead>
+    <tr>
+      <th>Mode</th>
+      <th>Quand il s'exécute</th>
+      <th>Utilisation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Continu</strong></td>
+      <td>Automatiquement, à chaque nouvelle transaction correspondante</td>
+      <td>Le nettoyage permanent : « AMZN Mktp* » → Amazon, catégorie Shopping</td>
+    </tr>
+    <tr>
+      <td><strong>Unique</strong></td>
+      <td>Une fois, rétroactivement sur les transactions existantes</td>
+      <td>Migrations et corrections : recatégoriser les frais de salle de sport de l'année dernière</td>
+    </tr>
+    <tr>
+      <td><strong>Saisie automatique</strong></td>
+      <td>Pendant la saisie dans le formulaire d'ajout de transaction</td>
+      <td>Des suggestions, pas des modifications — vous acceptez ou refusez chacune</td>
+    </tr>
+  </tbody>
+</table>
+
+Les règles continues se déclenchent sur chaque canal de saisie — imports CSV/PDF, saisie manuelle, Push API. Les règles uniques se marquent comme consommées après leur exécution et ne se redéclenchent pas tant qu'elles n'ont pas été réinitialisées. Les règles de saisie automatique ne modifient jamais quoi que ce soit par elles-mêmes ; elles pré-remplissent les champs sous forme de suggestions dans le formulaire de saisie, une fois par session de formulaire.
+
+## Conditions : ce qu'une règle cible
+
+Une règle nécessite au moins une condition. Lorsqu'elle en comporte plusieurs, **toutes doivent correspondre** (logique ET — il n'y a pas de OU ; si vous avez besoin de « ce bénéficiaire-ci ou ce bénéficiaire-là », créez deux règles).
+
+<table>
+  <thead>
+    <tr>
+      <th>Champ</th>
+      <th>Opérateurs</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Bénéficiaire</strong></td>
+      <td>égal à · contient · regex</td>
+      <td>Insensible à la casse par défaut ; bascule pour sensible à la casse</td>
+    </tr>
+    <tr>
+      <td><strong>Note</strong></td>
+      <td>égal à · contient · regex</td>
+      <td>Même bascule de sensibilité à la casse</td>
+    </tr>
+    <tr>
+      <td><strong>Montant</strong></td>
+      <td>= · ≠ · &gt; · ≥ · &lt; · ≤</td>
+      <td>Compare le montant net (entrée − sortie) ; pour les comptes en devise étrangère, le montant d'origine, non le montant converti</td>
+    </tr>
+    <tr>
+      <td><strong>Compte</strong></td>
+      <td>est · n'est pas</td>
+      <td>Limiter une règle à (ou exclure) des comptes spécifiques</td>
+    </tr>
+  </tbody>
+</table>
+
+Regex débloque les cas complexes — les exports bancaires qui suffixent les bénéficiaires avec des numéros de magasin (`MIGROS M-0451`), les codes de référence dans les notes — avec la syntaxe complète des motifs JavaScript.
+
+## Actions : ce qu'une règle fait
+
+Une règle correspondante applique une ou plusieurs actions, **dans l'ordre où vous les listez** — chaque action voit le résultat de la précédente.
+
+<table>
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Ce qu'elle fait</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Définir la catégorie</strong></td>
+      <td>Affecte la transaction à une catégorie</td>
+    </tr>
+    <tr>
+      <td><strong>Définir le bénéficiaire</strong></td>
+      <td>Remplace (ou efface) le bénéficiaire — le pilier de la normalisation</td>
+    </tr>
+    <tr>
+      <td><strong>Définir la note</strong></td>
+      <td>Remplace la note par un texte fixe</td>
+    </tr>
+    <tr>
+      <td><strong>Retirer de la note (regex)</strong></td>
+      <td>Supprime les motifs correspondants — numéros de référence, suffixes de carte, bruit</td>
+    </tr>
+    <tr>
+      <td><strong>Définir le montant</strong></td>
+      <td>Remplace le montant purement et simplement</td>
+    </tr>
+    <tr>
+      <td><strong>Ajuster le montant par valeur</strong></td>
+      <td>Ajoute ou soustrait un montant fixe (ex. −5)</td>
+    </tr>
+    <tr>
+      <td><strong>Ajuster le montant par pourcentage</strong></td>
+      <td>Met à l'échelle le montant (ex. −10 %)</td>
+    </tr>
+    <tr>
+      <td><strong>Définir le compte</strong></td>
+      <td>Redirige la transaction vers un autre compte</td>
+    </tr>
+  </tbody>
+</table>
+
+Les actions sur le montant et le compte sont suffisamment puissantes pour mériter du respect : un ajustement en pourcentage sur une condition trop large réécrit beaucoup d'historique lors d'une exécution rétroactive. Limitez strictement la portée des règles agressives — une condition de compte plus une condition de bénéficiaire est une bonne habitude.
+
+## Ordre : quand plusieurs règles correspondent
+
+Les règles ne s'arrêtent pas à la première correspondance — **chaque règle correspondante s'exécute**, par ordre d'exécution croissant (un champ numérique sur chaque règle ; les égalités sont départagées par ancienneté). Les règles ultérieures voient la transaction telle que les règles précédentes l'ont laissée, ce qui permet des pipelines délibérés : la règle 1 normalise le bénéficiaire, la règle 2 correspond au nom de bénéficiaire *nettoyé* et définit la catégorie.
+
+Les règles ne s'arrêtent pas à la première correspondance — **chaque règle correspondante s'exécute**, dans l'**ordre d'exécution** croissant (un champ numérique sur chaque règle ; en cas d'égalité, la plus ancienne l'emporte). Les règles suivantes voient la transaction telle que les règles précédentes l'ont laissée, ce qui permet des pipelines délibérés : la règle 1 normalise le bénéficiaire, la règle 2 fait correspondre le nom de bénéficiaire *nettoyé* et définit la catégorie.
+
+Chaque règle dispose également d'un interrupteur **activé** — mettez-la en pause sans la supprimer.
+
+## Exécuter des règles sur des transactions existantes
+
+Deux boutons sur chaque carte de règle vont au-delà de l'attente de nouvelles transactions :
+
+- **Exécuter maintenant** exécute la règle sur l'ensemble du budget à la demande — la même logique que le mode continu, déclenchée manuellement.
+- **Exécution rétroactive** applique la règle à **toutes les transactions passées**, après une boîte de dialogue de confirmation. C'est le flux d'application aux transactions existantes, et la deuxième étape naturelle après avoir créé une règle que vous auriez aimé avoir il y a un an.
+
+Après chaque exécution, la superposition des résultats indique combien de transactions ont été évaluées et modifiées.
+
+## Historique et annulation
+
+Chaque exécution est enregistrée. Le panneau **Historique** de chaque règle liste les exécutions passées avec les modifications effectuées — et l'exécution terminée la plus récente peut être **annulée** en un clic, restaurant les transactions affectées. Annuler l'exécution d'une règle ponctuelle réinitialise également son indicateur « consommé » afin qu'elle puisse se déclencher à nouveau.
+
+C'est le filet de sécurité qui rend l'expérimentation peu coûteuse : rédigez la règle, exécutez-la rétroactivement, examinez le résultat, annulez si elle a touché plus que prévu, resserrez les conditions, exécutez à nouveau.
+
+## Modèles à emprunter
+
+- **Le nettoyeur d'import.** Le CSV de votre banque indique `CARD PURCHASE 4421 TESCO STORES 2284`. Une règle : le mémo contient `TESCO` → définir le bénéficiaire « Tesco », définir la catégorie Courses, supprimer les références inutiles du mémo via regex. Chaque futur [import](/docs/csv-import) arrive déjà nettoyé.
+- **L'étiqueteur d'abonnements.** Le bénéficiaire contient « Spotify » et le compte est votre carte de facturation → catégorie Abonnements. Répétez pour chaque service ; dix minutes de configuration mettent fin définitivement à la dérive des catégories.
+- **L'assistant de répartition de salaire.** Montant ≥ votre salaire et le compte est votre compte courant → définir le bénéficiaire « Employeur », catégorie Revenus — ainsi le jour de paie arrive étiqueté même quand le mémo de la banque est du charabia.
+- **L'assistant de remplissage automatique.** Une règle de remplissage automatique sur le bénéficiaire contenant « Shell » suggérant la catégorie Carburant transforme la saisie manuelle à la pompe en deux tapotements — tout en vous laissant le dernier mot.

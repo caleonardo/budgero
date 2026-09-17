@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 /**
  * Add Transaction Form Utilities
  *
@@ -144,21 +145,24 @@ export function validateTransaction(params: {
   if (!selectedFromAccount) {
     return {
       isValid: false,
-      error: { title: 'Missing account', description: 'Please select an account.' },
+      error: { title: t`Missing account`, description: t`Please select an account.` },
     };
   }
 
   if (isTransfer && !selectedToAccount) {
     return {
       isValid: false,
-      error: { title: 'Missing destination', description: 'Please select a destination account.' },
+      error: {
+        title: t`Missing destination`,
+        description: t`Please select a destination account.`,
+      },
     };
   }
 
   if (!isTransfer && !isSplit && !selectedCategory) {
     return {
       isValid: false,
-      error: { title: 'Missing category', description: 'Please select a category.' },
+      error: { title: t`Missing category`, description: t`Please select a category.` },
     };
   }
 
@@ -175,8 +179,8 @@ export function validateSplitTotal(remaining: number): TransactionValidation {
     return {
       isValid: false,
       error: {
-        title: 'Split total mismatch',
-        description: 'Splits must add up to the transaction total.',
+        title: t`Split total mismatch`,
+        description: t`Splits must add up to the transaction total.`,
       },
     };
   }
@@ -216,7 +220,7 @@ export function formatTransferMemo(params: {
     needsConversion,
   } = params;
 
-  let transferMemo = `Transfer from ${fromAccountName} to ${toAccountName}${memo ? `: ${memo}` : ''}`;
+  let transferMemo = t`Transfer from ${fromAccountName} to ${toAccountName}${memo ? `: ${memo}` : ''}`;
 
   if (needsConversion) {
     transferMemo += ` (${formatNativeAmount(amount, fromCurrency)} ${fromCurrency} → ${formatNativeAmount(convertedAmount, toCurrency)} ${toCurrency})`;

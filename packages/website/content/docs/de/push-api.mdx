@@ -1,0 +1,114 @@
+---
+title: "Push API Übersicht"
+summary: "Sende verschlüsselte Transaktionen von jedem System aus über die Push API oder das Python SDK an Budgero."
+section: integrations
+topicId: push-api
+badge: "Neu"
+order: 10
+takeaways:
+  - "Generiere einen Push-API-Token und exportiere deinen Space-Verschlüsselungsschlüssel unter Einstellungen → Integrationen → Push API."
+  - "Verschlüssele eine transactions.add-Payload mit AES-GCM, Base64-kodiere sie und sende sie per POST mit einem Bearer-Token an /api/v1/push; verwende message_id, um Wiederholungen zu deduplizieren."
+  - "Verwende das Python SDK, um Verschlüsselung, Nachrichten-IDs und die Warteschlangen-Sichtbarkeit (ausstehend/verarbeitet/fehlgeschlagen) zu verwalten."
+---
+
+Die Push-API ermöglicht es dir, Transaktionen aus anderen Systemen an Budgero zu senden, während alles Ende-zu-Ende-verschlüsselt bleibt. Du generierst ein Token, verschlüsselst den Payload mit deinem Space-Schlüssel und sendest ihn per POST über HTTPS an den Push-Endpunkt.
+
+## Schnelle Einrichtung
+
+1. Erstelle unter **Einstellungen → Integrationen → Push-API** ein Push-API-Token.  
+2. Exportiere deinen **Space-Verschlüsselungsschlüssel** (Budgero speichert ihn nie serverseitig).  
+3. Erstelle einen JSON-Payload (siehe Format unten), verschlüssele ihn mit **AES-256-GCM**, Base64-kodiere ihn und sende ihn mit deinem Bearer-Token per POST an den Push-Endpunkt.  
+4. Füge optional eine **message_id** hinzu, damit Wiederholungen dedupliziert werden.  
+5. Überwache die Warteschlangen-Statistiken in der App oder über die API, um die Verarbeitung zu bestätigen.
+
+## Endpunkt- und Payload-Spezifikation
+
+- Endpunkt: `POST /api/v1/push` (verwende deine Basis-URL; Standard ist `https://my.budgero.app`)
+- Auth: `Authorization: Bearer <push-api-token>`
+- Body-Felder:
+  - `encrypted_payload` (String, Base64): AES-GCM-verschlüsselter JSON-Payload (Salt + IV + Ciphertext + Auth-Tag; siehe [Verschlüsselungsanforderungen](#verschlüsselungsanforderungen)).
+  - `message_id` (String, optional): Client-generierte ID zur Deduplizierung von Wiederholungen.
+
+### Form des entschlüsselten Payloads (vor der Verschlüsselung)
+
+```json
+{
+  "v": 2,
+  "op": "transactions.add",
+  "args": {
+    "accountId": 1,
+    "categoryId": 5,
+    "budgetId": 1,
+    "date": "2024-11-27",
+    "inflow": 0,
+    "outflow": 42500,
+    "memo": "API push",
+    "payee": "Vendor",
+    "transferId": ""
+  },
+  "message_id": "optional-unique-id"
+}
+```
+
+Geldwerte sind ganzzahlige Millieinheiten (1/1000 einer Währungseinheit), daher wird 42,50 als `42500` gesendet. Schließe immer `"v": 2` ein; ältere Payloads ohne dieses Flag werden als Format 1 (Dezimalbeträge) behandelt und beim Import aktualisiert, aber neue Integrationen sollten Format 2 senden. Das Python-SDK übernimmt sowohl das Format-Flag als auch die Konvertierung für dich.
+
+### Derzeit unterstützte Operation
+
+- `transactions.add` — sende eine Einnahme oder Ausgabe. Verwende `inflow` für Einnahmen und `outflow` für Ausgaben (nur eines sollte ungleich null sein). Gib deine bestehenden Budget-, Konto- und Kategorie-IDs an.
+
+## Verschlüsselungsanforderungen
+
+- Algorithmus: AES-256-GCM  
+- Salt: 32 Bytes = **SHA-256 deines rohen 32-Byte-Space-Verschlüsselungsschlüssels** (vor der IV einfügen)  
+- IV: 12 Bytes (nach dem Salt, vor dem Ciphertext)  
+- Auth-Tag: 16 Bytes (nach dem Ciphertext anhängen)  
+- Codierung: Base64 aus **Salt + IV + Ciphertext + Tag**  
+- Schlüssel: Dein **Space-Verschlüsselungsschlüssel** (aus den Einstellungen exportiert). Dekodiere den exportierten Wert aus Base64, bevor du ihn hashst oder als AES-Schlüssel verwendest; verwende den rohen SHA-256-Hash mit 32 Bytes als Salt.
+
+Das Salt-Präfix ist nicht optional: Der Client vergleicht es *vor* der Entschlüsselung mit SHA-256 seines eigenen Space-Schlüssels (Vergleich in konstanter Zeit in `mutation-crypto.ts`). Ein Payload ohne Salt wird vom Server angenommen (HTTP 202, in die Warteschlange aufgenommen), aber die Verarbeitung schlägt clientseitig fehl und das Element erhält in der Warteschlange den Status `failed` — die Transaktion erscheint trotz erfolgreicher Annahme nicht im Budget. Das Python-SDK stellt das Salt bereits automatisch voran; betroffen sind nur selbst entwickelte Clients, die auf der bisherigen Spezifikation basieren.
+
+## Python SDK – Schnellstart
+
+```python
+from budgero import BudgeroClient
+
+client = BudgeroClient(
+    api_key="your-push-token",
+    encryption_key="your-space-key",
+    base_url="https://my.budgero.app",
+)
+
+result = client.add_transaction(
+    account_id=1,
+    category_id=5,
+    budget_id=1,
+    date="2024-11-27",
+    outflow=42.50,
+    memo="Example push",
+    payee="API Demo",
+)
+
+print("Queued id:", result.queue_id)
+```
+
+SDK-Hilfsfunktionen:
+
+- `get_queue()` — ausstehende Elemente auflisten  
+- `get_queue_stats()` — Anzahl ausstehend/verarbeitet/fehlgeschlagen  
+- `clear_queue()` — ausstehende Elemente löschen (oder alle mit einem Flag)
+
+## Hinweise zum Betrieb und Sicherheitstipps
+
+- **Deduplizierung:** Gib beim Wiederholen eine stabile `message_id` an, um doppelte Einträge zu vermeiden.  
+- **Warteschlangen-Einblick:** Prüfe Warteschlangen-Statistiken in der App oder über `/push/queue` und `/push/stats`, um die Zustellung zu überprüfen.  
+- **Token-Hygiene:** Bei Kompromittierung rotieren/erneuern. Bei Bedarf in den Einstellungen deaktivieren oder widerrufen.  
+- **Schlüssel-Hygiene:** Halte Token/Schlüssel aus der Versionsverwaltung fern.  
+  <figure>
+    <img src="/gandalf_keep_it_secret.gif" alt="„Keep it secret, keep it safe“ — Gandalf erinnert Frodo" />
+    <figcaption>Keep it secret, keep it safe.</figcaption>
+  </figure>
+  
+  Verwende Umgebungsvariablen (z. B. `BUDGERO_PUSH_TOKEN`, `BUDGERO_SPACE_KEY`) oder den Secret-Manager deines Betriebssystems, beschränke Dateiberechtigungen und vermeide es, sie zu protokollieren.  
+- **Übertragung:** Verwende immer HTTPS, damit Bearer-Token und Metadaten geschützt bleiben.  
+- **Zugriffskontrolle:** Beschränke, wer den Token/Schlüssel lesen kann. Behandle sie wie Zugangsdaten mit Zugriff auf dein Budget.  
+- **Fehlerbehandlung:** Bei 409 mit message_id als deduplizierten Wiederholungsversuch behandeln. Bei 401/403 Token erneuern/aktivieren. Warteschlangen-Fehler überwachen und bei Bedarf löschen oder erneut einreihen.

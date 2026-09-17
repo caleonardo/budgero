@@ -19,16 +19,14 @@ export function useFocusCategoryFromNavState(): number | null {
   // Derive focus category from navigation state - no useState needed
   const focusCategoryId = useMemo(() => {
     const state = location.state as
-      | { expandCategoryId?: number; scrollToCategory?: boolean }
-      | undefined;
+      { expandCategoryId?: number; scrollToCategory?: boolean } | undefined;
     return state?.expandCategoryId && state?.scrollToCategory ? state.expandCategoryId : null;
   }, [location.state]);
 
   // Clear navigation state after reading it (side effect only, no setState)
   useEffect(() => {
     const state = location.state as
-      | { expandCategoryId?: number; scrollToCategory?: boolean }
-      | undefined;
+      { expandCategoryId?: number; scrollToCategory?: boolean } | undefined;
     if (state?.expandCategoryId && state?.scrollToCategory) {
       window.history.replaceState({}, document.title);
     }

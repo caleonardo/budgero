@@ -1,0 +1,272 @@
+---
+title: "Seguimiento de deudas"
+summary: "Lleva el seguimiento de tarjetas de crédito, préstamos e hipotecas en Budgero. Aprende cómo cada tipo de deuda afecta a tu presupuesto de manera diferente y cómo reducir tus deudas de forma intencionada."
+section: accounts-and-imports
+topicId: debt-tracking
+takeaways:
+  - "Entiende en qué se diferencian las tarjetas de crédito de los préstamos y las hipotecas."
+  - "Aprende cómo las categorías de pago de la tarjeta de crédito registran automáticamente el dinero reservado para tu tarjeta."
+  - "Domina el pago de deudas presupuestando para categorías de préstamos."
+---
+
+Budgero gestiona cuentas de deuda, pero las tarjetas de crédito funcionan de forma fundamentalmente distinta a los préstamos y las hipotecas. Entender esta diferencia te ayuda a llevar tu presupuesto con precisión.
+
+## Tarjetas de crédito frente a préstamos
+
+La diferencia clave radica en **cuándo el gasto afecta a tu presupuesto**:
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo de deuda</th>
+      <th>Cuándo se registra el gasto</th>
+      <th>Efecto del pago</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Tarjeta de crédito</strong></td>
+      <td>Al usar la tarjeta</td>
+      <td>Transferencia neutral</td>
+    </tr>
+    <tr>
+      <td><strong>Préstamo / hipoteca</strong></td>
+      <td>Al realizar un pago</td>
+      <td>Genera gasto en la categoría vinculada</td>
+    </tr>
+  </tbody>
+</table>
+
+### Tarjetas de crédito
+
+Cuando compras comida con tu tarjeta de crédito, esos 50 $ aparecen inmediatamente como gasto en tu categoría de Compra. La tarjeta de crédito es simplemente un método de pago: el impacto en el presupuesto se produce en el momento de la compra.
+
+Pagar la factura de tu tarjeta de crédito más adelante consiste simplemente en mover dinero para cubrir gastos que ya habías registrado. No genera gasto adicional en tu presupuesto.
+
+### Préstamos e hipotecas
+
+Los préstamos funcionan al revés. No haces la compra con tu hipoteca. El pago mensual en sí es el gasto. Budgero crea una categoría vinculada (como "Hipoteca de la vivienda" o "Préstamo del coche") y registra cada pago como un gasto en esa categoría.
+
+## Categorías de pago de tarjeta de crédito
+
+Cuando creas una cuenta de tarjeta de crédito, Budgero configura automáticamente una **Categoría de pago de tarjeta de crédito** para esa tarjeta. Esta categoría utiliza una mecánica estilo YNAB para llevar el seguimiento de cuánto dinero tienes disponible para pagar tu tarjeta.
+
+### Cómo funciona
+
+1. **Configuración automática:** Cuando creas una tarjeta de crédito, Budgero crea un grupo de categorías de "Pagos de tarjeta de crédito" y una categoría de pago con el nombre de tu tarjeta (p. ej., "Chase CC").
+
+2. **Financiación automática desde los gastos:** Cuando haces compras con la tarjeta, el dinero se "financia" automáticamente desde tus categorías de gasto hacia la categoría de pago de la tarjeta de crédito. Esto te muestra exactamente cuánto has reservado para pagar la factura.
+
+3. **Solo los gastos presupuestados financian la categoría:** Si te excedes en una categoría, solo la parte presupuestada financia tu pago de la tarjeta de crédito. El importe excedido se convierte en deuda de tarjeta de crédito.
+
+### Ejemplos de financiación
+
+<table>
+  <thead>
+    <tr>
+      <th>Presupuesto de la categoría</th>
+      <th>Gasto con TC</th>
+      <th>Financiado al pago de TC</th>
+      <th>Deuda de TC creada</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>$100</td>
+      <td>$50</td>
+      <td>$50</td>
+      <td>$0</td>
+    </tr>
+    <tr>
+      <td>$100</td>
+      <td>$150</td>
+      <td>$100</td>
+      <td>$50</td>
+    </tr>
+    <tr>
+      <td>$0</td>
+      <td>$50</td>
+      <td>$0</td>
+      <td>$50</td>
+    </tr>
+    <tr>
+      <td>$30</td>
+      <td>$50</td>
+      <td>$30</td>
+      <td>$20</td>
+    </tr>
+  </tbody>
+</table>
+
+Cuando varias tarjetas de crédito tienen gastos en la misma categoría, el importe financiado se reparte entre sus categorías de Pago de TC en proporción a la parte que representa cada tarjeta del gasto de esa categoría.
+
+### Cómo leer la categoría de Pago de TC
+
+La categoría de Pago de TC muestra:
+
+- **Asignado:** Dinero que has presupuestado manualmente para reducir la deuda
+- **Actividad:** Pagos realizados a la tarjeta (mostrados como negativos)
+- **Disponible:** Cuánto tienes listo para pagar la tarjeta
+
+Haz clic en el icono de información junto al importe Disponible para ver un **desglose de financiación**: exactamente qué categorías contribuyeron y cuánto. Para cada tarjeta, el desglose refleja únicamente los gastos de esa tarjeta.
+
+<Callout variant="tip" title="Funding breakdown">
+El desglose de financiación te ayuda a entender de dónde provino el dinero para el pago de tu TC. Si gastaste $60 en comida y $30 en gasolina con tu tarjeta, verás ambas categorías listadas con sus contribuciones.
+</Callout>
+
+## Cómo funcionan los saldos iniciales
+
+Cuando configuras una cuenta de deuda, el saldo inicial representa el dinero que ya debes. Esta deuda inicial no afecta a tus categorías del presupuesto ni a Por asignar.
+
+**Ejemplo:** Creas una tarjeta de crédito con un saldo de 2.000 $. Budgero muestra -2.000 $ en la cuenta, pero los saldos de tus categorías y Por asignar no cambian. La deuda existía antes de que empezaras a hacer el presupuesto.
+
+<Callout variant="note" title="Starting fresh">
+Si ya has pagado parte de una deuda antes de usar Budgero, introduce el importe original de la deuda y la cantidad pagada hasta ahora al crear la cuenta. Budgero calculará tu saldo actual automáticamente.
+</Callout>
+
+## Flujo de trabajo con tarjeta de crédito
+
+Así funciona un ciclo típico de tarjeta de crédito:
+
+1. **Pasa tu tarjeta** para una compra de 50 $ en el supermercado
+2. **Categoriza la transacción** como Supermercado (o deja que la autocategorización lo gestione)
+3. **La categoría Supermercado** muestra -50 $ de actividad, Disponible disminuye
+4. **La categoría Pago de TC** gana 50 $ en Disponible (financiada automáticamente desde Supermercado)
+5. **El saldo de la tarjeta de crédito** muestra -50 $
+
+Cuando pagas la tarjeta:
+
+1. **Transfiere** 50 $ de la cuenta corriente a la tarjeta de crédito
+2. **La categoría Pago de TC** muestra -50 $ de actividad (el pago)
+3. **Disponible del Pago de TC** vuelve a 0 $
+4. **El saldo de la tarjeta de crédito** vuelve a 0 $
+
+La idea clave: tus categorías de gasto ya reflejan el gasto real. La categoría de pago de la tarjeta de crédito simplemente controla el dinero reservado para cubrirlo.
+
+## Pagar deudas anteriores
+
+Si tienes deuda de tarjeta de crédito existente cuando empiezas a usar Budgero:
+
+1. La deuda inicial se registra como un gasto en la categoría "Transferencias". Si rellenas "Pagado hasta ahora" al crear la cuenta, Budgero también lo registra como un ingreso para que el saldo restante sea igual a original − pagado.
+2. Ambos asientos afectan solo al saldo de la cuenta, no a ninguna categoría del presupuesto.
+3. Tu categoría de pago de la tarjeta de crédito empieza en $0 (todavía no se ha financiado ningún gasto).
+
+**Para pagar deudas anteriores:**
+
+1. Asignar dinero directamente a la categoría de pago de la tarjeta de crédito
+2. Transferir ese dinero a la tarjeta de crédito
+3. Ver cómo disminuye el saldo de tu tarjeta de crédito
+
+Cuando pagas más de lo que se ha "financiado" con el gasto, el Disponible del pago de la tarjeta de crédito pasa a negativo. Esto es esperado: indica que estás pagando deuda antigua, no solo cubriendo el gasto actual.
+
+## Flujo de trabajo de préstamos e hipotecas
+
+Los préstamos y las hipotecas funcionan de forma distinta porque el propio pago ES el gasto:
+
+1. **Budgero crea una categoría vinculada** cuando añades el préstamo (p. ej., "Préstamo del coche")
+2. **Presupuesta los pagos** asignando dinero a esa categoría cada mes
+3. **Realiza el pago** transfiriendo desde la Cuenta corriente a la cuenta del préstamo
+4. **El pago aparece como gasto** en la categoría vinculada
+
+**Ejemplo:** Tienes un préstamo de coche de 10 000 $ con pagos mensuales de 300 $.
+
+1. Asigna 300 $ a la categoría "Préstamo del coche" cuando cobres
+2. Transfiere 300 $ desde la Cuenta corriente a la cuenta del Préstamo del coche
+3. La categoría "Préstamo del coche" muestra una actividad de -300 $
+4. El saldo del préstamo disminuye en 300 $
+
+### El límite de gasto
+
+Para préstamos e hipotecas, Budgero limita el gasto al importe real de la deuda. Si pagas de más:
+
+**Ejemplo:** El saldo de tu préstamo del coche es de -100 $. Transfieres 300 $ para pagarlo por adelantado.
+- La cuenta recibe 300 $, llevando el saldo a +200 $
+- Solo 100 $ cuenta como gasto en la categoría "Préstamo del coche"
+- Los 200 $ restantes se registran como una transferencia normal (sin gasto en la categoría)
+
+Esto mantiene tus informes de gasto precisos cuando pagas la deuda por adelantado.
+
+## Ciclo de vida de cuentas y categorías
+
+### Categorías de pago de tarjetas de crédito
+
+Al crear una tarjeta de crédito:
+- Se crea un grupo de categorías de "Pagos de tarjetas de crédito" (si no existe)
+- Se crea una categoría de pago con el nombre de tu tarjeta
+- La categoría se elimina automáticamente al eliminar la cuenta
+
+### Categorías vinculadas (solo préstamos/hipotecas)
+
+Al crear un préstamo o hipoteca, Budgero crea una categoría vinculada bajo el grupo **Pasivos**. Esta categoría:
+- Comparte el nombre de la cuenta (cambia el nombre de la cuenta y la categoría se actualiza)
+- Se elimina automáticamente al eliminar la cuenta
+- No se puede eliminar mientras exista la cuenta
+
+### Cambiar el nombre de cuentas
+
+Al cambiar el nombre de cualquier cuenta de deuda, Budgero actualiza todas las notas de transferencia que hacen referencia al nombre anterior. En el caso de las tarjetas de crédito, el nombre de la categoría de pago también se actualiza.
+
+## En el presupuesto vs fuera del presupuesto
+
+La mayoría de las cuentas de deuda deberían permanecer **en el presupuesto**. Para préstamos e hipotecas, esto significa que los pagos generan gasto en la categoría vinculada. Las tarjetas de crédito y los préstamos están en el presupuesto por defecto; las hipotecas están fuera del presupuesto por defecto, pero se puede cambiar.
+
+Cuentas de deuda fuera del presupuesto:
+- Siguen registrando tu saldo de deuda con precisión
+- Los pagos son siempre transferencias neutras — no se registra ningún gasto en ninguna categoría
+- Para préstamos/hipotecas, la categoría vinculada se sigue creando al configurar, pero permanece vacía mientras la cuenta siga fuera del presupuesto
+
+Usa fuera del presupuesto para deudas que no quieres presupuestar mes a mes (por ejemplo, una hipoteca que solo quieres ver en la parte del patrimonio neto).
+
+## Presupuestar para pagar deudas
+
+### Tarjetas de crédito
+
+Para los gastos actuales, no hace falta ningún presupuesto especial. Simplemente presupuesta tus categorías de gasto (compra, gasolina, etc.) y la categoría de Pago de la TC muestra automáticamente lo que tienes disponible para pagar.
+
+**Para pagar la deuda existente más rápido:**
+1. Asigna dinero extra a la categoría de Pago de la TC
+2. Transfiere ese dinero a la tarjeta
+3. Que el Disponible del Pago de la TC sea negativo indica que estás pagando por encima del gasto actual
+
+### Préstamos e hipotecas
+
+1. **Establece un objetivo de financiación** en la categoría vinculada para el importe de tu pago mensual
+2. **Asigna dinero** a la categoría cada mes cuando cobres
+3. **Haz la transferencia** desde tu cuenta corriente a la cuenta de deuda
+4. **Mira cómo baja el saldo** a medida que tus pagos reducen lo que debes
+
+La categoría vinculada funciona como cualquier otra categoría de gasto. Inclúyela en tu presupuesto, fúndala y gasta de ella haciendo pagos.
+
+## Preguntas frecuentes
+
+### ¿Por qué mi pago de tarjeta de crédito no aparece como gasto?
+
+Porque el gasto ya se produjo cuando usaste la tarjeta. Pagar la factura solo mueve dinero para cubrir gastos que ya registraste. Esto evita el doble conteo.
+
+### ¿Qué significa un Disponible para pago de TC negativo?
+
+Significa que has pagado a la tarjeta más de lo que se financió con tu gasto presupuestado. Esto suele ocurrir cuando:
+- Estás pagando una deuda anterior a cuando empezaste a presupuestar
+- Te excediste en categorías y ahora estás cubriendo esa deuda
+- Hiciste un pago extra además del gasto del mes en curso
+
+### Mi Disponible para pago de TC no coincide con el saldo de la tarjeta. ¿Está mal?
+
+Es normal. Tu Disponible para pago de la tarjeta de crédito muestra el dinero reservado de los gastos **presupuestados**. El saldo de tu tarjeta incluye:
+- Gastos del mes actual (puede incluir gastos excedidos aún no financiados)
+- Deuda anterior a cuando empezaste a presupuestar
+- Cargos por intereses
+
+La diferencia representa la deuda que aún necesitas presupuestar.
+
+### ¿Puedo seguir un préstamo sin crear gastos en el presupuesto?
+
+Sí. Marca la cuenta como fuera del presupuesto al crearla, o edita una cuenta existente para cambiar la configuración. Los préstamos fuera del presupuesto siguen los saldos sin afectar a tus categorías del presupuesto.
+
+### ¿Dónde veo qué categorías financiaron mi pago de la tarjeta de crédito?
+
+Haz clic en el icono de información junto al importe Disponible en la fila de pago de la tarjeta de crédito. Una ventana emergente muestra el desglose de financiación con cada categoría que contribuye y su importe, correspondiente a esa tarjeta específica.
+
+## Próximos pasos
+
+El seguimiento de deudas funciona mejor junto con objetivos y revisiones regulares del presupuesto. Para las tarjetas de crédito, vigila tu Disponible para pago de la tarjeta de crédito para asegurarte de que puedes cubrir la factura. Para préstamos e hipotecas, establece objetivos de financiación mensuales y observa cómo tus saldos se reducen con el tiempo.

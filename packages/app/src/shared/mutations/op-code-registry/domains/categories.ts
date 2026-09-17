@@ -183,8 +183,7 @@ export const categoryOps = {
       capture: async (args) =>
         safeCapture(() => {
           const category = S().categories!.getCategory(args.id as number) as
-            | CategoryRow
-            | undefined;
+            CategoryRow | undefined;
           return { oldValue: category?.ExcludeFromBudgetPace ?? false };
         }),
       build: (args, _result, before) => {

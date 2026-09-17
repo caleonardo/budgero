@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans, useLingui } from '@lingui/react/macro';
+
 import { useMemo } from 'react';
 import { Trash2 } from 'lucide-react';
 import {
@@ -35,6 +37,8 @@ export function CCPaymentActivityDialog({
   budgetId,
   currentMonth,
 }: CCPaymentActivityDialogProps) {
+  const { t } = useLingui();
+
   const { data: accounts } = useAccounts(budgetId);
   const ccAccount = useMemo(
     () => findCCAccountForCategory(accounts, ccCategoryId),
@@ -61,19 +65,25 @@ export function CCPaymentActivityDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md p-4 sm:p-6 max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{ccCategoryName} payments</DialogTitle>
-          <DialogDescription>Transfers covering this card in the selected month.</DialogDescription>
+          <DialogTitle>
+            <Trans>{ccCategoryName} payments</Trans>
+          </DialogTitle>
+          <DialogDescription>
+            <Trans>Transfers covering this card in the selected month.</Trans>
+          </DialogDescription>
         </DialogHeader>
 
         {!ccAccount ? (
           <div className="py-4 text-sm text-muted-foreground">
-            Could not find the credit card account linked to this category.
+            <Trans>Could not find the credit card account linked to this category.</Trans>
           </div>
         ) : isLoading ? (
-          <div className="py-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="py-4 text-sm text-muted-foreground">
+            <Trans>Loading…</Trans>
+          </div>
         ) : payments.length === 0 ? (
           <div className="py-4 text-sm text-muted-foreground">
-            No payments to this card yet this month.
+            <Trans>No payments to this card yet this month.</Trans>
           </div>
         ) : (
           <>
@@ -86,7 +96,7 @@ export function CCPaymentActivityDialog({
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium tabular-nums">{p.Date}</div>
                     <div className="mt-0.5 line-clamp-2 break-words text-xs text-muted-foreground">
-                      {p.Memo || 'Transfer'}
+                      {p.Memo || t`Transfer`}
                     </div>
                   </div>
                   <div className="shrink-0 text-sm font-semibold tabular-nums text-foreground">
@@ -96,7 +106,7 @@ export function CCPaymentActivityDialog({
                     size="icon"
                     variant="ghost"
                     className="h-7 w-7 shrink-0"
-                    title="Delete payment"
+                    title={t`Delete payment`}
                     disabled={deleteTransaction.isPending}
                     onClick={() =>
                       deleteTransaction.mutate({
@@ -111,7 +121,9 @@ export function CCPaymentActivityDialog({
               ))}
             </div>
             <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-sm">
-              <span className="text-muted-foreground">Total paid this month</span>
+              <span className="text-muted-foreground">
+                <Trans>Total paid this month</Trans>
+              </span>
               <span className="font-semibold tabular-nums">{formatAmount(totalPaid)}</span>
             </div>
           </>

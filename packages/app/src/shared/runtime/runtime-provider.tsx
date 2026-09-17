@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useEffect, useMemo, useSyncExternalStore } from 'react';
 import { toast } from 'sonner';
@@ -11,6 +12,8 @@ import type { RuntimeState } from '@budgero/runtime';
 const RuntimeContext = createContext<AppRuntime | null>(null);
 
 export function RuntimeProvider({ children }: { children: React.ReactNode }) {
+  const { t } = useLingui();
+
   const runtime = useMemo(() => new AppRuntime(), []);
   // Expose runtime for non-React modules (e.g., MutationManager)
   setRuntime(runtime);
@@ -32,12 +35,12 @@ export function RuntimeProvider({ children }: { children: React.ReactNode }) {
       }
       if (status.syncError === lastShownError) return;
       lastShownError = status.syncError;
-      toast.warning('Sync needs attention', {
+      toast.warning(t`Sync needs attention`, {
         description: status.syncError,
         duration: 15_000,
       });
     });
-  }, [runtime]);
+  }, [runtime, t]);
 
   return <RuntimeContext.Provider value={runtime}>{children}</RuntimeContext.Provider>;
 }

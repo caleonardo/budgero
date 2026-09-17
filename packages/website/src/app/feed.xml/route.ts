@@ -1,10 +1,11 @@
 import { allPosts } from 'contentlayer/generated';
+import { postsForLocale } from '@/lib/content-routing';
 
 export async function GET() {
   const site = 'https://budgero.app';
-  const posts = allPosts
-    .filter((p) => !p.draft)
-    .sort((a, b) => Number(new Date(b.date)) - Number(new Date(a.date)));
+  const posts = postsForLocale(allPosts, 'en').sort(
+    (a, b) => Number(new Date(b.date)) - Number(new Date(a.date))
+  );
 
   const items = posts
     .map((post) => {

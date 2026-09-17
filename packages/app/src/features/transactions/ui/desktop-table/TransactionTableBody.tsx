@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React, { useCallback, useRef } from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { TableBody } from '@shared/ui/table';
@@ -129,7 +130,9 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
       {topSpacerHeight > 0 && (
         <tr aria-hidden="true">
           <td colSpan={columnCount} style={{ height: topSpacerHeight, padding: 0, border: 0 }}>
-            <span className="sr-only">Rows above the visible area</span>
+            <span className="sr-only">
+              <Trans>Rows above the visible area</Trans>
+            </span>
           </td>
         </tr>
       )}
@@ -176,7 +179,9 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
       {bottomSpacerHeight > 0 && (
         <tr aria-hidden="true">
           <td colSpan={columnCount} style={{ height: bottomSpacerHeight, padding: 0, border: 0 }}>
-            <span className="sr-only">Rows below the visible area</span>
+            <span className="sr-only">
+              <Trans>Rows below the visible area</Trans>
+            </span>
           </td>
         </tr>
       )}

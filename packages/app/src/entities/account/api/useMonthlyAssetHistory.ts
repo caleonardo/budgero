@@ -4,7 +4,8 @@ import { useAllTransactions } from '@entities/transaction/api/useTransactions';
 import { useBudgetRevaluations } from '@entities/currency/api/useRevaluationSummary';
 import { LIABILITY_ACCOUNT_TYPES } from '@entities/account/model/accountTypes';
 import { groupTransactionsByAccount } from '@entities/account/lib/history';
-import { format, parseISO, startOfMonth, eachMonthOfInterval, subMonths, isBefore } from 'date-fns';
+import { parseISO, startOfMonth, eachMonthOfInterval, subMonths, isBefore } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 
 /** All amounts are integer milliunits (sums of stored transaction amounts). */
 export interface MonthlyAssetPoint {

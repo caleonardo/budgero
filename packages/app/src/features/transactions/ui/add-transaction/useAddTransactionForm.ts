@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 /**
  * useAddTransactionForm Hook
  *
@@ -81,6 +82,8 @@ export function useAddTransactionForm({
   disableAutofill = false,
   disableCurrencyConversion = false,
 }: UseAddTransactionFormOptions) {
+  const { t } = useLingui();
+
   const upsertSplits = useUpsertSplits();
   const deleteTransaction = useDeleteTransaction();
   const spaceId = useActiveSpaceId();
@@ -438,7 +441,7 @@ export function useAddTransactionForm({
       }
 
       const { inflow, outflow } = convertAmountToFlow(form.amount, form.transactionType);
-      const finalCategory = isSplit ? 'Uncategorized' : form.selectedCategory;
+      const finalCategory = isSplit ? t`Uncategorized` : form.selectedCategory;
 
       if (form.transactionType === 'transfer') {
         const fromAccount = accounts.find((acc) => acc.ID.toString() === form.selectedFromAccount);
@@ -474,8 +477,8 @@ export function useAddTransactionForm({
                   : null;
 
                 if (needsSourceBudgetRate && !sourceToBudgetRate) {
-                  toast.error('Exchange rate unavailable', {
-                    description: `A ${fromAccount.Currency} to ${budgetCurrency} rate is required to save the received amount.`,
+                  toast.error(t`Exchange rate unavailable`, {
+                    description: t`A ${fromAccount.Currency} to ${budgetCurrency} rate is required to save the received amount.`,
                   });
                   return;
                 }
@@ -554,7 +557,7 @@ export function useAddTransactionForm({
             if (addAnother) {
               resetFormFields();
             }
-            toast.success('Transfer added', { description: 'Transfer created successfully.' });
+            toast.success(t`Transfer added`, { description: t`Transfer created successfully.` });
           } finally {
             form.setCalculatingTransfer(false);
           }
@@ -618,7 +621,7 @@ export function useAddTransactionForm({
         if (addAnother) {
           resetFormFields();
         }
-        toast.success('Transaction added', { description: 'Transaction saved successfully.' });
+        toast.success(t`Transaction added`, { description: t`Transaction saved successfully.` });
         return;
       }
 
@@ -639,8 +642,8 @@ export function useAddTransactionForm({
           (line.inflow > 0 && line.outflow > 0)
       );
       if (invalidAmounts) {
-        toast.error('Invalid split amount', {
-          description: 'Each split line needs either an inflow or an outflow amount.',
+        toast.error(t`Invalid split amount`, {
+          description: t`Each split line needs either an inflow or an outflow amount.`,
         });
         return;
       }
@@ -653,8 +656,8 @@ export function useAddTransactionForm({
         (l) => (!l.categoryId && !l.transferAccountId) || (l.categoryId && l.transferAccountId)
       );
       if (missingAssignment && !uncategorizedId) {
-        toast.error('Split requires category', {
-          description: 'Each split line needs a category. Please assign a category to every split.',
+        toast.error(t`Split requires category`, {
+          description: t`Each split line needs a category. Please assign a category to every split.`,
         });
         return;
       }
@@ -706,8 +709,8 @@ export function useAddTransactionForm({
         } else {
           onCancel();
         }
-        toast.success('Transaction with splits added', {
-          description: 'Transaction saved successfully.',
+        toast.success(t`Transaction with splits added`, {
+          description: t`Transaction saved successfully.`,
         });
       } catch (e) {
         console.error('Failed to save splits', e);
@@ -718,12 +721,13 @@ export function useAddTransactionForm({
             console.error('Failed to roll back split parent transaction', rollbackError);
           }
         }
-        toast.error('Failed to save split transaction', {
-          description: e instanceof Error ? e.message : 'Please try again.',
+        toast.error(t`Failed to save split transaction`, {
+          description: e instanceof Error ? e.message : t`Please try again.`,
         });
       }
     },
     [
+      t,
       form,
       isSplit,
       splitLines,

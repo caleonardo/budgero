@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 /**
  * Draggable Budget Table
  *
@@ -153,8 +154,7 @@ export function DraggableBudgetTable({
     const overIndex = newData.findIndex((item) => item.id === over.id);
 
     let movedCategoryInfo:
-      | { categoryId: number; oldGroupId: number; newGroupId: number }
-      | undefined;
+      { categoryId: number; oldGroupId: number; newGroupId: number } | undefined;
 
     if (!activeItem.isGroup) {
       if (overItem.isGroup) {
@@ -269,18 +269,32 @@ export function DraggableBudgetTable({
     layoutVariant === 'desktop-compact' ? (
       <div className="hidden md:block sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 -mx-1 px-1 md:-mx-2 md:px-2">
         <div className="px-3 py-2 text-[11px] uppercase tracking-wider font-medium text-muted-foreground grid grid-cols-[minmax(0,1fr)_minmax(96px,120px)_minmax(96px,120px)_minmax(96px,120px)] gap-2">
-          <div>Category</div>
-          <div className="text-right">Allocated</div>
-          <div className="text-right">Activity</div>
-          <div className="text-right">Available</div>
+          <div>
+            <Trans>Category</Trans>
+          </div>
+          <div className="text-right">
+            <Trans>Allocated</Trans>
+          </div>
+          <div className="text-right">
+            <Trans>Activity</Trans>
+          </div>
+          <div className="text-right">
+            <Trans>Available</Trans>
+          </div>
         </div>
       </div>
     ) : isTableLayout ? (
       <div className="md:hidden sticky top-0 z-10 bg-muted/90 backdrop-blur-sm border-b border-border/40 rounded-t-lg">
         <div className="py-1 text-[9px] uppercase tracking-wider font-medium text-muted-foreground/60 grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-3 items-center pl-4 pr-2">
-          <div>Category</div>
-          <div className="text-right">Allocated</div>
-          <div className="text-right">Available</div>
+          <div>
+            <Trans>Category</Trans>
+          </div>
+          <div className="text-right">
+            <Trans>Allocated</Trans>
+          </div>
+          <div className="text-right">
+            <Trans>Available</Trans>
+          </div>
         </div>
       </div>
     ) : null;

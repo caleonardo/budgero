@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useId, useMemo, useState } from 'react';
 import { ListFilter } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -25,6 +26,8 @@ export function ChartLegend({
   compact = false,
   showSummary = true,
 }: ChartLegendProps) {
+  const { t } = useLingui();
+
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const palette = useChartPalette();
   const [searchTerm, setSearchTerm] = useState('');
@@ -66,8 +69,8 @@ export function ChartLegend({
 
   const summaryText =
     visibleCount === legendItems.length
-      ? `All ${legendItems.length} series visible`
-      : `${visibleCount}/${legendItems.length} series visible`;
+      ? t`All ${legendItems.length} series visible`
+      : t`${visibleCount}/${legendItems.length} series visible`;
 
   return (
     <div
@@ -94,8 +97,10 @@ export function ChartLegend({
             size="sm"
             className={compact ? 'shrink-0' : 'h-7 px-2 text-xs shrink-0'}
           >
-            <ListFilter className="h-3.5 w-3.5 mr-1.5" />
-            Series
+            <Trans>
+              <ListFilter className="h-3.5 w-3.5 mr-1.5" />
+              Series
+            </Trans>
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -108,7 +113,7 @@ export function ChartLegend({
             <Input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Filter series..."
+              placeholder={t`Filter series...`}
               className="h-8 text-xs"
             />
 
@@ -121,7 +126,7 @@ export function ChartLegend({
                 onClick={showAll}
                 disabled={hiddenInLegendCount === 0}
               >
-                Show all
+                <Trans>Show all</Trans>
               </Button>
               <Button
                 type="button"
@@ -131,7 +136,7 @@ export function ChartLegend({
                 onClick={hideAll}
                 disabled={visibleCount <= 1}
               >
-                Hide all
+                <Trans>Hide all</Trans>
               </Button>
             </div>
 
@@ -170,7 +175,9 @@ export function ChartLegend({
                   );
                 })}
                 {filteredItems.length === 0 && (
-                  <p className="text-xs text-muted-foreground px-2 py-1">No matching series.</p>
+                  <p className="text-xs text-muted-foreground px-2 py-1">
+                    <Trans>No matching series.</Trans>
+                  </p>
                 )}
               </div>
             </div>

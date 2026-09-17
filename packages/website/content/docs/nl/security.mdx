@@ -1,0 +1,84 @@
+---
+title: "Beveiligingsmodel"
+summary: "Duik in het ontwerp van Budgero's end-to-end-versleuteling, wat de server wel en niet kan zien, en wat er gebeurt als je een apparaat verliest."
+section: collaboration
+topicId: security
+takeaways:
+  - "Hoe enveloppe-versleuteling jouw hoofdwachtwoord omzet in werkende sleutels."
+  - "Welke metadata de server precies ziet - en welke data nooit kan zien."
+  - "Wat het verliezen van een apparaat in de praktijk betekent, en hoe je je erop kunt voorbereiden."
+---
+
+De meeste financiële apps vragen je hun bedoelingen te vertrouwen. Budgero is zo gebouwd dat je dat niet hoeft te doen: de architectuur maakt het voor ons onmogelijk om je gegevens te lezen, niet alleen verboden. Deze gids legt het ontwerp precies uit — want "vertrouw ons, het is versleuteld" is precies de bewering die je niet zonder details zou moeten accepteren.
+
+## Het versleutelingsproces
+
+Budgero gebruikt **envelopversleuteling**, hetzelfde patroon dat wordt gebruikt in serieuze sleutelbeheersystemen:
+
+1. Je [hoofdwachtwoord](/docs/master-password) wordt op je apparaat door **PBKDF2-HMAC-SHA256 met 600.000 iteraties** gehaald, wat een **sleutelversleutelingssleutel (KEK)** oplevert. Het aantal iteraties is bedoeld om elke wachtwoordgissing rekenkundig duur te maken.
+2. Een willekeurig gegenereerde **gegevensversleutelingssleutel (DEK)** doet het eigenlijke werk van het versleutelen van je budget.
+3. De KEK verpakt (versleutelt) de DEK. Alleen de verpakte DEK wordt opgeslagen — ontgrendelen betekent dat de KEK uit je wachtwoord wordt afgeleid en de DEK wordt uitgepakt, waarna de dure afleiding niet meer opnieuw hoeft te worden uitgevoerd voor de sessie.
+4. Alle gegevensversleuteling gebruikt **AES-256-GCM**, een geauthentificeerd versleutelingsalgoritme — het verbergt niet alleen gegevens, het detecteert ook manipulatie.
+
+Elke budgetwijziging wordt op je apparaat versleuteld *voordat* deze wordt gesynchroniseerd. De server ontvangt, slaat op en stuurt cijfertekst door.
+
+## Wat de server ziet — en wat niet
+
+Eerlijke zero-knowledge-beweringen vereisen dat je beide kanten hardop uitspreekt:
+
+<table>
+  <thead>
+    <tr>
+      <th>De server kan zien</th>
+      <th>De server kan nooit zien</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Dat je een rekening hebt (e-mail, inlogidentiteit)</td>
+      <td>Transacties — bedragen, begunstigden, notities, datums</td>
+    </tr>
+    <tr>
+      <td>Werkruimte-lidmaatschap en rollen (wie deelt met wie)</td>
+      <td>Rekeningsaldo's en rekeningnamen</td>
+    </tr>
+    <tr>
+      <td>Tijdstempels en versienummers van gesynchroniseerde wijzigingen</td>
+      <td>Categorieën, toewijzingen, doelen — het budget zelf</td>
+    </tr>
+    <tr>
+      <td>De grootte en frequentie van versleutelde blobs</td>
+      <td>Je hoofdwachtwoord of enige afgeleide sleutel</td>
+    </tr>
+  </tbody>
+</table>
+
+Die linkerkolom is het minimum dat nodig is om een synchronisatieservice te draaien: versleutelde tekst naar de juiste mensen routeren en de juiste rekening factureren. De rechterkolom is jouw financiële leven, en het bestaat in leesbare vorm alleen op jouw ontgrendelde apparaten.
+
+Deze architectuur bepaalt ook het inbreukverhaal. Als Budgero's servers volledig gecompromitteerd zouden worden, zou de aanvaller ingepakte sleutels en AES-256-GCM-versleutelde tekst verkrijgen — en zou nog steeds per gebruiker een 600.000-iteratie PBKDF2 tegen elk hoofdwachtwoord moeten doorstaan om ergens te komen. Met een sterke wachtwoordzin is 'ergens' nergens.
+
+## Waar jouw gegevens leven
+
+Budgero Cloud wordt gehost in **Finland, onder EU-jurisdictie** — en de app stuurt **geen telemetrie tenzij je er expliciet voor kiest**. Als zelfs versleutelde blobs op onze infrastructuur meer vertrouwen vereist dan je wilt geven, draait [Budgero Self-Host](/docs/self-hosting-guide) dezelfde versleutelingspipeline op hardware die jij beheert. De versleuteling is geen Cloud-functie — het is hoe het product werkt.
+
+## Delen zonder het model te verzwakken
+
+Gedeelde budgetten behouden dezelfde garanties: sleutels voor gedeelde leden worden uitgewisseld via geheimen in uitnodigingslinks die in URL-fragmenten worden meegedragen (nooit naar de server gestuurd) en opnieuw worden ingepakt onder elk lids eigen hoofdwachtwoord. De server weet dat twee rekeningen een werkruimte delen — nooit wat erin zit. Details in [Budgetten delen](/docs/sharing).
+
+## Een apparaat verliezen
+
+Wat een dief van jouw apparaat krijgt, is wat jouw keuzes aan apparaatzijde daar hebben achtergelaten:
+
+- De lokale budgetgegevens zijn in rust versleuteld; zonder jouw hoofdwachtwoord is het ciphertext.
+- Als je **sessie-ontgrendeling** hebt ingeschakeld met een lange duur en het apparaat geen toegangscode heeft, is een ontgrendelde sessie het realistische risico. De maatregelen zijn gebruikelijk maar effectief: apparaat-toegangscode/biometrie en kortere sessieduur op draagbare apparaten (zie [Hoofdwachtwoord](/docs/master-password)).
+- Jouw accountlogin (die de toegang tot synchronisatie regelt) kan via normaal identiteitsherstel worden gereset zonder iets te verliezen. Het hoofdwachtwoord is anders: het kan worden gewijzigd als je het kent, of gereset als je het niet kent — maar een reset wist de versleutelde gegevens, omdat niets het kan ontsleutelen zonder het oude wachtwoord (zie [Hoofdwachtwoord](/docs/master-password)).
+
+Na het verliezen van een apparaat wijzig je jouw *account*wachtwoord om het apparaat af te sluiten van toekomstige synchronisaties, en ga je verder. De versleuteling heeft zijn werk gedaan.
+
+## Support en jouw gegevens
+
+Een consequentie van dit ontwerp die de moeite waard is om duidelijk te stellen: wanneer je contact opneemt met support, kunnen we service-side feiten zien — synchronisatiestatus, abonnement, foutlogboeken — en niets binnen jouw budget. Support zal nooit om jouw hoofdwachtwoord vragen; niets wat wij beheren heeft daar gebruik voor.
+
+## De audittrail
+
+Elke gesynchroniseerde wijziging is een versleutelde invoer in een alleen-toevoegen mutatielogboek — dat is zowel hoe synchronisatie en [offline samenvoegen](/docs/offline) werken, als een manipulatie-aantoonbare geschiedenis van jouw budget. Net als al het andere is de inhoud onleesbaar voor de server.

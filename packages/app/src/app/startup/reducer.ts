@@ -1,9 +1,10 @@
+import { msg } from '@lingui/core/macro';
 import type { StartupEvent, StartupMachineState, StartupResolution } from './types';
 
 export const INITIAL_STARTUP_RESOLUTION: StartupResolution = {
   state: 'boot',
   screen: 'splash',
-  message: 'Loading Budgero…',
+  message: msg`Loading Budgero…`,
   branch: 'boot',
 };
 
@@ -24,8 +25,8 @@ export function startupReducer(
       const unchanged =
         state.resolution.state === event.resolution.state &&
         state.resolution.screen === event.resolution.screen &&
-        state.resolution.message === event.resolution.message &&
-        state.resolution.detail === event.resolution.detail &&
+        state.resolution.message?.id === event.resolution.message?.id &&
+        state.resolution.detail?.id === event.resolution.detail?.id &&
         state.resolution.error === event.resolution.error &&
         state.resolution.branch === event.resolution.branch &&
         state.stablePublished === nextStablePublished;

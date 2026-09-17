@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -37,6 +38,8 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
   isLoading = false,
   formatAmount = (value) => toDecimal(value).toLocaleString(),
 }) => {
+  const { t } = useLingui();
+
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
   const handleDelete = async () => {
@@ -61,33 +64,37 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Category</DialogTitle>
+          <DialogTitle>
+            <Trans>Delete Category</Trans>
+          </DialogTitle>
           <DialogDescription>
             {incomeOnly ? (
-              'Choose another income category to receive this category’s transactions and any assignments. Your income totals will stay the same.'
+              t`Choose another income category to receive this category’s transactions and any assignments. Your income totals will stay the same.`
             ) : (
-              <>
+              <Trans>
                 Before you can delete the category, you need to reassign all
                 {(currentCategoryTotalTransactions ?? 0) > 0 && (currentCategoryAssigned ?? 0) !== 0
-                  ? ' transactions and assignments'
+                  ? t` transactions and assignments`
                   : (currentCategoryTotalTransactions ?? 0) > 0
                     ? ' transactions'
                     : ' assignments'}{' '}
                 to a new category.
-              </>
+              </Trans>
             )}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm">
-            Select a category to reassign transactions, assigned amounts, and any remaining
-            available amounts.
+            <Trans>
+              Select a category to reassign transactions, assigned amounts, and any remaining
+              available amounts.
+            </Trans>
           </p>
           <Select
             disabled={isLoading}
             onValueChange={(value) => setSelectedCategoryId(parseInt(value, 10))}
           >
-            <SelectTrigger aria-label="Destination category">
+            <SelectTrigger aria-label={t`Destination category`}>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
@@ -109,34 +116,44 @@ export const DeleteCategoryDialog: React.FC<DeleteCategoryDialogProps> = ({
             </SelectContent>
           </Select>
           <div className="text-sm mt-4">
-            <p>Here's what will be reassigned to the new category:</p>
+            <p>
+              <Trans>Here's what will be reassigned to the new category:</Trans>
+            </p>
             <ul className="list-disc pl-6 space-y-1">
               {(incomeOnly || (currentCategoryTotalTransactions ?? 0) > 0) && (
                 <li>
-                  All transactions
-                  {currentCategoryTotalTransactions !== undefined &&
-                    ` (${currentCategoryTotalTransactions})`}
-                  , including split lines
+                  <Trans>
+                    All transactions
+                    {currentCategoryTotalTransactions !== undefined &&
+                      ` (${currentCategoryTotalTransactions})`}
+                    , including split lines
+                  </Trans>
                 </li>
               )}
               {currentCategoryAssigned !== undefined && currentCategoryAssigned !== 0 && (
-                <li>Assigned amount ({formatAmount(currentCategoryAssigned)})</li>
+                <li>
+                  <Trans>Assigned amount ({formatAmount(currentCategoryAssigned)})</Trans>
+                </li>
               )}
-              <li>Any remaining available amount</li>
-              <li>Scheduled transactions using this category</li>
+              <li>
+                <Trans>Any remaining available amount</Trans>
+              </li>
+              <li>
+                <Trans>Scheduled transactions using this category</Trans>
+              </li>
             </ul>
           </div>
         </div>
         <DialogFooter>
           <Button variant="secondary" onClick={onClose} disabled={isLoading}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             variant="destructive"
             onClick={handleDelete}
             disabled={selectedCategoryId === null || isLoading}
           >
-            {isLoading ? 'Deleting...' : 'Delete'}
+            {isLoading ? t`Deleting...` : t`Delete`}
           </Button>
         </DialogFooter>
       </DialogContent>

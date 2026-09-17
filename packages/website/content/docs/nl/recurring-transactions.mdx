@@ -1,0 +1,110 @@
+---
+title: "Terugkerende transacties"
+summary: "Plan rekeningen, salarissen en toekomstige uitgaven voordat ze plaatsvinden. Stel terugkerende schema's in met herinneringen, of plan een eenmalige transactie in de toekomst — en zie ze allebei verschijnen op het dashboard."
+section: integrations
+topicId: recurring-transactions
+takeaways:
+  - "Hoe terugkerende sjablonen, voorkomens en de Mark ready-flow samenwerken."
+  - "Een eenmalige toekomstige transactie direct inplannen vanuit het transactieformulier."
+  - "Wat de kaart voor toekomstige transacties op het dashboard laat zien en hoe ver vooruit deze kijkt."
+  - "Hoe geprojecteerde rijen en toekomstige datumbereiken het rekeningregister en rapporten omzetten in een cashflowprognose."
+---
+
+De meeste geldbewegingen zijn geen verrassingen. De huur is op de eerste verschuldigd, je salaris staat op de 25e op je rekening, en je weet al van de tandartsafspraak volgende maand. Budgero geeft je twee manieren om die kennis in je budget te verwerken voordat het geld beweegt — **terugkerende transacties** voor zaken die zich herhalen, en **geplande eenmalige transacties** voor zaken die één keer voorkomen. Beide verschijnen op je dashboard, zodat de komende weken nooit een raadsel zijn.
+
+Trouw aan Budgero's 'handmatig eerst'-filosofie boekt geen van beide iets achter je rug om: terugkerende transacties wachten op je bevestiging, en eenmalige transacties zijn items die je zelf hebt aangemaakt.
+
+## Terugkerende transacties
+
+Een terugkerende transactie is een sjabloon: wat je betaalt (of ontvangt), van welke rekening, in welke categorie, en met welk ritme. Je beheert ze in **Instellingen → Terugkerende transacties**.
+
+Elk sjabloon definieert:
+
+- **Naam en memo** — "Huur", "Salaris", "Sportschoolabonnement".
+- **Richting** — een **Factuur** (uitgaven) of **Inkomsten** (inkomsten).
+- **Bedrag, rekening en categorie** — net als bij een normale transactie.
+- **Planning** — dagelijks, wekelijks, elke 2 weken, maandelijks, elke 2 maanden, per kwartaal, elke 6 maanden, of jaarlijks, gekoppeld aan een startdatum.
+- **Eindigt** — nooit, op een datum of na een bepaald aantal uitvoeringen (geteld vanaf de eerste, inclusief geboekte of overgeslagen uitvoeringen). Handig voor leningen, termijnbetalingen en tijdelijke abonnementen.
+- **Herinnering** — hoeveel dagen voor de vervaldatum je een melding wilt.
+
+Op basis van de planning genereert Budgero **voorkomens** — de afzonderlijke komende vervaldata — ongeveer zes maanden vooruit. De instellingenpagina toont wat er volgende op de planning staat, en voor elk voorkomen heb je twee keuzes:
+
+- **Klaar markeren** maakt de echte transactie aan en past je [continue regels](/docs/rules-engine) er automatisch op toe — zodat de opschoonacties voor begunstigde, categorie en memo die je hebt geautomatiseerd ook gelden voor terugkerende items. De transactie krijgt altijd de vervaldatum van het voorkomen, zelfs als je een paar dagen eerder bevestigt.
+- **Deze keer overslaan** laat één voorkomen vallen zonder de planning aan te passen. De reeks gaat verder met de volgende datum.
+
+Er wordt nooit automatisch iets geboekt. Een terugkerende transactie is een herinnering met een 'Maak het concreet'-knop (één klik), geen doorlopende opdracht — jij blijft het laatste controlepunt tussen het plan en het grootboek.
+
+Sjablonen kunnen op elk moment worden **gepauzeerd** en **hervat**, en het verwijderen van een sjabloon verwijdert aanstaande herinneringen zonder al geboekte transacties aan te raken.
+
+### Herinneringen
+
+Schakel meldingen in op de pagina Terugkerende transacties en Budgero herinnert je vóór elke vervaldatum, met de 'dagen vooraf'-instelling per sjabloon. Meldingen zijn lokaal op je apparaat — in lijn met het [Zero-knowledge model](/docs/security), geen server komt ooit te weten welke rekeningen je moet betalen.
+
+## Eenmalige geplande transacties
+
+Niet alles herhaalt zich. Voor een eenmalige bekende toekomstige uitgave — een vliegticket, een jaarlijkse verzekeringspremie, een geplande aankoop — voer je gewoon een normale transactie in en geef je deze een **toekomstige datum**. Er is geen aparte functie om te leren: het gewone transactieformulier op elke rekeningpagina is alles wat je nodig hebt.
+
+Een transactie met een toekomstige datum is een echte grootboekinvoer die simpelweg zijn datum nog niet heeft bereikt. Je kunt deze bewerken of verwijderen als elke andere transactie, en hij verschijnt op het dashboard als **Gepland** zodat je niet voor verrassingen komt te staan.
+
+## De kaart Aankomende transacties
+
+De **Aankomende transacties**-kaart van het dashboard combineert beide soorten geplande activiteit in één tijdlijn:
+
+- **Terugkerende reeksen** tonen alleen hun *volgende* keer — een maandelijkse rekening verschijnt één keer, niet zes keer. Terugkerende items hebben een **Terugkerend**-badge (of **Klaar om te boeken** zodra je ze klaar hebt gemarkeerd).
+- **Geplande eenmalige transacties** tonen elke toekomstig gedateerde transactie binnen de **komende 3 maanden**, gemarkeerd met een **Gepland**-badge.
+
+De kaart toont de eerstvolgende zes items, elk met hun bedrag, rekening en een aftelling tot vervaldatum. Items zijn interactief:
+
+- Klik op een **terugkerend** item om naar de rekeningpagina te gaan.
+- Klik op een **gepland** item om een dialoogvenster voor snelle bewerking te openen waarin je de datum, het bedrag, de begunstigde of de categorie kunt aanpassen — of het kunt verwijderen — zonder het dashboard te verlaten.
+
+De link **Automatiseringen beheren** onderaan brengt je naar de pagina voor terugkerende instellingen.
+
+## Je cashflow voorspellen
+
+Weten wat er gepland staat, is de helft van het verhaal — de andere helft is zien wat het met je saldo doet. Budgero projecteert terugkerende transacties die nog niet als klaar zijn gemarkeerd in twee overzichten, zodat je een paar maanden vooruit kunt kijken zonder iets te boeken.
+
+### Op de rekeningpagina
+
+Elke rekeningpagina heeft een compacte balk met **Aankomende transacties** boven het register die laat zien hoeveel terugkerende en geplande vermeldingen er aankomen, inclusief de gecombineerde inkomsten en uitgaven. Klik erop om de volledige lijst uit te klappen — van daaruit kun je instanties gereed markeren of overslaan. Het onthoudt of je hem open of gesloten hebt achtergelaten.
+
+Het register zelf wordt een prognose wanneer je daarom vraagt. Breid het datumbereik van de pagina uit tot na vandaag en aankomende terugkerende instanties verschijnen inline als **geprojecteerde rijen** — gemarkeerd met een badge, getoond naast je echte transacties, maar alleen-lezen: een projectie is geen record, dus er is niets te bewerken. Om er een te wijzigen, bewerk je de terugkerende sjabloon of markeer je de instantie als gereed. Een instantie waarvan de vervaldatum is verstreken zonder als gereed te zijn gemarkeerd, blijft ook in het register staan, gemarkeerd als **Te laat** in het aankomende paneel totdat je hem boekt of overslaat.
+
+Geprojecteerde rijen vloeien mee in de **saldokolom** van het register, zodat je kunt doorbladeren naar volgende maand en kunt aflezen waar de rekening naartoe gaat. Geplande saldowarden zijn gemarkeerd met **≈** om duidelijk te maken dat het schattingen zijn. Het hoofdsaldo van de rekening en de saldo's in de zijbalk bevatten nooit projecties of toekomstige transacties — die laten altijd gerealiseerd geld zien, vanaf vandaag.
+
+### In rapporten
+
+De rapportenpagina accepteert toekomstige datumbereiken — de kiezer bevat voorinstellingen voor **Volgende 30 dagen** en **Volgende 3 maanden**. Wanneer je bereik verder gaat dan vandaag, worden terugkerende instanties die niet als gereed zijn gemarkeerd meegeteld alsof ze op hun vervaldatum zijn geboekt, en toont de pagina de melding **Bevat geprojecteerde terugkerende transacties**. Uitgaventrends, specificaties per categorie en begunstigde, en de periodesamenvatting nemen ze allemaal mee, dus "hoe ziet mijn cashflow eruit tot het einde van het kwartaal?" is een datumselectie, geen spreadsheetoefening.
+
+Projecties zijn zelfcorrigerend: ze worden live berekend op basis van je terugkerende sjablonen, dus het gereed markeren van een instantie, het overslaan ervan, of het bewerken van de sjabloon werkt elke prognose direct bij. Een projectie is slechts zo exact als het bedrag in de sjabloon — variabele lasten zullen een beetje afwijken tot ze worden geboekt, waarna het echte getal het overneemt.
+
+## Welk hulpmiddel voor welke taak?
+
+<table>
+  <thead>
+    <tr>
+      <th>Je weet…</th>
+      <th>Gebruik</th>
+      <th>Waarom</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Het herhaalt zich in een ritme (huur, salaris, abonnementen)</td>
+      <td><strong>Terugkerende transactie</strong></td>
+      <td>Eén sjabloon dekt elke toekomstige instantie, met herinneringen</td>
+    </tr>
+    <tr>
+      <td>Het gebeurt één keer, op een bekende datum</td>
+      <td><strong>Toekomstige transactie</strong></td>
+      <td>Een echte vermelding, al in het grootboek, zichtbaar op het dashboard</td>
+    </tr>
+    <tr>
+      <td>Je spaart ervoor maar hebt je nog niet vastgelegd op een datum of begunstigde</td>
+      <td><strong>Een doel</strong></td>
+      <td>Het is een financieringsplan, nog geen transactie — zie <a href="/docs/goals">Doelen</a></td>
+    </tr>
+  </tbody>
+</table>
+
+Een veelvoorkomend patroon combineert alle drie: een doel met streefdatum bouwt het geld op, een terugkerende herinnering geeft je een seintje wanneer de rekening nadert, en door het als gereed te markeren wordt de transactie geboekt op de categorie die het doel al die tijd heeft gevuld.

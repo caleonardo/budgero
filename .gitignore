@@ -100,3 +100,7 @@ ynab_pat.txt
 # Local SEO reports and advertising exports
 /docs/seo/
 /packages/website/ads/
+
+# Python localization tooling
+__pycache__/
+*.pyc

@@ -1,29 +1,33 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { StepProps } from './shared';
+import { getOnboardingImage } from '../onboarding-images';
 
 export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
+  const { t, i18n } = useLingui();
+
   const acknowledgeId = React.useId();
   const rules = [
     {
       n: 'I.',
-      title: 'Only money you have now',
-      body: 'No projections, no credit limits. We budget paychecks that have actually landed — never money you hope will arrive.',
+      title: t`Only money you have now`,
+      body: t`No projections, no credit limits. We budget paychecks that have actually landed — never money you hope will arrive.`,
       icon: '/onboarding-rules-wallet.png',
-      alt: 'Wallet with cash',
+      alt: t`Wallet with cash`,
     },
     {
       n: 'II.',
-      title: 'Every dollar gets a job',
-      body: "Rent, groceries, future-you. If a coin walks into Budgero with no assignment, it doesn't leave the front desk.",
+      title: t`Every dollar gets a job`,
+      body: t`Rent, groceries, future-you. If a coin walks into Budgero with no assignment, it doesn't leave the front desk.`,
       icon: '/onboarding-rules-worker.png',
-      alt: 'Coin character with hardhat and briefcase',
+      alt: t`Coin character with hardhat and briefcase`,
     },
     {
       n: 'III.',
-      title: 'You are the accountant',
-      body: "Transactions are entered by hand — no bank sync, no background fetch. Slow is the feature. You'll feel every transaction.",
+      title: t`You are the accountant`,
+      body: t`Transactions are entered by hand — no bank sync, no background fetch. Slow is the feature. You'll feel every transaction.`,
       icon: '/onboarding-rules-clipboard.png',
-      alt: 'Clipboard with checkmarks',
+      alt: t`Clipboard with checkmarks`,
     },
   ];
   return (
@@ -50,9 +54,11 @@ export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
               color: '#141414',
             }}
           >
-            Three
-            <br />
-            house rules.
+            <Trans>
+              Three
+              <br />
+              house rules.
+            </Trans>
           </h1>
           {/* Orange marker-style accent under the title. */}
           <div
@@ -73,13 +79,15 @@ export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
               lineHeight: 1.65,
             }}
           >
-            Budgero is opinionated on purpose. These three rules shape everything — read them once,
-            and the rest of the app will make sense.
+            <Trans>
+              Budgero is opinionated on purpose. These three rules shape everything — read them
+              once, and the rest of the app will make sense.
+            </Trans>
           </p>
         </div>
         <img
-          src="/onboarding-rules-hero.png"
-          alt="Coin character pointing at a House Rules board"
+          src={getOnboardingImage('/onboarding-rules-hero.png', i18n.locale)}
+          alt={t`Coin character pointing at a House Rules board`}
           style={{
             width: '100%',
             height: 'auto',
@@ -170,8 +178,10 @@ export const RulesStep: React.FC<StepProps> = ({ state, set }) => {
           style={{ marginTop: 2, accentColor: '#141414', width: 16, height: 16 }}
         />
         <span style={{ fontSize: 12, color: '#141414', lineHeight: 1.55 }}>
-          I understand. I will budget only the money I have, assign every coin, and enter
-          transactions myself.
+          <Trans>
+            I understand. I will budget only the money I have, assign every coin, and enter
+            transactions myself.
+          </Trans>
         </span>
       </label>
     </div>

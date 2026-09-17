@@ -1,5 +1,9 @@
 'use client';
 
+import { plural, t } from '@lingui/core/macro';
+
+import { Trans, useLingui } from '@lingui/react/macro';
+
 import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -53,10 +57,10 @@ function formatRelativeTime(value: string): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffMins < 1) return t`just now`;
+  if (diffMins < 60) return t`${diffMins}m ago`;
+  if (diffHours < 24) return t`${diffHours}h ago`;
+  if (diffDays < 7) return t`${diffDays}d ago`;
   return date.toLocaleDateString();
 }
 
@@ -110,6 +114,8 @@ function PayloadPreview({ payload }: { payload: Record<string, unknown> }) {
 const PAGE_SIZE = 25;
 
 export default function AuditLogPage() {
+  const { t } = useLingui();
+
   const queryClient = useQueryClient();
   const spaceId = useActiveSpaceId();
   const selectedBudget = useUiStore((state) => state.selectedBudget);
@@ -152,16 +158,16 @@ export default function AuditLogPage() {
     try {
       if (pendingAction.type === 'undo') {
         await undoMutation.mutateAsync({ entry: pendingAction.entry });
-        toast.success('Action undone', {
-          description: `Reverted: ${formatOpCode(pendingAction.entry.op)}`,
+        toast.success(t`Action undone`, {
+          description: t`Reverted: ${formatOpCode(pendingAction.entry.op)}`,
         });
       } else if (pendingAction.type === 'clear') {
         await clearMutation.mutateAsync({ spaceId });
-        toast.success('Audit log cleared');
+        toast.success(t`Audit log cleared`);
         setPage(0);
       }
     } catch (error: unknown) {
-      const message = getErrorMessage(error, 'Action failed');
+      const message = getErrorMessage(error, t`Action failed`);
       toast.error(message);
     } finally {
       setPendingAction(null);
@@ -173,8 +179,8 @@ export default function AuditLogPage() {
   return (
     <div className="container max-w-6xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Audit Log"
-        description="View all changes made to your budget with the ability to undo recent actions."
+        title={t`Audit Log`}
+        description={t`View all changes made to your budget with the ability to undo recent actions.`}
       />
 
       <Card>
@@ -182,13 +188,18 @@ export default function AuditLogPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <History size={20} />
-                Mutation History
+                <Trans>
+                  <History size={20} />
+                  Mutation History
+                </Trans>
               </CardTitle>
               <CardDescription>
                 {totalCount > 0
-                  ? `${totalCount} recorded action${totalCount !== 1 ? 's' : ''} (showing ${Math.min(PAGE_SIZE, history.length)} per page)`
-                  : 'No actions recorded yet'}
+                  ? plural(totalCount, {
+                      one: `# recorded action (showing ${Math.min(PAGE_SIZE, history.length)} per page)`,
+                      other: `# recorded actions (showing ${Math.min(PAGE_SIZE, history.length)} per page)`,
+                    })
+                  : t`No actions recorded yet`}
               </CardDescription>
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -198,8 +209,10 @@ export default function AuditLogPage() {
                 onClick={handleRefresh}
                 disabled={isRefreshing || isLoading}
               >
-                <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
-                Refresh
+                <Trans>
+                  <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Trans>
               </Button>
               {totalCount > 0 && (
                 <Button
@@ -209,8 +222,10 @@ export default function AuditLogPage() {
                   disabled={disableActions}
                   className="text-destructive hover:text-destructive"
                 >
-                  <Trash2 className="h-4 w-4 mr-1" />
-                  Clear History
+                  <Trans>
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Clear History
+                  </Trans>
                 </Button>
               )}
             </div>
@@ -219,14 +234,18 @@ export default function AuditLogPage() {
         <CardContent className="p-0">
           {!spaceId ? (
             <div className="p-6 text-sm text-muted-foreground flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              No workspace selected.
+              <Trans>
+                <AlertTriangle className="h-4 w-4" />
+                No workspace selected.
+              </Trans>
             </div>
           ) : isLoading ? (
-            <InlineLoadingRow label="Loading audit log..." />
+            <InlineLoadingRow label={t`Loading audit log...`} />
           ) : history.length === 0 ? (
             <div className="p-6 text-sm text-muted-foreground">
-              No actions recorded yet. Changes you make will appear here for review and undo.
+              <Trans>
+                No actions recorded yet. Changes you make will appear here for review and undo.
+              </Trans>
             </div>
           ) : (
             <>
@@ -234,13 +253,27 @@ export default function AuditLogPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[140px]">Time</TableHead>
-                      <TableHead className="w-[120px]">Budget</TableHead>
-                      <TableHead className="w-[180px]">Action</TableHead>
-                      <TableHead>Details</TableHead>
-                      <TableHead className="w-[80px] text-center">Origin</TableHead>
-                      <TableHead className="w-[100px]">Status</TableHead>
-                      <TableHead className="w-[100px] text-right">Actions</TableHead>
+                      <TableHead className="w-[140px]">
+                        <Trans>Time</Trans>
+                      </TableHead>
+                      <TableHead className="w-[120px]">
+                        <Trans>Budget</Trans>
+                      </TableHead>
+                      <TableHead className="w-[180px]">
+                        <Trans>Action</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Details</Trans>
+                      </TableHead>
+                      <TableHead className="w-[80px] text-center">
+                        <Trans>Origin</Trans>
+                      </TableHead>
+                      <TableHead className="w-[100px]">
+                        <Trans>Status</Trans>
+                      </TableHead>
+                      <TableHead className="w-[100px] text-right">
+                        <Trans>Actions</Trans>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -293,8 +326,8 @@ export default function AuditLogPage() {
                                 </TooltipTrigger>
                                 <TooltipContent>
                                   {entry.origin === 'local'
-                                    ? 'Local change (made on this device)'
-                                    : 'Remote change (synced from another device)'}
+                                    ? t`Local change (made on this device)`
+                                    : t`Remote change (synced from another device)`}
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -308,8 +341,10 @@ export default function AuditLogPage() {
                                       variant="destructive"
                                       className="cursor-help flex items-center gap-1"
                                     >
-                                      <AlertCircle className="h-3 w-3" />
-                                      Failed
+                                      <Trans>
+                                        <AlertCircle className="h-3 w-3" />
+                                        Failed
+                                      </Trans>
                                     </Badge>
                                   </TooltipTrigger>
                                   <TooltipContent side="left" className="max-w-xs">
@@ -320,7 +355,7 @@ export default function AuditLogPage() {
                                         </p>
                                       )}
                                       <p className="text-sm">
-                                        {entry.errorMessage || 'Unknown error'}
+                                        {entry.errorMessage || t`Unknown error`}
                                       </p>
                                     </div>
                                   </TooltipContent>
@@ -328,13 +363,15 @@ export default function AuditLogPage() {
                               </TooltipProvider>
                             ) : entry.undoneAt ? (
                               <Badge variant="outline" className="text-muted-foreground">
-                                Undone
+                                <Trans>Undone</Trans>
                               </Badge>
                             ) : canUndo ? (
-                              <Badge variant="secondary">Active</Badge>
+                              <Badge variant="secondary">
+                                <Trans>Active</Trans>
+                              </Badge>
                             ) : (
                               <Badge variant="outline" className="text-muted-foreground">
-                                No Undo
+                                <Trans>No Undo</Trans>
                               </Badge>
                             )}
                           </TableCell>
@@ -345,7 +382,10 @@ export default function AuditLogPage() {
                               disabled={!canUndo || disableActions}
                               onClick={() => setPendingAction({ type: 'undo', entry })}
                             >
-                              <Undo2 className="h-4 w-4 mr-1" /> Undo
+                              <Trans>
+                                <Undo2 className="h-4 w-4 mr-1" />
+                                Undo
+                              </Trans>
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -359,7 +399,9 @@ export default function AuditLogPage() {
               {totalPages > 1 && (
                 <div className="flex items-center justify-between px-4 py-3 border-t">
                   <span className="text-sm text-muted-foreground">
-                    Page {page + 1} of {totalPages}
+                    <Trans>
+                      Page {page + 1} of {totalPages}
+                    </Trans>
                   </span>
                   <div className="flex items-center gap-2">
                     <Button
@@ -368,8 +410,10 @@ export default function AuditLogPage() {
                       onClick={() => setPage((p) => Math.max(0, p - 1))}
                       disabled={page === 0}
                     >
-                      <ChevronLeft className="h-4 w-4" />
-                      Previous
+                      <Trans>
+                        <ChevronLeft className="h-4 w-4" />
+                        Previous
+                      </Trans>
                     </Button>
                     <Button
                       variant="outline"
@@ -377,8 +421,10 @@ export default function AuditLogPage() {
                       onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                       disabled={page >= totalPages - 1}
                     >
-                      Next
-                      <ChevronRight className="h-4 w-4" />
+                      <Trans>
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                      </Trans>
                     </Button>
                   </div>
                 </div>
@@ -391,17 +437,17 @@ export default function AuditLogPage() {
       <ConfirmDialog
         open={pendingAction !== null}
         onOpenChange={(open) => !open && setPendingAction(null)}
-        title={pendingAction?.type === 'undo' ? 'Undo this action?' : 'Clear audit log?'}
+        title={pendingAction?.type === 'undo' ? t`Undo this action?` : t`Clear audit log?`}
         description={
           pendingAction?.type === 'undo' ? (
-            <>
+            <Trans>
               <span className="block font-medium text-foreground mb-2">
                 {formatOpCode(pendingAction.entry.op)}
               </span>
               This will revert the changes made by this action. Make sure this is what you want.
-            </>
+            </Trans>
           ) : (
-            'This will permanently delete all audit log entries. Your actual data will not be affected.'
+            t`This will permanently delete all audit log entries. Your actual data will not be affected.`
           )
         }
         loadingText="Working..."

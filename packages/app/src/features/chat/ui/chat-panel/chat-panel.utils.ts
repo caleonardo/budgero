@@ -1,5 +1,7 @@
+import { t } from '@lingui/core/macro';
 import type { ChatConversation } from '@budgero/core/browser';
 import { normalizeUtcString } from '@shared/lib/date-utils';
+import { getLocaleTag } from '@shared/i18n';
 
 /**
  * Tailwind `prose` classes shared by every rendered-markdown chat bubble
@@ -62,7 +64,7 @@ export function formatTokenCount(tokens: number): string {
 export function formatMessageTime(dateString: string): string {
   // SQLite datetime('now') is timezone-naive UTC; anchor it before local display.
   const date = new Date(normalizeUtcString(dateString));
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString(getLocaleTag(), {
     hour: 'numeric',
     minute: '2-digit',
   });
@@ -80,10 +82,10 @@ export function formatRelativeTime(dateStr: string): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffMins < 1) return t`Just now`;
+  if (diffMins < 60) return t`${diffMins}m ago`;
+  if (diffHours < 24) return t`${diffHours}h ago`;
+  if (diffDays < 7) return t`${diffDays}d ago`;
   return date.toLocaleDateString();
 }
 

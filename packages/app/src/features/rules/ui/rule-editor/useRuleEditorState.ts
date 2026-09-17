@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import type { TransactionRule, RuleCondition, RuleAction } from '@budgero/core/browser';
 import { useCategories } from '@entities/category/api/useCategories';
@@ -40,6 +41,8 @@ export function useRuleEditorState({
   initialRule,
   onSubmit,
 }: UseRuleEditorStateOptions) {
+  const { t } = useLingui();
+
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [enabled, setEnabled] = useState(true);
@@ -169,11 +172,11 @@ export function useRuleEditorState({
     await onSubmit(payload);
   }, [name, description, modeValue, enabled, runOrder, conditions, actions, onSubmit]);
 
-  const dialogTitle = mode === 'create' ? 'New automation rule' : 'Edit automation rule';
+  const dialogTitle = mode === 'create' ? t`New automation rule` : t`Edit automation rule`;
   const dialogDescription =
     mode === 'create'
-      ? 'Describe the conditions and actions you want Budgero to apply automatically.'
-      : "Update the rule's details, then save your changes to keep automations in sync.";
+      ? t`Describe the conditions and actions you want Budgero to apply automatically.`
+      : t`Update the rule's details, then save your changes to keep automations in sync.`;
 
   return {
     name,

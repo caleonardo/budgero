@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -26,26 +27,37 @@ export function EncryptionInfoPanel({ state }: EncryptionInfoPanelProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Encryption Key
+            <Trans>
+              <Shield className="h-5 w-5" />
+              Encryption Key
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Export your encryption key for use with external tools like the Python script.
+            <Trans>
+              Export your encryption key for use with external tools like the Python script.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Security Warning:</strong> Your encryption key can decrypt all your budget
-              data. Never share it publicly and store it securely.
+              <Trans>
+                <strong>
+                  <Trans>Security Warning:</Trans>
+                </strong>
+                Your encryption key can decrypt all your budget data. Never share it publicly and
+                store it securely.
+              </Trans>
             </AlertDescription>
           </Alert>
 
           {showEncryptionKey && encryptionKey ? (
             <div className="space-y-3">
               <div className="space-y-2">
-                <Label>Your Encryption Key (Base64)</Label>
+                <Label>
+                  <Trans>Your Encryption Key (Base64)</Trans>
+                </Label>
                 <div className="flex gap-2">
                   <Input type="text" value={encryptionKey} readOnly className="font-mono text-xs" />
                   <Button variant="outline" size="icon" onClick={handleCopyEncryptionKey}>
@@ -53,18 +65,22 @@ export function EncryptionInfoPanel({ state }: EncryptionInfoPanelProps) {
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  This key will automatically hide in 60 seconds.
+                  <Trans>This key will automatically hide in 60 seconds.</Trans>
                 </p>
               </div>
               <Button variant="outline" onClick={handleHideEncryptionKey}>
-                <EyeOff className="h-4 w-4 mr-2" />
-                Hide Key
+                <Trans>
+                  <EyeOff className="h-4 w-4 mr-2" />
+                  Hide Key
+                </Trans>
               </Button>
             </div>
           ) : (
             <Button variant="outline" onClick={handleRevealEncryptionKey}>
-              <Eye className="h-4 w-4 mr-2" />
-              Reveal Encryption Key
+              <Trans>
+                <Eye className="h-4 w-4 mr-2" />
+                Reveal Encryption Key
+              </Trans>
             </Button>
           )}
         </CardContent>
@@ -74,29 +90,41 @@ export function EncryptionInfoPanel({ state }: EncryptionInfoPanelProps) {
       {encryptionInfo && (
         <Card>
           <CardHeader>
-            <CardTitle>Encryption Details</CardTitle>
-            <CardDescription>Technical details for encrypting your payloads.</CardDescription>
+            <CardTitle>
+              <Trans>Encryption Details</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Technical details for encrypting your payloads.</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Algorithm</span>
+                <span className="text-muted-foreground">
+                  <Trans>Algorithm</Trans>
+                </span>
                 <code className="text-xs bg-muted px-1 py-0.5 rounded">
                   {encryptionInfo.info.algorithm}
                 </code>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Encoding</span>
+                <span className="text-muted-foreground">
+                  <Trans>Encoding</Trans>
+                </span>
                 <code className="text-xs bg-muted px-1 py-0.5 rounded">
                   {encryptionInfo.info.encoding}
                 </code>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Key Source</span>
+                <span className="text-muted-foreground">
+                  <Trans>Key Source</Trans>
+                </span>
                 <span className="text-xs">{encryptionInfo.info.key_derivation}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Supported Operations</span>
+                <span className="text-muted-foreground">
+                  <Trans>Supported Operations</Trans>
+                </span>
                 <code className="text-xs bg-muted px-1 py-0.5 rounded">
                   {encryptionInfo.info.supported_opcodes}
                 </code>

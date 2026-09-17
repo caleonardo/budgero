@@ -1,4 +1,5 @@
-import { eachDayOfInterval, format, parseISO, isAfter, isBefore } from 'date-fns';
+import { eachDayOfInterval, parseISO, isAfter, isBefore } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 
 /** Minimal transaction shape needed for balance-history math (amounts in integer milliunits). */
 export interface HistoryTransaction {

@@ -13,6 +13,7 @@ RUN npm install -g pnpm@11.1.2
 
 # Copy workspace manifests
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/website/patches ./packages/website/patches
 COPY packages/core/package.json packages/core/
 COPY packages/runtime/package.json packages/runtime/
 COPY packages/app/package.json packages/app/
@@ -38,7 +39,7 @@ ARG APP_BUILD_SHA
 ENV APP_BUILD_SHA=$APP_BUILD_SHA
 
 # Build self-host frontend (run via pnpm workspace to avoid npx resolution issues in containers)
-RUN VITE_SELF_HOSTABLE=true pnpm --filter @budgero/app exec vite build
+RUN VITE_SELF_HOSTABLE=true pnpm --filter @budgero/app exec vite build --config vite.config.ts
 
 
 ### Stage 2: Build Go Server
@@ -73,7 +74,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 ### Stage 3: Runtime
 FROM alpine:3.24 AS runtime
 
-# Note: apk upgrade ensures we get the latest security patches (e.g., busybox CVEs)
+# Apply the security updates currently available from Alpine.
 RUN apk upgrade --no-cache && apk add --no-cache ca-certificates tzdata
 
 # Create non-root user

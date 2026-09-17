@@ -1,3 +1,5 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -65,6 +67,8 @@ const CLOSED_CREATE_DIALOG: {
 } = { open: false, email: '', name: '', password: '', isAdmin: false, submitting: false };
 
 export default function SelfHostAdminUsers() {
+  const { t } = useLingui();
+
   const adminApi = useAdminApi();
   const [users, setUsers] = useState<SelfHostAdminUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,11 +84,11 @@ export default function SelfHostAdminUsers() {
       setUsers(data ?? []);
     } catch (error) {
       console.error('Failed to load self-host users', error);
-      toast.error('Unable to load users');
+      toast.error(t`Unable to load users`);
     } finally {
       setLoading(false);
     }
-  }, [adminApi]);
+  }, [adminApi, t]);
 
   useEffect(() => {
     void loadUsers();
@@ -112,24 +116,24 @@ export default function SelfHostAdminUsers() {
   const handleResetPassword = async () => {
     if (!resetDialog.user) return;
     if (resetDialog.password.length < 8) {
-      toast.error('Password too short', {
-        description: 'Use at least 8 characters.',
+      toast.error(t`Password too short`, {
+        description: t`Use at least 8 characters.`,
       });
       return;
     }
     if (resetDialog.password !== resetDialog.confirm) {
-      toast.error('Passwords do not match');
+      toast.error(t`Passwords do not match`);
       return;
     }
 
     try {
       setResetDialog((prev) => ({ ...prev, submitting: true }));
       await adminApi.resetSelfHostPassword(resetDialog.user.id, resetDialog.password);
-      toast.success('Password updated', { description: resetDialog.user.email });
+      toast.success(t`Password updated`, { description: resetDialog.user.email });
       setResetDialog(CLOSED_RESET_DIALOG);
     } catch (error) {
       console.error('Failed to reset password', error);
-      toast.error('Reset failed');
+      toast.error(t`Reset failed`);
       setResetDialog((prev) => ({ ...prev, submitting: false }));
     }
   };
@@ -139,12 +143,12 @@ export default function SelfHostAdminUsers() {
     try {
       setDeleteDialog((prev) => ({ ...prev, submitting: true }));
       await adminApi.deleteSelfHostUser(deleteDialog.user.id);
-      toast.success('User deleted', { description: deleteDialog.user.email });
+      toast.success(t`User deleted`, { description: deleteDialog.user.email });
       setDeleteDialog(CLOSED_DELETE_DIALOG);
       await loadUsers();
     } catch (error) {
       console.error('Failed to delete user', error);
-      toast.error('Delete failed');
+      toast.error(t`Delete failed`);
       setDeleteDialog((prev) => ({ ...prev, submitting: false }));
     }
   };
@@ -153,15 +157,15 @@ export default function SelfHostAdminUsers() {
     try {
       if (block) {
         await adminApi.blockUser(user.id);
-        toast.success('Blocked', { description: `${user.email} cannot log in` });
+        toast.success(t`Blocked`, { description: t`${user.email} cannot log in` });
       } else {
         await adminApi.unblockUser(user.id);
-        toast.success('Unblocked', { description: `${user.email} can log in again` });
+        toast.success(t`Unblocked`, { description: t`${user.email} can log in again` });
       }
       await loadUsers();
     } catch (error) {
       console.error('Failed to update block flag', error);
-      toast.error('Update failed');
+      toast.error(t`Update failed`);
     }
   };
 
@@ -171,10 +175,10 @@ export default function SelfHostAdminUsers() {
     if (!confirmed) return;
     try {
       await adminApi.resetUserData(user.id);
-      toast.success('User data reset', { description: user.email });
+      toast.success(t`User data reset`, { description: user.email });
     } catch (error) {
       console.error('Failed to reset data', error);
-      toast.error('Reset failed');
+      toast.error(t`Reset failed`);
     }
   };
 
@@ -188,12 +192,12 @@ export default function SelfHostAdminUsers() {
 
   const handleCreateUser = async () => {
     if (!createDialog.email.trim()) {
-      toast.error('Username required');
+      toast.error(t`Username required`);
       return;
     }
     if (createDialog.password.length < 8) {
-      toast.error('Password too short', {
-        description: 'Use at least 8 characters.',
+      toast.error(t`Password too short`, {
+        description: t`Use at least 8 characters.`,
       });
       return;
     }
@@ -206,12 +210,12 @@ export default function SelfHostAdminUsers() {
         createDialog.password,
         createDialog.isAdmin
       );
-      toast.success('User created', { description: createDialog.email });
+      toast.success(t`User created`, { description: createDialog.email });
       setCreateDialog(CLOSED_CREATE_DIALOG);
       await loadUsers();
     } catch (error) {
       console.error('Failed to create user', error);
-      toast.error('Create failed');
+      toast.error(t`Create failed`);
       setCreateDialog((prev) => ({ ...prev, submitting: false }));
     }
   };
@@ -220,17 +224,25 @@ export default function SelfHostAdminUsers() {
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Users</h1>
-          <p className="text-muted-foreground mt-1">Manage local accounts, passwords, and data.</p>
+          <h1 className="text-3xl font-bold">
+            <Trans>Users</Trans>
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            <Trans>Manage local accounts, passwords, and data.</Trans>
+          </p>
         </div>
         <div className="flex gap-2">
           <Button onClick={() => setCreateDialog((prev) => ({ ...prev, open: true }))}>
-            <UserPlus className="w-4 h-4 mr-2" />
-            Add User
+            <Trans>
+              <UserPlus className="w-4 h-4 mr-2" />
+              Add User
+            </Trans>
           </Button>
           <Button variant="outline" onClick={loadUsers} disabled={loading}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            <Trans>
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Trans>
           </Button>
         </div>
       </div>
@@ -238,8 +250,12 @@ export default function SelfHostAdminUsers() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>Total users</CardTitle>
-            <CardDescription>Across this deployment</CardDescription>
+            <CardTitle>
+              <Trans>Total users</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Across this deployment</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex items-center justify-between">
             <div className="text-3xl font-bold">{summary.total}</div>
@@ -248,8 +264,12 @@ export default function SelfHostAdminUsers() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Admins</CardTitle>
-            <CardDescription>Users with elevated access</CardDescription>
+            <CardTitle>
+              <Trans>Admins</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Users with elevated access</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{summary.admins}</div>
@@ -257,8 +277,12 @@ export default function SelfHostAdminUsers() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Missing master passwords</CardTitle>
-            <CardDescription>Users who need onboarding</CardDescription>
+            <CardTitle>
+              <Trans>Missing master passwords</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Users who need onboarding</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{summary.noMasterPassword}</div>
@@ -266,8 +290,12 @@ export default function SelfHostAdminUsers() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Blocked users</CardTitle>
-            <CardDescription>Cannot log in</CardDescription>
+            <CardTitle>
+              <Trans>Blocked users</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Cannot log in</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{summary.blocked}</div>
@@ -277,14 +305,18 @@ export default function SelfHostAdminUsers() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Search Users</CardTitle>
-          <CardDescription>Filter by name, username, or ID.</CardDescription>
+          <CardTitle>
+            <Trans>Search Users</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Filter by name, username, or ID.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              placeholder="Search by username, name, or ID..."
+              placeholder={t`Search by username, name, or ID...`}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               className="pl-10"
@@ -295,11 +327,16 @@ export default function SelfHostAdminUsers() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Accounts</CardTitle>
+          <CardTitle>
+            <Trans>Accounts</Trans>
+          </CardTitle>
           <CardDescription>
             {loading
-              ? 'Loading users...'
-              : `${filteredUsers.length} matching user${filteredUsers.length === 1 ? '' : 's'}`}
+              ? t`Loading users...`
+              : plural(filteredUsers.length, {
+                  one: `# matching user`,
+                  other: `# matching users`,
+                })}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -308,17 +345,31 @@ export default function SelfHostAdminUsers() {
               <RefreshCw className="w-6 h-6 text-muted-foreground animate-spin" />
             </div>
           ) : filteredUsers.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-6">No users found.</p>
+            <p className="text-sm text-muted-foreground text-center py-6">
+              <Trans>No users found.</Trans>
+            </p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Spaces</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Last login</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>
+                    <Trans>User</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Status</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Spaces</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Created</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Last login</Trans>
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <Trans>Actions</Trans>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -334,28 +385,37 @@ export default function SelfHostAdminUsers() {
                       <div className="flex flex-wrap gap-1">
                         {user.isAdmin && (
                           <Badge variant="outline" className="text-xs">
-                            <Shield className="w-3 h-3 mr-1" /> Admin
+                            <Trans>
+                              <Shield className="w-3 h-3 mr-1" />
+                              Admin
+                            </Trans>
                           </Badge>
                         )}
                         {user.isBlocked && (
                           <Badge variant="destructive" className="text-xs">
-                            <Ban className="w-3 h-3 mr-1" /> Blocked
+                            <Trans>
+                              <Ban className="w-3 h-3 mr-1" />
+                              Blocked
+                            </Trans>
                           </Badge>
                         )}
                         <Badge variant="outline" className="text-xs">
                           <LockOpen className="w-3 h-3 mr-1" />
-                          {user.hasLocalPassword ? 'Password set' : 'No password'}
+                          {user.hasLocalPassword ? t`Password set` : t`No password`}
                         </Badge>
                         <Badge variant="outline" className="text-xs">
-                          {user.isMasterPasswordSet ? 'Master password set' : 'Needs onboarding'}
+                          {user.isMasterPasswordSet ? t`Master password set` : t`Needs onboarding`}
                         </Badge>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <span className="font-medium">{user.spaceMembershipCount}</span> memberships
-                        <br />
-                        <span className="font-medium">{user.ownedSpaceCount}</span> owned
+                        <Trans>
+                          <span className="font-medium">{user.spaceMembershipCount}</span>
+                          memberships
+                          <br />
+                          <span className="font-medium">{user.ownedSpaceCount}</span>owned
+                        </Trans>
                       </div>
                     </TableCell>
                     <TableCell>{formatShortDate(user.createdAt)}</TableCell>
@@ -368,23 +428,34 @@ export default function SelfHostAdminUsers() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Manage</DropdownMenuLabel>
+                          <DropdownMenuLabel>
+                            <Trans>Manage</Trans>
+                          </DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => openResetDialog(user)}>
-                            <KeyRound className="w-4 h-4 mr-2" /> Reset password
+                            <Trans>
+                              <KeyRound className="w-4 h-4 mr-2" />
+                              Reset password
+                            </Trans>
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleResetData(user)}>
-                            <RotateCcw className="w-4 h-4 mr-2" /> Reset data flags
+                            <Trans>
+                              <RotateCcw className="w-4 h-4 mr-2" />
+                              Reset data flags
+                            </Trans>
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleBlockUser(user, !user.isBlocked)}>
                             <Ban className="w-4 h-4 mr-2" />
-                            {user.isBlocked ? 'Unblock user' : 'Block user'}
+                            {user.isBlocked ? t`Unblock user` : t`Block user`}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             className="text-red-600"
                             onClick={() => openDeleteDialog(user)}
                           >
-                            <Trash2 className="w-4 h-4 mr-2" /> Delete user
+                            <Trans>
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete user
+                            </Trans>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -405,14 +476,20 @@ export default function SelfHostAdminUsers() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reset password</DialogTitle>
+            <DialogTitle>
+              <Trans>Reset password</Trans>
+            </DialogTitle>
             <DialogDescription>
-              Set a new password for {resetDialog.user?.email}. Share it securely with the user.
+              <Trans>
+                Set a new password for {resetDialog.user?.email}. Share it securely with the user.
+              </Trans>
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="new-password">New password</Label>
+              <Label htmlFor="new-password">
+                <Trans>New password</Trans>
+              </Label>
               <Input
                 id="new-password"
                 type="password"
@@ -420,11 +497,13 @@ export default function SelfHostAdminUsers() {
                 onChange={(event) =>
                   setResetDialog((prev) => ({ ...prev, password: event.target.value }))
                 }
-                placeholder="At least 8 characters"
+                placeholder={t`At least 8 characters`}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm password</Label>
+              <Label htmlFor="confirm-password">
+                <Trans>Confirm password</Trans>
+              </Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -437,10 +516,10 @@ export default function SelfHostAdminUsers() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setResetDialog(CLOSED_RESET_DIALOG)}>
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button onClick={handleResetPassword} disabled={resetDialog.submitting}>
-              {resetDialog.submitting ? 'Resetting...' : 'Reset password'}
+              {resetDialog.submitting ? t`Resetting...` : t`Reset password`}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -454,22 +533,26 @@ export default function SelfHostAdminUsers() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete user</DialogTitle>
+            <DialogTitle>
+              <Trans>Delete user</Trans>
+            </DialogTitle>
             <DialogDescription>
-              Permanently delete {deleteDialog.user?.email}. This removes their memberships and
-              owned spaces.
+              <Trans>
+                Permanently delete {deleteDialog.user?.email}. This removes their memberships and
+                owned spaces.
+              </Trans>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialog(CLOSED_DELETE_DIALOG)}>
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteUser}
               disabled={deleteDialog.submitting}
             >
-              {deleteDialog.submitting ? 'Deleting…' : 'Delete user'}
+              {deleteDialog.submitting ? t`Deleting…` : t`Delete user`}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -483,14 +566,18 @@ export default function SelfHostAdminUsers() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create user</DialogTitle>
+            <DialogTitle>
+              <Trans>Create user</Trans>
+            </DialogTitle>
             <DialogDescription>
-              Add a new user to this deployment. Share the password securely.
+              <Trans>Add a new user to this deployment. Share the password securely.</Trans>
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="create-username">Username</Label>
+              <Label htmlFor="create-username">
+                <Trans>Username</Trans>
+              </Label>
               <Input
                 id="create-username"
                 type="text"
@@ -502,7 +589,9 @@ export default function SelfHostAdminUsers() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="create-name">Name</Label>
+              <Label htmlFor="create-name">
+                <Trans>Name</Trans>
+              </Label>
               <Input
                 id="create-name"
                 type="text"
@@ -510,11 +599,13 @@ export default function SelfHostAdminUsers() {
                 onChange={(event) =>
                   setCreateDialog((prev) => ({ ...prev, name: event.target.value }))
                 }
-                placeholder="John Doe"
+                placeholder={t`John Doe`}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="create-password">Password</Label>
+              <Label htmlFor="create-password">
+                <Trans>Password</Trans>
+              </Label>
               <div className="flex gap-2">
                 <Input
                   id="create-password"
@@ -523,14 +614,14 @@ export default function SelfHostAdminUsers() {
                   onChange={(event) =>
                     setCreateDialog((prev) => ({ ...prev, password: event.target.value }))
                   }
-                  placeholder="At least 8 characters"
+                  placeholder={t`At least 8 characters`}
                   className="flex-1"
                 />
                 <Button
                   type="button"
                   variant="outline"
                   onClick={generatePassword}
-                  title="Generate random password"
+                  title={t`Generate random password`}
                 >
                   <Dices className="w-4 h-4" />
                 </Button>
@@ -545,16 +636,16 @@ export default function SelfHostAdminUsers() {
                 }
               />
               <Label htmlFor="create-admin" className="text-sm font-normal cursor-pointer">
-                Grant admin privileges
+                <Trans>Grant admin privileges</Trans>
               </Label>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateDialog(CLOSED_CREATE_DIALOG)}>
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button onClick={handleCreateUser} disabled={createDialog.submitting}>
-              {createDialog.submitting ? 'Creating...' : 'Create user'}
+              {createDialog.submitting ? t`Creating...` : t`Create user`}
             </Button>
           </DialogFooter>
         </DialogContent>

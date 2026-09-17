@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -67,6 +68,8 @@ function indexCells(cells: CohortRetentionCell[]): RetentionLookup {
 }
 
 export default function StickinessAnalyticsSection() {
+  const { t } = useLingui();
+
   const adminApi = useAdminApi();
 
   const [cohort, setCohort] = useState<AnalyticsGranularity>('weekly');
@@ -79,7 +82,7 @@ export default function StickinessAnalyticsSection() {
     [AnalyticsGranularity, number]
   >({
     defaultDaysBack: 90,
-    errorMessage: 'Failed to load stickiness analytics',
+    errorMessage: t`Failed to load stickiness analytics`,
     initialArgs: ['weekly', 30],
     fetcher: (f, t, g, n) =>
       adminApi.getStickinessAnalytics(dateInputToISO(f), dateInputToISO(t), g, n),
@@ -124,13 +127,13 @@ export default function StickinessAnalyticsSection() {
           const point = series[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           return tooltipHtml(`Day ${point.day}`, [
-            { color: lineColor, name: 'DAU/MAU', value: pct(point.stickiness) },
+            { color: lineColor, name: t`DAU/MAU`, value: pct(point.stickiness) },
           ]);
         },
       },
       series: [
         {
-          name: 'DAU/MAU',
+          name: t`DAU/MAU`,
           type: 'line',
           data: series.map((p) => p.stickiness * 100),
           lineStyle: { color: lineColor, width: 2 },
@@ -141,21 +144,25 @@ export default function StickinessAnalyticsSection() {
         },
       ],
     };
-  }, [series, palette]);
+  }, [series, palette, t]);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5 text-blue-500" />
-          Stickiness & retention
+          <Trans>
+            <Activity className="h-5 w-5 text-blue-500" />
+            Stickiness & retention
+          </Trans>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Controls */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
           <div className="space-y-1.5">
-            <Label htmlFor="stickiness-from">From</Label>
+            <Label htmlFor="stickiness-from">
+              <Trans>From</Trans>
+            </Label>
             <Input
               id="stickiness-from"
               type="date"
@@ -164,7 +171,9 @@ export default function StickinessAnalyticsSection() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="stickiness-to">To</Label>
+            <Label htmlFor="stickiness-to">
+              <Trans>To</Trans>
+            </Label>
             <Input
               id="stickiness-to"
               type="date"
@@ -173,34 +182,52 @@ export default function StickinessAnalyticsSection() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label>Cohort bucket</Label>
+            <Label>
+              <Trans>Cohort bucket</Trans>
+            </Label>
             <Select value={cohort} onValueChange={(v) => setCohort(v as AnalyticsGranularity)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="daily">
+                  <Trans>Daily</Trans>
+                </SelectItem>
+                <SelectItem value="weekly">
+                  <Trans>Weekly</Trans>
+                </SelectItem>
+                <SelectItem value="monthly">
+                  <Trans>Monthly</Trans>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="stickiness-maxn">Day-N window</Label>
+            <Label htmlFor="stickiness-maxn">
+              <Trans>Day-N window</Trans>
+            </Label>
             <Select value={String(maxDayN)} onValueChange={(v) => setMaxDayN(Number(v))}>
               <SelectTrigger id="stickiness-maxn">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="14">14 days</SelectItem>
-                <SelectItem value="30">30 days</SelectItem>
-                <SelectItem value="60">60 days</SelectItem>
-                <SelectItem value="90">90 days</SelectItem>
+                <SelectItem value="14">
+                  <Trans>14 days</Trans>
+                </SelectItem>
+                <SelectItem value="30">
+                  <Trans>30 days</Trans>
+                </SelectItem>
+                <SelectItem value="60">
+                  <Trans>60 days</Trans>
+                </SelectItem>
+                <SelectItem value="90">
+                  <Trans>90 days</Trans>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
           <Button onClick={() => void fetchData(from, to, cohort, maxDayN)} disabled={loading}>
-            {loading ? 'Loading…' : 'Refresh'}
+            {loading ? t`Loading…` : t`Refresh`}
           </Button>
         </div>
 
@@ -209,8 +236,10 @@ export default function StickinessAnalyticsSection() {
           <Card className="lg:col-span-1">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Current DAU/MAU
+                <Trans>
+                  <Users className="h-4 w-4" />
+                  Current DAU/MAU
+                </Trans>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -219,26 +248,36 @@ export default function StickinessAnalyticsSection() {
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 {current
-                  ? `${current.dau.toLocaleString()} active today / ${current.mau.toLocaleString()} active in last 30 days`
-                  : 'No data yet'}
+                  ? t`${current.dau.toLocaleString()} active today / ${current.mau.toLocaleString()} active in last 30 days`
+                  : t`No data yet`}
               </p>
               <div className="mt-3 text-xs text-muted-foreground space-y-0.5">
-                <p>&lt;10% — low engagement</p>
-                <p>10–20% — typical SaaS</p>
-                <p>20–50% — strong</p>
-                <p>50%+ — exceptional</p>
+                <p>
+                  <Trans>&lt;10% — low engagement</Trans>
+                </p>
+                <p>
+                  <Trans>10–20% — typical SaaS</Trans>
+                </p>
+                <p>
+                  <Trans>20–50% — strong</Trans>
+                </p>
+                <p>
+                  <Trans>50%+ — exceptional</Trans>
+                </p>
               </div>
             </CardContent>
           </Card>
           <Card className="lg:col-span-2">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Stickiness over time
+                <Trans>Stickiness over time</Trans>
               </CardTitle>
             </CardHeader>
             <CardContent>
               {series.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No activity in the selected window.</p>
+                <p className="text-sm text-muted-foreground">
+                  <Trans>No activity in the selected window.</Trans>
+                </p>
               ) : (
                 <EChart
                   option={stickinessOption}
@@ -252,24 +291,32 @@ export default function StickinessAnalyticsSection() {
 
         {/* Cohort retention heatmap */}
         <div>
-          <h3 className="text-sm font-medium mb-2">Cohort retention</h3>
+          <h3 className="text-sm font-medium mb-2">
+            <Trans>Cohort retention</Trans>
+          </h3>
           <p className="text-xs text-muted-foreground mb-3">
-            Each row is a signup cohort. Cells show the % of that cohort active on day N after
-            signup. Look for cliffs (every cohort drops at the same day) and cross-cohort drift
-            (recent cohorts retaining better or worse than older ones). Daily cohorts are noisy at
-            low signup volume — switch to weekly if rows look jagged.
+            <Trans>
+              Each row is a signup cohort. Cells show the % of that cohort active on day N after
+              signup. Look for cliffs (every cohort drops at the same day) and cross-cohort drift
+              (recent cohorts retaining better or worse than older ones). Daily cohorts are noisy at
+              low signup volume — switch to weekly if rows look jagged.
+            </Trans>
           </p>
           {(data?.cohorts.cohorts.length ?? 0) === 0 ? (
-            <p className="text-sm text-muted-foreground">No cohorts in the selected window.</p>
+            <p className="text-sm text-muted-foreground">
+              <Trans>No cohorts in the selected window.</Trans>
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
                   <tr>
                     <th className="text-left p-2 font-medium sticky left-0 bg-background">
-                      Cohort
+                      <Trans>Cohort</Trans>
                     </th>
-                    <th className="text-right p-2 font-medium">Size</th>
+                    <th className="text-right p-2 font-medium">
+                      <Trans>Size</Trans>
+                    </th>
                     {dayColumns.map((n) => (
                       <th key={n} className="text-center p-2 font-medium tabular-nums">
                         D{n}
@@ -296,8 +343,8 @@ export default function StickinessAnalyticsSection() {
                             )}`}
                             title={
                               cell
-                                ? `${cell.active}/${cell.cohort_size} active on day ${n}`
-                                : 'No data'
+                                ? t`${cell.active}/${cell.cohort_size} active on day ${n}`
+                                : t`No data`
                             }
                           >
                             {cell ? pct(r) : '—'}

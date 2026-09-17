@@ -1,5 +1,7 @@
 'use client';
 
+import { useLingui } from '@lingui/react/macro';
+
 import { useState, useRef, ChangeEvent, useEffect, useCallback } from 'react';
 import { useBudgets } from '@entities/budget/api/useBudgets';
 import {
@@ -103,6 +105,8 @@ function withDecision(row: PreviewRow, decision: 'skip' | 'import'): PreviewRow 
 }
 
 export function useImportDialogState(): ImportDialogState {
+  const { t } = useLingui();
+
   const [currentStep, setCurrentStep] = useState<ImportStep>('upload');
   const [parsedData, setParsedData] = useState<ParsedData | null>(null);
   const [columnMapping, setColumnMapping] = useState<ColumnMapping>({});
@@ -231,10 +235,10 @@ export function useImportDialogState(): ImportDialogState {
         setCurrentStep('configure');
       } catch (err) {
         console.error('File parsing error:', err);
-        setError(getErrorMessage(err, 'Failed to parse file'));
+        setError(getErrorMessage(err, t`Failed to parse file`));
       }
     },
-    [importConfig.skipRows]
+    [importConfig.skipRows, t]
   );
 
   processFileRef.current = processSelectedFile;
@@ -288,14 +292,14 @@ export function useImportDialogState(): ImportDialogState {
         setSkippedRowIndices(new Set());
       } catch (err) {
         if (cancelled) return;
-        setError(getErrorMessage(err, 'Failed to re-parse file'));
+        setError(getErrorMessage(err, t`Failed to re-parse file`));
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [importConfig.skipRows]);
+  }, [importConfig.skipRows, t]);
 
   const handleFileChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
@@ -381,11 +385,11 @@ export function useImportDialogState(): ImportDialogState {
       setPreviewSkippedCount(preview.filter((row) => row.duplicate.status === 'invalid').length);
       setCurrentStep('preview');
     } catch (err) {
-      setError(getErrorMessage(err, 'Failed to check duplicates'));
+      setError(getErrorMessage(err, t`Failed to check duplicates`));
     } finally {
       if (generation === previewGeneration.current) setIsChecking(false);
     }
-  }, [buildPreview]);
+  }, [buildPreview, t]);
 
   // A preview belongs to exactly one parsing configuration and destination.
   useEffect(() => {
@@ -448,7 +452,7 @@ export function useImportDialogState(): ImportDialogState {
       if (signature(fresh) !== signature(previewData)) {
         setPreviewData(fresh);
         setCurrentStep('preview');
-        setError('Transactions or destinations changed. Please review the updated matches.');
+        setError(t`Transactions or destinations changed. Please review the updated matches.`);
         importLock.current = false;
         return;
       }
@@ -462,7 +466,7 @@ export function useImportDialogState(): ImportDialogState {
         return;
       }
     } catch (err) {
-      setError(getErrorMessage(err, 'Duplicate check failed'));
+      setError(getErrorMessage(err, t`Duplicate check failed`));
       importLock.current = false;
       return;
     } finally {
@@ -533,7 +537,7 @@ export function useImportDialogState(): ImportDialogState {
         setImportSummary(summary);
         setCurrentStep('complete');
       } catch (err) {
-        setError(getErrorMessage(err, 'Could not finish import'));
+        setError(getErrorMessage(err, t`Could not finish import`));
       } finally {
         importLock.current = false;
       }
@@ -622,7 +626,7 @@ export function useImportDialogState(): ImportDialogState {
         destinationAccountName = selectedAccount?.Name || 'Existing account';
       } else {
         const defaultAccount = await addAccountMutation.mutateAsync({
-          name: 'Import Account',
+          name: t`Import Account`,
           budget_id: budgetId,
           type: 'Checking',
           currency: importConfig.accountCurrency,
@@ -748,7 +752,7 @@ export function useImportDialogState(): ImportDialogState {
               transferId: '',
               importIdentities: [plan],
             },
-            meta: { label: 'Import transaction', skipInvalidate: true },
+            meta: { label: t`Import transaction`, skipInvalidate: true },
           });
           matchedIds.set(plan.index, transactionId);
 
@@ -759,7 +763,7 @@ export function useImportDialogState(): ImportDialogState {
             duplicatesSkipped--;
           failures.push({
             index: plan.index,
-            message: getErrorMessage(rowError, 'Failed to import row'),
+            message: getErrorMessage(rowError, t`Failed to import row`),
           });
         }
 
@@ -826,13 +830,14 @@ export function useImportDialogState(): ImportDialogState {
       setCurrentStep('complete');
     } catch (err) {
       console.error('Import error:', err);
-      setError(getErrorMessage(err, 'Import failed'));
+      setError(getErrorMessage(err, t`Import failed`));
       setCurrentStep('configure');
     } finally {
       setIsImporting(false);
       importLock.current = false;
     }
   }, [
+    t,
     parsedData,
     skippedRowIndices,
     selectedBudget,

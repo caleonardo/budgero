@@ -1,3 +1,5 @@
+import { AccountTypeLabel } from '@entities/account/ui/AccountTypeLabel';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Dialog,
@@ -74,6 +76,8 @@ interface EditAccountPayload {
 }
 
 export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDialogProps) {
+  const { t } = useLingui();
+
   const [open, setOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [archiveOpen, setArchiveOpen] = useState(false);
@@ -219,8 +223,8 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
 
       editAccountMutation.mutate(payload, {
         onSuccess: () => {
-          toast.success('Account updated', {
-            description: `${name} has been updated successfully.`,
+          toast.success(t`Account updated`, {
+            description: t`${name} has been updated successfully.`,
           });
           setOpen(false);
         },
@@ -237,8 +241,8 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
         { ...pendingEdit, currencyChangeMode },
         {
           onSuccess: () => {
-            toast.success('Account updated', {
-              description: 'Account currency has been changed successfully.',
+            toast.success(t`Account updated`, {
+              description: t`Account currency has been changed successfully.`,
             });
             setPendingEdit(null);
             setConfirmOpen(false);
@@ -260,8 +264,8 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
         budget_id: budgetId,
         archived: false,
       });
-      toast.success('Account unarchived', {
-        description: `${selectedAccount.Name} is visible again.`,
+      toast.success(t`Account unarchived`, {
+        description: t`${selectedAccount.Name} is visible again.`,
       });
       setOpen(false);
     } catch (error) {
@@ -271,23 +275,23 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
 
   const handleDelete = async () => {
     if (!transactionSummary) {
-      toast.info('Still checking this account', {
-        description: 'Please try again in a moment.',
+      toast.info(t`Still checking this account`, {
+        description: t`Please try again in a moment.`,
       });
       return;
     }
     const transactionCount = transactionSummary.TransactionCount;
 
     if (transactionCount > 0) {
-      toast.error('Cannot delete account with transactions!', {
-        description: `This account has ${transactionCount} transaction(s). Please move or delete all transactions first.`,
+      toast.error(t`Cannot delete account with transactions!`, {
+        description: t`This account has ${transactionCount} transaction(s). Please move or delete all transactions first.`,
       });
       return;
     }
 
     if (selectedAccount?.BalanceNative !== 0) {
-      toast.error("You can't delete an account with a non-zero balance!", {
-        description: 'Please move or delete all transactions from this account first.',
+      toast.error(t`You can't delete an account with a non-zero balance!`, {
+        description: t`Please move or delete all transactions from this account first.`,
       });
       return;
     }
@@ -300,8 +304,8 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
         },
         {
           onSuccess: () => {
-            toast.success('Account deleted', {
-              description: `${selectedAccount.Name} has been permanently removed.`,
+            toast.success(t`Account deleted`, {
+              description: t`${selectedAccount.Name} has been permanently removed.`,
             });
             setOpen(false);
             // Navigate to the user's home page after deletion to avoid landing
@@ -327,21 +331,23 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
 
         <DialogContent className="p-4 sm:p-6 text-sm sm:text-base max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">Edit Account</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">
+              <Trans>Edit Account</Trans>
+            </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm">
-              Fill in the details below to edit this account.
+              <Trans>Fill in the details below to edit this account.</Trans>
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleEdit} className="space-y-3 sm:space-y-4">
             <div className="grid gap-3 sm:gap-4">
               {/* Account Name */}
-              <Field label="Account Name" htmlFor="accountName" className="space-y-1">
+              <Field label={t`Account Name`} htmlFor="accountName" className="space-y-1">
                 <Input
                   className="h-8 sm:h-9"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter account name"
+                  placeholder={t`Enter account name`}
                   required
                 />
               </Field>
@@ -356,7 +362,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
               />
 
               {/* Account Type */}
-              <Field label="Account Type" htmlFor="accountType" className="space-y-1">
+              <Field label={t`Account Type`} htmlFor="accountType" className="space-y-1">
                 <Select
                   value={accType}
                   onValueChange={(val) => {
@@ -378,12 +384,12 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                   }}
                 >
                   <SelectTrigger size="sm" className="w-full">
-                    <SelectValue placeholder="Select account type" />
+                    <SelectValue placeholder={t`Select account type`} />
                   </SelectTrigger>
                   <SelectContent>
                     {getAccountTypesByBudgetType(onBudget ? 'on' : 'off').map((type) => (
                       <SelectItem key={type} value={type}>
-                        {type}
+                        <AccountTypeLabel type={type} />
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -392,9 +398,11 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
               {/* Liability Details */}
               {isLiability && (
                 <div className="grid gap-2 sm:gap-3 p-2 sm:p-3 rounded-md border border-border/50 bg-muted/20">
-                  <div className="text-xs text-muted-foreground">Liability details</div>
+                  <div className="text-xs text-muted-foreground">
+                    <Trans>Liability details</Trans>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                    <Field label="Original Debt" htmlFor="debtTotal" className="space-y-1">
+                    <Field label={t`Original Debt`} htmlFor="debtTotal" className="space-y-1">
                       <LiabilityNumberCell
                         value={debtTotal}
                         onCommit={setDebtTotal}
@@ -402,7 +410,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                         localizer={plainNumberFormatter}
                       />
                     </Field>
-                    <Field label="Interest % (APR)" htmlFor="interestRate" className="space-y-1">
+                    <Field label={t`Interest % (APR)`} htmlFor="interestRate" className="space-y-1">
                       <LiabilityNumberCell
                         value={interestRate}
                         onCommit={setInterestRate}
@@ -412,7 +420,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                     </Field>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                    <Field label="Min. Monthly Payment (calculated)" className="space-y-1">
+                    <Field label={t`Min. Monthly Payment (calculated)`} className="space-y-1">
                       <Input
                         className="h-8 sm:h-9"
                         value={
@@ -420,16 +428,16 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                             ? toDecimal(computedMinPayment).toFixed(2)
                             : ''
                         }
-                        placeholder="Select target date to calculate"
+                        placeholder={t`Select target date to calculate`}
                         disabled
                       />
                     </Field>
-                    <Field label="Start Date" htmlFor="startDate" className="space-y-1">
+                    <Field label={t`Start Date`} htmlFor="startDate" className="space-y-1">
                       <DatePickerButton value={startDate} onChange={setStartDate} />
                     </Field>
                   </div>
                   <Field
-                    label="Target Payoff Date (optional)"
+                    label={t`Target Payoff Date (optional)`}
                     htmlFor="targetDate"
                     className="space-y-1"
                   >
@@ -446,8 +454,10 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
               />
               {isLiability && (
                 <div className="rounded-md bg-muted/20 border border-border/50 p-2 text-[11px] text-muted-foreground">
-                  Paid So Far should be edited via transactions (inflows). Here you can adjust
-                  metadata like Original Debt, APR and dates.
+                  <Trans>
+                    Paid So Far should be edited via transactions (inflows). Here you can adjust
+                    metadata like Original Debt, APR and dates.
+                  </Trans>
                 </div>
               )}
             </div>
@@ -462,7 +472,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                   onClick={handleDelete}
                   disabled={deleteAccountMutation.isPending || isTransactionSummaryLoading}
                 >
-                  {deleteAccountMutation.isPending ? 'Deleting...' : 'Delete'}
+                  {deleteAccountMutation.isPending ? t`Deleting...` : t`Delete`}
                 </Button>
                 {selectedAccount?.Archived ? (
                   <Button
@@ -472,7 +482,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                     onClick={handleUnarchive}
                     disabled={setArchivedMutation.isPending}
                   >
-                    {setArchivedMutation.isPending ? 'Unarchiving...' : 'Unarchive'}
+                    {setArchivedMutation.isPending ? t`Unarchiving...` : t`Unarchive`}
                   </Button>
                 ) : (
                   <Button
@@ -481,7 +491,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                     className="h-8 sm:h-9"
                     onClick={() => setArchiveOpen(true)}
                   >
-                    Archive
+                    <Trans>Archive</Trans>
                   </Button>
                 )}
               </div>
@@ -494,17 +504,19 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                   className="h-8 sm:h-9"
                   onClick={() => setOpen(false)}
                 >
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </Button>
                 {!accType ? (
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button className="h-8 sm:h-9 opacity-50 cursor-not-allowed" type="button">
-                        Apply
+                        <Trans>Apply</Trans>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-3" side="top">
-                      <p className="text-sm">Please select an account type first</p>
+                      <p className="text-sm">
+                        <Trans>Please select an account type first</Trans>
+                      </p>
                     </PopoverContent>
                   </Popover>
                 ) : (
@@ -513,7 +525,7 @@ export function EditAccountDialog({ selectedAccount, budgetId }: EditAccountDial
                     type="submit"
                     disabled={editAccountMutation.isPending}
                   >
-                    {editAccountMutation.isPending ? 'Saving...' : 'Apply'}
+                    {editAccountMutation.isPending ? t`Saving...` : t`Apply`}
                   </Button>
                 )}
               </div>

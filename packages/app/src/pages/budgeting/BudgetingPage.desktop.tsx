@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState, useCallback } from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { ScrollArea } from '@shared/ui/scroll-area';
@@ -9,7 +10,8 @@ import { useMonthlyBudget, useReadyToAssign } from '@entities/budget/api/useMont
 import { useGoals } from '@entities/goal/api/useGoals';
 import { transformBudgetRows } from '@features/budget-planning/lib/budget-transforms';
 import { useHideCategory } from '@features/category-management/api/useHideCategory';
-import { format, addMonths, parse } from 'date-fns';
+import { addMonths, parse } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Button } from '@shared/ui/button';
 import { Calendar, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Search } from 'lucide-react';
 import { Drawer, DrawerContent } from '@shared/ui/drawer';
@@ -24,6 +26,8 @@ import { useClearCategorySelectionOnMount } from '@shared/hooks/useClearCategory
 import { useNavigateMonth } from '@shared/hooks/useNavigateMonth';
 
 export function BudgetingPageDesktop() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const globalLocalizer = useUiStore((state) => state.globalLocalizer);
   const currentMonth = useUiStore((state) => state.currentMonth);
@@ -144,7 +148,7 @@ export function BudgetingPageDesktop() {
         size="icon"
         className="h-8 w-7 rounded-l-lg rounded-r-none text-muted-foreground hover:bg-muted/60 hover:text-foreground"
         onClick={() => navigateMonth('prev')}
-        aria-label="Previous month"
+        aria-label={t`Previous month`}
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
@@ -160,7 +164,7 @@ export function BudgetingPageDesktop() {
         size="icon"
         className="h-8 w-7 rounded-r-lg rounded-l-none text-muted-foreground hover:bg-muted/60 hover:text-foreground"
         onClick={() => navigateMonth('next')}
-        aria-label="Next month"
+        aria-label={t`Next month`}
       >
         <ChevronRight className="h-4 w-4" />
       </Button>
@@ -175,8 +179,10 @@ export function BudgetingPageDesktop() {
         onClick={() => setMultiMonthOpen(true)}
         className="hidden h-8 items-center gap-1.5 rounded-lg border-border/70 bg-card/50 px-2.5 text-xs font-medium text-muted-foreground shadow-none hover:bg-muted/60 hover:text-foreground min-[1440px]:inline-flex"
       >
-        <Calendar className="h-3.5 w-3.5" />
-        Multi-Month
+        <Trans>
+          <Calendar className="h-3.5 w-3.5" />
+          Multi-Month
+        </Trans>
       </Button>
       {monthSwitcher}
     </div>
@@ -215,7 +221,7 @@ export function BudgetingPageDesktop() {
       <div className="p-6">
         <Card>
           <CardContent className="py-10 text-center text-muted-foreground">
-            Select a budget to manage allocations.
+            <Trans>Select a budget to manage allocations.</Trans>
           </CardContent>
         </Card>
       </div>
@@ -285,11 +291,15 @@ export function BudgetingPageDesktop() {
           <div className="h-full overflow-y-auto p-6">
             <div className="mb-6 space-y-4">
               <div className="text-center">
-                <h2 className="text-xl font-semibold">Multi-Month Budget View</h2>
+                <h2 className="text-xl font-semibold">
+                  <Trans>Multi-Month Budget View</Trans>
+                </h2>
               </div>
               <div className="flex flex-col items-center justify-center gap-4 lg:flex-row">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Show:</span>
+                  <span className="text-sm text-muted-foreground">
+                    <Trans>Show:</Trans>
+                  </span>
                   <Select
                     value={monthCount.toString()}
                     onValueChange={(value) => setMonthCount(parseInt(value, 10))}
@@ -305,7 +315,9 @@ export function BudgetingPageDesktop() {
                       <SelectItem value="6">6</SelectItem>
                     </SelectContent>
                   </Select>
-                  <span className="text-sm text-muted-foreground">months starting from:</span>
+                  <span className="text-sm text-muted-foreground">
+                    <Trans>months starting from:</Trans>
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Button
@@ -333,7 +345,9 @@ export function BudgetingPageDesktop() {
               <div className="flex flex-col items-center justify-center gap-4 lg:flex-row">
                 <div className="rounded-lg border border-primary/20 bg-primary/10 px-4 py-2">
                   <div className="flex items-center gap-1">
-                    <p className="text-xs text-muted-foreground">Ready to Assign</p>
+                    <p className="text-xs text-muted-foreground">
+                      <Trans>Ready to Assign</Trans>
+                    </p>
                     <ReadyToAssignHelpPopover
                       budgetId={budgetId}
                       month={currentMonth}
@@ -352,7 +366,7 @@ export function BudgetingPageDesktop() {
                 <div className="relative w-full max-w-md">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search categories across all months..."
+                    placeholder={t`Search categories across all months...`}
                     value={multiMonthSearchTerm}
                     onChange={(event) => setMultiMonthSearchTerm(event.target.value)}
                     className="w-full pl-8"
@@ -366,15 +380,15 @@ export function BudgetingPageDesktop() {
                   onClick={handleToggleGlobalCollapsed}
                 >
                   {globalCollapsed ? (
-                    <>
+                    <Trans>
                       <ChevronDown className="h-3.5 w-3.5" />
                       Expand All
-                    </>
+                    </Trans>
                   ) : (
-                    <>
+                    <Trans>
                       <ChevronUp className="h-3.5 w-3.5" />
                       Collapse All
-                    </>
+                    </Trans>
                   )}
                 </Button>
               </div>

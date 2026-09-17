@@ -1,3 +1,5 @@
+import { plural, t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Shield, AlertTriangle, Lock, Eye, EyeOff, ShieldAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -29,7 +31,7 @@ import { PrivacySettingsCard } from './components';
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   if (typeof error === 'string') return error;
-  return 'An unexpected error occurred';
+  return t`An unexpected error occurred`;
 }
 
 function PasswordField({
@@ -79,6 +81,8 @@ function PasswordField({
 }
 
 export default function SecurityPage() {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const { data: profile } = useProfile();
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -125,7 +129,10 @@ export default function SecurityPage() {
         master_password_storage_days: normalized,
       });
       toast.success(
-        `Master password will be remembered on this device for ${normalized} day${normalized === 1 ? '' : 's'}.`
+        plural(normalized, {
+          one: `Master password will be remembered on this device for # day.`,
+          other: `Master password will be remembered on this device for # days.`,
+        })
       );
       if (storageDays !== normalized) {
         setStorageDays(normalized);
@@ -133,7 +140,7 @@ export default function SecurityPage() {
     } else {
       MasterPasswordManager.setPersistenceSetting({ mode: 'memory' });
       persistUserPreferencesPatch({ master_password_storage_mode: 'memory' });
-      toast.info('Master password will now stay in memory only.');
+      toast.info(t`Master password will now stay in memory only.`);
     }
   };
 
@@ -157,22 +164,22 @@ export default function SecurityPage() {
 
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('All fields are required');
+      setError(t`All fields are required`);
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('New passwords do not match');
+      setError(t`New passwords do not match`);
       return;
     }
 
     if (newPassword.length < 8) {
-      setError('New password must be at least 8 characters long');
+      setError(t`New password must be at least 8 characters long`);
       return;
     }
 
     if (currentPassword === newPassword) {
-      setError('New password must be different from current password');
+      setError(t`New password must be different from current password`);
       return;
     }
 
@@ -182,17 +189,17 @@ export default function SecurityPage() {
     try {
       // Step 1: Verify current password (best-effort in-memory check)
       if (MasterPasswordManager.canVerifyLocally()) {
-        toast.info('Verifying current password...');
+        toast.info(t`Verifying current password...`);
         const isValid = await MasterPasswordManager.verify(currentPassword);
         if (!isValid) {
-          setError('Current password is incorrect');
+          setError(t`Current password is incorrect`);
           setIsChanging(false);
           return;
         }
       }
 
       // Step 2: Resolve workspace keys (ensures current password unlocks all spaces)
-      toast.info('Preparing workspace keys...');
+      toast.info(t`Preparing workspace keys...`);
       const spaces = runtime.listSpaces();
       if (!spaces.length) {
         throw new Error('No accepted workspaces found for this account');
@@ -222,7 +229,7 @@ export default function SecurityPage() {
       // Step 3: Re-wrap every workspace key locally, then commit the complete
       // set atomically. A sequential update can strand an account with some
       // spaces under the old password and others under the new one.
-      toast.info('Updating workspace access credentials...');
+      toast.info(t`Updating workspace access credentials...`);
       const apis = await import('@shared/api/api-client');
       const wrappedKeys: Record<string, string> = {};
       for (const entry of workspaceKeys) {
@@ -245,19 +252,19 @@ export default function SecurityPage() {
 
       // Step 6: Tell THIS USER's other devices (and only them — space
       // members keep their own passwords) so they reload and re-prompt.
-      toast.info('Notifying your other devices...');
+      toast.info(t`Notifying your other devices...`);
       runtime.notifyMasterPasswordChanged();
 
       // Step 7: Reload. In-place runtime re-init after a cipher swap proved
       // fragile (stuck loading, stale OPFS handles); a clean reload is what
       // remote devices do anyway, and the stored password unlocks silently.
-      toast.success('Master password changed successfully! Reloading…');
+      toast.success(t`Master password changed successfully! Reloading…`);
       setShowReinitOverlay(true);
       window.location.reload();
     } catch (error: unknown) {
       console.error('[ChangePassword] ERROR:', error);
-      setError(getErrorMessage(error) || 'Failed to change password. Please try again.');
-      toast.error('Failed to change password');
+      setError(getErrorMessage(error) || t`Failed to change password. Please try again.`);
+      toast.error(t`Failed to change password`);
     } finally {
       setIsChanging(false);
     }
@@ -275,51 +282,65 @@ export default function SecurityPage() {
   return (
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Security & Privacy"
-        description="Manage your security settings and privacy preferences"
+        title={t`Security & Privacy`}
+        description={t`Manage your security settings and privacy preferences`}
       />
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Security Settings
+            <Trans>
+              <Shield className="h-5 w-5" />
+              Security Settings
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Change your master password (used to encrypt your local database).
+            <Trans>Change your master password (used to encrypt your local database).</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <h3 className="text-sm font-medium">Change Master Password</h3>
+            <h3 className="text-sm font-medium">
+              <Trans>Change Master Password</Trans>
+            </h3>
             <p className="text-sm text-muted-foreground">
-              Update your master password to keep your data secure. This will re-encrypt all your
-              data with the new password. Sign-in password, email and 2FA are managed in your Clerk
-              profile.
+              <Trans>
+                Update your master password to keep your data secure. This will re-encrypt all your
+                data with the new password. Sign-in password, email and 2FA are managed in your
+                Clerk profile.
+              </Trans>
             </p>
             <Button
               onClick={() => setShowChangePassword(true)}
               variant="outline"
               className="w-full sm:w-auto"
             >
-              <Lock className="h-4 w-4 mr-2" />
-              Change Master Password
+              <Trans>
+                <Lock className="h-4 w-4 mr-2" />
+                Change Master Password
+              </Trans>
             </Button>
           </div>
 
           <div className="pt-6 border-t border-border/60 space-y-4">
             <div className="space-y-1">
-              <h3 className="text-sm font-medium">Master Password Storage</h3>
+              <h3 className="text-sm font-medium">
+                <Trans>Master Password Storage</Trans>
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Choose how long Budgero keeps your master password after you unlock the app on this
-                device.
+                <Trans>
+                  Choose how long Budgero keeps your master password after you unlock the app on
+                  this device.
+                </Trans>
               </p>
             </div>
             <Alert>
               <ShieldAlert className="h-4 w-4" />
               <AlertDescription>
-                Storing your master password outside memory lowers security. Anyone with access to
-                this browser profile could decrypt your data until it expires.
+                <Trans>
+                  Storing your master password outside memory lowers security. Anyone with access to
+                  this browser profile could decrypt your data until it expires.
+                </Trans>
               </AlertDescription>
             </Alert>
             <RadioGroup
@@ -333,11 +354,13 @@ export default function SecurityPage() {
                 <RadioGroupItem value="memory" id="storage-memory" className="mt-1" />
                 <div className="space-y-1">
                   <Label htmlFor="storage-memory" className="text-sm font-medium">
-                    Keep in memory only (recommended)
+                    <Trans>Keep in memory only (recommended)</Trans>
                   </Label>
                   <p className="text-sm text-muted-foreground">
-                    We keep your master password in volatile memory only. Refreshing or closing the
-                    tab will require it again.
+                    <Trans>
+                      We keep your master password in volatile memory only. Refreshing or closing
+                      the tab will require it again.
+                    </Trans>
                   </p>
                 </div>
               </div>
@@ -349,11 +372,13 @@ export default function SecurityPage() {
                   <RadioGroupItem value="session" id="storage-session" className="mt-1" />
                   <div className="space-y-1">
                     <Label htmlFor="storage-session" className="text-sm font-medium">
-                      Remember on this device (IndexedDB)
+                      <Trans>Remember on this device (IndexedDB)</Trans>
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Budgero stores your master password in this browser&apos;s IndexedDB until it
-                      expires.
+                      <Trans>
+                        Budgero stores your master password in this browser's IndexedDB until it
+                        expires.
+                      </Trans>
                     </p>
                   </div>
                 </div>
@@ -362,7 +387,7 @@ export default function SecurityPage() {
                     htmlFor="storage-days"
                     className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
                   >
-                    Duration
+                    <Trans>Duration</Trans>
                   </Label>
                   <Select
                     value={String(storageDays)}
@@ -370,19 +395,31 @@ export default function SecurityPage() {
                     disabled={storageMode !== 'session'}
                   >
                     <SelectTrigger id="storage-days" size="sm" className="w-[140px]">
-                      <SelectValue placeholder="Select days" />
+                      <SelectValue placeholder={t`Select days`} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">1 day</SelectItem>
-                      <SelectItem value="3">3 days</SelectItem>
-                      <SelectItem value="7">7 days</SelectItem>
-                      <SelectItem value="14">14 days</SelectItem>
-                      <SelectItem value="30">30 days</SelectItem>
+                      <SelectItem value="1">
+                        <Trans>1 day</Trans>
+                      </SelectItem>
+                      <SelectItem value="3">
+                        <Trans>3 days</Trans>
+                      </SelectItem>
+                      <SelectItem value="7">
+                        <Trans>7 days</Trans>
+                      </SelectItem>
+                      <SelectItem value="14">
+                        <Trans>14 days</Trans>
+                      </SelectItem>
+                      <SelectItem value="30">
+                        <Trans>30 days</Trans>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    This cache survives app restarts and is cleared when the timer expires, you log
-                    out, or you reset local data.
+                    <Trans>
+                      This cache survives app restarts and is cleared when the timer expires, you
+                      log out, or you reset local data.
+                    </Trans>
                   </p>
                 </div>
               </div>
@@ -404,10 +441,14 @@ export default function SecurityPage() {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Change Master Password</DialogTitle>
+            <DialogTitle>
+              <Trans>Change Master Password</Trans>
+            </DialogTitle>
             <DialogDescription>
-              Enter your current password and choose a new one. Your data will be re-encrypted with
-              the new password.
+              <Trans>
+                Enter your current password and choose a new one. Your data will be re-encrypted
+                with the new password.
+              </Trans>
             </DialogDescription>
           </DialogHeader>
 
@@ -421,35 +462,35 @@ export default function SecurityPage() {
 
             <PasswordField
               id="current-password"
-              label="Current Password"
+              label={t`Current Password`}
               value={currentPassword}
               onChange={setCurrentPassword}
               show={showCurrentPassword}
               onToggleShow={() => setShowCurrentPassword(!showCurrentPassword)}
               disabled={isChanging}
-              placeholder="Enter current password"
+              placeholder={t`Enter current password`}
             />
 
             <PasswordField
               id="new-password"
-              label="New Password"
+              label={t`New Password`}
               value={newPassword}
               onChange={setNewPassword}
               show={showNewPassword}
               onToggleShow={() => setShowNewPassword(!showNewPassword)}
               disabled={isChanging}
-              placeholder="Enter new password (min 8 characters)"
+              placeholder={t`Enter new password (min 8 characters)`}
             />
 
             <PasswordField
               id="confirm-password"
-              label="Confirm New Password"
+              label={t`Confirm New Password`}
               value={confirmPassword}
               onChange={setConfirmPassword}
               show={showConfirmPassword}
               onToggleShow={() => setShowConfirmPassword(!showConfirmPassword)}
               disabled={isChanging}
-              placeholder="Confirm new password"
+              placeholder={t`Confirm new password`}
             />
           </div>
 
@@ -462,13 +503,13 @@ export default function SecurityPage() {
               }}
               disabled={isChanging}
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button
               onClick={handleChangePassword}
               disabled={isChanging || !currentPassword || !newPassword || !confirmPassword}
             >
-              {isChanging ? 'Changing...' : 'Change Password'}
+              {isChanging ? t`Changing...` : t`Change Password`}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -477,8 +518,8 @@ export default function SecurityPage() {
       {/* Reinitialization Overlay */}
       {showReinitOverlay && (
         <FullScreenLoadingOverlay
-          title="Applying New Password"
-          description="Please wait while we reinitialize with your new password..."
+          title={t`Applying New Password`}
+          description={t`Please wait while we reinitialize with your new password...`}
           footnote="This may take a few moments"
         />
       )}

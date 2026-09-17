@@ -1,5 +1,9 @@
 'use client';
 
+import { plural } from '@lingui/core/macro';
+
+import { Trans, useLingui } from '@lingui/react/macro';
+
 import React, { useEffect, useState, useRef, ChangeEvent } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { toast } from 'sonner';
@@ -64,6 +68,8 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   onModeChange,
   defaultTab,
 }) => {
+  const { t } = useLingui();
+
   // Common state
   const { setIsBudgetImporting } = useUiStore();
   const queryClient = useQueryClient();
@@ -182,10 +188,10 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         onCreated(budgetId);
         resetForm();
       } else {
-        toast.success(`Budget "${name}" created successfully!`);
+        toast.success(t`Budget "${name}" created successfully!`);
       }
     } catch (err: unknown) {
-      const errorMessage = getErrorMessage(err, 'Failed to create budget');
+      const errorMessage = getErrorMessage(err, t`Failed to create budget`);
       toast.error(errorMessage);
     }
   };
@@ -210,7 +216,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       if (request !== ynabSourceRequestRef.current) return;
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
-      toast.error(getErrorMessage(error, 'Could not inspect this YNAB export.'));
+      toast.error(getErrorMessage(error, t`Could not inspect this YNAB export.`));
     } finally {
       if (request === ynabSourceRequestRef.current) setIsInspectingYnab(false);
     }
@@ -237,7 +243,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       }
     } catch (error) {
       if (request !== ynabSourceRequestRef.current) return;
-      toast.error(getErrorMessage(error, 'Could not read that YNAB plan.'));
+      toast.error(getErrorMessage(error, t`Could not read that YNAB plan.`));
     } finally {
       if (request === ynabSourceRequestRef.current) setIsConnectingYnab(false);
     }
@@ -271,7 +277,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       if (request !== ynabSourceRequestRef.current) return;
       setYnabPlans([]);
       setSelectedYnabPlanId('');
-      toast.error(getErrorMessage(error, 'Could not connect to YNAB.'));
+      toast.error(getErrorMessage(error, t`Could not connect to YNAB.`));
     } finally {
       if (request === ynabSourceRequestRef.current) setIsConnectingYnab(false);
     }
@@ -292,8 +298,8 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         status: 'running',
         progress: 99,
         label: acceptedWithWarnings
-          ? 'Saving imported budget with accepted warnings'
-          : 'Saving imported budget',
+          ? t`Saving imported budget with accepted warnings`
+          : t`Saving imported budget`,
       },
     ]);
     try {
@@ -360,29 +366,44 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       const summaryParts: string[] = [];
       if (categoryNames.length > 0) {
         summaryParts.push(
-          `Created ${categoryNames.length} historical categor${categoryNames.length === 1 ? 'y' : 'ies'} referenced by transactions: ${categoryNames.join(', ')}.`
+          plural(categoryNames.length, {
+            one: `Created # historical category referenced by transactions: ${categoryNames.join(', ')}.`,
+            other: `Created # historical categories referenced by transactions: ${categoryNames.join(', ')}.`
+          })
         );
       }
       if (result.summary.splitTransactionsImported > 0) {
         summaryParts.push(
-          `Imported ${result.summary.splitTransactionsImported} split transaction${result.summary.splitTransactionsImported === 1 ? '' : 's'}.`
+          plural(result.summary.splitTransactionsImported, {
+            one: `Imported # split transaction.`,
+            other: `Imported # split transactions.`
+          })
         );
       }
       if (result.summary.accountBalancesVerified !== undefined) {
         summaryParts.push(
-          `Verified ${result.summary.accountBalancesVerified} account balance${result.summary.accountBalancesVerified === 1 ? '' : 's'} against YNAB.`
+          plural(result.summary.accountBalancesVerified, {
+            one: `Verified # account balance against YNAB.`,
+            other: `Verified # account balances against YNAB.`
+          })
         );
       } else {
-        summaryParts.push('Review imported account types before budgeting.');
+        summaryParts.push(t`Review imported account types before budgeting.`);
       }
       if (result.summary.readyToAssignMonthsVerified !== undefined) {
         summaryParts.push(
-          `Matched Ready to Assign for ${result.summary.readyToAssignMonthsVerified} month${result.summary.readyToAssignMonthsVerified === 1 ? '' : 's'}.`
+          plural(result.summary.readyToAssignMonthsVerified, {
+            one: `Matched Ready to Assign for # month.`,
+            other: `Matched Ready to Assign for # months.`
+          })
         );
       }
       if ((result.summary.debtBalanceAdjustmentsCreated ?? 0) > 0) {
         summaryParts.push(
-          `Created ${result.summary.debtBalanceAdjustmentsCreated} visible YNAB debt interest adjustment${result.summary.debtBalanceAdjustmentsCreated === 1 ? '' : 's'}.`
+          plural(result.summary.debtBalanceAdjustmentsCreated ?? 0, {
+            one: `Created # visible YNAB debt interest adjustment.`,
+            other: `Created # visible YNAB debt interest adjustments.`
+          })
         );
       }
 
@@ -399,8 +420,8 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
           status: 'passed',
           progress: 100,
           label: acceptedWithWarnings
-            ? 'Imported budget saved with warnings'
-            : 'Imported budget saved',
+            ? t`Imported budget saved with warnings`
+            : t`Imported budget saved`,
           detail: summaryParts.join(' ') || undefined,
         },
       ]);
@@ -421,8 +442,8 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
     if (!hasSource || !budgetName.trim()) {
       toast.error(
         ynabSourceMode === 'api'
-          ? 'Please connect to YNAB, select a plan, and provide a budget name'
-          : 'Please provide a budget name and select a file'
+          ? t`Please connect to YNAB, select a plan, and provide a budget name`
+          : t`Please provide a budget name and select a file`
       );
       return;
     }
@@ -438,7 +459,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         ynabCreditPaymentMappings
       )
     ) {
-      toast.error('Match each credit card to its payment category before importing.');
+      toast.error(t`Match each credit card to its payment category before importing.`);
       return;
     }
     if (ynabImportRunRef.current?.saving || isImporting) return;
@@ -511,7 +532,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
             stage: 'complete',
             status: 'warning',
             progress: 99,
-            label: 'Waiting for your review',
+            label: t`Waiting for your review`,
             detail: 'The imported budget has not been saved or synced yet.',
           },
         ]);
@@ -523,7 +544,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       if (run.cancelled) return;
       console.error('Import failed:', err);
       setYnabImportError(
-        getErrorMessage(err, 'Import failed. Please check your source and try again.')
+        getErrorMessage(err, t`Import failed. Please check your source and try again.`)
       );
     } finally {
       setIsImporting(false);
@@ -537,7 +558,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
     if (onCreated) {
       onCreated(budgetId);
     } else {
-      toast.success(`Successfully imported YNAB budget "${budgetName}"!`);
+      toast.success(t`Successfully imported YNAB budget "${budgetName}"!`);
     }
     resetForm();
   };
@@ -562,7 +583,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
     } catch (error) {
       console.error('Failed to save accepted YNAB import:', error);
       setYnabImportError(
-        getErrorMessage(error, 'Could not save the accepted import. You can cancel it safely.')
+        getErrorMessage(error, t`Could not save the accepted import. You can cancel it safely.`)
       );
     }
   };
@@ -589,7 +610,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
 
   const handleCoreImport = async () => {
     if (!coreFile) {
-      toast.error('Select the Budgero backup file you want to restore.');
+      toast.error(t`Select the Budgero backup file you want to restore.`);
       return;
     }
 
@@ -638,7 +659,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       }
 
       setCoreStatus('Import complete. Loading your budgets…');
-      toast.success('Budgero backup imported successfully.');
+      toast.success(t`Budgero backup imported successfully.`);
       setCoreFile(null);
       if (coreFileInputRef.current) {
         coreFileInputRef.current.value = '';
@@ -654,7 +675,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
       toast.error(
         getErrorMessage(
           err,
-          'Failed to import Budgero backup. Please verify the file and try again.'
+          t`Failed to import Budgero backup. Please verify the file and try again.`
         )
       );
     } finally {
@@ -727,7 +748,9 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
             className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-1 px-2 sm:px-3 text-[11px] sm:text-xs"
           >
             <Plus className="h-3 w-3" />
-            <span className="text-[11px] sm:text-xs">New</span>
+            <span className="text-[11px] sm:text-xs">
+              <Trans>New</Trans>
+            </span>
           </TabsTrigger>
           <TabsTrigger
             disabled={isWritingBudget}
@@ -735,7 +758,9 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
             className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-1 px-2 sm:px-3 text-[11px] sm:text-xs"
           >
             <HardDrive className="h-3 w-3" />
-            <span className="text-[11px] sm:text-xs">Backup</span>
+            <span className="text-[11px] sm:text-xs">
+              <Trans>Backup</Trans>
+            </span>
           </TabsTrigger>
           <TabsTrigger
             disabled={isWritingBudget}

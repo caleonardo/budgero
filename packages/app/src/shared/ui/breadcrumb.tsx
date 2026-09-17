@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRight, MoreHorizontal } from 'lucide-react';
@@ -86,7 +87,9 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'
       {...props}
     >
       <MoreHorizontal className="size-4" />
-      <span className="sr-only">More</span>
+      <span className="sr-only">
+        <Trans>More</Trans>
+      </span>
     </span>
   );
 }

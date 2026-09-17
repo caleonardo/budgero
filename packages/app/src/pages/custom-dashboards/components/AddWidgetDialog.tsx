@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { UnifiedReport } from '@budgero/core/browser';
 import {
@@ -33,6 +34,8 @@ export function AddWidgetDialog({
   reports,
   onAddWidget,
 }: AddWidgetDialogProps) {
+  const { t } = useLingui();
+
   const [titleOverride, setTitleOverride] = useState('');
   const {
     selectableReports,
@@ -43,7 +46,7 @@ export function AddWidgetDialog({
     setSelectedChartId,
   } = useReportChartSelection(reports, open);
   const { isRunning: isSubmitting, run: runSubmit } = useAsyncDialogAction({
-    errorMessage: 'Failed to add widget',
+    errorMessage: t`Failed to add widget`,
     onSuccess: () => onOpenChange(false),
   });
 
@@ -57,7 +60,7 @@ export function AddWidgetDialog({
 
   const handleSubmit = async () => {
     if (!selectedReportId || !selectedChartId) {
-      toast.error('Please select a report and chart.');
+      toast.error(t`Please select a report and chart.`);
       return;
     }
 
@@ -74,13 +77,17 @@ export function AddWidgetDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[520px]">
         <DialogHeader>
-          <DialogTitle>Add Widget</DialogTitle>
-          <DialogDescription>Select a saved chart to pin to this dashboard.</DialogDescription>
+          <DialogTitle>
+            <Trans>Add Widget</Trans>
+          </DialogTitle>
+          <DialogDescription>
+            <Trans>Select a saved chart to pin to this dashboard.</Trans>
+          </DialogDescription>
         </DialogHeader>
 
         {selectableReports.length === 0 ? (
           <div className="rounded-md border bg-muted/30 p-4 text-sm text-muted-foreground">
-            Save a report with at least one chart in Explorer first.
+            <Trans>Save a report with at least one chart in Explorer first.</Trans>
           </div>
         ) : (
           <div className="space-y-4">
@@ -93,12 +100,14 @@ export function AddWidgetDialog({
               onChartIdChange={setSelectedChartId}
             />
             <div className="space-y-2">
-              <Label htmlFor="titleOverride">Custom widget title (optional)</Label>
+              <Label htmlFor="titleOverride">
+                <Trans>Custom widget title (optional)</Trans>
+              </Label>
               <Input
                 id="titleOverride"
                 value={titleOverride}
                 onChange={(event) => setTitleOverride(event.target.value)}
-                placeholder="Leave blank to use chart title"
+                placeholder={t`Leave blank to use chart title`}
               />
             </div>
           </div>
@@ -106,13 +115,13 @@ export function AddWidgetDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || selectableReports.length === 0 || !selectedChartId}
           >
-            {isSubmitting ? 'Adding...' : 'Add Widget'}
+            {isSubmitting ? t`Adding...` : t`Add Widget`}
           </Button>
         </DialogFooter>
       </DialogContent>

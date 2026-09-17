@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 /**
  * SimpleFIN Client
  * Handles authentication and data fetching from SimpleFIN Bridge
@@ -90,7 +91,7 @@ export async function fetchAccounts(
   }
 
   // Use Authorization header for Basic auth
-  const authHeader = `Basic ${btoa(`${username}:${password}`)}`;
+  const authHeader = t`Basic ${btoa(`${username}:${password}`)}`;
 
   const response = await fetch(cleanUrl.toString(), {
     method: 'GET',

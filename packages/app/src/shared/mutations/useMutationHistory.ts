@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRuntime } from '@shared/runtime/global';
 import { getInvalidatesForOp } from '@shared/mutations/op-code-registry';
@@ -48,6 +49,8 @@ export function useMutationHistoryCount(spaceId: string | null) {
  * Hook to undo a mutation from history
  */
 export function useUndoMutationHistoryEntry() {
+  const { t } = useLingui();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -76,7 +79,7 @@ export function useUndoMutationHistoryEntry() {
           op: op.op,
           payload: op.args,
           invalidates: getInvalidatesForOp(op.op),
-          meta: { skipUndo: true, label: `Undo: ${entry.op}`, forceInvalidate: true },
+          meta: { skipUndo: true, label: t`Undo: ${entry.op}`, forceInvalidate: true },
         });
       }
 

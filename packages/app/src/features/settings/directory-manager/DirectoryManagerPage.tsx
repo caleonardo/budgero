@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
@@ -50,6 +51,8 @@ export function DirectoryManagerPage<
   onDeleteMany,
   isDeletingMany = false,
 }: DirectoryManagerPageProps<TItem, TKey, TDraft>) {
+  const { t } = useLingui();
+
   const [addDraft, setAddDraftState] = useState<TDraft>(config.emptyDraft);
   const [editingKey, setEditingKey] = useState<TKey | null>(null);
   const [editDraft, setEditDraftState] = useState<TDraft>(config.emptyDraft);
@@ -235,7 +238,7 @@ export function DirectoryManagerPage<
         onOpenChange={(open) => !open && setPendingDelete(null)}
         title={pendingDelete ? config.deleteDialogTitle(pendingDelete) : ''}
         description={pendingDelete ? config.deleteDialogDescription(pendingDelete) : ''}
-        confirmText="Remove"
+        confirmText={t`Remove`}
         variant="destructive"
         isLoading={isDeleting}
         onConfirm={handleDelete}

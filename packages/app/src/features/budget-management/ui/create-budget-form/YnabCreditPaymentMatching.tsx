@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import type { CreditPaymentMatching, CreditPaymentMappings } from './ynab-credit-payment-matching';
 
@@ -14,6 +15,8 @@ export function YnabCreditPaymentMatching({
   currency: string;
   disabled?: boolean;
 }) {
+  const { t } = useLingui();
+
   const id = useId();
   const byAccountId =
     value?.planId === matching.planId && value.serverKnowledge === matching.serverKnowledge
@@ -32,15 +35,21 @@ export function YnabCreditPaymentMatching({
 
   return (
     <fieldset className="space-y-3 rounded-md border p-3 text-xs" disabled={disabled}>
-      <legend className="px-1 font-medium">Match credit cards to payment categories</legend>
+      <legend className="px-1 font-medium">
+        <Trans>Match credit cards to payment categories</Trans>
+      </legend>
       <p>
-        Choose the payment category belonging to each card so its reserved money and future payments
-        stay together.
+        <Trans>
+          Choose the payment category belonging to each card so its reserved money and future
+          payments stay together.
+        </Trans>
       </p>
       <p className="text-muted-foreground">
-        Card debt and money available for payment can differ. Use your YNAB plan to confirm each
-        match. If you cannot identify the match, give the cards distinct names in YNAB and
-        reconnect.
+        <Trans>
+          Card debt and money available for payment can differ. Use your YNAB plan to confirm each
+          match. If you cannot identify the match, give the cards distinct names in YNAB and
+          reconnect.
+        </Trans>
       </p>
       {accounts.map((account, index) => {
         const selected = categories.find(
@@ -49,18 +58,24 @@ export function YnabCreditPaymentMatching({
         return (
           <div key={account.accountId} className="space-y-2 rounded-md border p-2.5">
             <label htmlFor={`${id}-${index}`} className="block font-medium">
-              {account.name} · Card {index + 1}
-              {account.closed ? ' · Closed' : ''}
+              <Trans>
+                {account.name} · Card {index + 1}
+                {account.closed ? t` · Closed` : ''}
+              </Trans>
             </label>
-            <p>Account balance: {amount(account.balance)}</p>
+            <p>
+              <Trans>Account balance: {amount(account.balance)}</Trans>
+            </p>
             {account.note && <p className="whitespace-pre-wrap break-words">{account.note}</p>}
             {account.recentTransactions.length > 0 && (
               <details>
-                <summary className="cursor-pointer">Recent transactions</summary>
+                <summary className="cursor-pointer">
+                  <Trans>Recent transactions</Trans>
+                </summary>
                 <ul className="mt-1 space-y-1">
                   {account.recentTransactions.map((transaction, transactionIndex) => (
                     <li key={transactionIndex}>
-                      {transaction.date} · {transaction.payee || 'No payee'} ·{' '}
+                      {transaction.date} · {transaction.payee || t`No payee`} ·{' '}
                       {amount(transaction.amount)}
                     </li>
                   ))}
@@ -79,7 +94,9 @@ export function YnabCreditPaymentMatching({
               }}
               className="w-full min-w-0 rounded-md border bg-background p-2 text-foreground"
             >
-              <option value="">Choose its payment category</option>
+              <option value="">
+                <Trans>Choose its payment category</Trans>
+              </option>
               {categories.map((category, categoryIndex) => {
                 if (!account.candidateCategoryIds.includes(category.categoryId)) return null;
                 const used = accounts.some(
@@ -89,17 +106,19 @@ export function YnabCreditPaymentMatching({
                 );
                 return (
                   <option key={category.categoryId} value={category.categoryId} disabled={used}>
-                    {category.name} · Category {categoryIndex + 1} · Available{' '}
-                    {amount(category.available)} · Assigned {amount(category.assigned)}
-                    {category.note ? ` · ${category.note}` : ''}
-                    {used ? ' · Already matched' : ''}
+                    <Trans>
+                      {category.name} · Category {categoryIndex + 1} · Available{' '}
+                      {amount(category.available)} · Assigned {amount(category.assigned)}
+                      {category.note ? ` · ${category.note}` : ''}
+                      {used ? t` · Already matched` : ''}
+                    </Trans>
                   </option>
                 );
               })}
             </select>
             {selected?.note && (
               <p className="whitespace-pre-wrap break-words">
-                Payment category note: {selected.note}
+                <Trans>Payment category note: {selected.note}</Trans>
               </p>
             )}
           </div>

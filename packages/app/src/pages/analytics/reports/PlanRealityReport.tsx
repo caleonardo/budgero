@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import type { EChartsCoreOption } from 'echarts/core';
 import { EChart } from '@shared/ui/echart';
@@ -35,6 +36,8 @@ interface PlanRealityReportProps {
  * plan leaks per category, and how well goal categories are being funded.
  */
 export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
+  const { t } = useLingui();
+
   const palette = usePalette();
   const money = useMoneyFormatters();
   const { data: planInputs, isLoading: planLoading } = usePlanData(months, data.budgetId);
@@ -98,11 +101,11 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
           const point = plan.months[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           return tooltipHtml(shortMonthLabel(point.monthKey), [
-            { color: planColor, name: 'Assigned', value: money.amount(point.assigned) },
-            { color: spentColor, name: 'Spent', value: money.amount(point.spent) },
+            { color: planColor, name: t`Assigned`, value: money.amount(point.assigned) },
+            { color: spentColor, name: t`Spent`, value: money.amount(point.spent) },
             {
               color: point.slack >= 0 ? palette.flow.positive : palette.flow.negative,
-              name: point.slack >= 0 ? 'Left in plan' : 'Over plan',
+              name: point.slack >= 0 ? t`Left in plan` : t`Over plan`,
               value: money.amount(Math.abs(point.slack)),
             },
           ]);
@@ -110,7 +113,7 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
       },
       series: [
         {
-          name: 'Assigned',
+          name: t`Assigned`,
           type: 'bar',
           data: plan.months.map((point) => point.assigned / 1000),
           barMaxWidth: BAR_MAX_WIDTH,
@@ -118,7 +121,7 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
           itemStyle: { color: planColor, borderRadius: BAR_RADIUS_TOP },
         },
         {
-          name: 'Spent',
+          name: t`Spent`,
           type: 'bar',
           data: plan.months.map((point) => ({
             value: point.spent / 1000,
@@ -132,7 +135,7 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
         },
       ],
     };
-  }, [plan, palette, money, planColor, spentColor]);
+  }, [plan, palette, money, planColor, spentColor, t]);
 
   // Chronic offenders first (habit beats magnitude), then by total overage.
   const overspenders = useMemo(
@@ -149,7 +152,7 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
 
   return (
     <ReportShell
-      title="Plan vs Reality"
+      title={t`Plan vs Reality`}
       hero={
         <AnimatedNumber
           value={slack}
@@ -160,27 +163,27 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
         />
       }
       heroClassName={trendTextClass(slack)}
-      subtitle="What you assigned vs what actually happened — only possible because you budget"
+      subtitle={t`What you assigned vs what actually happened — only possible because you budget`}
       insights={<InsightStrip insights={insights} />}
       legend={
         <LegendChips
           items={[
-            { color: planColor, label: 'Assigned' },
-            { color: palette.chrome.other, label: 'Spent (within plan)' },
-            { color: spentColor, label: 'Spent (over plan)' },
+            { color: planColor, label: t`Assigned` },
+            { color: palette.chrome.other, label: t`Spent (within plan)` },
+            { color: spentColor, label: t`Spent (over plan)` },
           ]}
         />
       }
       chart={<EChart option={option} ariaLabel="Assigned versus spent per month" />}
       isLoading={data.isLoading || planLoading}
       isEmpty={isEmpty}
-      emptyText="No assignments in this period — assign money on the Planning page first."
+      emptyText={t`No assignments in this period — assign money on the Planning page first.`}
       panel={
         <>
           <div className="grid grid-cols-2 gap-2">
-            <StatTile label="Assigned" value={money.tile(plan.totalAssigned)} />
+            <StatTile label={t`Assigned`} value={money.tile(plan.totalAssigned)} />
             <StatTile
-              label="Spent"
+              label={t`Spent`}
               value={money.tile(plan.totalSpent)}
               detail={
                 plan.totalAssigned > 0
@@ -189,14 +192,14 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
               }
             />
             <StatTile
-              label="Months on plan"
+              label={t`Months on plan`}
               value={`${Math.round(plan.monthsOnPlan * 100)}%`}
               valueClassName={
                 plan.monthsOnPlan >= 0.5 ? 'text-green-600' : 'text-red-600 dark:text-red-300'
               }
             />
             <StatTile
-              label={slack >= 0 ? 'Left in plan' : 'Over plan'}
+              label={slack >= 0 ? t`Left in plan` : t`Over plan`}
               value={money.tile(Math.abs(slack))}
               valueClassName={trendTextClass(slack)}
             />
@@ -204,7 +207,9 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
 
           {overspenders.length > 0 ? (
             <>
-              <PanelSectionTitle>Where the plan leaks</PanelSectionTitle>
+              <PanelSectionTitle>
+                <Trans>Where the plan leaks</Trans>
+              </PanelSectionTitle>
               <div className="divide-y divide-border/50">
                 {overspenders.map((row) => (
                   <div
@@ -216,15 +221,17 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
                         <span className="truncate text-sm font-medium">{row.name}</span>
                         {row.chronic ? (
                           <span className="shrink-0 rounded-full border border-red-300 px-1.5 text-[10px] font-medium uppercase tracking-wide text-red-600 dark:border-red-800 dark:text-red-300">
-                            chronic
+                            <Trans>chronic</Trans>
                           </span>
                         ) : null}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {money.amount(row.spent)} of {money.amount(row.assigned)} assigned
-                        {row.monthsWithPlan > 0
-                          ? ` · over in ${row.monthsOver}/${row.monthsWithPlan} mo`
-                          : ''}
+                        <Trans>
+                          {money.amount(row.spent)} of {money.amount(row.assigned)} assigned
+                          {row.monthsWithPlan > 0
+                            ? t` · over in ${row.monthsOver}/${row.monthsWithPlan} mo`
+                            : ''}
+                        </Trans>
                       </div>
                     </div>
                     <span className="whitespace-nowrap text-sm font-semibold text-red-600 tabular-nums dark:text-red-300">
@@ -238,7 +245,9 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
 
           {goalRows.length > 0 ? (
             <>
-              <PanelSectionTitle>Goal funding (this period)</PanelSectionTitle>
+              <PanelSectionTitle>
+                <Trans>Goal funding (this period)</Trans>
+              </PanelSectionTitle>
               <div className="space-y-2">
                 {goalRows.map((goal) => {
                   const pct = Math.min(1, goal.coverage);
@@ -266,8 +275,10 @@ export function PlanRealityReport({ data, months }: PlanRealityReportProps) {
                         />
                       </div>
                       <div className="mt-0.5 text-xs text-muted-foreground">
-                        {money.amount(goal.funded)} of {money.amount(goal.expected)}
-                        {goal.isMonthly ? ' (target × months)' : ''}
+                        <Trans>
+                          {money.amount(goal.funded)} of {money.amount(goal.expected)}
+                          {goal.isMonthly ? t` (target × months)` : ''}
+                        </Trans>
                       </div>
                     </div>
                   );

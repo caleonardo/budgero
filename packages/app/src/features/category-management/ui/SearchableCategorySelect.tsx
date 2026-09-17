@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 
@@ -74,6 +75,7 @@ export function SearchableCategorySelect({
   onOpenChange,
   includeTransfers = false,
 }: SearchableCategorySelectProps) {
+  const { t } = useLingui();
   const [open, setOpen] = React.useState(defaultOpen);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
@@ -258,11 +260,12 @@ export function SearchableCategorySelect({
       setOpen(false);
       setSearchTerm('');
     } catch (err) {
-      const fallback = 'Failed to create category.';
+      const fallback = t`Failed to create category.`;
       // `|| fallback` also covers Error instances with an empty message.
       setCreateError(getErrorMessage(err, fallback) || fallback);
     }
   }, [
+    t,
     addCategoryMutation,
     budgetId,
     onCategorySelect,
@@ -359,7 +362,7 @@ export function SearchableCategorySelect({
         className={cn('w-[200px] justify-start text-destructive', triggerClassName)}
         disabled
       >
-        Error loading data
+        <Trans>Error loading data</Trans>
       </Button>
     );
   }
@@ -371,7 +374,7 @@ export function SearchableCategorySelect({
         className={cn('w-[200px] justify-start text-muted-foreground', triggerClassName)}
         disabled
       >
-        No data available
+        <Trans>No data available</Trans>
       </Button>
     );
   }
@@ -418,7 +421,7 @@ export function SearchableCategorySelect({
         >
           <Command className="h-full" filter={commandFilter}>
             <CommandInput
-              placeholder="Search category..."
+              placeholder={t`Search category...`}
               value={searchTerm}
               onValueChange={setSearchTerm}
               onKeyDown={(event) => {
@@ -436,7 +439,9 @@ export function SearchableCategorySelect({
             >
               <CommandEmpty>
                 <div className="space-y-2">
-                  <p>No category found.</p>
+                  <p>
+                    <Trans>No category found.</Trans>
+                  </p>
                   {canOfferCreate && (
                     <Button
                       size="sm"
@@ -444,13 +449,13 @@ export function SearchableCategorySelect({
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={openCreateDialog}
                     >
-                      Create “{searchTerm.trim()}”
+                      <Trans>Create “{searchTerm.trim()}”</Trans>
                     </Button>
                   )}
                 </div>
               </CommandEmpty>
               {includeReadyToAssign && (!onlyPositiveAvailable || readyToAssignAmount > 0) && (
-                <CommandGroup heading="General">
+                <CommandGroup heading={t`General`}>
                   <CommandItem
                     value={readyToAssignLabel.toLowerCase()}
                     onSelect={() => {
@@ -514,7 +519,7 @@ export function SearchableCategorySelect({
               ))}
               {groupedCategories.length === 0 && (
                 <div className="p-4 text-center text-sm text-muted-foreground">
-                  No categories available to select.
+                  <Trans>No categories available to select.</Trans>
                 </div>
               )}
             </CommandList>

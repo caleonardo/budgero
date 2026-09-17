@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { subscriptionApi } from '@shared/api/api-client';
 import { toast } from 'sonner';
@@ -28,6 +29,8 @@ export function useSubscriptionDetails(subscriptionId?: string) {
 }
 
 export function useCancelSubscription() {
+  const { t } = useLingui();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -36,20 +39,21 @@ export function useCancelSubscription() {
       void queryClient.invalidateQueries({ queryKey: ['profile'] });
       void queryClient.invalidateQueries({ queryKey: ['subscription'] });
 
-      toast.success('Subscription Cancelled', {
-        description:
-          'Your subscription has been cancelled. You will have access until the end of the billing period.',
+      toast.success(t`Subscription Cancelled`, {
+        description: t`Your subscription has been cancelled. You will have access until the end of the billing period.`,
       });
     },
     onError: () => {
-      toast.error('Error', {
-        description: 'Failed to cancel subscription. Please try again.',
+      toast.error(t`Error`, {
+        description: t`Failed to cancel subscription. Please try again.`,
       });
     },
   });
 }
 
 export function useResumeSubscription() {
+  const { t } = useLingui();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -58,19 +62,21 @@ export function useResumeSubscription() {
       void queryClient.invalidateQueries({ queryKey: ['profile'] });
       void queryClient.invalidateQueries({ queryKey: ['subscription'] });
 
-      toast.success('Subscription Resumed', {
-        description: 'Your subscription has been resumed successfully.',
+      toast.success(t`Subscription Resumed`, {
+        description: t`Your subscription has been resumed successfully.`,
       });
     },
     onError: () => {
-      toast.error('Error', {
-        description: 'Failed to resume subscription. Please try again.',
+      toast.error(t`Error`, {
+        description: t`Failed to resume subscription. Please try again.`,
       });
     },
   });
 }
 
 export function useUpdateSubscriptionPlan() {
+  const { t } = useLingui();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -81,13 +87,13 @@ export function useUpdateSubscriptionPlan() {
         queryClient.refetchQueries({ queryKey: ['subscription'] }),
       ]);
 
-      toast.success('Plan Updated', {
-        description: 'Your subscription plan has been updated successfully.',
+      toast.success(t`Plan Updated`, {
+        description: t`Your subscription plan has been updated successfully.`,
       });
     },
     onError: () => {
-      toast.error('Error', {
-        description: 'Failed to update plan. Please try again.',
+      toast.error(t`Error`, {
+        description: t`Failed to update plan. Please try again.`,
       });
     },
   });
@@ -95,28 +101,32 @@ export function useUpdateSubscriptionPlan() {
 
 // Create checkout session mutation.
 export function useCreateCheckout() {
+  const { t } = useLingui();
+
   return useMutation({
     mutationFn: ({ variantId }: { variantId: string }) => subscriptionApi.createCheckout(variantId),
     onSuccess: (data) => {
       window.open(data.url, '_blank');
     },
     onError: () => {
-      toast.error('Error', {
-        description: 'Failed to create checkout session. Please try again.',
+      toast.error(t`Error`, {
+        description: t`Failed to create checkout session. Please try again.`,
       });
     },
   });
 }
 
 export function useCustomerPortal() {
+  const { t } = useLingui();
+
   return useMutation({
     mutationFn: subscriptionApi.getCustomerPortal,
     onSuccess: (data) => {
       window.open(data.url, '_blank');
     },
     onError: () => {
-      toast.error('Error', {
-        description: 'Failed to open billing portal. Please try again.',
+      toast.error(t`Error`, {
+        description: t`Failed to open billing portal. Please try again.`,
       });
     },
   });

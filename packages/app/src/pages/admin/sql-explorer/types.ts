@@ -1,3 +1,4 @@
+import type { MessageDescriptor } from '@lingui/core';
 import type { Extension } from '@codemirror/state';
 import type { AdminQueryResult } from '@features/admin/model/admin-database';
 import type { useSqlEditorModules } from '@shared/hooks/useSqlEditorModules';
@@ -61,7 +62,7 @@ export interface QueryCardProps {
 }
 
 export interface CommonQuery {
-  name: string;
+  name: MessageDescriptor;
   query: string;
 }
 

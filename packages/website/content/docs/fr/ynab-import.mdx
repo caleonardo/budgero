@@ -1,0 +1,141 @@
+---
+title: "Import YNAB"
+summary: "Importez vos données YNAB sans perdre votre élan. Découvrez ce qui est transféré automatiquement, ce qui doit être recréé et comment bien finaliser votre transition."
+section: accounts-and-imports
+topicId: ynab-import
+takeaways:
+  - "Ce que Budgero importe via l’API YNAB ou un ZIP d’export, et ce qu’il ne peut pas importer."
+  - "La liste de vérification post-import : types de comptes, rattachement des dettes et objectifs."
+  - "Pourquoi vous devriez exporter vos données YNAB avant l'expiration de votre abonnement."
+---
+
+Changer d’application de budget ne devrait pas faire perdre des années d’historique. Budgero peut se connecter directement à YNAB ou lire un ZIP d’export, puis reconstruire votre budget — comptes, catégories, transactions et affectations mensuelles — en quelques minutes.
+
+## Recommandé : connexion directe
+
+Choisissez **Connexion directe**, saisissez un jeton d’accès personnel YNAB et sélectionnez votre plan. Budgero utilise le jeton uniquement en mémoire pour l’import en cours, l’envoie directement à YNAB et ne l’enregistre jamais dans Budgero, le navigateur, les journaux ou l’analytique. L’importateur effectue uniquement des lectures.
+
+La connexion directe évite les ambiguïtés CSV et conserve les types de comptes YNAB, le statut dans le budget ou de suivi, la fermeture, les liens exacts de virements, les lignes ventilées et la précision monétaire. Pour les prêts immobiliers et emprunts gérés par YNAB, Budgero réutilise aussi la catégorie de paiement lorsqu’elle est identifiée sans ambiguïté à partir des virements.
+
+Avant l’enregistrement, Budgero compare le résultat importé au même instantané de l’API YNAB :
+
+- Chaque transaction active et ligne ventilée doit être prise en compte.
+- Chaque solde de compte doit correspondre.
+- Les valeurs Affecté, Activité et Disponible sont comparées pour chaque catégorie et mois.
+- À affecter est comparé pour chaque mois.
+- Les Money Movements YNAB sont vérifiés indépendamment par rapport aux affectations mensuelles.
+
+Les erreurs d’intégrité de la source ou du registre des comptes arrêtent l’import et suppriment le budget incomplet. Les différences d’historique des catégories ou À affecter ouvrent un écran de vérification. Examinez les mois et montants, puis supprimez l’import ou choisissez **Importer quand même**. Les avertissements acceptés restent dans **Paramètres › Historique des imports**.
+
+## Autre option : importer un ZIP d’export
+
+Dans YNAB, ouvrez les paramètres de votre budget et choisissez **Exporter le budget**. Vous obtiendrez un fichier ZIP contenant deux fichiers CSV — votre registre de transactions et votre fichier de budget (plan). Budgero accepte le ZIP tel quel ; aucun décompactage ni modification n'est nécessaire.
+
+**Définissez vos formats avant d'exporter.** YNAB génère les CSV selon le format d'affichage de vos paramètres de plan, et les formats ambigus sont la première cause d'imports échoués (des dates comme `01/05/2025` peuvent signifier le 5 janvier *ou* le 1er mai). Dans l'application web YNAB, ouvrez **Paramètres du plan** et définissez :
+
+- **Format de date** sur `2025-12-30` (ISO — sans ambiguïté)
+- **Format des nombres** sur `123,456.78`
+- **Affichage de la devise** sur **« Ne pas afficher »**
+
+Exportez ensuite. Budgero détecte d'autres formats de date et de nombre quand c'est possible, mais les paramètres ci-dessus sont les seuls qui permettent un import sans perte.
+
+Faites-le **pendant que votre abonnement YNAB est actif**. L'accès à l'export disparaît normalement quand votre abonnement expire — le support YNAB peut éventuellement vous aider après coup, mais ne pariez pas votre historique là-dessus. Exporter d'abord ne coûte rien.
+
+## Ce qui est transféré
+
+<table>
+  <thead>
+    <tr>
+      <th>Données</th>
+      <th>Importé ?</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Comptes</td>
+      <td>✓</td>
+      <td>Les imports API conservent type et statut budgétaire ; les imports ZIP nécessitent une vérification des types</td>
+    </tr>
+    <tr>
+      <td>Groupes de catégories et catégories</td>
+      <td>✓</td>
+      <td>Hiérarchie complète conservée ; les catégories présentes uniquement dans le registre sont créées et signalées</td>
+    </tr>
+    <tr>
+      <td>Transactions</td>
+      <td>✓</td>
+      <td>Dates, bénéficiaires, mémos multilignes, montants — historique complet</td>
+    </tr>
+    <tr>
+      <td>Transactions ventilées</td>
+      <td>✓</td>
+      <td>Les groupes ventilés complets sont importés automatiquement ; catégories, bénéficiaires, mémos, montants et ordre des lignes sont conservés</td>
+    </tr>
+    <tr>
+      <td>Virements</td>
+      <td>✓</td>
+      <td>Détectés et recréés en tant que virements bilatéraux corrects</td>
+    </tr>
+    <tr>
+      <td>Affectations mensuelles</td>
+      <td>✓</td>
+      <td>Vos montants budgétés, mois par mois</td>
+    </tr>
+    <tr>
+      <td>Soldes de départ</td>
+      <td>✓</td>
+      <td>Les écritures « Starting Balance » de YNAB deviennent des transactions d'ouverture</td>
+    </tr>
+    <tr>
+      <td>Objectifs / cibles</td>
+      <td>✗</td>
+      <td>L'export de YNAB ne les inclut pas — à recréer dans Budgero</td>
+    </tr>
+    <tr>
+      <td>Transactions planifiées</td>
+      <td>✗</td>
+      <td>Non incluses dans l'export de YNAB</td>
+    </tr>
+    <tr>
+      <td>Drapeaux</td>
+      <td>✗</td>
+      <td>Non reportés</td>
+    </tr>
+  </tbody>
+</table>
+
+La mécanique spécifique de YNAB est traduite plutôt que copiée : les entrées vers **« Entrée : À affecter »** sont mappées vers la catégorie **Revenus** de Budgero, afin que votre historique de revenus alimente [À affecter](/docs/ready-to-assign) correctement dès la première synchronisation.
+
+Le moteur de dette de YNAB peut appliquer les intérêts courus directement au solde d’un prêt sans exporter de transaction normale. Budgero crée alors une transaction clairement nommée **Ajustement d’intérêts de dette YNAB importé**. Le solde reste exact sans cacher une écriture d’équilibrage ni modifier À affecter.
+
+Les budgets importés utilisent au départ le calcul **mensuel** de À affecter, le plus proche du fonctionnement de YNAB. Vous pouvez changer de mode à tout moment dans **Paramètres › Paramètres du budget**, sans modifier les transactions ni affectations.
+
+## Lancer l'import
+
+1. Lors de l'intégration (ou depuis les Paramètres si votre budget existe déjà), choisissez **Importer depuis YNAB**.
+2. Pour l’import direct, choisissez **Connexion directe**, saisissez un jeton personnel et sélectionnez un plan. Sinon, choisissez **ZIP d’export** et déposez le fichier.
+3. Vérifiez l’aperçu et confirmez. Les ventilations ordinaires complètes deviennent des transactions ventilées Budgero ; celles contenant des virements sont décomposées en transactions individuelles. L’écran suit la vérification de la source, des comptes, des catégories et de À affecter mois par mois. Si une différence de rapport non bloquante subsiste, examinez-la et décidez explicitement de conserver ou non le budget.
+
+Si vous importez pendant l'intégration, Budgero ignore les étapes de configuration déjà couvertes par l'import — on ne vous demandera pas de créer les comptes et catégories que vous venez d'importer.
+
+## Liste de vérification post-import
+
+Trois choses méritent dix minutes d'attention après tout import :
+
+1. **Vérifiez les types de comptes après un import ZIP.** L’API directe conserve les types YNAB et le statut budgétaire. Un ZIP ne contient pas toujours les types fiables : vérifiez-les et corrigez-les. C’est surtout important pour les cartes de crédit, car la gestion des dettes dépend du type.
+2. **Vérifiez les liens de dettes après un import ZIP.** L’API réutilise une catégorie de paiement de prêt sans ambiguïté et conserve la logique des cartes de crédit YNAB. Les ZIP contiennent moins de métadonnées : vérifiez les liens avec le [guide de suivi des dettes](/docs/debt-tracking).
+3. **Recréer les objectifs.** Vos cibles YNAB n'ont pas survécu au transfert — YNAB ne les exporte pas. Les recréer dans Budgero prend quelques minutes et le [guide des Objectifs](/docs/goals) fait correspondre les types de cibles de YNAB aux quatre types d'objectifs de Budgero presque un pour un.
+
+Enfin, rapprochez chaque compte avec votre banque une fois (voir [Comptes](/docs/accounts)) pour confirmer que les soldes correspondent bien à la réalité.
+
+## Si quelque chose ne semble pas correct
+
+Les surprises les plus courantes après l'import, par ordre de fréquence :
+
+- **À affecter ne correspond pas à YNAB** : les imports directs comparent chaque mois avant l’enregistrement et affichent les valeurs YNAB et Budgero, l’écart et les données de calcul. Retrouvez les avertissements acceptés dans **Paramètres › Historique des imports**. Les ZIP ne permettent pas cette comparaison API ; vérifiez d’abord les types et rapprochez chaque compte.
+- **Les dates ou les montants semblent incorrects** — presque toujours un problème de format d'export. Réexportez depuis YNAB avec le format de date `2025-12-30`, le format de nombre `123,456.78`, et l'affichage de la devise sur « Don't Show » (voir ci-dessus), puis importez dans un nouveau budget.
+- **Transactions apparemment en double** : les groupes complets et contigus de `Split (1/n)` à `Split (n/n)` deviennent une seule transaction ventilée. Les groupes incomplets ou ambigus restent séparés pour éviter de combiner des lignes sans lien.
+- **Questions de devise** — les budgets YNAB sont à devise unique, donc tout est importé dans cette devise. Si vous passez à une configuration multidevise, consultez [Devise du budget](/docs/budget-currency) avant de modifier quoi que ce soit.
+
+Vos données YNAB restent intactes : l’import direct ne fait que lire via l’API, et l’import ZIP ne lit que le fichier choisi. Vous pouvez relancer l’une ou l’autre méthode dans un nouveau budget pour repartir proprement.

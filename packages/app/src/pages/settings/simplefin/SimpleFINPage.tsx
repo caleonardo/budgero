@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans, useLingui } from '@lingui/react/macro';
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -26,6 +28,7 @@ import { trendTextClass } from '@shared/lib/amount-color';
 import { getErrorMessage } from '@shared/lib/errors';
 import { InlineLoadingRow } from '@shared/ui/InlineLoadingRow';
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
+import { getLocaleTag } from '@shared/i18n';
 
 function formatCurrency(amount: number, currency: string): string {
   return new Intl.NumberFormat('en-US', {
@@ -35,7 +38,7 @@ function formatCurrency(amount: number, currency: string): string {
 }
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(getLocaleTag(), {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -43,6 +46,8 @@ function formatDate(date: Date): string {
 }
 
 export default function SimpleFINPage() {
+  const { t } = useLingui();
+
   const {
     isConnected,
     credentials,
@@ -64,23 +69,23 @@ export default function SimpleFINPage() {
 
   const handleConnect = async () => {
     if (!setupToken.trim()) {
-      toast.error('Please enter a setup token');
+      toast.error(t`Please enter a setup token`);
       return;
     }
 
     try {
       claim(setupToken.trim());
       setSetupToken('');
-      toast.success('Successfully connected to SimpleFIN');
+      toast.success(t`Successfully connected to SimpleFIN`);
     } catch (error) {
-      toast.error(getErrorMessage(error, 'Failed to connect'));
+      toast.error(getErrorMessage(error, t`Failed to connect`));
     }
   };
 
   const handleDisconnect = () => {
     disconnect();
     setShowDisconnectDialog(false);
-    toast.success('Disconnected from SimpleFIN');
+    toast.success(t`Disconnected from SimpleFIN`);
   };
 
   const parsedCredentials = credentials?.accessUrl ? parseAccessUrl(credentials.accessUrl) : null;
@@ -89,23 +94,29 @@ export default function SimpleFINPage() {
   return (
     <div className="container max-w-5xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="SimpleFIN"
-        description="Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync."
+        title={t`SimpleFIN`}
+        description={t`Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync.`}
       >
         <Badge variant="outline" className="text-amber-600 border-amber-600">
-          <Beaker className="h-3 w-3 mr-1" />
-          Experimental
+          <Trans>
+            <Beaker className="h-3 w-3 mr-1" />
+            Experimental
+          </Trans>
         </Badge>
       </SettingsPageHeader>
 
       {/* Experimental Warning */}
       <Alert className="border-amber-500 bg-amber-500/10">
         <AlertTriangle className="h-4 w-4 text-amber-500" />
-        <AlertTitle className="text-amber-600">Experimental Feature</AlertTitle>
+        <AlertTitle className="text-amber-600">
+          <Trans>Experimental Feature</Trans>
+        </AlertTitle>
         <AlertDescription className="text-amber-600/90">
-          SimpleFIN integration is currently in development. Features may change, break, or be
-          removed without notice. Your credentials are stored locally in your browser. Use at your
-          own risk.
+          <Trans>
+            SimpleFIN integration is currently in development. Features may change, break, or be
+            removed without notice. Your credentials are stored locally in your browser. Use at your
+            own risk.
+          </Trans>
         </AlertDescription>
       </Alert>
 
@@ -113,13 +124,15 @@ export default function SimpleFINPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 size={20} />
-            Connection Status
+            <Trans>
+              <Building2 size={20} />
+              Connection Status
+            </Trans>
           </CardTitle>
           <CardDescription>
             {isConnected
-              ? 'Your SimpleFIN Bridge connection is active.'
-              : 'Connect to SimpleFIN Bridge to sync your bank accounts.'}
+              ? t`Your SimpleFIN Bridge connection is active.`
+              : t`Connect to SimpleFIN Bridge to sync your bank accounts.`}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -127,30 +140,40 @@ export default function SimpleFINPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-green-600">
                 <CheckCircle2 className="h-5 w-5" />
-                <span className="font-medium">Connected</span>
+                <span className="font-medium">
+                  <Trans>Connected</Trans>
+                </span>
               </div>
               {parsedCredentials && (
                 <div className="text-sm text-muted-foreground">
                   <p>
-                    Server: {parsedCredentials.scheme}://{parsedCredentials.host}
+                    <Trans>
+                      Server: {parsedCredentials.scheme}://{parsedCredentials.host}
+                    </Trans>
                   </p>
                   {credentials?.createdAt && (
-                    <p>Connected: {formatDate(new Date(credentials.createdAt))}</p>
+                    <p>
+                      <Trans>Connected: {formatDate(new Date(credentials.createdAt))}</Trans>
+                    </p>
                   )}
                 </div>
               )}
               <div className="flex gap-2">
                 <Button variant="outline" onClick={refresh} disabled={isFetching}>
-                  {isFetching ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                  )}
-                  Refresh
+                  <Trans>
+                    {isFetching ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                    )}
+                    Refresh
+                  </Trans>
                 </Button>
                 <Button variant="destructive" onClick={() => setShowDisconnectDialog(true)}>
-                  <Unplug className="h-4 w-4 mr-2" />
-                  Disconnect
+                  <Trans>
+                    <Unplug className="h-4 w-4 mr-2" />
+                    Disconnect
+                  </Trans>
                 </Button>
               </div>
             </div>
@@ -158,37 +181,43 @@ export default function SimpleFINPage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  To connect, you need a SimpleFIN setup token. Get one from{' '}
-                  <a
-                    href="https://beta-bridge.simplefin.org/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline inline-flex items-center gap-1"
-                  >
-                    SimpleFIN Bridge
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
+                  <Trans>
+                    To connect, you need a SimpleFIN setup token. Get one from{' '}
+                    <a
+                      href="https://beta-bridge.simplefin.org/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-1"
+                    >
+                      <Trans>
+                        SimpleFIN Bridge
+                        <ExternalLink className="h-3 w-3" />
+                      </Trans>
+                    </a>
+                  </Trans>
                 </p>
                 <Input
                   type="text"
-                  placeholder="Paste your setup token here..."
+                  placeholder={t`Paste your setup token here...`}
                   value={setupToken}
                   onChange={(e) => setSetupToken(e.target.value)}
                   className="font-mono text-sm"
                 />
                 {claimError && (
                   <p className="text-sm text-destructive">
-                    {getErrorMessage(claimError, 'Failed to connect')}
+                    {getErrorMessage(claimError, t`Failed to connect`)}
                   </p>
                 )}
               </div>
               <Button onClick={handleConnect} disabled={isClaiming || !setupToken.trim()}>
-                {isClaiming ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
-                )}
-                Connect
+                <Trans>
+                  {isClaiming ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                  )}
+                  Connect
+                </Trans>
               </Button>
             </div>
           )}
@@ -199,7 +228,9 @@ export default function SimpleFINPage() {
       {accountErrors.length > 0 && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Account Errors</AlertTitle>
+          <AlertTitle>
+            <Trans>Account Errors</Trans>
+          </AlertTitle>
           <AlertDescription>
             <ul className="list-disc list-inside">
               {accountErrors.map((error, index) => (
@@ -214,8 +245,10 @@ export default function SimpleFINPage() {
       {fetchError && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Failed to fetch accounts</AlertTitle>
-          <AlertDescription>{getErrorMessage(fetchError, 'Unknown error')}</AlertDescription>
+          <AlertTitle>
+            <Trans>Failed to fetch accounts</Trans>
+          </AlertTitle>
+          <AlertDescription>{getErrorMessage(fetchError, t`Unknown error`)}</AlertDescription>
         </Alert>
       )}
 
@@ -224,31 +257,47 @@ export default function SimpleFINPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Wallet size={20} />
-              Linked Accounts
+              <Trans>
+                <Wallet size={20} />
+                Linked Accounts
+              </Trans>
             </CardTitle>
             <CardDescription>
-              Accounts available through your SimpleFIN connection. Click an account to view recent
-              transactions.
+              <Trans>
+                Accounts available through your SimpleFIN connection. Click an account to view
+                recent transactions.
+              </Trans>
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
-              <InlineLoadingRow label="Loading accounts..." />
+              <InlineLoadingRow label={t`Loading accounts...`} />
             ) : accounts.length === 0 ? (
               <div className="p-6 text-sm text-muted-foreground">
-                No accounts found. Make sure your SimpleFIN connection is properly configured.
+                <Trans>
+                  No accounts found. Make sure your SimpleFIN connection is properly configured.
+                </Trans>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Institution</TableHead>
-                      <TableHead>Account</TableHead>
-                      <TableHead className="text-right">Balance</TableHead>
-                      <TableHead className="text-right">Available</TableHead>
-                      <TableHead>Last Updated</TableHead>
+                      <TableHead>
+                        <Trans>Institution</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Account</Trans>
+                      </TableHead>
+                      <TableHead className="text-right">
+                        <Trans>Balance</Trans>
+                      </TableHead>
+                      <TableHead className="text-right">
+                        <Trans>Available</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Last Updated</Trans>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -263,7 +312,7 @@ export default function SimpleFINPage() {
                         }}
                       >
                         <TableCell>
-                          <div className="font-medium">{account.org.name || 'Unknown'}</div>
+                          <div className="font-medium">{account.org.name || t`Unknown`}</div>
                           {account.org.domain && (
                             <div className="text-xs text-muted-foreground">
                               {account.org.domain}
@@ -299,23 +348,35 @@ export default function SimpleFINPage() {
       {selectedAccount && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Transactions - {selectedAccount.name}</CardTitle>
-            <CardDescription>Recent transactions from the last 30 days.</CardDescription>
+            <CardTitle className="text-lg">
+              <Trans>Transactions - {selectedAccount.name}</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Recent transactions from the last 30 days.</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             {!selectedAccount.transactions || selectedAccount.transactions.length === 0 ? (
               <div className="p-6 text-sm text-muted-foreground">
-                No transactions available for this account.
+                <Trans>No transactions available for this account.</Trans>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>
+                        <Trans>Date</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Description</Trans>
+                      </TableHead>
+                      <TableHead className="text-right">
+                        <Trans>Amount</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Status</Trans>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -337,10 +398,12 @@ export default function SimpleFINPage() {
                         <TableCell>
                           {tx.pending ? (
                             <Badge variant="outline" className="text-amber-600">
-                              Pending
+                              <Trans>Pending</Trans>
                             </Badge>
                           ) : (
-                            <Badge variant="secondary">Posted</Badge>
+                            <Badge variant="secondary">
+                              <Trans>Posted</Trans>
+                            </Badge>
                           )}
                         </TableCell>
                       </TableRow>
@@ -357,9 +420,9 @@ export default function SimpleFINPage() {
       <ConfirmDialog
         open={showDisconnectDialog}
         onOpenChange={setShowDisconnectDialog}
-        title="Disconnect SimpleFIN?"
-        description="This will remove your SimpleFIN credentials from this browser. You can reconnect at any time with a new setup token."
-        confirmText="Disconnect"
+        title={t`Disconnect SimpleFIN?`}
+        description={t`This will remove your SimpleFIN credentials from this browser. You can reconnect at any time with a new setup token.`}
+        confirmText={t`Disconnect`}
         onConfirm={handleDisconnect}
       />
     </div>

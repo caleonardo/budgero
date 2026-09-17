@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { CurrencySelector } from '@features/currencies/ui/CurrencySelector';
 import { currencies as ALL_CURRENCIES } from '@features/currencies/model/currency-data';
 import React from 'react';
@@ -7,6 +8,8 @@ import { OnboardingOptionTile, Title, type StepProps } from './shared';
 const GLOBE_SRC = '/onboarding-globe-currencies.png';
 
 export const CurrencyStep: React.FC<StepProps> = ({ cur, state, set }) => {
+  const { t } = useLingui();
+
   const popularCodes = new Set(CURRENCIES.map((c) => c.code));
   // True when the user picked a currency from the long-tail dropdown rather
   // than one of the 8 quick-pick tiles. Lets us highlight the dropdown row
@@ -25,7 +28,7 @@ export const CurrencyStep: React.FC<StepProps> = ({ cur, state, set }) => {
       >
         <img
           src={GLOBE_SRC}
-          alt="Globe with currencies orbiting around it"
+          alt={t`Globe with currencies orbiting around it`}
           style={{
             width: '100%',
             maxWidth: 440,
@@ -80,7 +83,7 @@ export const CurrencyStep: React.FC<StepProps> = ({ cur, state, set }) => {
               </span>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 13, fontWeight: 600 }}>{c.code}</div>
-                <div style={{ fontSize: 10, color: '#393939' }}>{c.name}</div>
+                <div style={{ fontSize: 10, color: '#393939' }}>{t(c.name)}</div>
               </div>
               {active && <span style={{ fontSize: 14 }}>✓</span>}
             </OnboardingOptionTile>
@@ -108,15 +111,19 @@ export const CurrencyStep: React.FC<StepProps> = ({ cur, state, set }) => {
             marginBottom: 8,
           }}
         >
-          NEED A DIFFERENT CURRENCY?
+          <Trans>NEED A DIFFERENT CURRENCY?</Trans>
         </div>
         <div style={{ fontSize: 11, color: '#393939', lineHeight: 1.55, marginBottom: 10 }}>
-          Search the full list — Budgero supports {ALL_CURRENCIES.length} currencies.
+          <Trans>Search the full list — Budgero supports {ALL_CURRENCIES.length} currencies.</Trans>
         </div>
         <CurrencySelector
           value={state.currency}
           onValueChange={(value) => set({ currency: value })}
-          label={<span className="sr-only">Currency</span>}
+          label={
+            <span className="sr-only">
+              <Trans>Currency</Trans>
+            </span>
+          }
         />
       </div>
     </div>

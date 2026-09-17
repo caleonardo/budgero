@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useId, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@shared/ui/button';
@@ -50,6 +51,7 @@ export function CoverOverspendingPopover({
   triggerClassName,
   tone = 'red',
 }: CoverOverspendingPopoverProps) {
+  const { t } = useLingui();
   const [open, setOpen] = useState(false);
   const formatAmount = useFormatMaskedMilli(globalLocalizer);
   const overspent = asMilli(Math.max(0, 0 - (available || 0)));
@@ -66,7 +68,9 @@ export function CoverOverspendingPopover({
               : 'text-red-600 dark:text-red-300',
             triggerClassName
           )}
-          title={tone === 'amber' ? 'Credit overspend — cover to avoid debt' : 'Cover overspending'}
+          title={
+            tone === 'amber' ? t`Credit overspend — cover to avoid debt` : t`Cover overspending`
+          }
           onClick={(e) => e.stopPropagation()}
         >
           <PlanningAnimatedNumber
@@ -117,6 +121,8 @@ function CoverOverspendingEditor({
   align,
   tone,
 }: CoverOverspendingEditorProps) {
+  const { t } = useLingui();
+
   const amountInputId = useId();
   const [sourceCategoryId, setSourceCategoryId] = useState<number | null>(null);
   const [amount, setAmount] = useState(() => String(toDecimal(overspent)));
@@ -166,8 +172,8 @@ function CoverOverspendingEditor({
           await batchUpsertAssignments.mutateAsync([
             { categoryId, amount: targetAssigned + cover, month, budgetId },
           ]);
-          toast.success('Overspending covered', {
-            description: `Assigned ${formatAmount(cover)} from Ready to Assign.`,
+          toast.success(t`Overspending covered`, {
+            description: t`Assigned ${formatAmount(cover)} from Ready to Assign.`,
           });
         } catch (error) {
           toastError('Cover failed', error, 'Please try again.');
@@ -184,17 +190,21 @@ function CoverOverspendingEditor({
 
   return (
     <PopoverContent className="w-72 space-y-3" align={align}>
-      <div className="text-sm font-medium">Cover Overspending</div>
+      <div className="text-sm font-medium">
+        <Trans>Cover Overspending</Trans>
+      </div>
       <div className="text-xs text-muted-foreground">
-        {tone === 'amber' ? 'Overspent on credit by ' : 'Overspent by '}
+        {tone === 'amber' ? t`Overspent on credit by ` : t`Overspent by `}
         <span className={cn('font-medium', tone === 'amber' ? 'text-amber-600' : 'text-red-600')}>
           {formatAmount(overspent)}
         </span>
-        {tone === 'amber' && ' — cover it to avoid creating debt.'}
+        {tone === 'amber' && t` — cover it to avoid creating debt.`}
       </div>
       <div className="space-y-1">
         {/* Caption, not a <label>: SearchableCategorySelect exposes no labelable control. */}
-        <span className="text-xs text-muted-foreground">Cover from</span>
+        <span className="text-xs text-muted-foreground">
+          <Trans>Cover from</Trans>
+        </span>
         <SearchableCategorySelect
           budgetId={budgetId}
           selectedCategoryId={sourceCategoryId}
@@ -210,7 +220,7 @@ function CoverOverspendingEditor({
       </div>
       <div className="space-y-1">
         <Label htmlFor={amountInputId} className="font-normal text-xs text-muted-foreground">
-          Amount
+          <Trans>Amount</Trans>
         </Label>
         <Input
           id={amountInputId}
@@ -224,16 +234,16 @@ function CoverOverspendingEditor({
         />
         {sourceCategoryId !== null && (
           <div className="text-[11px] text-muted-foreground">
-            Max {formatAmount(maxCover)} — covering never puts the source in the red
+            <Trans>Max {formatAmount(maxCover)} — covering never puts the source in the red</Trans>
           </div>
         )}
       </div>
       <div className="flex items-center justify-end gap-2 pt-1">
         <Button variant="ghost" size="sm" onClick={onClose}>
-          Cancel
+          <Trans>Cancel</Trans>
         </Button>
         <Button size="sm" onClick={handleCover} disabled={!canCover}>
-          {isCovering ? 'Covering…' : 'Cover'}
+          {isCovering ? t`Covering…` : t`Cover`}
         </Button>
       </div>
     </PopoverContent>

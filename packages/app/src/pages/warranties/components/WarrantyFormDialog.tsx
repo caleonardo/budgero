@@ -1,6 +1,7 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type React from 'react';
 import { useId } from 'react';
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Label } from '@shared/ui/label';
@@ -100,6 +101,8 @@ export function WarrantyFormDialog({
   recentTransactions,
   formatTxLabel,
 }: WarrantyFormDialogProps) {
+  const { t } = useLingui();
+
   const fieldIdBase = useId();
   const nameId = `${fieldIdBase}-name`;
   const expiryId = `${fieldIdBase}-expiry`;
@@ -110,24 +113,24 @@ export function WarrantyFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md max-h-[90dvh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>{editingWarranty ? 'Edit Warranty' : 'Add Warranty'}</DialogTitle>
+          <DialogTitle>{editingWarranty ? t`Edit Warranty` : t`Add Warranty`}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-2 overflow-y-auto flex-1 min-h-0">
           <div>
             <Label htmlFor={nameId} className="text-sm font-medium mb-1 block">
-              Name *
+              <Trans>Name *</Trans>
             </Label>
             <Input
               id={nameId}
               value={form.name}
               onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-              placeholder="e.g. Laptop Warranty"
+              placeholder={t`e.g. Laptop Warranty`}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor={expiryId} className="text-sm font-medium mb-1 block">
-                Expiry Date *
+                <Trans>Expiry Date *</Trans>
               </Label>
               <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
                 <PopoverTrigger asChild>
@@ -137,7 +140,7 @@ export function WarrantyFormDialog({
                     className="w-full justify-start text-left font-normal"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {expiresAtDate ? format(expiresAtDate, 'PP') : 'Select'}
+                    {expiresAtDate ? format(expiresAtDate, 'PP') : t`Select`}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start" modal>
@@ -155,7 +158,7 @@ export function WarrantyFormDialog({
             </div>
             <div>
               <Label htmlFor={amountId} className="text-sm font-medium mb-1 block">
-                Amount
+                <Trans>Amount</Trans>
               </Label>
               <Input
                 id={amountId}
@@ -170,7 +173,9 @@ export function WarrantyFormDialog({
           </div>
           <div>
             {/* Caption, not a <label>: the control below is a dropzone/camera composite. */}
-            <span className="text-sm font-medium mb-1 block">Receipt Image</span>
+            <span className="text-sm font-medium mb-1 block">
+              <Trans>Receipt Image</Trans>
+            </span>
             <canvas ref={canvasRef} className="hidden" />
             <input
               ref={fileInputRef}
@@ -209,7 +214,7 @@ export function WarrantyFormDialog({
           </div>
           <div>
             <Label htmlFor={transactionId} className="text-sm font-medium mb-1 block">
-              Link to Transaction
+              <Trans>Link to Transaction</Trans>
             </Label>
             <Popover open={txComboboxOpen} onOpenChange={setTxComboboxOpen} modal>
               <PopoverTrigger asChild>
@@ -223,17 +228,19 @@ export function WarrantyFormDialog({
                     !form.transactionId && 'text-muted-foreground'
                   )}
                 >
-                  <span className="truncate">{selectedTxLabel || 'None'}</span>
+                  <span className="truncate">{selectedTxLabel || t`None`}</span>
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                 <Command loop>
-                  <CommandInput placeholder="Search transactions..." />
+                  <CommandInput placeholder={t`Search transactions...`} />
                   <CommandList>
-                    <CommandEmpty>No transactions found.</CommandEmpty>
+                    <CommandEmpty>
+                      <Trans>No transactions found.</Trans>
+                    </CommandEmpty>
                     {form.transactionId && (
-                      <CommandGroup heading="Actions">
+                      <CommandGroup heading={t`Actions`}>
                         <CommandItem
                           value="__clear__"
                           onSelect={() => {
@@ -241,12 +248,14 @@ export function WarrantyFormDialog({
                             setTxComboboxOpen(false);
                           }}
                         >
-                          <X className="h-4 w-4 mr-2" />
-                          Clear selection
+                          <Trans>
+                            <X className="h-4 w-4 mr-2" />
+                            Clear selection
+                          </Trans>
                         </CommandItem>
                       </CommandGroup>
                     )}
-                    <CommandGroup heading="Transactions">
+                    <CommandGroup heading={t`Transactions`}>
                       {recentTransactions.map((tx) => {
                         const label = formatTxLabel(tx);
                         const isSelected = form.transactionId === String(tx.ID);
@@ -284,23 +293,23 @@ export function WarrantyFormDialog({
           </div>
           <div>
             <Label htmlFor={notesId} className="text-sm font-medium mb-1 block">
-              Notes
+              <Trans>Notes</Trans>
             </Label>
             <Textarea
               id={notesId}
               value={form.notes}
               onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))}
-              placeholder="Optional notes about the warranty..."
+              placeholder={t`Optional notes about the warranty...`}
               rows={3}
             />
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button onClick={onSubmit} disabled={submitting}>
-            {submitting ? 'Saving...' : editingWarranty ? 'Update' : 'Create'}
+            {submitting ? t`Saving...` : editingWarranty ? t`Update` : t`Create`}
           </Button>
         </DialogFooter>
       </DialogContent>

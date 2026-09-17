@@ -1,0 +1,272 @@
+---
+title: "Schuldenübersicht"
+summary: "Erfasse Kreditkarten, Kredite und Hypotheken in Budgero. Erfahre, wie sich die verschiedenen Schuldenarten unterschiedlich auf dein Budget auswirken und wie du Schulden gezielt abbauen kannst."
+section: accounts-and-imports
+topicId: debt-tracking
+takeaways:
+  - "Verstehe, wie sich Kreditkarten von Krediten und Hypotheken unterscheiden."
+  - "Erfahre, wie Kreditkarten-Zahlungskategorien automatisch Geld nachverfolgen, das für deine Karte zurückgelegt wurde."
+  - "Meistere den Schuldenabbau, indem du für Kreditkategorien budgetierst."
+---
+
+Budgero verwaltet Schuldenkonten, aber Kreditkarten funktionieren grundlegend anders als Kredite und Hypotheken. Wenn du diesen Unterschied verstehst, kannst du dein Budget genauer planen.
+
+## Kreditkarten vs. Kredite
+
+Der entscheidende Unterschied liegt darin, **wann Ausgaben in deinem Budget auftauchen**:
+
+<table>
+  <thead>
+    <tr>
+      <th>Schuldenart</th>
+      <th>Wann Ausgaben erfasst werden</th>
+      <th>Auswirkung der Zahlung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Kreditkarte</strong></td>
+      <td>Wenn du die Karte einsetzt</td>
+      <td>Neutrale Umbuchung</td>
+    </tr>
+    <tr>
+      <td><strong>Kredit / Hypothek</strong></td>
+      <td>Wenn du eine Zahlung leistest</td>
+      <td>Erzeugt Ausgaben in der verknüpften Kategorie</td>
+    </tr>
+  </tbody>
+</table>
+
+### Kreditkarten
+
+Wenn du mit deiner Kreditkarte Lebensmittel kaufst, erscheinen diese 50 $ sofort als Ausgabe in deiner Lebensmittel-Kategorie. Die Kreditkarte ist nur eine Zahlungsmethode – die Auswirkung aufs Budget entsteht im Moment des Kaufs.
+
+Die spätere Begleichung deiner Kreditkartenrechnung bedeutet lediglich, dass du Geld verschiebst, um bereits erfasste Ausgaben zu decken. Dadurch entstehen keine zusätzlichen Ausgaben in deinem Budget.
+
+### Kredite und Hypotheken
+
+Kredite funktionieren umgekehrt. Du kaufst nicht mit deiner Hypothek Lebensmittel ein. Die monatliche Zahlung selbst ist die Ausgabe. Budgero erstellt eine verknüpfte Kategorie (wie „Hypothek" oder „Autokredit") und erfasst jede Zahlung als Ausgabe in dieser Kategorie.
+
+## Kreditkarten-Zahlungskategorien
+
+Wenn du ein Kreditkartenkonto erstellst, richtet Budgero automatisch eine **Kreditkarten-Zahlung**-Kategorie für diese Karte ein. Diese Kategorie nutzt YNAB-ähnliche Mechaniken, um nachzuverfolgen, wie viel Geld dir für die Kartenrückzahlung zur Verfügung steht.
+
+### So funktioniert's
+
+1. **Automatische Einrichtung:** Wenn du eine Kreditkarte erstellst, legt Budgero eine Kategoriengruppe „Kreditkarten-Zahlungen" und eine nach deiner Karte benannte Zahlungskategorie (z. B. „Chase CC") an.
+
+2. **Automatische Finanzierung durch Ausgaben:** Wenn du mit der Karte einkaufst, wird automatisch Geld aus deinen Ausgabenkategorien in die Kreditkarten-Zahlungskategorie umgebucht. So siehst du genau, wie viel du für die Rechnungsbegleichung zurückgelegt hast.
+
+3. **Nur budgetierte Ausgaben finanzieren die Kategorie:** Wenn du in einer Kategorie überziehst, fließt nur der budgetierte Teil in deine Kreditkarten-Zahlung. Der überzogene Betrag wird zur Kreditkartenschuld.
+
+### Beispiele zur Finanzierung
+
+<table>
+  <thead>
+    <tr>
+      <th>Kategorie-Budget</th>
+      <th>KK-Ausgabe</th>
+      <th>Für KK-Zahlung finanziert</th>
+      <th>KK-Schulden entstanden</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>100 $</td>
+      <td>50 $</td>
+      <td>50 $</td>
+      <td>0 $</td>
+    </tr>
+    <tr>
+      <td>100 $</td>
+      <td>150 $</td>
+      <td>100 $</td>
+      <td>50 $</td>
+    </tr>
+    <tr>
+      <td>0 $</td>
+      <td>50 $</td>
+      <td>0 $</td>
+      <td>50 $</td>
+    </tr>
+    <tr>
+      <td>30 $</td>
+      <td>50 $</td>
+      <td>30 $</td>
+      <td>20 $</td>
+    </tr>
+  </tbody>
+</table>
+
+Wenn mehrere Kreditkarten in derselben Kategorie Ausgaben tätigen, wird der finanzierte Betrag auf die jeweiligen KK-Zahlungs-Kategorien im Verhältnis des Anteils jeder Karte an den Ausgaben dieser Kategorie aufgeteilt.
+
+### Die KK-Zahlungs-Kategorie lesen
+
+Die KK-Zahlungs-Kategorie zeigt:
+
+- **Zugewiesen:** Geld, das du manuell budgetiert hast, um Schulden abzubauen
+- **Aktivität:** An die Karte geleistete Zahlungen (als negativ angezeigt)
+- **Verfügbar:** Wie viel dir zur Verfügung steht, um die Karte zu bezahlen
+
+Klicke auf das Info-Symbol neben dem verfügbaren Betrag, um eine **Finanzierungsaufschlüsselung** zu sehen – genau, welche Kategorien wie viel beigetragen haben. Für jede Karte spiegelt die Aufschlüsselung nur die Ausgaben dieser jeweiligen Karte wider.
+
+<Callout variant="tip" title="Funding breakdown">
+Die Finanzierungsaufschlüsselung hilft dir zu verstehen, woher dein Geld für die KK-Zahlung kam. Wenn du 60 $ für Lebensmittel und 30 $ für Benzin mit deiner Karte ausgegeben hast, siehst du beide Kategorien mit ihren jeweiligen Beiträgen aufgelistet.
+</Callout>
+
+## Wie anfängliche Salden funktionieren
+
+Wenn du ein Schuldenkonto einrichtest, steht der Eröffnungssaldo für Geld, das du bereits schuldest. Diese anfänglichen Schulden haben keinen Einfluss auf deine Budgetkategorien oder Zu budgetieren.
+
+**Beispiel:** Du erstellst eine Kreditkarte mit einem Saldo von 2.000 $. Budgero zeigt -2.000 $ im Konto an, aber deine Kategoriesalden und Zu budgetieren bleiben unverändert. Die Schulden bestanden bereits, bevor du mit dem Budgetieren begonnen hast.
+
+<Callout variant="note" title="Starting fresh">
+Wenn du bereits einen Teil einer Schuld beglichen hast, bevor du Budgero genutzt hast, gib beim Erstellen des Kontos den ursprünglichen Schuldenbetrag und den bisher gezahlten Betrag ein. Budgero berechnet deinen aktuellen Saldo automatisch.
+</Callout>
+
+## Kreditkarten-Workflow
+
+So funktioniert ein typischer Kreditkartenzyklus:
+
+1. **Karte benutzen** für einen Lebensmittelkauf über 50 $
+2. **Transaktion kategorisieren** als Lebensmittel (oder die automatische Kategorisierung übernehmen lassen)
+3. **Kategorie Lebensmittel** zeigt -50 $ Aktivität, Verfügbar sinkt
+4. **Kategorie Kreditkartenrückzahlung** – Verfügbar steigt um 50 $ (automatisch aus Lebensmitteln finanziert)
+5. **Kreditkartensaldo** zeigt -50 $
+
+Wenn du die Karte bezahlst:
+
+1. **Umbuchung** von 50 $ vom Girokonto auf die Kreditkarte
+2. **Kategorie Kreditkartenrückzahlung** zeigt -50 $ Aktivität (die Zahlung)
+3. **Kreditkartenrückzahlung – Verfügbar** kehrt auf 0 $ zurück
+4. **Kreditkartensaldo** kehrt auf 0 $ zurück
+
+Die zentrale Erkenntnis: Deine Ausgabenkategorien spiegeln bereits die tatsächlichen Ausgaben wider. Die Kategorie für Kreditkartenrückzahlung verfolgt lediglich das Geld, das du dafür zurückgelegt hast.
+
+## Altschulden tilgen
+
+Wenn du bereits Kreditkartenschulden hast, wenn du mit Budgero beginnst:
+
+1. Die anfängliche Schuld wird als Ausgabe gegen die Kategorie „Umbuchungen“ erfasst. Wenn du beim Erstellen des Kontos „Bisher gezahlt“ ausfüllst, erfasst Budgero dies zusätzlich als Einnahme, sodass der verbleibende Saldo ursprünglich − gezahlt entspricht.
+2. Beide Einträge wirken sich nur auf den Kontostand aus, nicht auf eine Budget-Kategorie.
+3. Deine Kategorie für Kreditkartenrückzahlung startet bei 0 $ (es wurden noch keine Ausgaben finanziert).
+
+**So tilgst du Altschulden:**
+
+1. Weise Geld direkt der Kategorie für Kreditkartenrückzahlung zu
+2. Buche dieses Geld auf die Kreditkarte um
+3. Beobachte, wie dein Kreditkartensaldo sinkt
+
+Wenn du mehr zahlst, als durch Ausgaben „finanziert“ wurde, wird der verfügbare Betrag für Kreditkartenrückzahlung negativ. Das ist erwartet – es zeigt, dass du alte Schulden tilgst und nicht nur aktuelle Ausgaben deckst.
+
+## Workflow für Kredite und Hypotheken
+
+Kredite und Hypotheken funktionieren anders, da die Zahlung selbst die Ausgabe ist:
+
+1. **Budgero erstellt eine verknüpfte Kategorie**, wenn du den Kredit hinzufügst (z. B. "Autokredit")
+2. **Zahlungen budgetieren**, indem du monatlich Geld dieser Kategorie zuweist
+3. **Die Zahlung vornehmen** per Umbuchung vom Girokonto auf das Kreditkonto
+4. **Zahlung erscheint als Ausgabe** in der verknüpften Kategorie
+
+**Beispiel:** Du hast einen Autokredit über 10.000 $ mit monatlichen Zahlungen von 300 $.
+
+1. Weise 300 $ der Kategorie "Autokredit" zu, wenn du dein Gehalt erhältst
+2. Buche 300 $ per Umbuchung vom Girokonto auf das Autokreditkonto
+3. Kategorie "Autokredit" zeigt -300 $ Aktivität
+4. Kreditsaldo sinkt um 300 $
+
+### Die Ausgabengrenze
+
+Bei Krediten und Hypotheken begrenzt Budgero die Ausgaben auf den tatsächlichen Schuldenbetrag. Wenn du überzahlst:
+
+**Beispiel:** Dein Autokreditsaldo beträgt -100 $. Du tätigst eine Umbuchung von 300 $, um ihn vorzeitig abzubezahlen.
+- Das Konto erhält 300 $, wodurch der Saldo auf +200 $ steigt
+- Nur 100 $ zählen als Ausgabe in der Kategorie "Autokredit"
+- Die restlichen 200 $ werden als reguläre Umbuchung erfasst (keine Kategorienausgabe)
+
+Dadurch bleiben deine Ausgabenberichte korrekt, wenn du Schulden vorzeitig abbezahlst.
+
+## Konto- und Kategorie-Lebenszyklus
+
+### Kreditkarten-Zahlungskategorien
+
+Wenn du eine Kreditkarte erstellst:
+- Eine Kategoriengruppe „Kreditkartenzahlungen“ wird erstellt (falls sie noch nicht existiert)
+- Eine nach deiner Karte benannte Zahlungskategorie wird erstellt
+- Die Kategorie wird automatisch gelöscht, wenn du das Konto löschst
+
+### Verknüpfte Kategorien (nur Kredite/Hypotheken)
+
+Wenn du einen Kredit oder eine Hypothek erstellst, legt Budgero eine verknüpfte Kategorie unter der Gruppe **Verbindlichkeiten** an. Diese Kategorie:
+- Teilt den Kontonamen (benenne das Konto um und die Kategorie wird aktualisiert)
+- Wird automatisch gelöscht, wenn du das Konto löschst
+- Kann nicht gelöscht werden, solange das Konto existiert
+
+### Konten umbenennen
+
+Wenn du ein Schuldenkonto umbenennst, aktualisiert Budgero alle Umbuchungsvermerke, die auf den alten Namen verweisen. Bei Kreditkarten wird auch der Name der Kreditkarten-Zahlungskategorie aktualisiert.
+
+## Im Budget vs. Nicht im Budget
+
+Die meisten Schuld-Konten sollten **im Budget** bleiben. Bei Krediten und Hypotheken bedeutet das, dass Zahlungen Ausgaben in der verknüpften Kategorie erzeugen. Kreditkarten und Kredite sind standardmäßig im Budget; Hypotheken sind standardmäßig nicht im Budget, können aber umgestellt werden.
+
+Schuld-Konten, die nicht im Budget sind:
+- Erfassen weiterhin deinen Schuldenstand präzise
+- Zahlungen sind immer neutrale Umbuchungen — es werden keine Ausgaben in einer Kategorie erfasst
+- Bei Krediten/Hypotheken wird die verknüpfte Kategorie bei der Einrichtung weiterhin erstellt, bleibt aber leer, solange das Konto nicht im Budget ist
+
+Nutze „Nicht im Budget" für Schulden, die du nicht von Monat zu Monat budgetieren möchtest (zum Beispiel eine Hypothek, die du nur auf der Nettovermögen-Seite sehen möchtest).
+
+## Budgetieren für die Schuldentilgung
+
+### Kreditkarten
+
+Für laufende Ausgaben ist keine besondere Budgetierung nötig. Budgetiere einfach deine Ausgaben-Kategorien (Lebensmittel, Tanken usw.) und die Kreditkarten-Zahlungskategorie zeigt automatisch an, wie viel dir zur Zahlung zur Verfügung steht.
+
+**Um bestehende Schulden schneller abzubezahlen:**
+1. Weise der Kreditkarten-Zahlungskategorie zusätzliches Geld zu
+2. Buche dieses Geld auf die Karte um
+3. Wenn der verfügbare Betrag der Kreditkarten-Zahlungskategorie negativ wird, zahlst du über die laufenden Ausgaben hinaus
+
+### Kredite und Hypotheken
+
+1. **Setze ein Finanzierungsziel** für die verknüpfte Kategorie in Höhe deines monatlichen Zahlungsbetrags
+2. **Weise der Kategorie jeden Monat Geld zu**, wenn du dein Gehalt bekommst
+3. **Führe die Umbuchung** von deinem Girokonto auf das Schuldenkonto durch
+4. **Sieh zu, wie der Saldo sinkt**, während deine Zahlungen deine Schulden reduzieren
+
+Die verknüpfte Kategorie funktioniert wie jede andere Ausgabenkategorie. Budgetiere dafür, finanziere sie und gib daraus Geld aus, indem du Zahlungen leistest.
+
+## Häufige Fragen
+
+### Warum wird meine Kreditkartenzahlung nicht als Ausgabe angezeigt?
+
+Weil die Ausgabe bereits stattgefunden hat, als du die Karte benutzt hast. Die Rechnung zu bezahlen verschiebt lediglich Geld, um Ausgaben zu decken, die du bereits erfasst hast. Das verhindert eine Doppelzählung.
+
+### Was bedeutet ein negativer Wert bei „Verfügbar" für die Kreditkarten-Zahlung?
+
+Das bedeutet, dass du mehr an die Kreditkarte gezahlt hast, als durch deine budgetierten Ausgaben gedeckt war. Das passiert typischerweise, wenn:
+- Du Altschulden aus der Zeit vor deinem Budgetieren abzahlst
+- Du in Kategorien überzogen hast und nun diese Schulden deckst
+- Du eine zusätzliche Zahlung über die Ausgaben des aktuellen Monats hinaus geleistet hast
+
+### Mein „Verfügbar" für die Kreditkarten-Zahlung stimmt nicht mit dem Kartensaldo überein. Ist das falsch?
+
+Das ist normal. Dein Verfügbar-Betrag bei der Kreditkartenrückzahlung zeigt Geld, das für **budgetierte** Ausgaben zurückgelegt wurde. Dein Kartensaldo umfasst:
+- Ausgaben im aktuellen Monat (kann noch nicht finanzierte Überziehung enthalten)
+- Altschulden von bevor du mit dem Budgetieren begonnen hast
+- Zinsgebühren
+
+Die Differenz steht für Schulden, die du noch budgetieren musst.
+
+### Kann ich einen Kredit verfolgen, ohne Budget-Ausgaben zu erzeugen?
+
+Ja. Markiere das Konto beim Erstellen als Nicht im Budget, oder bearbeite ein bestehendes Konto, um die Einstellung umzuschalten. Als Nicht im Budget markierte Kredite verfolgen Salden, ohne deine Budget-Kategorien zu beeinflussen.
+
+### Wo sehe ich, welche Kategorien meine Kreditkartenrückzahlung finanziert haben?
+
+Klicke auf das Info-Symbol neben dem verfügbaren Betrag in der Zeile der Kreditkartenrückzahlung. Ein Popover zeigt die Finanzierungsaufschlüsselung mit jeder beitragenden Kategorie und dem jeweiligen Betrag, bezogen auf die konkrete Karte.
+
+## Nächste Schritte
+
+Die Schuldenübersicht funktioniert am besten in Kombination mit Zielen und regelmäßigen Budget-Überprüfungen. Behalte bei Kreditkarten deinen Verfügbar-Betrag bei der Kreditkartenrückzahlung im Auge, um sicherzustellen, dass du die Rechnung decken kannst. Richte bei Krediten und Hypotheken monatliche Finanzierungsziele ein und sieh zu, wie dein Saldo mit der Zeit sinkt.

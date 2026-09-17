@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type { User } from './auth';
 
 export enum AccessLevel {
@@ -190,17 +191,17 @@ export function getAccessLevelDisplay(level: AccessLevel): string {
     case AccessLevel.ADMIN:
       return 'Administrator';
     case AccessLevel.FOUNDING_MEMBER:
-      return 'Founding Member';
+      return t`Founding Member`;
     case AccessLevel.SUBSCRIBER:
       return 'Subscriber';
     case AccessLevel.TRIAL:
-      return 'Trial User';
+      return t`Trial User`;
     case AccessLevel.BETA:
-      return 'Beta Tester';
+      return t`Beta Tester`;
     case AccessLevel.COLLABORATOR:
       return 'Collaborator';
     case AccessLevel.NONE:
-      return 'No Access';
+      return t`No Access`;
     default:
       return 'Unknown';
   }

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Card } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -89,6 +90,8 @@ interface ExportDataCardProps {
 }
 
 export default function ExportDataCard({ spaceId, embedded = false }: ExportDataCardProps) {
+  const { t } = useLingui();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [masterPassword, setMasterPassword] = useState('');
   const [isExporting, setIsExporting] = useState(false);
@@ -106,12 +109,12 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
     e?.preventDefault();
 
     if (!spaceId) {
-      setError('No workspace found to export.');
+      setError(t`No workspace found to export.`);
       return;
     }
 
     if (!masterPassword.trim()) {
-      setError('Please enter your master password.');
+      setError(t`Please enter your master password.`);
       return;
     }
 
@@ -154,7 +157,7 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
 
       if (exportType === 'sqlite') {
         downloadBlob(decryptedData, `budgero-backup-${timestamp}.db`, 'application/x-sqlite3');
-        toast.success('Database exported successfully');
+        toast.success(t`Database exported successfully`);
       } else {
         const SQL = await loadSqlJs();
         const db = new SQL.Database(decryptedData);
@@ -193,7 +196,7 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
 
           const zipBlob = await zip.generateAsync({ type: 'blob' });
           downloadBlob(zipBlob, `budgero-csv-export-${timestamp}.zip`, 'application/zip');
-          toast.success('CSV files exported successfully');
+          toast.success(t`CSV files exported successfully`);
         } finally {
           db.close();
         }
@@ -202,7 +205,7 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
       setDialogOpen(false);
       setMasterPassword('');
     } catch (err) {
-      const message = getErrorMessage(err, 'Export failed. Please try again.');
+      const message = getErrorMessage(err, t`Export failed. Please try again.`);
       setError(message);
       toast.error(message);
     } finally {
@@ -219,10 +222,14 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
       <Download className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
       <div className="flex-1 space-y-3">
         <div>
-          <h3 className="font-semibold">Export Your Data</h3>
+          <h3 className="font-semibold">
+            <Trans>Export Your Data</Trans>
+          </h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Download your budget data before your subscription ends. You&apos;ll need your master
-            password to decrypt the export.
+            <Trans>
+              Download your budget data before your subscription ends. You'll need your master
+              password to decrypt the export.
+            </Trans>
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
@@ -232,8 +239,10 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
             onClick={() => handleExportClick('sqlite')}
             disabled={isExporting}
           >
-            <Database className="h-4 w-4 mr-2" />
-            Download SQLite
+            <Trans>
+              <Database className="h-4 w-4 mr-2" />
+              Download SQLite
+            </Trans>
           </Button>
           <Button
             variant="outline"
@@ -241,8 +250,10 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
             onClick={() => handleExportClick('csv')}
             disabled={isExporting}
           >
-            <FileText className="h-4 w-4 mr-2" />
-            Download CSV
+            <Trans>
+              <FileText className="h-4 w-4 mr-2" />
+              Download CSV
+            </Trans>
           </Button>
         </div>
       </div>
@@ -267,20 +278,26 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Enter Master Password</DialogTitle>
+            <DialogTitle>
+              <Trans>Enter Master Password</Trans>
+            </DialogTitle>
             <DialogDescription>
-              Your data is encrypted. Enter your master password to decrypt and export it.
+              <Trans>
+                Your data is encrypted. Enter your master password to decrypt and export it.
+              </Trans>
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleExport} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="export-master-password">Master Password</Label>
+              <Label htmlFor="export-master-password">
+                <Trans>Master Password</Trans>
+              </Label>
               <Input
                 id="export-master-password"
                 type="password"
                 value={masterPassword}
                 onChange={(e) => setMasterPassword(e.target.value)}
-                placeholder="Enter your master password"
+                placeholder={t`Enter your master password`}
                 disabled={isExporting}
                 autoFocus
               />
@@ -298,19 +315,19 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
                 onClick={() => setDialogOpen(false)}
                 disabled={isExporting}
               >
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
               <Button type="submit" disabled={isExporting || !masterPassword.trim()}>
                 {isExporting ? (
-                  <>
+                  <Trans>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Exporting...
-                  </>
+                  </Trans>
                 ) : (
-                  <>
+                  <Trans>
                     <Download className="h-4 w-4 mr-2" />
-                    Export {exportType === 'sqlite' ? 'Database' : 'CSV'}
-                  </>
+                    Export {exportType === 'sqlite' ? t`Database` : 'CSV'}
+                  </Trans>
                 )}
               </Button>
             </DialogFooter>

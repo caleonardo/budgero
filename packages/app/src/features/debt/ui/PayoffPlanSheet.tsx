@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import {
   Drawer,
@@ -58,6 +59,8 @@ export function PayoffPlanSheet({
   suggestedMin,
   maxPayment,
 }: PayoffPlanSheetProps) {
+  const { t } = useLingui();
+
   const [open, setOpen] = React.useState(false);
   const originalTriggerOnClick = trigger.props.onClick;
   const handleTriggerClick: React.MouseEventHandler<HTMLElement> = (event) => {
@@ -163,15 +166,15 @@ export function PayoffPlanSheet({
           const row = chartData[items[0]?.dataIndex ?? 0];
           if (!row) return '';
           return tooltipHtml(`Month ${row.idx + 1} — ${row.monthLabel}`, [
-            { color: principalColor, name: 'Principal', value: formatter.format(row.principal) },
-            { color: interestColor, name: 'Interest', value: formatter.format(row.interest) },
-            { color: remainingColor, name: 'Remaining', value: formatter.format(row.remaining) },
+            { color: principalColor, name: t`Principal`, value: formatter.format(row.principal) },
+            { color: interestColor, name: t`Interest`, value: formatter.format(row.interest) },
+            { color: remainingColor, name: t`Remaining`, value: formatter.format(row.remaining) },
           ]);
         },
       },
       series: [
         {
-          name: 'Principal',
+          name: t`Principal`,
           type: 'bar' as const,
           stack: 'payment',
           data: chartData.map((row) => row.principal),
@@ -179,7 +182,7 @@ export function PayoffPlanSheet({
           itemStyle: { color: principalColor, borderColor: chrome.surface, borderWidth: 1 },
         },
         {
-          name: 'Interest',
+          name: t`Interest`,
           type: 'bar' as const,
           stack: 'payment',
           data: chartData.map((row) => row.interest),
@@ -187,7 +190,7 @@ export function PayoffPlanSheet({
           itemStyle: { color: interestColor, borderColor: chrome.surface, borderWidth: 1 },
         },
         {
-          name: 'Remaining',
+          name: t`Remaining`,
           type: 'line' as const,
           yAxisIndex: 1,
           data: chartData.map((row) => row.remaining),
@@ -199,7 +202,7 @@ export function PayoffPlanSheet({
         },
       ],
     };
-  }, [chartData, palette, formatter]);
+  }, [chartData, palette, formatter, t]);
 
   return (
     <Drawer open={open} onOpenChange={setOpen} direction="right">
@@ -214,13 +217,17 @@ export function PayoffPlanSheet({
         }}
       >
         <DrawerHeader className="relative pr-10">
-          <DrawerTitle>Payment Plan</DrawerTitle>
+          <DrawerTitle>
+            <Trans>Payment Plan</Trans>
+          </DrawerTitle>
           <DrawerDescription>
-            Explore detailed payoff projections. Adjust APR, monthly payment, and extras to see how
-            they affect timeline and interest.
+            <Trans>
+              Explore detailed payoff projections. Adjust APR, monthly payment, and extras to see
+              how they affect timeline and interest.
+            </Trans>
           </DrawerDescription>
           <DrawerClose
-            aria-label="Close payment plan"
+            aria-label={t`Close payment plan`}
             className="absolute right-4 top-4 inline-flex h-6 w-6 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <X className="h-4 w-4" />
@@ -231,7 +238,9 @@ export function PayoffPlanSheet({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-3">
               <div>
-                <Label className="text-xs text-muted-foreground">APR (%)</Label>
+                <Label className="text-xs text-muted-foreground">
+                  <Trans>APR (%)</Trans>
+                </Label>
                 {/* APR is a dimensionless percent; bridge CalculatorCell's MilliUnits contract */}
                 <CalculatorCell
                   value={fromDecimal(isFinite(localApr) ? localApr : 0)}
@@ -249,7 +258,9 @@ export function PayoffPlanSheet({
               </div>
               <div>
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs text-muted-foreground">Monthly payment</Label>
+                  <Label className="text-xs text-muted-foreground">
+                    <Trans>Monthly payment</Trans>
+                  </Label>
                   <span className="text-xs font-mono">
                     {formatMilli(formatter, roundMilli(payment || 0))}
                   </span>
@@ -274,10 +285,12 @@ export function PayoffPlanSheet({
                   />
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">
-                  Suggested minimum:{' '}
-                  <span className="font-mono">
-                    {formatMilli(formatter, roundMilli(suggestedMin))}
-                  </span>
+                  <Trans>
+                    Suggested minimum:{' '}
+                    <span className="font-mono">
+                      {formatMilli(formatter, roundMilli(suggestedMin))}
+                    </span>
+                  </Trans>
                 </div>
               </div>
               <Separator />
@@ -286,21 +299,21 @@ export function PayoffPlanSheet({
                   <div className="flex items-center justify-between gap-2">
                     <Label
                       className="flex-1 min-w-0 block text-xs text-muted-foreground leading-tight whitespace-normal break-words sm:truncate sm:whitespace-nowrap sm:overflow-hidden sm:h-5"
-                      title="Extra monthly"
+                      title={t`Extra monthly`}
                     >
-                      Extra monthly
+                      <Trans>Extra monthly</Trans>
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <button
-                          aria-label="About extra monthly"
+                          aria-label={t`About extra monthly`}
                           className="shrink-0 text-muted-foreground hover:text-foreground"
                         >
                           <Info className="h-3.5 w-3.5" />
                         </button>
                       </PopoverTrigger>
                       <PopoverContent className="w-64 text-xs">
-                        Added to every monthly payment throughout the plan.
+                        <Trans>Added to every monthly payment throughout the plan.</Trans>
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -319,21 +332,21 @@ export function PayoffPlanSheet({
                   <div className="flex items-center justify-between gap-2">
                     <Label
                       className="flex-1 min-w-0 block text-xs text-muted-foreground leading-tight whitespace-normal break-words sm:truncate sm:whitespace-nowrap sm:overflow-hidden sm:h-5"
-                      title="One-time extra (this month)"
+                      title={t`One-time extra (this month)`}
                     >
-                      One-time extra (this month)
+                      <Trans>One-time extra (this month)</Trans>
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <button
-                          aria-label="About one-time extra"
+                          aria-label={t`About one-time extra`}
                           className="shrink-0 text-muted-foreground hover:text-foreground"
                         >
                           <Info className="h-3.5 w-3.5" />
                         </button>
                       </PopoverTrigger>
                       <PopoverContent className="w-64 text-xs">
-                        Applied only in the first month of the schedule.
+                        <Trans>Applied only in the first month of the schedule.</Trans>
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -360,7 +373,9 @@ export function PayoffPlanSheet({
                 leading={
                   <>
                     <div>
-                      <div className="text-xs text-muted-foreground">Outstanding</div>
+                      <div className="text-xs text-muted-foreground">
+                        <Trans>Outstanding</Trans>
+                      </div>
                       <div className="font-mono">
                         {formatMilli(formatter, roundMilli(outstanding))}
                       </div>
@@ -378,11 +393,13 @@ export function PayoffPlanSheet({
           <div className="bg-muted/30 rounded-lg p-2">
             {sim.months === null && (
               <div className="text-xs text-destructive mb-2">
-                Payment too low to cover monthly interest. Increase payment above{' '}
-                <span className="font-mono">
-                  {formatMilli(formatter, roundMilli(outstanding * rMonthly))}
-                </span>
-                .
+                <Trans>
+                  Payment too low to cover monthly interest. Increase payment above{' '}
+                  <span className="font-mono">
+                    {formatMilli(formatter, roundMilli(outstanding * rMonthly))}
+                  </span>
+                  .
+                </Trans>
               </div>
             )}
             <div>
@@ -393,9 +410,9 @@ export function PayoffPlanSheet({
               />
               <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
                 {[
-                  { color: palette.series[0], label: 'Principal' },
-                  { color: palette.series[3], label: 'Interest' },
-                  { color: palette.series[6], label: 'Remaining' },
+                  { color: palette.series[0], label: t`Principal` },
+                  { color: palette.series[3], label: t`Interest` },
+                  { color: palette.series[6], label: t`Remaining` },
                 ].map((item) => (
                   <span
                     key={item.label}
@@ -414,17 +431,29 @@ export function PayoffPlanSheet({
           </div>
 
           <div>
-            <div className="text-sm font-medium mb-2">Amortization Table</div>
+            <div className="text-sm font-medium mb-2">
+              <Trans>Amortization Table</Trans>
+            </div>
             <div className="border rounded-lg max-h-72 overflow-auto">
               <table className="w-full text-xs">
                 <thead className="sticky top-0 bg-background/90 backdrop-blur">
                   <tr className="border-b">
                     <th className="text-left p-2">#</th>
-                    <th className="text-left p-2">Date</th>
-                    <th className="text-right p-2">Payment</th>
-                    <th className="text-right p-2">Interest</th>
-                    <th className="text-right p-2">Principal</th>
-                    <th className="text-right p-2">Remaining</th>
+                    <th className="text-left p-2">
+                      <Trans>Date</Trans>
+                    </th>
+                    <th className="text-right p-2">
+                      <Trans>Payment</Trans>
+                    </th>
+                    <th className="text-right p-2">
+                      <Trans>Interest</Trans>
+                    </th>
+                    <th className="text-right p-2">
+                      <Trans>Principal</Trans>
+                    </th>
+                    <th className="text-right p-2">
+                      <Trans>Remaining</Trans>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

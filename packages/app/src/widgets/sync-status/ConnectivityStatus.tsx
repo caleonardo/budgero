@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Real-time connectivity indicator showing online/offline and WebSocket sync status
  */
@@ -16,6 +17,8 @@ interface ConnectivityStatusProps {
  * Compact version for header/toolbar
  */
 export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
+  const { t } = useLingui();
+
   const [snapshot, setSnapshot] = useState(() => ({
     clerkToken: false,
     apiReachable: false,
@@ -44,22 +47,22 @@ export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
       : 'bg-red-500';
 
   const statusLabel = snapshot.overall
-    ? 'Connected - Real-time sync active'
+    ? t`Connected - Real-time sync active`
     : snapshot.wsConnected
-      ? 'Limited - WebSocket connected but API/Auth may be degraded'
-      : 'Offline - Changes will sync when connection is restored';
+      ? t`Limited - WebSocket connected but API/Auth may be degraded`
+      : t`Offline - Changes will sync when connection is restored`;
 
   const detailRows = useMemo(() => {
     const rows = [
       !snapshot.selfHostable && {
-        label: 'Clerk token',
+        label: t`Clerk token`,
         value: snapshot.clerkToken ? 'ready' : 'missing',
       },
-      { label: 'API health', value: snapshot.apiReachable ? 'reachable' : 'unreachable' },
-      { label: 'WebSocket', value: snapshot.wsConnected ? 'connected' : 'disconnected' },
+      { label: t`API health`, value: snapshot.apiReachable ? 'reachable' : 'unreachable' },
+      { label: t`WebSocket`, value: snapshot.wsConnected ? 'connected' : 'disconnected' },
     ].filter(Boolean) as { label: string; value: string }[];
     return rows;
-  }, [snapshot]);
+  }, [snapshot, t]);
 
   const lastChecked =
     snapshot.lastChecked > 0
@@ -79,7 +82,7 @@ export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
             'flex items-center gap-1 rounded-md px-1.5 py-1 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             className
           )}
-          aria-label="Connectivity status"
+          aria-label={t`Connectivity status`}
         >
           <div className={cn('w-1.5 h-1.5 rounded-full', statusColor)} />
           {snapshot.wsConnected && <span className="text-xs text-muted-foreground">⚡</span>}
@@ -87,13 +90,15 @@ export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="w-56 space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-foreground">Connectivity</span>
+          <span className="text-sm font-medium text-foreground">
+            <Trans>Connectivity</Trans>
+          </span>
           <Badge
             variant={
               snapshot.overall ? 'default' : snapshot.wsConnected ? 'secondary' : 'destructive'
             }
           >
-            {snapshot.overall ? 'Online' : snapshot.wsConnected ? 'Partial' : 'Offline'}
+            {snapshot.overall ? t`Online` : snapshot.wsConnected ? t`Partial` : t`Offline`}
           </Badge>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">{statusLabel}</p>
@@ -105,7 +110,9 @@ export function ConnectivityStatus({ className }: ConnectivityStatusProps) {
             </div>
           ))}
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Last checked</span>
+            <span className="text-muted-foreground">
+              <Trans>Last checked</Trans>
+            </span>
             <span className="font-medium text-foreground">{lastChecked}</span>
           </div>
         </div>

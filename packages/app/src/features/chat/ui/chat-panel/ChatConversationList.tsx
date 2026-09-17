@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Plus, Trash2, MessageSquare, MoreHorizontal } from 'lucide-react';
 import {
@@ -26,13 +27,17 @@ export function ChatConversationList({
   onDelete,
   onNew,
 }: ChatConversationListProps) {
+  const { t } = useLingui();
+
   const sorted = sortConversationsByRecent(conversations);
 
   return (
     <div className="flex h-full flex-col">
       <div className="flex shrink-0 items-center justify-between border-b px-3 py-2">
-        <span className="text-sm font-medium">Chats</span>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onNew} title="New chat">
+        <span className="text-sm font-medium">
+          <Trans>Chats</Trans>
+        </span>
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onNew} title={t`New chat`}>
           <Plus className="h-4 w-4" />
         </Button>
       </div>
@@ -40,7 +45,7 @@ export function ChatConversationList({
         <div className="p-2 space-y-1">
           {sorted.length === 0 ? (
             <div className="px-2 py-4 text-center text-xs text-muted-foreground">
-              No conversations yet
+              <Trans>No conversations yet</Trans>
             </div>
           ) : (
             sorted.map((conv) => (
@@ -54,7 +59,7 @@ export function ChatConversationList({
               >
                 <MessageSquare className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <div className="flex-1 min-w-0">
-                  <div className="truncate font-medium">{conv.Title || 'New Chat'}</div>
+                  <div className="truncate font-medium">{conv.Title || t`New Chat`}</div>
                   <div className="text-xs text-muted-foreground">
                     {formatRelativeTime(conv.UpdatedAt)}
                   </div>
@@ -78,8 +83,10 @@ export function ChatConversationList({
                         onDelete(conv.ID);
                       }}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      <Trans>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </Trans>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Separator } from '@shared/ui/separator';
 import { Button } from '@shared/ui/button';
 import { RefreshCw, Trash2 } from 'lucide-react';
@@ -20,16 +21,20 @@ export function TokenActions({ state }: TokenActionsProps) {
           onClick={handleGenerateToken}
           disabled={generateTokenMutation.isPending}
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Regenerate Token
+          <Trans>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Regenerate Token
+          </Trans>
         </Button>
         <Button
           variant="destructive"
           onClick={() => setShowRevokeDialog(true)}
           disabled={revokeTokenMutation.isPending}
         >
-          <Trash2 className="h-4 w-4 mr-2" />
-          Revoke Token
+          <Trans>
+            <Trash2 className="h-4 w-4 mr-2" />
+            Revoke Token
+          </Trans>
         </Button>
       </div>
     </>

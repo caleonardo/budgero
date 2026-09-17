@@ -24,13 +24,19 @@ Layer import rule: a layer may only import from layers **below** it (`app → pa
 
 ```bash
 # From repo root
-pnpm run dev:app          # Start Vite dev server (port 5173)
+pnpm --dir packages/app run dev:app  # Start Vite dev server (port 5173)
 pnpm run dev:selfhost     # Start app + Go backend in self-host mode
 pnpm run test:app         # Run tests (vitest)
 pnpm run lint:app         # ESLint
 pnpm run type-check:app   # TypeScript check
 pnpm run build:app        # Production build
 ```
+
+Vite compiles the tracked `src/locales/*/messages.po` catalogs before starting
+or building, and recompiles them when a catalog changes during development.
+The generated `messages.mjs` files are gitignored; a fresh checkout needs no
+manual compilation step. The dev and build commands explicitly use
+`vite.config.ts` so an old generated JavaScript config cannot shadow it.
 
 Cloud signup displays the 35-day trial and current default prices ($4/month,
 $35/year). Optional build-time `VITE_BUDGERO_PRICE_MONTHLY` and
@@ -44,11 +50,11 @@ the website's `NEXT_PUBLIC_BUDGERO_PRICE_*` values and the billing plans.
 
 ## Key Tech
 
-| Layer | Stack |
-|---|---|
-| Framework | React 19 + Vite |
-| Styling | TailwindCSS 4 + shadcn/ui |
-| State | Zustand (local) + TanStack Query (server) |
-| Auth | Clerk (SaaS) / local JWT (self-host) |
-| PWA | vite-plugin-pwa, Workbox |
-| Charts | Recharts, DuckDB WASM |
+| Layer     | Stack                                     |
+| --------- | ----------------------------------------- |
+| Framework | React 19 + Vite                           |
+| Styling   | TailwindCSS 4 + shadcn/ui                 |
+| State     | Zustand (local) + TanStack Query (server) |
+| Auth      | Clerk (SaaS) / local JWT (self-host)      |
+| PWA       | vite-plugin-pwa, Workbox                  |
+| Charts    | Recharts, DuckDB WASM                     |

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
@@ -23,6 +24,8 @@ interface ValueChangeStatProps {
 /** Signed daily deltas as bars around a zero baseline. Direction carries
  * polarity (up = gain, down = loss) so color is never the only encoding. */
 function RevaluationBars({ rows }: { rows: { Date: string; DeltaConverted: number }[] }) {
+  const { t } = useLingui();
+
   const bars = rows.slice(-30);
   const width = 248;
   const height = 72;
@@ -36,7 +39,7 @@ function RevaluationBars({ rows }: { rows: { Date: string; DeltaConverted: numbe
       viewBox={`0 0 ${width} ${height}`}
       className="w-full"
       role="img"
-      aria-label="Daily value changes from exchange-rate moves"
+      aria-label={t`Daily value changes from exchange-rate moves`}
     >
       <line
         x1={0}
@@ -82,6 +85,8 @@ export function ValueChangeStat({
   budgetCurrency,
   size = 'sm',
 }: ValueChangeStatProps) {
+  const { t } = useLingui();
+
   const { data: history = [] } = useRevaluationHistory(accountId);
   const positive30 = summary.last30Days >= 0;
   const Icon = positive30 ? ArrowUpRight : ArrowDownRight;
@@ -94,7 +99,7 @@ export function ValueChangeStat({
         <button
           type="button"
           className="text-left cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          aria-label="Value change details"
+          aria-label={t`Value change details`}
         >
           <span
             className={cn(
@@ -102,8 +107,10 @@ export function ValueChangeStat({
               size === 'sm' ? 'text-[10px]' : 'text-xs'
             )}
           >
-            <Icon className={cn('h-3 w-3', colorClass)} />
-            Value change (30d)
+            <Trans>
+              <Icon className={cn('h-3 w-3', colorClass)} />
+              Value change (30d)
+            </Trans>
           </span>
           <p
             className={cn(
@@ -118,10 +125,14 @@ export function ValueChangeStat({
       </PopoverTrigger>
       <PopoverContent className="w-72 space-y-3" align="end">
         <div>
-          <p className="text-sm font-medium">Value change</p>
+          <p className="text-sm font-medium">
+            <Trans>Value change</Trans>
+          </p>
           <p className="text-xs text-muted-foreground">
-            How much this account's worth in {budgetCurrency} moved with exchange rates. Your{' '}
-            {accountCurrency} balance itself is unchanged.
+            <Trans>
+              How much this account's worth in {budgetCurrency} moved with exchange rates. Your{' '}
+              {accountCurrency} balance itself is unchanged.
+            </Trans>
           </p>
         </div>
 
@@ -135,19 +146,25 @@ export function ValueChangeStat({
           </div>
         ) : (
           <p className="text-xs text-muted-foreground">
-            Value changes are journaled once per day — history builds up as rates move.
+            <Trans>
+              Value changes are journaled once per day — history builds up as rates move.
+            </Trans>
           </p>
         )}
 
         <div className="space-y-1 text-xs">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Last 30 days</span>
+            <span className="text-muted-foreground">
+              <Trans>Last 30 days</Trans>
+            </span>
             <span className={cn('font-medium tabular-nums', colorClass)}>
               {formatBudgetMilliAmount(summary.last30Days)}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">All time</span>
+            <span className="text-muted-foreground">
+              <Trans>All time</Trans>
+            </span>
             <span
               className={cn(
                 'font-medium tabular-nums',
@@ -159,7 +176,9 @@ export function ValueChangeStat({
           </div>
           {latest && (
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Latest rate ({latest.Date})</span>
+              <span className="text-muted-foreground">
+                <Trans>Latest rate ({latest.Date})</Trans>
+              </span>
               <span className="font-medium tabular-nums">
                 1 {accountCurrency} = {formatRate(latest.NewRate)} {budgetCurrency}
               </span>
@@ -169,8 +188,8 @@ export function ValueChangeStat({
 
         <p className="text-[11px] text-muted-foreground border-t border-border pt-2">
           {onBudget
-            ? 'This account is on-budget: these changes are included in Ready to Assign.'
-            : 'Tracking-only account: these changes affect net worth but not Ready to Assign.'}
+            ? t`This account is on-budget: these changes are included in Ready to Assign.`
+            : t`Tracking-only account: these changes affect net worth but not Ready to Assign.`}
         </p>
       </PopoverContent>
     </Popover>

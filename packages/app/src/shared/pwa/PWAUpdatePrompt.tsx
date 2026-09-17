@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { RefreshCw, X } from 'lucide-react';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -18,26 +19,36 @@ export function PWAUpdatePrompt({ open, onUpdate, onDismiss, currentVersion }: P
         <CardHeader>
           <div className="flex items-center gap-2">
             <RefreshCw className="h-5 w-5 text-primary" />
-            <CardTitle>Update available</CardTitle>
+            <CardTitle>
+              <Trans>Update available</Trans>
+            </CardTitle>
           </div>
           <CardDescription>
-            A new Budgero build is ready to install. Refresh now to load the latest features and
-            fixes.
+            <Trans>
+              A new Budgero build is ready to install. Refresh now to load the latest features and
+              fixes.
+            </Trans>
           </CardDescription>
         </CardHeader>
         {currentVersion && (
           <div className="px-6 text-sm text-muted-foreground">
-            <span className="font-semibold text-foreground">{currentVersion}</span> → latest build
+            <Trans>
+              <span className="font-semibold text-foreground">{currentVersion}</span>→ latest build
+            </Trans>
           </div>
         )}
         <CardFooter className="mt-4 flex gap-3">
           <Button variant="outline" className="flex-1" onClick={onDismiss}>
-            <X className="mr-2 h-4 w-4" />
-            Later
+            <Trans>
+              <X className="mr-2 h-4 w-4" />
+              Later
+            </Trans>
           </Button>
           <Button className="flex-1" onClick={onUpdate}>
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Update now
+            <Trans>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Update now
+            </Trans>
           </Button>
         </CardFooter>
       </Card>

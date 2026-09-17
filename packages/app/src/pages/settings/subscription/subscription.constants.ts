@@ -1,9 +1,11 @@
+import { msg } from '@lingui/core/macro';
+
 export const CANCEL_REASON_OPTIONS = [
-  { value: 'too_expensive', label: 'Too expensive' },
-  { value: 'missing_features', label: 'Missing features' },
-  { value: 'bugs_or_performance', label: 'Bugs or performance issues' },
-  { value: 'switching_apps', label: "I'm switching to another app" },
-  { value: 'other', label: 'Other' },
+  { value: 'too_expensive', label: msg`Too expensive` },
+  { value: 'missing_features', label: msg`Missing features` },
+  { value: 'bugs_or_performance', label: msg`Bugs or performance issues` },
+  { value: 'switching_apps', label: msg`I'm switching to another app` },
+  { value: 'other', label: msg`Other` },
 ] as const;
 
 export type CancelReasonValue = (typeof CANCEL_REASON_OPTIONS)[number]['value'];

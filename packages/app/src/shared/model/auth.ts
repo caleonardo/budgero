@@ -61,13 +61,7 @@ export interface User {
   backup_reminder_frequency_days?: number;
   primary_space_id?: string | null;
   access_level?:
-    | 'admin'
-    | 'founding_member'
-    | 'beta'
-    | 'trial'
-    | 'subscriber'
-    | 'collaborator'
-    | 'none';
+    'admin' | 'founding_member' | 'beta' | 'trial' | 'subscriber' | 'collaborator' | 'none';
   can_access_owned_workspaces?: boolean;
   can_access_shared_workspaces?: boolean;
   can_create_workspace?: boolean;

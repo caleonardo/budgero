@@ -1,10 +1,11 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   useSpendingByDatesByCategories,
   useSpendingByCategoriesInGroup,
 } from '@features/analytics/api/useAnalyticsQueries';
 import { useUiStore } from '@shared/store/useUiStore';
 import { useMemo, useState } from 'react';
-import { format } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Button } from '@shared/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { ChartEmptyState } from '@shared/ui/ChartEmptyState';
@@ -16,6 +17,8 @@ interface BreakdownDatum extends SpendingDonutDatum {
 }
 
 export function SpendingBreakdownContent() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const dateRange = useUiStore((state) => state.dateRange);
 
@@ -59,7 +62,7 @@ export function SpendingBreakdownContent() {
       const categoryTotals: Record<string, { value: number; id: number }> = {};
 
       breakdownData.forEach((item) => {
-        const groupName = item.CategoryGroupName || 'Uncategorized';
+        const groupName = item.CategoryGroupName || t`Uncategorized`;
         if (!categoryTotals[groupName]) {
           categoryTotals[groupName] = { value: 0, id: item.CategoryGroupID };
         }
@@ -73,14 +76,16 @@ export function SpendingBreakdownContent() {
         .sort((a, b) => b.value - a.value);
     }
     return [];
-  }, [breakdownData, categoryData, selectedCategoryGroup]);
+  }, [breakdownData, categoryData, selectedCategoryGroup, t]);
 
   const isLoading = isLoadingBreakdown || (selectedCategoryGroup && isLoadingCategories);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[300px]">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="text-muted-foreground">
+          <Trans>Loading...</Trans>
+        </div>
       </div>
     );
   }
@@ -99,8 +104,10 @@ export function SpendingBreakdownContent() {
             onClick={() => setSelectedCategoryGroup(null)}
             className="h-8 px-2"
           >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Back
+            <Trans>
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back
+            </Trans>
           </Button>
           <span className="text-sm font-medium">{selectedCategoryGroup.name}</span>
         </div>

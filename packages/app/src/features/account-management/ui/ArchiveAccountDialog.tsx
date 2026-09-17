@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useMemo, useState } from 'react';
 import {
   Dialog,
@@ -41,6 +42,8 @@ export function ArchiveAccountDialog({
   onOpenChange,
   onArchived,
 }: ArchiveAccountDialogProps) {
+  const { t } = useLingui();
+
   const balance = account.BalanceNative ?? 0;
   const needsAdjustment = balance !== 0;
 
@@ -82,7 +85,7 @@ export function ArchiveAccountDialog({
     try {
       if (needsAdjustment) {
         if (!categoryId) {
-          toast.error('Please pick a category for the adjustment');
+          toast.error(t`Please pick a category for the adjustment`);
           return;
         }
         await addTransactionMutation.mutateAsync({
@@ -103,10 +106,10 @@ export function ArchiveAccountDialog({
         archived: true,
       });
 
-      toast.success('Account archived', {
+      toast.success(t`Account archived`, {
         description: needsAdjustment
-          ? `${account.Name} balanced to zero and archived.`
-          : `${account.Name} has been archived.`,
+          ? t`${account.Name} balanced to zero and archived.`
+          : t`${account.Name} has been archived.`,
       });
       onOpenChange(false);
       onArchived?.();
@@ -121,11 +124,15 @@ export function ArchiveAccountDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="p-4 sm:p-6 text-sm sm:text-base max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg">Archive account</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">
+            <Trans>Archive account</Trans>
+          </DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">
-            Archived accounts are hidden from sidebars and account pickers by default, but their
-            historical transactions remain visible in reports and transaction lists. You can
-            unarchive an account later from the All Accounts page.
+            <Trans>
+              Archived accounts are hidden from sidebars and account pickers by default, but their
+              historical transactions remain visible in reports and transaction lists. You can
+              unarchive an account later from the All Accounts page.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -133,22 +140,24 @@ export function ArchiveAccountDialog({
           <div className="space-y-3">
             <div className="rounded-md border border-border/60 bg-muted/30 p-3 text-xs sm:text-sm">
               <p>
-                <strong>{account.Name}</strong> has a current balance of{' '}
-                <strong>
-                  {toDecimal(asMilli(balance)).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}{' '}
-                  {account.Currency}
-                </strong>
-                . To archive it, Budgero will create the following adjusting transaction to bring
-                the balance to zero. You can edit the details below, and the transaction will remain
-                editable afterwards.
+                <Trans>
+                  <strong>{account.Name}</strong>has a current balance of{' '}
+                  <strong>
+                    {toDecimal(asMilli(balance)).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}{' '}
+                    {account.Currency}
+                  </strong>
+                  . To archive it, Budgero will create the following adjusting transaction to bring
+                  the balance to zero. You can edit the details below, and the transaction will
+                  remain editable afterwards.
+                </Trans>
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Inflow" className="space-y-1">
+              <Field label={t`Inflow`} className="space-y-1">
                 <Input
                   className="h-8 sm:h-9"
                   value={toDecimal(asMilli(inflow)).toFixed(2)}
@@ -156,7 +165,7 @@ export function ArchiveAccountDialog({
                   disabled
                 />
               </Field>
-              <Field label="Outflow" className="space-y-1">
+              <Field label={t`Outflow`} className="space-y-1">
                 <Input
                   className="h-8 sm:h-9"
                   value={toDecimal(asMilli(outflow)).toFixed(2)}
@@ -167,13 +176,15 @@ export function ArchiveAccountDialog({
             </div>
 
             <Field
-              label="Category"
+              label={t`Category`}
               htmlFor="archive-category"
               className="space-y-1"
               hint={
                 <span className="text-[11px]">
-                  Defaults to Income. Pick a different category if this adjustment represents
-                  something else (e.g. debt forgiveness, write-off).
+                  <Trans>
+                    Defaults to Income. Pick a different category if this adjustment represents
+                    something else (e.g. debt forgiveness, write-off).
+                  </Trans>
                 </span>
               }
             >
@@ -182,7 +193,7 @@ export function ArchiveAccountDialog({
                 onValueChange={(v) => setCategoryId(Number(v))}
               >
                 <SelectTrigger id="archive-category" className="h-8 sm:h-9">
-                  <SelectValue placeholder="Select a category" />
+                  <SelectValue placeholder={t`Select a category`} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((c) => {
@@ -197,17 +208,17 @@ export function ArchiveAccountDialog({
               </Select>
             </Field>
 
-            <Field label="Memo" htmlFor="archive-memo" className="space-y-1">
+            <Field label={t`Memo`} htmlFor="archive-memo" className="space-y-1">
               <Input
                 id="archive-memo"
                 className="h-8 sm:h-9"
                 value={memo}
                 onChange={(e) => setMemo(e.target.value)}
-                placeholder="Archive adjustment"
+                placeholder={t`Archive adjustment`}
               />
             </Field>
 
-            <Field label="Date" htmlFor="archive-date" className="space-y-1">
+            <Field label={t`Date`} htmlFor="archive-date" className="space-y-1">
               <Input
                 id="archive-date"
                 type="date"
@@ -220,8 +231,10 @@ export function ArchiveAccountDialog({
         ) : (
           <div className="rounded-md border border-border/60 bg-muted/30 p-3 text-xs sm:text-sm">
             <p>
-              <strong>{account.Name}</strong> has a zero balance and will be archived without any
-              further changes.
+              <Trans>
+                <strong>{account.Name}</strong>has a zero balance and will be archived without any
+                further changes.
+              </Trans>
             </p>
           </div>
         )}
@@ -234,7 +247,7 @@ export function ArchiveAccountDialog({
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             type="button"
@@ -242,7 +255,7 @@ export function ArchiveAccountDialog({
             onClick={handleArchive}
             disabled={isPending || (needsAdjustment && !categoryId)}
           >
-            {isPending ? 'Archiving...' : 'Archive'}
+            {isPending ? t`Archiving...` : t`Archive`}
           </Button>
         </DialogFooter>
       </DialogContent>

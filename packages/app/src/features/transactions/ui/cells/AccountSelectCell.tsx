@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { useAccounts } from '@entities/account/api/useAccounts';
@@ -23,6 +24,8 @@ export function AccountSelectCell({
   defaultOpen,
   onOpenChange,
 }: AccountSelectCellProps) {
+  const { t } = useLingui();
+
   const { selectedBudget } = useUiStore();
   const accountsQuery = useAccounts(selectedBudget?.ID || 0, providedAccounts === undefined);
   const allAccounts = providedAccounts ?? accountsQuery.data ?? EMPTY_ACCOUNTS;
@@ -61,7 +64,7 @@ export function AccountSelectCell({
       onOpenChange={onOpenChange}
     >
       <SelectTrigger className={triggerClassName}>
-        <SelectValue placeholder={isLoading ? 'Loading...' : 'Select account'} />
+        <SelectValue placeholder={isLoading ? t`Loading...` : t`Select account`} />
       </SelectTrigger>
       <SelectContent>
         {accounts.map((account) => (

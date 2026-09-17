@@ -1,11 +1,14 @@
+import { msg } from '@lingui/core/macro';
+import type { MessageDescriptor } from '@lingui/core';
+
 export type AppThemeId = 'default' | 'phosphor' | 'mesa' | 'obsidian' | 'paper';
 
 export type ThemeColorMode = 'dual' | 'light' | 'dark';
 
 export interface AppThemeOption {
   id: AppThemeId;
-  name: string;
-  description?: string;
+  name: MessageDescriptor;
+  description?: MessageDescriptor;
   colorMode: ThemeColorMode;
   previewColors: {
     light: string;
@@ -16,8 +19,8 @@ export interface AppThemeOption {
 export const APP_THEMES: AppThemeOption[] = [
   {
     id: 'default',
-    name: 'Budgero Classic',
-    description: 'Original look and feel tuned for readability.',
+    name: msg`Budgero Classic`,
+    description: msg`Original look and feel tuned for readability.`,
     colorMode: 'dual',
     previewColors: [
       { light: 'oklch(1 0 0)', dark: 'oklch(0.141 0.005 285.823)' },
@@ -27,8 +30,8 @@ export const APP_THEMES: AppThemeOption[] = [
   },
   {
     id: 'phosphor',
-    name: 'Phosphor',
-    description: 'Retro CRT terminal with phosphor green glow and scanlines.',
+    name: msg`Phosphor`,
+    description: msg`Retro CRT terminal with phosphor green glow and scanlines.`,
     colorMode: 'dark',
     previewColors: [
       { light: 'oklch(0.13 0 0)', dark: 'oklch(0.13 0 0)' },
@@ -38,8 +41,8 @@ export const APP_THEMES: AppThemeOption[] = [
   },
   {
     id: 'mesa',
-    name: 'Mesa',
-    description: 'Warm southwestern desert with sand, terracotta, and sage.',
+    name: msg`Mesa`,
+    description: msg`Warm southwestern desert with sand, terracotta, and sage.`,
     colorMode: 'light',
     previewColors: [
       { light: 'oklch(0.95 0.02 75)', dark: 'oklch(0.95 0.02 75)' },
@@ -49,8 +52,8 @@ export const APP_THEMES: AppThemeOption[] = [
   },
   {
     id: 'obsidian',
-    name: 'Obsidian',
-    description: 'Luxury editorial dark with charcoal and warm copper accents.',
+    name: msg`Obsidian`,
+    description: msg`Luxury editorial dark with charcoal and warm copper accents.`,
     colorMode: 'dark',
     previewColors: [
       { light: 'oklch(0.15 0.01 270)', dark: 'oklch(0.15 0.01 270)' },
@@ -60,9 +63,8 @@ export const APP_THEMES: AppThemeOption[] = [
   },
   {
     id: 'paper',
-    name: 'Paper',
-    description:
-      'Monochrome budgeting workspace with parchment canvas and red/green utility accents.',
+    name: msg`Paper`,
+    description: msg`Monochrome budgeting workspace with parchment canvas and red/green utility accents.`,
     colorMode: 'light',
     previewColors: [
       { light: '#FBF7EB', dark: '#FBF7EB' },

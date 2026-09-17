@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useAudioRecorder } from '@shared/hooks/useAudioRecorder';
 import {
@@ -44,6 +45,8 @@ export interface UseWhisperVoiceInputReturn {
 export function useWhisperVoiceInput(
   options: UseWhisperVoiceInputOptions = {}
 ): UseWhisperVoiceInputReturn {
+  const { t } = useLingui();
+
   const { modelSize = 'base', language, onTranscript, onError } = options;
 
   const [state, setState] = useState<VoiceInputState>('idle');
@@ -85,7 +88,7 @@ export function useWhisperVoiceInput(
 
   const startListening = useCallback(async () => {
     if (!isSupported) {
-      const err = 'Voice input is not supported in this browser';
+      const err = t`Voice input is not supported in this browser`;
       setError(err);
       setState('error');
       onError?.(err);
@@ -100,13 +103,13 @@ export function useWhisperVoiceInput(
     if (!service.isReady() || service.getLoadedModel() !== modelSize) {
       setState('loading_model');
       setModelLoadProgress(0);
-      setModelLoadMessage('Initializing...');
+      setModelLoadMessage(t`Initializing...`);
 
       try {
         await service.initialize({ modelSize, language });
         setIsModelReady(true);
       } catch (err) {
-        const errMsg = getErrorMessage(err, 'Failed to load speech model');
+        const errMsg = getErrorMessage(err, t`Failed to load speech model`);
         setError(errMsg);
         setState('error');
         onError?.(errMsg);
@@ -118,12 +121,12 @@ export function useWhisperVoiceInput(
     try {
       await audioRecorder.startRecording();
     } catch (err) {
-      const errMsg = getErrorMessage(err, 'Failed to start recording');
+      const errMsg = getErrorMessage(err, t`Failed to start recording`);
       setError(errMsg);
       setState('error');
       onError?.(errMsg);
     }
-  }, [isSupported, modelSize, language, audioRecorder, onError]);
+  }, [isSupported, modelSize, language, audioRecorder, onError, t]);
 
   const stopListening = useCallback(async (): Promise<string | null> => {
     if (!audioRecorder.isRecording) {
@@ -133,7 +136,7 @@ export function useWhisperVoiceInput(
     const audioBlob = await audioRecorder.stopRecording();
 
     if (!audioBlob || audioBlob.size === 0) {
-      setError('No audio recorded');
+      setError(t`No audio recorded`);
       setState('idle');
       return null;
     }
@@ -148,13 +151,13 @@ export function useWhisperVoiceInput(
       onTranscript?.(result);
       return result;
     } catch (err) {
-      const errMsg = getErrorMessage(err, 'Transcription failed');
+      const errMsg = getErrorMessage(err, t`Transcription failed`);
       setError(errMsg);
       setState('error');
       onError?.(errMsg);
       return null;
     }
-  }, [audioRecorder, language, onTranscript, onError]);
+  }, [audioRecorder, language, onTranscript, onError, t]);
 
   const cancelListening = useCallback(() => {
     audioRecorder.cancelRecording();

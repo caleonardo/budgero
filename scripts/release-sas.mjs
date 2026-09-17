@@ -5,6 +5,9 @@ import { execSync } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { assertReleaseTag, dockerLogin } from './release-common.mjs';
+
+const dryRun = process.argv.includes('--dry-run');
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 
@@ -79,11 +82,13 @@ async function buildAndPushDocker(tag) {
   console.log(`==> Build engine: ${useDepot ? 'Depot' : 'Docker Buildx'}`);
 
   // Login to Docker Hub
-  run(`echo "${DOCKER_TOKEN}" | docker login -u "${DOCKER_USERNAME}" --password-stdin`);
+  dockerLogin(DOCKER_USERNAME, DOCKER_TOKEN);
 
   if (!useDepot) {
     // Create buildx builder if needed (ignore error if exists)
-    tryRun('docker buildx create --name budgero-builder --use 2>/dev/null || docker buildx use budgero-builder');
+    tryRun(
+      'docker buildx create --name budgero-builder --use 2>/dev/null || docker buildx use budgero-builder'
+    );
   }
 
   const buildCmd = useDepot ? 'depot build' : 'docker buildx build';
@@ -101,9 +106,14 @@ async function buildAndPushDocker(tag) {
     archTags.push(archTag);
     console.log(`==> Building Docker image for ${platform}: ${archTag}`);
     run(
-      `${buildCmd} --platform ${platform} ${buildArgs} --provenance=false --sbom=false --tag ${archTag} --push -f app.Dockerfile .`
+      `${buildCmd} --pull --no-cache-filter runtime --platform ${platform} ${buildArgs} --provenance=false --sbom=false --tag ${archTag} ${dryRun ? '--load' : '--push'} -f app.Dockerfile .`
     );
     if (!useDepot) tryRun('docker builder prune -af');
+  }
+
+  if (dryRun) {
+    console.log('SaaS image verified locally; nothing published.');
+    return;
   }
 
   // Create multi-arch manifest tags from per-arch images
@@ -135,22 +145,10 @@ async function main() {
     process.exit(1);
   }
 
-  const existingTag = runCapture(`git tag --list ${tag}`);
-  if (existingTag) {
-    const tagCommit = runCapture(`git rev-list -n 1 ${tag}`);
-    const headCommit = runCapture('git rev-parse HEAD');
-    if (tagCommit === headCommit) {
-      console.log(`\n==> Tag ${tag} already exists on HEAD; reusing it.`);
-    } else {
-      console.log(`\n==> Moving ${tag} to current HEAD`);
-      run(`git tag -f ${tag}`);
-    }
-  } else {
-    console.log(`\n==> Note: Tag ${tag} does not exist yet. Create it after successful build if needed.`);
-  }
+  if (!dryRun) assertReleaseTag(tag, root);
 
   // Build and push Docker image
-  await buildAndPushDocker(tag);
+  await buildAndPushDocker(dryRun ? `${tag}-verification` : tag);
 
   console.log(`\n==> SaaS release complete: ${DOCKER_IMAGE}:${tag}`);
 }

@@ -1,0 +1,162 @@
+---
+title: "Regelwerk"
+summary: "Automatisiere die Bereinigung von Transaktionen mit Regeln — gleiche anhand von Empfänger, Notiz, Betrag oder Konto ab und kategorisiere, benenne um und passe automatisch an."
+section: integrations
+topicId: rules-engine
+takeaways:
+  - "Die drei Regel-Modi – Fortlaufend, Einmalig und Auto-Ausfüllen – und wann jeder davon ausgeführt wird."
+  - "Alle verfügbaren Bedingungen und Aktionen, und wie sich mehrere Regeln kombinieren lassen."
+  - "Rückwirkende Ausführungen, Ausführungsverlauf und das Sicherheitsnetz zum Rückgängigmachen mit einem Klick."
+---
+
+Manuelles Budgetieren muss nicht repetitiv sein. Das Regelwerk überwacht Transaktionen, sobald sie eintreffen — aus Importen, manueller Eingabe oder der [Push API](/docs/push-api) — und wendet die Bereinigung an, die du sonst von Hand vornehmen würdest: Empfängernamen korrigieren, Kategorien zuweisen, Memos entrümpeln. Du definierst das Muster einmal; Budgero wendet es für immer an.
+
+Regeln findest du unter **Einstellungen → Regeln**.
+
+## Die drei Modi
+
+Jede Regel läuft in einem von drei Modi:
+
+<table>
+  <thead>
+    <tr>
+      <th>Modus</th>
+      <th>Wann er läuft</th>
+      <th>Verwendungszweck</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Fortlaufend</strong></td>
+      <td>Automatisch, bei jeder neuen übereinstimmenden Transaktion</td>
+      <td>Die dauerhafte Bereinigung: „AMZN Mktp*“ → Amazon, Kategorie Einkauf</td>
+    </tr>
+    <tr>
+      <td><strong>Einmalig</strong></td>
+      <td>Einmal, rückwirkend über bestehende Transaktionen</td>
+      <td>Migrationen und Korrekturen: Letztjährige Fitnessstudio-Abbuchungen neu kategorisieren</td>
+    </tr>
+    <tr>
+      <td><strong>Auto-Ausfüllen</strong></td>
+      <td>Während du im Transaktion-hinzufügen-Formular tippst</td>
+      <td>Vorschläge, keine Änderungen — du nimmst jeden an oder lehnst ihn ab</td>
+    </tr>
+  </tbody>
+</table>
+
+Fortlaufende Regeln werden bei jedem Eingabeweg ausgelöst — CSV/PDF-Importe, manuelle Eingabe, Push API. Einmalige Regeln markieren sich nach ihrem Durchlauf als verbraucht und werden erst nach einem Reset erneut ausgelöst. Auto-Ausfüllen-Regeln ändern nie etwas von selbst; sie füllen Felder im Eingabeformular als Vorschläge vor, einmal pro Formularsitzung.
+
+## Bedingungen: Worauf eine Regel zutrifft
+
+Eine Regel benötigt mindestens eine Bedingung. Wenn sie mehrere hat, **müssen alle zutreffen** (UND-Logik — es gibt kein ODER; wenn du „dieser Empfänger oder jener Empfänger“ brauchst, erstelle zwei Regeln).
+
+<table>
+  <thead>
+    <tr>
+      <th>Feld</th>
+      <th>Operatoren</th>
+      <th>Hinweise</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Empfänger</strong></td>
+      <td>entspricht · enthält · Regex</td>
+      <td>Standardmäßig Groß-/Kleinschreibung ignorieren; umschalten für Groß-/Kleinschreibung beachten</td>
+    </tr>
+    <tr>
+      <td><strong>Memo</strong></td>
+      <td>entspricht · enthält · Regex</td>
+      <td>Gleiche Umschaltung für Groß-/Kleinschreibung</td>
+    </tr>
+    <tr>
+      <td><strong>Betrag</strong></td>
+      <td>= · ≠ · &gt; · ≥ · &lt; · ≤</td>
+      <td>Vergleicht den Nettobetrag (Einnahme − Ausgabe); bei Fremdwährungskonten der Originalbetrag, nicht der umgerechnete</td>
+    </tr>
+    <tr>
+      <td><strong>Konto</strong></td>
+      <td>ist · ist nicht</td>
+      <td>Regel auf bestimmte Konten beschränken (oder von diesen ausschließen)</td>
+    </tr>
+  </tbody>
+</table>
+
+Regex löst die unübersichtlichen Fälle — Bank-Exporte, die Filialnummern an Empfängernamen anhängen (`MIGROS M-0451`), Referenzcodes in Memos — mit voller JavaScript-Pattern-Syntax.
+
+## Aktionen: Was eine Regel bewirkt
+
+Eine übereinstimmende Regel wendet eine oder mehrere Aktionen an, **in der Reihenfolge, in der du sie auflistest** — jede Aktion sieht das Ergebnis der vorherigen.
+
+<table>
+  <thead>
+    <tr>
+      <th>Aktion</th>
+      <th>Was sie bewirkt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Kategorie festlegen</strong></td>
+      <td>Weist die Transaktion einer Kategorie zu</td>
+    </tr>
+    <tr>
+      <td><strong>Empfänger festlegen</strong></td>
+      <td>Ersetzt (oder leert) den Empfänger — das Arbeitstier der Normalisierung</td>
+    </tr>
+    <tr>
+      <td><strong>Memo festlegen</strong></td>
+      <td>Ersetzt das Memo durch festen Text</td>
+    </tr>
+    <tr>
+      <td><strong>Aus Memo entfernen (Regex)</strong></td>
+      <td>Entfernt übereinstimmende Muster — Referenznummern, Kartenendungen, Stördaten</td>
+    </tr>
+    <tr>
+      <td><strong>Betrag festlegen</strong></td>
+      <td>Ersetzt den Betrag vollständig</td>
+    </tr>
+    <tr>
+      <td><strong>Betrag um Wert anpassen</strong></td>
+      <td>Addiert oder subtrahiert einen festen Betrag (z. B. −5)</td>
+    </tr>
+    <tr>
+      <td><strong>Betrag um Prozent anpassen</strong></td>
+      <td>Skaliert den Betrag (z. B. −10%)</td>
+    </tr>
+    <tr>
+      <td><strong>Konto festlegen</strong></td>
+      <td>Leitet die Transaktion an ein anderes Konto um</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Aktionen für Betrag und Konto sind mächtig genug, um mit Vorsicht behandelt zu werden: Eine prozentuale Anpassung bei einer zu weit gefassten Bedingung überschreibt beim retroaktiven Durchlauf viele Daten. Fasse aggressive Regeln eng — eine Konto-Bedingung plus eine Empfänger-Bedingung ist eine gute Angewohnheit.
+
+## Reihenfolge: Wenn mehrere Regeln übereinstimmen
+
+Regeln stoppen nicht beim ersten Treffer — **jede übereinstimmende Regel wird ausgeführt**, in aufsteigender **Ausführungsreihenfolge** (ein numerisches Feld auf jeder Regel; Gleichstände werden nach Alter aufgelöst). Spätere Regeln sehen die Transaktion so, wie frühere Regeln sie hinterlassen haben, was gezielte Pipelines ermöglicht: Regel 1 normalisiert den Empfänger, Regel 2 matcht den *bereinigten* Empfängernamen und legt die Kategorie fest.
+
+Jede Regel verfügt außerdem über einen **Aktiviert**-Schalter — pausiere sie, ohne sie zu löschen.
+
+## Regeln auf bestehenden Transaktionen ausführen
+
+Zwei Schaltflächen auf jeder Regelkarte gehen über das bloße Warten auf neue Transaktionen hinaus:
+
+- **Jetzt ausführen** wendet die Regel bei Bedarf auf das gesamte Budget an — dieselbe Logik wie im kontinuierlichen Modus, nur manuell ausgelöst.
+- **Retro-Ausführung** wendet die Regel nach einem Bestätigungsdialog auf **alle vergangenen Transaktionen** an. Das ist der Ablauf zum Anwenden auf Bestehendes und der natürliche zweite Schritt, nachdem du eine Regel erstellt hast, die du dir schon vor einem Jahr gewünscht hättest.
+
+Nach jeder Ausführung zeigt ein Ergebnis-Overlay, wie viele Transaktionen geprüft und geändert wurden.
+
+## Verlauf und Rückgängig
+
+Jede Ausführung wird protokolliert. Der **Verlauf**-Drawer auf jeder Regel listet vergangene Ausführungen mit den vorgenommenen Änderungen auf — und die zuletzt abgeschlossene Ausführung lässt sich mit einem Klick **rückgängig machen**, wobei die betroffenen Transaktionen wiederhergestellt werden. Das Rückgängigmachen der Ausführung einer Einmal-Regel setzt außerdem ihr Verbraucht-Kennzeichen zurück, sodass sie erneut auslösen kann.
+
+Dieses Sicherheitsnetz macht Experimentieren unkompliziert: schreibe die Regel, führe sie retro aus, prüfe das Ergebnis, mache sie rückgängig, wenn sie mehr erfasst hat als beabsichtigt, verschärfe die Bedingungen, führe sie erneut aus.
+
+## Muster, die sich zu übernehmen lohnen
+
+- **Der Import-Aufräumer.** Die CSV-Datei deiner Bank sagt `CARD PURCHASE 4421 TESCO STORES 2284`. Eine Regel: Verwendungszweck enthält `TESCO` → Empfänger auf „Tesco" setzen, Kategorie auf Lebensmittel setzen, den Referenzmüll per Regex aus dem Verwendungszweck entfernen. Jeder zukünftige [Import](/docs/csv-import) kommt bereits bereinigt an.
+- **Der Abo-Tagger.** Empfänger enthält „Spotify" und Konto ist deine Abrechnungskarte → Kategorie Abos. Pro Dienst wiederholen; zehn Minuten Einrichtung beenden die Kategorie-Drift dauerhaft.
+- **Der Gehaltsteiler-Helfer.** Betrag ≥ dein Gehalt und Konto ist Girokonto → Empfänger auf „Arbeitgeber" setzen, Kategorie Einkommen — damit die Gehaltszahlung richtig zugeordnet ankommt, selbst wenn der Verwendungszweck der Bank Kauderwelsch ist.
+- **Der Auto-Fill-Assistent.** Eine Auto-Fill-Regel, die bei Empfänger „Shell" erkennt und Kategorie Kraftstoff vorschlägt, macht die manuelle Eingabe an der Zapfsäule zu zwei Taps — während du das letzte Wort behältst.

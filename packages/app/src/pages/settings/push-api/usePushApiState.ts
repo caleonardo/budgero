@@ -1,3 +1,5 @@
+import { useLingui } from '@lingui/react/macro';
+import { plural } from '@lingui/core/macro';
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -10,6 +12,8 @@ import { usePayeeDirectory } from '@entities/payee/api/payee-directory';
 import { useUiStore } from '@shared/store/useUiStore';
 
 export function usePushApiState() {
+  const { t } = useLingui();
+
   const queryClient = useQueryClient();
   const runtime = useRuntime();
 
@@ -54,11 +58,14 @@ export function usePushApiState() {
     onSuccess: (data) => {
       void queryClient.invalidateQueries({ queryKey: ['push-queue-stats'] });
       toast.success(
-        `Cleared ${data.deleted} pending item${data.deleted === 1 ? '' : 's'} from queue`
+        plural(data.deleted, {
+          one: `Cleared # pending item from queue`,
+          other: `Cleared # pending items from queue`,
+        })
       );
     },
     onError: (error: Error) => {
-      toast.error(`Failed to clear queue: ${error.message}`);
+      toast.error(t`Failed to clear queue: ${error.message}`);
     },
   });
 
@@ -74,10 +81,10 @@ export function usePushApiState() {
       setNewToken(data.token);
       setShowToken(true);
       void queryClient.invalidateQueries({ queryKey: ['push-token-status'] });
-      toast.success('API token generated successfully');
+      toast.success(t`API token generated successfully`);
     },
     onError: (error: Error) => {
-      toast.error(`Failed to generate token: ${error.message}`);
+      toast.error(t`Failed to generate token: ${error.message}`);
     },
   });
 
@@ -85,10 +92,10 @@ export function usePushApiState() {
     mutationFn: (enabled: boolean) => pushApi.toggleToken(enabled),
     onSuccess: (_, enabled) => {
       void queryClient.invalidateQueries({ queryKey: ['push-token-status'] });
-      toast.success(`Push API ${enabled ? 'enabled' : 'disabled'}`);
+      toast.success(t`Push API ${enabled ? 'enabled' : 'disabled'}`);
     },
     onError: (error: Error) => {
-      toast.error(`Failed to toggle token: ${error.message}`);
+      toast.error(t`Failed to toggle token: ${error.message}`);
     },
   });
 
@@ -98,10 +105,10 @@ export function usePushApiState() {
       setNewToken(null);
       setShowRevokeDialog(false);
       void queryClient.invalidateQueries({ queryKey: ['push-token-status'] });
-      toast.success('API token revoked');
+      toast.success(t`API token revoked`);
     },
     onError: (error: Error) => {
-      toast.error(`Failed to revoke token: ${error.message}`);
+      toast.error(t`Failed to revoke token: ${error.message}`);
     },
   });
 
@@ -109,21 +116,21 @@ export function usePushApiState() {
     if (!newToken) return;
     try {
       await navigator.clipboard.writeText(newToken);
-      toast.success('Token copied to clipboard');
+      toast.success(t`Token copied to clipboard`);
     } catch {
-      toast.error('Failed to copy token');
+      toast.error(t`Failed to copy token`);
     }
-  }, [newToken]);
+  }, [newToken, t]);
 
   const handleCopyEndpoint = useCallback(async () => {
     const endpoint = `${window.location.origin}/api/v1/push`;
     try {
       await navigator.clipboard.writeText(endpoint);
-      toast.success('Endpoint copied to clipboard');
+      toast.success(t`Endpoint copied to clipboard`);
     } catch {
-      toast.error('Failed to copy endpoint');
+      toast.error(t`Failed to copy endpoint`);
     }
-  }, []);
+  }, [t]);
 
   const handleGenerateToken = useCallback(() => {
     if (tokenStatus?.has_token) {
@@ -159,39 +166,45 @@ export function usePushApiState() {
         setShowEncryptionKey(false);
       }, 60000);
     } else {
-      toast.error('Failed to export encryption key');
+      toast.error(t`Failed to export encryption key`);
     }
-  }, [runtime]);
+  }, [runtime, t]);
 
   const handleCopyEncryptionKey = useCallback(async () => {
     if (!encryptionKey) return;
     try {
       await navigator.clipboard.writeText(encryptionKey);
-      toast.success('Encryption key copied to clipboard');
+      toast.success(t`Encryption key copied to clipboard`);
     } catch {
-      toast.error('Failed to copy key');
+      toast.error(t`Failed to copy key`);
     }
-  }, [encryptionKey]);
+  }, [encryptionKey, t]);
 
-  const handleCopyId = useCallback(async (id: number, label: string) => {
-    try {
-      await navigator.clipboard.writeText(String(id));
-      toast.success(`${label} ID copied: ${id}`);
-    } catch {
-      toast.error('Failed to copy ID');
-    }
-  }, []);
+  const handleCopyId = useCallback(
+    async (id: number, label: string) => {
+      try {
+        await navigator.clipboard.writeText(String(id));
+        toast.success(t`${label} ID copied: ${id}`);
+      } catch {
+        toast.error(t`Failed to copy ID`);
+      }
+    },
+    [t]
+  );
 
   // Payees are referenced by name in push payloads (there is no payee id),
   // so the reference panel copies the name string instead.
-  const handleCopyText = useCallback(async (text: string, label: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success(`${label} copied: ${text}`);
-    } catch {
-      toast.error('Failed to copy');
-    }
-  }, []);
+  const handleCopyText = useCallback(
+    async (text: string, label: string) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        toast.success(`${label} copied: ${text}`);
+      } catch {
+        toast.error(t`Failed to copy`);
+      }
+    },
+    [t]
+  );
 
   const handleHideEncryptionKey = useCallback(() => {
     setEncryptionKey(null);
@@ -208,24 +221,27 @@ export function usePushApiState() {
       void queryClient.invalidateQueries({ queryKey: ['mutationHistoryCount'] });
       if (result.processed > 0 || result.failed > 0) {
         if (result.failed > 0) {
-          toast.warning(`Processed ${result.processed}, failed ${result.failed}`, {
-            description: 'Check Audit Log for error details',
+          toast.warning(t`Processed ${result.processed}, failed ${result.failed}`, {
+            description: t`Check Audit Log for error details`,
           });
         } else {
           toast.success(
-            `Processed ${result.processed} mutation${result.processed === 1 ? '' : 's'}`
+            plural(result.processed, {
+              one: `Processed # mutation`,
+              other: `Processed # mutations`,
+            })
           );
         }
       } else {
-        toast.info('No pending mutations to process');
+        toast.info(t`No pending mutations to process`);
       }
     } catch (error) {
-      toast.error('Failed to process mutations');
+      toast.error(t`Failed to process mutations`);
       console.error('Pull mutations error:', error);
     } finally {
       setIsProcessingQueue(false);
     }
-  }, [runtime, queryClient]);
+  }, [runtime, queryClient, t]);
 
   return {
     newToken,

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import type { CategoryPriorityMode } from '@budgero/core/browser';
 import { Input } from '@shared/ui/input';
@@ -17,14 +18,18 @@ export function FundingPriorityInput({
   mode: CategoryPriorityMode;
   disabled?: boolean;
 }) {
+  const { t } = useLingui();
+
   const id = useId();
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id}>Funding priority</Label>
+      <Label htmlFor={id}>
+        <Trans>Funding priority</Trans>
+      </Label>
       {mode === 'five-levels' ? (
         <Select value={value} onValueChange={onChange} disabled={disabled}>
           <SelectTrigger id={id}>
-            <SelectValue placeholder="Mixed" />
+            <SelectValue placeholder={t`Mixed`} />
           </SelectTrigger>
           <SelectContent>
             {FUNDING_PRIORITY_LABELS.map((label, index) => (
@@ -42,12 +47,14 @@ export function FundingPriorityInput({
           max={Number.MAX_SAFE_INTEGER}
           step={1}
           value={value}
-          placeholder="Mixed"
+          placeholder={t`Mixed`}
           onChange={(event) => onChange(event.target.value)}
           disabled={disabled}
         />
       )}
-      <p className="text-xs text-muted-foreground">Lower numbers are funded first.</p>
+      <p className="text-xs text-muted-foreground">
+        <Trans>Lower numbers are funded first.</Trans>
+      </p>
     </div>
   );
 }

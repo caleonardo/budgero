@@ -3,8 +3,10 @@ import type { Services } from '@budgero/core/browser';
 import { useRuntime, useActiveSpaceId } from '@shared/runtime/runtime-provider';
 import { resolveSpaceKey } from '@shared/lib/query-utils';
 
-export interface SpaceQueryOptions<TData>
-  extends Omit<UseQueryOptions<TData>, 'queryKey' | 'queryFn' | 'enabled'> {
+export interface SpaceQueryOptions<TData> extends Omit<
+  UseQueryOptions<TData>,
+  'queryKey' | 'queryFn' | 'enabled'
+> {
   /**
    * Query key as `[root, ...parts]`. The active space key is inserted after
    * the root, producing the `['root', spaceKey, ...parts]` shape shared by

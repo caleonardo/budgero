@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Badge } from '@shared/ui/badge';
 import { Checkbox } from '@shared/ui/checkbox';
 import { Input } from '@shared/ui/input';
@@ -27,10 +28,12 @@ export function LineItemsTable({
     <div className="flex flex-col flex-1 overflow-hidden">
       <div className="flex items-center justify-between py-2">
         <div className="text-sm text-muted-foreground">
-          Found {transactions.length} transactions
-          <Badge variant="outline" className="ml-2">
-            {Math.round(confidence * 100)}% confidence
-          </Badge>
+          <Trans>
+            Found {transactions.length} transactions
+            <Badge variant="outline" className="ml-2">
+              {Math.round(confidence * 100)}% confidence
+            </Badge>
+          </Trans>
         </div>
       </div>
 
@@ -79,14 +82,18 @@ function LineItem({
         <div className="flex-1 space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-xs">Date</Label>
+              <Label className="text-xs">
+                <Trans>Date</Trans>
+              </Label>
               <DatePickerCell
                 value={t.date}
                 onCommit={(newDate) => onUpdateTransaction(t.id, 'date', newDate)}
               />
             </div>
             <div>
-              <Label className="text-xs">Type</Label>
+              <Label className="text-xs">
+                <Trans>Type</Trans>
+              </Label>
               <Select
                 value={t.isExpense ? 'outflow' : 'inflow'}
                 onValueChange={(v) => onUpdateTransaction(t.id, 'isExpense', v === 'outflow')}
@@ -95,14 +102,20 @@ function LineItem({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="outflow">Outflow</SelectItem>
-                  <SelectItem value="inflow">Inflow</SelectItem>
+                  <SelectItem value="outflow">
+                    <Trans>Outflow</Trans>
+                  </SelectItem>
+                  <SelectItem value="inflow">
+                    <Trans>Inflow</Trans>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <div>
-            <Label className="text-xs">Amount</Label>
+            <Label className="text-xs">
+              <Trans>Amount</Trans>
+            </Label>
             <Input
               type="number"
               step="0.01"
@@ -113,7 +126,9 @@ function LineItem({
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <Label className="text-xs">Payee</Label>
+              <Label className="text-xs">
+                <Trans>Payee</Trans>
+              </Label>
               <Input
                 value={t.payee}
                 onChange={(e) => onUpdateTransaction(t.id, 'payee', e.target.value)}
@@ -121,7 +136,9 @@ function LineItem({
               />
             </div>
             <div>
-              <Label className="text-xs">Category</Label>
+              <Label className="text-xs">
+                <Trans>Category</Trans>
+              </Label>
               <SearchableCategorySelect
                 budgetId={budgetId}
                 selectedCategoryId={t.categoryId}
@@ -130,13 +147,17 @@ function LineItem({
               />
               {t.suggestedCategoryName && !t.categoryId && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  AI suggested: <span className="italic">{t.suggestedCategoryName}</span>
+                  <Trans>
+                    AI suggested: <span className="italic">{t.suggestedCategoryName}</span>
+                  </Trans>
                 </p>
               )}
             </div>
           </div>
           <div>
-            <Label className="text-xs">Memo</Label>
+            <Label className="text-xs">
+              <Trans>Memo</Trans>
+            </Label>
             <Input
               value={t.memo}
               onChange={(e) => onUpdateTransaction(t.id, 'memo', e.target.value)}

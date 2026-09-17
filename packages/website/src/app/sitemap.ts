@@ -1,17 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { allGuides, allPosts } from 'contentlayer/generated';
 
+import { changelogPageCount, changelogPath } from '@/lib/changelog-pagination';
 import { changelogEntries } from '@/lib/changelog-data';
-
-function normalizeDate(value: string | Date): string | undefined {
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
-}
+import { guideSitemap, localizedRouteSitemap, postSitemap } from '@/lib/content-sitemap';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://budgero.app';
-
-  const publishedGuides = allGuides.filter((guide) => guide.published !== false);
 
   // Only include lastModified when we have an editorial date. Filesystem mtimes
   // and the build time change on deployment even when the content does not.
@@ -133,21 +128,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const posts: MetadataRoute.Sitemap = allPosts
-    .filter((post) => !post.draft && post.published !== false)
-    .map((post) => ({
-      url: `${base}${post.url}`,
-      lastModified: normalizeDate(post.updated || post.date),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    }));
-
-  const guides: MetadataRoute.Sitemap = publishedGuides.map((guide) => ({
-    url: `${base}${guide.url}`,
-    changeFrequency: 'monthly',
-    priority: 0.5,
-  }));
-
   const latestChangelogDate = changelogEntries
     // Changelog dates are written as "September 4, 2026" without a time zone.
     // Interpret them as UTC so deployment environments produce the same date.
@@ -156,14 +136,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     .sort((a, b) => b.getTime() - a.getTime())[0];
 
   const changelogLastModified = latestChangelogDate?.toISOString();
-  const changelogRoute: MetadataRoute.Sitemap = [
-    {
-      url: `${base}/changelog`,
+  const changelogRoute: MetadataRoute.Sitemap = Array.from(
+    { length: changelogPageCount },
+    (_, index) => ({
+      url: `${base}${changelogPath(index + 1)}`,
       lastModified: changelogLastModified,
       changeFrequency: 'weekly',
-      priority: 0.5,
-    },
-  ];
+      priority: index === 0 ? 0.5 : 0.3,
+    })
+  );
 
-  return [...routes, ...posts, ...guides, ...changelogRoute];
+  return [
+    ...localizedRouteSitemap([...routes, ...changelogRoute]),
+    ...postSitemap(allPosts),
+    ...guideSitemap(allGuides),
+    // This comparison is an independent English page, not a translation group.
+    { url: `${base}/actual-budget-alternative`, changeFrequency: 'monthly', priority: 0.8 },
+  ];
 }

@@ -1,12 +1,18 @@
 'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import { createContext, useContext, useEffect, useState, useSyncExternalStore } from 'react';
-import { klaroConfig, type KlaroApi, type KlaroManager } from '@/lib/klaro-config';
+import {
+  createKlaroConfig,
+  type KlaroConfig,
+  type KlaroApi,
+  type KlaroManager,
+} from '@/lib/klaro-config';
 
 declare global {
   interface Window {
     klaro?: KlaroApi;
-    klaroConfig?: typeof klaroConfig;
+    klaroConfig?: KlaroConfig;
   }
 }
 
@@ -19,7 +25,7 @@ const KlaroContext = createContext<KlaroContextValue>({ manager: null, show: () 
 
 let klaroLoadPromise: Promise<KlaroApi> | null = null;
 
-async function loadKlaro(): Promise<KlaroApi> {
+async function loadKlaro(klaroConfig: KlaroConfig): Promise<KlaroApi> {
   if (typeof window === 'undefined') {
     throw new Error('Klaro can only load in the browser');
   }
@@ -68,18 +74,29 @@ async function loadKlaro(): Promise<KlaroApi> {
  * needing to re-init providers.
  */
 export function KlaroProvider({ children }: { children: React.ReactNode }) {
+  const locale = useLocale();
+  const translate = useTranslations('consent');
   const [manager, setManager] = useState<KlaroManager | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    void loadKlaro().then((api) => {
+    const config = createKlaroConfig(locale, translate);
+    void loadKlaro(config).then((api) => {
       if (cancelled) return;
+      // Keep domain storage and the existing manager when switching languages.
+      const activeConfig = window.klaroConfig;
+      if (activeConfig) {
+        activeConfig.lang = config.lang;
+        activeConfig.translations = config.translations;
+        activeConfig.services = config.services;
+        api.render(activeConfig);
+      }
       setManager(api.getManager());
     });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [locale, translate]);
 
   const show = () => {
     if (typeof window !== 'undefined' && window.klaro) {

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 // Post-signup onboarding — collects every setup choice, then fires the whole
 // setup pipeline on the final click. The pipeline has to run in order:
 // master password → workspace → runtime init → budget (or YNAB import) →
@@ -83,6 +84,8 @@ function yieldAfterPaint(): Promise<void> {
 }
 
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -243,12 +246,12 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
       } catch (err) {
         if (request !== ynabSourceRequestRef.current) return;
         console.error('[Onboarding] Failed to read YNAB file', err);
-        toast.error('Could not read that file — try the raw YNAB export .zip.');
+        toast.error(t`Could not read that file — try the raw YNAB export .zip.`);
       } finally {
         if (request === ynabSourceRequestRef.current) setIsInspectingYnab(false);
       }
     },
-    [set, state.budgetName]
+    [set, state.budgetName, t]
   );
 
   const handleYnabApiSnapshot = useCallback(
@@ -369,14 +372,14 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const isShowingYnabStatus = curId === 'done' && activePath === 'ynab';
 
   const primaryLabel = isFirst
-    ? 'Let’s begin →'
+    ? t`Let’s begin →`
     : launchesYnabImport
-      ? 'Import my budget →'
+      ? t`Import my budget →`
       : isFinal
         ? activePath === 'join'
-          ? 'Join workspace →'
-          : 'Open my budget →'
-        : 'Next →';
+          ? t`Join workspace →`
+          : t`Open my budget →`
+        : t`Next →`;
   const primaryAction = isFinal
     ? () => {
         if (applyStatus === 'running') return;
@@ -416,7 +419,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <img
             src="/logo_48.png"
-            alt="Budgero logo"
+            alt={t`Budgero logo`}
             width={28}
             height={28}
             style={{ display: 'block' }}
@@ -500,7 +503,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
             padding: '3px 8px',
           }}
         >
-          {cur.hint.toUpperCase()}
+          {t(cur.hint).toUpperCase()}
         </div>
 
         {curId === 'welcome' && <WelcomeStep cur={cur} state={state} set={set} />}
@@ -574,7 +577,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                     cursor: 'pointer',
                   }}
                 >
-                  ← Back
+                  <Trans>← Back</Trans>
                 </button>
               )}
             </div>
@@ -599,7 +602,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                     cursor: 'pointer',
                   }}
                 >
-                  Skip for now
+                  <Trans>Skip for now</Trans>
                 </button>
               )}
               <button
@@ -620,9 +623,9 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                 }}
               >
                 {isFinal && applyStatus === 'running'
-                  ? 'Working…'
+                  ? t`Working…`
                   : isFinal && applyStatus === 'error'
-                    ? 'Try again →'
+                    ? t`Try again →`
                     : primaryLabel}
               </button>
             </div>
@@ -642,7 +645,9 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
           letterSpacing: 0.5,
         }}
       >
-        <span>BUDGERO · ONBOARDING v1</span>
+        <span>
+          <Trans>BUDGERO · ONBOARDING v1</Trans>
+        </span>
         <button
           type="button"
           onClick={() => logout.mutate()}
@@ -657,7 +662,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
             padding: 0,
           }}
         >
-          SIGN OUT
+          <Trans>SIGN OUT</Trans>
         </button>
       </div>
     </div>

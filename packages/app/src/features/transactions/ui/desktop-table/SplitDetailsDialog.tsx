@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import {
@@ -54,6 +55,8 @@ export function SplitDetailsDialog({
   getPrimaryOutflow,
   budgetId,
 }: SplitDetailsDialogProps) {
+  const { t } = useLingui();
+
   const open = Boolean(transaction);
   const transactionId = transaction ? transaction.ID : null;
   // Edit surfaces must show real cents even under a zero-decimal display format.
@@ -277,16 +280,20 @@ export function SplitDetailsDialog({
     >
       <DialogContent style={{ width: '1100px', maxWidth: '94vw' }}>
         <DialogHeader>
-          <DialogTitle>Split details</DialogTitle>
+          <DialogTitle>
+            <Trans>Split details</Trans>
+          </DialogTitle>
           <DialogDescription className="truncate max-w-full" title={transaction?.Memo || ''}>
-            {transaction ? transaction.Memo || `Transaction #${transaction.ID}` : ''}
+            {transaction ? transaction.Memo || t`Transaction #${transaction.ID}` : ''}
           </DialogDescription>
         </DialogHeader>
         {transaction && (
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-3 rounded-lg border border-border/70 bg-muted/20 px-3 py-2 text-sm">
               <div>
-                <div className="text-muted-foreground">Original amount</div>
+                <div className="text-muted-foreground">
+                  <Trans>Original amount</Trans>
+                </div>
                 {editSplits ? (
                   <div
                     className={cn(
@@ -328,15 +335,15 @@ export function SplitDetailsDialog({
                       }}
                       disabled={upsertSplits.isPending}
                     >
-                      Cancel
+                      <Trans>Cancel</Trans>
                     </Button>
                     <Button size="sm" onClick={handleSave} disabled={!canSave}>
-                      {isClearing ? 'Remove splits' : 'Save'}
+                      {isClearing ? t`Remove splits` : t`Save`}
                     </Button>
                   </>
                 ) : (
                   <Button size="sm" onClick={startEditing}>
-                    Edit splits
+                    <Trans>Edit splits</Trans>
                   </Button>
                 )}
               </div>
@@ -345,40 +352,54 @@ export function SplitDetailsDialog({
             {editSplits && (
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-xs text-primary">
                 <span>
-                  Net remaining{' '}
-                  <strong>{formatMilli(editFormatter, asMilli(Math.abs(remaining)))}</strong>
+                  <Trans>
+                    Net remaining{' '}
+                    <strong>{formatMilli(editFormatter, asMilli(Math.abs(remaining)))}</strong>
+                  </Trans>
                 </span>
                 <span>
-                  Net total:{' '}
-                  <strong className={remaining === 0 ? 'text-green-600' : 'text-red-600'}>
-                    {draftNet > 0 ? '+' : draftNet < 0 ? '-' : ''}
-                    {formatMilli(editFormatter, asMilli(Math.abs(draftNet)))}
-                  </strong>{' '}
-                  / {targetNet > 0 ? '+' : '-'}
-                  {formatMilli(editFormatter, asMilli(targetTotal))}
+                  <Trans>
+                    Net total:{' '}
+                    <strong className={remaining === 0 ? 'text-green-600' : 'text-red-600'}>
+                      {draftNet > 0 ? '+' : draftNet < 0 ? '-' : ''}
+                      {formatMilli(editFormatter, asMilli(Math.abs(draftNet)))}
+                    </strong>{' '}
+                    / {targetNet > 0 ? '+' : '-'}
+                    {formatMilli(editFormatter, asMilli(targetTotal))}
+                  </Trans>
                 </span>
               </div>
             )}
             {isLoading ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                Loading splits...
+                <Trans>Loading splits...</Trans>
               </div>
             ) : displayedSplits.length === 0 ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
                 {editSplits
-                  ? 'No split lines yet. Add at least one line below.'
-                  : 'No split lines for this transaction.'}
+                  ? t`No split lines yet. Add at least one line below.`
+                  : t`No split lines for this transaction.`}
               </div>
             ) : (
               <div className="max-h-[360px] overflow-y-auto">
                 <Table className="text-sm table-fixed w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[200px]">Category / Transfer</TableHead>
-                      <TableHead className="w-[180px]">Payee</TableHead>
-                      <TableHead>Memo</TableHead>
-                      <TableHead className="w-[115px] text-right">Outflow</TableHead>
-                      <TableHead className="w-[115px] text-right">Inflow</TableHead>
+                      <TableHead className="w-[200px]">
+                        <Trans>Category / Transfer</Trans>
+                      </TableHead>
+                      <TableHead className="w-[180px]">
+                        <Trans>Payee</Trans>
+                      </TableHead>
+                      <TableHead>
+                        <Trans>Memo</Trans>
+                      </TableHead>
+                      <TableHead className="w-[115px] text-right">
+                        <Trans>Outflow</Trans>
+                      </TableHead>
+                      <TableHead className="w-[115px] text-right">
+                        <Trans>Inflow</Trans>
+                      </TableHead>
                       {editSplits && <TableHead className="w-[50px]" />}
                     </TableRow>
                   </TableHeader>
@@ -391,13 +412,13 @@ export function SplitDetailsDialog({
                       const isTransferLine =
                         Boolean(
                           (editable as EditableSplit)?.transfer_account_id ??
-                            s.transfer_account_id ??
-                            s.TransferAccountID
+                          s.transfer_account_id ??
+                          s.TransferAccountID
                         ) ||
                         Boolean(
                           (editable as unknown as Record<string, unknown>)?.transfer_account_name ??
-                            s.transfer_account_name ??
-                            s.TransferAccountName
+                          s.transfer_account_name ??
+                          s.TransferAccountName
                         );
                       return (
                         <TableRow key={String(s.id || s.ID || idx)}>
@@ -413,7 +434,7 @@ export function SplitDetailsDialog({
                                     category_id: categoryId,
                                   })
                                 }
-                                placeholder="Choose category"
+                                placeholder={t`Choose category`}
                                 triggerClassName="h-8 w-full text-left"
                                 popoverContentClassName="w-[320px]"
                                 includeReadyToAssign
@@ -429,7 +450,7 @@ export function SplitDetailsDialog({
                             )}
                             {isTransferLine && editSplits && (
                               <p className="text-[11px] text-muted-foreground">
-                                Editing transfer splits is not supported.
+                                <Trans>Editing transfer splits is not supported.</Trans>
                               </p>
                             )}
                           </TableCell>
@@ -452,7 +473,7 @@ export function SplitDetailsDialog({
                               <Input
                                 value={(editable as EditableSplit)?.memo ?? ''}
                                 className="h-8"
-                                placeholder="Memo"
+                                placeholder={t`Memo`}
                                 onChange={(e) =>
                                   handleUpdateSplit((editable as EditableSplit).id, {
                                     memo: e.target.value,
@@ -535,11 +556,15 @@ export function SplitDetailsDialog({
                   onClick={handleAddSplit}
                   className="flex items-center gap-2"
                 >
-                  <Plus className="h-4 w-4" />
-                  Add split line
+                  <Trans>
+                    <Plus className="h-4 w-4" />
+                    Add split line
+                  </Trans>
                 </Button>
                 <span className="text-xs text-muted-foreground">
-                  Splits must total {formatMilli(editFormatter, asMilli(targetTotal))}.
+                  <Trans>
+                    Splits must total {formatMilli(editFormatter, asMilli(targetTotal))}.
+                  </Trans>
                 </span>
               </div>
             )}

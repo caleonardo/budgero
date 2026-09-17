@@ -21,11 +21,50 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.13.0',
+    date: 'September 16, 2026',
+    summary:
+      'Adds German, French, Spanish, and Dutch app translations, language-aware dates, and improved layouts for smaller screens.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Use Budgero in four more languages',
+        description:
+          'Use the app in German, French, Spanish, or Dutch, including onboarding, budgeting, transactions, reports, goals, and settings. Budgero detects a supported browser language on first use; change it under Settings → Appearance. The choice is saved on this device.',
+      },
+      {
+        type: 'improved',
+        title: 'Dates follow your display language',
+        description:
+          'Month and weekday names, date labels, and relative times follow the selected app language. Currency and number formatting remain controlled by your budget settings.',
+      },
+      {
+        type: 'fixed',
+        title: 'Dialogs and controls fit smaller screens',
+        description:
+          'Dialogs stay within the screen and scroll when needed. Transaction forms and report controls make room for longer translated labels on smaller screens.',
+      },
+      {
+        type: 'fixed',
+        title: 'Clearer budgeting and transaction wording',
+        description:
+          'Corrected savings terminology, exchange-rate descriptions, goal messages, and spacing in translated labels. French goal titles, funding-priority guidance, and recurring-transaction navigation now use clearer phrasing.',
+      },
+      {
+        type: 'fixed',
+        title: 'Consistent onboarding language',
+        description:
+          'French illustrations now use “vous” throughout. Onboarding text uses consistent budgeting terms and correctly points to Settings → Appearance for changing the display language.',
+      },
+    ],
+  },
+  {
     version: 'v1.12.1',
     date: 'September 15, 2026',
     summary:
       'Adds a configurable first day of the week and fixes currency displays, scheduled conversions, shortcut labels, app caching, encrypted saving, and sync cleanup.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
@@ -347,7 +386,7 @@ export const changelogEntries: ChangelogEntry[] = [
         type: 'improved',
         title: 'Inspect and edit cross-currency transfer rates',
         description:
-          'Transfers now expose their direct account-to-account rate separately from each account\'s budget valuation. Editing the direct rate updates the received amount, custom rates take precedence over fetched rates, and transaction-level overrides remain the highest priority.',
+          "Transfers now expose their direct account-to-account rate separately from each account's budget valuation. Editing the direct rate updates the received amount, custom rates take precedence over fetched rates, and transaction-level overrides remain the highest priority.",
       },
       {
         type: 'fixed',
@@ -445,7 +484,8 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         type: 'fixed',
         title: 'Long YNAB export file names no longer overflow the import form',
-        description: 'The chosen file name wraps instead of pushing the form wider than the dialog.',
+        description:
+          'The chosen file name wraps instead of pushing the form wider than the dialog.',
       },
       {
         type: 'improved',
@@ -543,7 +583,7 @@ export const changelogEntries: ChangelogEntry[] = [
         type: 'fixed',
         title: 'Undo earlier rule runs',
         description:
-          'After undoing a rule\'s most recent run, the run before it can now be undone as well. Previously only a single run per rule could ever be reverted.',
+          "After undoing a rule's most recent run, the run before it can now be undone as well. Previously only a single run per rule could ever be reverted.",
       },
       {
         type: 'fixed',
@@ -907,8 +947,7 @@ export const changelogEntries: ChangelogEntry[] = [
   {
     version: 'v1.5.1',
     date: 'July 8, 2026',
-    summary:
-      'Fixes a self-host login loop introduced in v1.5.0 — all self-hosters should upgrade.',
+    summary: 'Fixes a self-host login loop introduced in v1.5.0 — all self-hosters should upgrade.',
     items: [
       {
         type: 'fixed',
@@ -1368,8 +1407,7 @@ export const changelogEntries: ChangelogEntry[] = [
   {
     version: 'v1.4.13',
     date: 'June 5, 2026',
-    summary:
-      'Bug fixes for category reassignment and multi-currency credit-card payments.',
+    summary: 'Bug fixes for category reassignment and multi-currency credit-card payments.',
     items: [
       {
         type: 'fixed',
@@ -1388,8 +1426,7 @@ export const changelogEntries: ChangelogEntry[] = [
   {
     version: 'v1.4.12',
     date: 'May 14, 2026',
-    summary:
-      'Credit-card payment polish in Planning and an in-app feedback widget.',
+    summary: 'Credit-card payment polish in Planning and an in-app feedback widget.',
     items: [
       {
         type: 'new',
@@ -1401,7 +1438,7 @@ export const changelogEntries: ChangelogEntry[] = [
         type: 'new',
         title: 'Pay a credit card from the Planning view',
         description:
-          "Clicking the Available amount on a CC Payment row now opens a focused popover: pick a source account, confirm the amount, hit Pay. Budgero records the transfer in one shot — no need to detour through the transactions screen.",
+          'Clicking the Available amount on a CC Payment row now opens a focused popover: pick a source account, confirm the amount, hit Pay. Budgero records the transfer in one shot — no need to detour through the transactions screen.',
       },
       {
         type: 'new',
@@ -1537,21 +1574,19 @@ export const changelogEntries: ChangelogEntry[] = [
         type: 'fixed',
         title: 'Currency code no longer defaults to USD in goal messages',
         description:
-          'Goal status messages now consistently use your budget\'s currency throughout, including the final-month prompt.',
+          "Goal status messages now consistently use your budget's currency throughout, including the final-month prompt.",
       },
       {
         type: 'fixed',
         title: 'Security updates',
-        description:
-          'Updated Go runtime and dependencies to address upstream security advisories.',
+        description: 'Updated Go runtime and dependencies to address upstream security advisories.',
       },
     ],
   },
   {
     version: 'v1.4.8',
     date: 'April 14, 2026',
-    summary:
-      'Master password setting now follows you across devices, plus security updates.',
+    summary: 'Master password setting now follows you across devices, plus security updates.',
     items: [
       {
         type: 'improved',
@@ -1570,8 +1605,7 @@ export const changelogEntries: ChangelogEntry[] = [
   {
     version: 'v1.4.7',
     date: 'April 9, 2026',
-    summary:
-      'Major PDF import improvements, plus a page size selector for transaction lists.',
+    summary: 'Major PDF import improvements, plus a page size selector for transaction lists.',
     items: [
       {
         type: 'improved',

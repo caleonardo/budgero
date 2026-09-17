@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Terminal } from 'lucide-react';
 import type { ToolEvent } from '@features/ai/lib/chat-client';
 
@@ -33,8 +34,10 @@ export function ToolCallLog({ events, defaultOpen = false }: ToolCallLogProps) {
   return (
     <details open={defaultOpen} className="mt-1 rounded-md border bg-muted/30 text-left text-xs">
       <summary className="flex cursor-pointer items-center gap-1.5 px-2 py-1 text-muted-foreground select-none">
-        <Terminal className="h-3.5 w-3.5" />
-        Ran {events.length} {events.length === 1 ? 'query' : 'queries'}
+        <Trans>
+          <Terminal className="h-3.5 w-3.5" />
+          Ran {events.length} {events.length === 1 ? 'query' : 'queries'}
+        </Trans>
       </summary>
       <div className="space-y-2 px-2 pb-2">
         {events.map((event, i) => (

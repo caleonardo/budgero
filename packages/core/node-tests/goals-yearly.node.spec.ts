@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { GoalCalculations, CategoryFinancials } from '../src/services/goals/calculations';
+import { GoalCalculations, CategoryFinancials, GoalProgress } from '../src/services/goals/calculations';
 import { Goal, GoalType, GoalPurpose } from '../src/services/goals/types';
 import { asMilli, MILLIS_PER_CENT } from '../src/money/index.js';
 
@@ -107,6 +107,38 @@ const finances = (overrides: Partial<CategoryFinancials> = {}): CategoryFinancia
   ...overrides,
 });
 
+
+/**
+ * Core now returns {{token}} templates plus raw values (the app formats them
+ * with its localizer). Render them here the same way so the expected literals
+ * below keep verifying the assembled sentences.
+ */
+const fillTemplate = (msg: string, values?: Record<string, number | string>): string =>
+  msg.replace(/\{\{(\w+)\}\}/g, (_, k) => {
+    const v = values?.[k];
+    if (typeof v === 'number') return usd(v);
+    if (typeof v === 'string') return /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v).toLocaleDateString() : v;
+    return `{{${k}}}`;
+  });
+
+const render = (r: GoalProgress) => {
+  const { statusValues, recommendationValues, breakdown, ...rest } = r;
+  const { values, items, explanation, ...b } = breakdown;
+  return {
+    ...rest,
+    statusMessage: fillTemplate(r.statusMessage, statusValues),
+    recommendation: fillTemplate(r.recommendation, recommendationValues),
+    breakdown: {
+      ...b,
+      items: items.map(({ unit: _unit, ...item }) => ({
+        ...item,
+        ...(item.description ? { description: fillTemplate(item.description, values) } : {}),
+      })),
+      explanation: explanation.map((e) => fillTemplate(e, values)),
+    },
+  };
+};
+
 describe('Yearly allocation goal (savings, target-date)', () => {
   it('on-track: this month meets the monthly pace', () => {
     const result = GoalCalculations.calculateProgress(
@@ -114,7 +146,7 @@ describe('Yearly allocation goal (savings, target-date)', () => {
       finances({ assigned: 110000, historicalAssignments: HISTORY_6X100 }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 100,
       amountSaved: 710000,
       amountNeeded: 490000,
@@ -157,7 +189,7 @@ describe('Yearly allocation goal (savings, target-date)', () => {
       finances({ assigned: 50000, historicalAssignments: HISTORY_6X100 }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 50,
       amountSaved: 650000,
       amountNeeded: 550000,
@@ -200,7 +232,7 @@ describe('Yearly allocation goal (savings, target-date)', () => {
       finances({ assigned: 20000, historicalAssignments: HISTORY_6X100 }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 20,
       amountSaved: 620000,
       amountNeeded: 580000,
@@ -243,7 +275,7 @@ describe('Yearly allocation goal (savings, target-date)', () => {
       finances({ assigned: 650000, historicalAssignments: HISTORY_6X100 }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 100,
       amountSaved: 1250000,
       amountNeeded: 0,
@@ -283,7 +315,7 @@ describe('Yearly allocation goal (savings, target-date)', () => {
       finances({ assigned: 30000, historicalAssignments: HISTORY_6X100 }),
       '2026-12'
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 5,
       amountSaved: 630000,
       amountNeeded: 570000,
@@ -325,7 +357,7 @@ describe('Yearly allocation goal (savings, target-date)', () => {
       finances({ assigned: 0, historicalAssignments: HISTORY_6X100 }),
       '2027-02'
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 0,
       amountSaved: 600000,
       amountNeeded: 600000,
@@ -376,7 +408,7 @@ describe('Yearly allocation goal (savings, target-date)', () => {
       MONTH
     );
     const monthlyTarget = centPace(900000 / 9);
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: (40000 / monthlyTarget) * 100,
       amountSaved: 340000,
       amountNeeded: 860000,
@@ -437,7 +469,7 @@ describe('Yearly allocation goal (savings, target-date)', () => {
       }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 50,
       amountSaved: 650000,
       amountNeeded: 550000,
@@ -483,7 +515,7 @@ describe('Yearly available goal (spending, yearly with target date)', () => {
       finances({ available: 1410000, assigned: 220000, activity: -10000 }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 100,
       amountSaved: 1410000,
       amountNeeded: 990000,
@@ -526,7 +558,7 @@ describe('Yearly available goal (spending, yearly with target date)', () => {
       finances({ available: 1280000, assigned: 90000, activity: -10000 }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 45,
       amountSaved: 1280000,
       amountNeeded: 1120000,
@@ -569,7 +601,7 @@ describe('Yearly available goal (spending, yearly with target date)', () => {
       finances({ available: 1220000, assigned: 30000, activity: -10000 }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 15,
       amountSaved: 1220000,
       amountNeeded: 1180000,
@@ -612,7 +644,7 @@ describe('Yearly available goal (spending, yearly with target date)', () => {
       finances({ available: 2500000, assigned: 100000, activity: 0 }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 100,
       amountSaved: 2500000,
       amountNeeded: 0,
@@ -652,7 +684,7 @@ describe('Yearly available goal (spending, yearly with target date)', () => {
       finances({ available: 2000000, assigned: 40000, activity: 0 }),
       '2026-12'
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: (40000 / 440000) * 100,
       amountSaved: 2000000,
       amountNeeded: 400000,
@@ -698,7 +730,7 @@ describe('Yearly available goal (spending, yearly with target date)', () => {
       finances({ available: 2000000, assigned: 0, activity: 0 }),
       '2027-02'
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 0,
       amountSaved: 2000000,
       amountNeeded: 400000,
@@ -745,7 +777,7 @@ describe('Yearly available goal (spending, yearly with target date)', () => {
       MONTH
     );
     const monthlyTarget = centPace(2120000 / 9);
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: (40000 / monthlyTarget) * 100,
       amountSaved: 300000,
       amountNeeded: 2100000,
@@ -807,7 +839,7 @@ describe('Yearly available goal (spending, yearly with target date)', () => {
       }),
       MONTH
     );
-    expect(result).toEqual({
+    expect(render(result)).toEqual({
       percentage: 45,
       amountSaved: 1280000,
       amountNeeded: 1120000,
