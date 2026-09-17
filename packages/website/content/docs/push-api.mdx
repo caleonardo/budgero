@@ -26,7 +26,7 @@ The Push API lets you send transactions into Budgero from other systems while ke
 - Endpoint: `POST /api/v1/push` (use your base URL; default is `https://my.budgero.app`)
 - Auth: `Authorization: Bearer <push-api-token>`
 - Body fields:
-  - `encrypted_payload` (string, Base64): AES-GCM encrypted JSON payload (IV + ciphertext + auth tag).
+  - `encrypted_payload` (string, Base64): AES-GCM encrypted JSON payload (salt + IV + ciphertext + auth tag; see [Encryption requirements](#encryption-requirements)).
   - `message_id` (string, optional): Client-generated id to dedupe retries.
 
 ### Decrypted payload shape (before encryption)
@@ -59,10 +59,13 @@ Monetary values are integer milliunits (1/1000 of a currency unit), so 42.50 is 
 ## Encryption requirements
 
 - Algorithm: AES-256-GCM  
-- IV: 12 bytes (prepend to ciphertext)  
+- Salt: 32 bytes = **SHA-256 of your space encryption key** (prepend before the IV)  
+- IV: 12 bytes (after the salt, before the ciphertext)  
 - Auth tag: 16 bytes (append after ciphertext)  
-- Encoding: Base64 of IV + ciphertext + tag  
+- Encoding: Base64 of **salt + IV + ciphertext + tag**  
 - Key: Your **space encryption key** (exported from Settings).
+
+The salt prefix is not optional: the client verifies it against SHA-256 of its own space key *before* decrypting (constant-time compare in `mutation-crypto.ts`). A payload without the salt is accepted by the server (HTTP 202, queued) but every apply fails client-side and the item lands in the queue as `failed` — the transaction silently never reaches the budget. The Python SDK already prepends the salt for you; only hand-rolled clients built from this spec are affected.
 
 ## Python SDK quick start
 
