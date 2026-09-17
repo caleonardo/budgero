@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -58,5 +58,25 @@ test('real git ranges include every PR commit, deletions, and both sides of rena
     assert.deepEqual(planEvent({}, cwd), all);
   } finally {
     rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+
+test('actual required gate scripts reject failed, cancelled, and unexpectedly skipped builds', () => {
+  const workflow = readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8');
+  for (const name of ['web', 'server']) {
+    const job = workflow.split(`\n  ${name}:\n`)[1].split(/\n  [a-z-]+:\n/)[0];
+    const script = job.split('        run: |\n')[1].split('\n').map((line) => line.replace(/^          /, '')).join('\n');
+    for (const changes of ['success', 'failure', 'cancelled', 'skipped']) {
+      for (const checks of ['success', 'failure', 'cancelled', 'skipped']) {
+        for (const selected of ['true', 'false']) {
+          const result = spawnSync('bash', ['-e', '-c', script], {
+            env: { ...process.env, CHANGES_RESULT: changes, CHECKS_RESULT: checks, SELECTED: selected },
+          });
+          const shouldPass = changes === 'success' && checks === (selected === 'true' ? 'success' : 'skipped');
+          assert.equal(result.status === 0, shouldPass, `${name}: changes=${changes}, checks=${checks}, selected=${selected}`);
+        }
+      }
+    }
   }
 });

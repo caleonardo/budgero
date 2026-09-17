@@ -15,7 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 # Do not filter workflow triggers by path: required web/server checks must report.
-# Jobs fail closed if change detection fails; only their expensive steps are skipped.
+# Short required gates fail closed if selection or an affected build fails.
+# Keep always() off expensive jobs so obsolete builds remain cancellable.
 jobs:
   changes:
     if: github.server_url == 'https://github.com'
@@ -39,32 +40,23 @@ jobs:
         id: paths
         run: node scripts/ci/changes.mjs
 
-  web:
+  web-checks:
     needs: changes
-    if: always() && github.server_url == 'https://github.com'
+    if: needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true'
     runs-on: ${{ fromJSON(github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.DELL_RUNNER_ENABLED == 'true' && '["self-hosted","linux","x64","budgero-build"]' || '["ubuntu-latest"]') }}
     timeout-minutes: 30
     steps:
-      - name: Verify change selection
-        working-directory: .
-        env:
-          CHANGES_RESULT: ${{ needs.changes.result }}
-        run: test "$CHANGES_RESULT" = success
-
       - name: Checkout
-        if: needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true'
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Setup pnpm
-        if: needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true'
         uses: pnpm/action-setup@v4
         with:
           run_install: false
 
       - name: Setup Node.js
-        if: needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -79,7 +71,6 @@ jobs:
           cache-dependency-path: packages/server/go.sum
 
       - name: Install dependencies
-        if: needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true'
         run: pnpm install --frozen-lockfile
 
       # core and runtime dist must exist before type-check: app resolves
@@ -162,29 +153,21 @@ jobs:
           node packages/app/scripts/build-knowledge.mjs
           node --experimental-strip-types --check packages/app/src/features/ai/lib/knowledge/knowledge-base.generated.ts
 
-  server:
+  server-checks:
     needs: changes
-    if: always() && github.server_url == 'https://github.com'
+    if: needs.changes.outputs.server == 'true'
     runs-on: ${{ fromJSON(github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.DELL_RUNNER_ENABLED == 'true' && '["self-hosted","linux","x64","budgero-build"]' || '["ubuntu-latest"]') }}
     timeout-minutes: 20
     defaults:
       run:
         working-directory: packages/server
     steps:
-      - name: Verify change selection
-        working-directory: .
-        env:
-          CHANGES_RESULT: ${{ needs.changes.result }}
-        run: test "$CHANGES_RESULT" = success
-
       - name: Checkout
-        if: needs.changes.outputs.server == 'true'
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Setup Go
-        if: needs.changes.outputs.server == 'true'
         uses: actions/setup-go@v5
         with:
           cache: ${{ runner.environment == 'github-hosted' }}
@@ -192,15 +175,12 @@ jobs:
           cache-dependency-path: packages/server/go.sum
 
       - name: Build
-        if: needs.changes.outputs.server == 'true'
         run: go build ./...
 
       - name: Test
-        if: needs.changes.outputs.server == 'true'
         run: go test ./...
 
       - name: Lint
-        if: needs.changes.outputs.server == 'true'
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.7.2
@@ -208,3 +188,41 @@ jobs:
           # are built with older Go and refuse newer go.mod targets
           install-mode: goinstall
           working-directory: packages/server
+
+  web:
+    needs: [changes, web-checks]
+    if: always() && github.server_url == 'https://github.com'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require successful affected checks
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          CHECKS_RESULT: ${{ needs.web-checks.result }}
+          SELECTED: ${{ needs.changes.outputs.app == 'true' || needs.changes.outputs.website == 'true' }}
+        run: |
+          test "$CHANGES_RESULT" = success
+          if [ "$SELECTED" = true ]; then
+            test "$CHECKS_RESULT" = success
+          else
+            test "$CHECKS_RESULT" = skipped
+          fi
+
+  server:
+    needs: [changes, server-checks]
+    if: always() && github.server_url == 'https://github.com'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require successful affected checks
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          CHECKS_RESULT: ${{ needs.server-checks.result }}
+          SELECTED: ${{ needs.changes.outputs.server == 'true' }}
+        run: |
+          test "$CHANGES_RESULT" = success
+          if [ "$SELECTED" = true ]; then
+            test "$CHECKS_RESULT" = success
+          else
+            test "$CHECKS_RESULT" = skipped
+          fi
