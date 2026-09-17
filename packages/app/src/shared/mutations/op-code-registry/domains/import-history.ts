@@ -1,5 +1,5 @@
 import type { ImportRunRecordInput, ImportIdentity } from '@budgero/core/browser';
-import { S, type OpCodeEntry } from '../shared';
+import { S, ACCOUNT_TRANSACTION_INVALIDATION_KEYS, type OpCodeEntry } from '../shared';
 
 export const importHistoryOps = {
   'importHistory.match': {
@@ -22,7 +22,7 @@ export const importHistoryOps = {
       return await S().importHistory!.undoImportRun(args.id as number);
     },
     invalidates: [
-      ['transactions'],
+      ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
       ['categories'],
       ['accounts'],
       ['monthlyBudget'],
