@@ -26,7 +26,7 @@ Met de Push API kun je transacties vanuit andere systemen naar Budgero sturen te
 - Endpoint: `POST /api/v1/push` (gebruik jouw basis-URL; standaard is `https://my.budgero.app`)
 - Authenticatie: `Authorization: Bearer <push-api-token>`
 - Body-velden:
-  - `encrypted_payload` (string, Base64): met AES-GCM versleutelde JSON-payload (salt + IV + ciphertext + auth-tag; zie [Versleutelingsvereisten](#versleutelingsvereisten)).
+  - `encrypted_payload` (string, Base64): met AES-GCM versleutelde JSON-payload (salt + IV + versleutelde tekst + authenticatietag; zie [Versleutelingsvereisten](#versleutelingsvereisten)).
   - `message_id` (string, optioneel): door de client gegenereerd id om nieuwe pogingen te ontdubbelen.
 
 ### Vorm van de ontsleutelde payload (vóór versleuteling)
@@ -60,9 +60,9 @@ Geldwaarden zijn gehele milli-eenheden (1/1000 van een valuta-eenheid), dus 42,5
 
 - Algoritme: AES-256-GCM  
 - Salt: 32 bytes = **SHA-256 van je ruwe werkruimte-versleutelingssleutel van 32 bytes** (vóór de IV plaatsen)  
-- IV: 12 bytes (na de salt, vóór de ciphertext)  
-- Auth tag: 16 bytes (voeg toe na ciphertext)  
-- Codering: Base64 van **salt + IV + ciphertext + tag**  
+- IV: 12 bytes (na de salt, vóór de versleutelde tekst)  
+- Authenticatietag: 16 bytes (voeg toe na de versleutelde tekst)  
+- Codering: Base64 van **salt + IV + versleutelde tekst + authenticatietag**  
 - Sleutel: Je **werkruimte-versleutelingssleutel** (geëxporteerd uit Instellingen). Decodeer de geëxporteerde waarde uit Base64 voordat je deze hasht of als AES-sleutel gebruikt; gebruik de ruwe SHA-256-hash van 32 bytes als salt.
 
 Het salt-prefix is verplicht: de client vergelijkt het *vóór* het ontsleutelen met SHA-256 van zijn eigen werkruimtesleutel (vergelijking in constante tijd in `mutation-crypto.ts`). De server accepteert een payload zonder salt (HTTP 202, in de wachtrij geplaatst), maar de verwerking mislukt aan de clientzijde en het item krijgt in de wachtrij de status `failed` — de transactie bereikt het budget dus nooit, ondanks de succesvolle ontvangst. De Python SDK voegt de salt al automatisch toe; dit treft alleen zelfgebouwde clients die de eerdere specificatie volgen.
