@@ -1,3 +1,4 @@
+import { EmailLink } from '@/components/email-link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { withLocalizedUrls } from '@/lib/localized-metadata';
@@ -308,12 +309,10 @@ export default async function DocsPage({
           <p className="mt-3 text-muted-foreground">
             {' '}
             {t('email')}{' '}
-            <a
-              href="mailto:hello@budgero.app"
+            <EmailLink
+              email="hello@budgero.app"
               className="font-medium text-primary underline-offset-4 hover:underline"
-            >
-              hello@budgero.app
-            </a>{' '}
+            />{' '}
             {t('and_we_ll_point_you_to')}{' '}
           </p>
         </div>

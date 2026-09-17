@@ -660,7 +660,12 @@
     "meta_title": "Nouveautés de Budgero - Journal des modifications",
     "meta_description": "Découvrez les dernières mises à jour, fonctionnalités et corrections de bugs de Budgero.",
     "typeMeta_border_border_60_bg_muted_40": "border-border/60 bg-muted/40 text-foreground",
-    "typeMeta_coming_soon": "Bientôt disponible"
+    "typeMeta_coming_soon": "Bientôt disponible",
+    "pagination": "Pages du journal des modifications",
+    "newer_releases": "Versions plus récentes",
+    "older_releases": "Versions plus anciennes",
+    "page_number": "Page {page}",
+    "page_of": "Page {page} sur {total}"
   },
   "everydollar_alternative": {
     "privacy_first_budgeting": "Budget axé sur la confidentialité",

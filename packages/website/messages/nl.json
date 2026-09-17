@@ -660,7 +660,12 @@
     "meta_title": "Nieuw in Budgero - Changelog",
     "meta_description": "Lees de nieuwste updates, functies en bugfixes voor Budgero.",
     "typeMeta_border_border_60_bg_muted_40": "border-border/60 bg-muted/40 text-foreground",
-    "typeMeta_coming_soon": "Binnenkort"
+    "typeMeta_coming_soon": "Binnenkort",
+    "pagination": "Pagina’s met wijzigingen",
+    "newer_releases": "Nieuwere versies",
+    "older_releases": "Oudere versies",
+    "page_number": "Pagina {page}",
+    "page_of": "Pagina {page} van {total}"
   },
   "everydollar_alternative": {
     "privacy_first_budgeting": "Privacygericht budgetteren",

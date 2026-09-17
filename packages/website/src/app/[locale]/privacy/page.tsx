@@ -1,3 +1,4 @@
+import { EmailLink } from '@/components/email-link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { withLocalizedUrls } from '@/lib/localized-metadata';
@@ -61,21 +62,16 @@ export default async function PrivacyPolicy({
             <p>
               {' '}
               {t('it_s_written_in_plain_english')}{' '}
-              <a href="mailto:privacy@budgero.app">
-                <strong>privacy@budgero.app</strong>
-              </a>
-              .
+              <EmailLink email="privacy@budgero.app" className="font-bold" />.
             </p>
             <hr />
 
             <h2>{t('1_who_we_are')}</h2>
             <p> {t('budgero_is_the_data_controller_for')} </p>
             <p>
-              <strong>{t('privacy_contact')}</strong>{' '}
-              <a href="mailto:privacy@budgero.app">privacy@budgero.app</a>
+              <strong>{t('privacy_contact')}</strong> <EmailLink email="privacy@budgero.app" />
               <br />
-              <strong>{t('general_contact')}</strong>{' '}
-              <a href="mailto:hello@budgero.app">hello@budgero.app</a>
+              <strong>{t('general_contact')}</strong> <EmailLink email="hello@budgero.app" />
             </p>
             <p> {t('at_budgero_s_current_scale_small')} </p>
 
@@ -241,7 +237,7 @@ export default async function PrivacyPolicy({
             <p>
               {' '}
               {t('where_budgero_relies_on_legitimate_interest')}{' '}
-              <a href="mailto:privacy@budgero.app">privacy@budgero.app</a>.
+              <EmailLink email="privacy@budgero.app" />.
             </p>
 
             <hr />
@@ -479,9 +475,7 @@ export default async function PrivacyPolicy({
             <p>
               {' '}
               {t('to_exercise_any_of_these_email')}{' '}
-              <a href="mailto:privacy@budgero.app">
-                <strong>privacy@budgero.app</strong>
-              </a>{' '}
+              <EmailLink email="privacy@budgero.app" className="font-bold" />{' '}
               {t('requests_will_be_answered_as_fast')} <strong>{t('30_days')}</strong>{' '}
               {t('as_required_by_gdpr_extendable_by')}{' '}
             </p>
@@ -530,8 +524,7 @@ export default async function PrivacyPolicy({
             </p>
             <p>
               {' '}
-              {t('because_nothing_is_sold_or_shared')}{' '}
-              <a href="mailto:privacy@budgero.app">privacy@budgero.app</a>.
+              {t('because_nothing_is_sold_or_shared')} <EmailLink email="privacy@budgero.app" />.
             </p>
             <p> {t('sensitive_personal_information_is_not_used')} </p>
             <p>{t('you_will_not_be_discriminated_against')}</p>
@@ -541,8 +534,7 @@ export default async function PrivacyPolicy({
             <h2>{t('12_children_s_privacy')}</h2>
             <p>
               {' '}
-              {t('budgero_is_not_directed_to_and')}{' '}
-              <a href="mailto:privacy@budgero.app">privacy@budgero.app</a>{' '}
+              {t('budgero_is_not_directed_to_and')} <EmailLink email="privacy@budgero.app" />{' '}
               {t('and_it_will_be_deleted')}{' '}
             </p>
 
@@ -558,16 +550,11 @@ export default async function PrivacyPolicy({
               <li>
                 {' '}
                 {t('privacy_questions_and_rights_requests')}{' '}
-                <a href="mailto:privacy@budgero.app">
-                  <strong>privacy@budgero.app</strong>
-                </a>
+                <EmailLink email="privacy@budgero.app" className="font-bold" />
               </li>
               <li>
                 {' '}
-                {t('general_support')}{' '}
-                <a href="mailto:hello@budgero.app">
-                  <strong>hello@budgero.app</strong>
-                </a>
+                {t('general_support')} <EmailLink email="hello@budgero.app" className="font-bold" />
               </li>
             </ul>
           </div>
