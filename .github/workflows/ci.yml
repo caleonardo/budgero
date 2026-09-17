@@ -93,6 +93,9 @@ jobs:
       - name: Build website
         run: pnpm run build:website
 
+      - name: Check changelog crawlability
+        run: pnpm --dir packages/website run test:changelog
+
       - name: Type-check website
         run: pnpm --dir packages/website exec tsc --noEmit
 

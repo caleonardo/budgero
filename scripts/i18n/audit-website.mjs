@@ -111,7 +111,8 @@ for (const locale of LOCALES) {
         continue;
       }
     }
-    if (rel === 'changelog.html') continue;
+    // Release notes remain in English on both the index and its archive pages.
+    if (rel === 'changelog.html' || /^changelog\/page\/[1-9]\d*\.html$/.test(rel)) continue;
     const enFile = rel === 'index.html' ? join(APP, 'en.html') : join(APP, 'en', rel);
     if (!existsSync(enFile)) {
       if (rel.startsWith('blog/')) originalArticles += 1;

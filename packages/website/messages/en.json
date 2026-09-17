@@ -660,7 +660,12 @@
     "meta_title": "What's New in Budgero - Changelog",
     "meta_description": "Read the latest updates, features, and bug fixes for Budgero.",
     "typeMeta_border_border_60_bg_muted_40": "border-border/60 bg-muted/40 text-foreground",
-    "typeMeta_coming_soon": "Coming soon"
+    "typeMeta_coming_soon": "Coming soon",
+    "pagination": "Changelog pages",
+    "newer_releases": "Newer releases",
+    "older_releases": "Older releases",
+    "page_number": "Page {page}",
+    "page_of": "Page {page} of {total}"
   },
   "everydollar_alternative": {
     "privacy_first_budgeting": "Privacy-First Budgeting",

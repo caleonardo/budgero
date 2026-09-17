@@ -1,3 +1,4 @@
+import { EmailLink } from '@/components/email-link';
 import Image from 'next/image';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
@@ -130,13 +131,11 @@ export async function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="mailto:hello@budgero.app"
+                <EmailLink
+                  email="hello@budgero.app"
                   className="hover:text-[#141414] transition-colors"
-                >
-                  {' '}
-                  {copy('u_98b67063cf8e')}{' '}
-                </a>
+                  label={copy('u_98b67063cf8e')}
+                />
               </li>
               <li>
                 <ManageCookiesButton className="hover:text-[#141414] transition-colors" />

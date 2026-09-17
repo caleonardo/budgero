@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { allGuides, allPosts } from 'contentlayer/generated';
 
+import { changelogPageCount, changelogPath } from '@/lib/changelog-pagination';
 import { changelogEntries } from '@/lib/changelog-data';
 import { guideSitemap, localizedRouteSitemap, postSitemap } from '@/lib/content-sitemap';
 
@@ -135,14 +136,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     .sort((a, b) => b.getTime() - a.getTime())[0];
 
   const changelogLastModified = latestChangelogDate?.toISOString();
-  const changelogRoute: MetadataRoute.Sitemap = [
-    {
-      url: `${base}/changelog`,
+  const changelogRoute: MetadataRoute.Sitemap = Array.from(
+    { length: changelogPageCount },
+    (_, index) => ({
+      url: `${base}${changelogPath(index + 1)}`,
       lastModified: changelogLastModified,
       changeFrequency: 'weekly',
-      priority: 0.5,
-    },
-  ];
+      priority: index === 0 ? 0.5 : 0.3,
+    })
+  );
 
   return [
     ...localizedRouteSitemap([...routes, ...changelogRoute]),
