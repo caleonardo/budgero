@@ -3,7 +3,7 @@ import {
   type GoalFundingSettings,
   type FundingPriorityUpdate,
 } from '@budgero/core/browser';
-import { S, type OpCodeEntry } from '../shared';
+import { S, ACCOUNT_TRANSACTION_INVALIDATION_KEYS, type OpCodeEntry } from '../shared';
 
 export const budgetOps = {
   'budgets.updateGoalFundingSettings': {
@@ -58,7 +58,7 @@ export const budgetOps = {
     invalidates: [
       ['budgets'],
       ['accounts', '*'],
-      ['transactions', '*'],
+      ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
       ['categoryGroups', '*'],
       ['monthlyBudget', '*'],
     ],
@@ -112,7 +112,7 @@ export const budgetOps = {
     invalidates: [
       ['budgets'],
       ['accounts'],
-      ['transactions'],
+      ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
       ['categoryGroups'],
       ['monthlyBudget', '*'],
     ],

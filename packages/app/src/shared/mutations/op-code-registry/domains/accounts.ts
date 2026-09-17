@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { asMilli, ZERO_MILLI } from '@budgero/core/browser';
 import { capitalize } from '@shared/lib/utils';
 import { getTodayISO } from '@shared/lib/date-utils';
-import { S, type OpCodeEntry } from '../shared';
+import { S, ACCOUNT_TRANSACTION_INVALIDATION_KEYS, type OpCodeEntry } from '../shared';
 
 export const accountOps = {
   'accounts.create': {
@@ -47,7 +47,7 @@ export const accountOps = {
     invalidates: [
       ['accounts', '*'], // Will match ["accounts", budgetId]
       ['account', '*'], // Will match ["account", id]
-      ['transactions', '*'], // Currency/type edits can rewrite transactions
+      ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS, // Currency/type edits can rewrite transactions
       // Type/name edits can create, relink, or rename system categories.
       ['categories', '*'],
       ['categoryGroups', '*'],
@@ -144,7 +144,7 @@ export const accountOps = {
       // Note: Balance recalculation is handled internally by addTransaction/updateTransaction
     },
     invalidates: [
-      ['transactions'],
+      ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
       ['allTransactions', '*'], // For useAllTransactions hook
       ['allTransactionsDetailed', '*'], // For useAllTransactionsDetailed hook
       ['allTransactionsAnalytics', '*'], // For useAllTransactionsAnalytics hook
@@ -198,7 +198,7 @@ export const accountOps = {
     },
     invalidates: [
       ['accounts', '*'], // Will match ["accounts", budgetId]
-      ['transactions'],
+      ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
       // Deleting a debt/credit account removes its linked system category.
       ['categories', '*'],
       ['categoryGroups', '*'],

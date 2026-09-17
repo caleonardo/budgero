@@ -188,13 +188,18 @@ export const RULE_INVALIDATION_KEYS: string[][] = [
   ['ruleRunChanges', '*'],
 ];
 
-export const TRANSACTION_INVALIDATION_KEYS: string[][] = [
+/** Every account-register projection must refresh whenever transaction rows change. */
+export const ACCOUNT_TRANSACTION_INVALIDATION_KEYS: [string, ...string[]][] = [
   ['transactions', '*'],
   ['accountTransactionPages', '*'],
   ['accountTransactionRange', '*'],
   ['accountTransactionSummary', '*'],
   ['futureAccountTransactions', '*'],
   ['accountBalanceHistory', '*'],
+];
+
+export const TRANSACTION_INVALIDATION_KEYS: string[][] = [
+  ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
   ['transferRateDetails', '*'],
   ['transactionsByCategoryAndMonth', '*'],
   ['allTransactions', '*'],

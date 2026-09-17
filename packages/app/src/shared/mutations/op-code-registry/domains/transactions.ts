@@ -4,6 +4,7 @@ import {
   sortTransactionSnapshots,
   transactionSnapshotToAddOp,
   TRANSACTION_INVALIDATION_KEYS,
+  ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
   RECURRING_TEMPLATE_INVALIDATIONS,
   type NormalizedSplit,
   type OpCodeEntry,
@@ -12,7 +13,7 @@ import {
 } from '../shared';
 
 const SPLIT_INVALIDATION_KEYS: [string, ...string[]][] = [
-  ['transactions', '*'],
+  ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
   ['allTransactions', '*'],
   ['allTransactionsDetailed', '*'],
   ['allTransactionsAnalytics', '*'],
@@ -34,7 +35,7 @@ const SPLIT_INVALIDATION_KEYS: [string, ...string[]][] = [
 // Shared by transactions.delete (exact) and transactions.updateColumn (which also
 // invalidates payees). Invalidation order is irrelevant — these are set operations.
 const TX_WRITE_INVALIDATION_KEYS: string[][] = [
-  ['transactions'],
+  ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
   ['transactionsByCategoryAndMonth', '*'],
   ['allTransactions', '*'],
   ['allTransactionsDetailed', '*'],
@@ -69,7 +70,7 @@ const TX_WRITE_INVALIDATION_KEYS: string[][] = [
 // Shared by transactions.moveToNewCategory and transactions.reassign (exact), and
 // transactions.moveToNewAccount (which also invalidates accounts).
 const TX_MOVE_INVALIDATION_KEYS: string[][] = [
-  ['transactions'],
+  ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
   ['allTransactions', '*'],
   ['allTransactionsDetailed', '*'],
   ['allTransactionsAnalytics', '*'],
@@ -480,7 +481,7 @@ export const transactionOps = {
       );
     },
     invalidates: [
-      ['transactions', '*'],
+      ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
       ['accounts', '*'], // Account's reconciled_at is updated
       ['allTransactions', '*'],
       ['allTransactionsDetailed', '*'],
