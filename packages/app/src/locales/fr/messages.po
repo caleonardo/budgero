@@ -4467,6 +4467,10 @@ msgstr "Modifier le mot de passe principal"
 msgid "Change month — currently {fullLabel}"
 msgstr "Changer de mois — actuellement {fullLabel}"
 
+#: src/shared/ui/date-range-picker.tsx
+msgid "Change month and year — currently {fullMonthLabel}"
+msgstr "Changer le mois et l’année — actuellement {fullMonthLabel}"
+
 #: src/pages/settings/SecurityPage.tsx
 msgid "Change Password"
 msgstr "Changer le mot de passe"
@@ -4610,6 +4614,10 @@ msgstr "Vérification…"
 #: src/features/budget-management/model/icon-options.ts
 msgid "Childcare"
 msgstr "Garde d'enfants"
+
+#: src/shared/ui/date-range-picker.tsx
+msgid "Choose a day"
+msgstr "Choisir un jour"
 
 #. placeholder {0}: plan.index + 1
 #. placeholder {1}: accountName ? ` (${accountName})` : ''
@@ -8769,6 +8777,7 @@ msgstr "Rejoindre…"
 msgid "Jump straight into the budgeting workspace to assign funds."
 msgstr "Accédez directement à l'espace de travail budgétaire pour affecter des fonds."
 
+#: src/shared/ui/date-range-picker.tsx
 #: src/shared/ui/MonthPickerPopover.tsx
 msgid "Jump to today"
 msgstr "Aller à aujourd'hui"
@@ -10183,6 +10192,7 @@ msgstr "Prochaine échéance pour chaque série récurrente, plus les transactio
 msgid "Next month"
 msgstr "Mois suivant"
 
+#: src/shared/ui/date-range-picker.tsx
 #: src/shared/ui/MonthPickerPopover.tsx
 msgid "Next year"
 msgstr "Année suivante"
@@ -12076,6 +12086,7 @@ msgstr "Mois précédent :"
 msgid "Previous Period"
 msgstr "Période précédente"
 
+#: src/shared/ui/date-range-picker.tsx
 #: src/shared/ui/MonthPickerPopover.tsx
 msgid "Previous year"
 msgstr "Année précédente"
