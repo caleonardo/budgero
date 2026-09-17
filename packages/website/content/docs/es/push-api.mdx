@@ -26,7 +26,7 @@ La Push API te permite enviar transacciones a Budgero desde otros sistemas mante
 - Endpoint: `POST /api/v1/push` (usa tu URL base; el valor predeterminado es `https://my.budgero.app`)
 - Auth: `Authorization: Bearer <push-api-token>`
 - Campos del body:
-  - `encrypted_payload` (string, Base64): payload JSON cifrado con AES-GCM (IV + texto cifrado + etiqueta de autenticación).
+  - `encrypted_payload` (string, Base64): payload JSON cifrado con AES-GCM (sal + IV + texto cifrado + etiqueta de autenticación; consulta [Requisitos de cifrado](#requisitos-de-cifrado)).
   - `message_id` (string, opcional): ID generado por el cliente para deduplicar reintentos.
 
 ### Estructura del payload descifrado (antes del cifrado)
@@ -59,10 +59,13 @@ Los valores monetarios son milunidades enteras (1/1000 de una unidad de moneda),
 ## Requisitos de cifrado
 
 - Algoritmo: AES-256-GCM  
-- IV: 12 bytes (anteponer al texto cifrado)  
+- Sal: 32 bytes = **SHA-256 de los 32 bytes sin codificar de tu clave de cifrado del espacio** (anteponer al IV)  
+- IV: 12 bytes (después de la sal, antes del texto cifrado)  
 - Etiqueta de autenticación: 16 bytes (añadir después del texto cifrado)  
-- Codificación: Base64 de IV + texto cifrado + etiqueta  
-- Clave: Tu **clave de cifrado del espacio** (exportada desde Ajustes).
+- Codificación: Base64 de **sal + IV + texto cifrado + etiqueta**  
+- Clave: Tu **clave de cifrado del espacio** (exportada desde Ajustes). Decodifica el valor exportado de Base64 antes de calcular su hash o usarlo como clave AES; utiliza el resumen SHA-256 de 32 bytes sin codificar como sal.
+
+El prefijo de sal es obligatorio: el cliente lo compara con el SHA-256 de su propia clave del espacio *antes* de descifrar (comparación en tiempo constante en `mutation-crypto.ts`). El servidor acepta un payload sin sal (HTTP 202, encolado), pero el procesamiento falla en el cliente y el elemento queda en la cola con el estado `failed` — la transacción nunca llega al presupuesto, aunque se haya aceptado. El SDK de Python ya antepone la sal automáticamente; solo afecta a los clientes desarrollados manualmente a partir de la especificación anterior.
 
 ## Inicio rápido del SDK de Python
 

@@ -26,7 +26,7 @@ Die Push-API ermöglicht es dir, Transaktionen aus anderen Systemen an Budgero z
 - Endpunkt: `POST /api/v1/push` (verwende deine Basis-URL; Standard ist `https://my.budgero.app`)
 - Auth: `Authorization: Bearer <push-api-token>`
 - Body-Felder:
-  - `encrypted_payload` (String, Base64): AES-GCM-verschlüsselter JSON-Payload (IV + Ciphertext + Auth-Tag).
+  - `encrypted_payload` (String, Base64): AES-GCM-verschlüsselter JSON-Payload (Salt + IV + Ciphertext + Auth-Tag; siehe [Verschlüsselungsanforderungen](#verschlüsselungsanforderungen)).
   - `message_id` (String, optional): Client-generierte ID zur Deduplizierung von Wiederholungen.
 
 ### Form des entschlüsselten Payloads (vor der Verschlüsselung)
@@ -59,10 +59,13 @@ Geldwerte sind ganzzahlige Millieinheiten (1/1000 einer Währungseinheit), daher
 ## Verschlüsselungsanforderungen
 
 - Algorithmus: AES-256-GCM  
-- IV: 12 Bytes (dem Ciphertext voranstellen)  
+- Salt: 32 Bytes = **SHA-256 deines rohen 32-Byte-Space-Verschlüsselungsschlüssels** (vor der IV einfügen)  
+- IV: 12 Bytes (nach dem Salt, vor dem Ciphertext)  
 - Auth-Tag: 16 Bytes (nach dem Ciphertext anhängen)  
-- Codierung: Base64 aus IV + Ciphertext + Tag  
-- Schlüssel: Dein **Space-Verschlüsselungsschlüssel** (aus den Einstellungen exportiert).
+- Codierung: Base64 aus **Salt + IV + Ciphertext + Tag**  
+- Schlüssel: Dein **Space-Verschlüsselungsschlüssel** (aus den Einstellungen exportiert). Dekodiere den exportierten Wert aus Base64, bevor du ihn hashst oder als AES-Schlüssel verwendest; verwende den rohen SHA-256-Hash mit 32 Bytes als Salt.
+
+Das Salt-Präfix ist nicht optional: Der Client vergleicht es *vor* der Entschlüsselung mit SHA-256 seines eigenen Space-Schlüssels (Vergleich in konstanter Zeit in `mutation-crypto.ts`). Ein Payload ohne Salt wird vom Server angenommen (HTTP 202, in die Warteschlange aufgenommen), aber die Verarbeitung schlägt clientseitig fehl und das Element erhält in der Warteschlange den Status `failed` — die Transaktion erscheint trotz erfolgreicher Annahme nicht im Budget. Das Python-SDK stellt das Salt bereits automatisch voran; betroffen sind nur selbst entwickelte Clients, die auf der bisherigen Spezifikation basieren.
 
 ## Python SDK – Schnellstart
 

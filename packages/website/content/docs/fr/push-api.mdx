@@ -26,7 +26,7 @@ L'API Push vous permet d'envoyer des transactions vers Budgero depuis d'autres s
 - Point de terminaison : `POST /api/v1/push` (utilisez votre URL de base ; par défaut `https://my.budgero.app`)
 - Authentification : `Authorization: Bearer <push-api-token>`
 - Champs du corps :
-  - `encrypted_payload` (chaîne, Base64) : charge utile JSON chiffrée en AES-GCM (IV + texte chiffré + tag d'authentification).
+  - `encrypted_payload` (chaîne, Base64) : charge utile JSON chiffrée en AES-GCM (sel + IV + texte chiffré + tag d'authentification ; voir [Exigences de chiffrement](#exigences-de-chiffrement)).
   - `message_id` (chaîne, facultatif) : identifiant généré par le client pour dédupliquer les nouvelles tentatives.
 
 ### Format de la charge utile déchiffrée (avant chiffrement)
@@ -59,10 +59,13 @@ Les valeurs monétaires sont des milliunités entières (1/1000 d'une unité mon
 ## Exigences de chiffrement
 
 - Algorithme : AES-256-GCM  
-- IV : 12 octets (à placer avant le texte chiffré)  
+- Sel : 32 octets = **SHA-256 de votre clé de chiffrement d'espace brute de 32 octets** (à placer avant l'IV)  
+- IV : 12 octets (après le sel, avant le texte chiffré)  
 - Tag d'authentification : 16 octets (à ajouter après le texte chiffré)  
-- Encodage : Base64 de IV + texte chiffré + tag  
-- Clé : Votre **clé de chiffrement de l'espace** (exportée depuis les Paramètres).
+- Encodage : Base64 de **sel + IV + texte chiffré + tag**  
+- Clé : Votre **clé de chiffrement de l'espace** (exportée depuis les Paramètres). Décodez la valeur exportée depuis Base64 avant de la hacher ou de l'utiliser comme clé AES ; utilisez le condensat SHA-256 brut de 32 octets comme sel.
+
+Le préfixe de sel est obligatoire : le client le compare au SHA-256 de sa propre clé d'espace *avant* le déchiffrement (comparaison en temps constant dans `mutation-crypto.ts`). Une charge utile sans sel est acceptée par le serveur (HTTP 202, mise en file d'attente), mais son traitement échoue côté client et l'élément prend le statut `failed` dans la file d'attente — la transaction n'apparaît donc jamais dans le budget malgré son acceptation. Le SDK Python ajoute déjà le sel pour vous ; seuls les clients développés manuellement à partir de l'ancienne spécification sont concernés.
 
 ## Démarrage rapide du SDK Python
 
