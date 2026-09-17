@@ -1,0 +1,141 @@
+---
+title: "YNAB-import"
+summary: "Importeer je YNAB-gegevens zonder vaart te verliezen! Begrijp wat automatisch wordt overgezet, wat je opnieuw moet opbouwen en hoe je het netjes afrondt."
+section: accounts-and-imports
+topicId: ynab-import
+takeaways:
+  - "Wat Budgero via de YNAB-API of een export-ZIP importeert en wat niet."
+  - "De checklist na het importeren - rekeningtypes, schulden koppelen en doelen."
+  - "Waarom je uit YNAB moet exporteren voordat je abonnement afloopt."
+---
+
+Overstappen naar een andere budgetapp hoeft niet te betekenen dat je jaren geschiedenis opgeeft. Budgero kan direct met YNAB verbinden of een export-ZIP lezen en je budget — rekeningen, categorieën, transacties en maandelijkse toewijzingen — in enkele minuten opnieuw opbouwen.
+
+## Aanbevolen: direct verbinden
+
+Kies **Direct verbinden**, voer een persoonlijk YNAB-toegangstoken in en selecteer je plan. Budgero gebruikt het token alleen in het geheugen voor deze import, stuurt het direct naar YNAB en bewaart het nooit in Budgero, browseropslag, logboeken of analytics. De importeur doet alleen leesverzoeken.
+
+De directe route vermijdt onduidelijke CSV-formaten en behoudt YNAB-rekeningtypen, budget- of trackingstatus, gesloten status, exacte overboekingsrelaties, gesplitste regels en valutaprecisie. Voor hypotheken en door YNAB beheerde leningen hergebruikt Budgero ook de betaalcategorie als die eenduidig uit de overboekingen blijkt.
+
+Voordat het budget wordt opgeslagen, vergelijkt Budgero het resultaat met dezelfde YNAB-API-snapshot:
+
+- Elke actieve transactie en gesplitste regel moet zijn verwerkt.
+- Elk rekeningsaldo moet overeenkomen.
+- Toegewezen, Activiteit en Beschikbaar worden per maand en categorie vergeleken.
+- Te verdelen wordt voor elke maand vergeleken.
+- YNAB Money Movements worden onafhankelijk gecontroleerd tegen maandelijkse toewijzingen.
+
+Fouten in bronintegriteit of rekeningboekingen stoppen de import en verwijderen het onvolledige budget. Verschillen in categoriegeschiedenis of Te verdelen openen een controlescherm. Bekijk de maanden en bedragen en verwijder de import of kies **Toch importeren**. Geaccepteerde waarschuwingen blijven zichtbaar onder **Instellingen › Importgeschiedenis**.
+
+## Alternatief: een export-ZIP importeren
+
+Open in YNAB je budgetinstellingen en kies **Budget exporteren**. Je krijgt een ZIP-bestand met twee CSV's — je transactieoverzicht en je budget (plan)-bestand. Budgero accepteert de ZIP zoals hij is; uitpakken of bewerken is niet nodig.
+
+**Stel je formaten in vóór het exporteren.** YNAB schrijft de CSV's in het weergaveformaat dat je planinstellingen gebruiken, en dubbelzinnige formaten zijn de belangrijkste oorzaak van mislukte imports (datums zoals `01/05/2025` kunnen 5 januari *of* 1 mei betekenen). Open in de YNAB-webapp **Planinstellingen** en stel in:
+
+- **Datumformaat** op `2025-12-30` (ISO — eenduidig)
+- **Getalformaat** op `123,456.78`
+- **Valutaweergave** op **"Niet weergeven"**
+
+Exporteer daarna. Budgero detecteert waar mogelijk andere datum- en getalformaten, maar de bovenstaande instellingen zijn de enige die zonder verlies importeren.
+
+Doe dit **terwijl je YNAB-abonnement actief is**. De mogelijkheid om te exporteren verdwijnt normaal gesproken wanneer je abonnement afloopt — YNAB-ondersteuning kan misschien achteraf helpen, maar reken er niet op dat je geschiedenis bewaard blijft. Eerst exporteren kost niets.
+
+## Wat meekomt
+
+<table>
+  <thead>
+    <tr>
+      <th>Gegevens</th>
+      <th>Geïmporteerd?</th>
+      <th>Opmerkingen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Rekeningen</td>
+      <td>✓</td>
+      <td>API-imports behouden type en budgetstatus; ZIP-imports vereisen controle van typen</td>
+    </tr>
+    <tr>
+      <td>Categoriegroepen &amp; categorieën</td>
+      <td>✓</td>
+      <td>Volledige hiërarchie behouden; categorieën die alleen in het register staan worden aangemaakt en gemeld</td>
+    </tr>
+    <tr>
+      <td>Transacties</td>
+      <td>✓</td>
+      <td>Datums, begunstigden, meerregelige memo’s, bedragen — volledige geschiedenis</td>
+    </tr>
+    <tr>
+      <td>Gesplitste transacties</td>
+      <td>✓</td>
+      <td>Volledige geëxporteerde splitsingen worden automatisch geïmporteerd; categorieën, begunstigden, memo’s, bedragen en regelvolgorde blijven behouden</td>
+    </tr>
+    <tr>
+      <td>Overboekingen</td>
+      <td>✓</td>
+      <td>Gedetecteerd en opnieuw aangemaakt als echte tweezijdige overboekingen</td>
+    </tr>
+    <tr>
+      <td>Maandelijkse toewijzingen</td>
+      <td>✓</td>
+      <td>Je gebudgetteerde bedragen, maand voor maand</td>
+    </tr>
+    <tr>
+      <td>Beginsaldi</td>
+      <td>✓</td>
+      <td>YNAB's "Starting Balance"-boekingen worden openingstransacties</td>
+    </tr>
+    <tr>
+      <td>Doelen / streefbedragen</td>
+      <td>✗</td>
+      <td>YNAB's export bevat deze niet — herstel ze in Budgero</td>
+    </tr>
+    <tr>
+      <td>Geplande transacties</td>
+      <td>✗</td>
+      <td>Geen onderdeel van YNAB's export</td>
+    </tr>
+    <tr>
+      <td>Vlaggen</td>
+      <td>✗</td>
+      <td>Niet overgenomen</td>
+    </tr>
+  </tbody>
+</table>
+
+De onderliggende logica van YNAB wordt vertaald in plaats van gekopieerd: inkomsten naar **"Inkomsten: Te verdelen"** worden gekoppeld aan Budgero's **Inkomen**-categorie, zodat je inkomstenhistorie [Te verdelen](/docs/ready-to-assign) vanaf de eerste synchronisatie correct vult.
+
+YNAB kan opgebouwde rente direct op een hypotheek- of leningsaldo toepassen zonder een normale transactie te exporteren. Budgero maakt dan een duidelijk gelabelde transactie **Geïmporteerde YNAB-schuldrenteaanpassing**. Zo blijft het saldo exact zonder een correctieboeking te verbergen of Te verdelen te wijzigen.
+
+Geïmporteerde budgetten beginnen met de **maandelijkse** berekening van Te verdelen, die het dichtst bij YNAB ligt. Je kunt de modus altijd wijzigen via **Instellingen › Budgetinstellingen**, zonder transacties of toewijzingen te veranderen.
+
+## De import uitvoeren
+
+1. Tijdens de onboarding (of vanuit Instellingen als je budget al bestaat), kies **Importeren vanuit YNAB**.
+2. Kies voor directe import **Direct verbinden**, voer een persoonlijk toegangstoken in en selecteer een plan. Kies anders **Export-ZIP** en sleep het bestand erin.
+3. Controleer het voorbeeld en bevestig. Volledige normale splitsingen worden gesplitste Budgero-transacties; YNAB-splitsingen met overboekingen worden veilig uitgebreid naar afzonderlijke transacties. Het voortgangsscherm toont controles van bron, rekeningen, categoriegeschiedenis en Te verdelen per maand. Blijft er een niet-blokkerend rapportverschil over, bekijk het dan en beslis expliciet of je het budget wilt behouden.
+
+Als je tijdens de onboarding importeert, slaat Budgero de instelstappen over die de import al heeft afgedekt — je wordt niet gevraagd rekeningen en categorieën aan te maken die je net hebt meegenomen.
+
+## De checklist na import
+
+Drie dingen verdienen na elke import tien minuten aandacht:
+
+1. **Controleer rekeningtypen na een ZIP-import.** Directe API-imports behouden YNAB-typen en budgetstatus. Een ZIP bevat niet altijd betrouwbare typen; controleer en corrigeer ze. Dat is vooral belangrijk voor creditcards, omdat schuldverwerking afhangt van het rekeningtype.
+2. **Controleer schuldkoppelingen na een ZIP-import.** De API hergebruikt eenduidige hypotheek- of leningbetaalcategorieën en behoudt YNAB’s creditcardlogica. ZIP-exports bevatten minder metadata; controleer de koppelingen met de [gids voor schulden bijhouden](/docs/debt-tracking).
+3. **Herstel je doelen.** Je YNAB-streefbedragen hebben de overgang niet overleefd — YNAB exporteert ze niet. Ze opnieuw aanmaken in Budgero kost een paar minuten en de [Doelen-handleiding](/docs/goals) koppelt YNAB's streefbedragtypes bijna één-op-één aan Budgero's vier doeltypen.
+
+Stem ten slotte elke rekening één keer af met je bank (zie [Rekeningen](/docs/accounts)) om te bevestigen dat de saldi kloppen met de werkelijkheid.
+
+## Als iets niet klopt
+
+De meest voorkomende verrassingen na het importeren, in volgorde:
+
+- **Te verdelen wijkt af van YNAB**: directe imports vergelijken elke maand vóór opslaan en tonen de exacte YNAB- en Budgero-waarde, het verschil en de berekeningsgegevens. Open geaccepteerde waarschuwingen via **Instellingen › Importgeschiedenis**. ZIP-imports kunnen deze API-vergelijking niet doen; controleer eerst typen en stem elke rekening af.
+- **Datums of bedragen kloppen niet** — bijna altijd een probleem met het exportformaat. Exporteer opnieuw vanuit YNAB met Date Format `2025-12-30`, Number Format `123,456.78`, en Currency Placement "Don't Show" (zie hierboven), en importeer daarna in een nieuw budget.
+- **Transacties die dubbel lijken**: volledige aaneengesloten groepen van `Split (1/n)` tot `Split (n/n)` worden één gesplitste transactie. Onvolledige of onduidelijke groepen blijven apart zodat Budgero geen ongerelateerde regels samenvoegt.
+- **Vragen over valuta** — YNAB-budgetten gebruiken één valuta, dus alles wordt in die valuta geïmporteerd. Als je overstapt naar een multivaluta-instelling, lees dan [Budget-valuta](/docs/budget-currency) voordat je iets wijzigt.
+
+Je YNAB-gegevens blijven intact: de directe importeur leest alleen via de API en ZIP-import leest alleen het gekozen bestand. Je kunt beide methoden opnieuw uitvoeren in een nieuw budget voor een schone tweede poging.

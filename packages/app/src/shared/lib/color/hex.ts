@@ -1,7 +1,9 @@
+import { t } from '@lingui/core/macro';
+
 export function hexToRgba(hex: string, alpha: number): string {
   const normalized = hex.trim().replace('#', '');
   if (!/^[0-9A-Fa-f]{6}$/.test(normalized)) {
-    return `rgba(148, 163, 184, ${alpha})`;
+    return t`rgba(148, 163, 184, ${alpha})`;
   }
   const r = parseInt(normalized.slice(0, 2), 16);
   const g = parseInt(normalized.slice(2, 4), 16);

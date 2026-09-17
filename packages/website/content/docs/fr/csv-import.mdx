@@ -1,0 +1,76 @@
+---
+title: "Import et export CSV"
+summary: "Importez l'historique des transactions de vos banques et exportez des sauvegardes complètes que vous pouvez utiliser pour la saison des impôts, les comptables ou une analyse approfondie."
+section: accounts-and-imports
+topicId: csv-import
+takeaways:
+  - "Formats de fichiers pris en charge et fonctionnement de l'aperçu du mappage des colonnes."
+  - "Comment éviter les doublons en combinant les importations et la saisie manuelle."
+  - "Ce que l'export produit - un ensemble complet de fichiers CSV plus une sauvegarde de la base de données."
+---
+
+Budgero privilégie la saisie manuelle, mais « manuel » ne signifie pas saisir chaque ligne. L'importateur transforme les exports de votre banque en transactions en quelques minutes — et l'exportateur garantit que vos données ne sont jamais verrouillées.
+
+## Formats pris en charge
+
+L'importateur accepte bien plus que le CSV :
+
+- **CSV / TSV / TXT** — l'export bancaire universel
+- **OFX / QFX / QIF** — les formats bancaires classiques et Quicken
+- **CAMT.053** — le format de relevé XML courant chez les banques européennes
+- **PDF** — Budgero extrait les tableaux des relevés PDF ; vous choisissez le tableau, puis vous mappez les colonnes exactement comme avec un CSV
+
+Ce dernier point compte plus qu'il n'y paraît : de nombreuses banques ne fournissent des relevés qu'en PDF, et l'extraction de tableaux vous évite de les retaper. (Il s'agit d'extraction de tableaux, pas de numérisation de reçus — visez les relevés, pas les reçus de courses froissés.)
+
+## Mappage de votre fichier
+
+Les exports bancaires ne s'accordent jamais sur les noms de colonnes, l'importateur affiche donc un aperçu et vous permet de mapper les colonnes vous-même :
+
+1. **Choisissez la ligne d'en-tête.** Si votre banque remplit le fichier avec des lignes de logo et des mentions légales, ignorez les lignes jusqu'à ce que les vrais en-têtes apparaissent.
+2. **Mappez les colonnes.** Obligatoire : une colonne **date** et soit une colonne **montant** unique, soit une paire **Entrée/Sortie**. Facultatif : bénéficiaire, mémo/description, catégorie et compte.
+3. **Définissez les formats.** Les dates sont détectées automatiquement parmi les formats courants (`YYYY-MM-DD`, `DD/MM/YYYY`, `MM/DD/YYYY`, `DD.MM.YYYY`, et d'autres), et les formats numériques couvrent les conventions américaines/britanniques (`1,234.56`), européennes (`1.234,56`), suisses et françaises — ainsi, un export de Deutsche Bank et un export de Chase sont tous deux importés correctement.
+4. **Vérifiez l'aperçu** et importez.
+
+Si le fichier ne contient pas de colonne de compte, vous choisissez le compte de destination à l'avance — c'est le cas le plus courant, car la plupart des banques exportent un compte par fichier.
+
+## Éviter les doublons
+
+Avant l’enregistrement, l’aperçu compare les lignes aux données déjà importées, transactions existantes et autres lignes du fichier. Il indique **Nouveau**, **Déjà importé**, **À vérifier** ou **Invalide/ignoré**.
+
+Les lignes déjà importées sont ignorées par défaut. Pour les correspondances possibles, choisissez **Ignorer** ou **Importer comme nouveau** ; l’import attend que toutes les lignes ambiguës soient résolues. Vérifiez date, montant, bénéficiaire et mémo, pas seulement la ressemblance. Vous pouvez décider pour toutes les lignes restantes ou les examiner une par une.
+
+Si les transactions ou comptes de destination changent pendant la vérification, examinez les correspondances actualisées. Après l’import, rapprochez chaque compte du relevé bancaire (voir [Comptes](/docs/accounts)). Des périodes sans chevauchement réduisent toujours les vérifications, surtout si vous combinez saisie manuelle et imports bancaires.
+
+## Catégoriser ce qui arrive
+
+Les transactions importées sans catégorie arrivent dans **Non catégorisé** — la zone d'attente du système. Traitez la liste jusqu'à ce qu'elle soit à zéro peu après chaque import ; un budget précis avec un solde Non catégorisé important est un oxymore. Si l'export de votre banque inclut une colonne de catégorie qui correspond à peu près à votre structure, associez-la lors de l'import et vous n'aurez plus qu'à corriger les retardataires.
+
+## Exporter vos données
+
+Tout ressort par la même porte qu'il est entré. **Paramètres → Gestion des données → Exporter les données** propose deux formats :
+
+<table>
+  <thead>
+    <tr>
+      <th>Export</th>
+      <th>Contenu</th>
+      <th>Idéal pour</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Lot CSV</strong> (zip)</td>
+      <td>budgets, comptes, catégories, groupes de catégories, transactions, affectations, objectifs — un CSV chacun</td>
+      <td>Comptables, tableurs, saison fiscale, analyse</td>
+    </tr>
+    <tr>
+      <td><strong>Sauvegarde de base de données</strong> (.db)</td>
+      <td>Votre budget complet sous forme de base de données SQLite</td>
+      <td>Sauvegardes complètes, migration vers l'auto-hébergement</td>
+    </tr>
+  </tbody>
+</table>
+
+Comme vos données sont chiffrées de bout en bout, les exports se font sur votre appareil après déverrouillage avec votre mot de passe principal — le serveur ne voit jamais le texte en clair à aucun moment (voir le [Modèle de sécurité](/docs/security) pour comprendre pourquoi c'est important).
+
+Une bonne habitude de sauvegarde : exportez le lot CSV chaque trimestre et avant toute restructuration importante. Cela ne demande qu'un clic, et signifie que même une erreur dans le pire des cas — une catégorie supprimée, un import raté — est récupérable à partir du dernier instantané de la vérité.

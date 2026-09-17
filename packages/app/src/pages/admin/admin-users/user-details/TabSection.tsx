@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
@@ -34,13 +35,17 @@ export function TabSection({
             <div className="flex items-start gap-3">
               <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-700" />
               <div>
-                <div className="font-medium text-amber-900">Unable to load user details</div>
+                <div className="font-medium text-amber-900">
+                  <Trans>Unable to load user details</Trans>
+                </div>
                 <div className="text-sm text-amber-800">{error}</div>
               </div>
             </div>
             <Button variant="outline" onClick={onRetry}>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Retry
+              <Trans>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Retry
+              </Trans>
             </Button>
           </CardContent>
         </Card>

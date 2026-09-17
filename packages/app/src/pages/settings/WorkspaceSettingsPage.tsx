@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -41,6 +42,8 @@ import { AccessLevel, canCreateWorkspace, getUserAccessStatus } from '@shared/mo
 import { WorkspaceRow } from './components';
 
 export default function WorkspaceSettingsPage() {
+  const { t } = useLingui();
+
   // All hooks must be called before any early returns
   const runtime = useRuntime();
   const queryClient = useQueryClient();
@@ -56,16 +59,16 @@ export default function WorkspaceSettingsPage() {
       return null;
     }
     if (!accessStatus) {
-      return 'Loading account access details…';
+      return t`Loading account access details…`;
     }
     if (accessStatus.level === AccessLevel.COLLABORATOR) {
-      return 'Shared collaborators can view the workspaces they are invited to. Upgrade to a paid plan to create your own.';
+      return t`Shared collaborators can view the workspaces they are invited to. Upgrade to a paid plan to create your own.`;
     }
     if (!canCreateNewWorkspace) {
-      return 'Create or import your own workspace once you have an active subscription, trial, or free access.';
+      return t`Create or import your own workspace once you have an active subscription, trial, or free access.`;
     }
     return null;
-  }, [accessStatus, canCreateNewWorkspace, isSelfHost]);
+  }, [accessStatus, canCreateNewWorkspace, isSelfHost, t]);
   const [loadingSpaceId, setLoadingSpaceId] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -128,12 +131,12 @@ export default function WorkspaceSettingsPage() {
         queryClient,
         spaceId,
       });
-      toast.success('Workspace switched', {
-        description: 'You are now viewing this workspace.',
+      toast.success(t`Workspace switched`, {
+        description: t`You are now viewing this workspace.`,
       });
     } catch (error) {
-      const message = getErrorMessage(error, 'Unable to switch workspace. Please try again.');
-      toast.error('Unable to switch workspace', {
+      const message = getErrorMessage(error, t`Unable to switch workspace. Please try again.`);
+      toast.error(t`Unable to switch workspace`, {
         description: message,
       });
     } finally {
@@ -150,12 +153,12 @@ export default function WorkspaceSettingsPage() {
         await queryClient.invalidateQueries({ queryKey: ['space-invites', activeSpaceId] });
         await queryClient.invalidateQueries({ queryKey: ['space-members', activeSpaceId] });
       }
-      toast.success('Workspace list refreshed', {
-        description: 'Latest workspace information has been loaded.',
+      toast.success(t`Workspace list refreshed`, {
+        description: t`Latest workspace information has been loaded.`,
       });
     } catch (error) {
-      const message = getErrorMessage(error, 'Failed to refresh workspaces. Please try again.');
-      toast.error('Refresh failed', {
+      const message = getErrorMessage(error, t`Failed to refresh workspaces. Please try again.`);
+      toast.error(t`Refresh failed`, {
         description: message,
       });
     } finally {
@@ -166,8 +169,8 @@ export default function WorkspaceSettingsPage() {
   const handleCreateSpace = async () => {
     const trimmed = newSpaceName.trim();
     if (!trimmed) {
-      toast.error('Name required', {
-        description: 'Enter a name before creating the workspace.',
+      toast.error(t`Name required`, {
+        description: t`Enter a name before creating the workspace.`,
       });
       return;
     }
@@ -176,8 +179,8 @@ export default function WorkspaceSettingsPage() {
       const summary = await spaceApi.createSpace(trimmed);
       await runtime.refreshSpaces();
       await spacesQuery.refetch();
-      toast.success('Workspace created', {
-        description: 'We switched you to the new workspace automatically.',
+      toast.success(t`Workspace created`, {
+        description: t`We switched you to the new workspace automatically.`,
       });
       setCreateDialogOpen(false);
       setNewSpaceName('');
@@ -189,8 +192,8 @@ export default function WorkspaceSettingsPage() {
         });
       }
     } catch (error) {
-      const message = getErrorMessage(error, 'Failed to create workspace. Please try again.');
-      toast.error('Creation failed', {
+      const message = getErrorMessage(error, t`Failed to create workspace. Please try again.`);
+      toast.error(t`Creation failed`, {
         description: message,
       });
     } finally {
@@ -204,12 +207,12 @@ export default function WorkspaceSettingsPage() {
     setDefaultSpaceId(nextId);
     setStoredDefaultSpaceId(nextId);
     if (nextId) {
-      toast.success('Default workspace set', {
-        description: 'We will open this workspace first next time.',
+      toast.success(t`Default workspace set`, {
+        description: t`We will open this workspace first next time.`,
       });
     } else {
-      toast.success('Default workspace cleared', {
-        description: 'We will follow your workspace list order.',
+      toast.success(t`Default workspace cleared`, {
+        description: t`We will follow your workspace list order.`,
       });
     }
   };
@@ -262,15 +265,15 @@ export default function WorkspaceSettingsPage() {
         }
       }
 
-      toast.success('Workspace deleted', {
+      toast.success(t`Workspace deleted`, {
         description: deletingActive
-          ? 'The workspace was deleted and your session was updated.'
-          : 'The workspace and its data were deleted permanently.',
+          ? t`The workspace was deleted and your session was updated.`
+          : t`The workspace and its data were deleted permanently.`,
       });
       setDeletingSpace(null);
     } catch (error) {
-      const message = getErrorMessage(error, 'Failed to delete workspace. Please try again.');
-      toast.error('Delete failed', {
+      const message = getErrorMessage(error, t`Failed to delete workspace. Please try again.`);
+      toast.error(t`Delete failed`, {
         description: message,
       });
     } finally {
@@ -300,14 +303,14 @@ export default function WorkspaceSettingsPage() {
       await spaceApi.updateSpace(space.space_id, { display_name: trimmed });
       await runtime.refreshSpaces();
       await spacesQuery.refetch();
-      toast.success('Workspace renamed', {
-        description: 'The workspace name was updated successfully.',
+      toast.success(t`Workspace renamed`, {
+        description: t`The workspace name was updated successfully.`,
       });
       setEditingSpace(null);
       setEditingName('');
     } catch (error) {
-      const message = getErrorMessage(error, 'Failed to rename workspace. Please try again.');
-      toast.error('Rename failed', {
+      const message = getErrorMessage(error, t`Failed to rename workspace. Please try again.`);
+      toast.error(t`Rename failed`, {
         description: message,
       });
     } finally {
@@ -338,10 +341,14 @@ export default function WorkspaceSettingsPage() {
   return (
     <div className="container max-w-5xl mx-auto p-4 sm:p-6 pb-24 sm:pb-12 space-y-6 sm:space-y-8">
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Workspaces & Sharing</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          <Trans>Workspaces & Sharing</Trans>
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Switch between workspaces, review locked spaces, and manage invite access for the ones you
-          can use right now.
+          <Trans>
+            Switch between workspaces, review locked spaces, and manage invite access for the ones
+            you can use right now.
+          </Trans>
         </p>
       </div>
 
@@ -355,16 +362,22 @@ export default function WorkspaceSettingsPage() {
           space.is_accessible === false
       ) ? (
         <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200">
-          Your own workspaces are locked because your Budgero plan is inactive. Subscribe again to
-          regain access.
+          <Trans>
+            Your own workspaces are locked because your Budgero plan is inactive. Subscribe again to
+            regain access.
+          </Trans>
         </div>
       ) : null}
 
       <Card>
         <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <CardTitle>Workspaces</CardTitle>
-            <CardDescription>Switch to a different workspace or create a new one.</CardDescription>
+            <CardTitle>
+              <Trans>Workspaces</Trans>
+            </CardTitle>
+            <CardDescription>
+              <Trans>Switch to a different workspace or create a new one.</Trans>
+            </CardDescription>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button
@@ -373,18 +386,23 @@ export default function WorkspaceSettingsPage() {
               onClick={handleRefreshSpaces}
               disabled={isRefreshing}
             >
-              {isRefreshing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="mr-2 h-4 w-4" />
-              )}
-              Refresh
+              <Trans>
+                {isRefreshing ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                )}
+                Refresh
+              </Trans>
             </Button>
             {!canCreateNewWorkspace ? (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button size="sm" variant="secondary" disabled>
-                    <Plus className="mr-2 h-4 w-4" /> New Workspace
+                    <Trans>
+                      <Plus className="mr-2 h-4 w-4" />
+                      New Workspace
+                    </Trans>
                   </Button>
                 </TooltipTrigger>
                 {createWorkspaceTooltip ? (
@@ -397,26 +415,34 @@ export default function WorkspaceSettingsPage() {
               <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm">
-                    <Plus className="mr-2 h-4 w-4" /> New Workspace
+                    <Trans>
+                      <Plus className="mr-2 h-4 w-4" />
+                      New Workspace
+                    </Trans>
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Create workspace</DialogTitle>
+                    <DialogTitle>
+                      <Trans>Create workspace</Trans>
+                    </DialogTitle>
                     <DialogDescription>
-                      Give your workspace a descriptive name so collaborators know what it includes.
+                      <Trans>
+                        Give your workspace a descriptive name so collaborators know what it
+                        includes.
+                      </Trans>
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="workspace-name" className="text-sm font-medium">
-                        Workspace name
+                        <Trans>Workspace name</Trans>
                       </Label>
                       <Input
                         id="workspace-name"
                         value={newSpaceName}
                         onChange={(event) => setNewSpaceName(event.target.value)}
-                        placeholder="Family budget"
+                        placeholder={t`Family budget`}
                         autoFocus
                       />
                     </div>
@@ -427,10 +453,10 @@ export default function WorkspaceSettingsPage() {
                       onClick={() => setCreateDialogOpen(false)}
                       disabled={isCreating}
                     >
-                      Cancel
+                      <Trans>Cancel</Trans>
                     </Button>
                     <Button onClick={handleCreateSpace} disabled={isCreating} loading={isCreating}>
-                      Create workspace
+                      <Trans>Create workspace</Trans>
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -445,7 +471,7 @@ export default function WorkspaceSettingsPage() {
             <div className="space-y-2">
               <Separator />
               <p className="text-xs font-medium uppercase text-muted-foreground">
-                Locked workspaces
+                <Trans>Locked workspaces</Trans>
               </p>
               <div className="space-y-2">
                 {lockedAcceptedSpaces.map((space) => renderSpaceRow(space, false))}
@@ -456,7 +482,7 @@ export default function WorkspaceSettingsPage() {
             <div className="space-y-2">
               <Separator />
               <p className="text-xs font-medium uppercase text-muted-foreground">
-                Pending invitations
+                <Trans>Pending invitations</Trans>
               </p>
               <div className="space-y-2">
                 {pendingSpaces.map((space) => renderSpaceRow(space, false))}
@@ -466,13 +492,15 @@ export default function WorkspaceSettingsPage() {
           {spaces.length === 0 && (
             <div className="rounded-md border border-dashed border-border/80 p-4 text-sm text-muted-foreground">
               {isCollaboratorOnly
-                ? 'No shared workspaces yet. Ask the workspace owner to send you an invite.'
-                : 'No workspaces yet. Use the button above to create your first workspace.'}
+                ? t`No shared workspaces yet. Ask the workspace owner to send you an invite.`
+                : t`No workspaces yet. Use the button above to create your first workspace.`}
             </div>
           )}
           {spacesQuery.isError ? (
             <div className="rounded-md border border-dashed border-amber-500/40 bg-amber-500/5 p-4 text-sm text-amber-800 dark:text-amber-200">
-              Workspace access details may be stale right now. Refresh once you&apos;re back online.
+              <Trans>
+                Workspace access details may be stale right now. Refresh once you're back online.
+              </Trans>
             </div>
           ) : null}
         </CardContent>
@@ -481,10 +509,14 @@ export default function WorkspaceSettingsPage() {
       {activeSpace ? (
         <Card>
           <CardHeader>
-            <CardTitle>Sharing & invitations</CardTitle>
+            <CardTitle>
+              <Trans>Sharing & invitations</Trans>
+            </CardTitle>
             <CardDescription>
-              Invite collaborators, manage pending invites, and control access for the active
-              workspace.
+              <Trans>
+                Invite collaborators, manage pending invites, and control access for the active
+                workspace.
+              </Trans>
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -494,7 +526,7 @@ export default function WorkspaceSettingsPage() {
       ) : (
         <Card>
           <CardContent className="py-8 text-center text-sm text-muted-foreground">
-            Select or create a workspace to manage sharing options.
+            <Trans>Select or create a workspace to manage sharing options.</Trans>
           </CardContent>
         </Card>
       )}
@@ -506,18 +538,18 @@ export default function WorkspaceSettingsPage() {
             setDeletingSpace(null);
           }
         }}
-        title="Delete workspace"
+        title={t`Delete workspace`}
         description={
           deletingSpace ? (
-            <>
+            <Trans>
               Delete{' '}
               <span className="font-semibold text-foreground">{deletingSpace.display_name}</span>{' '}
               permanently. This removes its data, members, invites, and backups. This action cannot
               be undone.
-            </>
+            </Trans>
           ) : null
         }
-        confirmText="Delete workspace"
+        confirmText={t`Delete workspace`}
         loadingText="Deleting..."
         variant="destructive"
         isLoading={isDeletingSpace}

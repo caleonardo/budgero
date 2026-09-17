@@ -1,5 +1,8 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { toast } from 'sonner';
 import { Calendar as CalendarIcon, Coins, Plus, Pencil, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
@@ -41,6 +44,8 @@ const RETENTION_OPTIONS = [30, 60, 90, 180, 365] as const;
 
 /** Daily-rate cache retention + reconnect-resync settings (user_meta backed). */
 function RateCacheSettingsCard() {
+  const { t } = useLingui();
+
   const [retentionDays, setRetentionDays] = useState<number>(() => {
     try {
       return getRuntime()?.services()?.userMeta.getRateCacheRetentionDays() ?? 30;
@@ -65,8 +70,11 @@ function RateCacheSettingsCard() {
     if (selectedBudget) {
       const pruned = services.currency.pruneRateCache(selectedBudget.ID);
       if (pruned > 0) {
-        toast.success('Rate cache pruned', {
-          description: `${pruned} cached rate${pruned !== 1 ? 's' : ''} older than ${days} days removed.`,
+        toast.success(t`Rate cache pruned`, {
+          description: plural(pruned, {
+            one: `# cached rate older than ${days} days removed.`,
+            other: `# cached rates older than ${days} days removed.`,
+          }),
         });
       }
     }
@@ -80,28 +88,35 @@ function RateCacheSettingsCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-medium">Rate cache & offline sync</CardTitle>
+        <CardTitle className="text-sm font-medium">
+          <Trans>Rate cache & offline sync</Trans>
+        </CardTitle>
         <CardDescription>
-          Exchange rates are fetched daily and cached inside your budget file.
+          <Trans>Exchange rates are fetched daily and cached inside your budget file.</Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-0.5">
-            <p className="text-sm font-medium">Keep cached rates for</p>
+            <p className="text-sm font-medium">
+              <Trans>Keep cached rates for</Trans>
+            </p>
             <p className="text-xs text-muted-foreground">
-              Older rates are pruned and refetched on demand. Longer retention means fewer refetches
-              for historical edits, but a larger budget file — which can slow app load and sync.
+              <Trans>
+                Older rates are pruned and refetched on demand. Longer retention means fewer
+                refetches for historical edits, but a larger budget file — which can slow app load
+                and sync.
+              </Trans>
             </p>
           </div>
           <Select value={String(retentionDays)} onValueChange={(v) => commitRetention(Number(v))}>
-            <SelectTrigger className="w-32" aria-label="Keep cached rates for">
+            <SelectTrigger className="w-32" aria-label={t`Keep cached rates for`}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {RETENTION_OPTIONS.map((days) => (
                 <SelectItem key={days} value={String(days)}>
-                  {days} days
+                  <Trans>{days} days</Trans>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -109,17 +124,21 @@ function RateCacheSettingsCard() {
         </div>
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-0.5">
-            <p className="text-sm font-medium">Update offline rates when back online</p>
+            <p className="text-sm font-medium">
+              <Trans>Update offline rates when back online</Trans>
+            </p>
             <p className="text-xs text-muted-foreground">
-              Transactions converted with a manually entered rate while offline are re-converted
-              with the official rate once you reconnect. Rates you pinned on a transaction are never
-              touched.
+              <Trans>
+                Transactions converted with a manually entered rate while offline are re-converted
+                with the official rate once you reconnect. Rates you pinned on a transaction are
+                never touched.
+              </Trans>
             </p>
           </div>
           <Switch
             checked={resyncOnReconnect}
             onCheckedChange={commitResync}
-            aria-label="Update offline rates when back online"
+            aria-label={t`Update offline rates when back online`}
           />
         </div>
       </CardContent>
@@ -235,26 +254,30 @@ function RateFormDialog({
   onSave: () => void;
   isSaving: boolean;
 }) {
+  const { t } = useLingui();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[90dvh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{editing ? 'Edit Exchange Rate' : 'Add Exchange Rate'}</DialogTitle>
+          <DialogTitle>{editing ? t`Edit Exchange Rate` : t`Add Exchange Rate`}</DialogTitle>
           <DialogDescription>
             {editing
-              ? 'Update the rate and date range. Affected transactions will be recalculated.'
-              : 'Set a custom exchange rate for a specific date range.'}
+              ? t`Update the rate and date range. Affected transactions will be recalculated.`
+              : t`Set a custom exchange rate for a specific date range.`}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-5 py-1">
           {/* Currency pair section */}
           <fieldset className="space-y-3">
             <legend className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Currency Pair
+              <Trans>Currency Pair</Trans>
             </legend>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-sm">From</Label>
+                <Label className="text-sm">
+                  <Trans>From</Trans>
+                </Label>
                 <CurrencySelector
                   value={formData.fromCurrency}
                   onValueChange={(v) => setFormData((f) => ({ ...f, fromCurrency: v }))}
@@ -264,7 +287,9 @@ function RateFormDialog({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">To</Label>
+                <Label className="text-sm">
+                  <Trans>To</Trans>
+                </Label>
                 <CurrencySelector
                   value={formData.toCurrency}
                   onValueChange={(v) => setFormData((f) => ({ ...f, toCurrency: v }))}
@@ -278,7 +303,9 @@ function RateFormDialog({
 
           {/* Rate section */}
           <div className="space-y-1.5">
-            <Label className="text-sm">Exchange Rate</Label>
+            <Label className="text-sm">
+              <Trans>Exchange Rate</Trans>
+            </Label>
             {/* Decimal-contract calculator cell: rates are dimensionless and
                 need EXCHANGE_RATE_PRECISION decimals — the MilliUnits cell
                 would round them to 3. */}
@@ -306,11 +333,11 @@ function RateFormDialog({
                     const parsed = Number.parseFloat(formData.rate);
                     if (!Number.isFinite(parsed) || parsed <= 0) return null;
                     return (
-                      <>
+                      <Trans>
                         {' · '}the reverse (1 {formData.toCurrency} ={' '}
                         {Number((1 / parsed).toFixed(EXCHANGE_RATE_PRECISION))}{' '}
                         {formData.fromCurrency}) is applied automatically
-                      </>
+                      </Trans>
                     );
                   })()}
               </p>
@@ -335,15 +362,19 @@ function RateFormDialog({
                     />
                     <div>
                       <Label htmlFor="also-reverse-rate" className="text-sm font-normal">
-                        Also add the reverse rate
-                        {reverseValue !== null
-                          ? ` (1 ${formData.toCurrency} = ${reverseValue} ${formData.fromCurrency})`
-                          : ''}
+                        <Trans>
+                          Also add the reverse rate
+                          {reverseValue !== null
+                            ? ` (1 ${formData.toCurrency} = ${reverseValue} ${formData.fromCurrency})`
+                            : ''}
+                        </Trans>
                       </Label>
                       {!formData.alsoReverse && (
                         <p className="text-xs text-muted-foreground">
-                          Conversions still derive the reverse automatically; unchecking only skips
-                          the visible second entry.
+                          <Trans>
+                            Conversions still derive the reverse automatically; unchecking only
+                            skips the visible second entry.
+                          </Trans>
                         </p>
                       )}
                     </div>
@@ -355,20 +386,23 @@ function RateFormDialog({
           {/* Date range section */}
           <fieldset className="space-y-3">
             <legend className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Date Range
+              <Trans>Date Range</Trans>
             </legend>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <DateField
-                label="Start Date"
+                label={t`Start Date`}
                 value={formData.startDate}
                 emptyLabel="Select date"
                 onChange={(date) => setFormData((f) => ({ ...f, startDate: date }))}
               />
               <DateField
                 label={
-                  <>
-                    End Date <span className="font-normal text-muted-foreground">(optional)</span>
-                  </>
+                  <Trans>
+                    End Date{' '}
+                    <span className="font-normal text-muted-foreground">
+                      <Trans>(optional)</Trans>
+                    </span>
+                  </Trans>
                 }
                 value={formData.endDate}
                 emptyLabel="Open-ended"
@@ -380,10 +414,10 @@ function RateFormDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button onClick={onSave} disabled={isSaving}>
-            {isSaving ? 'Saving...' : editing ? 'Update' : 'Add'}
+            {isSaving ? t`Saving...` : editing ? t`Update` : t`Add`}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -392,6 +426,8 @@ function RateFormDialog({
 }
 
 export default function CurrencySettingsPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const budgetId = selectedBudget?.ID || 0;
 
@@ -427,17 +463,17 @@ export default function CurrencySettingsPage() {
   const handleSave = async () => {
     const rateNum = parseFloat(formData.rate);
     if (!formData.fromCurrency || !formData.toCurrency || isNaN(rateNum) || rateNum <= 0) {
-      toast.error('Invalid input', {
-        description: 'Please fill in all required fields with valid values.',
+      toast.error(t`Invalid input`, {
+        description: t`Please fill in all required fields with valid values.`,
       });
       return;
     }
     if (formData.fromCurrency === formData.toCurrency) {
-      toast.error('Same currency', { description: 'From and To currencies must be different.' });
+      toast.error(t`Same currency`, { description: t`From and To currencies must be different.` });
       return;
     }
     if (!formData.startDate) {
-      toast.error('Missing start date', { description: 'Please specify a start date.' });
+      toast.error(t`Missing start date`, { description: t`Please specify a start date.` });
       return;
     }
 
@@ -454,11 +490,14 @@ export default function CurrencySettingsPage() {
           budgetId,
         });
         const count = result.recalculated;
-        toast.success('Rate updated', {
+        toast.success(t`Rate updated`, {
           description:
             count > 0
-              ? `${count} transaction${count !== 1 ? 's' : ''} recalculated.`
-              : 'No transactions were affected.',
+              ? plural(count, {
+                  one: `# transaction recalculated.`,
+                  other: `# transactions recalculated.`,
+                })
+              : t`No transactions were affected.`,
         });
       } else {
         const result = await addMutation.mutateAsync({
@@ -471,17 +510,20 @@ export default function CurrencySettingsPage() {
           alsoReverse: formData.alsoReverse,
         });
         const count = result.recalculated;
-        toast.success('Rate added', {
+        toast.success(t`Rate added`, {
           description:
             count > 0
-              ? `${count} transaction${count !== 1 ? 's' : ''} recalculated.`
-              : 'Rate saved. New transactions will use this rate.',
+              ? plural(count, {
+                  one: `# transaction recalculated.`,
+                  other: `# transactions recalculated.`,
+                })
+              : t`Rate saved. New transactions will use this rate.`,
         });
       }
       setDialogOpen(false);
     } catch (err) {
       console.error('Failed to save rate:', err);
-      toast.error('Failed to save', { description: 'An error occurred while saving the rate.' });
+      toast.error(t`Failed to save`, { description: t`An error occurred while saving the rate.` });
     }
   };
 
@@ -493,16 +535,19 @@ export default function CurrencySettingsPage() {
         budgetId,
       });
       const count = result.recalculated;
-      toast.success('Rate deleted', {
+      toast.success(t`Rate deleted`, {
         description:
           count > 0
-            ? `${count} transaction${count !== 1 ? 's' : ''} recalculated using fallback rates.`
-            : 'No transactions were affected.',
+            ? plural(count, {
+                one: `# transaction recalculated using fallback rates.`,
+                other: `# transactions recalculated using fallback rates.`,
+              })
+            : t`No transactions were affected.`,
       });
     } catch (err) {
       console.error('Failed to delete rate:', err);
-      toast.error('Failed to delete', {
-        description: 'An error occurred while deleting the rate.',
+      toast.error(t`Failed to delete`, {
+        description: t`An error occurred while deleting the rate.`,
       });
     } finally {
       setDeleteTarget(null);
@@ -514,8 +559,8 @@ export default function CurrencySettingsPage() {
   return (
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Currencies"
-        description="Manage custom exchange rates for your budget. Custom rates take priority over automatically fetched rates for transactions and account balances within the specified date range."
+        title={t`Currencies`}
+        description={t`Manage custom exchange rates for your budget. Custom rates take priority over automatically fetched rates for transactions and account balances within the specified date range.`}
       />
 
       <Card>
@@ -523,30 +568,42 @@ export default function CurrencySettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Coins className="h-5 w-5" />
-                Custom Exchange Rates
+                <Trans>
+                  <Coins className="h-5 w-5" />
+                  Custom Exchange Rates
+                </Trans>
               </CardTitle>
               <CardDescription>
-                Define exchange rates with date ranges. Transactions without a manual rate override
-                will be recalculated when you add, edit, or delete a custom rate.
+                <Trans>
+                  Define exchange rates with date ranges. Transactions without a manual rate
+                  override will be recalculated when you add, edit, or delete a custom rate.
+                </Trans>
               </CardDescription>
             </div>
             <Button size="sm" onClick={openAddDialog}>
-              <Plus className="h-4 w-4 mr-1" />
-              Add Rate
+              <Trans>
+                <Plus className="h-4 w-4 mr-1" />
+                Add Rate
+              </Trans>
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="text-sm text-muted-foreground py-8 text-center">Loading rates...</p>
+            <p className="text-sm text-muted-foreground py-8 text-center">
+              <Trans>Loading rates...</Trans>
+            </p>
           ) : rates.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Coins className="h-8 w-8 mx-auto mb-3 opacity-50" />
-              <p className="text-sm font-medium">No custom rates defined</p>
+              <p className="text-sm font-medium">
+                <Trans>No custom rates defined</Trans>
+              </p>
               <p className="text-xs mt-1">
-                Add a custom rate to override automatically fetched exchange rates for specific date
-                ranges.
+                <Trans>
+                  Add a custom rate to override automatically fetched exchange rates for specific
+                  date ranges.
+                </Trans>
               </p>
             </div>
           ) : (
@@ -554,11 +611,21 @@ export default function CurrencySettingsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>From</TableHead>
-                    <TableHead>To</TableHead>
-                    <TableHead className="text-right">Rate</TableHead>
-                    <TableHead>Start Date</TableHead>
-                    <TableHead>End Date</TableHead>
+                    <TableHead>
+                      <Trans>From</Trans>
+                    </TableHead>
+                    <TableHead>
+                      <Trans>To</Trans>
+                    </TableHead>
+                    <TableHead className="text-right">
+                      <Trans>Rate</Trans>
+                    </TableHead>
+                    <TableHead>
+                      <Trans>Start Date</Trans>
+                    </TableHead>
+                    <TableHead>
+                      <Trans>End Date</Trans>
+                    </TableHead>
                     <TableHead className="w-[80px]" />
                   </TableRow>
                 </TableHeader>
@@ -572,7 +639,11 @@ export default function CurrencySettingsPage() {
                       </TableCell>
                       <TableCell>{rate.StartDate}</TableCell>
                       <TableCell>
-                        {rate.EndDate || <span className="text-muted-foreground">Open</span>}
+                        {rate.EndDate || (
+                          <span className="text-muted-foreground">
+                            <Trans>Open</Trans>
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
@@ -607,28 +678,46 @@ export default function CurrencySettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">How it works</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            <Trans>How it works</Trans>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
             <li>
-              <strong className="text-foreground">Custom rates take priority</strong> over
-              automatically fetched rates when a matching date range exists. Account balances are
-              pinned to the custom rate too — no daily market revaluation while it's active.
+              <Trans>
+                <strong className="text-foreground">
+                  <Trans>Custom rates take priority</Trans>
+                </strong>
+                over automatically fetched rates when a matching date range exists. Account balances
+                are pinned to the custom rate too — no daily market revaluation while it's active.
+              </Trans>
             </li>
             <li>
-              <strong className="text-foreground">Retroactive recalculation</strong> — adding or
-              changing a rate recalculates all affected transactions that don't have a manual
-              override.
+              <Trans>
+                <strong className="text-foreground">
+                  <Trans>Retroactive recalculation</Trans>
+                </strong>
+                — adding or changing a rate recalculates all affected transactions that don't have a
+                manual override.
+              </Trans>
             </li>
             <li>
-              <strong className="text-foreground">Manual overrides are protected</strong> —
-              transactions where you manually set the exchange rate in the table are never
-              automatically changed.
+              <Trans>
+                <strong className="text-foreground">
+                  <Trans>Manual overrides are protected</Trans>
+                </strong>
+                — transactions where you manually set the exchange rate in the table are never
+                automatically changed.
+              </Trans>
             </li>
             <li>
-              <strong className="text-foreground">Open-ended rates</strong> — leave the end date
-              empty to apply the rate to all future dates.
+              <Trans>
+                <strong className="text-foreground">
+                  <Trans>Open-ended rates</Trans>
+                </strong>
+                — leave the end date empty to apply the rate to all future dates.
+              </Trans>
             </li>
           </ul>
         </CardContent>
@@ -649,15 +738,15 @@ export default function CurrencySettingsPage() {
       <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Delete custom rate?"
+        title={t`Delete custom rate?`}
         description={
-          <>
+          <Trans>
             This will delete the {deleteTarget?.FromCurrency} → {deleteTarget?.ToCurrency} rate (
             {deleteTarget?.StartDate} – {deleteTarget?.EndDate || 'open'}). Affected transactions
             will be recalculated using fallback rates.
-          </>
+          </Trans>
         }
-        confirmText="Delete"
+        confirmText={t`Delete`}
         loadingText="Deleting..."
         variant="destructive"
         isLoading={deleteMutation.isPending}

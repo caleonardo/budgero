@@ -1,17 +1,24 @@
+import { msg } from '@lingui/core/macro';
+import type { MessageDescriptor } from '@lingui/core';
 /**
  * Map of URL segments to human-readable breadcrumb labels
  */
-export const BREADCRUMB_LABEL_MAP: Record<string, string> = {
-  dashboard: 'Dashboard',
-  budget: 'Budget',
-  accounts: 'Accounts',
-  reports: 'Reports',
-  dashboards: 'Custom Dashboards',
-  explorer: 'Explorer',
-  settings: 'Settings',
-  automations: 'Automations',
-  rules: 'Rules',
-  about: 'About',
+export const BREADCRUMB_LABEL_MAP: Record<string, MessageDescriptor> = {
+  dashboard: msg`Dashboard`,
+  budget: msg`Budget`,
+  budgeting: msg`Budgeting`,
+  accounts: msg`Accounts`,
+  all: msg`All Transactions`,
+  warranties: msg`Warranties`,
+  reports: msg`Reports`,
+  prebuilt: msg`Prebuilt`,
+  dashboards: msg`Custom Dashboards`,
+  explorer: msg`Explorer`,
+  settings: msg`Settings`,
+  automations: msg`Automations`,
+  rules: msg`Rules`,
+  recurring: msg`Recurring`,
+  about: msg`About`,
 };
 
 /**

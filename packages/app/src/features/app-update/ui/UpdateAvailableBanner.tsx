@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -25,6 +26,8 @@ function readPersistedDismiss(version: string): boolean {
  * the query still runs so the server can count active clients.
  */
 export function UpdateAvailableBanner() {
+  const { t } = useLingui();
+
   const [explicitlyDismissed, setExplicitlyDismissed] = useState(false);
   const { data } = useQuery({
     queryKey: ['version', 'latest'],
@@ -59,7 +62,9 @@ export function UpdateAvailableBanner() {
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-3 py-3">
           <p className="text-sm font-medium flex-1 min-w-0 truncate">
-            Budgero {latest} is available — you&apos;re running {data.build_version}
+            <Trans>
+              Budgero {latest} is available — you're running {data.build_version}
+            </Trans>
           </p>
           <a
             href="https://budgero.app/changelog"
@@ -67,12 +72,12 @@ export function UpdateAvailableBanner() {
             rel="noopener noreferrer"
             className="text-sm font-semibold underline whitespace-nowrap hover:opacity-90"
           >
-            See what&apos;s new
+            <Trans>See what's new</Trans>
           </a>
           <button
             onClick={handleDismiss}
             className="p-1 hover:bg-white/20 rounded transition-colors"
-            aria-label="Dismiss banner"
+            aria-label={t`Dismiss banner`}
           >
             <X className="h-4 w-4" />
           </button>

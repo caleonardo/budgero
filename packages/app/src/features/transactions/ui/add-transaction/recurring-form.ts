@@ -1,3 +1,5 @@
+import type { MessageDescriptor } from '@lingui/core';
+import { msg, t, plural } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import type { MilliUnits, RecurringSchedule } from '@budgero/core/browser';
 import type { TransactionFormInitialValues } from '@features/transactions/api/useTransactionForm';
@@ -39,15 +41,15 @@ export interface RecurringTransactionFormSubmit {
   active: boolean;
 }
 
-export const FREQUENCY_OPTIONS: { value: string; label: string }[] = [
-  { value: 'day:1', label: 'Daily' },
-  { value: 'week:1', label: 'Weekly' },
-  { value: 'week:2', label: 'Every 2 weeks' },
-  { value: 'month:1', label: 'Monthly' },
-  { value: 'month:2', label: 'Every 2 months' },
-  { value: 'month:3', label: 'Quarterly' },
-  { value: 'month:6', label: 'Every 6 months' },
-  { value: 'year:1', label: 'Yearly' },
+export const FREQUENCY_OPTIONS: { value: string; label: MessageDescriptor }[] = [
+  { value: 'day:1', label: msg`Daily` },
+  { value: 'week:1', label: msg`Weekly` },
+  { value: 'week:2', label: msg`Every 2 weeks` },
+  { value: 'month:1', label: msg`Monthly` },
+  { value: 'month:2', label: msg`Every 2 months` },
+  { value: 'month:3', label: msg`Quarterly` },
+  { value: 'month:6', label: msg`Every 6 months` },
+  { value: 'year:1', label: msg`Yearly` },
 ];
 
 export function dateKeyToLocalDate(value?: string | null): Date | null {
@@ -63,11 +65,19 @@ export function scheduleToFrequency(schedule: RecurringSchedule): string {
 }
 
 export function frequencyOptionsFor(value: string): { value: string; label: string }[] {
-  if (FREQUENCY_OPTIONS.some((option) => option.value === value)) return FREQUENCY_OPTIONS;
+  const options = FREQUENCY_OPTIONS.map((option) => ({ ...option, label: t(option.label) }));
+  if (options.some((option) => option.value === value)) return options;
   const [unit, countRaw] = value.split(':');
   const count = Math.max(1, Number(countRaw || '1'));
-  const pluralUnit = count === 1 ? unit : `${unit}s`;
-  return [...FREQUENCY_OPTIONS, { value, label: `Every ${count} ${pluralUnit}` }];
+  const label =
+    unit === 'day'
+      ? plural(count, { one: 'Every # day', other: 'Every # days' })
+      : unit === 'week'
+        ? plural(count, { one: 'Every # week', other: 'Every # weeks' })
+        : unit === 'month'
+          ? plural(count, { one: 'Every # month', other: 'Every # months' })
+          : plural(count, { one: 'Every # year', other: 'Every # years' });
+  return [...options, { value, label }];
 }
 
 export function createRecurringFormSettings(

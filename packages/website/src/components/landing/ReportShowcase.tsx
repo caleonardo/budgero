@@ -1,4 +1,5 @@
 'use client';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { useState } from 'react';
 import Image from 'next/image';
@@ -23,59 +24,59 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { track } from '@/lib/analytics';
+import { demoScreenshot } from './demo-screenshots';
 import { HOMEPAGE_VARIANT, TrialLink } from './TrialLink';
 
-const reports = [
-  {
-    id: 'money-map',
-    label: 'Money Map',
-    icon: GitFork,
-    title: 'Follow your money, from payday to savings.',
-    description:
-      'See how your household income divides between everyday spending and the money you keep for later.',
-    image: '/demo-report-money-map.png',
-    alt: 'Budgero Money Map showing two salaries flowing into household spending categories and savings, using demo data.',
-    caption: 'Desktop report shown with demo data.',
-  },
-  {
-    id: 'spending',
-    label: 'Spending',
-    icon: ChartPie,
-    title: 'Find the patterns behind your spending.',
-    description:
-      'Explore spending by category, group, or payee. See what takes the biggest share and how it changes over time.',
-    image: '/demo-report-spending.png',
-    alt: 'Budgero spending report with a category breakdown for rent, groceries, holidays, dining out, and other household expenses, using demo data.',
-    caption: 'Desktop report shown with demo data.',
-  },
-  {
-    id: 'wealth',
-    label: 'Wealth',
-    icon: TrendingUp,
-    title: 'See how far you have come.',
-    description:
-      'Follow your assets, debt, and net worth over time—including the months when life costs a little more.',
-    image: '/demo-report-wealth.png',
-    alt: 'Budgero Wealth report showing a year of net worth changes, including a dip for a planned holiday, using demo data.',
-    caption: 'Desktop report shown with demo data.',
-  },
-  {
-    id: 'scenario',
-    label: 'Scenarios',
-    icon: FlaskConical,
-    title: 'Make room for “what if?”',
-    description:
-      'Adjust income, spending, or a one-off cost to explore how your balance could change before you change your plans.',
-    image: '/demo-report-scenario.png',
-    alt: 'Budgero Scenario Planner with adjustable income and spending, showing an illustrative 24-month balance projection from demo data.',
-    caption: 'Illustrative projection based on demo data and scenario assumptions.',
-  },
-] as const;
+const reports = (copy: CopyTranslator, locale: string) =>
+  [
+    {
+      id: 'money-map',
+      label: copy('u_8ae31c6b6255'),
+      icon: GitFork,
+      title: copy('u_f1430f1cc733'),
+      description: copy('u_e0c6f737e2a6'),
+      image: demoScreenshot(locale, 'report-money-map'),
+      alt: copy('u_f984efd7069b'),
+      caption: copy('u_850658ffb64e'),
+    },
+    {
+      id: 'spending',
+      label: copy('u_c2c7ae2ad923'),
+      icon: ChartPie,
+      title: copy('u_96a729117270'),
+      description: copy('u_12fd696e3387'),
+      image: demoScreenshot(locale, 'report-spending'),
+      alt: copy('u_53928a71bb94'),
+      caption: copy('u_850658ffb64e'),
+    },
+    {
+      id: 'wealth',
+      label: copy('u_35466d70b118'),
+      icon: TrendingUp,
+      title: copy('u_440a368ca7f3'),
+      description: copy('u_3c4de64fb2b7'),
+      image: demoScreenshot(locale, 'report-wealth'),
+      alt: copy('u_ede573c2e73d'),
+      caption: copy('u_850658ffb64e'),
+    },
+    {
+      id: 'scenario',
+      label: copy('u_72fa5509b2f9'),
+      icon: FlaskConical,
+      title: copy('u_8d21f54036f6'),
+      description: copy('u_c38de080eb4d'),
+      image: demoScreenshot(locale, 'report-scenario'),
+      alt: copy('u_647294baf1ef'),
+      caption: copy('u_21212020439b'),
+    },
+  ] as const;
 
 export function ReportShowcase() {
+  const locale = useLocale();
+  const copy = useTranslations('updates');
   const [selected, setSelected] = useState(0);
   const [zoomed, setZoomed] = useState(true);
-  const report = reports[selected];
+  const report = reports(copy, locale)[selected];
 
   return (
     <section
@@ -86,27 +87,29 @@ export function ReportShowcase() {
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-3xl text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">
-            Your money, in perspective
+            {' '}
+            {copy('u_ce69d9e65a0c')}{' '}
           </p>
           <h2
             id="reports-heading"
             className="text-balance text-3xl font-bold tracking-tight sm:text-4xl"
           >
-            See where your money goes.
-            <br className="hidden sm:block" /> See your progress.
+            {' '}
+            {copy('u_08d01365b9c2')} <br className="hidden sm:block" />{' '}
+            {copy('u_4e2ec2b6f163')}{' '}
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-pretty leading-7 text-muted-foreground">
-            A plan for today. A bigger picture over time. Turn your budget history into reports that
-            help you understand your spending and think ahead.
+            {' '}
+            {copy('u_d8daf259bbef')}{' '}
           </p>
         </div>
 
         <div
           role="group"
-          aria-label="Choose a report to preview"
+          aria-label={copy('u_061a29ec8561')}
           className="mx-auto mt-8 grid max-w-2xl grid-cols-2 gap-2 rounded-2xl border border-border/60 bg-muted/30 p-2 sm:grid-cols-4"
         >
-          {reports.map((item, index) => (
+          {reports(copy, locale).map((item, index) => (
             <button
               key={item.id}
               type="button"
@@ -145,7 +148,9 @@ export function ReportShowcase() {
               <DialogTrigger asChild>
                 <button
                   type="button"
-                  aria-label={`Enlarge ${report.label} screenshot`}
+                  aria-label={copy('u_1c3f4b4fa542', {
+                    p0: report.label,
+                  })}
                   className="group relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-border bg-card text-left shadow-xl shadow-black/5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:rounded-2xl"
                   onClick={() =>
                     track('Report Preview Enlarged', {
@@ -164,7 +169,7 @@ export function ReportShowcase() {
                     className="h-auto w-full"
                   />
                   <span className="absolute bottom-3 right-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/95 px-3 py-2 text-xs font-medium shadow-sm transition-colors group-hover:bg-accent sm:bottom-5 sm:right-5">
-                    <Expand className="size-3.5" aria-hidden="true" /> View larger
+                    <Expand className="size-3.5" aria-hidden="true" /> {copy('u_f7ab0572fbce')}{' '}
                   </span>
                 </button>
               </DialogTrigger>
@@ -189,7 +194,7 @@ export function ReportShowcase() {
                     variant="ghost"
                     size="icon"
                     className="size-11 shrink-0"
-                    aria-label="Close report preview"
+                    aria-label={copy('u_eaa53653d96a')}
                   >
                     <X className="size-5" aria-hidden="true" />
                   </Button>
@@ -202,7 +207,7 @@ export function ReportShowcase() {
                   size="sm"
                   className="min-h-10"
                   aria-pressed={zoomed}
-                  aria-label={zoomed ? 'Fit report to screen' : 'Zoom in on report'}
+                  aria-label={zoomed ? copy('u_1fec95c93489') : copy('u_abc8886a95a1')}
                   onClick={() => setZoomed(!zoomed)}
                 >
                   {zoomed ? (
@@ -210,15 +215,15 @@ export function ReportShowcase() {
                   ) : (
                     <ZoomIn className="size-4" aria-hidden="true" />
                   )}
-                  {zoomed ? 'Fit to screen' : 'Zoom in'}
+                  {zoomed ? copy('u_32bb0d298ca1') : copy('u_0e47f09a748f')}
                 </Button>
                 <p className="text-xs text-muted-foreground">
-                  {zoomed ? 'Scroll to explore the details.' : 'Zoom in for a closer look.'}
+                  {zoomed ? copy('u_e058e2929995') : copy('u_cf1049e5d904')}
                 </p>
               </div>
               <div
                 role="region"
-                aria-label="Report image; scroll to explore when enlarged"
+                aria-label={copy('u_4718ae434841')}
                 tabIndex={0}
                 className="min-h-0 flex-1 overflow-auto overscroll-contain bg-muted/20 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
               >
@@ -253,18 +258,18 @@ export function ReportShowcase() {
             className="h-auto min-h-12 max-w-full whitespace-normal rounded-full px-5 py-3"
           >
             <TrialLink placement="reports">
-              Try it with your own budget
+              {' '}
+              {copy('u_d13eabb1cbbd')}{' '}
               <ArrowRight
                 className="ml-2 hidden size-4 shrink-0 min-[360px]:block"
                 aria-hidden="true"
               />
             </TrialLink>
           </Button>
-          <p className="mt-3 text-xs text-muted-foreground">
-            All reports included. 35 days free. No credit card.
-          </p>
+          <p className="mt-3 text-xs text-muted-foreground"> {copy('u_f92c9910a7fb')} </p>
         </div>
       </div>
     </section>
   );
 }
+type CopyTranslator = (key: string, values?: Record<string, string | number>) => string;

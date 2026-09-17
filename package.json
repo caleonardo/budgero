@@ -1,6 +1,6 @@
 {
   "name": "budgero",
-  "version": "1.12.1",
+  "version": "1.13.2",
   "license": "AGPL-3.0-only",
   "description": "Personal budget management application",
   "private": true,
@@ -44,10 +44,16 @@
     "release:sdk-python": "TWINE_USERNAME=${TWINE_USERNAME:-__token__} TWINE_PASSWORD=${TWINE_PASSWORD:-} TWINE_REPOSITORY=${TWINE_REPOSITORY:-pypi} ./scripts/release-python-sdk.sh",
     "security": "pnpm run security:deps; pnpm run security:go",
     "security:deps": "osv-scanner -r .",
-    "security:go": "cd packages/server && go run golang.org/x/vuln/cmd/govulncheck@latest ./..."
+    "security:go": "cd packages/server && go run golang.org/x/vuln/cmd/govulncheck@latest ./...",
+    "i18n:check": "node scripts/i18n/check-catalogs.mjs",
+    "i18n:extract": "pnpm --dir packages/app run i18n:extract",
+    "i18n:overflow": "node scripts/i18n/check-overflow.mjs",
+    "i18n:sweep": "node scripts/i18n/sweep.mjs --max 0"
   },
   "devDependencies": {
+    "@types/jscodeshift": "^17.3.0",
     "husky": "^9.1.7",
+    "jscodeshift": "^17.4.0",
     "lint-staged": "^16.4.0",
     "prettier": "^3.9.6"
   },

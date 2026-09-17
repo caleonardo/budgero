@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import type { AdminUserDetails } from '@features/admin/model/admin-users';
@@ -16,26 +17,30 @@ export function WorkspacesTab({
   error: string | null;
   onRetry: () => void;
 }) {
+  const { t } = useLingui();
+
   return (
     <TabSection loading={loading} error={error} onRetry={onRetry}>
       <Card>
         <CardHeader>
-          <CardTitle>Workspace Access</CardTitle>
+          <CardTitle>
+            <Trans>Workspace Access</Trans>
+          </CardTitle>
           <CardDescription>
-            Membership footprint and owner-wide collaborator seat usage.
+            <Trans>Membership footprint and owner-wide collaborator seat usage.</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-3">
           <CompactMetric
-            label="Owned Workspaces"
+            label={t`Owned Workspaces`}
             value={`${details?.workspaces.ownedWorkspaceCount ?? 0}`}
           />
           <CompactMetric
-            label="Collaborator Workspaces"
+            label={t`Collaborator Workspaces`}
             value={`${details?.workspaces.collaboratorWorkspaceCount ?? 0}`}
           />
           <CompactMetric
-            label="Shares Used"
+            label={t`Shares Used`}
             value={`${details?.workspaces.ownedShareSeatsUsed ?? 0}/${details?.workspaces.ownedShareSeatsLimit ?? 5}`}
           />
         </CardContent>
@@ -43,9 +48,11 @@ export function WorkspacesTab({
 
       <Card>
         <CardHeader>
-          <CardTitle>Workspace Memberships</CardTitle>
+          <CardTitle>
+            <Trans>Workspace Memberships</Trans>
+          </CardTitle>
           <CardDescription>
-            Every workspace this account belongs to, including invitation status.
+            <Trans>Every workspace this account belongs to, including invitation status.</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -54,11 +61,21 @@ export function WorkspacesTab({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Workspace</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Owner</TableHead>
-                  <TableHead>Created</TableHead>
+                  <TableHead>
+                    <Trans>Workspace</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Role</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Status</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Owner</Trans>
+                  </TableHead>
+                  <TableHead>
+                    <Trans>Created</Trans>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

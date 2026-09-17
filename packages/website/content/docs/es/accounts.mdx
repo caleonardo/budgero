@@ -1,0 +1,107 @@
+---
+title: "Cuentas"
+summary: "Añade cuentas corrientes, de ahorro, efectivo, crédito y de seguimiento con confianza. Aprende cómo los saldos, las divisas y la conciliación funcionan en conjunto."
+section: accounts-and-imports
+topicId: accounts
+takeaways:
+  - "Qué tipos de cuentas están en el presupuesto, fuera del presupuesto o te permiten elegir."
+  - "Cómo las cuentas multidivisa se convierten a la divisa de tu presupuesto."
+  - "El flujo de trabajo de conciliación y qué se conserva al archivar una cuenta."
+---
+
+Las cuentas son donde vive físicamente tu dinero; el presupuesto es el plan que se superpone a ellas. Budgero mantiene esa distinción clara — por eso elegir el tipo de cuenta correcto importa más de lo que parece al principio.
+
+## Tipos de cuenta
+
+<table>
+  <thead>
+    <tr>
+      <th>Tipo</th>
+      <th>Naturaleza</th>
+      <th>Participación en el presupuesto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Cuenta corriente</strong></td>
+      <td>Activo</td>
+      <td>Siempre en el presupuesto</td>
+    </tr>
+    <tr>
+      <td><strong>Cuenta de ahorro</strong></td>
+      <td>Activo</td>
+      <td>Siempre en el presupuesto</td>
+    </tr>
+    <tr>
+      <td><strong>Efectivo</strong></td>
+      <td>Activo</td>
+      <td>Siempre en el presupuesto</td>
+    </tr>
+    <tr>
+      <td><strong>Tarjeta de crédito</strong></td>
+      <td>Pasivo</td>
+      <td>A tu elección</td>
+    </tr>
+    <tr>
+      <td><strong>Préstamo</strong></td>
+      <td>Pasivo</td>
+      <td>A tu elección</td>
+    </tr>
+    <tr>
+      <td><strong>Hipoteca</strong></td>
+      <td>Pasivo</td>
+      <td>Siempre fuera del presupuesto</td>
+    </tr>
+    <tr>
+      <td><strong>Inversión / Jubilación</strong></td>
+      <td>Activo</td>
+      <td>Siempre fuera del presupuesto</td>
+    </tr>
+    <tr>
+      <td><strong>Inmuebles / Otro activo</strong></td>
+      <td>Activo</td>
+      <td>Siempre fuera del presupuesto</td>
+    </tr>
+  </tbody>
+</table>
+
+Las cuentas **en el presupuesto** alimentan tu presupuesto: su dinero aparece en [Por asignar](/docs/ready-to-assign) y sus gastos afectan a las categorías. Las cuentas **fuera del presupuesto** (de seguimiento) contribuyen al patrimonio neto pero se mantienen al margen del cálculo de sobres — no presupuestas las fluctuaciones del mercado de tu fondo de jubilación.
+
+Las tarjetas de crédito y los préstamos son **flexibles**: en el presupuesto si quieres que la maquinaria de deudas de Budgero gestione los pagos y la amortización (ver [Seguimiento de deudas](/docs/debt-tracking)), fuera del presupuesto si solo quieres llevar el seguimiento del saldo.
+
+## Saldos iniciales
+
+Cuando creas una cuenta con un saldo, Budgero lo registra como una transacción de apertura para que las cuentas cuadren desde el primer día:
+
+- Las **cuentas de activo** reciben un ingreso ("Saldo inicial") que va a parar a Ingresos — lo que significa que tu dinero existente se puede asignar de inmediato.
+- Las **cuentas de deuda** pueden registrar tanto el total prestado como lo que ya has pagado, de modo que el saldo refleje lo que realmente debes hoy.
+
+## Cuentas multidivisa
+
+Cualquier cuenta puede estar denominada en más de 120 monedas fiduciarias o 25 criptomonedas principales, de forma independiente a tu [moneda del presupuesto](/docs/budget-currency). Para una cuenta en moneda extranjera, cada transacción almacena dos importes: el **original** (lo que ocurrió realmente, en la moneda de la cuenta) y el valor **convertido** (lo que ve tu presupuesto), junto con el tipo de cambio utilizado.
+
+Los tipos de cambio se resuelven en un orden definido:
+
+1. **Tipos personalizados** que has fijado a un rango de fechas — útil cuando moviste dinero a un tipo conocido.
+2. **Tipos obtenidos** — Budgero recupera los tipos diarios automáticamente.
+3. **Tipos manuales** que has introducido — estos también permiten que multidivisa funcione completamente sin conexión y en configuraciones de autoalojamiento sin una API de tipos de cambio.
+4. **Tipo más reciente más cercano** — el tipo del día anterior más cercano (hasta una semana atrás) cuando el día exacto no está en caché.
+
+También puedes sobrescribir el tipo de cambio en cualquier transacción individual — la herramienta adecuada cuando el tipo de liquidación real de tu tarjeta difiere de la media del mercado y quieres que el importe convertido coincida con tu extracto hasta el céntimo.
+
+## Conciliación
+
+Conciliar es el hábito que mantiene un presupuesto manual fiable: comparar el saldo de Budgero con el de tu banco y confirmar que coinciden.
+
+1. Abre la cuenta y compara su saldo con la app de tu banco o el extracto.
+2. Si difieren, busca la diferencia — normalmente una transacción omitida, un duplicado o un cargo pendiente que el banco aún no ha liquidado.
+3. Añade una transacción de ajuste si una pequeña discrepancia no merece la pena investigarla a fondo.
+4. **Concilia** la cuenta — Budgero marca todas las transacciones hasta esa fecha como conciliadas y registra la hora de conciliación en la cuenta.
+
+Las transacciones conciliadas son tu historial verificado; el sello te indica lo reciente que es esa verificación. Conciliar semanalmente te lleva unos dos minutos por cuenta. Conciliar mensualmente también funciona. «Nunca» es como mueren los presupuestos manuales — consulta [Por asignar](/docs/ready-to-assign) para ver cómo la deriva no conciliada aparece en tus números.
+
+## Cerrar una cuenta
+
+Las cuentas se **archivan**, no se eliminan. Una cuenta archivada desaparece de los selectores y las listas del día a día, pero cada transacción que tuvo permanece en tus informes e historial — cierra tu vieja cuenta bancaria sin perder cinco años de registros. El archivado es reversible; desarchívala y volverá exactamente como estaba.
+
+Antes de archivar, lleva el saldo a cero (transfiere los fondos restantes a otra cuenta) para que tu patrimonio neto y Por asignar no arrastren un saldo fantasma.

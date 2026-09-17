@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { Check, ChevronsUpDown, Tag, X } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -33,7 +34,7 @@ export function LabelCombobox({
   budgetId,
   value,
   onChange,
-  placeholder = 'No label',
+  placeholder: placeholderProp,
   triggerClassName,
   popoverContentClassName,
   disabled = false,
@@ -42,6 +43,8 @@ export function LabelCombobox({
   defaultOpen = false,
   onOpenChange,
 }: LabelComboboxProps) {
+  const { t } = useLingui();
+  const placeholder = placeholderProp ?? t`No label`;
   const [open, setOpen] = React.useState(defaultOpen);
   const [search, setSearch] = React.useState('');
   const labelsQuery = useLabels(budgetId, providedLabels === undefined);
@@ -125,7 +128,7 @@ export function LabelCombobox({
       <PopoverContent className={cn('w-[300px] p-0', popoverContentClassName)} align="start">
         <Command loop>
           <CommandInput
-            placeholder="Search labels..."
+            placeholder={t`Search labels...`}
             value={search}
             onValueChange={setSearch}
             disabled={disabled || isFetching}
@@ -133,21 +136,23 @@ export function LabelCombobox({
           <CommandList>
             <CommandEmpty>
               {normalizedSearch
-                ? 'No matching labels.'
+                ? t`No matching labels.`
                 : labels.length === 0
-                  ? 'No labels yet.'
-                  : 'Type to filter labels.'}
+                  ? t`No labels yet.`
+                  : t`Type to filter labels.`}
             </CommandEmpty>
 
             {allowClear && (
-              <CommandGroup heading="Actions">
+              <CommandGroup heading={t`Actions`}>
                 <CommandItem
                   value="__clear_label__"
                   onSelect={() => handleSelect(null)}
                   className="flex items-center gap-2 text-foreground data-[selected=true]:bg-muted/80 data-[selected=true]:text-foreground"
                 >
                   <X className="h-4 w-4" />
-                  <span>Clear label</span>
+                  <span>
+                    <Trans>Clear label</Trans>
+                  </span>
                   <Check
                     className={cn(
                       'ml-auto h-4 w-4',
@@ -158,7 +163,7 @@ export function LabelCombobox({
               </CommandGroup>
             )}
 
-            <CommandGroup heading="Labels">
+            <CommandGroup heading={t`Labels`}>
               {filteredLabels.map((label) => (
                 <CommandItem
                   key={label.ID}

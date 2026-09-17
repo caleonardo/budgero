@@ -78,11 +78,14 @@ vi.mock('@shared/runtime/global', () => ({
           exclude: boolean,
           priority: number
         ) =>
-          Object.assign(state.categories.find((c) => c.ID === id)!, {
-            Name: name,
-            ExcludeFromBudgetPace: exclude,
-            FundingPriority: priority,
-          }),
+          Object.assign(
+            state.categories.find((c) => c.ID === id)!,
+            {
+              Name: name,
+              ExcludeFromBudgetPace: exclude,
+              FundingPriority: priority,
+            }
+          ),
         deleteCategory: vi.fn(),
         addCategory: mock.addCategory,
       },

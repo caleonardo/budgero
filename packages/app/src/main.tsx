@@ -2,6 +2,8 @@ import { createRoot } from 'react-dom/client';
 import '@/fonts';
 import '@/index.css';
 import App from '@/App';
+import { I18nProvider } from '@lingui/react';
+import { i18n, initI18n } from '@shared/i18n';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { shadcn } from '@clerk/themes';
 import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
@@ -80,20 +82,25 @@ function renderAppBody() {
   return <App />;
 }
 
-createRoot(document.getElementById('root')!).render(
-  <HelmetProvider>
-    {!USES_CLERK ? (
-      renderAppBody()
-    ) : (
-      <ClerkProvider
-        publishableKey={PUBLISHABLE_KEY ?? ''}
-        afterSignOutUrl="/"
-        signInUrl="/auth"
-        signUpUrl="/auth?mode=signup"
-        appearance={{ cssLayerName: 'clerk', baseTheme: [shadcn] }}
-      >
-        {renderAppBody()}
-      </ClerkProvider>
-    )}
-  </HelmetProvider>
-);
+// Catalogs load before mount so no screen renders in the wrong language first.
+void initI18n().then(() => {
+  createRoot(document.getElementById('root')!).render(
+    <I18nProvider i18n={i18n}>
+      <HelmetProvider>
+        {!USES_CLERK ? (
+          renderAppBody()
+        ) : (
+          <ClerkProvider
+            publishableKey={PUBLISHABLE_KEY ?? ''}
+            afterSignOutUrl="/"
+            signInUrl="/auth"
+            signUpUrl="/auth?mode=signup"
+            appearance={{ cssLayerName: 'clerk', baseTheme: [shadcn] }}
+          >
+            {renderAppBody()}
+          </ClerkProvider>
+        )}
+      </HelmetProvider>
+    </I18nProvider>
+  );
+});

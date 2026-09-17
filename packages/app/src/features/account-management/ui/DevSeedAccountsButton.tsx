@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Sprout } from 'lucide-react';
 import { toast } from 'sonner';
@@ -110,6 +111,8 @@ function randomBalance(): MilliUnits {
 }
 
 export function DevSeedAccountsButton() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const addAccount = useAddAccount();
   const [count, setCount] = useState(40);
@@ -121,7 +124,7 @@ export function DevSeedAccountsButton() {
 
   const handleSeed = async () => {
     if (!budgetId) {
-      toast.error('No budget selected');
+      toast.error(t`No budget selected`);
       return;
     }
     const specs = buildSeedSpecs(Math.max(1, Math.min(200, count)));
@@ -152,9 +155,9 @@ export function DevSeedAccountsButton() {
         created += 1;
         setProgress(created);
       }
-      toast.success(`Seeded ${created} accounts`);
+      toast.success(t`Seeded ${created} accounts`);
     } catch (err) {
-      toast.error(`Stopped after ${created}: ${getErrorMessage(err, 'unknown error')}`);
+      toast.error(t`Stopped after ${created}: ${getErrorMessage(err, 'unknown error')}`);
     } finally {
       setProgress(null);
     }
@@ -170,7 +173,7 @@ export function DevSeedAccountsButton() {
         onChange={(e) => setCount(Number(e.target.value))}
         disabled={running}
         className="h-8 w-16"
-        aria-label="Number of accounts to seed"
+        aria-label={t`Number of accounts to seed`}
       />
       <Button
         size="sm"
@@ -180,7 +183,7 @@ export function DevSeedAccountsButton() {
         className="gap-1.5"
       >
         <Sprout className="h-4 w-4" />
-        {running ? `Seeding ${progress}/${count}…` : 'Seed accounts'}
+        {running ? t`Seeding ${progress}/${count}…` : t`Seed accounts`}
       </Button>
     </div>
   );

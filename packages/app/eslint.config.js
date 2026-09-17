@@ -20,6 +20,7 @@ export default [
       '**/*.generated.ts',
       'scripts/**',
       'vitest.setup.ts',
+      'vitest.i18n-setup.tsx',
       '*.config.js',
       '*.config.ts',
     ],

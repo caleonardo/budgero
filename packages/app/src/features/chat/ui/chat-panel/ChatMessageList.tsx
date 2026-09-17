@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { forwardRef } from 'react';
 import { Loader2, Bot } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -42,9 +43,14 @@ export const ChatMessageList = forwardRef<HTMLDivElement, ChatMessageListProps>(
         <div className="py-4">
           {messages.length === 0 && !streamingText ? (
             <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-              <p>Hi! I'm your budget assistant.</p>
+              <p>
+                <Trans>Hi! I'm your budget assistant.</Trans>
+              </p>
               <p className="mt-2">
-                Try saying "I spent $20 on coffee today" or "What's my biggest expense this month?"
+                <Trans>
+                  Try saying "I spent $20 on coffee today" or "What's my biggest expense this
+                  month?"
+                </Trans>
               </p>
             </div>
           ) : (
@@ -86,8 +92,10 @@ export const ChatMessageList = forwardRef<HTMLDivElement, ChatMessageListProps>(
           {/* Generating indicator — only before any text or tool activity appears */}
           {isGenerating && !streamingText && streamingToolEvents.length === 0 && (
             <div className="flex items-center gap-2 px-4 py-3 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Thinking...
+              <Trans>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Thinking...
+              </Trans>
             </div>
           )}
         </div>

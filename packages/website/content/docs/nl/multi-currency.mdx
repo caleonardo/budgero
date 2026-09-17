@@ -1,0 +1,107 @@
+---
+title: "Multivaluta"
+summary: "Beheer rekeningen in meer dan 120 fiatvaluta — of crypto — binnen één budget. Ontdek hoe conversie werkt, waar de wisselkoersen vandaan komen en hoe je ze kunt overschrijven wanneer de werkelijkheid anders is."
+section: accounts-and-imports
+topicId: multi-currency
+takeaways:
+  - "Hoe elke buitenlandse transactie zowel een oorspronkelijk als een geconverteerd bedrag opslaat."
+  - "De wisselkoershiërarchie - overschrijvingen per transactie, aangepaste wisselkoersen, opgehaalde wisselkoersen, handmatige wisselkoersen."
+  - "Workflows voor het matchen van afschriften, uitgaven op reis en offline budgetteren."
+---
+
+Multivaluta is geen weergaveoptie in Budgero — het is de kern van het boekhouden. Je kunt rekeningen in elk van de 168 valuta binnen één budget aanhouden, en elk getal komt nog steeds op één plek samen. Deze gids behandelt het conversiemechanisme; voor het kiezen en wijzigen van de ankervaluta zelf, zie [Budgetvaluta](/docs/budget-currency).
+
+## Twee bedragen per transactie
+
+Elke transactie op een rekening in een vreemde valuta slaat twee waarden op:
+
+- het **oorspronkelijke bedrag** — wat er daadwerkelijk is gebeurd, in de valuta van de rekening. Dit is de bron van waarheid en verandert nooit.
+- het **geconverteerde bedrag** — dezelfde transactie uitgedrukt in jouw budgetvaluta, wat categorieën, [Te verdelen](/docs/ready-to-assign) en rapporten gebruiken.
+
+Daarnaast noteert Budgero de gebruikte **wisselkoers** en of je deze hebt overschreven. De geschiedenis van jouw CHF-rekening blijft in franken; jouw budget leest in euro's; er gaat niets verloren in de overgang. Rekeningsaldi werken op dezelfde manier — elke buitenlandse rekening kent zowel zijn eigen saldo als zijn geconverteerde bijdrage aan jouw nettovermogen.
+
+## Waar de koersen vandaan komen
+
+Als een transactie geconverteerd moet worden, lost Budgero de koers op via een strikte hiërarchie — de eerste bron die van toepassing is wint:
+
+<table>
+  <thead>
+    <tr>
+      <th>Prioriteit</th>
+      <th>Bron</th>
+      <th>Wanneer het van toepassing is</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>Override per transactie</strong></td>
+      <td>Je stelt de exacte koers in voor die ene transactie</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>Aangepaste koersen</strong></td>
+      <td>Een koers die je hebt gedefinieerd voor een datumbereik dat de transactie dekt</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>Opgehaalde koersen</strong></td>
+      <td>Dagkoersen die Budgero automatisch ophaalt</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><strong>Handmatige koersen</strong></td>
+      <td>Vaste koersen die je zelf hebt ingevoerd — geen internet vereist</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><strong>Dichtstbijzijnde recente koers</strong></td>
+      <td>De koers van de dichtstbijzijnde eerdere dag (tot een week terug), wanneer de exacte dag niet in de cache staat</td>
+    </tr>
+  </tbody>
+</table>
+
+Voor de meeste mensen doen opgehaalde wisselkoersen al het werk onzichtbaar. De lagen daarboven bestaan voor de momenten waarop "het marktgemiddelde" niet jouw werkelijkheid is.
+
+## Aangepaste wisselkoersen: jouw koers, jouw datumbereik
+
+**Instellingen → Valuta** is het controlepaneel. Daar definieer je **Aangepaste wisselkoersen**: een valutapaar, een koers en een datumbereik. Binnen dat bereik heeft jouw koers voorrang op de opgehaalde koers.
+
+Typische toepassingen:
+
+- **Je hebt geld verplaatst tegen een bekende koers.** Je hebt €10.000 omgezet tegen 1,0845 op 3 maart — koppel die koers aan die week en de boeken komen overeen met het overschrijvingsbewijs.
+- **Een beheerde of gekoppelde valuta.** Als je werkt in een valuta waarbij de officiële koers en de praktische koers verschillen, stel dan de koers in die jouw werkelijkheid weerspiegelt.
+- **Historisch opruimen.** Jaren aan buitenlandse transacties geïmporteerd? Definieer aangepaste wisselkoersen per periode in plaats van rijen één voor één te bewerken.
+
+Aangepaste wisselkoersen zijn actuele instellingen, geen eenmalige stempels: wanneer je er een toevoegt, bewerkt of verwijdert, berekent Budgero **de omgerekende bedragen** van elke transactie in dat bereik opnieuw — behalve transacties die je afzonderlijk hebt overschreven, die behouden altijd hun vastgepinde koers.
+
+## Overschrijvingen per transactie: afstemmen op het afschrift
+
+Marktkoersen zijn gemiddelden; de afwikkelingskoers van je kaart is dat vrijwel nooit. Wanneer het omgerekende bedrag tot op de cent moet kloppen met een afschrift, overschrijf dan de koers op de afzonderlijke transactie — voer de koers of het exact afgewikkelde bedrag in, en de transactie is vanaf dat moment vrijgesteld van elke automatische herberekening.
+
+Dit is het hulpmiddel voor: kaartaankopen in het buitenland (banken voegen hun eigen marge toe), overboekingen waarbij de bon de exacte wisselkoers toont, en elke regel die je accountant uiteindelijk zal vergelijken met een afschrift.
+
+## Handmatige wisselkoersen: budgetteren zonder wisselkoersfeed
+
+Handmatige wisselkoersen zijn vaste wisselkoersen die je zelf invoert, gebruikt wanneer opgehaalde wisselkoersen niet beschikbaar zijn — [offline](/docs/offline), of op een [zelf gehoste](/docs/self-hosting-guide) instantie die je niet met een wisselkoers-API hebt verbonden. Stel ze eenmaal in voor de paren die je gebruikt en multivaluta blijft werken zonder enige netwerkverbinding; je kunt later altijd afzonderlijke transacties corrigeren met handmatige aanpassingen.
+
+## Dagelijkse workflows
+
+**Het grensoverschrijdende huishouden.** Salaris komt binnen in GBP, huur gaat eruit in EUR. Elke rekening houdt zijn eigen valuta; toewijzings- en uitgavenbeslissingen vinden allemaal plaats in de budgetvaluta. Geen mentale wisselkoersberekeningen op welk moment dan ook — de wisselkoershiërarchie regelt het.
+
+**Reizen.** Betaal met je thuiskaart in het buitenland en de transactie komt zoals gebruikelijk aan in de valuta van de rekening — voer in wat de terminal in de buitenlandse valuta toonde of wat je bank-app als verrekend toont, wat je ook hebt; een handmatige aanpassing stemt het verschil af wanneer het afschrift binnenkomt.
+
+**Buitenlandse rekeningen afstemmen.** [Afstemming](/docs/accounts) vergelijkt *oorspronkelijke* bedragen met je bank — franken tegen franken. Conversie bemoeit zich nooit met de vraag of je rekeningsaldo klopt; het bepaalt alleen hoe dat saldo wordt weergegeven in je budgetvaluta.
+
+## Wat conversie nooit beïnvloedt
+
+Een principe om te kennen: koersen beïnvloeden hoe buitenlandse bedragen worden *uitgedrukt*, nooit wat er *is gebeurd*. Oorspronkelijke bedragen zijn onveranderlijke feiten; omgerekende bedragen zijn interpretaties die meeverbeteren naarmate je koersgegevens beter worden. Een aangepaste koers verwijderen corrupteert geen geschiedenis — het stuurt die transacties gewoon terug door de hiërarchie naar de volgende geldige koers.
+
+## Cryptorekeningen
+
+Rekeningen kunnen ook worden gedenommeerd in cryptocurrency — Bitcoin, Ethereum en ongeveer twee dozijn andere belangrijke coins. Een paar dingen werken anders dan bij fiat:
+
+- **Precisie op sat-niveau.** Cryptobedragen worden opgeslagen met acht decimalen, dus 0.00000001 BTC is weer te geven. Fiat-precisie blijft ongewijzigd.
+- **Standaard alleen voor tracking.** Nieuwe cryptorekeningen starten buiten budget: hun waarde telt mee voor je nettovermogen, maar dagelijkse marktschommelingen veranderen Te verdelen niet. Zet de rekening in budget als je *wilt* dat je budget meeademt met de markt.
+- **Dagelijkse herwaardering.** Elke dag wordt het omgerekende saldo van de rekening gelijkgetrokken met het oorspronkelijke saldo maal de laatste koers, en de wijziging wordt geboekt. Je transacties behouden de koers van de dag waarop ze plaatsvonden — uitgavenrapporten herschrijven nooit de geschiedenis — terwijl saldo's altijd de markt van vandaag weerspiegelen.
+- **Geen 1:1-terugval.** Een fiat-transactie zonder bekende koers valt terug op een tijdelijke 1:1-omrekening en herstelt zichzelf later; voor crypto zou dat catastrofaal zijn, dus Budgero weigert de transactie vast te leggen totdat er een koers beschikbaar is (voeg een handmatige koers toe of maak opnieuw verbinding).

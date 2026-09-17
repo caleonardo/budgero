@@ -35,12 +35,11 @@ If the file doesn't carry an account column, you choose the destination account 
 
 ## Avoiding duplicates
 
-The importer does **not** automatically deduplicate against existing transactions — combining imports with manual entry is where duplicates come from, so adopt one of two disciplines:
+Before saving, the preview compares rows with previously imported data, existing transactions, and other rows in the same file. It labels them **New**, **Already imported**, **Needs review**, or **Invalid/skipped**.
 
-- **Import-only accounts:** for accounts you import regularly, don't also enter transactions by hand. Import in non-overlapping date ranges (e.g., export "last month" on the 1st) and duplicates simply can't occur.
-- **Manual-first with backfill:** if you enter as you spend, treat imports as a checking mechanism instead — reconcile against the bank (see [Accounts](/docs/accounts)) rather than importing the same period twice.
+Already-imported rows are skipped by default. For possible matches, choose **Skip** or **Import as new**; import waits until every ambiguous row has a decision. Compare the date, amount, payee, and memo rather than relying only on similar-looking text. You can resolve all remaining rows together or review each one.
 
-If you do double-import a range, sort the account's transactions by date and delete one side — and reconcile after, so the verified balance confirms you removed the right ones.
+If transactions or destination accounts change during review, check the refreshed matches. After importing, reconcile each account against the bank statement (see [Accounts](/docs/accounts)). Non-overlapping date ranges still reduce review work, especially when combining manual entry with bank imports.
 
 ## Categorizing what arrives
 

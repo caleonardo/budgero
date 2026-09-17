@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -38,6 +40,7 @@ import {
 } from './screens';
 
 const RUNTIME_READY_STATES = new Set(['Ready', 'Degraded', 'Reconnecting']);
+// Compared against Error.message thrown in the runtime — locale-stable by design.
 const NO_ACCEPTED_SPACES_ERROR = 'No accepted budget spaces available for this account';
 
 function markStartup(name: string) {
@@ -49,6 +52,8 @@ function markStartup(name: string) {
 }
 
 export default function StartupController() {
+  const { t } = useLingui();
+
   const location = useLocation();
   const queryClient = useQueryClient();
   const runtime = useRuntime();
@@ -216,7 +221,7 @@ export default function StartupController() {
         }
         setServicesReady(true);
       } catch (error) {
-        const message = getErrorMessage(error, 'Unknown startup error while initializing.');
+        const message = getErrorMessage(error, t`Unknown startup error while initializing.`);
 
         if (isDecryptionFailure(message)) {
           promptForReentry('Invalid master password - please try again');
@@ -225,7 +230,7 @@ export default function StartupController() {
 
         if (isSecureContextFailure(message)) {
           setRuntimeError(
-            'Your browser blocked the encryption features Budgero needs. Serve Budgero over HTTPS or install a trusted certificate.'
+            t`Your browser blocked the encryption features Budgero needs. Serve Budgero over HTTPS or install a trusted certificate.`
           );
           return;
         }
@@ -257,6 +262,7 @@ export default function StartupController() {
     workspace.accessibleSpaces,
     workspace.status,
     bypassStartupGuards,
+    t,
   ]);
 
   useEffect(() => {
@@ -276,7 +282,7 @@ export default function StartupController() {
       }
 
       setSyncPhase('syncing');
-      setSyncMessage('Finishing initial sync…');
+      setSyncMessage(t`Finishing initial sync…`);
 
       try {
         const syncResult = await runtime.waitForInitialSync({ timeoutMs: 20_000 });
@@ -284,7 +290,7 @@ export default function StartupController() {
 
         if (!syncResult.synced) {
           setSyncPhase('warning');
-          setSyncMessage('Using local data while sync catches up in the background.');
+          setSyncMessage(t`Using local data while sync catches up in the background.`);
           return;
         }
 
@@ -293,18 +299,18 @@ export default function StartupController() {
           if (cancelled) return;
           if (pushResult.failed > 0) {
             setSyncPhase('warning');
-            setSyncMessage('Some queued changes still need retry.');
+            setSyncMessage(t`Some queued changes still need retry.`);
             return;
           }
         } catch (error) {
           console.warn('[Startup] Push queue processing failed', error);
           setSyncPhase('warning');
-          setSyncMessage('Queued changes will retry automatically.');
+          setSyncMessage(t`Queued changes will retry automatically.`);
           return;
         }
 
         setSyncPhase('complete');
-        setSyncMessage('Budgero is fully synchronized.');
+        setSyncMessage(t`Budgero is fully synchronized.`);
         hideTimer = window.setTimeout(() => {
           setSyncPhase('hidden');
           setSyncMessage('');
@@ -313,7 +319,7 @@ export default function StartupController() {
         console.warn('[Startup] Background sync startup failed', error);
         if (cancelled) return;
         setSyncPhase('warning');
-        setSyncMessage('Working from local data while sync reconnects.');
+        setSyncMessage(t`Working from local data while sync reconnects.`);
       }
     })();
 
@@ -323,7 +329,7 @@ export default function StartupController() {
         window.clearTimeout(hideTimer);
       }
     };
-  }, [auth.canProceedOffline, resolution.state, runtime, runtimeReady, runtimeState]);
+  }, [auth.canProceedOffline, resolution.state, runtime, runtimeReady, runtimeState, t]);
 
   const handleRetry = () => {
     setRuntimeError('');
@@ -344,12 +350,12 @@ export default function StartupController() {
         queryClient,
         spaceId,
       });
-      toast.success('Workspace switched', {
-        description: 'You are now viewing this workspace.',
+      toast.success(t`Workspace switched`, {
+        description: t`You are now viewing this workspace.`,
       });
     } catch (error) {
-      const message = getErrorMessage(error, 'Unable to switch workspace. Please try again.');
-      toast.error('Unable to switch workspace', {
+      const message = getErrorMessage(error, t`Unable to switch workspace. Please try again.`);
+      toast.error(t`Unable to switch workspace`, {
         description: message,
       });
     } finally {
@@ -377,7 +383,7 @@ export default function StartupController() {
     // The explicit completion callback releases the pin synchronously. Keep
     // the old intro resolution from remounting a fresh OnboardingFlow during
     // the one render before the startup reducer publishes the ready screen.
-    content = <StartupSplashScreen message="Opening your budget…" />;
+    content = <StartupSplashScreen message={msg`Opening your budget…`} />;
   } else {
     switch (machineState.resolution.screen) {
       case 'access_blocked':

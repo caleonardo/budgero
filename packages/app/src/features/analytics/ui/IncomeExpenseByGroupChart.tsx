@@ -1,5 +1,7 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { parseISO, format } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -32,13 +34,6 @@ import { cn } from '@shared/lib/utils';
 import { useCompactNumberFormat } from '@shared/lib/useCompactNumberFormat';
 import { formatMaskedAmount, maskFormattedIfEnabled } from '@shared/lib/privacy/mask-numbers';
 import { asMilli, toDecimal, ZERO_MILLI } from '@shared/lib/currency/milli';
-
-const groupingOptions: { value: Grouping; label: string }[] = [
-  { value: 'day', label: 'Daily' },
-  { value: 'week', label: 'Weekly' },
-  { value: 'month', label: 'Monthly' },
-  { value: 'quarter', label: 'Quarterly' },
-];
 
 type Grouping = 'day' | 'week' | 'month' | 'quarter';
 
@@ -89,6 +84,15 @@ function getLabel(grouping: Grouping, start: Date, end: Date) {
 }
 
 export function IncomeExpenseByGroupChart() {
+  const { t } = useLingui();
+
+  const groupingOptions: { value: Grouping; label: string }[] = [
+    { value: 'day', label: t`Daily` },
+    { value: 'week', label: t`Weekly` },
+    { value: 'month', label: t`Monthly` },
+    { value: 'quarter', label: t`Quarterly` },
+  ];
+
   const [grouping, setGrouping] = useState<Grouping>('month');
   const [selectedAccountIds, setSelectedAccountIds] = useState<number[]>([]);
   const dateRange = useUiStore((state) => state.dateRange);
@@ -157,20 +161,20 @@ export function IncomeExpenseByGroupChart() {
 
   const accountButtonLabel = useMemo(() => {
     if (isLoadingAccounts) {
-      return 'Loading accounts...';
+      return t`Loading accounts...`;
     }
     if (onBudgetAccounts.length === 0) {
-      return 'No on-budget accounts';
+      return t`No on-budget accounts`;
     }
     if (selectedAccountIds.length === 0) {
-      return 'All on-budget accounts';
+      return t`All on-budget accounts`;
     }
     if (selectedAccountIds.length === 1) {
       const account = onBudgetAccounts.find((item) => item.ID === selectedAccountIds[0]);
       return account?.Name ?? '1 account';
     }
     return `${selectedAccountIds.length} accounts`;
-  }, [isLoadingAccounts, onBudgetAccounts, selectedAccountIds]);
+  }, [isLoadingAccounts, onBudgetAccounts, selectedAccountIds, t]);
 
   const chartData = useMemo<ChartDatum[]>(() => {
     if (!data || data.length === 0) {
@@ -269,12 +273,12 @@ export function IncomeExpenseByGroupChart() {
           const rows: TooltipRow[] = [
             {
               color: incomeColor,
-              name: 'Income',
+              name: t`Income`,
               value: formatMaskedAmount(globalLocalizer, datum.income, privacyMaskNumbers),
             },
             {
               color: expenseColor,
-              name: 'Expense',
+              name: t`Expense`,
               value: formatMaskedAmount(
                 globalLocalizer,
                 Math.abs(datum.expense),
@@ -283,14 +287,14 @@ export function IncomeExpenseByGroupChart() {
             },
             {
               color: chrome.inkPrimary,
-              name: 'Net',
+              name: t`Net`,
               value: formatMaskedAmount(globalLocalizer, datum.net, privacyMaskNumbers),
             },
           ];
           if (typeof datum.netWorth === 'number') {
             rows.push({
               color: netWorthColor,
-              name: 'Net worth',
+              name: t`Net worth`,
               value: formatMaskedAmount(globalLocalizer, datum.netWorth, privacyMaskNumbers),
             });
           }
@@ -299,7 +303,7 @@ export function IncomeExpenseByGroupChart() {
       },
       series: [
         {
-          name: 'Income',
+          name: t`Income`,
           type: 'bar' as const,
           stack: 'net',
           yAxisIndex: 0,
@@ -308,7 +312,7 @@ export function IncomeExpenseByGroupChart() {
           itemStyle: { color: incomeColor, borderRadius: BAR_RADIUS_TOP },
         },
         {
-          name: 'Expense',
+          name: t`Expense`,
           type: 'bar' as const,
           stack: 'net',
           yAxisIndex: 0,
@@ -317,7 +321,7 @@ export function IncomeExpenseByGroupChart() {
           itemStyle: { color: expenseColor, borderRadius: BAR_RADIUS_BOTTOM },
         },
         {
-          name: 'Net worth',
+          name: t`Net worth`,
           type: 'line' as const,
           yAxisIndex: 1,
           data: chartData.map((datum) => datum.netWorth),
@@ -331,15 +335,17 @@ export function IncomeExpenseByGroupChart() {
         },
       ],
     };
-  }, [chartData, palette, compactFormatter, privacyMaskNumbers, globalLocalizer]);
+  }, [chartData, palette, compactFormatter, privacyMaskNumbers, globalLocalizer, t]);
 
   return (
     <Card className="shadow-sm">
       <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <CardTitle className="text-lg font-semibold">Income vs expense trend</CardTitle>
+          <CardTitle className="text-lg font-semibold">
+            <Trans>Income vs expense trend</Trans>
+          </CardTitle>
           <CardDescription>
-            Spot how cash flows in and out across the selected period grouping.
+            <Trans>Spot how cash flows in and out across the selected period grouping.</Trans>
           </CardDescription>
         </div>
         <div className="flex w-full flex-wrap items-stretch gap-2 sm:justify-end">
@@ -358,24 +364,28 @@ export function IncomeExpenseByGroupChart() {
               </PopoverTrigger>
               <PopoverContent className="w-[280px] p-0" align="end">
                 <Command>
-                  <CommandInput placeholder="Search accounts..." />
+                  <CommandInput placeholder={t`Search accounts...`} />
                   <CommandList className="max-h-64 overflow-y-auto">
-                    <CommandEmpty>No accounts found.</CommandEmpty>
+                    <CommandEmpty>
+                      <Trans>No accounts found.</Trans>
+                    </CommandEmpty>
                     <CommandItem
                       value="__all__"
                       onSelect={() => setSelectedAccountIds([])}
                       className="cursor-pointer"
                     >
-                      <Check
-                        className={cn(
-                          'mr-2 h-4 w-4',
-                          selectedAccountIds.length === 0 ? 'opacity-100' : 'opacity-0'
-                        )}
-                      />
-                      All on-budget accounts
+                      <Trans>
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            selectedAccountIds.length === 0 ? 'opacity-100' : 'opacity-0'
+                          )}
+                        />
+                        All on-budget accounts
+                      </Trans>
                     </CommandItem>
                     {onBudgetAccounts.length > 0 && (
-                      <CommandGroup heading="Accounts">
+                      <CommandGroup heading={t`Accounts`}>
                         {onBudgetAccounts.map((account) => {
                           const isSelected = selectedAccountIds.includes(account.ID);
                           return (
@@ -431,8 +441,12 @@ export function IncomeExpenseByGroupChart() {
           </div>
         ) : chartData.length === 0 ? (
           <div className="flex h-[260px] flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
-            <p>No income or expense activity for the selected range.</p>
-            <p>Adjust the filters or date range to explore other periods.</p>
+            <p>
+              <Trans>No income or expense activity for the selected range.</Trans>
+            </p>
+            <p>
+              <Trans>Adjust the filters or date range to explore other periods.</Trans>
+            </p>
           </div>
         ) : (
           <div className="h-[320px]">

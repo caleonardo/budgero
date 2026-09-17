@@ -1,12 +1,13 @@
 # Multi-stage Dockerfile for Next.js (standalone)
 
-FROM oven/bun:1-alpine AS deps
+FROM oven/bun:1.4.2-alpine AS deps
 RUN apk upgrade --no-cache && apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json bun.lock* ./
+COPY package.json bun.lock ./
+COPY patches ./patches
 RUN bun install --frozen-lockfile
 
-FROM oven/bun:1-alpine AS builder
+FROM oven/bun:1.4.2-alpine AS builder
 RUN apk upgrade --no-cache && apk add --no-cache libc6-compat
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -20,7 +21,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN bun run build
 
-FROM oven/bun:1-alpine AS runner
+FROM oven/bun:1.4.2-alpine AS runner
 RUN apk upgrade --no-cache && apk add --no-cache libc6-compat
 WORKDIR /app
 ENV NODE_ENV=production

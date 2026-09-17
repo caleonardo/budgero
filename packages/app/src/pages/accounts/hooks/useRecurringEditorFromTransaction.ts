@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import type { GetTransactionsByAccountRow, Transaction } from '@budgero/core/browser';
@@ -45,7 +47,7 @@ export function recurringInitialValuesFromTransaction(
     if (!source || !destination || source.AccountID === destination.AccountID) return null;
 
     return {
-      name: source.Payee || source.Memo || 'Recurring transfer',
+      name: source.Payee || source.Memo || t`Recurring transfer`,
       memo: source.Memo || '',
       amount: asMilli(Math.abs(nativeOutflow(source))),
       direction: 'outflow',
@@ -63,7 +65,7 @@ export function recurringInitialValuesFromTransaction(
   const direction = outflow > 0 ? 'outflow' : 'inflow';
 
   return {
-    name: transaction.Payee || transaction.Memo || 'Recurring transaction',
+    name: transaction.Payee || transaction.Memo || t`Recurring transaction`,
     memo: transaction.Memo || '',
     amount: asMilli(Math.abs(direction === 'outflow' ? outflow : inflow)),
     direction,
@@ -90,6 +92,8 @@ export function useRecurringEditorFromTransaction({
   budgetId: number;
   accountId?: number;
 }) {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const createRecurring = useCreateRecurringTransaction();
   const [open, setOpen] = useState(false);
@@ -104,9 +108,8 @@ export function useRecurringEditorFromTransaction({
       const values = recurringInitialValuesFromTransaction(transaction, accountId, transferLegs);
 
       if (!values) {
-        toast.error('Unable to create recurring transfer', {
-          description:
-            'The selected transfer does not have one source and one destination. Recurring split transfers are not supported yet.',
+        toast.error(t`Unable to create recurring transfer`, {
+          description: t`The selected transfer does not have one source and one destination. Recurring split transfers are not supported yet.`,
         });
         return;
       }
@@ -114,8 +117,11 @@ export function useRecurringEditorFromTransaction({
       setInitialValues(values);
       setOpen(true);
     } catch (error) {
-      toast.error('Unable to load transfer', {
-        description: getErrorMessage(error, 'The paired transfer transaction could not be loaded.'),
+      toast.error(t`Unable to load transfer`, {
+        description: getErrorMessage(
+          error,
+          t`The paired transfer transaction could not be loaded.`
+        ),
       });
     }
   };
@@ -123,20 +129,20 @@ export function useRecurringEditorFromTransaction({
   const handleSubmit = async (values: RecurringTransactionEditorSubmit) => {
     if (!budgetId) return;
     if (!values.accountId) {
-      toast.error('Select an account');
+      toast.error(t`Select an account`);
       return;
     }
     if (values.toAccountId != null) {
       if (values.toAccountId === values.accountId) {
-        toast.error('Pick two different accounts for a transfer');
+        toast.error(t`Pick two different accounts for a transfer`);
         return;
       }
     } else if (!values.categoryId) {
-      toast.error('Select a category');
+      toast.error(t`Select a category`);
       return;
     }
     if (!values.amount || Number.isNaN(values.amount)) {
-      toast.error('Enter a valid amount');
+      toast.error(t`Enter a valid amount`);
       return;
     }
 
@@ -154,13 +160,13 @@ export function useRecurringEditorFromTransaction({
         notifyDaysBefore: values.notifyDaysBefore,
         active: values.active,
       });
-      toast.success('Recurring transaction created', {
-        description: 'We will remind you when it is almost due.',
+      toast.success(t`Recurring transaction created`, {
+        description: t`We will remind you when it is almost due.`,
       });
       setOpen(false);
     } catch (error) {
-      const message = getErrorMessage(error, 'Something went wrong.');
-      toast.error('Unable to save recurring transaction', {
+      const message = getErrorMessage(error, t`Something went wrong.`);
+      toast.error(t`Unable to save recurring transaction`, {
         description: message,
       });
     }

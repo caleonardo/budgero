@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo } from 'react';
 import { cn } from '@shared/lib/utils';
 import { formatMonthLabel } from '@shared/lib/date-utils';
@@ -28,7 +29,9 @@ export const CategoryHeader = memo(function CategoryHeader({
               <div className="text-xl md:text-2xl font-bold truncate">
                 {formatMilli(globalLocalizer, totalSpent)}
               </div>
-              <div className="text-[11px] text-muted-foreground">Total Spent</div>
+              <div className="text-[11px] text-muted-foreground">
+                <Trans>Total Spent</Trans>
+              </div>
             </div>
 
             {goalStatus && (
@@ -41,11 +44,13 @@ export const CategoryHeader = memo(function CategoryHeader({
                       : 'bg-primary/10 text-primary border-primary/30'
                   )}
                 >
-                  {goalStatus.percentage}% of goal
+                  <Trans>{goalStatus.percentage}% of goal</Trans>
                 </span>
                 {goalStatus.isOver && (
                   <span className="text-[11px] text-destructive whitespace-nowrap">
-                    Over by {formatMilli(globalLocalizer, asMilli(0 - goalStatus.remaining))}
+                    <Trans>
+                      Over by {formatMilli(globalLocalizer, asMilli(0 - goalStatus.remaining))}
+                    </Trans>
                   </span>
                 )}
               </div>

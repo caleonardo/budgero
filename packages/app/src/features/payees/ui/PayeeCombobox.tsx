@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { Check, ChevronsUpDown, PlusCircle, X } from 'lucide-react';
 import { Button } from '@shared/ui/button';
@@ -37,7 +38,7 @@ export function PayeeCombobox({
   budgetId,
   value,
   onChange,
-  placeholder = 'Select or create payee',
+  placeholder: placeholderProp,
   triggerClassName,
   popoverContentClassName,
   disabled = false,
@@ -46,6 +47,8 @@ export function PayeeCombobox({
   defaultOpen = false,
   onOpenChange,
 }: PayeeComboboxProps) {
+  const { t } = useLingui();
+  const placeholder = placeholderProp ?? t`Select or create payee`;
   const [open, setOpen] = React.useState(defaultOpen);
   const [search, setSearch] = React.useState('');
   const payeesQuery = usePayees(budgetId, providedPayees === undefined);
@@ -119,7 +122,7 @@ export function PayeeCombobox({
       >
         <Command className="h-full" loop>
           <CommandInput
-            placeholder="Search payees…"
+            placeholder={t`Search payees…`}
             value={search}
             onValueChange={setSearch}
             disabled={isFetching}
@@ -127,11 +130,11 @@ export function PayeeCombobox({
           <CommandList className="overflow-y-auto overscroll-contain touch-pan-y max-h-[44dvh]">
             <CommandEmpty>
               {normalizedSearch
-                ? 'No matching payees. Use "Create" below.'
-                : 'Type to search payees.'}
+                ? t`No matching payees. Use "Create" below.`
+                : t`Type to search payees.`}
             </CommandEmpty>
             {(normalizedSearch && !hasExactMatch) || (allowClear && normalizedValue) ? (
-              <CommandGroup heading="Actions">
+              <CommandGroup heading={t`Actions`}>
                 {normalizedSearch && !hasExactMatch && (
                   <CommandItem
                     value={`__create__::${normalizedSearch}`}
@@ -139,7 +142,9 @@ export function PayeeCombobox({
                     className="flex items-center gap-2"
                   >
                     <PlusCircle className="h-4 w-4" />
-                    <span>Create "{normalizedSearch}"</span>
+                    <span>
+                      <Trans>Create "{normalizedSearch}"</Trans>
+                    </span>
                   </CommandItem>
                 )}
                 {allowClear && normalizedValue && (
@@ -149,12 +154,14 @@ export function PayeeCombobox({
                     className="flex items-center gap-2"
                   >
                     <X className="h-4 w-4" />
-                    <span>Clear payee</span>
+                    <span>
+                      <Trans>Clear payee</Trans>
+                    </span>
                   </CommandItem>
                 )}
               </CommandGroup>
             ) : null}
-            <CommandGroup heading="Payees">
+            <CommandGroup heading={t`Payees`}>
               {existingPayees.map((payee) => (
                 <CommandItem
                   key={payee}

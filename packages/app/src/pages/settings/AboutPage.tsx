@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Separator } from '@shared/ui/separator';
@@ -23,6 +24,8 @@ const communityBadgeClass =
   'inline-flex h-6 w-6 items-center justify-center rounded-full text-[0.625rem] font-semibold text-white';
 
 export default function AboutPage() {
+  const { t } = useLingui();
+
   const buildChannel = 'Web';
   const repoLink = useMemo(() => {
     if (!pkg.repository) return undefined;
@@ -33,34 +36,38 @@ export default function AboutPage() {
   const swUpdates = useServiceWorkerUpdate();
   const handleUpdateServiceWorker = useCallback(async () => {
     if (!swUpdates.isSupported) {
-      toast.error('Service worker updates are not available in this build.');
+      toast.error(t`Service worker updates are not available in this build.`);
       return;
     }
     await swUpdates.checkForUpdates();
-  }, [swUpdates]);
+  }, [swUpdates, t]);
 
   const rows: { label: string; value: string }[] = [
-    { label: 'Version', value: pkg.version ?? 'Unknown' },
+    { label: t`Version`, value: pkg.version ?? 'Unknown' },
     {
-      label: 'Build',
+      label: t`Build`,
       value: typeof __APP_BUILD_SHA__ === 'string' ? __APP_BUILD_SHA__ : 'Unknown',
     },
-    { label: 'Build Channel', value: buildChannel },
-    { label: 'Environment', value: import.meta.env.MODE },
-    { label: 'License', value: pkg.license ?? 'All rights reserved' },
+    { label: t`Build Channel`, value: buildChannel },
+    { label: t`Environment`, value: import.meta.env.MODE },
+    { label: t`License`, value: pkg.license ?? 'All rights reserved' },
   ];
 
   return (
     <div className="container max-w-3xl mx-auto p-4 sm:p-6 space-y-6 pb-24 sm:pb-6">
       <SettingsPageHeader
-        title="About Budgero"
-        description="A quick overview of this Budgero installation, including version and useful links."
+        title={t`About Budgero`}
+        description={t`A quick overview of this Budgero installation, including version and useful links.`}
       />
 
       <Card>
         <CardHeader>
-          <CardTitle>Application Details</CardTitle>
-          <CardDescription>Build metadata for support or troubleshooting.</CardDescription>
+          <CardTitle>
+            <Trans>Application Details</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Build metadata for support or troubleshooting.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
@@ -81,17 +88,25 @@ export default function AboutPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Project Resources</CardTitle>
-          <CardDescription>Learn more about Budgero or get in touch with the team.</CardDescription>
+          <CardTitle>
+            <Trans>Project Resources</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Learn more about Budgero or get in touch with the team.</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3 text-sm">
             {IS_SELF_HOSTABLE_BUILD && (
               <div>
-                <p className="font-medium text-foreground">Support Development</p>
+                <p className="font-medium text-foreground">
+                  <Trans>Support Development</Trans>
+                </p>
                 <p className="text-muted-foreground mb-1">
-                  Self-Host is free forever. If Budgero is useful to you, you can support its
-                  development with a one-time, pay-what-you-want donation.
+                  <Trans>
+                    Self-Host is free forever. If Budgero is useful to you, you can support its
+                    development with a one-time, pay-what-you-want donation.
+                  </Trans>
                 </p>
                 <a
                   href="https://budgero.app/donate?utm_source=selfhost-app&utm_medium=about"
@@ -99,13 +114,17 @@ export default function AboutPage() {
                   rel="noreferrer"
                   className="text-primary hover:underline inline-flex items-center gap-2"
                 >
-                  <span className={`${communityBadgeClass} bg-[#e05d5d]`}>♥</span>
-                  Donate to Budgero
+                  <Trans>
+                    <span className={`${communityBadgeClass} bg-[#e05d5d]`}>♥</span>Donate to
+                    Budgero
+                  </Trans>
                 </a>
               </div>
             )}
             <div>
-              <p className="font-medium text-foreground">Website</p>
+              <p className="font-medium text-foreground">
+                <Trans>Website</Trans>
+              </p>
               <a
                 href="https://budgero.app"
                 target="_blank"
@@ -117,7 +136,9 @@ export default function AboutPage() {
             </div>
             {repoLink && (
               <div>
-                <p className="font-medium text-foreground">Repository</p>
+                <p className="font-medium text-foreground">
+                  <Trans>Repository</Trans>
+                </p>
                 <a
                   href={repoLink}
                   target="_blank"
@@ -129,71 +150,87 @@ export default function AboutPage() {
               </div>
             )}
             <div>
-              <p className="font-medium text-foreground">Support</p>
+              <p className="font-medium text-foreground">
+                <Trans>Support</Trans>
+              </p>
               <a href="mailto:hello@budgero.app" className="text-primary hover:underline">
                 hello@budgero.app
               </a>
             </div>
             <div>
-              <p className="font-medium text-foreground">Discord Community</p>
+              <p className="font-medium text-foreground">
+                <Trans>Discord Community</Trans>
+              </p>
               <a
                 href="https://discord.gg/ZgWnzaPqae"
                 target="_blank"
                 rel="noreferrer"
                 className="text-primary hover:underline inline-flex items-center gap-2"
               >
-                <span className={`${communityBadgeClass} bg-[#5865F2]`}>D</span>
-                Join our Discord
+                <Trans>
+                  <span className={`${communityBadgeClass} bg-[#5865F2]`}>D</span>Join our Discord
+                </Trans>
               </a>
             </div>
             <div>
-              <p className="font-medium text-foreground">Reddit Community</p>
+              <p className="font-medium text-foreground">
+                <Trans>Reddit Community</Trans>
+              </p>
               <a
                 href="https://www.reddit.com/r/budgero/"
                 target="_blank"
                 rel="noreferrer"
                 className="text-primary hover:underline inline-flex items-center gap-2"
               >
-                <span className={`${communityBadgeClass} bg-[#FF4500]`}>R</span>
-                r/budgero
+                <Trans>
+                  <span className={`${communityBadgeClass} bg-[#FF4500]`}>R</span>r/budgero
+                </Trans>
               </a>
             </div>
             <div>
-              <p className="font-medium text-foreground">Product Feedback</p>
+              <p className="font-medium text-foreground">
+                <Trans>Product Feedback</Trans>
+              </p>
               <button
                 type="button"
                 onClick={openQuackback}
                 className="text-primary hover:underline"
               >
-                Share feedback
+                <Trans>Share feedback</Trans>
               </button>
             </div>
             <div>
-              <p className="font-medium text-foreground">Report a Bug</p>
+              <p className="font-medium text-foreground">
+                <Trans>Report a Bug</Trans>
+              </p>
               <button
                 type="button"
                 onClick={openQuackback}
                 className="text-primary hover:underline"
               >
-                Submit a bug report
+                <Trans>Submit a bug report</Trans>
               </button>
             </div>
             <div>
-              <p className="font-medium text-foreground">Changelog</p>
+              <p className="font-medium text-foreground">
+                <Trans>Changelog</Trans>
+              </p>
               <a
                 href="https://budgero.app/changelog"
                 target="_blank"
                 rel="noreferrer"
                 className="text-primary hover:underline"
               >
-                Latest updates
+                <Trans>Latest updates</Trans>
               </a>
             </div>
           </div>
           <Separator />
           <p className="text-xs text-muted-foreground">
-            Budgero is continually updated. If you experience issues, share the version information
-            above when contacting support so we can help quickly.
+            <Trans>
+              Budgero is continually updated. If you experience issues, share the version
+              information above when contacting support so we can help quickly.
+            </Trans>
           </p>
           <div className="flex flex-wrap gap-2">
             {swUpdates.isSupported && (
@@ -203,7 +240,7 @@ export default function AboutPage() {
                 onClick={handleUpdateServiceWorker}
                 disabled={swUpdates.isChecking}
               >
-                Update Service Worker
+                <Trans>Update Service Worker</Trans>
               </Button>
             )}
             <Button asChild variant="outline">
@@ -213,7 +250,7 @@ export default function AboutPage() {
                 rel="noreferrer"
                 className="no-underline"
               >
-                View Changelog
+                <Trans>View Changelog</Trans>
               </a>
             </Button>
             {swUpdates.lastCheckMessage && (

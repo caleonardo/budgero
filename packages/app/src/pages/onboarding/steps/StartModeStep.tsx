@@ -1,7 +1,11 @@
+import { Trans, useLingui } from '@lingui/react/macro';
+import { msg } from '@lingui/core/macro';
 import React from 'react';
 import { OnboardingOptionTile, Title, type StepProps } from './shared';
 
 export const StartModeStep: React.FC<StepProps> = ({ state, set }) => {
+  const { t } = useLingui();
+
   const modes: {
     id: 'fresh' | 'ynab';
     title: string;
@@ -11,30 +15,33 @@ export const StartModeStep: React.FC<StepProps> = ({ state, set }) => {
   }[] = [
     {
       id: 'fresh',
-      title: 'Fresh start',
-      sub: 'I’m new to zero-based budgeting, or starting clean.',
+      title: t`Fresh start`,
+      sub: t`I’m new to zero-based budgeting, or starting clean.`,
       bullets: [
-        'Learn ZBB with a short walkthrough',
-        'Set up accounts & envelopes by hand',
-        'Takes about 2 minutes',
+        t`Learn ZBB with a short walkthrough`,
+        t`Set up accounts & envelopes by hand`,
+        t`Takes about 2 minutes`,
       ],
       glyph: '✎',
     },
     {
       id: 'ynab',
-      title: 'Importing from YNAB',
-      sub: 'I’ve got a budget elsewhere I want to bring over.',
+      title: t`Importing from YNAB`,
+      sub: t`I’ve got a budget elsewhere I want to bring over.`,
       bullets: [
-        'Accounts, categories, and balances come with you',
-        'Transaction history preserved',
-        'We skip the basics — you know the drill',
+        t`Accounts, categories, and balances come with you`,
+        t`Transaction history preserved`,
+        t`We skip the basics — you know the drill`,
       ],
       glyph: '↳',
     },
   ];
   return (
     <div>
-      <Title h="How are you starting?" sub="Budgero works either way. Pick the path that fits." />
+      <Title
+        h={msg`How are you starting?`}
+        sub={msg`Budgero works either way. Pick the path that fits.`}
+      />
       <div
         className="bo-stack-mobile"
         style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, marginTop: 8 }}
@@ -100,7 +107,7 @@ export const StartModeStep: React.FC<StepProps> = ({ state, set }) => {
       </div>
       {!state.startMode && (
         <div style={{ marginTop: 14, fontSize: 11, color: '#393939', textAlign: 'center' }}>
-          Pick a path to continue.
+          <Trans>Pick a path to continue.</Trans>
         </div>
       )}
     </div>

@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React, { useMemo } from 'react';
 import { TransactionSelectionCheckbox } from '@features/transactions/ui/TransactionSelectionCheckbox';
 import { Calendar as CalendarIcon, Tag } from 'lucide-react';
@@ -27,13 +28,15 @@ export const TransactionCardHeader = React.memo(function TransactionCardHeader({
   accountLocalizer,
   onSelectionChange,
 }: TransactionCardHeaderProps) {
+  const { t } = useLingui();
+
   const displayDate = useMemo(() => {
     const rawDate = transaction.Date;
-    if (!rawDate) return 'No date';
+    if (!rawDate) return t`No date`;
     const dateObj = parseISO(rawDate);
-    if (isNaN(dateObj.getTime())) return 'No date';
+    if (isNaN(dateObj.getTime())) return t`No date`;
     return formatShortDate(dateObj, { hideCurrentYear: true });
-  }, [transaction]);
+  }, [transaction, t]);
 
   const categoryDisplay = displayCategoryOverride || transaction.Category || '';
   return (
@@ -43,7 +46,7 @@ export const TransactionCardHeader = React.memo(function TransactionCardHeader({
           <TransactionSelectionCheckbox
             checked={isSelected}
             onCheckedChange={onSelectionChange}
-            aria-label={`Select transaction: ${transaction.Memo || 'No memo'} - ${formatMilli(accountLocalizer, asMilli(transaction.InflowConverted > 0 ? transaction.InflowConverted : transaction.OutflowConverted))}`}
+            aria-label={t`Select transaction: ${transaction.Memo || 'No memo'} - ${formatMilli(accountLocalizer, asMilli(transaction.InflowConverted > 0 ? transaction.InflowConverted : transaction.OutflowConverted))}`}
             className="rounded-full"
           />
         </div>

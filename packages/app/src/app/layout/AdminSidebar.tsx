@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { cloneElement, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@shared/lib/utils';
@@ -6,26 +7,28 @@ import { Button } from '@shared/ui/button';
 import { useLogout } from '@entities/user/api/useAuth';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@shared/ui/tooltip';
 
-const adminRoutes = [
-  {
-    path: '/admin',
-    label: 'Dashboard',
-    icon: Home,
-    exact: true,
-  },
-  {
-    path: '/admin/users',
-    label: 'Users',
-    icon: Users,
-  },
-  {
-    path: '/admin/database',
-    label: 'Database',
-    icon: Database,
-  },
-];
-
 export default function AdminSidebar() {
+  const { t } = useLingui();
+
+  const adminRoutes = [
+    {
+      path: '/admin',
+      label: t`Dashboard`,
+      icon: Home,
+      exact: true,
+    },
+    {
+      path: '/admin/users',
+      label: t`Users`,
+      icon: Users,
+    },
+    {
+      path: '/admin/database',
+      label: t`Database`,
+      icon: Database,
+    },
+  ];
+
   const location = useLocation();
   const logout = useLogout();
   const [collapsed, setCollapsed] = useState(false);
@@ -57,8 +60,12 @@ export default function AdminSidebar() {
               <Shield className="text-purple-600 w-6 h-6" />
               {!collapsed && (
                 <div>
-                  <h2 className="font-bold text-lg">Admin Panel</h2>
-                  <p className="text-xs text-muted-foreground">Budgero Management</p>
+                  <h2 className="font-bold text-lg">
+                    <Trans>Admin Panel</Trans>
+                  </h2>
+                  <p className="text-xs text-muted-foreground">
+                    <Trans>Budgero Management</Trans>
+                  </p>
                 </div>
               )}
             </div>
@@ -71,7 +78,7 @@ export default function AdminSidebar() {
                 'ml-auto text-muted-foreground hover:text-foreground transition-transform',
                 collapsed && 'rotate-180'
               )}
-              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              aria-label={collapsed ? t`Expand sidebar` : t`Collapse sidebar`}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -132,12 +139,20 @@ export default function AdminSidebar() {
                   size="sm"
                 >
                   <Home className={cn('w-4 h-4', !collapsed && 'mr-2')} />
-                  {!collapsed && 'Back to App'}
-                  {collapsed && <span className="sr-only">Back to App</span>}
+                  {!collapsed && t`Back to App`}
+                  {collapsed && (
+                    <span className="sr-only">
+                      <Trans>Back to App</Trans>
+                    </span>
+                  )}
                 </Button>
               </Link>
             </TooltipTrigger>
-            {collapsed && <TooltipContent side="right">Back to App</TooltipContent>}
+            {collapsed && (
+              <TooltipContent side="right">
+                <Trans>Back to App</Trans>
+              </TooltipContent>
+            )}
           </Tooltip>
           <Tooltip delayDuration={200}>
             <TooltipTrigger asChild>
@@ -151,11 +166,19 @@ export default function AdminSidebar() {
                 onClick={() => logout.mutate()}
               >
                 <LogOut className={cn('w-4 h-4', !collapsed && 'mr-2')} />
-                {!collapsed && 'Logout'}
-                {collapsed && <span className="sr-only">Logout</span>}
+                {!collapsed && t`Logout`}
+                {collapsed && (
+                  <span className="sr-only">
+                    <Trans>Logout</Trans>
+                  </span>
+                )}
               </Button>
             </TooltipTrigger>
-            {collapsed && <TooltipContent side="right">Logout</TooltipContent>}
+            {collapsed && (
+              <TooltipContent side="right">
+                <Trans>Logout</Trans>
+              </TooltipContent>
+            )}
           </Tooltip>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Net Worth Card Component
  *
@@ -14,6 +15,7 @@ import { cn } from '@shared/lib/utils';
 import { parseISO } from 'date-fns';
 import { trendTextClass } from '@shared/lib/amount-color';
 import { asMilli, fromDecimal, toDecimal } from '@shared/lib/currency/milli';
+import { getLocaleTag } from '@shared/i18n';
 
 interface NetWorthDataPoint {
   date: string;
@@ -41,6 +43,8 @@ export function NetWorthCard({
   chartData,
   formatCurrency,
 }: NetWorthCardProps) {
+  const { t } = useLingui();
+
   const changePercent =
     netWorth - netWorthChange !== 0 ? (netWorthChange / (netWorth - netWorthChange)) * 100 : 0;
 
@@ -75,20 +79,20 @@ export function NetWorthCard({
           const items = params as { dataIndex: number }[];
           const point = points[items[0]?.dataIndex ?? 0];
           if (!point) return '';
-          const title = parseISO(point.date).toLocaleDateString('en-US', {
+          const title = parseISO(point.date).toLocaleDateString(getLocaleTag(), {
             weekday: 'short',
             month: 'short',
             day: 'numeric',
           });
           // Plotted values are decimal; formatCurrency is milli-in.
           return tooltipHtml(title, [
-            { color, name: 'Net Worth', value: formatCurrency(fromDecimal(point.value)) },
+            { color, name: t`Net Worth`, value: formatCurrency(fromDecimal(point.value)) },
           ]);
         },
       },
       series: [
         {
-          name: 'Net Worth',
+          name: t`Net Worth`,
           type: 'line' as const,
           data: points.map((point) => point.value),
           lineStyle: { color, width: 2 },
@@ -100,14 +104,16 @@ export function NetWorthCard({
         },
       ],
     };
-  }, [chartData, formatCurrency, palette]);
+  }, [chartData, formatCurrency, palette, t]);
 
   return (
     <Card>
       <CardContent className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4 sm:gap-0">
           <div>
-            <div className="text-sm text-muted-foreground mb-1">NET WORTH</div>
+            <div className="text-sm text-muted-foreground mb-1">
+              <Trans>NET WORTH</Trans>
+            </div>
             <div className="text-2xl sm:text-3xl font-bold">{formatCurrency(netWorth)}</div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mt-2">
               <div
@@ -123,11 +129,15 @@ export function NetWorthCard({
                 )}
                 {formatCurrency(Math.abs(netWorthChange))} ({changePercent.toFixed(1)}%)
               </div>
-              <span className="text-sm text-muted-foreground">{periodLabel} change</span>
+              <span className="text-sm text-muted-foreground">
+                <Trans>{periodLabel} change</Trans>
+              </span>
             </div>
           </div>
           <div className="text-left sm:text-right">
-            <div className="text-sm text-muted-foreground">Net worth performance</div>
+            <div className="text-sm text-muted-foreground">
+              <Trans>Net worth performance</Trans>
+            </div>
             <div className="text-xs text-muted-foreground mt-1">{periodLabel}</div>
           </div>
         </div>

@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Check, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -50,6 +51,7 @@ export function CodeBlock(props: React.HTMLAttributes<HTMLPreElement>) {
     codeEl?.props?.['data-title'] ||
     (props as any)?.['data-file'] ||
     (props as any)?.['data-filename']) as string | undefined;
+  const t = useTranslations('common');
   const [copied, setCopied] = React.useState(false);
 
   const onCopy = async () => {
@@ -82,10 +84,10 @@ export function CodeBlock(props: React.HTMLAttributes<HTMLPreElement>) {
           size="sm"
           className="h-7 gap-1 px-2"
           onClick={onCopy}
-          aria-label="Copy code"
+          aria-label={t('copy_code')}
         >
           {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-          {copied ? 'Copied' : 'Copy'}
+          {copied ? t('copied') : t('copy')}
         </Button>
       </div>
       {/* Keep the original pre exactly as-is to preserve Shiki styles/vars */}

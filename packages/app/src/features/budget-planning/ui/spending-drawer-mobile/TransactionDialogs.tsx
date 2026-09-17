@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo, useMemo } from 'react';
 import { Button } from '@shared/ui/button';
 import { DeleteTransactionDialog } from '@features/transactions/ui/DeleteTransactionDialog';
@@ -63,7 +64,7 @@ export const TransactionDialogs = memo(function TransactionDialogs({
         footer={
           <div className="flex justify-center pt-4">
             <Button variant="destructive" onClick={onOpenDeleteConfirm} disabled={isDeleting}>
-              Delete transaction
+              <Trans>Delete transaction</Trans>
             </Button>
           </div>
         }

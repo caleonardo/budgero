@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Loader2, TrendingUp, AlertCircle } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
@@ -18,6 +19,8 @@ export function CurrencyConversionOverlay({
   progress,
   error,
 }: CurrencyConversionOverlayProps) {
+  const { t } = useLingui();
+
   if (!isVisible) return null;
 
   return (
@@ -44,7 +47,7 @@ export function CurrencyConversionOverlay({
 
             <div className="text-center space-y-2">
               <h3 className="text-lg font-semibold">
-                {error ? 'Conversion Failed' : 'Currency Conversion in Progress'}
+                {error ? t`Conversion Failed` : t`Currency Conversion in Progress`}
               </h3>
               <p className="text-sm text-muted-foreground">{error || message}</p>
             </div>
@@ -52,7 +55,9 @@ export function CurrencyConversionOverlay({
             {!error && progress && (
               <div className="w-full space-y-2">
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Processing transactions</span>
+                  <span>
+                    <Trans>Processing transactions</Trans>
+                  </span>
                   <span>
                     {progress.current} / {progress.total}
                   </span>
@@ -70,9 +75,15 @@ export function CurrencyConversionOverlay({
 
             {!error && (
               <div className="text-xs text-muted-foreground text-center space-y-1">
-                <p>• Fetching exchange rates</p>
-                <p>• Updating transaction amounts</p>
-                <p>• Recalculating balances</p>
+                <p>
+                  <Trans>• Fetching exchange rates</Trans>
+                </p>
+                <p>
+                  <Trans>• Updating transaction amounts</Trans>
+                </p>
+                <p>
+                  <Trans>• Recalculating balances</Trans>
+                </p>
               </div>
             )}
 
@@ -81,7 +92,7 @@ export function CurrencyConversionOverlay({
                 onClick={() => window.location.reload()}
                 className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
               >
-                Reload Application
+                <Trans>Reload Application</Trans>
               </button>
             )}
           </div>

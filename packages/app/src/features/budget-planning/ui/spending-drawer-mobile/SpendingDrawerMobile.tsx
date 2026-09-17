@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Drawer, DrawerContent } from '@shared/ui/drawer';
 import { useMaskedLocalizer } from '@shared/lib/privacy/useMaskedLocalizer';
@@ -129,7 +130,9 @@ export const SpendingDrawerMobile = React.memo(function SpendingDrawerMobile({
 
           <div className="space-y-4 max-w-full">
             {contentLoading ? (
-              <div className="text-center py-8">Preparing transactions...</div>
+              <div className="text-center py-8">
+                <Trans>Preparing transactions...</Trans>
+              </div>
             ) : (
               <>
                 {/* Chart */}

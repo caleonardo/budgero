@@ -39,3 +39,9 @@ interface Window {
 
 declare const __APP_VERSION__: string;
 declare const __APP_BUILD_SHA__: string;
+
+declare module '*/messages.mjs' {
+  import type { Messages } from '@lingui/core';
+
+  export const messages: Messages;
+}

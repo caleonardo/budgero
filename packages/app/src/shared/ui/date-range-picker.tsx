@@ -1,9 +1,10 @@
 'use client';
 
+import { useLingui } from '@lingui/react/macro';
+
 import { useMemo, useState } from 'react';
 import {
   addDays,
-  format,
   addMonths,
   endOfMonth,
   endOfYear,
@@ -14,6 +15,7 @@ import {
   subYears,
 } from 'date-fns';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { formatDate as format } from '@shared/lib/date-format';
 import { DateRange } from 'react-day-picker';
 
 import { cn } from '@shared/lib/utils';
@@ -46,9 +48,6 @@ const PRESET_LABELS: Record<PresetKey, string> = {
 };
 
 const FUTURE_PRESETS: ReadonlySet<PresetKey> = new Set(['next30Days', 'next3Months']);
-
-// Short month labels (Jan…Dec)
-const MONTH_LABELS = Array.from({ length: 12 }, (_, i) => format(new Date(2000, i, 1), 'MMM'));
 
 export interface DateRangePickerProps {
   value?: DateRange;
@@ -115,6 +114,9 @@ export function DateRangePicker({
   disableFuture = false,
   className,
 }: DateRangePickerProps) {
+  const { t } = useLingui();
+  const monthLabels = Array.from({ length: 12 }, (_, i) => format(new Date(2000, i, 1), 'MMM'));
+
   const today = useMemo(() => new Date(), []);
   const presets = useMemo(() => createPresets(today), [today]);
 
@@ -183,6 +185,7 @@ export function DateRangePicker({
     onChange?.({ from: from ?? day, to: day });
   };
 
+  const fullMonthLabel = format(month, 'MMMM yyyy');
   const disabledRules = disableFuture ? [{ after: today }] : undefined;
 
   return (
@@ -198,6 +201,7 @@ export function DateRangePicker({
                     const presetRange = presets[presetKey];
                     return (
                       <Button
+                        type="button"
                         key={presetKey}
                         variant="ghost"
                         size="sm"
@@ -214,7 +218,7 @@ export function DateRangePicker({
           <div className="flex flex-col">
             <div className="flex items-center gap-2 border-b px-3 py-2">
               {(['from', 'to'] as const).map((field) => {
-                const label = field === 'from' ? 'Start' : 'End';
+                const label = field === 'from' ? t`Start` : t`End`;
                 const fieldDate = field === 'from' ? date?.from : date?.to;
                 const isArmed = armed === field;
                 return (
@@ -234,7 +238,7 @@ export function DateRangePicker({
                       {label}
                     </span>
                     <span className="whitespace-nowrap">
-                      {fieldDate ? format(fieldDate, "MMM d, ''yy") : 'Pick a date'}
+                      {fieldDate ? format(fieldDate, "MMM d, ''yy") : t`Pick a date`}
                     </span>
                   </button>
                 );
@@ -247,20 +251,22 @@ export function DateRangePicker({
                   {/* Year stepper */}
                   <div className="mb-3 flex items-center justify-between">
                     <Button
+                      type="button"
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
-                      aria-label="Previous year"
+                      aria-label={t`Previous year`}
                       onClick={() => setViewYear((y) => y - 1)}
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="text-sm font-semibold tabular-nums">{viewYear}</span>
                     <Button
+                      type="button"
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
-                      aria-label="Next year"
+                      aria-label={t`Next year`}
                       disabled={disableFuture && viewYear >= today.getFullYear()}
                       onClick={() => setViewYear((y) => y + 1)}
                     >
@@ -270,7 +276,7 @@ export function DateRangePicker({
 
                   {/* Month grid */}
                   <div className="grid grid-cols-4 gap-1.5">
-                    {MONTH_LABELS.map((monthLabel, monthIndex) => {
+                    {monthLabels.map((monthLabel, monthIndex) => {
                       const isSelected =
                         monthIndex === month.getMonth() && viewYear === month.getFullYear();
                       const isCurrent =
@@ -282,7 +288,7 @@ export function DateRangePicker({
 
                       return (
                         <button
-                          key={monthLabel}
+                          key={monthIndex}
                           type="button"
                           disabled={isDisabled}
                           onClick={() => {
@@ -309,6 +315,7 @@ export function DateRangePicker({
                 {/* Footer buttons */}
                 <div className="mt-3 flex items-center gap-2">
                   <Button
+                    type="button"
                     variant="outline"
                     size="sm"
                     className="flex-1 text-xs"
@@ -318,15 +325,16 @@ export function DateRangePicker({
                       setCalendarView('day');
                     }}
                   >
-                    Jump to today
+                    {t`Jump to today`}
                   </Button>
                   <Button
+                    type="button"
                     variant="ghost"
                     size="sm"
                     className="text-xs"
                     onClick={() => setCalendarView('day')}
                   >
-                    Day picker
+                    {t`Choose a day`}
                   </Button>
                 </div>
               </div>
@@ -354,7 +362,7 @@ export function DateRangePicker({
                         setCalendarView('month');
                       }}
                       className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
-                      aria-label={`Change month and year — currently ${format(month, 'MMMM yyyy')}`}
+                      aria-label={t`Change month and year — currently ${fullMonthLabel}`}
                     >
                       <span>{children}</span>
                       <ChevronDown className="h-3.5 w-3.5 opacity-60" />

@@ -1,3 +1,5 @@
+import { plural } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Dices, Undo2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -34,6 +36,8 @@ const INVALIDATED_KEYS = [
 ];
 
 export function DevSimulateRateMoveButton() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((s) => s.selectedBudget);
   const queryClient = useQueryClient();
   const [running, setRunning] = useState(false);
@@ -46,18 +50,21 @@ export function DevSimulateRateMoveButton() {
     const services = getRuntime()?.services();
     const budgetId = selectedBudget?.ID;
     if (!services || !budgetId) {
-      toast.error('No budget selected');
+      toast.error(t`No budget selected`);
       return;
     }
     setRestoring(true);
     try {
       const revalued = await services.currency.restoreOfficialRates(budgetId);
       await invalidateAll();
-      toast.success('Official rates restored', {
-        description: `Today's cache refetched; ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
+      toast.success(t`Official rates restored`, {
+        description: plural(revalued, {
+          one: `Today's cache refetched; # account revalued.`,
+          other: `Today's cache refetched; # accounts revalued.`,
+        }),
       });
     } catch (err) {
-      toast.error(`Restore failed: ${getErrorMessage(err, 'unknown error')}`);
+      toast.error(t`Restore failed: ${getErrorMessage(err, 'unknown error')}`);
     } finally {
       setRestoring(false);
     }
@@ -68,7 +75,7 @@ export function DevSimulateRateMoveButton() {
     const budgetId = selectedBudget?.ID;
     const displayCurrency = selectedBudget?.DisplayCurrency;
     if (!services || !budgetId || !displayCurrency) {
-      toast.error('No budget selected');
+      toast.error(t`No budget selected`);
       return;
     }
 
@@ -82,8 +89,8 @@ export function DevSimulateRateMoveButton() {
           .filter((currency) => currency && currency !== displayCurrency)
       );
       if (foreignCurrencies.size === 0) {
-        toast.info('No foreign-currency accounts', {
-          description: 'Add an account in another currency (or crypto) first.',
+        toast.info(t`No foreign-currency accounts`, {
+          description: t`Add an account in another currency (or crypto) first.`,
         });
         return;
       }
@@ -107,11 +114,20 @@ export function DevSimulateRateMoveButton() {
       const revalued = await services.currency.revalueAccounts(budgetId);
       await invalidateAll();
 
-      toast.success(`Simulated a market move`, {
-        description: `${moved} rate${moved !== 1 ? 's' : ''} shifted, ${revalued} account${revalued !== 1 ? 's' : ''} revalued.`,
+      toast.success(t`Simulated a market move`, {
+        description: plural(moved, {
+          one: plural(revalued, {
+            one: `# rate shifted, # account revalued.`,
+            other: `# rate shifted, # accounts revalued.`,
+          }),
+          other: plural(revalued, {
+            one: `# rates shifted, # account revalued.`,
+            other: `# rates shifted, # accounts revalued.`,
+          }),
+        }),
       });
     } catch (err) {
-      toast.error(`Rate simulation failed: ${getErrorMessage(err, 'unknown error')}`);
+      toast.error(t`Rate simulation failed: ${getErrorMessage(err, 'unknown error')}`);
     } finally {
       setRunning(false);
     }
@@ -127,7 +143,7 @@ export function DevSimulateRateMoveButton() {
         className="gap-1.5"
       >
         <Dices className="h-4 w-4" />
-        {running ? 'Moving rates…' : 'Simulate rate move'}
+        {running ? t`Moving rates…` : t`Simulate rate move`}
       </Button>
       <Button
         size="sm"
@@ -137,7 +153,7 @@ export function DevSimulateRateMoveButton() {
         className="gap-1.5"
       >
         <Undo2 className="h-4 w-4" />
-        {restoring ? 'Restoring…' : 'Restore real rates'}
+        {restoring ? t`Restoring…` : t`Restore real rates`}
       </Button>
     </div>
   );

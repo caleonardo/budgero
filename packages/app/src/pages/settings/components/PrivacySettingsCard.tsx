@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Alert, AlertDescription } from '@shared/ui/alert';
@@ -15,6 +16,8 @@ import { IS_SELF_HOSTABLE_BUILD } from '@shared/lib/env';
 
 /** Self-contained privacy/analytics card: owns its own state, sync effect, and mutation. */
 export function PrivacySettingsCard() {
+  const { t } = useLingui();
+
   const { data: profile } = useProfile();
   const setAnalyticsDisabledMutation = useSetAnalyticsDisabled();
   const [analyticsEnabled, setAnalyticsEnabled] = useState(() => !isAnalyticsDisabled());
@@ -60,13 +63,15 @@ export function PrivacySettingsCard() {
     <Card className={IS_SELF_HOSTABLE_BUILD ? 'opacity-60' : undefined}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <BarChart3 className="h-5 w-5" />
-          Privacy Settings
+          <Trans>
+            <BarChart3 className="h-5 w-5" />
+            Privacy Settings
+          </Trans>
         </CardTitle>
         <CardDescription>
           {IS_SELF_HOSTABLE_BUILD
-            ? 'Analytics is not available in self-hosted builds.'
-            : 'Control what anonymous usage data Budgero collects.'}
+            ? t`Analytics is not available in self-hosted builds.`
+            : t`Control what anonymous usage data Budgero collects.`}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -74,8 +79,10 @@ export function PrivacySettingsCard() {
           <Alert>
             <ShieldAlert className="h-4 w-4" />
             <AlertDescription>
-              Usage analytics is disabled and not included in self-hosted builds. No tracking code
-              is loaded or executed.
+              <Trans>
+                Usage analytics is disabled and not included in self-hosted builds. No tracking code
+                is loaded or executed.
+              </Trans>
             </AlertDescription>
           </Alert>
         )}
@@ -85,12 +92,12 @@ export function PrivacySettingsCard() {
               htmlFor="analytics-toggle"
               className={`text-sm font-medium ${IS_SELF_HOSTABLE_BUILD ? 'text-muted-foreground' : ''}`}
             >
-              Usage Analytics
+              <Trans>Usage Analytics</Trans>
             </Label>
             <p className="text-sm text-muted-foreground">
               {IS_SELF_HOSTABLE_BUILD
-                ? 'Not available in self-hosted builds.'
-                : 'Help improve Budgero by sending anonymous usage events. Off by default — nothing is collected unless you turn this on.'}
+                ? t`Not available in self-hosted builds.`
+                : t`Help improve Budgero by sending anonymous usage events. Off by default — nothing is collected unless you turn this on.`}
             </p>
           </div>
           <Switch
@@ -104,95 +111,156 @@ export function PrivacySettingsCard() {
         {!IS_SELF_HOSTABLE_BUILD && (
           <div className="pt-4 border-t border-border/60 space-y-4">
             <div className="space-y-1">
-              <h3 className="text-sm font-medium">What we collect</h3>
+              <h3 className="text-sm font-medium">
+                <Trans>What we collect</Trans>
+              </h3>
               <p className="text-sm text-muted-foreground">
-                When enabled, we collect <strong>only the event name</strong> with no personal data,
-                account information, or financial details. All analytics are completely anonymous.
+                <Trans>
+                  When enabled, we collect{' '}
+                  <strong>
+                    <Trans>only the event name</Trans>
+                  </strong>
+                  with no personal data, account information, or financial details. All analytics
+                  are completely anonymous.
+                </Trans>
               </p>
             </div>
 
             <div className="rounded-md border border-border/60 bg-muted/20 p-4">
               <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-3">
-                Events we track
+                <Trans>Events we track</Trans>
               </h4>
               <ul className="grid gap-2 text-sm">
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Transaction Logged / Edited / Deleted</strong> — when you add, modify,
-                    or remove a transaction
+                    <Trans>
+                      <strong>
+                        <Trans>Transaction Logged / Edited / Deleted</Trans>
+                      </strong>
+                      — when you add, modify, or remove a transaction
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Account Added</strong> — when you create a new account
+                    <Trans>
+                      <strong>
+                        <Trans>Account Added</Trans>
+                      </strong>
+                      — when you create a new account
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Category Added / Edited / Deleted</strong> — when you manage categories
+                    <Trans>
+                      <strong>
+                        <Trans>Category Added / Edited / Deleted</Trans>
+                      </strong>
+                      — when you manage categories
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Category Group Added / Edited / Deleted</strong> — when you manage
-                    category groups
+                    <Trans>
+                      <strong>
+                        <Trans>Category Group Added / Edited / Deleted</Trans>
+                      </strong>
+                      — when you manage category groups
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Assignment Upserted</strong> — when you assign money to a category
+                    <Trans>
+                      <strong>
+                        <Trans>Assignment Upserted</Trans>
+                      </strong>
+                      — when you assign money to a category
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Budget Created</strong> — when you create a new budget
+                    <Trans>
+                      <strong>
+                        <Trans>Budget Created</Trans>
+                      </strong>
+                      — when you create a new budget
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Imported from YNAB / Imported CSV/PDF</strong> — when you import data
-                    into a budget
+                    <Trans>
+                      <strong>
+                        <Trans>Imported from YNAB / Imported CSV/PDF</Trans>
+                      </strong>
+                      — when you import data into a budget
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Shared Budget</strong> — when you create a workspace invite
+                    <Trans>
+                      <strong>
+                        <Trans>Shared Budget</Trans>
+                      </strong>
+                      — when you create a workspace invite
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Trial Started</strong> — when your free trial begins
+                    <Trans>
+                      <strong>
+                        <Trans>Trial Started</Trans>
+                      </strong>
+                      — when your free trial begins
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Checkout Started / Purchase</strong> — subscription funnel events (plan,
-                    price)
+                    <Trans>
+                      <strong>
+                        <Trans>Checkout Started / Purchase</Trans>
+                      </strong>
+                      — subscription funnel events (plan, price)
+                    </Trans>
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-muted-foreground">•</span>
                   <span>
-                    <strong>Subscription Canceled</strong> — cancellation reason (so we can improve
-                    the product)
+                    <Trans>
+                      <strong>
+                        <Trans>Subscription Canceled</Trans>
+                      </strong>
+                      — cancellation reason (so we can improve the product)
+                    </Trans>
                   </span>
                 </li>
               </ul>
             </div>
 
             <p className="text-xs text-muted-foreground">
-              We do not collect transaction amounts, payee names, category names, account balances,
-              or any other financial information. Your budget data stays entirely private.
+              <Trans>
+                We do not collect transaction amounts, payee names, category names, account
+                balances, or any other financial information. Your budget data stays entirely
+                private.
+              </Trans>
             </p>
 
             <div className="pt-2">
@@ -201,7 +269,7 @@ export function PrivacySettingsCard() {
                 onClick={showKlaro}
                 className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
               >
-                Manage cookies
+                <Trans>Manage cookies</Trans>
               </button>
             </div>
           </div>

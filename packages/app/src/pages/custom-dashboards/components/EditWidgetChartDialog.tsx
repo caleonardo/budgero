@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { ChartConfiguration } from '@budgero/core/browser';
 import { toast } from 'sonner';
@@ -52,9 +53,11 @@ export function EditWidgetChartDialog({
   reportName,
   onSave,
 }: EditWidgetChartDialogProps) {
+  const { t } = useLingui();
+
   const [form, setForm] = useState<ChartFormData>(DEFAULT_FORM);
   const { isRunning: isSaving, run: runSave } = useAsyncDialogAction({
-    errorMessage: 'Failed to update chart',
+    errorMessage: t`Failed to update chart`,
     onSuccess: () => onOpenChange(false),
   });
 
@@ -80,14 +83,14 @@ export function EditWidgetChartDialog({
   const handleSave = async () => {
     if (!initialChart) return;
     if (!queryResult || queryResult.columns.length === 0) {
-      toast.error('Run the report query first, then edit this chart.');
+      toast.error(t`Run the report query first, then edit this chart.`);
       return;
     }
     if (!requiredColumnsSelected) {
       toast.error(
         form.chartType === 'stat'
-          ? 'Please select a metric column.'
-          : 'Please select both X and Y axis columns.'
+          ? t`Please select a metric column.`
+          : t`Please select both X and Y axis columns.`
       );
       return;
     }
@@ -111,16 +114,23 @@ export function EditWidgetChartDialog({
     <Dialog open={open} onOpenChange={(nextOpen) => !isSaving && onOpenChange(nextOpen)}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Edit Chart</DialogTitle>
+          <DialogTitle>
+            <Trans>Edit Chart</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Update the selected chart widget configuration{reportName ? ` for ${reportName}` : ''}.
+            <Trans>
+              Update the selected chart widget configuration{reportName ? ` for ${reportName}` : ''}
+              .
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Chart Type</Label>
+              <Label>
+                <Trans>Chart Type</Trans>
+              </Label>
               <Select
                 value={form.chartType}
                 onValueChange={(value) =>
@@ -138,23 +148,39 @@ export function EditWidgetChartDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bar">Bar Chart</SelectItem>
-                  <SelectItem value="line">Line Chart</SelectItem>
-                  <SelectItem value="area">Area Chart</SelectItem>
-                  <SelectItem value="pie">Pie Chart</SelectItem>
-                  <SelectItem value="scatter">Scatter Plot</SelectItem>
-                  <SelectItem value="table">Table</SelectItem>
-                  <SelectItem value="stat">Stat</SelectItem>
+                  <SelectItem value="bar">
+                    <Trans>Bar Chart</Trans>
+                  </SelectItem>
+                  <SelectItem value="line">
+                    <Trans>Line Chart</Trans>
+                  </SelectItem>
+                  <SelectItem value="area">
+                    <Trans>Area Chart</Trans>
+                  </SelectItem>
+                  <SelectItem value="pie">
+                    <Trans>Pie Chart</Trans>
+                  </SelectItem>
+                  <SelectItem value="scatter">
+                    <Trans>Scatter Plot</Trans>
+                  </SelectItem>
+                  <SelectItem value="table">
+                    <Trans>Table</Trans>
+                  </SelectItem>
+                  <SelectItem value="stat">
+                    <Trans>Stat</Trans>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Title (Optional)</Label>
+              <Label>
+                <Trans>Title (Optional)</Trans>
+              </Label>
               <Input
                 value={form.title}
                 onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
-                placeholder="Chart title..."
+                placeholder={t`Chart title...`}
               />
             </div>
           </div>
@@ -162,13 +188,13 @@ export function EditWidgetChartDialog({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {form.chartType !== 'stat' && (
               <div className="space-y-2">
-                <Label>{form.chartType === 'pie' ? 'Labels' : 'X-Axis'} *</Label>
+                <Label>{form.chartType === 'pie' ? t`Labels` : t`X-Axis`} *</Label>
                 <Select
                   value={form.xAxisColumn}
                   onValueChange={(value) => setForm((prev) => ({ ...prev, xAxisColumn: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select column" />
+                    <SelectValue placeholder={t`Select column`} />
                   </SelectTrigger>
                   <SelectContent>
                     {columns.map((column) => (
@@ -184,10 +210,10 @@ export function EditWidgetChartDialog({
             <div className={form.chartType === 'stat' ? 'sm:col-span-2 space-y-2' : 'space-y-2'}>
               <Label>
                 {form.chartType === 'pie'
-                  ? 'Values'
+                  ? t`Values`
                   : form.chartType === 'stat'
-                    ? 'Metric Column'
-                    : 'Y-Axis'}{' '}
+                    ? t`Metric Column`
+                    : t`Y-Axis`}{' '}
                 *
               </Label>
               <Select
@@ -195,7 +221,7 @@ export function EditWidgetChartDialog({
                 onValueChange={(value) => setForm((prev) => ({ ...prev, yAxisColumn: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select column" />
+                  <SelectValue placeholder={t`Select column`} />
                 </SelectTrigger>
                 <SelectContent>
                   {columns.map((column) => (
@@ -211,7 +237,9 @@ export function EditWidgetChartDialog({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {!['pie', 'stat'].includes(form.chartType) && (
               <div className="space-y-2">
-                <Label>Group By</Label>
+                <Label>
+                  <Trans>Group By</Trans>
+                </Label>
                 <Select
                   value={form.groupByColumn}
                   onValueChange={(value) => setForm((prev) => ({ ...prev, groupByColumn: value }))}
@@ -220,7 +248,9 @@ export function EditWidgetChartDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="__none__">None</SelectItem>
+                    <SelectItem value="__none__">
+                      <Trans>None</Trans>
+                    </SelectItem>
                     {columns.map((column) => (
                       <SelectItem key={column} value={column}>
                         {column}
@@ -236,7 +266,9 @@ export function EditWidgetChartDialog({
                 ['pie', 'stat'].includes(form.chartType) ? 'sm:col-span-2 space-y-2' : 'space-y-2'
               }
             >
-              <Label>Aggregate Function</Label>
+              <Label>
+                <Trans>Aggregate Function</Trans>
+              </Label>
               <Select
                 value={form.aggregateFunction}
                 onValueChange={(value) =>
@@ -250,11 +282,21 @@ export function EditWidgetChartDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="SUM">Sum</SelectItem>
-                  <SelectItem value="COUNT">Count</SelectItem>
-                  <SelectItem value="AVG">Average</SelectItem>
-                  <SelectItem value="MAX">Maximum</SelectItem>
-                  <SelectItem value="MIN">Minimum</SelectItem>
+                  <SelectItem value="SUM">
+                    <Trans>Sum</Trans>
+                  </SelectItem>
+                  <SelectItem value="COUNT">
+                    <Trans>Count</Trans>
+                  </SelectItem>
+                  <SelectItem value="AVG">
+                    <Trans>Average</Trans>
+                  </SelectItem>
+                  <SelectItem value="MAX">
+                    <Trans>Maximum</Trans>
+                  </SelectItem>
+                  <SelectItem value="MIN">
+                    <Trans>Minimum</Trans>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -263,10 +305,10 @@ export function EditWidgetChartDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button onClick={() => void handleSave()} disabled={isSaving || !requiredColumnsSelected}>
-            {isSaving ? 'Saving...' : 'Update Chart'}
+            {isSaving ? t`Saving...` : t`Update Chart`}
           </Button>
         </DialogFooter>
       </DialogContent>

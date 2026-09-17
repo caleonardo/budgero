@@ -1,9 +1,14 @@
+import { Trans, useLingui } from '@lingui/react/macro';
+import { msg } from '@lingui/core/macro';
 import React from 'react';
 import { Title, type StepProps } from './shared';
+import { getOnboardingImage } from '../onboarding-images';
 
 const WELCOME_SRC = '/onboarding-welcome.png';
 
 export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
+  const { t, i18n } = useLingui();
+
   // Invitee shortcut: the user landed here via /join#code=…, so they're
   // joining someone else's workspace, not building their own. Drop the
   // 6-step journey illustration (misleading — they only see two screens
@@ -12,8 +17,8 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
     return (
       <div>
         <Title
-          h="You’re joining a Budgero workspace."
-          sub="Someone shared their budget with you. We’ll set up an encryption key on this device, then drop you straight into their ledger — no setup of your own required."
+          h={msg`You’re joining a Budgero workspace.`}
+          sub={msg`Someone shared their budget with you. We’ll set up an encryption key on this device, then drop you straight into their ledger — no setup of your own required.`}
         />
         <ul
           style={{
@@ -27,9 +32,9 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
           }}
         >
           {[
-            'Pick a master password — your encryption key on this device.',
-            'We’ll redeem the invite and unlock the shared workspace.',
-            'You land on the dashboard with their budget ready to go.',
+            t`Pick a master password — your encryption key on this device.`,
+            t`We’ll redeem the invite and unlock the shared workspace.`,
+            t`You land on the dashboard with their budget ready to go.`,
           ].map((s, i) => (
             <li key={i} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               <span
@@ -62,9 +67,13 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
             lineHeight: 1.55,
           }}
         >
-          <span style={{ fontWeight: 700, color: '#141414', letterSpacing: 0.5 }}>HEADS UP:</span>{' '}
-          Your master password encrypts the shared workspace key on this device. Pick something
-          memorable — Budgero never sees it and we can’t reset it for you.
+          <Trans>
+            <span style={{ fontWeight: 700, color: '#141414', letterSpacing: 0.5 }}>
+              <Trans>HEADS UP:</Trans>
+            </span>{' '}
+            Your master password encrypts the shared workspace key on this device. Pick something
+            memorable — Budgero never sees it and we can’t reset it for you.
+          </Trans>
         </div>
       </div>
     );
@@ -72,8 +81,8 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
   return (
     <div>
       <Title
-        h="Welcome to Budgero."
-        sub="We’ll walk through it together. The idea is simple: every coin you earn gets a job before you spend it. Here’s what we’ll do, in six small steps."
+        h={msg`Welcome to Budgero.`}
+        sub={msg`We’ll walk through it together. The idea is simple: every coin you earn gets a job before you spend it. Here’s what we’ll do, in six small steps.`}
       />
       <div
         style={{
@@ -87,8 +96,8 @@ export const WelcomeStep: React.FC<StepProps> = ({ state }) => {
             step icons across the top + a friendly coin at the bottom. We
             drop the prior numbered text list since the visual covers it. */}
         <img
-          src={WELCOME_SRC}
-          alt="Your journey in six steps: rules, currency, ZBB, name your budget, accounts, password"
+          src={getOnboardingImage(WELCOME_SRC, i18n.locale)}
+          alt={t`Your journey in six steps: rules, currency, ZBB, name your budget, accounts, password`}
           style={{
             width: '100%',
             maxWidth: 720,

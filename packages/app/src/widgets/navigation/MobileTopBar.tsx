@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
@@ -27,6 +28,8 @@ import { useActiveSpace } from '@shared/runtime/runtime-provider';
 import logoImg from '/logo_144.png';
 
 export function MobileTopBar() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const togglePrivacyMaskNumbers = useUiStore((state) => state.togglePrivacyMaskNumbers);
@@ -84,14 +87,14 @@ export function MobileTopBar() {
       const createdBudget = useUiStore.getState().selectedBudget;
       setCreateDialogOpen(false);
       setBudgetDropdownOpen(false);
-      toast.success('Budget created', {
+      toast.success(t`Budget created`, {
         description: createdBudget
-          ? `Switched to "${createdBudget.Name}".`
-          : 'Switched to your new budget.',
+          ? t`Switched to "${createdBudget.Name}".`
+          : t`Switched to your new budget.`,
       });
       void navigate('/', { replace: true });
     },
-    [navigate]
+    [navigate, t]
   );
 
   // Expose top bar height via CSS variable for layout sizing
@@ -169,9 +172,9 @@ export function MobileTopBar() {
             type="button"
             onClick={() => setCommandPaletteOpen(true)}
             className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            aria-label="Open command menu"
+            aria-label={t`Open command menu`}
           >
-            <img src={logoImg} alt="Logo" className="h-10 w-10 rounded-full shadow-sm" />
+            <img src={logoImg} alt={t`Logo`} className="h-10 w-10 rounded-full shadow-sm" />
           </button>
         </div>
 
@@ -186,8 +189,10 @@ export function MobileTopBar() {
                     size="icon"
                     className="h-8 w-6 mr-1"
                     onClick={togglePrivacyMaskNumbers}
-                    title={privacyMaskNumbers ? 'Disable privacy mode' : 'Enable privacy mode'}
-                    aria-label={privacyMaskNumbers ? 'Disable privacy mode' : 'Enable privacy mode'}
+                    title={privacyMaskNumbers ? t`Disable privacy mode` : t`Enable privacy mode`}
+                    aria-label={
+                      privacyMaskNumbers ? t`Disable privacy mode` : t`Enable privacy mode`
+                    }
                   >
                     {privacyMaskNumbers ? (
                       <EyeOff className="h-4 w-4" />
@@ -196,7 +201,9 @@ export function MobileTopBar() {
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="bottom">Privacy mode</TooltipContent>
+                <TooltipContent side="bottom">
+                  <Trans>Privacy mode</Trans>
+                </TooltipContent>
               </Tooltip>
               {feedbackEnabled && (
                 <Button
@@ -204,8 +211,8 @@ export function MobileTopBar() {
                   size="icon"
                   className="h-8 w-6 mr-1"
                   onClick={openQuackback}
-                  title="Send feedback"
-                  aria-label="Send feedback"
+                  title={t`Send feedback`}
+                  aria-label={t`Send feedback`}
                 >
                   <FeedbackIcon className="h-4 w-4" />
                 </Button>
@@ -222,7 +229,9 @@ export function MobileTopBar() {
                     <Undo2 className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="bottom">Undo</TooltipContent>
+                <TooltipContent side="bottom">
+                  <Trans>Undo</Trans>
+                </TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -236,7 +245,9 @@ export function MobileTopBar() {
                     <Redo2 className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="bottom">Redo</TooltipContent>
+                <TooltipContent side="bottom">
+                  <Trans>Redo</Trans>
+                </TooltipContent>
               </Tooltip>
             </div>
           </TooltipProvider>
@@ -253,8 +264,12 @@ export function MobileTopBar() {
           }}
         >
           <DialogContent>
-            <DialogTitle>Manage Budget</DialogTitle>
-            <DialogDescription>Edit or delete your budget</DialogDescription>
+            <DialogTitle>
+              <Trans>Manage Budget</Trans>
+            </DialogTitle>
+            <DialogDescription>
+              <Trans>Edit or delete your budget</Trans>
+            </DialogDescription>
 
             {error && (
               <div className="rounded-md bg-destructive-foreground/10 px-4 py-3 text-sm text-destructive">
@@ -283,7 +298,7 @@ export function MobileTopBar() {
                 onError={setError}
               />
               <Button type="submit" form="budget-form" variant="default">
-                Update Budget
+                <Trans>Update Budget</Trans>
               </Button>
             </div>
           </DialogContent>
@@ -302,7 +317,7 @@ export function MobileTopBar() {
           <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto p-2 sm:p-4">
             <DialogTitle className="sr-only">Create New Budget</DialogTitle>
             <DialogDescription className="sr-only">
-              Set up a new budget to track your finances
+              <Trans>Set up a new budget to track your finances</Trans>
             </DialogDescription>
             <BudgetWizard onCreated={handleBudgetCreated} />
           </DialogContent>

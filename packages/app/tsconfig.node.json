@@ -8,7 +8,10 @@
     "strict": true,
     "types": ["node"],
     "target": "ES2022",
-    "lib": ["ES2022"]
+    "lib": ["ES2022"],
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "./node_modules/.tsc-node"
   },
   "include": ["vite.config.ts", "playwright.config.ts", "tests/**/*"]
 }

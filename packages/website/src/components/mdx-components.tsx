@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { useMDXComponent } from 'next-contentlayer2/hooks';
 import { cn } from '@/lib/utils';
 import { Callout } from '@/components/callout';

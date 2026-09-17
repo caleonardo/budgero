@@ -1,0 +1,95 @@
+---
+title: "Por asignar"
+summary: "Por asignar es el corazón del sistema de presupuesto base cero de Budgero. Te muestra exactamente cuánto de tu dinero disponible aún necesita un trabajo."
+section: getting-started
+topicId: ready-to-assign
+badge: "Nuevo"
+takeaways:
+  - "Elige entre Por asignar acumulativo o mensual (estilo YNAB) para cada presupuesto."
+  - "Entiende los eventos que aumentan o reducen automáticamente Por asignar."
+  - "Domina las operaciones matemáticas del campo de asignación para hacer ajustes rápidos del presupuesto."
+---
+
+Por asignar controla la parte de tu dinero presupuestado que aún necesita un destino. Cuando marca cero, cada unidad está asignada a una categoría. Si es positivo, todavía tienes decisiones que tomar. Si baja a negativo, has asignado más dinero del que realmente tienes.
+
+## El ciclo de Por asignar
+
+1. **Registra el dinero en cuanto llega.** Anota nóminas, transferencias, reembolsos e ingresos en efectivo en la cuenta donde realmente está el dinero. Budgero actualiza Por asignar al instante según el importe del ingreso y la divisa de la cuenta.
+2. **Revisa tu tabla de presupuesto.** Por asignar se encuentra en la parte superior de la tabla de presupuesto y muestra cuánto de tu dinero aún necesita un destino antes del próximo ingreso.
+3. **Asigna fondos con intención.** Haz clic en el campo asignado de cualquier categoría para asignar dinero. El campo funciona como una mini calculadora donde puedes escribir importes directamente o usar operaciones matemáticas (suma, resta, multiplicación, división) para ajustar las asignaciones existentes. Asigna fondos hasta que Por asignar llegue a cero.
+4. **Concilia con regularidad.** Coincidir los saldos de Budgero con los de tu banco mantiene Por asignar alineado con el dinero que realmente está disponible.
+
+<Callout variant="note" title="Zero-based reminder">
+Cuando Por asignar marca cero, cada unidad de divisa tiene un propósito. Si es positivo, todavía tienes decisiones que tomar. Si es negativo, retira dinero de las categorías de menor prioridad hasta que el saldo vuelva a ser cero.
+</Callout>
+
+## Dos formas de calcular Por asignar
+
+Budgero puede calcular Por asignar en uno de dos modos, que se eligen **por presupuesto** en **Ajustes → Ajustes de presupuesto**. Cambiar de modo es instantáneo y no destructivo: solo cambia el cálculo, nunca tus transacciones ni tus asignaciones. La ayuda emergente junto a Por asignar siempre muestra el desglose completo del modo que esté activo.
+
+### Acumulativo (predeterminado)
+
+Por asignar es una única cifra acumulada desde siempre: los ingresos totales menos todo lo que hayas asignado (y el dinero transferido fuera del presupuesto). Es **la misma en todos los meses** —el mes que estés viendo no la cambia—, lo que la mantiene sencilla y predecible.
+
+- Los ingresos cuentan en cuanto se registran, sin importar su fecha.
+- El gasto excedido **se mantiene dentro de la categoría** como un saldo negativo y se arrastra de mes a mes hasta que lo cubras. Nunca afecta a Por asignar.
+
+Elige Acumulado si consideras tu presupuesto como un fondo continuo y no te importa que Por asignar se mantenga constante entre meses.
+
+### Mensual (estilo YNAB)
+
+Por asignar se calcula **para el mes que estás viendo**, de modo que cada mes es independiente. Esto coincide con lo que esperan quienes vienen de YNAB.
+
+- Los ingresos solo cuentan **hasta el mes seleccionado inclusive** — el dinero recibido en un mes futuro no está disponible para asignar hasta que llegues a ese mes.
+- El dinero **asignado a meses futuros** ya está reservado y se descuenta del mes que ves (como «Asignado a meses futuros» en el desglose Por asignar). Como en YNAB, esto solo puede reducir un mes anterior a cero. Si asignas más de lo que tienes, el déficit aparece como Por asignar negativo en el mes al que lo asignaste.
+- El **exceso de gasto en efectivo** se descuenta del Por asignar del mes **siguiente**, y la categoría se reinicia a cero en lugar de arrastrar un saldo rojo para siempre.
+- El **exceso de gasto con tarjeta de crédito** se trata como deuda de la tarjeta, no como dinero perdido, por lo que **no** reduce el Por asignar. En su lugar, la categoría de Pago de tarjeta de crédito aparece como infradotada; haz clic en ella para ver exactamente qué categorías y meses generaron la deuda.
+
+Elige Mensual si vienes de YNAB, o si quieres que cada mes concilie por su cuenta — los ingresos según llegan, y el exceso de gasto del mes pasado reduciendo el Por asignar de este mes.
+
+## Cómo cambia el Por asignar
+
+### Ingresos
+
+- **Nuevos ingresos.** Las nóminas, los pagos freelance o los reembolsos incorporan su importe neto a Por asignar. Estas transacciones deben categorizarse bajo la categoría 'Ingresos' para que Por asignar aumente correctamente.
+- **Transferencias entre cuentas.** Mover fondos desde una cuenta fuera del presupuesto (como el ahorro) a una cuenta en el presupuesto (como la cuenta corriente) aumenta Por asignar. Las transferencias internas entre cuentas en el presupuesto mantienen Por asignar sin cambios. Las transferencias desde cuentas en el presupuesto a cuentas fuera del presupuesto reducen Por asignar por el importe transferido.
+- **Conciliaciones de cuentas.** Cuando concilias una cuenta, cualquier ajuste necesario para coincidir con el saldo de tu banco afecta a Por asignar. Por defecto, estos ajustes se categorizan como 'Ingresos' a menos que los reasignes a otra categoría.
+
+### Gastos
+
+- **Asignar dinero.** Cuando financias una categoría, Por asignar disminuye en la misma cantidad.
+- **Reasignar fondos.** Mover dinero entre categorías no cambia Por asignar, pero devolver dinero a Por asignar lo aumenta.
+
+## Cómo asignar dinero
+
+1. Selecciona una categoría que necesite fondos y haz clic en su campo de asignación.
+2. Escribe la cantidad que quieres asignar o usa +, -, * y / para ajustar la asignación existente como en una calculadora.
+3. Pulsa Enter para confirmar y luego sigue asignando hasta que Por asignar muestre cero.
+
+## Resolución de problemas habituales
+
+### Por asignar es negativo
+
+1. Revisa las categorías en busca de indicadores de gasto excedido — rojo para excedido en efectivo, ámbar para crédito — y devuelve dinero hasta que esas categorías lleguen a cero o estén en verde.
+2. Comprueba si hay gastos duplicados o transacciones de gasto introducidas dos veces y elimina el duplicado.
+3. Concilia cada cuenta del presupuesto. Si los saldos no coinciden con los de tu banco, ajusta el saldo de la cuenta para que Por asignar refleje tu efectivo real.
+
+### Por asignar no aumentó después de cobrar la nómina
+
+- Asegúrate de que el tipo de transacción sea un ingreso categorizado como Por asignar (deja la categoría en blanco).
+- Confirma que la cuenta forme parte del presupuesto: las cuentas de seguimiento no afectan a Por asignar.
+- Si el ingreso llegó en otra divisa, verifica el tipo de cambio y edita el importe si cambió tras su registro.
+
+### Mi Por asignar no coincide con YNAB
+
+Por defecto, Budgero usa el modo **Acumulado**, que se diferencia de YNAB en dos aspectos: cuenta todo el ingreso inmediatamente sin importar el mes que estés viendo, y el exceso de gasto se queda dentro de la categoría en lugar de deducirse de Por asignar. Si quieres el comportamiento de YNAB, cambia este presupuesto al modo **Mensual** en Ajustes → Ajustes del presupuesto: el ingreso entonces se cuenta solo hasta el mes que estés viendo, y el exceso de gasto en efectivo del mes pasado se descuenta del Por asignar de este mes. Consulta [Dos formas de calcular Por asignar](#two-ways-to-calculate-ready-to-assign) más arriba para la comparación completa.
+
+### Quieres reservar dinero para más adelante
+
+- Crea una categoría de reserva (por ejemplo, «Colchón para el mes próximo»). Asigna los fondos ahí en lugar de dejarlos sin asignar.
+- Cuando estés listo para usar el dinero, muévelo de esa categoría de reserva a la categoría que lo necesite.
+- Da preferencia a los objetivos para metas predecibles: te recuerdan cuándo aportar fondos y cuánto mantener para seguir en el buen camino.
+
+## Próximos pasos
+
+Por asignar funciona mejor cuando los objetivos y las categorías reflejan tus prioridades. Explora más guías en el [centro de documentación de Budgero](/docs) para seguir ganando impulso.

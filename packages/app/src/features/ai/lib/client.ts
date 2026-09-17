@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { createOpenAI } from '@ai-sdk/openai';
 import { z } from 'zod';
 import type { LLMProvider } from '@budgero/core/browser';
@@ -184,7 +185,7 @@ export async function testConnection(config: AIClientConfig): Promise<Connection
     const errorData = await testResponse.text();
     throw new Error(errorData || `HTTP ${testResponse.status}`);
   } catch (error) {
-    const message = getErrorMessage(error, 'Failed to connect. Check your API key and endpoint.');
+    const message = getErrorMessage(error, t`Failed to connect. Check your API key and endpoint.`);
     return {
       success: false,
       error: message,

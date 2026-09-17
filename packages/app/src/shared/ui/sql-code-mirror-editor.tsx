@@ -1,3 +1,5 @@
+import { useLingui, Trans } from '@lingui/react/macro';
+import type { MessageDescriptor } from '@lingui/core';
 import { memo, useState, useEffect, useCallback, useRef } from 'react';
 import type { Extension } from '@codemirror/state';
 import type { SqlEditorModules } from '@shared/hooks/useSqlEditorModules';
@@ -16,7 +18,7 @@ export interface SqlCodeMirrorEditorProps {
   /** Lazily-loaded CodeMirror modules; null while loading shows the placeholder state. */
   editorModules: SqlEditorModules | null;
   /** Placeholder text shown in the empty editor. */
-  placeholder: string;
+  placeholder: MessageDescriptor | string;
   /**
    * Tailwind classes controlling the editor (and matching loading-state) min-height,
    * e.g. `min-h-[140px] sm:min-h-[180px]`.
@@ -43,6 +45,7 @@ export const SqlCodeMirrorEditor = memo(
     minHeightClassName,
     debounceMs = 300,
   }: SqlCodeMirrorEditorProps) => {
+    const { t } = useLingui();
     // Local state manages editor value for performance; props sync in on change.
     const [localValue, setLocalValue] = useState(value);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -78,7 +81,7 @@ export const SqlCodeMirrorEditor = memo(
         <div
           className={`flex ${minHeightClassName} items-center justify-center rounded border border-dashed border-muted-foreground/50 bg-muted/30 text-xs text-muted-foreground`}
         >
-          Loading SQL editor...
+          <Trans>Loading SQL editor...</Trans>
         </div>
       );
     }
@@ -98,7 +101,7 @@ export const SqlCodeMirrorEditor = memo(
         }}
         extensions={extensions}
         theme={isDark ? editorModules.oneDark : 'light'}
-        placeholder={placeholder}
+        placeholder={typeof placeholder === 'string' ? placeholder : t(placeholder)}
         basicSetup={{
           lineNumbers: false,
           foldGutter: false,

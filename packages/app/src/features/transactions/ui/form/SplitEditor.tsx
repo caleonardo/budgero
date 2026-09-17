@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Split Editor Component
  *
@@ -46,6 +47,8 @@ export function SplitEditor({
   parentAmount,
   formatter,
 }: SplitEditorProps) {
+  const { t } = useLingui();
+
   const updateLine = (id: string, updates: Partial<SplitLine>) => {
     onSplitLinesChange(splitLines.map((l) => (l.id === id ? { ...l, ...updates } : l)));
   };
@@ -110,14 +113,16 @@ export function SplitEditor({
           type="button"
           onClick={onToggleSplit}
         >
-          {isSplit ? 'Disable Split' : 'Enable Split'}
+          {isSplit ? t`Disable Split` : t`Enable Split`}
         </Button>
       </div>
 
       {isSplit && (
         <div className="space-y-2 sm:space-y-3 border rounded-md p-2 sm:p-3">
           <div className="flex items-center justify-between text-[11px] sm:text-xs text-muted-foreground">
-            <span>Remaining to assign</span>
+            <span>
+              <Trans>Remaining to assign</Trans>
+            </span>
             <span className="font-mono">{formatMilli(formatter, asMilli(remaining))}</span>
           </div>
 
@@ -130,7 +135,7 @@ export function SplitEditor({
                   onCategorySelect={(categoryId) => {
                     updateLine(line.id, { categoryId, transferAccountId: undefined });
                   }}
-                  placeholder="Category"
+                  placeholder={t`Category`}
                   triggerClassName="w-full h-8 sm:h-9"
                   popoverContentClassName="w-[320px] max-w-[90vw]"
                 />
@@ -147,13 +152,15 @@ export function SplitEditor({
                 <Input
                   value={line.memo || ''}
                   onChange={(e) => updateLine(line.id, { memo: e.target.value })}
-                  placeholder="Memo"
+                  placeholder={t`Memo`}
                   className="h-8 sm:h-9"
                 />
               </div>
               <div className="grid grid-cols-2 gap-2 sm:flex sm:items-end">
                 <div className="min-w-0 sm:flex-1">
-                  <div className="mb-1 text-[10px] text-muted-foreground">Outflow</div>
+                  <div className="mb-1 text-[10px] text-muted-foreground">
+                    <Trans>Outflow</Trans>
+                  </div>
                   <CalculatorCell
                     value={line.outflow}
                     onCommit={(val) =>
@@ -173,7 +180,9 @@ export function SplitEditor({
                   />
                 </div>
                 <div className="min-w-0 sm:flex-1">
-                  <div className="mb-1 text-[10px] text-muted-foreground">Inflow</div>
+                  <div className="mb-1 text-[10px] text-muted-foreground">
+                    <Trans>Inflow</Trans>
+                  </div>
                   <CalculatorCell
                     value={line.inflow}
                     onCommit={(val) =>
@@ -199,8 +208,12 @@ export function SplitEditor({
                   type="button"
                   onClick={() => deleteLine(line.id)}
                 >
-                  <span className="hidden sm:inline">Delete</span>
-                  <span className="sm:hidden inline">Del</span>
+                  <span className="hidden sm:inline">
+                    <Trans>Delete</Trans>
+                  </span>
+                  <span className="sm:hidden inline">
+                    <Trans>Del</Trans>
+                  </span>
                 </Button>
               </div>
             </div>
@@ -208,7 +221,7 @@ export function SplitEditor({
 
           <div className="flex items-center gap-2 pt-1">
             <Button variant="outline" size="sm" className="h-8" type="button" onClick={addLine}>
-              + Line
+              <Trans>+ Line</Trans>
             </Button>
             <Button
               variant="outline"
@@ -217,7 +230,7 @@ export function SplitEditor({
               type="button"
               onClick={splitRemaining}
             >
-              Split remaining
+              <Trans>Split remaining</Trans>
             </Button>
           </div>
         </div>

@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
@@ -28,19 +30,19 @@ function frequencyLabelFor(schedule: RecurringTransaction['schedule']): string {
     case 'week:1':
       return 'Weekly';
     case 'week:2':
-      return 'Every 2 weeks';
+      return t`Every 2 weeks`;
     case 'month:1':
       return 'Monthly';
     case 'month:2':
-      return 'Every 2 months';
+      return t`Every 2 months`;
     case 'month:3':
       return 'Quarterly';
     case 'month:6':
-      return 'Every 6 months';
+      return t`Every 6 months`;
     case 'year:1':
       return 'Yearly';
     default:
-      return 'Custom cadence';
+      return t`Custom cadence`;
   }
 }
 
@@ -48,9 +50,9 @@ function endLabelFor(schedule: RecurringTransaction['schedule']): string | null 
   const count = schedule.occurrenceCount ?? null;
   const countLabel = count ? `after ${count} ${count === 1 ? 'occurrence' : 'occurrences'}` : null;
   const dateLabel = schedule.endDate ? `on ${schedule.endDate}` : null;
-  if (countLabel && dateLabel) return `Ends ${countLabel} or ${dateLabel}`;
-  if (countLabel) return `Ends ${countLabel}`;
-  if (dateLabel) return `Ends ${dateLabel}`;
+  if (countLabel && dateLabel) return t`Ends ${countLabel} or ${dateLabel}`;
+  if (countLabel) return t`Ends ${countLabel}`;
+  if (dateLabel) return t`Ends ${dateLabel}`;
   return null;
 }
 
@@ -89,7 +91,9 @@ export function RecurringTemplateCard({
   onEdit,
   onDelete,
 }: RecurringTemplateCardProps) {
-  const dueLabel = nextOccurrence ? formatDueLabel(nextOccurrence.dueDate) : 'No upcoming dates';
+  const { t } = useLingui();
+
+  const dueLabel = nextOccurrence ? formatDueLabel(nextOccurrence.dueDate) : t`No upcoming dates`;
   const amountDisplay = formatRecurringAmount(template, accountLocalizer);
   const budgetAmountDisplay =
     budgetAmount != null &&
@@ -116,10 +120,10 @@ export function RecurringTemplateCard({
               {template.name}
               <Badge variant={template.direction === 'inflow' ? 'default' : 'secondary'}>
                 {template.toAccountId != null
-                  ? 'Transfer'
+                  ? t`Transfer`
                   : template.direction === 'inflow'
-                    ? 'Income'
-                    : 'Bill'}
+                    ? t`Income`
+                    : t`Bill`}
               </Badge>
             </CardTitle>
             {template.memo ? (
@@ -136,7 +140,9 @@ export function RecurringTemplateCard({
                 </TooltipContent>
               </Tooltip>
             ) : (
-              <CardDescription>No memo provided</CardDescription>
+              <CardDescription>
+                <Trans>No memo provided</Trans>
+              </CardDescription>
             )}
           </div>
           <div className="mt-1 flex shrink-0 flex-wrap items-center gap-3 self-end sm:mt-0 sm:justify-end sm:self-auto">
@@ -152,7 +158,7 @@ export function RecurringTemplateCard({
               onClick={() => onToggleActive(!template.active)}
               disabled={isProcessing || isTogglePending}
             >
-              {template.active ? 'Pause' : 'Resume'}
+              {template.active ? t`Pause` : t`Resume`}
             </Button>
           </div>
         </div>
@@ -161,7 +167,10 @@ export function RecurringTemplateCard({
             <Sparkles className="h-3.5 w-3.5 text-primary" /> {frequencyLabel}
           </span>
           <span className="flex items-center gap-1">
-            <CalendarDays className="h-3.5 w-3.5" /> Started {template.schedule.startDate}
+            <Trans>
+              <CalendarDays className="h-3.5 w-3.5" />
+              Started {template.schedule.startDate}
+            </Trans>
           </span>
           {endLabel && (
             <span className="flex items-center gap-1">
@@ -169,7 +178,10 @@ export function RecurringTemplateCard({
             </span>
           )}
           <span className="flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" /> Next due {dueLabel}
+            <Trans>
+              <Clock className="h-3.5 w-3.5" />
+              Next due {dueLabel}
+            </Trans>
           </span>
         </div>
       </CardHeader>
@@ -177,29 +189,41 @@ export function RecurringTemplateCard({
         <div className="grid gap-2 text-sm text-muted-foreground">
           <div>
             <span className="font-medium text-foreground">
-              {template.toAccountId != null ? 'From account:' : 'Account:'}
+              {template.toAccountId != null ? t`From account:` : t`Account:`}
             </span>{' '}
             {accountName}
           </div>
           {template.toAccountId != null ? (
             <div>
-              <span className="font-medium text-foreground">To account:</span>{' '}
-              {toAccountName ?? 'Unknown account'}
+              <span className="font-medium text-foreground">
+                <Trans>To account:</Trans>
+              </span>{' '}
+              {toAccountName ?? t`Unknown account`}
             </div>
           ) : (
             <div>
-              <span className="font-medium text-foreground">Category:</span> {categoryName}
+              <span className="font-medium text-foreground">
+                <Trans>Category:</Trans>
+              </span>{' '}
+              {categoryName}
             </div>
           )}
           <div>
-            <span className="font-medium text-foreground">Remind me:</span>{' '}
-            {template.notifyDaysBefore || 0} day(s) before
+            <Trans>
+              <span className="font-medium text-foreground">
+                <Trans>Remind me:</Trans>
+              </span>{' '}
+              {template.notifyDaysBefore || 0} day(s) before
+            </Trans>
           </div>
         </div>
         <Separator />
         <div className="flex flex-wrap gap-2">
           <Button variant="ghost" size="sm" onClick={onEdit} disabled={isProcessing}>
-            <Pencil className="mr-2 h-4 w-4" /> Edit
+            <Trans>
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
+            </Trans>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -209,23 +233,32 @@ export function RecurringTemplateCard({
                 className="text-destructive hover:text-destructive"
                 disabled={isProcessing}
               >
-                <Trash2 className="mr-2 h-4 w-4" /> Delete
+                <Trans>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </Trans>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete “{template.name}”?</AlertDialogTitle>
+                <AlertDialogTitle>
+                  <Trans>Delete “{template.name}”?</Trans>
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will remove upcoming reminders. Existing transactions are unaffected.
+                  <Trans>
+                    This will remove upcoming reminders. Existing transactions are unaffected.
+                  </Trans>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>
+                  <Trans>Cancel</Trans>
+                </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={onDelete}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  Delete
+                  <Trans>Delete</Trans>
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

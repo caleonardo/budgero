@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { useUiStore } from '@shared/store/useUiStore';
@@ -97,13 +98,17 @@ export function DashboardPageMobile() {
       {/* Balance Card */}
       <Card className="mb-4">
         <CardHeader className="pb-0 text-center">
-          <CardTitle className="text-base font-medium">Cash Balance</CardTitle>
+          <CardTitle className="text-base font-medium">
+            <Trans>Cash Balance</Trans>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {/* Summary Text */}
           <div className="text-center mb-4 text-muted-foreground">
             <div className="text-2xl font-medium">{formatMilliAmount(totalBalance)}</div>
-            <div className="text-sm opacity-70">checking, savings & cash</div>
+            <div className="text-sm opacity-70">
+              <Trans>checking, savings & cash</Trans>
+            </div>
             {/* Trend Indicator */}
             {balanceTrend.change !== 0 && (
               <TrendIndicator
@@ -127,7 +132,9 @@ export function DashboardPageMobile() {
       {/* Spending Card with Tabs */}
       <Card className="mb-4">
         <CardHeader className="pb-0 text-center">
-          <CardTitle className="text-base font-medium">Spending Analysis</CardTitle>
+          <CardTitle className="text-base font-medium">
+            <Trans>Spending Analysis</Trans>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs
@@ -141,13 +148,13 @@ export function DashboardPageMobile() {
                   value="breakdown"
                   className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
                 >
-                  Breakdown
+                  <Trans>Breakdown</Trans>
                 </TabsTrigger>
                 <TabsTrigger
                   value="timeseries"
                   className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
                 >
-                  Time Series
+                  <Trans>Time Series</Trans>
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -157,7 +164,9 @@ export function DashboardPageMobile() {
               {activeTab === 'breakdown' ? (
                 <div>
                   <div className="text-2xl font-medium">{formatMilliAmount(totalSpending)}</div>
-                  <div className="text-sm opacity-70">total spent</div>
+                  <div className="text-sm opacity-70">
+                    <Trans>total spent</Trans>
+                  </div>
                   {/* Spending Trend Indicator */}
                   {spendingTrend.change !== 0 && (
                     <TrendIndicator
@@ -172,10 +181,10 @@ export function DashboardPageMobile() {
               ) : (
                 <div>
                   <div className="text-2xl font-medium">
-                    {formatMilliAmount(budgetRemaining)} left
+                    <Trans>{formatMilliAmount(budgetRemaining)} left</Trans>
                   </div>
                   <div className="text-sm opacity-70">
-                    out of {formatMilliAmount(totalAssignedAmount || 0)} budgeted
+                    <Trans>out of {formatMilliAmount(totalAssignedAmount || 0)} budgeted</Trans>
                   </div>
                 </div>
               )}

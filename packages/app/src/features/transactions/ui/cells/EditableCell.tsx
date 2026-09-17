@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Input } from '@shared/ui/input';
 import { cn } from '@shared/lib/utils';
@@ -26,6 +27,7 @@ export function EditableCell({
   autoFocus = false,
   onEditingChange,
 }: EditableCellProps) {
+  const { t } = useLingui();
   const [isEditing, setIsEditing] = React.useState(autoFocus);
   // Internal state for the input, initialized from the prop. Input value is always string.
   const [currentValue, setCurrentValue] = React.useState(String(initialValueProp ?? ''));
@@ -121,7 +123,7 @@ export function EditableCell({
         className
       )}
       {...buttonizeProps(handleEditClick)}
-      title={String(initialValueProp ?? '') || 'Click to edit'}
+      title={String(initialValueProp ?? '') || t`Click to edit`}
     >
       {isEmptyDisplay ? (
         // Render a placeholder for empty content to ensure clickability and indicate emptiness

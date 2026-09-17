@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 /**
  * SQL query parsing and helper utilities for the Explorer page
  */
@@ -29,7 +30,7 @@ export function resultsToCSV(columns: string[], rows: unknown[][]): string {
  */
 export const COMMON_QUERIES = [
   {
-    name: 'List all tables',
+    name: msg`List all tables`,
     query: `SELECT
       table_name AS name,
       table_type
@@ -38,7 +39,7 @@ export const COMMON_QUERIES = [
     ORDER BY table_type DESC, table_name;`,
   },
   {
-    name: 'Analytics view columns',
+    name: msg`Analytics view columns`,
     query: `SELECT
       column_name AS name,
       data_type AS type
@@ -47,7 +48,7 @@ export const COMMON_QUERIES = [
     ORDER BY ordinal_position;`,
   },
   {
-    name: 'Transactions analytics preview',
+    name: msg`Transactions analytics preview`,
     query: `SELECT
       transaction_id,
       date,
@@ -63,7 +64,7 @@ export const COMMON_QUERIES = [
     LIMIT 20;`,
   },
   {
-    name: 'Database statistics',
+    name: msg`Database statistics`,
     query: `SELECT
       (SELECT COUNT(*) FROM budgets) AS Budgets,
       (SELECT COUNT(*) FROM accounts) AS Accounts,
@@ -72,7 +73,7 @@ export const COMMON_QUERIES = [
       (SELECT COUNT(*) FROM transactions_analytics) AS AnalyticsRows;`,
   },
   {
-    name: 'Recent transactions',
+    name: msg`Recent transactions`,
     query: `SELECT
       transaction_id,
       date,
@@ -90,7 +91,7 @@ export const COMMON_QUERIES = [
     LIMIT 25;`,
   },
   {
-    name: 'Top category spending (30d)',
+    name: msg`Top category spending (30d)`,
     query: `SELECT
       category_group_name,
       category_name,
@@ -105,7 +106,7 @@ export const COMMON_QUERIES = [
     LIMIT 20;`,
   },
   {
-    name: 'Account balances',
+    name: msg`Account balances`,
     query: `SELECT
       a."Name" AS account_name,
       a."Balance" AS balance,
@@ -116,7 +117,7 @@ export const COMMON_QUERIES = [
     ORDER BY a."Balance" DESC;`,
   },
   {
-    name: 'Top payees by spending (30d)',
+    name: msg`Top payees by spending (30d)`,
     query: `SELECT
       COALESCE(payee_name, '(No payee)') AS payee,
       ROUND(SUM(outflow), 2) AS total_outflow,
@@ -130,7 +131,7 @@ export const COMMON_QUERIES = [
     LIMIT 20;`,
   },
   {
-    name: 'Spending by label (90d)',
+    name: msg`Spending by label (90d)`,
     query: `SELECT
       COALESCE(label_name, '(Unlabeled)') AS label,
       ROUND(SUM(outflow), 2) AS total_outflow,
@@ -143,7 +144,7 @@ export const COMMON_QUERIES = [
     ORDER BY total_outflow DESC;`,
   },
   {
-    name: 'Monthly inflow vs outflow (12m)',
+    name: msg`Monthly inflow vs outflow (12m)`,
     query: `SELECT
       month,
       ROUND(SUM(inflow), 2) AS total_inflow,
@@ -155,7 +156,7 @@ export const COMMON_QUERIES = [
     ORDER BY month;`,
   },
   {
-    name: 'Current month by category group',
+    name: msg`Current month by category group`,
     query: `SELECT
       category_group_name,
       ROUND(SUM(outflow), 2) AS total_outflow,
@@ -168,7 +169,7 @@ export const COMMON_QUERIES = [
     ORDER BY total_outflow DESC;`,
   },
   {
-    name: 'Split transactions overview',
+    name: msg`Split transactions overview`,
     query: `SELECT
       transaction_id,
       date,

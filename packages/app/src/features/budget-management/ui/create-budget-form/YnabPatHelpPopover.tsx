@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { CircleHelp, ExternalLink } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -8,6 +9,8 @@ interface YnabPatHelpPopoverProps {
 }
 
 export function YnabPatHelpPopover({ className }: YnabPatHelpPopoverProps) {
+  const { t } = useLingui();
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -16,7 +19,7 @@ export function YnabPatHelpPopover({ className }: YnabPatHelpPopoverProps) {
           variant="ghost"
           size="icon"
           className={cn('size-5 rounded-full text-muted-foreground', className)}
-          aria-label="How to create a YNAB personal access token"
+          aria-label={t`How to create a YNAB personal access token`}
         >
           <CircleHelp className="size-3.5" />
         </Button>
@@ -24,14 +27,22 @@ export function YnabPatHelpPopover({ className }: YnabPatHelpPopoverProps) {
       <PopoverContent align="start" className="w-80 max-w-[calc(100vw-2rem)] space-y-3 text-xs">
         <p className="font-medium text-foreground">Create a YNAB personal access token</p>
         <ol className="list-decimal space-y-1.5 pl-4 text-muted-foreground">
-          <li>Sign in to the YNAB web app and open Account Settings.</li>
-          <li>Open Developer Settings, then find Personal Access Tokens.</li>
+          <li>
+            <Trans>Sign in to the YNAB web app and open Account Settings.</Trans>
+          </li>
+          <li>
+            <Trans>Open Developer Settings, then find Personal Access Tokens.</Trans>
+          </li>
           <li>Select New Token, enter your password, and choose Generate.</li>
-          <li>Copy the token when it appears and paste it here.</li>
+          <li>
+            <Trans>Copy the token when it appears and paste it here.</Trans>
+          </li>
         </ol>
         <p className="text-[11px] text-muted-foreground">
-          YNAB shows the full token only once. Treat it like a password; you can revoke it later
-          from the same screen.
+          <Trans>
+            YNAB shows the full token only once. Treat it like a password; you can revoke it later
+            from the same screen.
+          </Trans>
         </p>
         <a
           href="https://app.ynab.com/settings/developer"
@@ -39,8 +50,10 @@ export function YnabPatHelpPopover({ className }: YnabPatHelpPopoverProps) {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 font-medium text-primary underline underline-offset-2"
         >
-          Open YNAB Developer Settings
-          <ExternalLink className="size-3" />
+          <Trans>
+            Open YNAB Developer Settings
+            <ExternalLink className="size-3" />
+          </Trans>
         </a>
       </PopoverContent>
     </Popover>

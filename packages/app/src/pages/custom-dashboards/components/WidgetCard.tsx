@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
@@ -54,35 +55,6 @@ const MOBILE_HEIGHTS: Record<'s' | 'm' | 'l', string> = {
   l: 'h-[520px]',
 };
 
-const DESKTOP_LAYOUT_BUTTONS: {
-  label: string;
-  icon: typeof MoveHorizontal;
-  patch: (
-    layout: CustomDashboardWidget['desktopLayout']
-  ) => Partial<{ colSpan: number; rowSpan: number }>;
-}[] = [
-  {
-    label: 'Width -',
-    icon: MoveHorizontal,
-    patch: (layout) => ({ colSpan: Math.max(3, layout.colSpan - 1) }),
-  },
-  {
-    label: 'Width +',
-    icon: MoveHorizontal,
-    patch: (layout) => ({ colSpan: Math.min(12, layout.colSpan + 1) }),
-  },
-  {
-    label: 'Height -',
-    icon: MoveVertical,
-    patch: (layout) => ({ rowSpan: Math.max(3, layout.rowSpan - 1) }),
-  },
-  {
-    label: 'Height +',
-    icon: MoveVertical,
-    patch: (layout) => ({ rowSpan: Math.min(8, layout.rowSpan + 1) }),
-  },
-];
-
 /** Edit-mode layout controls: desktop col/row span steppers or mobile size picker. */
 function WidgetLayoutControls({
   widget,
@@ -95,10 +67,43 @@ function WidgetLayoutControls({
   onUpdateDesktopLayout: WidgetCardProps['onUpdateDesktopLayout'];
   onUpdateMobileSize: WidgetCardProps['onUpdateMobileSize'];
 }) {
+  const { t } = useLingui();
+
+  const DESKTOP_LAYOUT_BUTTONS: {
+    label: string;
+    icon: typeof MoveHorizontal;
+    patch: (
+      layout: CustomDashboardWidget['desktopLayout']
+    ) => Partial<{ colSpan: number; rowSpan: number }>;
+  }[] = [
+    {
+      label: t`Width -`,
+      icon: MoveHorizontal,
+      patch: (layout) => ({ colSpan: Math.max(3, layout.colSpan - 1) }),
+    },
+    {
+      label: t`Width +`,
+      icon: MoveHorizontal,
+      patch: (layout) => ({ colSpan: Math.min(12, layout.colSpan + 1) }),
+    },
+    {
+      label: t`Height -`,
+      icon: MoveVertical,
+      patch: (layout) => ({ rowSpan: Math.max(3, layout.rowSpan - 1) }),
+    },
+    {
+      label: t`Height +`,
+      icon: MoveVertical,
+      patch: (layout) => ({ rowSpan: Math.min(8, layout.rowSpan + 1) }),
+    },
+  ];
+
   if (isMobile) {
     return (
       <div className="flex items-center gap-2 pt-2">
-        <span className="text-xs text-muted-foreground">Size</span>
+        <span className="text-xs text-muted-foreground">
+          <Trans>Size</Trans>
+        </span>
         {(['s', 'm', 'l'] as const).map((size) => (
           <Button
             key={size}
@@ -115,8 +120,12 @@ function WidgetLayoutControls({
 
   return (
     <div className="flex flex-wrap items-center gap-2 pt-2">
-      <Badge variant="outline">Cols {widget.desktopLayout.colSpan}</Badge>
-      <Badge variant="outline">Rows {widget.desktopLayout.rowSpan}</Badge>
+      <Badge variant="outline">
+        <Trans>Cols {widget.desktopLayout.colSpan}</Trans>
+      </Badge>
+      <Badge variant="outline">
+        <Trans>Rows {widget.desktopLayout.rowSpan}</Trans>
+      </Badge>
       {DESKTOP_LAYOUT_BUTTONS.map(({ label, icon: Icon, patch }) => (
         <Button
           key={label}
@@ -151,10 +160,10 @@ function WidgetErrorCard({
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">
         <Button variant="outline" size="sm" onClick={onSelectNewChart}>
-          Select new chart
+          <Trans>Select new chart</Trans>
         </Button>
         <Button variant="destructive" size="sm" onClick={() => void onRemove()}>
-          Remove widget
+          <Trans>Remove widget</Trans>
         </Button>
       </CardContent>
     </Card>
@@ -174,6 +183,8 @@ export function WidgetCard({
   onEditChart,
   onOpenReportInExplorer,
 }: WidgetCardProps) {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const queryClient = useQueryClient();
   const reportUpdatedAt = report?.updatedAt ?? 'missing';
@@ -190,7 +201,7 @@ export function WidgetCard({
     staleTime: 30 * 1000,
   });
 
-  const title = widget.titleOverride || chart?.title || report?.name || 'Widget';
+  const title = widget.titleOverride || chart?.title || report?.name || t`Widget`;
 
   const refreshWidgetData = async () => {
     await queryClient.invalidateQueries({
@@ -211,7 +222,7 @@ export function WidgetCard({
     return (
       <WidgetErrorCard
         title={title}
-        description="Source report is missing. Choose another chart or remove this widget."
+        description={t`Source report is missing. Choose another chart or remove this widget.`}
         onSelectNewChart={() => onSelectNewChart(widget.id)}
         onRemove={() => onRemove(widget.id)}
       />
@@ -222,7 +233,7 @@ export function WidgetCard({
     return (
       <WidgetErrorCard
         title={title}
-        description="Source chart is missing in this report."
+        description={t`Source chart is missing in this report.`}
         onSelectNewChart={() => onSelectNewChart(widget.id)}
         onRemove={() => onRemove(widget.id)}
       />
@@ -235,7 +246,7 @@ export function WidgetCard({
         title={title}
         description={
           isNonReadOnlyError
-            ? 'This report query is not read-only and cannot run in dashboard widgets.'
+            ? t`This report query is not read-only and cannot run in dashboard widgets.`
             : queryError.message
         }
         onSelectNewChart={() => onSelectNewChart(widget.id)}
@@ -259,8 +270,8 @@ export function WidgetCard({
               size="icon"
               onClick={() => void refreshWidgetData()}
               disabled={dataQuery.isFetching}
-              aria-label={dataQuery.isFetching ? 'Refreshing widget data' : 'Refresh widget data'}
-              title={dataQuery.isFetching ? 'Refreshing...' : 'Refresh widget data'}
+              aria-label={dataQuery.isFetching ? t`Refreshing widget data` : t`Refresh widget data`}
+              title={dataQuery.isFetching ? t`Refreshing...` : t`Refresh widget data`}
             >
               <RefreshCcw className={`h-4 w-4 ${dataQuery.isFetching ? 'animate-spin' : ''}`} />
             </Button>
@@ -268,8 +279,8 @@ export function WidgetCard({
               <Button
                 variant="ghost"
                 size="icon"
-                title="Open source report in Explorer"
-                aria-label="Open source report in Explorer"
+                title={t`Open source report in Explorer`}
+                aria-label={t`Open source report in Explorer`}
                 onClick={() => onOpenReportInExplorer(report.id)}
               >
                 <SquareArrowOutUpRight className="h-4 w-4" />
@@ -279,8 +290,8 @@ export function WidgetCard({
               <Button
                 variant="ghost"
                 size="icon"
-                title="Edit source visualization"
-                aria-label="Edit source visualization"
+                title={t`Edit source visualization`}
+                aria-label={t`Edit source visualization`}
                 onClick={() =>
                   onEditChart({
                     reportId: report.id,
@@ -317,7 +328,7 @@ export function WidgetCard({
       <CardContent className="flex-1 min-h-0 pt-0">
         {dataQuery.isPending && (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            Loading chart...
+            <Trans>Loading chart...</Trans>
           </div>
         )}
         {!dataQuery.isPending && dataQuery.data && (

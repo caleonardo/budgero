@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
@@ -77,6 +78,8 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
   isSkipPending,
   onOccurrenceAction,
 }: RecurringTransactionsPanelProps) {
+  const { t } = useLingui();
+
   const [isExpanded, setIsExpanded] = React.useState(() => {
     try {
       return localStorage.getItem(EXPANDED_STORAGE_KEY) === 'true';
@@ -177,7 +180,9 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="flex min-w-0 items-center gap-2 text-sm md:text-base">
             <CalendarClock className="h-4 w-4 shrink-0 text-primary" />
-            <span className="truncate">Upcoming transactions</span>
+            <span className="truncate">
+              <Trans>Upcoming transactions</Trans>
+            </span>
             {!showSkeleton && upcomingCount > 0 && (
               <Badge variant="secondary" className="shrink-0 tabular-nums">
                 {upcomingCount}
@@ -212,8 +217,10 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
         </div>
         {isExpanded && (
           <CardDescription>
-            Automations and scheduled entries that land soon are listed here. Mark recurring items
-            ready when you are prepared to post them.
+            <Trans>
+              Automations and scheduled entries that land soon are listed here. Mark recurring items
+              ready when you are prepared to post them.
+            </Trans>
           </CardDescription>
         )}
       </CardHeader>
@@ -239,13 +246,13 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
           {visibleOccurrences.length > 0 && (
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                From automations
+                <Trans>From automations</Trans>
               </p>
               {visibleOccurrences.map((occurrence) => {
                 const { template } = occurrence;
                 const categoryName = template.categoryId
-                  ? categoriesById.get(template.categoryId) || 'Unassigned category'
-                  : 'Unassigned category';
+                  ? categoriesById.get(template.categoryId) || t`Unassigned category`
+                  : t`Unassigned category`;
                 const isOutflow = isOccurrenceOutflow(template);
                 const amountLabel = `${isOutflow ? '-' : '+'}${formatMilli(
                   formatter,
@@ -265,20 +272,23 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                         <Repeat className="h-3.5 w-3.5 text-primary" />
                         <span>{template.name}</span>
                         <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
-                          Recurring
+                          <Trans context="transaction-status">Recurring</Trans>
                         </Badge>
                         {isOverdue && (
                           <Badge
                             variant="destructive"
                             className="text-[10px] uppercase tracking-wide"
                           >
-                            Overdue
+                            <Trans>Overdue</Trans>
                           </Badge>
                         )}
                       </div>
                       <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                         <span className="inline-flex items-center gap-1">
-                          <Clock className="h-3 w-3" /> Due {occurrence.dueDate} ({dueLabel})
+                          <Trans>
+                            <Clock className="h-3 w-3" />
+                            Due {occurrence.dueDate}({dueLabel})
+                          </Trans>
                         </span>
                         <span className="inline-flex items-center gap-1">
                           <Tag className="h-3 w-3" /> {categoryName}
@@ -297,12 +307,14 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                           onOccurrenceAction(occurrence.id, 'ready');
                         }}
                       >
-                        {busy && isMarkReadyPending ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Check className="mr-2 h-4 w-4" />
-                        )}
-                        Mark ready
+                        <Trans>
+                          {busy && isMarkReadyPending ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <Check className="mr-2 h-4 w-4" />
+                          )}
+                          Mark ready
+                        </Trans>
                       </Button>
                       <Button
                         size="sm"
@@ -314,7 +326,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                           onOccurrenceAction(occurrence.id, 'skip');
                         }}
                       >
-                        Skip this time
+                        <Trans>Skip this time</Trans>
                       </Button>
                     </div>
                   </div>
@@ -322,7 +334,10 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
               })}
               {upcomingRecurringOccurrences.length > MAX_VISIBLE_ITEMS && (
                 <p className="text-xs text-muted-foreground">
-                  +{upcomingRecurringOccurrences.length - MAX_VISIBLE_ITEMS} more in the next month
+                  <Trans>
+                    +{upcomingRecurringOccurrences.length - MAX_VISIBLE_ITEMS} more in the next
+                    month
+                  </Trans>
                 </p>
               )}
             </div>
@@ -331,12 +346,12 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
           {visibleScheduled.length > 0 && (
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Scheduled entries
+                <Trans>Scheduled entries</Trans>
               </p>
               {visibleScheduled.map(({ transaction, parsedDate }) => {
                 if (!parsedDate) return null;
                 const payeeName =
-                  transaction.Payee || transaction.Memo || `Transaction ${transaction.ID}`;
+                  transaction.Payee || transaction.Memo || t`Transaction ${transaction.ID}`;
                 const memoNote =
                   transaction.Memo &&
                   transaction.Memo.trim().length > 0 &&
@@ -346,8 +361,8 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                 const categoryName =
                   transaction.Category ||
                   (transaction.CategoryID
-                    ? categoriesById.get(transaction.CategoryID) || 'Unassigned category'
-                    : 'Unassigned category');
+                    ? categoriesById.get(transaction.CategoryID) || t`Unassigned category`
+                    : t`Unassigned category`);
                 const inflowValue =
                   transactionCurrencyDisplay === 'budget'
                     ? transaction.InflowConverted
@@ -375,13 +390,15 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
                         <CalendarDays className="h-3.5 w-3.5 text-primary" />
                         <span>{payeeName}</span>
                         <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
-                          Scheduled
+                          <Trans>Scheduled</Trans>
                         </Badge>
                       </div>
                       <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                         <span className="inline-flex items-center gap-1">
-                          <Clock className="h-3 w-3" /> Scheduled {format(parsedDate, 'yyyy-MM-dd')}{' '}
-                          ({dueLabel})
+                          <Trans>
+                            <Clock className="h-3 w-3" />
+                            Scheduled {format(parsedDate, 'yyyy-MM-dd')} ({dueLabel})
+                          </Trans>
                         </span>
                         <span className="inline-flex items-center gap-1">
                           <Tag className="h-3 w-3" /> {categoryName}
@@ -399,7 +416,9 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
               })}
               {upcomingScheduledTransactions.length > MAX_VISIBLE_ITEMS && (
                 <p className="text-xs text-muted-foreground">
-                  +{upcomingScheduledTransactions.length - MAX_VISIBLE_ITEMS} more scheduled
+                  <Trans>
+                    +{upcomingScheduledTransactions.length - MAX_VISIBLE_ITEMS} more scheduled
+                  </Trans>
                 </p>
               )}
             </div>
@@ -407,7 +426,7 @@ export const RecurringTransactionsPanel = React.memo(function RecurringTransacti
 
           {hasNoContent && (
             <div className="text-sm text-muted-foreground">
-              All set - nothing scheduled for this account right now.
+              <Trans>All set - nothing scheduled for this account right now.</Trans>
             </div>
           )}
         </CardContent>

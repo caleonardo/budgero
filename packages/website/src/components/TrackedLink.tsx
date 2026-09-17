@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import type { ReactNode } from 'react';
 import { track } from '@/lib/analytics';
 
@@ -54,12 +54,7 @@ export function TrackedLink({
   }
 
   return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className={className}
-      aria-label={ariaLabel}
-    >
+    <Link href={href} onClick={onClick} className={className} aria-label={ariaLabel}>
       {children}
     </Link>
   );

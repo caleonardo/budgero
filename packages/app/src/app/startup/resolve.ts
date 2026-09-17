@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import type {
   AuthStartupSnapshot,
   BudgetStartupSnapshot,
@@ -24,8 +25,8 @@ export function resolveStartupResolution(input: ResolveStartupInput): StartupRes
     return {
       state: 'boot',
       screen: 'splash',
-      message: 'Preparing your session…',
-      detail: 'Checking authentication and connectivity',
+      message: msg`Preparing your session…`,
+      detail: msg`Checking authentication and connectivity`,
       branch: 'auth-loading',
     };
   }
@@ -34,7 +35,7 @@ export function resolveStartupResolution(input: ResolveStartupInput): StartupRes
     return {
       state: 'auth_required',
       screen: 'redirect',
-      message: 'Redirecting to sign in…',
+      message: msg`Redirecting to sign in…`,
       branch: 'auth-required',
     };
   }
@@ -43,7 +44,7 @@ export function resolveStartupResolution(input: ResolveStartupInput): StartupRes
     return {
       state: 'access_blocked',
       screen: 'access_blocked',
-      detail: auth.accessBlockedMode,
+
       branch: 'access-blocked',
     };
   }
@@ -69,8 +70,8 @@ export function resolveStartupResolution(input: ResolveStartupInput): StartupRes
     return {
       state: 'boot',
       screen: 'splash',
-      message: 'Checking your encryption key…',
-      detail: 'Preparing your secure workspace',
+      message: msg`Checking your encryption key…`,
+      detail: msg`Preparing your secure workspace`,
       branch: 'master-password-loading',
     };
   }
@@ -87,8 +88,8 @@ export function resolveStartupResolution(input: ResolveStartupInput): StartupRes
     return {
       state: 'boot',
       screen: 'splash',
-      message: 'Checking your workspaces…',
-      detail: 'Loading accessible workspaces',
+      message: msg`Checking your workspaces…`,
+      detail: msg`Loading accessible workspaces`,
       branch: 'workspace-loading',
     };
   }
@@ -114,8 +115,8 @@ export function resolveStartupResolution(input: ResolveStartupInput): StartupRes
     return {
       state: 'runtime_initializing',
       screen: 'splash',
-      message: 'Starting Budgero…',
-      detail: 'Opening your local workspace',
+      message: msg`Starting Budgero…`,
+      detail: msg`Opening your local workspace`,
       branch: 'runtime-initializing',
     };
   }
@@ -124,8 +125,8 @@ export function resolveStartupResolution(input: ResolveStartupInput): StartupRes
     return {
       state: 'runtime_initializing',
       screen: 'splash',
-      message: 'Loading budgets…',
-      detail: 'Selecting your default budget',
+      message: msg`Loading budgets…`,
+      detail: msg`Selecting your default budget`,
       branch: 'budget-loading',
     };
   }

@@ -1,3 +1,5 @@
+import { t, plural } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 // Plain, React-free implementation of the onboarding "apply" pipeline —
 // extracted verbatim from OnboardingFlow's `applyOnboarding` useCallback so
 // it can be unit-tested by mocking `deps` instead of rendering the flow.
@@ -46,6 +48,8 @@ import {
   ACCOUNT_TYPES,
   CATEGORY_PRESETS,
   CATEGORY_TO_GROUP,
+  CATEGORY_ITEM_LABELS,
+  GOAL_TEMPLATES,
   resolveHeardValue,
   type ActivePath,
   type InviteFailure,
@@ -307,7 +311,7 @@ export async function runOnboardingApply(
           stage: 'complete',
           status: 'warning',
           progress: 99,
-          label: 'Waiting for your review',
+          label: t`Waiting for your review`,
           detail: 'The imported budget has not been saved or synced yet.',
         });
         const decision = await reviewDecision;
@@ -332,8 +336,8 @@ export async function runOnboardingApply(
         progress: 99,
         label:
           importResult.verification?.status === 'warning'
-            ? 'Saving imported budget with accepted warnings'
-            : 'Saving imported budget',
+            ? t`Saving imported budget with accepted warnings`
+            : t`Saving imported budget`,
       });
 
       runtime.services().importHistory.recordImportRun({
@@ -363,27 +367,36 @@ export async function runOnboardingApply(
       const summaryParts: string[] = [];
       if (createdCategories.length > 0) {
         summaryParts.push(
-          `Created ${createdCategories.length} categor${createdCategories.length === 1 ? 'y' : 'ies'} missing from Plan.csv: ${createdCategories.join(', ')}.`
+          plural(createdCategories.length, {
+            one: `Created # category missing from Plan.csv: ${createdCategories.join(', ')}.`,
+            other: `Created # categories missing from Plan.csv: ${createdCategories.join(', ')}.`
+          })
         );
       }
       if (importResult.summary.splitTransactionsImported > 0) {
         summaryParts.push(
-          `Imported ${importResult.summary.splitTransactionsImported} split transaction${importResult.summary.splitTransactionsImported === 1 ? '' : 's'}.`
+          plural(importResult.summary.splitTransactionsImported, {
+            one: `Imported # split transaction.`,
+            other: `Imported # split transactions.`
+          })
         );
       }
       if (importResult.summary.accountBalancesVerified !== undefined) {
         summaryParts.push(
-          `Verified ${importResult.summary.accountBalancesVerified} account balance${importResult.summary.accountBalancesVerified === 1 ? '' : 's'} against YNAB.`
+          plural(importResult.summary.accountBalancesVerified, {
+            one: `Verified # account balance against YNAB.`,
+            other: `Verified # account balances against YNAB.`
+          })
         );
       } else {
-        summaryParts.push('Review imported account types before budgeting.');
+        summaryParts.push(t`Review imported account types before budgeting.`);
       }
       ynabSummaryDescription = summaryParts.join(' ');
     } else {
       const result = await runtime.mutationsRouter().execute<number>({
         op: 'budgets.create',
         payload: {
-          name: state.budgetName.trim() || 'My budget',
+          name: state.budgetName.trim() || t`My budget`,
           displayCurrency: state.currency,
           badgeIcon: '💰',
           numberFormat: '$1,096.56',
@@ -447,10 +460,10 @@ export async function runOnboardingApply(
       const groupBuckets = new Map<string, string[]>();
       for (const cat of state.selectedCats) {
         const groupKey = CATEGORY_TO_GROUP[cat] ?? 'needs';
-        const { label } = CATEGORY_PRESETS[groupKey];
-        const bucket = groupBuckets.get(label) ?? [];
+        const groupName = i18n._(CATEGORY_PRESETS[groupKey].label);
+        const bucket = groupBuckets.get(groupName) ?? [];
         bucket.push(cat);
-        groupBuckets.set(label, bucket);
+        groupBuckets.set(groupName, bucket);
       }
       const groupIdByLabel = new Map<string, number>();
       for (const [groupLabel, cats] of groupBuckets) {
@@ -466,7 +479,12 @@ export async function runOnboardingApply(
           for (const cat of cats) {
             const catRes = await runtime.mutationsRouter().execute<number>({
               op: 'categories.create',
-              payload: { name: cat, parentId, budgetId, note: '' },
+              payload: {
+                name: CATEGORY_ITEM_LABELS[cat] ? i18n._(CATEGORY_ITEM_LABELS[cat]) : cat,
+                parentId,
+                budgetId,
+                note: '',
+              },
               spaceId,
               meta: { label: 'onboarding.createCategory' },
             });
@@ -484,10 +502,14 @@ export async function runOnboardingApply(
       // name. Every goal template the user can pick is savings-oriented, so
       // SAVINGS is always the right home. Skip the placeholder "Something
       // else" label — that means the user picked Custom but didn't rename.
-      const goalLabel = state.goal.label.trim();
+      const goalLabel =
+        state.goal.label.trim() ||
+        i18n._(
+          GOAL_TEMPLATES.find((g) => g.id === state.goal.id)?.label ?? GOAL_TEMPLATES[0].label
+        );
       const goalIsUsable = goalLabel.length > 0 && goalLabel.toLowerCase() !== 'something else';
       if (state.goal.target > 0 && goalIsUsable && goalCategoryId == null) {
-        const savingsLabel = CATEGORY_PRESETS.savings.label;
+        const savingsLabel = i18n._(CATEGORY_PRESETS.savings.label);
         try {
           let savingsGroupId = groupIdByLabel.get(savingsLabel);
           if (savingsGroupId == null) {
@@ -593,7 +615,7 @@ export async function runOnboardingApply(
             console.warn('[Onboarding apply] Invite create failed for', email, err);
             failures.push({
               email,
-              reason: getErrorMessage(err, 'unknown error'),
+              reason: getErrorMessage(err, t`unknown error`),
             });
           }
         }
@@ -647,11 +669,11 @@ export async function runOnboardingApply(
         progress: 100,
         label:
           ynabImportResult.verification?.status === 'warning'
-            ? 'Imported budget saved with warnings'
-            : 'Imported budget saved',
+            ? t`Imported budget saved with warnings`
+            : t`Imported budget saved`,
         detail: ynabSummaryDescription || undefined,
       });
-      toast.success('YNAB import complete', { description: ynabSummaryDescription });
+      toast.success(t`YNAB import complete`, { description: ynabSummaryDescription });
       if (!(await continueFromYnabReport)) return;
     }
 
@@ -680,11 +702,11 @@ export async function runOnboardingApply(
     await queryClient.invalidateQueries();
     onComplete();
   } catch (err) {
-    const message = getErrorMessage(err, 'Setup failed. Try again or contact support.');
+    const message = getErrorMessage(err, t`Setup failed. Try again or contact support.`);
     console.error('[Onboarding] Apply failed', err);
     setApplyError(message);
     setApplyStatus('error');
-    toast.error('Setup failed', {
+    toast.error(t`Setup failed`, {
       description: message,
     });
   }

@@ -1,0 +1,112 @@
+---
+title: "Push API-overzicht"
+summary: "Stuur versleutelde transacties naar Budgero vanuit elk systeem met de Push API of de Python SDK."
+section: integrations
+topicId: push-api
+badge: "Nieuw"
+order: 10
+takeaways:
+  - "Genereer een Push API-token en exporteer de versleutelsleutel van je werkruimte via Instellingen → Integraties → Push API."
+  - "Versleutel een transactions.add-payload met AES-GCM, codeer deze als Base64 en doe een POST naar /api/v1/push met een bearer-token; gebruik message_id om herhalingen te dedupliceren."
+  - "Gebruik de Python SDK voor het afhandelen van versleuteling, message-id's en de zichtbaarheid van de wachtrij (in behandeling/verwerkt/mislukt)."
+---
+
+Met de Push API kun je transacties vanuit andere systemen naar Budgero sturen terwijl alles end-to-end versleuteld blijft. Je genereert een token, versleutelt de payload met jouw werkruimtesleutel, en stuurt deze via een POST naar het push-endpoint over HTTPS.
+
+## Snelle installatie
+
+1. Ga naar **Instellingen → Integraties → Push API** en genereer een Push API-token.  
+2. Exporteer jouw **werkruimte-versleutelingssleutel** (Budgero slaat deze nooit op de server op).  
+3. Maak een JSON-payload aan (zie formaat hieronder), versleutel deze met **AES-256-GCM**, codeer deze als Base64, en stuur deze via een POST naar het push-endpoint met jouw bearer-token.  
+4. Voeg optioneel een **message_id** toe zodat nieuwe pogingen worden ontdubbeld.  
+5. Volg de wachtrijstatistieken in de app of via de API om de verwerking te bevestigen.
+
+## Endpoint- en payloadspecificatie
+
+- Endpoint: `POST /api/v1/push` (gebruik jouw basis-URL; standaard is `https://my.budgero.app`)
+- Authenticatie: `Authorization: Bearer <push-api-token>`
+- Body-velden:
+  - `encrypted_payload` (string, Base64): met AES-GCM versleutelde JSON-payload (salt + IV + versleutelde tekst + authenticatietag; zie [Versleutelingsvereisten](#versleutelingsvereisten)).
+  - `message_id` (string, optioneel): door de client gegenereerd id om nieuwe pogingen te ontdubbelen.
+
+### Vorm van de ontsleutelde payload (vóór versleuteling)
+
+```json
+{
+  "v": 2,
+  "op": "transactions.add",
+  "args": {
+    "accountId": 1,
+    "categoryId": 5,
+    "budgetId": 1,
+    "date": "2024-11-27",
+    "inflow": 0,
+    "outflow": 42500,
+    "memo": "API push",
+    "payee": "Vendor",
+    "transferId": ""
+  },
+  "message_id": "optional-unique-id"
+}
+```
+
+Geldwaarden zijn gehele milli-eenheden (1/1000 van een valuta-eenheid), dus 42,50 wordt verzonden als `42500`. Voeg altijd `"v": 2` toe; oudere payloads zonder dit worden behandeld als formaat 1 (decimale bedragen) en bijgewerkt bij import, maar nieuwe integraties moeten formaat 2 verzenden. De Python SDK regelt zowel de formaatvlag als de conversie voor je.
+
+### Vandaag ondersteunde bewerking
+
+- `transactions.add` — stuur inkomsten of uitgaven. Gebruik `inflow` voor inkomsten en `outflow` voor uitgaven (slechts één mag niet-nul zijn). Geef je bestaande budget-, rekening- en categorie-ID's op.
+
+## Versleutelingsvereisten
+
+- Algoritme: AES-256-GCM  
+- Salt: 32 bytes = **SHA-256 van je ruwe werkruimte-versleutelingssleutel van 32 bytes** (vóór de IV plaatsen)  
+- IV: 12 bytes (na de salt, vóór de versleutelde tekst)  
+- Authenticatietag: 16 bytes (voeg toe na de versleutelde tekst)  
+- Codering: Base64 van **salt + IV + versleutelde tekst + authenticatietag**  
+- Sleutel: Je **werkruimte-versleutelingssleutel** (geëxporteerd uit Instellingen). Decodeer de geëxporteerde waarde uit Base64 voordat je deze hasht of als AES-sleutel gebruikt; gebruik de ruwe SHA-256-hash van 32 bytes als salt.
+
+Het salt-prefix is verplicht: de client vergelijkt het *vóór* het ontsleutelen met SHA-256 van zijn eigen werkruimtesleutel (vergelijking in constante tijd in `mutation-crypto.ts`). De server accepteert een payload zonder salt (HTTP 202, in de wachtrij geplaatst), maar de verwerking mislukt aan de clientzijde en het item krijgt in de wachtrij de status `failed` — de transactie bereikt het budget dus nooit, ondanks de succesvolle ontvangst. De Python SDK voegt de salt al automatisch toe; dit treft alleen zelfgebouwde clients die de eerdere specificatie volgen.
+
+## Python SDK-snelstart
+
+```python
+from budgero import BudgeroClient
+
+client = BudgeroClient(
+    api_key="your-push-token",
+    encryption_key="your-space-key",
+    base_url="https://my.budgero.app",
+)
+
+result = client.add_transaction(
+    account_id=1,
+    category_id=5,
+    budget_id=1,
+    date="2024-11-27",
+    outflow=42.50,
+    memo="Example push",
+    payee="API Demo",
+)
+
+print("Queued id:", result.queue_id)
+```
+
+SDK-helpers:
+
+- `get_queue()` — items in afwachting weergeven  
+- `get_queue_stats()` — aantal in afwachting/verwerkt/mislukt  
+- `clear_queue()` — items in afwachting wissen (of alle met een vlag)
+
+- **Deduplicatie:** Geef een stabiele `message_id` op bij het opnieuw proberen om dubbele invoer te voorkomen.  
+- **Wachtrij-inzicht:** Controleer wachtrijstatistieken in de app of via `/push/queue` en `/push/stats` om levering te verifiëren.  
+- **Tokenhygiëne:** Roteer/regenereer bij blootstelling. Schakel uit of trek in vanuit Instellingen indien nodig.  
+- **Sleutelhygiëne:** Houd de token/sleutel buiten versiebeheer.  
+  <figure>
+    <img src="/gandalf_keep_it_secret.gif" alt="“Houd het geheim, houd het veilig” — Gandalf herinnert Frodo" />
+    <figcaption>Houd het geheim, houd het veilig.</figcaption>
+  </figure>
+  
+  Gebruik omgevingsvariabelen (bijv. `BUDGERO_PUSH_TOKEN`, `BUDGERO_SPACE_KEY`) of de geheime beheerder van je besturingssysteem, beperk bestandsrechten en vermijd ze te loggen.  
+- **Transport:** Gebruik altijd HTTPS zodat de bearer-token en metadata beschermd blijven.  
+- **Toegangsbeheer:** Beperk wie de token/sleutel kan lezen. Behandel ze als inloggegevens met scope tot je budget.  
+- **Foutafhandeling:** Bij 409 met message_id, behandel het als een gedupliceerde poging. Bij 401/403, regenereer/schakel de token in. Monitor wachtrijfouten en wis of plaats opnieuw in de wachtrij indien nodig.

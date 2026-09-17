@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { memo } from 'react';
 import { Badge } from '@shared/ui/badge';
 import { ScrollArea } from '@shared/ui/scroll-area';
@@ -9,11 +10,13 @@ export const SchemaSidebar = memo(
     <div className="flex flex-col h-full bg-muted/20">
       <div className="p-4 border-b border-border/60">
         <h2 className="font-semibold text-sm flex items-center gap-2">
-          <Database className="h-4 w-4 text-purple-600" />
-          Database Schema
+          <Trans>
+            <Database className="h-4 w-4 text-purple-600" />
+            Database Schema
+          </Trans>
         </h2>
         <p className="text-xs text-muted-foreground mt-1">
-          {tableSchema.length} tables - Click to insert
+          <Trans>{tableSchema.length} tables - Click to insert</Trans>
         </p>
       </div>
       <ScrollArea className="flex-1">
@@ -32,7 +35,9 @@ export const SchemaSidebar = memo(
                     {table.name}
                   </span>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Badge variant="outline">{table.rowCount.toLocaleString()} rows</Badge>
+                    <Badge variant="outline">
+                      <Trans>{table.rowCount.toLocaleString()} rows</Trans>
+                    </Badge>
                     {isExpanded ? (
                       <ChevronDown className="h-4 w-4" />
                     ) : (
@@ -43,7 +48,9 @@ export const SchemaSidebar = memo(
                 {isExpanded && (
                   <div className="px-3 py-2 space-y-1 border-t border-border/30">
                     {table.columns.length === 0 ? (
-                      <p className="text-xs text-muted-foreground">No column metadata</p>
+                      <p className="text-xs text-muted-foreground">
+                        <Trans>No column metadata</Trans>
+                      </p>
                     ) : (
                       table.columns.map((column) => (
                         <button

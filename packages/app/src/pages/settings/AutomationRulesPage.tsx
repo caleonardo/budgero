@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -27,7 +28,7 @@ import type {
   RuleExecutionResult,
   RuleRunUndoResult,
 } from '@budgero/core/browser';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
 import {
   Bot,
   Clock,
@@ -45,6 +46,8 @@ import { cn } from '@shared/lib/utils';
 import { getErrorMessage, toastError } from '@shared/lib/errors';
 
 export default function AutomationRulesPage() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const budgetId = selectedBudget?.ID ?? 0;
 
@@ -120,7 +123,7 @@ export default function AutomationRulesPage() {
           enabled: values.enabled,
           runOrder: values.runOrder,
         });
-        toast.success('Rule created', { description: 'Your automation rule is ready to run.' });
+        toast.success(t`Rule created`, { description: t`Your automation rule is ready to run.` });
       } else if (editingRule) {
         await updateRule.mutateAsync({
           id: editingRule.id,
@@ -135,7 +138,7 @@ export default function AutomationRulesPage() {
             runOrder: values.runOrder,
           },
         });
-        toast.success('Rule updated', { description: 'Changes saved successfully.' });
+        toast.success(t`Rule updated`, { description: t`Changes saved successfully.` });
       }
 
       setEditorOpen(false);
@@ -152,10 +155,10 @@ export default function AutomationRulesPage() {
         budgetId,
         patch: { enabled: nextEnabled },
       });
-      toast.success(nextEnabled ? 'Rule enabled' : 'Rule paused', {
+      toast.success(nextEnabled ? t`Rule enabled` : t`Rule paused`, {
         description: nextEnabled
-          ? 'New matching transactions will run through this rule.'
-          : 'Automation paused until you re-enable it.',
+          ? t`New matching transactions will run through this rule.`
+          : t`Automation paused until you re-enable it.`,
       });
     } catch (error) {
       toastError('Unable to update rule', error, 'Toggle failed. Try again.');
@@ -190,9 +193,9 @@ export default function AutomationRulesPage() {
       }
       setRunOverlay((prev) => ({ ...prev, phase: 'done' }));
     } catch (error) {
-      const message = getErrorMessage(error, 'Unable to run the rule.');
+      const message = getErrorMessage(error, t`Unable to run the rule.`);
       setRunOverlay((prev) => ({ ...prev, phase: 'error', error: message }));
-      toast.error('Execution failed', {
+      toast.error(t`Execution failed`, {
         description: message,
       });
     } finally {
@@ -204,7 +207,7 @@ export default function AutomationRulesPage() {
     if (!budgetId) return;
     try {
       await deleteRule.mutateAsync({ id: rule.id, budgetId });
-      toast.success('Rule deleted', { description: 'Automation removed successfully.' });
+      toast.success(t`Rule deleted`, { description: t`Automation removed successfully.` });
     } catch (error) {
       toastError('Unable to delete rule', error, 'Please try again.');
     }
@@ -263,13 +266,13 @@ export default function AutomationRulesPage() {
         console.warn('[AutomationRules] Failed to refresh queries after undoing run', refreshError);
       }
       setRunOverlay((prev) => ({ ...prev, phase: 'done', undoResult: result }));
-      toast.success('Run undone', {
-        description: 'Transactions were restored to their previous values.',
+      toast.success(t`Run undone`, {
+        description: t`Transactions were restored to their previous values.`,
       });
     } catch (error) {
-      const message = getErrorMessage(error, 'Unable to undo run.');
+      const message = getErrorMessage(error, t`Unable to undo run.`);
       setRunOverlay((prev) => ({ ...prev, phase: 'error', error: message }));
-      toast.error('Unable to undo run', {
+      toast.error(t`Unable to undo run`, {
         description: message,
       });
     } finally {
@@ -281,15 +284,22 @@ export default function AutomationRulesPage() {
     <div className="space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Automation rules</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            <Trans>Automation rules</Trans>
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Create powerful rules that categorise, clean up, and reroute transactions the moment
-            they appear.
+            <Trans>
+              Create powerful rules that categorise, clean up, and reroute transactions the moment
+              they appear.
+            </Trans>
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
           <Button onClick={openCreateDialog} className="w-full sm:w-auto">
-            <Sparkles className="mr-2 h-4 w-4" /> New rule
+            <Trans>
+              <Sparkles className="mr-2 h-4 w-4" />
+              New rule
+            </Trans>
           </Button>
         </div>
       </div>
@@ -299,9 +309,11 @@ export default function AutomationRulesPage() {
       {!budgetId ? (
         <Card className="border-dashed">
           <CardHeader>
-            <CardTitle>No budget selected</CardTitle>
+            <CardTitle>
+              <Trans>No budget selected</Trans>
+            </CardTitle>
             <CardDescription>
-              Select or create a budget to configure automation rules.
+              <Trans>Select or create a budget to configure automation rules.</Trans>
             </CardDescription>
           </CardHeader>
         </Card>
@@ -315,17 +327,24 @@ export default function AutomationRulesPage() {
         <Card className="border-dashed">
           <CardHeader className="space-y-2">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Bot className="h-5 w-5 text-muted-foreground" />
-              Let Budgero handle the busywork
+              <Trans>
+                <Bot className="h-5 w-5 text-muted-foreground" />
+                Let Budgero handle the busywork
+              </Trans>
             </CardTitle>
             <CardDescription>
-              No rules yet. Create your first automation to categorise subscriptions, split income,
-              or tidy up imported descriptions.
+              <Trans>
+                No rules yet. Create your first automation to categorise subscriptions, split
+                income, or tidy up imported descriptions.
+              </Trans>
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={openCreateDialog}>
-              <Sparkles className="mr-2 h-4 w-4" /> Design a rule
+              <Trans>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Design a rule
+              </Trans>
             </Button>
           </CardContent>
         </Card>
@@ -334,7 +353,7 @@ export default function AutomationRulesPage() {
           {orderedRules.map((rule) => {
             const lastRunLabel = rule.lastRunAt
               ? formatDistanceToNow(new Date(rule.lastRunAt), { addSuffix: true })
-              : 'Never';
+              : t`Never`;
             const isOneTimeConsumed = rule.mode === 'one_time' && rule.oneTimeConsumed;
 
             return (
@@ -352,10 +371,10 @@ export default function AutomationRulesPage() {
                         {rule.name}
                         <Badge variant={rule.mode === 'one_time' ? 'secondary' : 'outline'}>
                           {rule.mode === 'one_time'
-                            ? 'One time'
+                            ? t`One time`
                             : rule.mode === 'autofill'
-                              ? 'Autofill'
-                              : 'Continuous'}
+                              ? t`Autofill`
+                              : t`Continuous`}
                         </Badge>
                       </CardTitle>
                       {rule.description ? (
@@ -372,22 +391,35 @@ export default function AutomationRulesPage() {
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
-                      <Layers2 className="h-3.5 w-3.5" /> Run order {rule.runOrder}
+                      <Trans>
+                        <Layers2 className="h-3.5 w-3.5" />
+                        Run order {rule.runOrder}
+                      </Trans>
                     </span>
                     <span className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" /> Last run {lastRunLabel}
+                      <Trans>
+                        <Clock className="h-3.5 w-3.5" />
+                        Last run {lastRunLabel}
+                      </Trans>
                     </span>
                     {isOneTimeConsumed ? (
                       <span className="flex items-center gap-1 text-destructive">
-                        <ShieldOff className="h-3.5 w-3.5" /> Consumed after retro run
+                        <Trans>
+                          <ShieldOff className="h-3.5 w-3.5" />
+                          Consumed after retro run
+                        </Trans>
                       </span>
                     ) : null}
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline">{rule.conditions.length} condition(s)</Badge>
-                    <Badge variant="outline">{rule.actions.length} action(s)</Badge>
+                    <Badge variant="outline">
+                      <Trans>{rule.conditions.length} condition(s)</Trans>
+                    </Badge>
+                    <Badge variant="outline">
+                      <Trans>{rule.actions.length} action(s)</Trans>
+                    </Badge>
                   </div>
                   <Separator />
                   <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
@@ -397,14 +429,16 @@ export default function AutomationRulesPage() {
                       onClick={() => handleExecute(rule, 'manual')}
                       disabled={!!executingCurrent && executingCurrent !== rule.id}
                     >
-                      {executeRule.isPending &&
-                      executingCurrent === rule.id &&
-                      executingTrigger === 'manual' ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <Play className="mr-2 h-4 w-4" />
-                      )}
-                      Run now
+                      <Trans>
+                        {executeRule.isPending &&
+                        executingCurrent === rule.id &&
+                        executingTrigger === 'manual' ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Play className="mr-2 h-4 w-4" />
+                        )}
+                        Run now
+                      </Trans>
                     </Button>
                     <ConfirmDialog
                       trigger={
@@ -417,19 +451,21 @@ export default function AutomationRulesPage() {
                             (!!executingCurrent && executingCurrent !== rule.id)
                           }
                         >
-                          {executeRule.isPending &&
-                          executingCurrent === rule.id &&
-                          executingTrigger === 'retroactive' ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : (
-                            <Rocket className="mr-2 h-4 w-4" />
-                          )}
-                          Retro run
+                          <Trans>
+                            {executeRule.isPending &&
+                            executingCurrent === rule.id &&
+                            executingTrigger === 'retroactive' ? (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                              <Rocket className="mr-2 h-4 w-4" />
+                            )}
+                            Retro run
+                          </Trans>
                         </Button>
                       }
-                      title="Run this rule on past transactions?"
-                      description="Budgero will evaluate every transaction in this budget and apply any matching actions. This may take a moment for larger budgets."
-                      confirmText="Confirm retro run"
+                      title={t`Run this rule on past transactions?`}
+                      description={t`Budgero will evaluate every transaction in this budget and apply any matching actions. This may take a moment for larger budgets.`}
+                      confirmText={t`Confirm retro run`}
                       confirmDisabled={!!executingCurrent && executingCurrent !== rule.id}
                       onConfirm={() => {
                         void handleExecute(rule, 'retroactive');
@@ -441,7 +477,10 @@ export default function AutomationRulesPage() {
                       className="w-full justify-center sm:w-auto sm:justify-start"
                       onClick={() => openHistoryForRule(rule)}
                     >
-                      <History className="mr-2 h-4 w-4" /> History
+                      <Trans>
+                        <History className="mr-2 h-4 w-4" />
+                        History
+                      </Trans>
                     </Button>
                     <Button
                       size="sm"
@@ -449,7 +488,10 @@ export default function AutomationRulesPage() {
                       className="w-full justify-center sm:w-auto sm:justify-start"
                       onClick={() => openEditDialog(rule)}
                     >
-                      <Pencil className="mr-2 h-4 w-4" /> Edit
+                      <Trans>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit
+                      </Trans>
                     </Button>
                     <DeleteRuleButton
                       rule={rule}
@@ -505,6 +547,8 @@ function DeleteRuleButton({
   onDelete: () => void;
   disabled: boolean;
 }) {
+  const { t } = useLingui();
+
   return (
     <ConfirmDialog
       trigger={
@@ -513,12 +557,15 @@ function DeleteRuleButton({
           variant="ghost"
           className="w-full justify-center text-destructive hover:text-destructive sm:w-auto sm:justify-start"
         >
-          <Trash2 className="mr-2 h-4 w-4" /> Delete
+          <Trans>
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
+          </Trans>
         </Button>
       }
-      title={<>Delete “{rule.name}”?</>}
-      description="This rule and its history will be removed. Recent runs can still be undone from the global undo menu."
-      confirmText="Delete rule"
+      title={<Trans>Delete “{rule.name}”?</Trans>}
+      description={t`This rule and its history will be removed. Recent runs can still be undone from the global undo menu.`}
+      confirmText={t`Delete rule`}
       variant="destructive"
       confirmDisabled={disabled}
       onConfirm={onDelete}

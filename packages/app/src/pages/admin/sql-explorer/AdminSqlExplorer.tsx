@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import {
@@ -16,6 +17,8 @@ import { QueryCard } from './QueryCard';
 import { ResultsTable } from './ResultsTable';
 
 export function AdminSqlExplorer() {
+  const { t } = useLingui();
+
   const {
     sqlQuery,
     setSqlQuery,
@@ -66,11 +69,15 @@ export function AdminSqlExplorer() {
         <div className="border-b px-4 py-3 flex items-center justify-between">
           <div>
             <h1 className="text-lg font-semibold flex items-center gap-2">
-              <Columns className="h-5 w-5 text-purple-600" />
-              SQL Explorer
+              <Trans>
+                <Columns className="h-5 w-5 text-purple-600" />
+                SQL Explorer
+              </Trans>
             </h1>
             <p className="text-sm text-muted-foreground">
-              Run read-only analysis or maintenance queries against the primary server database.
+              <Trans>
+                Run read-only analysis or maintenance queries against the primary server database.
+              </Trans>
             </p>
           </div>
           <Button
@@ -79,7 +86,7 @@ export function AdminSqlExplorer() {
             size="icon"
             className="lg:hidden"
             onClick={() => setSidebarOpen(true)}
-            aria-label="Open schema sidebar"
+            aria-label={t`Open schema sidebar`}
           >
             <Menu className="h-4 w-4" />
           </Button>
@@ -112,7 +119,9 @@ export function AdminSqlExplorer() {
             {error && (
               <Card className="border-destructive/50 bg-destructive/5">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-destructive">Query Error</CardTitle>
+                  <CardTitle className="text-sm text-destructive">
+                    <Trans>Query Error</Trans>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-xs font-mono whitespace-pre-wrap text-destructive">{error}</p>
@@ -139,12 +148,14 @@ export function AdminSqlExplorer() {
       <Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Query Failed</DialogTitle>
+            <DialogTitle>
+              <Trans>Query Failed</Trans>
+            </DialogTitle>
             <DialogDescription>{error}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button type="button" onClick={() => setShowErrorDialog(false)}>
-              Close
+              <Trans>Close</Trans>
             </Button>
           </DialogFooter>
         </DialogContent>

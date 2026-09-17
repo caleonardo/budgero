@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { SignIn, SignUp } from '@clerk/clerk-react';
@@ -49,16 +50,18 @@ export default function AuthPage() {
 }
 
 function CloudAuthPage({ isSignup }: { isSignup: boolean }) {
+  const { t } = useLingui();
+
   const signupViewed = useRef(false);
   const [searchParams] = useSearchParams();
   const monthly = import.meta.env.VITE_BUDGERO_PRICE_MONTHLY ?? '$4';
   const yearly = import.meta.env.VITE_BUDGERO_PRICE_YEARLY ?? '$35';
   const metaTitle = isSignup
-    ? 'Start Your 35-Day Free Trial | Budgero'
-    : 'Sign in to Budgero Cloud';
+    ? t`Start Your 35-Day Free Trial | Budgero`
+    : t`Sign in to Budgero Cloud`;
   const metaDescription = isSignup
-    ? `Try private budgeting with Budgero Cloud free for 35 days. No credit card required. Then ${monthly}/month or ${yearly}/year, tax included.`
-    : 'Sign in to your Budgero Cloud account and unlock your private budget.';
+    ? t`Try private budgeting with Budgero Cloud free for 35 days. No credit card required. Then ${monthly}/month or ${yearly}/year, tax included.`
+    : t`Sign in to your Budgero Cloud account and unlock your private budget.`;
   const alternateQuery = new URLSearchParams(searchParams);
   alternateQuery.set('mode', isSignup ? 'signin' : 'signup');
 
@@ -84,7 +87,10 @@ function CloudAuthPage({ isSignup }: { isSignup: boolean }) {
           href="https://budgero.app/"
           className="mx-auto flex max-w-5xl items-center gap-2 text-lg font-bold"
         >
-          <img src="/logo_64.png" alt="" className="h-9 w-9 rounded-lg" /> Budgero
+          <Trans>
+            <img src="/logo_64.png" alt="" className="h-9 w-9 rounded-lg" />
+            Budgero
+          </Trans>
         </a>
         <main
           className={`mx-auto flex min-h-[calc(100svh-9rem)] max-w-5xl flex-col justify-center gap-6 py-6 sm:gap-8 sm:py-8 ${isSignup ? 'lg:flex-row lg:items-center lg:gap-20' : 'items-center'}`}
@@ -95,27 +101,31 @@ function CloudAuthPage({ isSignup }: { isSignup: boolean }) {
             }
           >
             <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Budgero Cloud
+              <Trans>Budgero Cloud</Trans>
             </p>
             <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
-              {isSignup ? 'Start your 35-day free trial.' : 'Welcome back to your budget.'}
+              {isSignup ? t`Start your 35-day free trial.` : t`Welcome back to your budget.`}
             </h1>
             <p className="mt-4 text-base leading-7 text-muted-foreground">
               {isSignup
-                ? 'Know what you can spend. Keep your budget private. Create your account to start your free trial.'
-                : 'Sign in, then unlock your budget with your master password.'}
+                ? t`Know what you can spend. Keep your budget private. Create your account to start your free trial.`
+                : t`Sign in, then unlock your budget with your master password.`}
             </p>
             {isSignup && (
               <>
-                <p className="mt-4 text-sm font-medium">No credit card required.</p>
+                <p className="mt-4 text-sm font-medium">
+                  <Trans>No credit card required.</Trans>
+                </p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Then {monthly}/month or {yearly}/year, tax included.
+                  <Trans>
+                    Then {monthly}/month or {yearly}/year, tax included.
+                  </Trans>
                 </p>
                 <ul className="mt-7 hidden space-y-4 text-sm lg:block">
                   {[
-                    'Start fresh or bring your YNAB budget',
-                    'Budget together with up to five people',
-                    'Use your phone, tablet, or computer',
+                    t`Start fresh or bring your YNAB budget`,
+                    t`Budget together with up to five people`,
+                    t`Use your phone, tablet, or computer`,
                   ].map((benefit) => (
                     <li key={benefit} className="flex items-center gap-3">
                       <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
@@ -124,9 +134,11 @@ function CloudAuthPage({ isSignup }: { isSignup: boolean }) {
                   ))}
                 </ul>
                 <p className="mt-7 hidden items-start gap-3 text-sm leading-6 text-muted-foreground lg:flex">
-                  <LockKeyhole className="mt-1 size-4 shrink-0" aria-hidden="true" />
-                  Your budget is encrypted on your device before it syncs. Budgero cannot read its
-                  contents.
+                  <Trans>
+                    <LockKeyhole className="mt-1 size-4 shrink-0" aria-hidden="true" />
+                    Your budget is encrypted on your device before it syncs. Budgero cannot read its
+                    contents.
+                  </Trans>
                 </p>
               </>
             )}
@@ -152,8 +164,10 @@ function CloudAuthPage({ isSignup }: { isSignup: boolean }) {
             )}
             {isSignup && (
               <p className="text-center text-xs leading-5 text-muted-foreground">
-                No automatic charge when your trial ends. Choose a plan only if Budgero works for
-                you.
+                <Trans>
+                  No automatic charge when your trial ends. Choose a plan only if Budgero works for
+                  you.
+                </Trans>
               </p>
             )}
           </div>
@@ -164,11 +178,13 @@ function CloudAuthPage({ isSignup }: { isSignup: boolean }) {
 }
 
 function AuthLoading() {
+  const { t } = useLingui();
+
   return (
     <div
       className="flex h-[360px] items-center justify-center"
       role="status"
-      aria-label="Loading secure sign-in"
+      aria-label={t`Loading secure sign-in`}
     >
       <Loader2 className="size-6 animate-spin text-primary" aria-hidden="true" />
     </div>
@@ -176,6 +192,7 @@ function AuthLoading() {
 }
 
 export function SelfHostAuthPage() {
+  const { t } = useLingui();
   const [searchParams, setSearchParams] = useSearchParams();
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
@@ -225,7 +242,7 @@ export function SelfHostAuthPage() {
       if (err instanceof ApiError) {
         setError(typeof err.response === 'string' ? err.response : err.message);
       } else {
-        setError('Something went wrong, please try again.');
+        setError(t`Something went wrong, please try again.`);
       }
       return;
     } finally {
@@ -240,26 +257,32 @@ export function SelfHostAuthPage() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <img src="/logo_64.png" alt="Budgero" className="w-16 h-16 object-contain" />
+            <img src="/logo_64.png" alt={t`Budgero`} className="w-16 h-16 object-contain" />
           </div>
-          <h1 className="text-2xl font-semibold text-foreground">Budgero</h1>
+          <h1 className="text-2xl font-semibold text-foreground">
+            <Trans>Budgero</Trans>
+          </h1>
         </div>
 
         <form className="space-y-4" onSubmit={submit}>
           {mode === 'signup' && (
             <div className="space-y-1.5">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">
+                <Trans>Name</Trans>
+              </Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
+                placeholder={t`Your name`}
                 required
               />
             </div>
           )}
           <div className="space-y-1.5">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">
+              <Trans>Username</Trans>
+            </Label>
             <Input
               id="username"
               type="text"
@@ -271,7 +294,9 @@ export function SelfHostAuthPage() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">
+              <Trans>Password</Trans>
+            </Label>
             <Input
               id="password"
               type="password"
@@ -294,12 +319,12 @@ export function SelfHostAuthPage() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {mode === 'signin' ? 'Signing in…' : 'Creating account…'}
+                {mode === 'signin' ? t`Signing in…` : t`Creating account…`}
               </>
             ) : mode === 'signin' ? (
-              'Sign in'
+              t`Sign in`
             ) : (
-              'Create account'
+              t`Create account`
             )}
           </Button>
         </form>
@@ -312,7 +337,12 @@ export function SelfHostAuthPage() {
                 onClick={() => setMode('signup')}
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
-                Need an account? <span className="text-primary">Sign up</span>
+                <Trans>
+                  Need an account?{' '}
+                  <span className="text-primary">
+                    <Trans>Sign up</Trans>
+                  </span>
+                </Trans>
               </button>
             ) : (
               <button
@@ -320,7 +350,12 @@ export function SelfHostAuthPage() {
                 onClick={() => setMode('signin')}
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
-                Already have an account? <span className="text-primary">Sign in</span>
+                <Trans>
+                  Already have an account?{' '}
+                  <span className="text-primary">
+                    <Trans>Sign in</Trans>
+                  </span>
+                </Trans>
               </button>
             )}
           </div>

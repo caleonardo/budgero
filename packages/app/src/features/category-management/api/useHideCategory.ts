@@ -8,6 +8,7 @@ import {
   useMoveCategoryToNewGroup,
 } from '@entities/category/api/useCategories';
 
+// Sentinel stored in user data and compared on read — must stay locale-stable.
 export const HIDDEN_CATEGORIES_GROUP_NAME = 'Hidden Categories';
 
 export function useHideCategory(budgetId: number) {

@@ -1,26 +1,28 @@
+import { msg } from '@lingui/core/macro';
+import type { MessageDescriptor } from '@lingui/core';
 import type { LLMProvider } from '@budgero/core/browser';
 
 export interface ProviderOption {
   value: LLMProvider;
-  label: string;
-  description: string;
+  label: MessageDescriptor;
+  description: MessageDescriptor;
 }
 
 export const PROVIDER_OPTIONS: ProviderOption[] = [
   {
     value: 'ollama',
-    label: 'Ollama',
-    description: 'Run models locally with Ollama',
+    label: msg`Ollama`,
+    description: msg`Run models locally with Ollama`,
   },
   {
     value: 'lmstudio',
-    label: 'LM Studio',
-    description: 'Connect to LM Studio server',
+    label: msg`LM Studio`,
+    description: msg`Connect to LM Studio server`,
   },
   {
     value: 'openai-compatible',
-    label: 'OpenAI Compatible',
-    description: 'Any OpenAI-compatible API',
+    label: msg`OpenAI Compatible`,
+    description: msg`Any OpenAI-compatible API`,
   },
 ];
 
@@ -73,13 +75,13 @@ export const isCloudEndpoint = (url: string, apiKey: string): boolean =>
   Boolean(apiKey.trim()) || !isLocalEndpoint(url);
 
 export const RECOMMENDED_TEXT_MODELS = [
-  { name: 'qwen3', description: 'Excellent for structured outputs' },
-  { name: 'llama3.2', description: 'Fast and accurate' },
-  { name: 'mistral', description: 'Good balance of speed and quality' },
+  { name: 'qwen3', description: msg`Excellent for structured outputs` },
+  { name: 'llama3.2', description: msg`Fast and accurate` },
+  { name: 'mistral', description: msg`Good balance of speed and quality` },
 ];
 
 export const RECOMMENDED_VISION_MODELS = [
-  { name: 'qwen3-vl-8b', description: 'Best for documents (~6GB)' },
-  { name: 'qwen3-vl-4b', description: 'Lighter option (~3GB)' },
-  { name: 'llava-llama3', description: 'Good general vision' },
+  { name: 'qwen3-vl-8b', description: msg`Best for documents (~6GB)` },
+  { name: 'qwen3-vl-4b', description: msg`Lighter option (~3GB)` },
+  { name: 'llava-llama3', description: msg`Good general vision` },
 ];

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import React from 'react';
 import { CheckCircle, Wifi } from 'lucide-react';
 
@@ -41,10 +42,10 @@ export const ReconnectionOverlay: React.FC<ReconnectionOverlayProps> = ({
                   <Wifi className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  Getting you back online
+                  <Trans>Getting you back online</Trans>
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Syncing your data and replaying offline changes...
+                  <Trans>Syncing your data and replaying offline changes...</Trans>
                 </p>
               </div>
 
@@ -71,10 +72,10 @@ export const ReconnectionOverlay: React.FC<ReconnectionOverlayProps> = ({
                   <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  Welcome back online!
+                  <Trans>Welcome back online!</Trans>
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  All your data is now synchronized
+                  <Trans>All your data is now synchronized</Trans>
                 </p>
               </div>
 

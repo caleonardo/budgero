@@ -11,6 +11,7 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/website/patches ./packages/website/patches
 COPY packages/core/package.json ./packages/core/
 COPY packages/runtime/package.json ./packages/runtime/
 COPY packages/app/package.json ./packages/app/
@@ -48,7 +49,7 @@ RUN pnpm --filter @budgero/runtime build
 RUN pnpm --filter @budgero/core build
 
 # Build app package (run via pnpm workspace to avoid npx resolution issues in containers)
-RUN pnpm --filter @budgero/app exec vite build
+RUN pnpm --filter @budgero/app exec vite build --config vite.config.ts
 
 # Go builder stage
 FROM golang:1.26.6-alpine AS go-builder
@@ -78,10 +79,10 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o budgero-server ./cmd/saas
 
 # Final stage - minimal runtime image
-FROM alpine:3.24
+FROM alpine:3.24 AS runtime
 
 # Install ca-certificates for HTTPS requests and wget for health checks
-# Note: apk upgrade ensures we get the latest security patches (e.g., busybox CVEs)
+# Apply the security updates currently available from Alpine.
 RUN apk upgrade --no-cache && apk add --no-cache ca-certificates tzdata wget
 
 # Create non-root user

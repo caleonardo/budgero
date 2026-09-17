@@ -1,6 +1,9 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { format, addMonths, parseISO, differenceInCalendarDays } from 'date-fns';
+import { addMonths, parseISO, differenceInCalendarDays } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import { CalendarClock, ArrowRight, AlertCircle, Repeat } from 'lucide-react';
 
 import {
@@ -67,6 +70,8 @@ export function UpcomingTransactionsCard({
   budgetId,
   globalLocalizer,
 }: UpcomingTransactionsCardProps) {
+  const { t } = useLingui();
+
   const navigate = useNavigate();
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const selectedBudget = useUiStore((state) => state.selectedBudget);
@@ -212,7 +217,7 @@ export function UpcomingTransactionsCard({
         const convertedAmount = isOutflow ? tx.OutflowConverted : tx.InflowConverted;
         return {
           key: `transaction-${tx.ID}`,
-          name: tx.Payee || tx.Memo || tx.Category || 'Scheduled transaction',
+          name: tx.Payee || tx.Memo || tx.Category || t`Scheduled transaction`,
           date: parseISO(tx.Date),
           amount: Math.abs(nativeAmount ?? convertedAmount ?? 0),
           budgetAmount: Math.abs(convertedAmount ?? 0),
@@ -239,6 +244,7 @@ export function UpcomingTransactionsCard({
     accountIdByName,
     today,
     oneOffHorizon,
+    t,
   ]);
 
   const isLoading = occurrencesLoading || transactionsLoading;
@@ -303,8 +309,11 @@ export function UpcomingTransactionsCard({
               <Badge variant={item.badgeVariant}>{item.badgeLabel}</Badge>
               <span className="text-[11px] text-muted-foreground">
                 {daysUntil <= 0
-                  ? 'Due today'
-                  : `Due in ${daysUntil} day${daysUntil === 1 ? '' : 's'}`}
+                  ? t`Due today`
+                  : plural(daysUntil, {
+                      one: `Due in # day`,
+                      other: `Due in # days`,
+                    })}
               </span>
             </div>
           </div>
@@ -317,12 +326,16 @@ export function UpcomingTransactionsCard({
     <Card className="h-full">
       <CardHeader className="pb-1">
         <CardTitle className="flex items-center gap-2 text-base font-semibold">
-          <CalendarClock className="h-5 w-5 text-muted-foreground" />
-          Upcoming transactions
+          <Trans>
+            <CalendarClock className="h-5 w-5 text-muted-foreground" />
+            Upcoming transactions
+          </Trans>
         </CardTitle>
         <CardDescription className="text-xs">
-          Next charge for each recurring series, plus scheduled transactions in the next{' '}
-          {ONE_OFF_LOOKAHEAD_MONTHS} months.
+          <Trans>
+            Next charge for each recurring series, plus scheduled transactions in the next{' '}
+            {ONE_OFF_LOOKAHEAD_MONTHS} months.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -335,8 +348,10 @@ export function UpcomingTransactionsCard({
           <ul className="space-y-2">{upcoming.map(renderItem)}</ul>
         ) : (
           <EmptyStateRow icon={AlertCircle}>
-            Nothing upcoming. Recurring charges and transactions dated in the next{' '}
-            {ONE_OFF_LOOKAHEAD_MONTHS} months appear here.
+            <Trans>
+              Nothing upcoming. Recurring charges and transactions dated in the next{' '}
+              {ONE_OFF_LOOKAHEAD_MONTHS} months appear here.
+            </Trans>
           </EmptyStateRow>
         )}
       </CardContent>
@@ -347,8 +362,10 @@ export function UpcomingTransactionsCard({
           className="ml-auto gap-2"
           onClick={() => navigate('/settings/recurring')}
         >
-          Manage automations
-          <ArrowRight className="h-4 w-4" />
+          <Trans>
+            Manage automations
+            <ArrowRight className="h-4 w-4" />
+          </Trans>
         </Button>
       </CardFooter>
 

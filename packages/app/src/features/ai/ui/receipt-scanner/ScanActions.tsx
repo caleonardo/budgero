@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Camera } from 'lucide-react';
 
@@ -11,11 +12,13 @@ export function UploadActions({ canScan, onCancel, onScan }: UploadActionsProps)
   return (
     <div className="flex justify-end gap-2 pt-4">
       <Button variant="outline" onClick={onCancel}>
-        Cancel
+        <Trans>Cancel</Trans>
       </Button>
       <Button onClick={onScan} disabled={!canScan}>
-        <Camera className="h-4 w-4 mr-2" />
-        Scan Receipt
+        <Trans>
+          <Camera className="h-4 w-4 mr-2" />
+          Scan Receipt
+        </Trans>
       </Button>
     </div>
   );
@@ -31,10 +34,10 @@ export function ReviewActions({ selectedCount, onBack, onImport }: ReviewActions
   return (
     <div className="flex justify-end gap-2 pt-4">
       <Button variant="outline" onClick={onBack}>
-        Back
+        <Trans>Back</Trans>
       </Button>
       <Button onClick={onImport} disabled={selectedCount === 0}>
-        Import {selectedCount} Transactions
+        <Trans>Import {selectedCount} Transactions</Trans>
       </Button>
     </div>
   );
@@ -49,11 +52,13 @@ export function CameraActions({ onCancel, onCapture }: CameraActionsProps) {
   return (
     <div className="flex justify-center gap-3">
       <Button variant="outline" onClick={onCancel}>
-        Cancel
+        <Trans>Cancel</Trans>
       </Button>
       <Button onClick={onCapture} size="lg">
-        <Camera className="h-5 w-5 mr-2" />
-        Capture
+        <Trans>
+          <Camera className="h-5 w-5 mr-2" />
+          Capture
+        </Trans>
       </Button>
     </div>
   );

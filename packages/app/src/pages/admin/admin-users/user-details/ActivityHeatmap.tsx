@@ -1,4 +1,7 @@
-import { format, parseISO, startOfWeek, endOfWeek, addDays } from 'date-fns';
+import { plural } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { parseISO, startOfWeek, endOfWeek, addDays } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui/tooltip';
 import type { AdminDayCount } from '@features/admin/model/admin-users';
@@ -69,7 +72,10 @@ export function ActivityHeatmap({
                       <button
                         type="button"
                         className={`h-4 w-4 rounded-[4px] border ${heatmapClass(entry.count, maxCount)}`}
-                        aria-label={`${format(entry.date, 'EEEE, MMM d, yyyy')}: ${entry.count} ${itemLabel}${entry.count === 1 ? '' : 's'}`}
+                        aria-label={plural(entry.count, {
+                          one: `${format(entry.date, 'EEEE, MMM d, yyyy')}: # ${itemLabel}`,
+                          other: `${format(entry.date, 'EEEE, MMM d, yyyy')}: # ${itemLabel}s`,
+                        })}
                       />
                     </TooltipTrigger>
                     <TooltipContent side="top" className="text-xs">
@@ -91,14 +97,18 @@ export function ActivityHeatmap({
       <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
         <span>{format(firstDate, 'MMM d')}</span>
         <div className="flex items-center gap-2">
-          <span>Less</span>
+          <span>
+            <Trans>Less</Trans>
+          </span>
           {[0, 1, 2, 3, 4].map((level) => (
             <div
               key={level}
               className={`h-3 w-3 rounded-[3px] border ${heatmapLegendClass(level)}`}
             />
           ))}
-          <span>More</span>
+          <span>
+            <Trans>More</Trans>
+          </span>
         </div>
         <span>{format(lastDate, 'MMM d')}</span>
       </div>

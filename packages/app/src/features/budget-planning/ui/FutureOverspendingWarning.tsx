@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,10 +47,16 @@ export function FutureOverspendingWarning({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>This will cause overspending</AlertDialogTitle>
+          <AlertDialogTitle>
+            <Trans>This will cause overspending</Trans>
+          </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-3">
-              <p>This change will cause negative Available in future months for this category:</p>
+              <p>
+                <Trans>
+                  This change will cause negative Available in future months for this category:
+                </Trans>
+              </p>
               <ul className="space-y-1 text-sm">
                 {affectedMonths.map((m) => (
                   <li key={m.month} className="flex justify-between gap-4">
@@ -64,12 +71,14 @@ export function FutureOverspendingWarning({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>
+            <Trans>Cancel</Trans>
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             className={cn(buttonVariants({ variant: 'destructive' }))}
           >
-            Proceed anyway
+            <Trans>Proceed anyway</Trans>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

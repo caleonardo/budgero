@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Download, Database, FileText, AlertTriangle, Inbox, Upload, BellRing } from 'lucide-react';
@@ -26,6 +27,8 @@ import { formatBytes } from '@shared/lib/format-bytes';
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
 
 export default function DataManagementPage() {
+  const { t } = useLingui();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const runtime = useRuntime();
@@ -100,7 +103,7 @@ export default function DataManagementPage() {
 
   const lastBackupDisplay = (() => {
     const last = profile?.last_user_db_backup;
-    return last ? new Date(last).toLocaleString() : 'No backups yet';
+    return last ? new Date(last).toLocaleString() : t`No backups yet`;
   })();
   const isSavingFrequency = updateBackupSettings.isPending;
   const disableFrequencyControls = isSavingFrequency || isExporting || isRestoring;
@@ -122,16 +125,16 @@ export default function DataManagementPage() {
   const handleSaveFrequency = async () => {
     const parsed = parseInt(backupFrequency, 10);
     if (Number.isNaN(parsed) || parsed < 1) {
-      toast.error('Reminder frequency must be at least 1 day');
+      toast.error(t`Reminder frequency must be at least 1 day`);
       return;
     }
     const normalized = Math.min(parsed, 365);
     try {
       await updateBackupSettings.mutateAsync({ frequency_days: normalized });
       setBackupFrequency(String(normalized));
-      toast.success('Backup reminder updated');
+      toast.success(t`Backup reminder updated`);
     } catch (error) {
-      const message = getErrorMessage(error, 'Failed to update backup reminder');
+      const message = getErrorMessage(error, t`Failed to update backup reminder`);
       toast.error(message);
     }
   };
@@ -147,7 +150,7 @@ export default function DataManagementPage() {
       const filename = `budgero-${workspaceFilenameTag(activeSpace)}-${timestamp}.db`;
 
       downloadBlob(dbData, filename, 'application/x-sqlite3');
-      toast.success('Database exported successfully');
+      toast.success(t`Database exported successfully`);
       try {
         await recordBackup.mutateAsync();
       } catch (recordError) {
@@ -161,7 +164,7 @@ export default function DataManagementPage() {
         });
       }
     } catch (error) {
-      const errorMessage = getErrorMessage(error, 'Failed to export database');
+      const errorMessage = getErrorMessage(error, t`Failed to export database`);
       toast.error(errorMessage);
       console.error('Database export error:', error);
     } finally {
@@ -189,9 +192,9 @@ export default function DataManagementPage() {
       const filename = `budgero-${workspaceFilenameTag(activeSpace)}-csv-${timestamp}.zip`;
 
       downloadBlob(zipBlob, filename, 'application/zip');
-      toast.success('CSV files exported successfully');
+      toast.success(t`CSV files exported successfully`);
     } catch (error) {
-      const errorMessage = getErrorMessage(error, 'Failed to export CSV files');
+      const errorMessage = getErrorMessage(error, t`Failed to export CSV files`);
       toast.error(errorMessage);
       console.error('CSV export error:', error);
     } finally {
@@ -201,13 +204,13 @@ export default function DataManagementPage() {
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!canRestoreWorkspace) {
-      toast.error('Restore is unavailable while your workspace access is locked.');
+      toast.error(t`Restore is unavailable while your workspace access is locked.`);
       return;
     }
     const file = event.target.files?.[0];
     if (file) {
       if (!file.name.endsWith('.db') && !file.name.endsWith('.sqlite')) {
-        toast.error('Please select a valid database file (.db or .sqlite)');
+        toast.error(t`Please select a valid database file (.db or .sqlite)`);
         return;
       }
       setSelectedFile(file);
@@ -217,7 +220,7 @@ export default function DataManagementPage() {
 
   const handleRestoreDatabase = async () => {
     if (!canRestoreWorkspace) {
-      toast.error('Restore is unavailable while your workspace access is locked.');
+      toast.error(t`Restore is unavailable while your workspace access is locked.`);
       return;
     }
     if (!selectedFile) return;
@@ -251,14 +254,14 @@ export default function DataManagementPage() {
         // Continue anyway - local restore was successful
       }
 
-      toast.success('Database restored successfully!');
+      toast.success(t`Database restored successfully!`);
     } catch (error) {
       // Backup file from a newer app version — its schema is ahead of this
       // build; prompt for an update instead of a generic failure.
       if ((error as { code?: string })?.code === 'DB_NEWER_THAN_APP') {
         notifyUpdateRequired('restore-newer-than-app');
       }
-      const errorMessage = getErrorMessage(error, 'Failed to restore database');
+      const errorMessage = getErrorMessage(error, t`Failed to restore database`);
       toast.error(errorMessage);
       console.error('Database restore error:', error);
     } finally {
@@ -273,41 +276,51 @@ export default function DataManagementPage() {
   return (
     <div className="container max-w-4xl mx-auto p-4 sm:p-6 pb-20 sm:pb-6 space-y-6 sm:space-y-8">
       <SettingsPageHeader
-        title="Data Management"
-        description="Export backups, restore snapshots, and manage your budget data"
+        title={t`Data Management`}
+        description={t`Export backups, restore snapshots, and manage your budget data`}
       />
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BellRing className="h-5 w-5" />
-            Backup Reminders
+            <Trans>
+              <BellRing className="h-5 w-5" />
+              Backup Reminders
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Stay covered if data ever corrupts or you lose your master password—we&apos;ll remind
-            you to keep a fresh backup on hand.
+            <Trans>
+              Stay covered if data ever corrupts or you lose your master password—we'll remind you
+              to keep a fresh backup on hand.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-3">
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Last backup</p>
+                <p className="text-sm text-muted-foreground">
+                  <Trans>Last backup</Trans>
+                </p>
                 <p className="font-semibold text-foreground">{lastBackupDisplay}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Database size</p>
+                <p className="text-sm text-muted-foreground">
+                  <Trans>Database size</Trans>
+                </p>
                 <p className="font-semibold text-foreground">
                   {dbSizeQuery.isLoading
-                    ? 'Calculating…'
+                    ? t`Calculating…`
                     : dbSizeQuery.data != null
                       ? formatBytes(dbSizeQuery.data)
-                      : 'Unavailable'}
+                      : t`Unavailable`}
                 </p>
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="backup-frequency">Reminder frequency (days)</Label>
+              <Label htmlFor="backup-frequency">
+                <Trans>Reminder frequency (days)</Trans>
+              </Label>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Input
                   id="backup-frequency"
@@ -324,11 +337,11 @@ export default function DataManagementPage() {
                   onClick={handleSaveFrequency}
                   disabled={disableFrequencyControls}
                 >
-                  {isSavingFrequency ? 'Saving…' : 'Save'}
+                  {isSavingFrequency ? t`Saving…` : t`Save`}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                We&apos;ll prompt you again when a backup is overdue.
+                <Trans>We'll prompt you again when a backup is overdue.</Trans>
               </p>
             </div>
           </div>
@@ -339,20 +352,28 @@ export default function DataManagementPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Inbox className="h-4 w-4" />
-            Import Data
+            <Trans>
+              <Inbox className="h-4 w-4" />
+              Import Data
+            </Trans>
           </CardTitle>
           <CardDescription>
-            Imports now live on their own page so you can manage history and undo runs.
+            <Trans>
+              Imports now live on their own page so you can manage history and undo runs.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 sm:p-6 space-y-3">
           <p className="text-sm text-muted-foreground">
-            Head to the Imports page to upload CSV/PDF files, review past imports, and undo anything
-            that looks off.
+            <Trans>
+              Head to the Imports page to upload CSV/PDF files, review past imports, and undo
+              anything that looks off.
+            </Trans>
           </p>
           <Button asChild variant="outline">
-            <Link to="/settings/imports">Open Imports</Link>
+            <Link to="/settings/imports">
+              <Trans>Open Imports</Trans>
+            </Link>
           </Button>
         </CardContent>
       </Card>
@@ -361,10 +382,14 @@ export default function DataManagementPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Download className="h-5 w-5" />
-            Export Data
+            <Trans>
+              <Download className="h-5 w-5" />
+              Export Data
+            </Trans>
           </CardTitle>
-          <CardDescription>Download your data for backup or analysis</CardDescription>
+          <CardDescription>
+            <Trans>Download your data for backup or analysis</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {lockedOwnerRecoveryMode ? (
@@ -378,10 +403,10 @@ export default function DataManagementPage() {
               {(['sqlite', 'csv'] as const).map((type) => {
                 const disabled = !isOwner || isExporting || isRestoring;
                 const label = isExporting
-                  ? 'Exporting...'
+                  ? t`Exporting...`
                   : type === 'sqlite'
-                    ? 'Download SQLite Database'
-                    : 'Download CSV Files';
+                    ? t`Download SQLite Database`
+                    : t`Download CSV Files`;
 
                 if (!disabled) {
                   return (
@@ -416,8 +441,10 @@ export default function DataManagementPage() {
                       </span>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="text-sm max-w-xs">
-                      Shared collaborators can’t export workspace data. Ask the workspace owner to
-                      download it for you.
+                      <Trans>
+                        Shared collaborators can’t export workspace data. Ask the workspace owner to
+                        download it for you.
+                      </Trans>
                     </PopoverContent>
                   </Popover>
                 );
@@ -431,22 +458,34 @@ export default function DataManagementPage() {
           ) : null}
           <div className="text-sm text-muted-foreground space-y-2">
             <p>
-              Exports cover only the currently active workspace
-              {activeSpace?.display_name ? (
-                <>
-                  {' '}
-                  (<strong>{activeSpace.display_name}</strong>)
-                </>
-              ) : null}
-              . Switch workspaces and export again to back up the others.
+              <Trans>
+                Exports cover only the currently active workspace
+                {activeSpace?.display_name ? (
+                  <>
+                    {' '}
+                    (<strong>{activeSpace.display_name}</strong>)
+                  </>
+                ) : null}
+                . Switch workspaces and export again to back up the others.
+              </Trans>
             </p>
             <p>
-              <strong>SQLite Database:</strong> Downloads the complete database file that can be
-              imported into other SQLite-compatible tools or used as a backup.
+              <Trans>
+                <strong>
+                  <Trans>SQLite Database:</Trans>
+                </strong>
+                Downloads the complete database file that can be imported into other
+                SQLite-compatible tools or used as a backup.
+              </Trans>
             </p>
             <p>
-              <strong>CSV Files:</strong> Downloads individual CSV files for each table (budgets,
-              accounts, transactions, etc.) that can be opened in spreadsheet applications.
+              <Trans>
+                <strong>
+                  <Trans>CSV Files:</Trans>
+                </strong>
+                Downloads individual CSV files for each table (budgets, accounts, transactions,
+                etc.) that can be opened in spreadsheet applications.
+              </Trans>
             </p>
           </div>
         </CardContent>
@@ -456,10 +495,14 @@ export default function DataManagementPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Database className="h-5 w-5" />
-            Restore Database
+            <Trans>
+              <Database className="h-5 w-5" />
+              Restore Database
+            </Trans>
           </CardTitle>
-          <CardDescription>Restore from a database backup file</CardDescription>
+          <CardDescription>
+            <Trans>Restore from a database backup file</Trans>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <input
@@ -471,7 +514,7 @@ export default function DataManagementPage() {
           />
           {(() => {
             const disabled = !canRestoreWorkspace || isRestoring || isExporting;
-            const label = isRestoring ? 'Restoring...' : 'Restore from Database File';
+            const label = isRestoring ? t`Restoring...` : t`Restore from Database File`;
 
             if (!disabled) {
               return (
@@ -504,8 +547,8 @@ export default function DataManagementPage() {
                 </PopoverTrigger>
                 <PopoverContent align="start" className="text-sm max-w-xs">
                   {!isOwner
-                    ? 'Only the workspace owner can restore a Budgero Core backup into this workspace.'
-                    : 'Restore is unavailable while your workspace access is locked. Subscribe again to unlock owned workspace changes.'}
+                    ? t`Only the workspace owner can restore a Budgero Core backup into this workspace.`
+                    : t`Restore is unavailable while your workspace access is locked. Subscribe again to unlock owned workspace changes.`}
                 </PopoverContent>
               </Popover>
             );
@@ -514,16 +557,20 @@ export default function DataManagementPage() {
             <p className="flex items-start gap-2">
               <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
               <span>
-                <strong>Warning:</strong> Restore replaces the data in the currently active
-                workspace
-                {activeSpace?.display_name ? (
-                  <>
-                    {' '}
-                    (<strong>{activeSpace.display_name}</strong>)
-                  </>
-                ) : null}{' '}
-                — on this device and on the server. Other workspaces are not affected. This action
-                cannot be undone, so export this workspace first if you want a backup.
+                <Trans>
+                  <strong>
+                    <Trans>Warning:</Trans>
+                  </strong>{' '}
+                  Restore replaces the data in the currently active workspace
+                  {activeSpace?.display_name ? (
+                    <>
+                      {' '}
+                      (<strong>{activeSpace.display_name}</strong>)
+                    </>
+                  ) : null}{' '}
+                  — on this device and on the server. Other workspaces are not affected. This action
+                  cannot be undone, so export this workspace first if you want a backup.
+                </Trans>
               </span>
             </p>
           </div>
@@ -535,38 +582,50 @@ export default function DataManagementPage() {
         open={showRestoreDialog}
         onOpenChange={setShowRestoreDialog}
         icon={<AlertTriangle className="h-5 w-5 text-destructive" />}
-        title="Confirm Database Restore"
+        title={t`Confirm Database Restore`}
         description={
           <span className="block space-y-3">
             <p className="font-semibold text-foreground">
-              This will permanently replace the data in{' '}
-              {activeSpace?.display_name ? (
-                <>
-                  workspace <span className="font-semibold">{activeSpace.display_name}</span>
-                </>
-              ) : (
-                'the currently active workspace'
-              )}
-              .
+              <Trans>
+                This will permanently replace the data in{' '}
+                {activeSpace?.display_name ? (
+                  <>
+                    workspace <span className="font-semibold">{activeSpace.display_name}</span>
+                  </>
+                ) : (
+                  t`the currently active workspace`
+                )}
+                .
+              </Trans>
             </p>
             <p>
-              You are about to restore from:{' '}
-              <span className="font-mono text-xs">{selectedFile?.name}</span>
+              <Trans>
+                You are about to restore from:{' '}
+                <span className="font-mono text-xs">{selectedFile?.name}</span>
+              </Trans>
             </p>
             <ul className="list-disc list-inside space-y-1 text-sm">
               <li>
-                Budgets, accounts, transactions, and categories in this workspace will be replaced
+                <Trans>
+                  Budgets, accounts, transactions, and categories in this workspace will be replaced
+                </Trans>
               </li>
-              <li>The change will also be pushed to the server for this workspace</li>
-              <li>Your other workspaces are not affected</li>
-              <li>This action CANNOT be undone</li>
+              <li>
+                <Trans>The change will also be pushed to the server for this workspace</Trans>
+              </li>
+              <li>
+                <Trans>Your other workspaces are not affected</Trans>
+              </li>
+              <li>
+                <Trans>This action CANNOT be undone</Trans>
+              </li>
             </ul>
             <p className="font-semibold text-destructive">
-              Are you absolutely sure you want to continue?
+              <Trans>Are you absolutely sure you want to continue?</Trans>
             </p>
           </span>
         }
-        confirmText="Yes, Replace All Data"
+        confirmText={t`Yes, Replace All Data`}
         variant="destructive"
         onConfirm={() => {
           void handleRestoreDatabase();
@@ -576,8 +635,8 @@ export default function DataManagementPage() {
       {/* Loading Overlay */}
       {isRestoring && (
         <FullScreenLoadingOverlay
-          title="Restoring Database"
-          description="Please wait while we restore your data..."
+          title={t`Restoring Database`}
+          description={t`Please wait while we restore your data...`}
           footnote="Do not close this window"
         />
       )}
@@ -594,18 +653,24 @@ function LockedOwnerExportRecovery({
   selectedSpaceId: string | null;
   onSelectSpace: (spaceId: string) => void;
 }) {
+  const { t } = useLingui();
+
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-dashed p-4 space-y-3">
         <p className="text-sm text-muted-foreground">
-          Your owned workspaces are locked for edits until you resubscribe, but you can still export
-          their data here for recovery or migration.
+          <Trans>
+            Your owned workspaces are locked for edits until you resubscribe, but you can still
+            export their data here for recovery or migration.
+          </Trans>
         </p>
         <div className="space-y-2 max-w-md">
-          <Label htmlFor="export-workspace">Workspace to export</Label>
+          <Label htmlFor="export-workspace">
+            <Trans>Workspace to export</Trans>
+          </Label>
           <Select value={selectedSpaceId ?? ''} onValueChange={onSelectSpace}>
             <SelectTrigger id="export-workspace" className="w-full">
-              <SelectValue placeholder="Choose a workspace" />
+              <SelectValue placeholder={t`Choose a workspace`} />
             </SelectTrigger>
             <SelectContent>
               {spaces.map((space) => (
@@ -617,8 +682,10 @@ function LockedOwnerExportRecovery({
           </Select>
         </div>
         <p className="text-xs text-muted-foreground">
-          Export stays available. Restore and other workspace changes remain locked until access is
-          active again.
+          <Trans>
+            Export stays available. Restore and other workspace changes remain locked until access
+            is active again.
+          </Trans>
         </p>
       </div>
     </div>

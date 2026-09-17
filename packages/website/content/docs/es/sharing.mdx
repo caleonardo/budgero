@@ -1,0 +1,69 @@
+---
+title: "Compartir presupuestos"
+summary: "Invita a tu pareja o familia, mantén a todos sincronizados y comprende cómo se comparten las claves de cifrado sin que lleguen nunca al servidor."
+section: collaboration
+topicId: sharing
+takeaways:
+  - "Cómo funcionan los enlaces de invitación y por qué el secreto nunca llega al servidor."
+  - "Qué pueden hacer los Propietarios y los Miembros en un presupuesto compartido."
+  - "Convenciones prácticas para evitar que un presupuesto compartido se convierta en un desastre compartido."
+---
+
+Los presupuestos son un deporte de equipo para la mayoría de los hogares — y compartir es donde la mayoría de las apps «privadas» renuncian en silencio a su promesa de privacidad. Budgero comparte presupuestos sin debilitar el cifrado: tus datos siguen cifrados de extremo a extremo, y las claves viajan de forma que el servidor no puede interceptarlas.
+
+## Cómo funciona compartir
+
+1. El **propietario** del presupuesto abre el panel de compartir y genera un **enlace de invitación**.
+2. El enlace lleva un secreto de un solo uso en su **fragmento de URL** — la parte después de `#`. Los fragmentos nunca se envían en las peticiones HTTP, así que el servidor retransmite la invitación sin ver nunca el secreto.
+3. El invitado abre el enlace, inicia sesión y configura su propia [contraseña maestra](/docs/master-password) si aún no lo ha hecho.
+4. Su dispositivo usa el secreto de la invitación para descifrar la clave compartida del presupuesto y luego la vuelve a envolver con su propia contraseña maestra.
+
+El resultado: cada miembro desbloquea el mismo presupuesto con su *propia* contraseña maestra, el servidor solo almacena claves envueltas que no puede abrir, y no se compartieron contraseñas entre personas. Trata el enlace de invitación como algo sensible mientras esté activo — quienquiera que lo tenga puede canjearlo — y envíalo por un canal de confianza.
+
+Cada suscripción a Budgero incluye **5 plazas**, lo que cubre un hogar con margen de sobra.
+
+## Roles
+
+<table>
+  <thead>
+    <tr>
+      <th>Rol</th>
+      <th>Quién</th>
+      <th>Qué pueden hacer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Propietario</strong></td>
+      <td>Quienquiera que creó el presupuesto</td>
+      <td>Todo — además de generar invitaciones y eliminar miembros</td>
+    </tr>
+    <tr>
+      <td><strong>Miembro</strong></td>
+      <td>Todos los invitados</td>
+      <td>Gestión diaria del presupuesto: transacciones, asignaciones, categorías</td>
+    </tr>
+  </tbody>
+</table>
+
+La membresía y las invitaciones se gestionan desde el panel de compartir; el propietario puede revocar el acceso de un miembro en cualquier momento, lo que elimina su capacidad de sincronizar datos nuevos.
+
+## Todos se sincronizan, en todas partes
+
+Una vez unidos, los miembros ven el mismo presupuesto en tiempo real. Una transacción de compra que tu pareja introduce en la caja aparece en tu portátil cuando se sincroniza; la asignación que cambias en tu escritorio aparece en su teléfono. El [Modo sin conexión](/docs/offline) funciona por dispositivo — ambos podéis registrar gastos en un avión y los cambios se fusionan al reconectar.
+
+## Convenciones que mantienen sanos los presupuestos compartidos
+
+El software se encarga de la sincronización; los humanos siguen teniendo que encargarse de ponerse de acuerdo. Tres convenciones hacen la mayor parte del trabajo:
+
+1. **Haz visible el plan en el propio presupuesto.** Adjunta un [objetivo](/docs/goals) a cada categoría para la que hayáis acordado una cifra — el objetivo y su barra de progreso son el contrato, sincronizados y visibles para ambos. Para convenciones más detalladas, inclúyelas en el nombre de la categoría ("Comidas fuera (sin viajes)").
+2. **Una persona se encarga de asignar.** Que ambos miembros registren transacciones funciona genial; que ambos muevan dinero de forma independiente, generalmente no. Acordad quién lleva la [rutina de asignación](/docs/assign-money) — o hacedlo juntos cada mes.
+3. **Registra el gasto en el momento en que ocurre.** Los presupuestos compartidos amplifican el desfase: si el gasto del martes de una persona aparece el viernes, la otra persona tomó las decisiones del miércoles con cifras equivocadas. Cuanto antes registre todo el mundo, más fiables serán las cifras compartidas de Disponible.
+
+## Salir y eliminar
+
+Cuando se elimina a un miembro (o se va), su acceso a futuras sincronizaciones termina. Ten en cuenta los límites honestos de cualquier sistema de compartición: los datos que un miembro ya sincronizó en su dispositivo eran, por definición, suyos para ver — el cifrado te protege del servidor, no de las personas en las que decidiste confiar. Comparte en consecuencia.
+
+## Lo que compartir no cambia
+
+Compartir no añade ninguna visibilidad en el servidor. La vista que el servidor tiene de un presupuesto compartido es el mismo texto cifrado que la de uno individual, más los metadatos mínimos necesarios para enrutarlo: quién es miembro y qué bloques cifrados pertenecen a qué espacio de trabajo. La imagen completa de lo que el servidor puede y no puede ver está en el [Modelo de seguridad](/docs/security).

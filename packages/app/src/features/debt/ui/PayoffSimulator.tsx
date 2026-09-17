@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Slider } from '@shared/ui/slider';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
@@ -34,6 +35,8 @@ export function PayoffSimulator({
   initial,
   maxBound,
 }: PayoffSimulatorProps) {
+  const { t } = useLingui();
+
   const rMonthly = apr ? apr / 100 / 12 : 0;
   const suggestedMin = (() => {
     const interestOnly = rMonthly > 0 ? outstanding * rMonthly : 0;
@@ -76,7 +79,7 @@ export function PayoffSimulator({
   const formattedPayment = formatMilli(formatter, roundMilli(payment));
   const collapsedSummary =
     sim.months === null
-      ? 'Payment too low'
+      ? t`Payment too low`
       : payoffDate
         ? `${formattedPayment}/mo · paid off ${payoffDate}`
         : `${formattedPayment}/mo`;
@@ -98,7 +101,9 @@ export function PayoffSimulator({
               isExpanded && 'rotate-180'
             )}
           />
-          <span className="font-medium">Payoff Simulator</span>
+          <span className="font-medium">
+            <Trans>Payoff Simulator</Trans>
+          </span>
         </div>
         <div className="flex items-center gap-2">
           {!isExpanded && (
@@ -114,19 +119,26 @@ export function PayoffSimulator({
           >
             <Popover>
               <PopoverTrigger asChild>
-                <button aria-label="Info" className="text-muted-foreground hover:text-foreground">
+                <button
+                  aria-label={t`Info`}
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <Info className="h-4 w-4" />
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-72 text-xs">
                 <div className="space-y-2">
                   <p>
-                    Drag the slider to test a monthly payment. We estimate the payoff date and total
-                    interest assuming fixed payments and no new charges.
+                    <Trans>
+                      Drag the slider to test a monthly payment. We estimate the payoff date and
+                      total interest assuming fixed payments and no new charges.
+                    </Trans>
                   </p>
                   <p>
-                    For credit cards, this approximates a fixed payment schedule. Actual card
-                    minimums typically decline as balance drops.
+                    <Trans>
+                      For credit cards, this approximates a fixed payment schedule. Actual card
+                      minimums typically decline as balance drops.
+                    </Trans>
                   </p>
                 </div>
               </PopoverContent>
@@ -134,7 +146,7 @@ export function PayoffSimulator({
             <PayoffPlanSheet
               trigger={
                 <Button size="sm" variant="secondary">
-                  Plan
+                  <Trans>Plan</Trans>
                 </Button>
               }
               outstanding={outstanding}
@@ -151,7 +163,9 @@ export function PayoffSimulator({
       {isExpanded && (
         <div className="space-y-3 mt-3">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>Monthly payment</span>
+            <span>
+              <Trans>Monthly payment</Trans>
+            </span>
             <span className="font-mono">{formattedPayment}</span>
           </div>
           <Slider

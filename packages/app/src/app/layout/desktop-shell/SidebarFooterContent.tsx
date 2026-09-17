@@ -1,3 +1,4 @@
+import { useLingui, Trans } from '@lingui/react/macro';
 import React from 'react';
 import { Heart, LogOut } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarSeparator } from '@shared/ui/sidebar';
@@ -14,6 +15,8 @@ interface SidebarFooterContentProps {
 export const SidebarFooterContent = React.memo(function SidebarFooterContent({
   logout,
 }: SidebarFooterContentProps) {
+  const { t } = useLingui();
+
   return (
     <>
       <SidebarSeparator />
@@ -26,9 +29,13 @@ export const SidebarFooterContent = React.memo(function SidebarFooterContent({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Heart className="h-4 w-4" aria-hidden="true" />
-                Donate to Budgero
-                <span className="sr-only"> (opens in a new tab)</span>
+                <Trans>
+                  <Heart className="h-4 w-4" aria-hidden="true" />
+                  Donate to Budgero
+                  <span className="sr-only">
+                    <Trans>(opens in a new tab)</Trans>
+                  </span>
+                </Trans>
               </a>
             </Button>
           </SidebarMenuItem>
@@ -43,7 +50,7 @@ export const SidebarFooterContent = React.memo(function SidebarFooterContent({
             onClick={() => logout.mutate()}
           >
             <LogOut className="h-4 w-4" />
-            {logout.isPending ? 'Signing out...' : 'Sign out'}
+            {logout.isPending ? t`Signing out...` : t`Sign out`}
           </Button>
         </SidebarMenuItem>
       </SidebarMenu>

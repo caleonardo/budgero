@@ -19,10 +19,7 @@ export interface SqlDatabase {
 }
 
 export type ReportQueryErrorCode =
-  | 'EMPTY_QUERY'
-  | 'NON_READ_ONLY_QUERY'
-  | 'DATABASE_UNAVAILABLE'
-  | 'EXECUTION_FAILED';
+  'EMPTY_QUERY' | 'NON_READ_ONLY_QUERY' | 'DATABASE_UNAVAILABLE' | 'EXECUTION_FAILED';
 
 export class ReportQueryExecutionError extends Error {
   constructor(

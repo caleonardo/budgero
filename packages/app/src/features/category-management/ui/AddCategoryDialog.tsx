@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { AddNameDialog } from './AddNameDialog';
 
@@ -8,15 +9,19 @@ interface AddCategoryDialogProps {
   isSaving?: boolean;
 }
 
-export const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props) => (
-  <AddNameDialog
-    {...props}
-    title="Add Category"
-    description="Create a new category in this group"
-    inputId="category-name"
-    labelText="Category Name"
-    placeholder="e.g., Groceries"
-    savingLabel="Creating..."
-    confirmLabel="Create Category"
-  />
-);
+export const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props) => {
+  const { t } = useLingui();
+
+  return (
+    <AddNameDialog
+      {...props}
+      title={t`Add Category`}
+      description={t`Create a new category in this group`}
+      inputId="category-name"
+      labelText="Category Name"
+      placeholder={t`e.g., Groceries`}
+      savingLabel="Creating..."
+      confirmLabel="Create Category"
+    />
+  );
+};

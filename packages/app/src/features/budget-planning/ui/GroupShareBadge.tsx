@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { cn } from '@shared/lib/utils';
 
 interface GroupShareBadgeProps {
@@ -11,6 +12,8 @@ interface GroupShareBadgeProps {
  * "Category Group Percentages" budget setting is on.
  */
 export function GroupShareBadge({ share, className }: GroupShareBadgeProps) {
+  const { t } = useLingui();
+
   if (share === undefined || !Number.isFinite(share)) return null;
   const percent = Math.round(share * 100);
   return (
@@ -20,7 +23,7 @@ export function GroupShareBadge({ share, className }: GroupShareBadgeProps) {
         'bg-primary/10 text-primary dark:bg-white/15 dark:text-white',
         className
       )}
-      title="Share of everything assigned this month"
+      title={t`Share of everything assigned this month`}
       data-testid="group-share-badge"
     >
       {percent}%

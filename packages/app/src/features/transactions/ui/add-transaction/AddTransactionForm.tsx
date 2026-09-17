@@ -1,5 +1,7 @@
 'use client';
 
+import { Trans, useLingui } from '@lingui/react/macro';
+
 /**
  * Add Transaction Form
  *
@@ -83,6 +85,8 @@ function BudgetTransactionForm({
   onCancel,
   recurring,
 }: AddTransactionFormProps) {
+  const { t } = useLingui();
+
   const createRecurring = useCreateRecurringTransaction();
   const [recurringEnabled, setRecurringEnabled] = React.useState(
     recurring?.initialEnabled ?? false
@@ -140,39 +144,39 @@ function BudgetTransactionForm({
 
   const submitRecurring = React.useCallback(async () => {
     if (!form.selectedFromAccount) {
-      toast.error('Missing account', { description: 'Please select an account.' });
+      toast.error(t`Missing account`, { description: t`Please select an account.` });
       return;
     }
     if (form.isTransfer && !form.selectedToAccount) {
-      toast.error('Missing destination', {
-        description: 'Please select a destination account.',
+      toast.error(t`Missing destination`, {
+        description: t`Please select a destination account.`,
       });
       return;
     }
     if (!form.isTransfer && !form.selectedCategory) {
-      toast.error('Missing category', { description: 'Please select a category.' });
+      toast.error(t`Missing category`, { description: t`Please select a category.` });
       return;
     }
     if (!form.amount || form.amount <= 0) {
-      toast.error('Missing amount', { description: 'Please enter an amount greater than zero.' });
+      toast.error(t`Missing amount`, { description: t`Please enter an amount greater than zero.` });
       return;
     }
     if (!form.transactionDate) {
-      toast.error('Missing first occurrence', {
-        description: 'Please select the first occurrence date.',
+      toast.error(t`Missing first occurrence`, {
+        description: t`Please select the first occurrence date.`,
       });
       return;
     }
     if (!isRecurringEndConditionValid(recurringSettings)) {
-      toast.error('Incomplete end condition', {
-        description: 'Choose a valid end date or number of occurrences.',
+      toast.error(t`Incomplete end condition`, {
+        description: t`Choose a valid end date or number of occurrences.`,
       });
       return;
     }
 
     const category = categories.find((item) => item.Name === form.selectedCategory);
     const values: RecurringTransactionFormSubmit = {
-      name: form.payee.trim() || form.memo.trim() || 'Recurring transaction',
+      name: form.payee.trim() || form.memo.trim() || t`Recurring transaction`,
       memo: form.memo.trim(),
       amount: form.amount,
       direction: form.isInflow ? 'inflow' : 'outflow',
@@ -202,8 +206,8 @@ function BudgetTransactionForm({
       notifyDaysBefore: values.notifyDaysBefore,
       active: values.active,
     });
-    toast.success('Recurring transaction created', {
-      description: 'We will remind you when it is almost due.',
+    toast.success(t`Recurring transaction created`, {
+      description: t`We will remind you when it is almost due.`,
     });
     onCancel();
   }, [
@@ -215,21 +219,22 @@ function BudgetTransactionForm({
     createRecurring,
     budgetId,
     onCancel,
+    t,
   ]);
 
   const submitTransaction = React.useCallback(
     (addAnother: boolean) => {
       if (recurringEnabled) {
         void submitRecurring().catch((error) => {
-          toastError('Failed to save recurring transaction', error, 'Please try again.');
+          toastError(t`Failed to save recurring transaction`, error, t`Please try again.`);
         });
         return;
       }
       handleSubmit(addAnother).catch((error) => {
-        toastError('Failed to add transaction', error, 'Please try again.');
+        toastError(t`Failed to add transaction`, error, t`Please try again.`);
       });
     },
-    [handleSubmit, recurringEnabled, submitRecurring]
+    [handleSubmit, recurringEnabled, submitRecurring, t]
   );
 
   const onFormSubmit = React.useCallback(
@@ -298,19 +303,19 @@ function BudgetTransactionForm({
   // No accounts prompt
   if (!accountsLoading && accounts.length === 0) {
     return (
-      <div className="max-w-lg w-full mx-auto space-y-4 p-2 sm:p-4">
+      <div className="min-w-0 max-w-lg w-full mx-auto space-y-4 p-2 sm:p-4">
         <DialogHeader className="space-y-1.5">
           <DialogTitle className="text-lg sm:text-xl font-semibold">
-            Add an account first
+            <Trans>Add an account first</Trans>
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            Create an account to start recording transactions.
+            <Trans>Create an account to start recording transactions.</Trans>
           </DialogDescription>
         </DialogHeader>
         <Card>
           <CardContent className="space-y-4 pt-6">
             <p className="text-sm text-muted-foreground">
-              You need at least one account before adding transactions.
+              <Trans>You need at least one account before adding transactions.</Trans>
             </p>
             <div className="flex flex-wrap gap-2">
               <AddAccountDialog
@@ -322,12 +327,12 @@ function BudgetTransactionForm({
                 }}
                 renderTrigger={(open) => (
                   <Button type="button" onClick={open}>
-                    Create Account
+                    <Trans>Create Account</Trans>
                   </Button>
                 )}
               />
               <Button type="button" variant="outline" onClick={onCancel}>
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
             </div>
           </CardContent>
@@ -340,7 +345,7 @@ function BudgetTransactionForm({
     <form
       onSubmit={onFormSubmit}
       onKeyDownCapture={handleKeyDown}
-      className="max-w-lg w-full mx-auto max-h-[calc(100dvh-1rem)] sm:max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto px-1 sm:px-0"
+      className="min-w-0 max-w-lg w-full mx-auto px-1 sm:px-0"
       data-testid="add-transaction-form"
     >
       {form.showRatePrompt && form.pendingRatePair && (
@@ -359,14 +364,14 @@ function BudgetTransactionForm({
         onRememberLastChange={form.setRememberLast}
         title={
           recurringMode === 'edit'
-            ? 'Edit Recurring Transaction'
+            ? t`Edit Recurring Transaction`
             : recurringMode === 'create' && recurringLocked
-              ? 'New Recurring Transaction'
+              ? t`New Recurring Transaction`
               : undefined
         }
         description={
           recurringEnabled
-            ? 'Fill in the transaction once, then choose when it should repeat.'
+            ? t`Fill in the transaction once, then choose when it should repeat.`
             : undefined
         }
         showRememberLast={!recurringLocked}

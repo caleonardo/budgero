@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type { ChartConfiguration } from '@budgero/core/browser';
 import { downloadBlob } from '@shared/lib/download';
 import type { QueryResult } from '@shared/lib/sql/report-query-executor';
@@ -290,9 +291,9 @@ export function exportChartData(
 
     downloadBlob(csvContent, `${chartConfig.title || 'chart'}_data.csv`, 'text/csv;charset=utf-8;');
 
-    toast.success('Chart data exported to CSV');
+    toast.success(t`Chart data exported to CSV`);
   } catch (error) {
-    toast.error('Failed to export chart data');
+    toast.error(t`Failed to export chart data`);
     console.error('CSV export error:', error);
   }
 }

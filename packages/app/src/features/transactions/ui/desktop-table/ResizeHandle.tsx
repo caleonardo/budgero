@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import React, { useCallback, useRef } from 'react';
 import type { ColumnWidths } from './useColumnResize';
 
@@ -10,6 +11,8 @@ interface ResizeHandleProps {
 }
 
 export function ResizeHandle({ column, onResize }: ResizeHandleProps) {
+  const { t } = useLingui();
+
   const startXRef = useRef<number>(0);
   const isDraggingRef = useRef(false);
 
@@ -62,7 +65,7 @@ export function ResizeHandle({ column, onResize }: ResizeHandleProps) {
       // arrow-key resizing is the closest accessible equivalent.
       role="button"
       tabIndex={0}
-      aria-label="Resize column"
+      aria-label={t`Resize column`}
       className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-primary/50 active:bg-primary group-hover:bg-border/50"
       onMouseDown={handleMouseDown}
       onClick={(e) => e.stopPropagation()}

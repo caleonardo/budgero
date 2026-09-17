@@ -1,3 +1,5 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -42,6 +44,8 @@ export function TransactionsBatchToolbar({
   clearSelection,
   onCreateRecurring,
 }: TransactionsBatchToolbarProps) {
+  const { t } = useLingui();
+
   const numSelected = selectedRowIds.length;
   const [newCategoryID, setNewCategoryID] = useState<number>(-1);
   const [newAccountID, setNewAccountID] = useState<string>('-1');
@@ -84,16 +88,22 @@ export function TransactionsBatchToolbar({
       await deleteTransactionsMutation.mutateAsync({ transactionIds: selectedRowIds });
 
       const count = selectedRowIds.length;
-      toast.success(`${count} transaction${count === 1 ? '' : 's'} deleted`, {
-        description: 'The selected transaction(s) have been permanently removed.',
-      });
+      toast.success(
+        plural(count, {
+          one: `# transaction deleted`,
+          other: `# transactions deleted`,
+        }),
+        {
+          description: t`The selected transaction(s) have been permanently removed.`,
+        }
+      );
 
       clearSelection();
     } catch (error) {
       console.error('Error deleting transactions:', error);
       toastError('Failed to delete transactions', error, 'Please try again.');
     }
-  }, [selectedRowIds, deleteTransactionsMutation, clearSelection]);
+  }, [selectedRowIds, deleteTransactionsMutation, clearSelection, t]);
 
   async function handleBatchEdits() {
     setWorking(true);
@@ -170,7 +180,12 @@ export function TransactionsBatchToolbar({
       if (didUpdatePayee) applyOpInvalidations(queryClient, 'transactions.updateColumn');
 
       const count = selectedRowIds.length;
-      toast.success(`${count} transaction${count === 1 ? '' : 's'} updated`);
+      toast.success(
+        plural(count, {
+          one: `# transaction updated`,
+          other: `# transactions updated`,
+        })
+      );
 
       clearSelection();
       setNewPayee('');
@@ -199,11 +214,15 @@ export function TransactionsBatchToolbar({
         />
       )}
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">{numSelected} selected</span>
+        <span className="text-sm font-medium">
+          <Trans>{numSelected} selected</Trans>
+        </span>
         {hasUncategorized && (
           <div className="flex items-center gap-1 text-destructive">
             <AlertCircle className="h-3 w-3" />
-            <span className="text-xs">{uncategorizedCount} uncategorized</span>
+            <span className="text-xs">
+              <Trans>{uncategorizedCount} uncategorized</Trans>
+            </span>
           </div>
         )}
       </div>
@@ -213,7 +232,7 @@ export function TransactionsBatchToolbar({
             variant="outline"
             size="sm"
             className="h-8 px-2"
-            aria-label="Create recurring transaction"
+            aria-label={t`Create recurring transaction`}
             onClick={() => {
               onCreateRecurring?.(singleSelectedTransaction);
               clearSelection();
@@ -231,7 +250,7 @@ export function TransactionsBatchToolbar({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-64 max-w-[calc(100vw-2rem)]">
             <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-              Change Category
+              <Trans>Change Category</Trans>
             </div>
             <div className="px-2 pb-2">
               <div className="[&>div]:text-xs [&>button]:text-xs [&>div>button]:text-xs [&>button]:h-8">
@@ -248,12 +267,12 @@ export function TransactionsBatchToolbar({
               <>
                 <DropdownMenuSeparator />
                 <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                  Move to Account
+                  <Trans>Move to Account</Trans>
                 </div>
                 <div className="px-2 pb-2">
                   <Select onValueChange={setNewAccountID}>
                     <SelectTrigger className="w-full text-xs h-8">
-                      <SelectValue placeholder="Select account" />
+                      <SelectValue placeholder={t`Select account`} />
                     </SelectTrigger>
                     <SelectContent className="text-xs">
                       {accountsData
@@ -272,7 +291,7 @@ export function TransactionsBatchToolbar({
               <>
                 <DropdownMenuSeparator />
                 <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                  Set Payee
+                  <Trans>Set Payee</Trans>
                 </div>
                 <div className="px-2 pb-2">
                   <PayeeCombobox
@@ -281,7 +300,7 @@ export function TransactionsBatchToolbar({
                     onChange={setNewPayee}
                     triggerClassName="w-full text-xs h-8"
                     popoverContentClassName="w-64 max-w-[calc(100vw-2rem)]"
-                    placeholder="Select payee"
+                    placeholder={t`Select payee`}
                   />
                 </div>
               </>
@@ -300,15 +319,15 @@ export function TransactionsBatchToolbar({
               moveToNewCategoryMutation.isPending ||
               moveToNewAccountMutation.isPending ||
               updateTransactionColumnMutation.isPending ? (
-                <>
+                <Trans>
                   <Loader2 className="h-3 w-3 mr-2 animate-spin" />
                   Applying...
-                </>
+                </Trans>
               ) : (
-                <>
+                <Trans>
                   <MoveHorizontal className="h-3 w-3 mr-2" />
                   Apply Changes
-                </>
+                </Trans>
               )}
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -331,7 +350,7 @@ export function TransactionsBatchToolbar({
 
         {/* Clear Selection */}
         <Button variant="ghost" size="sm" onClick={clearSelection} className="h-8 px-2 text-xs">
-          Clear
+          <Trans>Clear</Trans>
         </Button>
       </div>
     </div>

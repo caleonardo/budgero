@@ -1,4 +1,5 @@
 import { defineDocumentType, makeSource } from 'contentlayer2/source-files';
+import { postPath } from './src/lib/content-routing';
 // MDX plugins similar to taxonomy setup
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
@@ -58,6 +59,22 @@ const removePrefix = (value: string, prefix: string) =>
 
 const splitSlug = (slug: string) => slug.split('/').filter(Boolean);
 
+// Translated docs live at content/docs/<locale>/<slug>.mdx; English stays at
+// content/docs/<slug>.mdx so existing paths and URLs are untouched.
+const DOC_LOCALES = ['de', 'fr', 'es', 'nl'];
+
+const docPath = (flattened: string) => removePrefix(flattened, 'docs/');
+
+const docLocale = (flattened: string) => {
+  const [first] = splitSlug(docPath(flattened));
+  return DOC_LOCALES.includes(first) ? first : 'en';
+};
+
+const docSlug = (flattened: string) => {
+  const parts = splitSlug(docPath(flattened));
+  return (DOC_LOCALES.includes(parts[0]) ? parts.slice(1) : parts).join('/');
+};
+
 export const Post = defineDocumentType(() => ({
   name: 'Post',
   filePathPattern: `blog/**/*.mdx`,
@@ -74,13 +91,17 @@ export const Post = defineDocumentType(() => ({
     draft: { type: 'boolean', required: false, default: false },
   },
   computedFields: {
+    locale: {
+      type: 'string',
+      resolve: (post) => postPath(post._raw.flattenedPath).locale,
+    },
     url: {
       type: 'string',
-      resolve: (post) => `/blog/${removePrefix(post._raw.flattenedPath, 'blog/')}`,
+      resolve: (post) => postPath(post._raw.flattenedPath).url,
     },
     slugAsParams: {
       type: 'string',
-      resolve: (post) => removePrefix(post._raw.flattenedPath, 'blog/'),
+      resolve: (post) => postPath(post._raw.flattenedPath).slugAsParams,
     },
     readingTimeMinutes: {
       type: 'number',
@@ -124,16 +145,24 @@ export const Guide = defineDocumentType(() => ({
   computedFields: {
     slug: {
       type: 'string',
-      resolve: (guide) => removePrefix(guide._raw.flattenedPath, 'docs/'),
+      resolve: (guide) => docSlug(guide._raw.flattenedPath),
     },
     slugSegments: {
       type: 'list',
       of: { type: 'string' },
-      resolve: (guide) => splitSlug(removePrefix(guide._raw.flattenedPath, 'docs/')),
+      resolve: (guide) => splitSlug(docSlug(guide._raw.flattenedPath)),
+    },
+    locale: {
+      type: 'string',
+      resolve: (guide) => docLocale(guide._raw.flattenedPath),
     },
     url: {
       type: 'string',
-      resolve: (guide) => `/docs/${removePrefix(guide._raw.flattenedPath, 'docs/')}`,
+      resolve: (guide) => {
+        const locale = docLocale(guide._raw.flattenedPath);
+        const slug = docSlug(guide._raw.flattenedPath);
+        return locale === 'en' ? `/docs/${slug}` : `/${locale}/docs/${slug}`;
+      },
     },
     readingTimeMinutes: {
       type: 'number',

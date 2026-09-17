@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * "New" tab of CreateBudgetForm: create a brand-new empty budget.
  */
@@ -41,10 +42,16 @@ export function ManualBudgetTab({
   isPending,
   onSubmit,
 }: ManualBudgetTabProps) {
+  const { t } = useLingui();
+
   return (
     <form onSubmit={onSubmit} className="space-y-3 sm:space-y-4" data-testid="create-budget-form">
       <Field
-        label={<span className="text-xs sm:text-sm">Budget Name</span>}
+        label={
+          <span className="text-xs sm:text-sm">
+            <Trans>Budget Name</Trans>
+          </span>
+        }
         htmlFor="manualName"
         hint="A short name to identify this budget. You can rename it later."
       >
@@ -53,7 +60,7 @@ export function ManualBudgetTab({
           type="text"
           value={name}
           onChange={(e) => onNameChange(e.target.value)}
-          placeholder='e.g. "Personal Budget" or "Household"'
+          placeholder={t`e.g. "Personal Budget" or "Household"`}
           required
           disabled={isPending}
           className="h-8 sm:h-9"
@@ -64,15 +71,18 @@ export function ManualBudgetTab({
         <CurrencySelector
           value={displayCurrency}
           onValueChange={onDisplayCurrencyChange}
-          label="Budget Currency"
+          label={t`Budget Currency`}
         />
         <p className="text-xs text-muted-foreground">
-          The base currency used for categories, assignments, reports, and converted account values.
+          <Trans>
+            The base currency used for categories, assignments, reports, and converted account
+            values.
+          </Trans>
         </p>
       </div>
 
       <div className="space-y-1.5">
-        <IconPicker value={badgeIcon} onValueChange={onBadgeIconChange} label="Badge Icon" />
+        <IconPicker value={badgeIcon} onValueChange={onBadgeIconChange} label={t`Badge Icon`} />
       </div>
 
       <div className="space-y-1.5">
@@ -80,21 +90,23 @@ export function ManualBudgetTab({
           value={selectedFormat}
           currency={displayCurrency}
           onValueChange={onSelectedFormatChange}
-          label="Number Format"
+          label={t`Number Format`}
         />
         <p className="text-xs text-muted-foreground">
-          How numbers and decimals are displayed throughout the app.
+          <Trans>How numbers and decimals are displayed throughout the app.</Trans>
         </p>
       </div>
 
       <div className="flex items-center justify-between space-x-2 py-2">
         <div className="space-y-1">
           <Label htmlFor="createDefaultCategories" className="text-xs sm:text-sm font-medium">
-            Create Default Categories
+            <Trans>Create Default Categories</Trans>
           </Label>
           <p className="text-xs text-muted-foreground">
-            Start with common categories like Rent, Groceries, and Savings. Recommended for new
-            users.
+            <Trans>
+              Start with common categories like Rent, Groceries, and Savings. Recommended for new
+              users.
+            </Trans>
           </p>
         </div>
         <Switch
@@ -114,7 +126,7 @@ export function ManualBudgetTab({
           className="w-full h-8 sm:h-9"
           data-testid="create-budget-submit"
         >
-          {isPending ? 'Creating...' : 'Create Budget'}
+          {isPending ? t`Creating...` : t`Create Budget`}
         </Button>
       </div>
     </form>

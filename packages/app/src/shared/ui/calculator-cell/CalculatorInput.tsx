@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Input } from '@shared/ui/input';
 import { cn } from '@shared/lib/utils';
 import { applyShortcut, isExpression } from './calculator-utils';
@@ -221,7 +222,7 @@ export function CalculatorInput({
       {/* Show error message */}
       {isEditing && hasError && (
         <div className="absolute left-0 top-0 -translate-y-full text-xs sm:text-sm font-medium text-destructive font-mono bg-background/95 px-2 py-0.5 mb-1 rounded border shadow-sm pointer-events-none z-20">
-          Error
+          <Trans>Error</Trans>
         </div>
       )}
     </div>

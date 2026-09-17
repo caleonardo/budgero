@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isValidFundingPriority } from '@budgero/core/browser';
 import { useGoalFundingSettings } from '@entities/budget/api/useGoalFundingSettings';
@@ -35,13 +36,15 @@ function PriorityEditor({
 }: Props & {
   settings: ReturnType<typeof useGoalFundingSettings>;
 }) {
+  const { t } = useLingui();
+
   const [value, setValue] = useState(priority === null ? '' : String(priority));
   const [error, setError] = useState('');
   const mutation = useUpdateFundingPriorities();
   const save = async (raw: string) => {
     const next = Number(raw);
     if (!isValidFundingPriority(next, settings.CategoryPriorityMode)) {
-      setError('Enter a positive whole number.');
+      setError(t`Enter a positive whole number.`);
       return;
     }
     setError('');
@@ -50,7 +53,7 @@ function PriorityEditor({
     } catch (cause) {
       if (settings.CategoryPriorityMode === 'five-levels')
         setValue(priority === null ? '' : String(priority));
-      setError(cause instanceof Error ? cause.message : 'Could not change funding priority.');
+      setError(cause instanceof Error ? cause.message : t`Could not change funding priority.`);
     }
   };
   return (
@@ -77,7 +80,7 @@ function PriorityEditor({
           disabled={!settings.isReady || mutation.isPending || !categoryIds.length}
           onClick={() => void save(value)}
         >
-          {mutation.isPending ? 'Saving…' : 'Apply priority'}
+          {mutation.isPending ? t`Saving…` : t`Apply priority`}
         </Button>
       )}
       {error && (

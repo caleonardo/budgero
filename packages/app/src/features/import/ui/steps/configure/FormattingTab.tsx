@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Formatting Tab
  *
@@ -20,6 +21,8 @@ interface FormattingTabProps {
 }
 
 export function FormattingTab({ importConfig, onImportConfigChange }: FormattingTabProps) {
+  const { t } = useLingui();
+
   const handleNumberFormatChange = (format: string) => {
     const { thousandSeparator, decimalSeparator } = getSeparatorsFromFormat(format);
     onImportConfigChange({
@@ -34,7 +37,9 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
     <>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="thousand-separator">Thousand Separator</Label>
+          <Label htmlFor="thousand-separator">
+            <Trans>Thousand Separator</Trans>
+          </Label>
           <Select
             value={importConfig.thousandSeparator}
             onValueChange={(value) =>
@@ -45,17 +50,29 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value=",">Comma (,)</SelectItem>
-              <SelectItem value=".">Dot (.)</SelectItem>
-              <SelectItem value=" ">Space ( )</SelectItem>
-              <SelectItem value="'">Apostrophe (')</SelectItem>
-              <SelectItem value="none">None</SelectItem>
+              <SelectItem value=",">
+                <Trans>Comma (,)</Trans>
+              </SelectItem>
+              <SelectItem value=".">
+                <Trans>Dot (.)</Trans>
+              </SelectItem>
+              <SelectItem value=" ">
+                <Trans>Space ( )</Trans>
+              </SelectItem>
+              <SelectItem value="'">
+                <Trans>Apostrophe (')</Trans>
+              </SelectItem>
+              <SelectItem value="none">
+                <Trans>None</Trans>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="decimal-separator">Decimal Separator</Label>
+          <Label htmlFor="decimal-separator">
+            <Trans>Decimal Separator</Trans>
+          </Label>
           <Select
             value={importConfig.decimalSeparator}
             onValueChange={(value) =>
@@ -66,22 +83,28 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value=".">Dot (.)</SelectItem>
-              <SelectItem value=",">Comma (,)</SelectItem>
+              <SelectItem value=".">
+                <Trans>Dot (.)</Trans>
+              </SelectItem>
+              <SelectItem value=",">
+                <Trans>Comma (,)</Trans>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="number-format">Quick Presets</Label>
+          <Label htmlFor="number-format">
+            <Trans>Quick Presets</Trans>
+          </Label>
           <Select value={importConfig.numberFormat} onValueChange={handleNumberFormatChange}>
             <SelectTrigger className="w-full min-w-0">
-              <SelectValue placeholder="Select preset" />
+              <SelectValue placeholder={t`Select preset`} />
             </SelectTrigger>
             <SelectContent>
               {SUPPORTED_NUMBER_FORMATS.map((format) => (
                 <SelectItem key={format.value} value={format.value}>
-                  {format.label}
+                  {t(format.label)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -89,7 +112,9 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="date-format">Date Format</Label>
+          <Label htmlFor="date-format">
+            <Trans>Date Format</Trans>
+          </Label>
           <Select
             value={importConfig.dateFormat}
             onValueChange={(value) => onImportConfigChange({ ...importConfig, dateFormat: value })}
@@ -100,7 +125,7 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
             <SelectContent>
               {SUPPORTED_DATE_FORMATS.map((format) => (
                 <SelectItem key={format.value} value={format.value}>
-                  {format.label}
+                  {t(format.label)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -109,19 +134,31 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
       </div>
 
       <div className="mt-4 rounded-lg border bg-muted/50 p-4">
-        <Label className="text-sm font-medium">Number Format Preview</Label>
+        <Label className="text-sm font-medium">
+          <Trans>Number Format Preview</Trans>
+        </Label>
         <div className="mt-2 break-words text-sm text-muted-foreground">
-          <p>With your current settings:</p>
           <p>
-            • Thousand separator:{' '}
-            <code>
-              {importConfig.thousandSeparator === 'none' ? 'None' : importConfig.thousandSeparator}
-            </code>
+            <Trans>With your current settings:</Trans>
           </p>
           <p>
-            • Decimal separator: <code>{importConfig.decimalSeparator}</code>
+            <Trans>
+              • Thousand separator:{' '}
+              <code>
+                {importConfig.thousandSeparator === 'none'
+                  ? 'None'
+                  : importConfig.thousandSeparator}
+              </code>
+            </Trans>
           </p>
-          <p className="mt-2">Examples:</p>
+          <p>
+            <Trans>
+              • Decimal separator: <code>{importConfig.decimalSeparator}</code>
+            </Trans>
+          </p>
+          <p className="mt-2">
+            <Trans>Examples:</Trans>
+          </p>
           <p>
             • "123
             {importConfig.thousandSeparator === 'none' ? '' : importConfig.thousandSeparator}
@@ -132,13 +169,15 @@ export function FormattingTab({ importConfig, onImportConfigChange }: Formatting
             )}
           </p>
           <p>
-            • "RSD 123
-            {importConfig.thousandSeparator === 'none' ? '' : importConfig.thousandSeparator}
-            123" →{' '}
-            {parseAmount(
-              `RSD 123${importConfig.thousandSeparator === 'none' ? '' : importConfig.thousandSeparator}123`,
-              importConfig
-            )}
+            <Trans>
+              • "RSD 123
+              {importConfig.thousandSeparator === 'none' ? '' : importConfig.thousandSeparator}123"
+              →{' '}
+              {parseAmount(
+                `RSD 123${importConfig.thousandSeparator === 'none' ? '' : importConfig.thousandSeparator}123`,
+                importConfig
+              )}
+            </Trans>
           </p>
         </div>
       </div>

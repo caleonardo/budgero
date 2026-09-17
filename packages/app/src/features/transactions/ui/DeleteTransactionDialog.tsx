@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog';
 
 /**
@@ -16,12 +17,14 @@ export function DeleteTransactionDialog({
   onConfirm: () => void | Promise<void>;
   isPending: boolean;
 }) {
+  const { t } = useLingui();
+
   return (
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Delete this transaction?"
-      confirmText="Delete"
+      title={t`Delete this transaction?`}
+      confirmText={t`Delete`}
       loadingText="Deleting..."
       variant="destructive"
       onConfirm={onConfirm}

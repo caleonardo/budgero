@@ -1,3 +1,5 @@
+import { useLingui } from '@lingui/react/macro';
+import { plural } from '@lingui/core/macro';
 /**
  * Category Operations Hook
  *
@@ -51,6 +53,8 @@ export function useCategoryOperations({
   transformedRows,
   rowsByCategoryId,
 }: UseCategoryOperationsProps) {
+  const { t } = useLingui();
+
   const runtime = useRuntime();
   const setHighlightAssignmentCategoryId = useUiStore(
     (state) => state.setHighlightAssignmentCategoryId
@@ -119,15 +123,18 @@ export function useCategoryOperations({
         categories?.filter((category) => category.CategoryGroupID === item.categoryGroupId) || [];
 
       if (associatedCategories.length > 0) {
-        toast.error('Cannot delete non-empty category group', {
-          description: `This group contains ${associatedCategories.length} ${associatedCategories.length === 1 ? 'category' : 'categories'}. Please move or delete them first.`,
+        toast.error(t`Cannot delete non-empty category group`, {
+          description: plural(associatedCategories.length, {
+            one: `This group contains # category. Please move or delete them first.`,
+            other: `This group contains # categories. Please move or delete them first.`,
+          }),
         });
         return;
       }
 
       if (item.categoryGroupId === undefined || item.categoryGroupId === null) {
-        toast.error('Cannot delete category group', {
-          description: 'Invalid category group.',
+        toast.error(t`Cannot delete category group`, {
+          description: t`Invalid category group.`,
         });
         return;
       }
@@ -142,13 +149,13 @@ export function useCategoryOperations({
         toastError('Failed to delete category group', error, 'Please try again.');
       }
     },
-    [categories, deleteCategoryGroupMutation, selectedBudgetId]
+    [categories, deleteCategoryGroupMutation, selectedBudgetId, t]
   );
 
   const handleUpdateCategoryGroup = useCallback(
     async (id: number, name: string) => {
       if (!name.trim()) {
-        toast.error('Name cannot be empty');
+        toast.error(t`Name cannot be empty`);
         return;
       }
 
@@ -159,12 +166,12 @@ export function useCategoryOperations({
           budgetId: selectedBudgetId || 0,
         });
       } catch {
-        toast.error('Failed to update category group', {
-          description: 'Please try again.',
+        toast.error(t`Failed to update category group`, {
+          description: t`Please try again.`,
         });
       }
     },
-    [selectedBudgetId, updateCategoryGroupMutation]
+    [selectedBudgetId, updateCategoryGroupMutation, t]
   );
 
   const handleCreateCategoryGroup = useCallback(
@@ -174,14 +181,14 @@ export function useCategoryOperations({
         {
           onSuccess,
           onError: () => {
-            toast.error('Failed to create category group', {
-              description: 'Please try again.',
+            toast.error(t`Failed to create category group`, {
+              description: t`Please try again.`,
             });
           },
         }
       );
     },
-    [budgetId, createCategoryGroupMutation]
+    [budgetId, createCategoryGroupMutation, t]
   );
 
   const handleSaveCategoryEdit = useCallback(
@@ -202,10 +209,10 @@ export function useCategoryOperations({
         });
         onSuccess();
       } catch {
-        toast.error('Failed to update category', { description: 'Please try again.' });
+        toast.error(t`Failed to update category`, { description: t`Please try again.` });
       }
     },
-    [updateCategoryDetailsMutation]
+    [updateCategoryDetailsMutation, t]
   );
 
   const handleConfirmDelete = useCallback(
@@ -227,14 +234,14 @@ export function useCategoryOperations({
     async (deletingCategory: BudgetRow, targetCategoryId: number, onSuccess: () => void) => {
       const budgetIdForOps = selectedBudgetId || budgetId || 0;
       if (!budgetIdForOps) {
-        toast.error('No budget selected', {
-          description: 'Please select a budget before deleting categories.',
+        toast.error(t`No budget selected`, {
+          description: t`Please select a budget before deleting categories.`,
         });
         throw new Error('Budget is required to delete a category');
       }
       if (targetCategoryId === deletingCategory.categoryId) {
-        toast.error('Choose another category', {
-          description: 'Select a different category to receive the data.',
+        toast.error(t`Choose another category`, {
+          description: t`Select a different category to receive the data.`,
         });
         throw new Error('Target category must be different from the source');
       }
@@ -247,15 +254,15 @@ export function useCategoryOperations({
         });
 
         onSuccess();
-        toast.success('Category deleted', {
-          description: 'All transactions and assignments were moved to the selected category.',
+        toast.success(t`Category deleted`, {
+          description: t`All transactions and assignments were moved to the selected category.`,
         });
       } catch (error) {
         toastError('Failed to delete category', error, 'Please try again.');
         throw error;
       }
     },
-    [budgetId, reassignAndDeleteCategoryMutation, selectedBudgetId]
+    [budgetId, reassignAndDeleteCategoryMutation, selectedBudgetId, t]
   );
 
   const handleCreateCategory = useCallback(
@@ -272,14 +279,14 @@ export function useCategoryOperations({
             onSuccess();
           },
           onError: () => {
-            toast.error('Failed to create category', {
-              description: 'Please try again.',
+            toast.error(t`Failed to create category`, {
+              description: t`Please try again.`,
             });
           },
         }
       );
     },
-    [budgetId, createCategoryMutation]
+    [budgetId, createCategoryMutation, t]
   );
 
   const executeUpsertAssignment = useCallback(
@@ -316,16 +323,16 @@ export function useCategoryOperations({
 
         if (isOverAssigning && !allowOverAssignment) {
           const overAmount = asMilli(assignmentDifference - readyToAssign);
-          toast.error('Assignment exceeds ready-to-assign amount', {
-            description: `This assignment would exceed your ready-to-assign amount by ${formatMilli(maskedLocalizer, overAmount)}.`,
+          toast.error(t`Assignment exceeds ready-to-assign amount`, {
+            description: t`This assignment would exceed your ready-to-assign amount by ${formatMilli(maskedLocalizer, overAmount)}.`,
           });
           return;
         }
 
         if (isOverAssigning && allowOverAssignment) {
           const overAmount = asMilli(assignmentDifference - readyToAssign);
-          toast.success('Creating negative Ready to Assign', {
-            description: `This will reduce your Ready to Assign by ${formatMilli(maskedLocalizer, overAmount)}.`,
+          toast.success(t`Creating negative Ready to Assign`, {
+            description: t`This will reduce your Ready to Assign by ${formatMilli(maskedLocalizer, overAmount)}.`,
           });
         }
 
@@ -346,12 +353,13 @@ export function useCategoryOperations({
 
         await executeUpsertAssignment(categoryId, value);
       } catch {
-        toast.error('Failed to update allocation', {
-          description: 'Please try again.',
+        toast.error(t`Failed to update allocation`, {
+          description: t`Please try again.`,
         });
       }
     },
     [
+      t,
       allowOverAssignment,
       checkOverspending,
       effectiveMonth,
@@ -393,13 +401,14 @@ export function useCategoryOperations({
       }
 
       await batchUpsertAssignments.mutateAsync(assignments);
-      toast.success('Money moved', {
-        description: `Moved ${formatMilli(maskedLocalizer, asMilli(moveAmount))} ${
+      toast.success(t`Money moved`, {
+        description: t`Moved ${formatMilli(maskedLocalizer, asMilli(moveAmount))} ${
           target === 'rta' ? 'to Ready to Assign' : 'to selected category'
         }.`,
       });
     },
     [
+      t,
       assignedByCategoryId,
       batchUpsertAssignments,
       effectiveMonth,
@@ -418,8 +427,8 @@ export function useCategoryOperations({
       const mapAvailable = availableByCategoryId.get(sourceCategoryId) ?? null;
       const sourceAvailable = (uiAvailable ?? mapAvailable ?? 0) as number;
       if (amount <= 0 || sourceAvailable <= 0) {
-        toast.error('Invalid amount', {
-          description: 'Enter a positive amount within available funds.',
+        toast.error(t`Invalid amount`, {
+          description: t`Enter a positive amount within available funds.`,
         });
         return;
       }
@@ -435,10 +444,11 @@ export function useCategoryOperations({
       try {
         await executeMoveMoney(sourceCategoryId, moveAmount, target);
       } catch {
-        toast.error('Move failed', { description: 'Please try again.' });
+        toast.error(t`Move failed`, { description: t`Please try again.` });
       }
     },
     [
+      t,
       availableByCategoryId,
       checkOverspending,
       effectiveMonth,
@@ -509,12 +519,13 @@ export function useCategoryOperations({
           }
         }
       } catch {
-        toast.error('Failed to save order', {
-          description: 'Please try again.',
+        toast.error(t`Failed to save order`, {
+          description: t`Please try again.`,
         });
       }
     },
     [
+      t,
       moveCategoryToNewGroupMutation,
       reorderCategoryGroupsMutation,
       reorderCategoriesMutation,

@@ -1,5 +1,7 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { formatDate as format } from '@shared/lib/date-format';
 import type { EChartsCoreOption } from 'echarts/core';
 
 import { EChart } from '@shared/ui/echart';
@@ -26,6 +28,8 @@ export function MutationsTab({
   error: string | null;
   onRetry: () => void;
 }) {
+  const { t } = useLingui();
+
   const palette = useChartPalette();
   const days = details?.mutations.days;
 
@@ -64,13 +68,13 @@ export function MutationsTab({
           const point = points[items[0]?.dataIndex ?? 0];
           if (!point) return '';
           return tooltipHtml(format(parseISO(point.day), 'MMM d, yyyy'), [
-            { color: barColor, name: 'Count', value: `${point.count} mutations` },
+            { color: barColor, name: t`Count`, value: `${point.count} mutations` },
           ]);
         },
       },
       series: [
         {
-          name: 'Count',
+          name: t`Count`,
           type: 'bar',
           data: points.map((entry) => entry.count),
           barMaxWidth: BAR_MAX_WIDTH,
@@ -78,25 +82,27 @@ export function MutationsTab({
         },
       ],
     };
-  }, [days, palette]);
+  }, [days, palette, t]);
 
   return (
     <TabSection loading={loading} error={error} onRetry={onRetry}>
       <Card>
         <CardHeader>
-          <CardTitle>Mutation KPIs</CardTitle>
+          <CardTitle>
+            <Trans>Mutation KPIs</Trans>
+          </CardTitle>
           <CardDescription>
-            All-time totals with a daily activity view for the current window.
+            <Trans>All-time totals with a daily activity view for the current window.</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-3">
           <CompactMetric
-            label="All-Time Mutations"
+            label={t`All-Time Mutations`}
             value={`${details?.mutations.totalMutations ?? 0}`}
           />
-          <CompactMetric label="Active Days" value={`${details?.mutations.activeDays ?? 0}`} />
+          <CompactMetric label={t`Active Days`} value={`${details?.mutations.activeDays ?? 0}`} />
           <CompactMetric
-            label="Avg / Active Day"
+            label={t`Avg / Active Day`}
             value={(details?.mutations.avgPerActiveDay ?? 0).toFixed(1)}
           />
         </CardContent>
@@ -104,10 +110,14 @@ export function MutationsTab({
 
       <Card>
         <CardHeader>
-          <CardTitle>Mutations Per Day</CardTitle>
+          <CardTitle>
+            <Trans>Mutations Per Day</Trans>
+          </CardTitle>
           <CardDescription>
-            Daily mutation counts over the same{' '}
-            {details?.activity?.windowDays ?? details?.mutations.days?.length ?? 365}-day window.
+            <Trans>
+              Daily mutation counts over the same{' '}
+              {details?.activity?.windowDays ?? details?.mutations.days?.length ?? 365}-day window.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

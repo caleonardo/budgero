@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   parseOfx,
   ofxToImportRows,
@@ -63,7 +64,8 @@ export async function parseImportFile(
   });
 
   if (!isSupportedImportFile(file)) {
-    throw new Error(`Please upload a ${SUPPORTED_IMPORT_FORMATS_LABEL} file.`);
+    const formats = t(SUPPORTED_IMPORT_FORMATS_LABEL);
+    throw new Error(t`Please upload a ${formats} file.`);
   }
 
   const fileType = file.name.toLowerCase();
@@ -75,17 +77,14 @@ export async function parseImportFile(
     const { text } = decodeImportText(buffer);
     if (!looksLikeCamt(text)) {
       throw new Error(
-        'This XML file is not a CAMT.053 bank statement. ' +
-          'Budgero only imports CAMT.053; other ISO 20022 messages ' +
-          '(pain.*, camt.052, camt.054) are not supported.'
+        t`This XML file is not a CAMT.053 bank statement. Budgero only imports CAMT.053; other ISO 20022 messages (pain.*, camt.052, camt.054) are not supported.`
       );
     }
     const parsed = parseCamt(text);
     const { headers, rows, currency } = camtToImportRows(parsed);
     if (rows.length === 0) {
       throw new Error(
-        'No transactions found in this CAMT.053 file. ' +
-          'Statements with only balance summaries (no <Ntry> entries) cannot be imported.'
+        t`No transactions found in this CAMT.053 file. Statements with only balance summaries (no <Ntry> entries) cannot be imported.`
       );
     }
     return applyStructuredImport('camt', headers, rows, currency);
@@ -98,8 +97,7 @@ export async function parseImportFile(
     const { headers, rows, currency } = ofxToImportRows(parsed);
     if (rows.length === 0) {
       throw new Error(
-        'No transactions found in this OFX/QFX file. ' +
-          'Investment-only statements are not supported — try a bank or credit-card export.'
+        t`No transactions found in this OFX/QFX file. Investment-only statements are not supported — try a bank or credit-card export.`
       );
     }
     return applyStructuredImport('ofx', headers, rows, currency);
@@ -112,8 +110,7 @@ export async function parseImportFile(
     const { headers, rows } = qifToImportRows(parsed);
     if (rows.length === 0) {
       throw new Error(
-        'No transactions found in this QIF file. ' +
-          'Only Bank, CCard, and Cash sections are supported (investment QIF is not).'
+        t`No transactions found in this QIF file. Only Bank, CCard, and Cash sections are supported (investment QIF is not).`
       );
     }
     return applyStructuredImport('qif', headers, rows);
@@ -145,10 +142,7 @@ export async function parseImportFile(
     }
     if (!hasAnyText) {
       throw new Error(
-        'This PDF has no extractable text — it looks like a scanned image. ' +
-          "Budgero imports PDFs by reading their text layer, which this file doesn't have. " +
-          'Try exporting the statement as CSV from your bank, or use a text-based PDF ' +
-          'generated directly by the bank (not a scan or screenshot).'
+        t`This PDF has no extractable text — it looks like a scanned image. Budgero imports PDFs by reading their text layer, which this file doesn't have. Try exporting the statement as CSV from your bank, or use a text-based PDF generated directly by the bank (not a scan or screenshot).`
       );
     }
 
@@ -156,9 +150,7 @@ export async function parseImportFile(
 
     if (pdfTables.length === 0) {
       throw new Error(
-        'No table structure detected in PDF. The file has text but the parser ' +
-          "couldn't find a consistent table layout. If the statement is available " +
-          'as CSV, that usually works better.'
+        t`No table structure detected in PDF. The file has text but the parser couldn't find a consistent table layout. If the statement is available as CSV, that usually works better.`
       );
     }
 
@@ -166,7 +158,7 @@ export async function parseImportFile(
     // statements import every transaction, not just the first page.
     const table = mergeExtractedTables(pdfTables);
     if (!table?.allRows || !Array.isArray(table.allRows) || table.allRows.length === 0) {
-      throw new Error('No table rows detected in PDF.');
+      throw new Error(t`No table rows detected in PDF.`);
     }
 
     const suggestedHeaderIndex =

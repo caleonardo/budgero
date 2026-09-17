@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useState, useEffect } from 'react';
 import {
   Dialog,
@@ -106,7 +107,11 @@ function ColumnSelect({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {includeNone && <SelectItem value="__none__">None</SelectItem>}
+        {includeNone && (
+          <SelectItem value="__none__">
+            <Trans>None</Trans>
+          </SelectItem>
+        )}
         {columns?.map((column) => (
           <SelectItem key={column} value={column}>
             {column}
@@ -127,6 +132,8 @@ export function SaveReportDialog({
   initialData,
   mode,
 }: SaveReportDialogProps) {
+  const { t } = useLingui();
+
   const [reportName, setReportName] = useState(initialData?.name || '');
   const [reportDescription, setReportDescription] = useState(initialData?.description || '');
   const [charts, setCharts] = useState<ChartFormData[]>(
@@ -160,13 +167,13 @@ export function SaveReportDialog({
 
   const handleAddChart = () => {
     if (!queryResult || queryResult.columns.length === 0) {
-      toast.error('No query results available to create chart');
+      toast.error(t`No query results available to create chart`);
       return;
     }
 
     if (!hasRequiredColumns) {
       toast.error(
-        isStat ? 'Please select a metric column' : 'Please select both X and Y axis columns'
+        isStat ? t`Please select a metric column` : t`Please select both X and Y axis columns`
       );
       return;
     }
@@ -180,22 +187,22 @@ export function SaveReportDialog({
     ]);
     setNewChart(defaultChartForm);
     setIsAddingChart(false);
-    toast.success('Chart added to report');
+    toast.success(t`Chart added to report`);
   };
 
   const handleRemoveChart = (index: number) => {
     setCharts((prev) => prev.filter((_, i) => i !== index));
-    toast.success('Chart removed from report');
+    toast.success(t`Chart removed from report`);
   };
 
   const handleSave = async (pinAfterSave = false) => {
     if (!reportName.trim()) {
-      toast.error('Please enter a report name');
+      toast.error(t`Please enter a report name`);
       return;
     }
 
     if (!sqlQuery.trim()) {
-      toast.error('No SQL query to save');
+      toast.error(t`No SQL query to save`);
       return;
     }
 
@@ -218,7 +225,7 @@ export function SaveReportDialog({
         charts: chartConfigs,
       });
 
-      toast.success(`Report ${mode === 'create' ? 'created' : 'updated'} successfully`);
+      toast.success(t`Report ${mode === 'create' ? 'created' : 'updated'} successfully`);
       if (pinAfterSave && onSaveAndPin) {
         onSaveAndPin(savedReport);
       }
@@ -226,7 +233,7 @@ export function SaveReportDialog({
     } catch (error) {
       const message = getErrorMessage(
         error,
-        `Failed to ${mode === 'create' ? 'create' : 'update'} report`
+        mode === 'create' ? t`Failed to create report` : t`Failed to update report`
       );
       toast.error(message);
     } finally {
@@ -244,33 +251,33 @@ export function SaveReportDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="w-[95vw] sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Save Report' : 'Edit Report'}</DialogTitle>
+          <DialogTitle>{mode === 'create' ? t`Save Report` : t`Edit Report`}</DialogTitle>
           <DialogDescription>
             {mode === 'create'
-              ? 'Save your SQL query as a reusable report. Optionally add chart visualizations.'
-              : 'Update your report and chart configurations.'}
+              ? t`Save your SQL query as a reusable report. Optionally add chart visualizations.`
+              : t`Update your report and chart configurations.`}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Report Details */}
           <div className="space-y-4">
-            <Field label="Report Name *" htmlFor="name" className="space-y-2">
+            <Field label={t`Report Name *`} htmlFor="name" className="space-y-2">
               <Input
                 id="name"
                 value={reportName}
                 onChange={(e) => setReportName(e.target.value)}
-                placeholder="Enter report name..."
+                placeholder={t`Enter report name...`}
                 disabled={isSaving}
               />
             </Field>
 
-            <Field label="Description" htmlFor="description" className="space-y-2">
+            <Field label={t`Description`} htmlFor="description" className="space-y-2">
               <Textarea
                 id="description"
                 value={reportDescription}
                 onChange={(e) => setReportDescription(e.target.value)}
-                placeholder="Optional description..."
+                placeholder={t`Optional description...`}
                 rows={2}
                 disabled={isSaving}
               />
@@ -283,9 +290,11 @@ export function SaveReportDialog({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium">Chart Visualizations</h3>
+                <h3 className="font-medium">
+                  <Trans>Chart Visualizations</Trans>
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Add charts to visualize your query results
+                  <Trans>Add charts to visualize your query results</Trans>
                 </p>
               </div>
               {canAddChart && !isAddingChart && (
@@ -295,8 +304,10 @@ export function SaveReportDialog({
                   onClick={() => setIsAddingChart(true)}
                   disabled={isSaving}
                 >
-                  <Plus className="h-3 w-3 mr-1" />
-                  Add Chart
+                  <Trans>
+                    <Plus className="h-3 w-3 mr-1" />
+                    Add Chart
+                  </Trans>
                 </Button>
               )}
             </div>
@@ -306,7 +317,9 @@ export function SaveReportDialog({
                 <CardContent className="flex items-center justify-center py-6">
                   <div className="text-center text-muted-foreground">
                     <BarChart3 className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Run a query first to add charts</p>
+                    <p className="text-sm">
+                      <Trans>Run a query first to add charts</Trans>
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -352,11 +365,13 @@ export function SaveReportDialog({
                         <Badge variant="secondary">{chart.chartType}</Badge>
                         {chart.chartType !== 'stat' && <span>X: {chart.xAxisColumn}</span>}
                         <span>
-                          {chart.chartType === 'stat' ? 'Metric' : 'Y'}: {chart.aggregateFunction}(
+                          {chart.chartType === 'stat' ? t`Metric` : 'Y'}: {chart.aggregateFunction}(
                           {chart.yAxisColumn})
                         </span>
                         {chart.groupByColumn !== '__none__' && (
-                          <span>Group: {chart.groupByColumn}</span>
+                          <span>
+                            <Trans>Group: {chart.groupByColumn}</Trans>
+                          </span>
                         )}
                       </div>
                     </CardContent>
@@ -370,12 +385,12 @@ export function SaveReportDialog({
               <Card>
                 <CardHeader>
                   <CardTitle className="text-sm">
-                    {newChart.xAxisColumn ? 'Edit' : 'Add'} Chart Configuration
+                    <Trans>{newChart.xAxisColumn ? t`Edit` : t`Add`} Chart Configuration</Trans>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Field label="Chart Type" className="space-y-2">
+                    <Field label={t`Chart Type`} className="space-y-2">
                       <Select
                         value={newChart.chartType}
                         onValueChange={(value) =>
@@ -395,24 +410,38 @@ export function SaveReportDialog({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="bar">Bar Chart</SelectItem>
-                          <SelectItem value="line">Line Chart</SelectItem>
-                          <SelectItem value="area">Area Chart</SelectItem>
-                          <SelectItem value="pie">Pie Chart</SelectItem>
-                          <SelectItem value="scatter">Scatter Plot</SelectItem>
-                          <SelectItem value="table">Table</SelectItem>
-                          <SelectItem value="stat">Stat</SelectItem>
+                          <SelectItem value="bar">
+                            <Trans>Bar Chart</Trans>
+                          </SelectItem>
+                          <SelectItem value="line">
+                            <Trans>Line Chart</Trans>
+                          </SelectItem>
+                          <SelectItem value="area">
+                            <Trans>Area Chart</Trans>
+                          </SelectItem>
+                          <SelectItem value="pie">
+                            <Trans>Pie Chart</Trans>
+                          </SelectItem>
+                          <SelectItem value="scatter">
+                            <Trans>Scatter Plot</Trans>
+                          </SelectItem>
+                          <SelectItem value="table">
+                            <Trans>Table</Trans>
+                          </SelectItem>
+                          <SelectItem value="stat">
+                            <Trans>Stat</Trans>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </Field>
 
-                    <Field label="Title (Optional)" className="space-y-2">
+                    <Field label={t`Title (Optional)`} className="space-y-2">
                       <Input
                         value={newChart.title}
                         onChange={(e) =>
                           setNewChart((prev) => ({ ...prev, title: e.target.value }))
                         }
-                        placeholder="Chart title..."
+                        placeholder={t`Chart title...`}
                       />
                     </Field>
                   </div>
@@ -429,7 +458,7 @@ export function SaveReportDialog({
                           onChange={(value) =>
                             setNewChart((prev) => ({ ...prev, xAxisColumn: value }))
                           }
-                          placeholder="Select column"
+                          placeholder={t`Select column`}
                         />
                       </Field>
                     )}
@@ -452,14 +481,14 @@ export function SaveReportDialog({
                         onChange={(value) =>
                           setNewChart((prev) => ({ ...prev, yAxisColumn: value }))
                         }
-                        placeholder="Select column"
+                        placeholder={t`Select column`}
                       />
                     </Field>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {!['pie', 'stat'].includes(newChart.chartType) && (
-                      <Field label="Group By" className="space-y-2">
+                      <Field label={t`Group By`} className="space-y-2">
                         <ColumnSelect
                           value={newChart.groupByColumn}
                           columns={queryResult?.columns}
@@ -472,7 +501,7 @@ export function SaveReportDialog({
                     )}
 
                     <Field
-                      label="Aggregate Function"
+                      label={t`Aggregate Function`}
                       className={
                         ['pie', 'stat'].includes(newChart.chartType)
                           ? 'sm:col-span-2 space-y-2'
@@ -492,11 +521,21 @@ export function SaveReportDialog({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="SUM">Sum</SelectItem>
-                          <SelectItem value="COUNT">Count</SelectItem>
-                          <SelectItem value="AVG">Average</SelectItem>
-                          <SelectItem value="MAX">Maximum</SelectItem>
-                          <SelectItem value="MIN">Minimum</SelectItem>
+                          <SelectItem value="SUM">
+                            <Trans>Sum</Trans>
+                          </SelectItem>
+                          <SelectItem value="COUNT">
+                            <Trans>Count</Trans>
+                          </SelectItem>
+                          <SelectItem value="AVG">
+                            <Trans>Average</Trans>
+                          </SelectItem>
+                          <SelectItem value="MAX">
+                            <Trans>Maximum</Trans>
+                          </SelectItem>
+                          <SelectItem value="MIN">
+                            <Trans>Minimum</Trans>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </Field>
@@ -512,7 +551,7 @@ export function SaveReportDialog({
                       }}
                       className="w-full sm:w-auto"
                     >
-                      Cancel
+                      <Trans>Cancel</Trans>
                     </Button>
                     <Button
                       size="sm"
@@ -520,7 +559,7 @@ export function SaveReportDialog({
                       disabled={!hasRequiredColumns}
                       className="w-full sm:w-auto"
                     >
-                      {hasRequiredColumns ? 'Update' : 'Add'} Chart
+                      <Trans>{hasRequiredColumns ? t`Update` : t`Add`} Chart</Trans>
                     </Button>
                   </div>
                 </CardContent>
@@ -536,14 +575,14 @@ export function SaveReportDialog({
             disabled={isSaving}
             className="w-full sm:w-auto"
           >
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             onClick={() => void handleSave(false)}
             disabled={!reportName.trim() || isSaving}
             className="w-full sm:w-auto"
           >
-            {isSaving ? 'Saving...' : mode === 'create' ? 'Save Report' : 'Update Report'}
+            {isSaving ? t`Saving...` : mode === 'create' ? t`Save Report` : t`Update Report`}
           </Button>
           <Button
             onClick={() => void handleSave(true)}
@@ -551,7 +590,7 @@ export function SaveReportDialog({
             className="w-full sm:w-auto"
             variant="secondary"
           >
-            {isSaving ? 'Saving...' : mode === 'create' ? 'Save & Pin' : 'Update & Pin'}
+            {isSaving ? t`Saving...` : mode === 'create' ? t`Save & Pin` : t`Update & Pin`}
           </Button>
         </DialogFooter>
       </DialogContent>

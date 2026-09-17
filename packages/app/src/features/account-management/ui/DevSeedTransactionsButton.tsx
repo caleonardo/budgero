@@ -1,3 +1,5 @@
+import { plural } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { ReceiptText } from 'lucide-react';
 import { toast } from 'sonner';
@@ -23,6 +25,8 @@ import {
  * is gated by `import.meta.env.DEV`, so production builds remove this module.
  */
 export function DevSeedTransactionsButton() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const queryClient = useQueryClient();
   const budgetId = selectedBudget?.ID ?? 0;
@@ -39,23 +43,23 @@ export function DevSeedTransactionsButton() {
     const runtime = getRuntime();
     const budgetCurrency = selectedBudget?.DisplayCurrency;
     if (!runtime || !budgetId || !budgetCurrency) {
-      toast.error('No budget selected');
+      toast.error(t`No budget selected`);
       return;
     }
 
     const requestedCount = Math.trunc(count);
     if (requestedCount < 1 || requestedCount > MAX_FAKE_TRANSACTIONS) {
-      toast.error(`Enter a transaction count from 1 to ${MAX_FAKE_TRANSACTIONS.toLocaleString()}`);
+      toast.error(t`Enter a transaction count from 1 to ${MAX_FAKE_TRANSACTIONS.toLocaleString()}`);
       return;
     }
 
     const activeAccounts = accounts.filter((account) => !account.Archived);
     if (activeAccounts.length === 0) {
-      toast.error('No active accounts available');
+      toast.error(t`No active accounts available`);
       return;
     }
     if (categories.length === 0) {
-      toast.error('No categories available');
+      toast.error(t`No categories available`);
       return;
     }
 
@@ -108,16 +112,19 @@ export function DevSeedTransactionsButton() {
 
       await runtime.finalizeOutOfBandMutation({ uploadSnapshot: true });
       refreshTransactionQueries();
-      toast.success(`Seeded ${created.toLocaleString()} transactions`, {
-        description: `Distributed across ${activeAccounts.length} active account${activeAccounts.length === 1 ? '' : 's'}.`,
+      toast.success(t`Seeded ${created.toLocaleString()} transactions`, {
+        description: plural(activeAccounts.length, {
+          one: `Distributed across # active account.`,
+          other: `Distributed across # active accounts.`
+        }),
       });
     } catch (error) {
       if (created > 0) {
         await runtime.finalizeOutOfBandMutation({ uploadSnapshot: true }).catch(() => undefined);
         refreshTransactionQueries();
       }
-      toast.error(`Stopped after ${created.toLocaleString()}`, {
-        description: getErrorMessage(error, 'Unknown error'),
+      toast.error(t`Stopped after ${created.toLocaleString()}`, {
+        description: getErrorMessage(error, t`Unknown error`),
       });
     } finally {
       setProgress(null);
@@ -134,7 +141,7 @@ export function DevSeedTransactionsButton() {
         onChange={(event) => setCount(Number(event.target.value))}
         disabled={running}
         className="h-8 w-20"
-        aria-label="Number of transactions to seed"
+        aria-label={t`Number of transactions to seed`}
       />
       <Button
         size="sm"
@@ -145,8 +152,8 @@ export function DevSeedTransactionsButton() {
       >
         <ReceiptText className="h-4 w-4" />
         {running
-          ? `Seeding ${progress?.toLocaleString()}/${count.toLocaleString()}…`
-          : 'Seed transactions'}
+          ? t`Seeding ${progress?.toLocaleString()}/${count.toLocaleString()}…`
+          : t`Seed transactions`}
       </Button>
     </div>
   );

@@ -5,14 +5,11 @@ explains how the project works and what a good contribution looks like.
 
 ## How this repository works
 
-Budgero's day-to-day development happens on private infrastructure; this GitHub
-repository is the project's public home. Issues and pull requests live here, reviews
-happen here, and CI for pull requests runs here on GitHub-hosted runners.
+GitHub is Budgero's primary repository. Issues, pull requests, reviews, and merges
+happen here, and accepted contributions are merged directly into `master`.
 
-When a PR is accepted, a maintainer merges it into the canonical repository and pushes
-the result back — with your commits and authorship intact, so GitHub marks your PR as
-merged. There may be a short delay between approval and the merge appearing on
-`master`.
+Pull-request CI runs on GitHub-hosted runners. Builds on `master` run on a dedicated
+self-hosted runner. Maintainers retain a separate copy on private infrastructure.
 
 ## Before you start
 
@@ -36,7 +33,18 @@ pnpm run dev:selfhost
 
 ## Quality gates
 
-CI runs these on every PR; running them locally first saves a round-trip:
+CI selects checks from the files changed across the whole PR (and the full commit
+range on pushes). Website changes run website builds, type-checking, translation
+audits, and validation of the app knowledge generated from the docs. App, core,
+and runtime changes run the app checks; server changes run the Go checks. Shared
+configuration, dependency patches, lockfiles, workflow changes, and unknown paths
+run the full suite. Repository-only prose skips build steps.
+
+The required `web`, `server`, and `dco` checks still report on every PR; a failed
+change-selection job blocks merging. Fork workflow runs may need maintainer
+approval before checks appear.
+
+Run the relevant checks locally before opening a PR:
 
 ```bash
 pnpm run type-check:all   # tsc across core, runtime, app

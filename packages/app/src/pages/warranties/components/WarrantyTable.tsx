@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { Button } from '@shared/ui/button';
 import { Card } from '@shared/ui/card';
@@ -30,18 +31,34 @@ export function WarrantyTable({
   onDelete,
   onViewReceipt,
 }: WarrantyTableProps) {
+  const { t } = useLingui();
+
   return (
     <Card className="hidden md:block">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Amount</TableHead>
-            <TableHead>Expiry Date</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Transaction</TableHead>
-            <TableHead>Receipt</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>
+              <Trans>Name</Trans>
+            </TableHead>
+            <TableHead>
+              <Trans>Amount</Trans>
+            </TableHead>
+            <TableHead>
+              <Trans>Expiry Date</Trans>
+            </TableHead>
+            <TableHead>
+              <Trans>Status</Trans>
+            </TableHead>
+            <TableHead>
+              <Trans>Transaction</Trans>
+            </TableHead>
+            <TableHead>
+              <Trans>Receipt</Trans>
+            </TableHead>
+            <TableHead className="text-right">
+              <Trans>Actions</Trans>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -59,7 +76,7 @@ export function WarrantyTable({
                         <button
                           onClick={() => onToggleNotes(w.ID)}
                           className="text-muted-foreground hover:text-foreground transition-colors"
-                          title="Toggle notes"
+                          title={t`Toggle notes`}
                         >
                           <StickyNote className="h-3.5 w-3.5" />
                         </button>

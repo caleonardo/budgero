@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { Button } from '@shared/ui/button';
 import { Camera, Upload } from 'lucide-react';
 
@@ -29,7 +30,9 @@ export function ReceiptDropzone({
             className="flex-1 h-24 flex-col gap-2"
           >
             <Camera className="h-8 w-8" />
-            <span className="text-sm">Take Photo</span>
+            <span className="text-sm">
+              <Trans>Take Photo</Trans>
+            </span>
           </Button>
           <Button
             variant="outline"
@@ -38,10 +41,14 @@ export function ReceiptDropzone({
             className="flex-1 h-24 flex-col gap-2"
           >
             <Upload className="h-8 w-8" />
-            <span className="text-sm">Browse Files</span>
+            <span className="text-sm">
+              <Trans>Browse Files</Trans>
+            </span>
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground">Or drag and drop an image here</p>
+        <p className="text-xs text-muted-foreground">
+          <Trans>Or drag and drop an image here</Trans>
+        </p>
       </div>
     </div>
   );

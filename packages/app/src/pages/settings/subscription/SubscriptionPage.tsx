@@ -1,4 +1,5 @@
-import { format } from 'date-fns';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { formatDate as format } from '@shared/lib/date-format';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card';
 import { Calendar, WifiOff } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
@@ -11,6 +12,8 @@ import { PlanChangeDialog } from '@pages/settings/subscription/PlanChangeDialog'
 import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
 
 export default function SubscriptionPage() {
+  const { t } = useLingui();
+
   const vm = useSubscriptionViewModel();
 
   const { user, userLoading, requiresOnline } = vm;
@@ -20,10 +23,14 @@ export default function SubscriptionPage() {
       <div className="container max-w-5xl mx-auto p-6 pb-24 md:pb-6">
         <Alert variant="default" className="border border-dashed">
           <WifiOff className="h-4 w-4" />
-          <AlertTitle>Internet connection required</AlertTitle>
+          <AlertTitle>
+            <Trans>Internet connection required</Trans>
+          </AlertTitle>
           <AlertDescription>
-            Subscription settings need an active connection to our billing services. Please
-            reconnect to the internet to view or manage your plan.
+            <Trans>
+              Subscription settings need an active connection to our billing services. Please
+              reconnect to the internet to view or manage your plan.
+            </Trans>
           </AlertDescription>
         </Alert>
       </div>
@@ -47,8 +54,8 @@ export default function SubscriptionPage() {
   return (
     <div className="container max-w-4xl mx-auto p-6 pb-24 md:pb-6 space-y-8">
       <SettingsPageHeader
-        title="Subscription"
-        description="Manage your Budgero subscription and billing preferences"
+        title={t`Subscription`}
+        description={t`Manage your Budgero subscription and billing preferences`}
       />
 
       {/* Current Status Card */}
@@ -64,21 +71,27 @@ export default function SubscriptionPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5" />
-            Account Information
+            <Trans>
+              <Calendar className="w-5 h-5" />
+              Account Information
+            </Trans>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid sm:grid-cols-2 gap-4 text-sm">
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-300">Account created:</span>
+                <span className="text-gray-600 dark:text-gray-300">
+                  <Trans>Account created:</Trans>
+                </span>
                 <span className="font-medium">
                   {format(new Date(user.created_at), 'MMM dd, yyyy')}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-300">Email:</span>
+                <span className="text-gray-600 dark:text-gray-300">
+                  <Trans>Email:</Trans>
+                </span>
                 <span className="font-medium">{user.email}</span>
               </div>
             </div>
@@ -86,11 +99,15 @@ export default function SubscriptionPage() {
             {user.subscription_id && (
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Subscription ID:</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    <Trans>Subscription ID:</Trans>
+                  </span>
                   <span className="font-mono text-xs">{user.subscription_id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Customer ID:</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    <Trans>Customer ID:</Trans>
+                  </span>
                   <span className="font-mono text-xs">{user.customer_id}</span>
                 </div>
               </div>

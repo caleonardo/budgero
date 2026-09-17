@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Complete Step Component
  *
@@ -15,24 +16,34 @@ interface CompleteStepProps {
 }
 
 export function CompleteStep({ importSummary, onReset }: CompleteStepProps) {
+  const { t } = useLingui();
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CheckCircle className="h-5 w-5 text-green-600" />
-          Import Complete!
+          <Trans>
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            Import Complete!
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Review the results below. Failed rows can be retried by importing the file again.
+          <Trans>
+            Review the results below. Failed rows can be retried by importing the file again.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {importSummary && (
           <div className="bg-muted p-4 rounded-md">
-            <h3 className="font-medium mb-2">Import Summary</h3>
+            <h3 className="font-medium mb-2">
+              <Trans>Import Summary</Trans>
+            </h3>
             <ul className="space-y-1 text-sm">
               <li className="flex justify-between">
-                <span>Transactions imported:</span>
+                <span>
+                  <Trans>Transactions imported:</Trans>
+                </span>
                 <span className="font-medium">{importSummary.transactionsImported}</span>
               </li>
               {(
@@ -50,20 +61,26 @@ export function CompleteStep({ importSummary, onReset }: CompleteStepProps) {
               ))}
               {importSummary.failures?.map((failure) => (
                 <li key={failure.index} className="text-destructive">
-                  Row {failure.index + 1}: {failure.message}
+                  <Trans>
+                    Row {failure.index + 1}: {failure.message}
+                  </Trans>
                 </li>
               ))}
               <li className="flex justify-between">
-                <span>Destination account:</span>
+                <span>
+                  <Trans>Destination account:</Trans>
+                </span>
                 <span className="font-medium">
                   {(importSummary.destinationAccountName || 'Existing account') +
                     (importSummary.accountsCreated > 0 ? ' (created)' : '')}
                 </span>
               </li>
               <li className="flex justify-between">
-                <span>New categories created:</span>
+                <span>
+                  <Trans>New categories created:</Trans>
+                </span>
                 <span className="font-medium">
-                  {importSummary.categoriesCreated > 0 ? importSummary.categoriesCreated : 'None'}
+                  {importSummary.categoriesCreated > 0 ? importSummary.categoriesCreated : t`None`}
                 </span>
               </li>
             </ul>
@@ -71,7 +88,7 @@ export function CompleteStep({ importSummary, onReset }: CompleteStepProps) {
         )}
 
         <Button className="w-full" onClick={onReset}>
-          Import Another File
+          <Trans>Import Another File</Trans>
         </Button>
       </CardContent>
     </Card>

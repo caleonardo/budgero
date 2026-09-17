@@ -1,0 +1,69 @@
+---
+title: "Partage de budgets"
+summary: "Invitez votre partenaire ou votre foyer, gardez tout le monde synchronisé, et comprenez comment les clés de chiffrement sont partagées sans jamais transiter par le serveur."
+section: collaboration
+topicId: sharing
+takeaways:
+  - "Comment fonctionnent les liens d'invitation et pourquoi le secret ne parvient jamais au serveur."
+  - "Ce que les propriétaires et les membres peuvent chacun faire dans un budget partagé."
+  - "Des conventions pratiques qui empêchent un budget partagé de devenir un chaos partagé."
+---
+
+Les budgets sont un sport d'équipe pour la plupart des foyers — et le partage est là où la plupart des applications « privées » abandonnent discrètement leur promesse de confidentialité. Budgero partage les budgets sans affaiblir le chiffrement : vos données restent chiffrées de bout en bout, et les clés transitent d'une manière que le serveur ne peut pas intercepter.
+
+## Comment fonctionne le partage
+
+1. Le **propriétaire** du budget ouvre le panneau de partage et génère un **lien d'invitation**.
+2. Le lien contient un secret à usage unique dans son **fragment d'URL** — la partie après `#`. Les fragments ne sont jamais envoyés dans les requêtes HTTP, le serveur relaie donc l'invitation sans jamais voir le secret.
+3. L'invité ouvre le lien, se connecte et configure son propre [mot de passe principal](/docs/master-password) s'il ne l'a pas déjà fait.
+4. Son appareil utilise le secret de l'invitation pour déchiffrer la clé partagée du budget, puis la réenveloppe sous son propre mot de passe principal.
+
+Le résultat : chaque membre déverrouille le même budget avec son *propre* mot de passe principal, le serveur ne stocke que des clés enveloppées qu'il ne peut pas ouvrir, et aucun mot de passe n'a été partagé entre humains. Considérez le lien d'invitation lui-même comme sensible tant qu'il est actif — quiconque le détient peut l'utiliser — et envoyez-le via un canal de confiance.
+
+Chaque abonnement Budgero inclut **5 places**, ce qui couvre un foyer avec une marge confortable.
+
+## Rôles
+
+<table>
+  <thead>
+    <tr>
+      <th>Rôle</th>
+      <th>Qui</th>
+      <th>Ce qu'ils peuvent faire</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Propriétaire</strong></td>
+      <td>Quiconque a créé le budget</td>
+      <td>Tout — plus la génération d'invitations et le retrait de membres</td>
+    </tr>
+    <tr>
+      <td><strong>Membre</strong></td>
+      <td>Tous les invités</td>
+      <td>Gestion quotidienne du budget : transactions, affectations, catégories</td>
+    </tr>
+  </tbody>
+</table>
+
+Les membres et les invitations sont gérés depuis le panneau de partage ; le propriétaire peut révoquer l'accès d'un membre à tout moment, ce qui supprime sa capacité à synchroniser de nouvelles données.
+
+## Tout le monde se synchronise, partout
+
+Une fois qu'ils ont rejoint, les membres voient le même budget en direct. Une transaction de courses que votre partenaire saisit à la caisse apparaît sur votre ordinateur portable lors de la synchronisation ; l'affectation que vous modifiez à votre bureau s'affiche sur son téléphone. Le [Mode hors ligne](/docs/offline) fonctionne par appareil — vous pouvez tous les deux enregistrer des dépenses dans un avion et les modifications fusionnent lorsque vous vous reconnectez.
+
+## Les conventions qui maintiennent les budgets partagés en bonne santé
+
+Le logiciel gère la synchronisation ; les humains doivent encore gérer l'entente. Trois conventions font l'essentiel du travail :
+
+1. **Rendez le plan visible dans le budget lui-même.** Associez un [objectif](/docs/goals) à chaque catégorie pour laquelle vous avez convenu d'un montant — la cible et sa barre de progression constituent le contrat, synchronisées et visibles pour vous deux. Pour des conventions plus précises, encodez-les dans le nom de la catégorie (« Restaurants (hors voyages) »).
+2. **Une seule personne gère l'affectation.** Que les deux partenaires enregistrent des transactions, cela fonctionne très bien ; que les deux partenaires déplacent de l'argent indépendamment, en général non. Convenez de qui assure la [routine d'affectation](/docs/assign-money) — ou faites-le ensemble chaque mois.
+3. **Saisissez les dépenses au moment où elles se produisent.** Les budgets partagés amplifient l'obsolescence des données : si les dépenses du mardi d'une personne n'apparaissent que vendredi, l'autre personne a pris ses décisions du mercredi sur la base de chiffres erronés. Plus tout le monde enregistre rapidement, plus on peut faire confiance aux chiffres du Disponible partagé.
+
+## Quitter et supprimer
+
+Lorsqu'un membre est supprimé (ou part), son accès aux synchronisations futures prend fin. Gardez à l'esprit les limites inhérentes à tout système de partage : les données qu'un membre a déjà synchronisées sur son appareil étaient, par définition, les siennes à consulter — le chiffrement vous protège du serveur, pas des personnes à qui vous avez choisi de faire confiance. Partagez en conséquence.
+
+## Ce que le partage ne change pas
+
+Le partage n'ajoute aucune visibilité côté serveur. La vue qu'a le serveur d'un budget partagé est le même texte chiffré que pour un budget individuel, plus les métadonnées minimales nécessaires pour l'acheminer : qui est membre et quels blobs chiffrés appartiennent à quel espace de travail. Le tableau complet de ce que le serveur peut et ne peut pas voir se trouve dans le [Modèle de sécurité](/docs/security).

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
@@ -38,6 +39,8 @@ export function CategoryGroupRow({
   mobileLayout = 'cards',
   showGroupPercent = false,
 }: CategoryGroupRowProps) {
+  const { t } = useLingui();
+
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const hasGroupId = item.categoryGroupId !== undefined && item.categoryGroupId !== null;
@@ -157,7 +160,7 @@ export function CategoryGroupRow({
                   onAddCategory={onAddCategory}
                   className="h-7 w-7 text-primary hover:bg-primary/10 dark:text-white dark:hover:bg-white/15"
                   highlightClassName="border border-primary ring-2 ring-primary/60 bg-primary/10 animate-pulse"
-                  title="Add category"
+                  title={t`Add category`}
                 />
               )}
             </div>
@@ -217,7 +220,7 @@ export function CategoryGroupRow({
           <div className="hidden text-[11px] text-muted-foreground md:flex md:items-center md:justify-between md:gap-1 md:text-center lg:text-xs">
             <div className="flex flex-1 items-center justify-between gap-1 md:flex-1 md:min-w-0 md:border-l md:border-white/20 md:px-1 md:first:border-l-0 md:first:pl-0 md:justify-center">
               <span className="uppercase tracking-wide text-[9px] text-muted-foreground lg:text-[10px]">
-                Allocated
+                <Trans>Allocated</Trans>
               </span>
               <span className="truncate text-xs font-semibold text-foreground dark:text-white text-right md:text-center lg:text-sm">
                 <PlanningAnimatedNumber value={item.assigned} formatter={formatAmount} />
@@ -226,7 +229,7 @@ export function CategoryGroupRow({
             {!isCompactLayout && (
               <div className="flex flex-1 items-center justify-between gap-1 md:flex-1 md:min-w-0 md:border-l md:border-white/20 md:px-1 md:justify-center">
                 <span className="uppercase tracking-wide text-[9px] text-muted-foreground lg:text-[10px]">
-                  Activity
+                  <Trans>Activity</Trans>
                 </span>
                 <span
                   className={cn(
@@ -247,7 +250,7 @@ export function CategoryGroupRow({
             )}
             <div className="flex flex-1 items-center justify-between gap-1 md:flex-1 md:min-w-0 md:border-l md:border-white/20 md:px-1 md:justify-center">
               <span className="uppercase tracking-wide text-[9px] text-muted-foreground lg:text-[10px]">
-                Available
+                <Trans>Available</Trans>
               </span>
               <span
                 className={cn(
@@ -268,7 +271,7 @@ export function CategoryGroupRow({
         <div className="flex items-center justify-between gap-1 md:hidden">
           <div className="flex flex-col items-center gap-1 flex-1">
             <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-              Allocated
+              <Trans>Allocated</Trans>
             </span>
             <span className="text-sm font-semibold text-foreground">
               <PlanningAnimatedNumber value={item.assigned} formatter={formatAmount} />
@@ -277,7 +280,7 @@ export function CategoryGroupRow({
           {!isCompactLayout && (
             <div className="flex flex-col items-center gap-1 flex-1">
               <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                Activity
+                <Trans>Activity</Trans>
               </span>
               <span
                 className={cn(
@@ -295,7 +298,7 @@ export function CategoryGroupRow({
           )}
           <div className="flex flex-col items-center gap-1 flex-1">
             <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-              Available
+              <Trans>Available</Trans>
             </span>
             <span
               className={cn(

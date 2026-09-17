@@ -1,0 +1,59 @@
+---
+title: "Offline-Modus"
+summary: "Budgetiere auf Flügen oder Ausflügen aufs Land. Verstehe, wie Budgero Änderungen zwischenspeichert, gleichzeitige Bearbeitungen zusammenführt und die Buchhaltung konsistent hält, sobald du wieder online bist."
+section: collaboration
+topicId: offline
+takeaways:
+  - "Wie Offline-Änderungen lokal zwischengespeichert und beim erneuten Verbinden nachträglich ausgeführt werden."
+  - "Was passiert, wenn zwei Personen dasselbe Budget offline bearbeiten."
+  - "Die wenigen Dinge, die tatsächlich eine Verbindung benötigen – und ihre Workarounds."
+---
+
+Budgero ist eine Offline-first-App, keine Online-App mit Cache. Dein komplettes Budget liegt auf deinem Gerät, jede Funktion funktioniert ohne Verbindung, und die Synchronisierung passiert *mit* deinen Änderungen — sie ist nichts, worauf deine Änderungen warten müssen.
+
+## So funktioniert's
+
+Budgero läuft als Progressive Web App, wobei dein Budget lokal gespeichert wird (in der IndexedDB deines Browsers). Jede Aktion — eine Transaktion hinzufügen, Geld verschieben, eine Kategorie bearbeiten — wird sofort auf die lokale Datenbank angewendet. Das gilt unabhängig davon, ob du online bist oder nicht; der einzige Unterschied, den eine Verbindung ausmacht, ist, was als Nächstes passiert:
+
+- **Online:** Jede Änderung wird verschlüsselt und sofort an den Server gesendet, wo andere Geräte sie abrufen.
+- **Offline:** Änderungen sammeln sich in einer lokalen **Warteschlange verschlüsselter Mutationen**. Wenn die Verbindung zurückkehrt, wird die Warteschlange in der richtigen Reihenfolge an den Server gesendet, und deine anderen Geräte empfangen die Änderungen, als wären sie live erfolgt.
+
+Es gibt keinen „Offline-Modus“, den du aktivieren musst, keinen schreibgeschützten Rückgriff und keine Begrenzung, wie viel du offline erledigen kannst. Die Transaktionen eines zweiwöchigen Trips werden genauso synchronisiert wie die von zwei Minuten.
+
+## Wie die Synchronisierung abläuft
+
+Die Synchronisierung ist darauf ausgelegt, unspektakulär zu sein. Änderungen werden anhand eindeutiger IDs dedupliziert — sodass eine instabile Verbindung, die eine Synchronisierung erneut versucht, keine doppelten Transaktionen erzeugen kann — und in einer deterministischen Reihenfolge angewendet. Periodisch erstellt Budgero außerdem einen Snapshot der gesamten verschlüsselten Datenbank auf dem Server, was verhindert, dass neue Geräte Jahre an Verlauf nachholen müssen.
+
+All das wird Ende-zu-Ende-verschlüsselt, bevor es dein Gerät verlässt; das Offline-Zwischenspeichern ändert nichts am [Sicherheitsmodell](/docs/security).
+
+## Zwei Personen, beide offline
+
+Der interessante Fall für [gemeinsame Budgets](/docs/sharing): Du bist im Flugzeug und notierst dein Mittagessen, dein Partner ist zu Hause und weist Kategorien neu zu, und kein Gerät kann das andere sehen.
+
+Wenn beide die Verbindung wiederherstellen, werden ihre gepufferten Änderungen zusammengeführt, indem sie nacheinander abgespielt werden:
+
+- **Verschiedene Dinge bearbeitet** — mit Abstand der häufigste Fall — und alles fügt sich einfach zusammen. Deine Transaktionen landen, ihre Zuweisungen landen, niemand merkt einen Bruch.
+- **Dasselbe bearbeitet** — ihr habt beide die Zuweisung *derselben* Kategorie geändert, sagen wir — und die letzte Änderung gewinnt. Es gibt keinen Konfliktdialog zu lösen; das Budget konvergiert zu einem konsistenten Zustand, und die Drei-Zahlen-Mathematik (Zugewiesen, Aktivität, Verfügbar) wird aus der zusammengeführten Historie neu berechnet.
+
+Praktischer Tipp für Haushalte, in denen gleichzeitiges Offline-Bearbeiten Alltag ist: Lasst alle unbesorgt *Transaktionen erfassen* (die kollidieren nie — es sind separate Einträge), und behaltet *Umstrukturierungen* — Kategorien umbenennen, Zuweisungen im großen Stil ändern — für Momente, in denen ihr online und synchronisiert seid. Das geht weniger um Datensicherheit als darum, sich nicht gegenseitig zu überraschen.
+
+## Die wenigen Dinge, die eine Verbindung brauchen
+
+Alles Wesentliche funktioniert offline. Die ehrliche Liste der Ausnahmen:
+
+- **Abgerufene Wechselkurse.** Live-Wechselkursabfragen benötigen das Netzwerk. Wenn du in mehreren Währungen budgetierst und reist, lege **manuelle Kurse** für die von dir verwendeten Währungen fest (siehe [Konten](/docs/accounts)) — manuelle Kurse funktionieren vollständig offline. Wenn kein Kurs zwischengespeichert ist, schlägt dir Budgero den nächsten verfügbaren zwischengespeicherten Kurs vor, und standardmäßig werden Umrechnungen bei der nächsten Verbindung automatisch an offizielle Kurse angeglichen.
+- **Neue Mitglieder einladen.** Das Erstellen und Einlösen von Einladungslinks ist eine Online-Operation.
+- **Die Push-API.** Von Natur aus serverseitig — allerdings warten Pushes, die gesendet werden, während dein Gerät offline ist, einfach in der Server-Warteschlange, bis du das nächste Mal synchronisierst.
+
+## Bevor du bewusst die Verbindung trennst
+
+Unterwegs ohne Internetverbindung? Zwei Gewohnheiten machen es unkompliziert:
+
+1. **Öffne die App einmal online** auf dem Gerät, das du dabei hast, damit es den letzten synchronisierten Stand behält – besonders, wenn kürzlich jemand anderes gebudgetet hat.
+2. **Verbinde dieses Gerät zuerst wieder**, wenn du zurück bist, bevor du größere Umorganisationen von einem anderen Gerät aus vornimmst.
+
+Beides ist nicht erforderlich – die Zusammenführung kümmert sich um Unordnung –, aber sie halten die Zeitleiste sauber.
+
+## Wenn die Synchronisation festzuhängen scheint
+
+Offline-Änderungen sind dauerhaft: Sie verbleiben in der lokalen Warteschlange, bis sie vom Server bestätigt werden, und überstehen App-Neustarts und Reboots. Wenn Änderungen nicht auf einem anderen Gerät erscheinen, liegt es fast immer daran, dass eines der beiden Geräte nicht wirklich online war, während die App geöffnet war. Öffne Budgero auf beiden, gib ihnen einen Moment Zeit, und die Warteschlangen leeren sich. Deine Daten sind nicht in der Schwebe – sie sind verschlüsselt, lokal und warten.

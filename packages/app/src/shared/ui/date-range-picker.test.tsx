@@ -1,8 +1,64 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { activateLocale } from '@shared/i18n';
 import DateRangePicker from './date-range-picker';
 
 describe('DateRangePicker', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 8, 17, 12));
+  });
+
+  afterEach(async () => {
+    vi.useRealTimers();
+    await act(() => activateLocale('en', false));
+  });
+
+  it('blocks future months and years when future dates are disabled', () => {
+    const onChange = vi.fn();
+    render(<DateRangePicker disableFuture onChange={onChange} />);
+    fireEvent.click(screen.getByRole('button', { name: /Change month and year/i }));
+    expect(screen.getByRole('button', { name: 'Next year' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Oct' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Sep' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Previous year' }));
+    expect(screen.getByRole('button', { name: 'Dec' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Dec' }));
+    expect(screen.getByRole('button', { name: /Change month and year/i })).toHaveTextContent(
+      'December 2025'
+    );
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('allows future navigation without submitting its enclosing form', () => {
+    const onSubmit = vi.fn((event) => event.preventDefault());
+    render(
+      <form onSubmit={onSubmit}>
+        <DateRangePicker />
+      </form>
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Change month and year/i }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next year' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Dec' }));
+    expect(screen.getByRole('button', { name: /Change month and year/i })).toHaveTextContent(
+      'December 2027'
+    );
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('updates month names and controls when the display language changes', async () => {
+    render(<DateRangePicker />);
+    fireEvent.click(screen.getByRole('button', { name: /Change month and year/i }));
+    expect(screen.getByRole('button', { name: 'Mar' })).toBeInTheDocument();
+    await act(() => activateLocale('de', false));
+    expect(screen.getByRole('button', { name: 'März' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tag auswählen' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'März' }));
+    expect(screen.getByRole('button', { name: /Monat und Jahr ändern/ })).toHaveTextContent(
+      'März 2026'
+    );
+  });
+
   it('renders start and end fields and switches between day and month view', () => {
     const onChange = vi.fn();
     const value = {
@@ -64,7 +120,9 @@ describe('DateRangePicker', () => {
     fireEvent.click(screen.getByRole('button', { name: /Change month and year/i }));
     const jumpBtn = screen.getByRole('button', { name: /Jump to today/i });
     fireEvent.click(jumpBtn);
-    expect(screen.getByRole('button', { name: /Change month and year/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Change month and year/i })).toHaveTextContent(
+      'September 2026'
+    );
   });
 
   it('allows fast selection of a date several years in the past and picking a day', () => {

@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useUiStore } from '@shared/store/useUiStore';
@@ -19,6 +20,8 @@ import {
 export type ConnectionStatus = 'idle' | 'testing' | 'success' | 'error';
 
 export function useAISettingsState() {
+  const { t } = useLingui();
+
   const selectedBudget = useUiStore((state) => state.selectedBudget);
   const budgetId = selectedBudget?.ID ?? 0;
 
@@ -198,19 +201,19 @@ export function useAISettingsState() {
       }
 
       const contextInfo = result.contextLength
-        ? ` | Context: ${(result.contextLength / 1000).toFixed(0)}k tokens`
+        ? t` | Context: ${(result.contextLength / 1000).toFixed(0)}k tokens`
         : '';
-      toast.success('Connected successfully!', {
-        description: `Found ${models.length} models${contextInfo}`,
+      toast.success(t`Connected successfully!`, {
+        description: t`Found ${models.length} models${contextInfo}`,
       });
     } else {
       setConnectionStatus('error');
-      setConnectionError(result.error || 'Connection failed');
-      toast.error('Connection failed', {
+      setConnectionError(result.error || t`Connection failed`);
+      toast.error(t`Connection failed`, {
         description: result.error,
       });
     }
-  }, [provider, endpointURL, apiKey, textModel, visionModel]);
+  }, [provider, endpointURL, apiKey, textModel, visionModel, t]);
 
   const handleSave = useCallback(async () => {
     if (!budgetId) return;
@@ -229,11 +232,12 @@ export function useAISettingsState() {
         },
       });
 
-      toast.success('AI settings saved');
+      toast.success(t`AI settings saved`);
     } catch (error: unknown) {
       toastError('Failed to save settings', error, 'Unknown error');
     }
   }, [
+    t,
     budgetId,
     enabled,
     provider,
@@ -261,11 +265,12 @@ export function useAISettingsState() {
         },
       });
 
-      toast.success('Chat settings saved');
+      toast.success(t`Chat settings saved`);
     } catch (error: unknown) {
       toastError('Failed to save chat settings', error, 'Unknown error');
     }
   }, [
+    t,
     budgetId,
     chatExecutionMode,
     chatVoiceEnabled,

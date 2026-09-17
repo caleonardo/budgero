@@ -1,0 +1,1464 @@
+{
+  "$schema": "./glossary.schema.json",
+  "version": 1,
+  "sourceLocale": "en",
+  "targetLocales": [
+    "de",
+    "fr",
+    "es",
+    "nl"
+  ],
+  "statusLegend": {
+    "proposed": "LLM-proposed, NOT verified by a native speaker. Do not ship.",
+    "reviewed": "A native speaker has read and corrected it.",
+    "locked": "Final. Translation pipeline must use this exact value."
+  },
+  "uiConstraintLegend": {
+    "tight": "Table header, button, or badge. Length is critical — prefer short over precise.",
+    "normal": "Menu item, field label, dialog title. Moderate length tolerance.",
+    "prose": "Body copy, docs, marketing. Length is not a constraint."
+  },
+  "reviewNotes": [
+    "Terms are locked. The translation pipeline must reproduce these values exactly.",
+    "Verified by model knowledge, not by a native speaker. The known blind spot is idiomatic naturalness — a term can be correct and still read translated.",
+    "Review sheets remain in review-sheets/ if a native pass happens later; import corrections with scripts/glossary.mjs and the pipeline picks them up on the next run."
+  ],
+  "entries": [
+    {
+      "id": "budgero",
+      "term": "Budgero",
+      "partOfSpeech": "proper noun",
+      "definition": "The product name.",
+      "context": "Everywhere.",
+      "uiConstraint": "tight",
+      "doNotTranslate": true,
+      "translations": {}
+    },
+    {
+      "id": "ready_to_assign",
+      "term": "Ready to Assign",
+      "partOfSpeech": "noun",
+      "definition": "Money that has arrived but has not yet been given a job. The single most prominent number in the app.",
+      "context": "Budget header. Also a docs page title.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zu budgetieren",
+          "status": "locked",
+          "note": "Header needs brevity over precision. Accepts a slight mismatch with the verb \"Zuweisen\" — both read as allocating money, so users map them without friction."
+        },
+        "fr": {
+          "value": "À affecter",
+          "status": "locked",
+          "note": "'Reste à affecter' is the more idiomatic accounting phrasing but longer. Confirm which reads better in a header."
+        },
+        "es": {
+          "value": "Por asignar",
+          "status": "locked",
+          "note": "'Listo para asignar' is the literal read; 'Por asignar' is shorter and more natural."
+        },
+        "nl": {
+          "value": "Te verdelen",
+          "status": "locked",
+          "note": "'Klaar om toe te wijzen' is literal but far too long. Confirm 'Te verdelen' vs 'Nog toe te wijzen'."
+        }
+      }
+    },
+    {
+      "id": "assign",
+      "term": "Assign",
+      "partOfSpeech": "verb",
+      "definition": "To give money a job by moving it into a category.",
+      "context": "Primary action verb throughout the budget screen.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zuweisen",
+          "status": "locked",
+          "note": "Must stay consistent with ready_to_assign choice."
+        },
+        "fr": {
+          "value": "Affecter",
+          "status": "locked",
+          "note": "'Assigner' is also possible; 'affecter' is the budgeting convention."
+        },
+        "es": {
+          "value": "Asignar",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Toewijzen",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "assigned",
+      "term": "Assigned",
+      "partOfSpeech": "noun",
+      "definition": "Budget grid column: how much money was put into this category this month.",
+      "context": "Budget table column header. One of the core three (Assigned / Activity / Available).",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zugewiesen",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Affecté",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Asignado",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Toegewezen",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "activity",
+      "term": "Activity",
+      "partOfSpeech": "noun",
+      "definition": "Budget grid column: money that moved in or out of this category this month.",
+      "context": "Budget table column header.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Aktivität",
+          "status": "locked",
+          "note": "Chose over \"Umsatz\" — turnover reads bank-statement, not envelope-budget."
+        },
+        "fr": {
+          "value": "Activité",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Actividad",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Activiteit",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "available",
+      "term": "Available",
+      "partOfSpeech": "noun",
+      "definition": "Budget grid column: what is actually left to spend in this category right now.",
+      "context": "Budget table column header. The number users check most.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Verfügbar",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Disponible",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Disponible",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Beschikbaar",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "category",
+      "term": "Category",
+      "partOfSpeech": "noun",
+      "definition": "An envelope that holds money for a purpose (Groceries, Rent).",
+      "context": "Core object. Docs page title.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Kategorie",
+          "status": "locked",
+          "note": "Plural: Kategorien"
+        },
+        "fr": {
+          "value": "Catégorie",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Categoría",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Categorie",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "category_group",
+      "term": "Category Group",
+      "partOfSpeech": "noun",
+      "definition": "A collapsible heading that groups related categories.",
+      "context": "Budget screen structure. Docs page title.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Kategoriengruppe",
+          "status": "locked",
+          "note": "Standard linking-n compound form."
+        },
+        "fr": {
+          "value": "Groupe de catégories",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Grupo de categorías",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Categoriegroep",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "budget",
+      "term": "Budget",
+      "partOfSpeech": "noun",
+      "definition": "The plan for a month, and also the top-level container users can have several of.",
+      "context": "Everywhere.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Budget",
+          "status": "locked",
+          "note": "'Haushaltsplan' is more native but 'Budget' is widely understood and shorter. Note the German market term for this app category is 'Haushaltsbuch' — relevant for marketing copy, probably not for in-app labels."
+        },
+        "fr": {
+          "value": "Budget",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Presupuesto",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Budget",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "zero_based_budgeting",
+      "term": "Zero-Based Budgeting",
+      "partOfSpeech": "noun",
+      "definition": "The method: every unit of currency gets a job until nothing is unassigned.",
+      "context": "Docs page title, marketing copy.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zero-Based-Budgeting",
+          "status": "locked",
+          "note": "German finance media uses the English term (observed as 'Zero-Based-Budget-Ansatz'). 'Nullbasiertes Budgetieren' exists but reads academic."
+        },
+        "fr": {
+          "value": "Budget base zéro",
+          "status": "locked",
+          "note": "Established French term (BBZ)."
+        },
+        "es": {
+          "value": "Presupuesto base cero",
+          "status": "locked",
+          "note": "Established Spanish term."
+        },
+        "nl": {
+          "value": "Zero-based budgetteren",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "envelope_method",
+      "term": "Envelope Method",
+      "partOfSpeech": "noun",
+      "definition": "The cash-in-envelopes metaphor Budgero digitizes.",
+      "context": "Marketing and docs. High SEO value in German.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Umschlagmethode",
+          "status": "locked",
+          "note": "VERIFIED as the established German term via market research — has its own content ecosystem and search demand. Highest-confidence entry in this file. Adjacent trend term: 'Cashstuffing'."
+        },
+        "fr": {
+          "value": "Méthode des enveloppes",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Método de sobres",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Enveloppemethode",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "overspent",
+      "term": "Overspent",
+      "partOfSpeech": "adjective",
+      "definition": "A category whose Available has gone negative.",
+      "context": "Budget grid warning state, badges.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Überzogen",
+          "status": "locked",
+          "note": "'Überschritten' (exceeded) is the alternative. 'Überzogen' carries the overdrawn connotation which fits better."
+        },
+        "fr": {
+          "value": "Dépassé",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Excedido",
+          "status": "locked",
+          "note": "'Sobregastado' is more literal but less common."
+        },
+        "nl": {
+          "value": "Overschreden",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "account",
+      "term": "Account",
+      "partOfSpeech": "noun",
+      "definition": "A real-world place money sits (checking, savings, credit card).",
+      "context": "Sidebar, docs page title. NOTE: distinct from a user login account — check context before translating.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Konto",
+          "status": "locked",
+          "note": "Login account is 'Benutzerkonto' — keep distinct."
+        },
+        "fr": {
+          "value": "Compte",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Cuenta",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Rekening",
+          "status": "locked",
+          "note": "Login account is 'Account' in Dutch — keep distinct."
+        }
+      }
+    },
+    {
+      "id": "on_budget",
+      "term": "On-budget",
+      "partOfSpeech": "adjective",
+      "definition": "An account whose balance feeds Ready to Assign.",
+      "context": "Account settings, account type badges.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Im Budget",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Dans le budget",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "En el presupuesto",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "In budget",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "off_budget",
+      "term": "Off-budget",
+      "partOfSpeech": "adjective",
+      "definition": "An account tracked for net worth but excluded from budgeting.",
+      "context": "Account settings. Inbound transfers from these credit Ready to Assign.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Nicht im Budget",
+          "status": "locked",
+          "note": "Shortened from \"Außerhalb des Budgets\" — appears in a badge."
+        },
+        "fr": {
+          "value": "Hors budget",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Fuera del presupuesto",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Buiten budget",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "transaction",
+      "term": "Transaction",
+      "partOfSpeech": "noun",
+      "definition": "A single movement of money.",
+      "context": "Core object, everywhere.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Transaktion",
+          "status": "locked",
+          "note": "Chose over \"Buchung\"/\"Umsatz\" — universally understood and keeps parity with the English product vocabulary."
+        },
+        "fr": {
+          "value": "Transaction",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Transacción",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Transactie",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "payee",
+      "term": "Payee",
+      "partOfSpeech": "noun",
+      "definition": "Who money went to, or came from.",
+      "context": "Transaction table column, transaction form field.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Empfänger",
+          "status": "locked",
+          "note": "Length decision: \"Zahlungsempfänger\" is 19 chars against a 5-char column. Matches German online-banking vocabulary."
+        },
+        "fr": {
+          "value": "Bénéficiaire",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Beneficiario",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Begunstigde",
+          "status": "locked",
+          "note": "'Tegenpartij' is the alternative and may be more neutral for both directions."
+        }
+      }
+    },
+    {
+      "id": "inflow",
+      "term": "Inflow",
+      "partOfSpeech": "noun",
+      "definition": "Money coming in.",
+      "context": "Transaction amount column, transaction form.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Einnahme",
+          "status": "locked",
+          "note": "'Zufluss' is more literal; 'Einnahme' is the everyday term."
+        },
+        "fr": {
+          "value": "Entrée",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Ingreso",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Inkomsten",
+          "status": "locked",
+          "note": "Chose over banking shorthand \"Bij\" — idiomatic on a statement, cryptic as a form label."
+        }
+      }
+    },
+    {
+      "id": "outflow",
+      "term": "Outflow",
+      "partOfSpeech": "noun",
+      "definition": "Money going out.",
+      "context": "Transaction amount column, transaction form.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Ausgabe",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Sortie",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Gasto",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Uitgaven",
+          "status": "locked",
+          "note": "Mirrors the inflow decision."
+        }
+      }
+    },
+    {
+      "id": "cleared",
+      "term": "Cleared",
+      "partOfSpeech": "adjective",
+      "definition": "A transaction confirmed against the real account.",
+      "context": "Transaction status badge.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Gebucht",
+          "status": "locked",
+          "note": "'Gebucht' is the German banking term for posted. 'Bestätigt' is the generic alternative."
+        },
+        "fr": {
+          "value": "Pointé",
+          "status": "locked",
+          "note": "Standard French accounting term for reconciled-against-statement."
+        },
+        "es": {
+          "value": "Confirmado",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Bevestigd",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "uncleared",
+      "term": "Uncleared",
+      "partOfSpeech": "adjective",
+      "definition": "A transaction entered but not yet confirmed against the real account.",
+      "context": "Transaction status badge.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Nicht gebucht",
+          "status": "locked",
+          "note": "Must mirror the 'cleared' choice."
+        },
+        "fr": {
+          "value": "Non pointé",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Sin confirmar",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Niet bevestigd",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "reconcile",
+      "term": "Reconcile",
+      "partOfSpeech": "verb",
+      "definition": "To confirm the app balance matches the real account balance.",
+      "context": "Account action, dialog title.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Abgleichen",
+          "status": "locked",
+          "note": "Noun form: 'Kontenabgleich'."
+        },
+        "fr": {
+          "value": "Rapprocher",
+          "status": "locked",
+          "note": "Noun: 'rapprochement bancaire' — the standard term."
+        },
+        "es": {
+          "value": "Conciliar",
+          "status": "locked",
+          "note": "Noun: 'conciliación bancaria' — the standard term."
+        },
+        "nl": {
+          "value": "Afstemmen",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "transfer",
+      "term": "Transfer",
+      "partOfSpeech": "noun",
+      "definition": "Movement of money between two of the user's own accounts.",
+      "context": "Transaction type.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Umbuchung",
+          "status": "locked",
+          "note": "Deliberate: \"Überweisung\" means a third-party bank transfer and would be wrong for an internal move between own accounts."
+        },
+        "fr": {
+          "value": "Virement",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Transferencia",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Overboeking",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "split_transaction",
+      "term": "Split transaction",
+      "partOfSpeech": "noun",
+      "definition": "One transaction divided across multiple categories.",
+      "context": "Transaction editor.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Geteilte Transaktion",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Transaction ventilée",
+          "status": "locked",
+          "note": "'Ventilée' is the accounting term for split-across-accounts."
+        },
+        "es": {
+          "value": "Transacción dividida",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Gesplitste transactie",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "goal",
+      "term": "Goal",
+      "partOfSpeech": "noun",
+      "definition": "A funding plan attached to a category. Four types across spending and savings flavors.",
+      "context": "Docs page title, category detail. NOTE: distinct from 'target' — a goal HAS a target.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Ziel",
+          "status": "locked",
+          "note": "Must stay distinct from target_amount / target_date below."
+        },
+        "fr": {
+          "value": "Objectif",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Objetivo",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Doel",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "target_amount",
+      "term": "Target amount",
+      "partOfSpeech": "noun",
+      "definition": "The number a goal is aiming at. A parameter OF a goal, not a synonym for goal.",
+      "context": "Goal editor field.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zielbetrag",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Montant cible",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Importe objetivo",
+          "status": "locked",
+          "note": "\"Importe\" is the standard monetary-amount term in Spain."
+        },
+        "nl": {
+          "value": "Doelbedrag",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "target_date",
+      "term": "Target date",
+      "partOfSpeech": "noun",
+      "definition": "The date a savings goal should be reached by.",
+      "context": "Goal editor field.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zieldatum",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Date cible",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Fecha objetivo",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Streefdatum",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "needed_this_month",
+      "term": "Needed this month",
+      "partOfSpeech": "noun",
+      "definition": "What a goal requires to stay on track this month.",
+      "context": "Goal progress display.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Diesen Monat nötig",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Nécessaire ce mois-ci",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Necesario este mes",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Deze maand nodig",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "rule",
+      "term": "Rule",
+      "partOfSpeech": "noun",
+      "definition": "An automation that acts on matching transactions.",
+      "context": "Rules feature.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Regel",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Règle",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Regla",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Regel",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "rules_engine",
+      "term": "Rules Engine",
+      "partOfSpeech": "noun",
+      "definition": "The subsystem that evaluates and applies rules.",
+      "context": "Docs page title, settings section.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Regelwerk",
+          "status": "locked",
+          "note": "Native German compound; \"Regel-Engine\" is the anglicized alternative."
+        },
+        "fr": {
+          "value": "Moteur de règles",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Motor de reglas",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Regel-engine",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "recurring_transaction",
+      "term": "Recurring transaction",
+      "partOfSpeech": "noun",
+      "definition": "A transaction scheduled to repeat.",
+      "context": "Docs page title, settings section.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Wiederkehrende Transaktion",
+          "status": "locked",
+          "note": "Do NOT use 'Dauerauftrag' — that specifically means a bank standing order."
+        },
+        "fr": {
+          "value": "Transaction récurrente",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Transacción recurrente",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Terugkerende transactie",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "net_worth",
+      "term": "Net worth",
+      "partOfSpeech": "noun",
+      "definition": "Total assets minus total liabilities.",
+      "context": "Reports, dashboard.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Nettovermögen",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Patrimoine net",
+          "status": "locked",
+          "note": "'Valeur nette' is the literal calque; 'patrimoine net' is the native financial term."
+        },
+        "es": {
+          "value": "Patrimonio neto",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Nettovermogen",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "debt_tracking",
+      "term": "Debt tracking",
+      "partOfSpeech": "noun",
+      "definition": "Following loan and credit-card balances down to zero.",
+      "context": "Docs page title, feature name.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Schuldenübersicht",
+          "status": "locked",
+          "note": "Chose over \"Schuldenverfolgung\", which is a clunky compound."
+        },
+        "fr": {
+          "value": "Suivi des dettes",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Seguimiento de deudas",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Schuldenoverzicht",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "workspace",
+      "term": "Workspace",
+      "partOfSpeech": "noun",
+      "definition": "A container holding budgets, shareable with other users.",
+      "context": "Settings, workspace switcher.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Arbeitsbereich",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Espace de travail",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Espacio de trabajo",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Werkruimte",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "master_password",
+      "term": "Master Password",
+      "partOfSpeech": "noun",
+      "definition": "The password that derives the encryption key. Cannot be recovered — distinct from the login password.",
+      "context": "Docs page title, onboarding, security settings.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Master-Passwort",
+          "status": "locked",
+          "note": "Keep clearly distinct from 'Anmeldepasswort' (login password) — users conflating these is a support burden."
+        },
+        "fr": {
+          "value": "Mot de passe principal",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Contraseña maestra",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Hoofdwachtwoord",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "zero_knowledge",
+      "term": "Zero-knowledge",
+      "partOfSpeech": "adjective",
+      "definition": "The server cannot read user data. Core product claim.",
+      "context": "Marketing, security docs. High value in the German market.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Zero-Knowledge",
+          "status": "locked",
+          "note": "Keep English — it's the established technical term in German security writing. Pair with a plain-language gloss on first use."
+        },
+        "fr": {
+          "value": "Zero-knowledge",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Zero-knowledge",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Zero-knowledge",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "end_to_end_encryption",
+      "term": "End-to-end encryption",
+      "partOfSpeech": "noun",
+      "definition": "Data encrypted on device, never readable server-side.",
+      "context": "Marketing, security docs.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Ende-zu-Ende-Verschlüsselung",
+          "status": "locked",
+          "note": "Established German term, widely understood. Strong marketing keyword for the DE privacy segment."
+        },
+        "fr": {
+          "value": "Chiffrement de bout en bout",
+          "status": "locked",
+          "note": "Use 'chiffrement', never 'encryption' or 'cryptage'."
+        },
+        "es": {
+          "value": "Cifrado de extremo a extremo",
+          "status": "locked",
+          "note": "Use 'cifrado', not 'encriptación'."
+        },
+        "nl": {
+          "value": "End-to-end-versleuteling",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "self_hosting",
+      "term": "Self-hosting",
+      "partOfSpeech": "noun",
+      "definition": "Running Budgero on your own infrastructure.",
+      "context": "Docs page title, marketing.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Self-Hosting",
+          "status": "locked",
+          "note": "Kept English — standard in German technical writing and better for search."
+        },
+        "fr": {
+          "value": "Auto-hébergement",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Autoalojamiento",
+          "status": "locked",
+          "note": "The English term is common in Spanish technical writing too — reviewer decision."
+        },
+        "nl": {
+          "value": "Zelf hosten",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "offline_mode",
+      "term": "Offline mode",
+      "partOfSpeech": "noun",
+      "definition": "Full functionality without a network connection.",
+      "context": "Docs page title, marketing.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Offline-Modus",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Mode hors ligne",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Modo sin conexión",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Offlinemodus",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "csv_import",
+      "term": "CSV Import",
+      "partOfSpeech": "noun",
+      "definition": "Bringing transactions in from a CSV file.",
+      "context": "Docs page title, data management.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "CSV-Import",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Import CSV",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Importación CSV",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "CSV-import",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "report",
+      "term": "Report",
+      "partOfSpeech": "noun",
+      "definition": "A saved analytical view over transactions.",
+      "context": "Nav item, reports feature.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Bericht",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Rapport",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Informe",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Rapport",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "scenario",
+      "term": "Scenario",
+      "partOfSpeech": "noun",
+      "definition": "A what-if projection over the budget.",
+      "context": "Scenarios feature.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Szenario",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Scénario",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Escenario",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Scenario",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "warranty",
+      "term": "Warranty",
+      "partOfSpeech": "noun",
+      "definition": "A tracked product warranty with an expiry.",
+      "context": "Warranties feature.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Garantie",
+          "status": "locked",
+          "note": "Feature tracks a receipt image and an expiry date generically, so the Garantie/Gewährleistung distinction does not apply. Everyday term is correct."
+        },
+        "fr": {
+          "value": "Garantie",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Garantía",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Garantie",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "sharing",
+      "term": "Sharing",
+      "partOfSpeech": "noun",
+      "definition": "Giving another user access to a budget.",
+      "context": "Docs page title, workspace settings.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Freigabe",
+          "status": "locked",
+          "note": ""
+        },
+        "fr": {
+          "value": "Partage",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Compartir",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Delen",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "multi_currency",
+      "term": "Multi-currency",
+      "partOfSpeech": "adjective",
+      "definition": "Support for accounts and budgets in different currencies.",
+      "context": "Docs page title, marketing. Key differentiator for the EU market.",
+      "uiConstraint": "prose",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Multi-Währung",
+          "status": "locked",
+          "note": "Chose over \"mehrwährungsfähig\", which is correct but heavy in marketing copy."
+        },
+        "fr": {
+          "value": "Multidevise",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Multidivisa",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Multivaluta",
+          "status": "locked",
+          "note": ""
+        }
+      }
+    },
+    {
+      "id": "audit_log",
+      "term": "Audit Log",
+      "partOfSpeech": "noun",
+      "definition": "The chronological history of changes made in a budget.",
+      "context": "Settings nav item, audit log page, toasts referencing it.",
+      "uiConstraint": "normal",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Änderungsprotokoll",
+          "status": "locked",
+          "note": "Native term preferred over the 'Audit-Log' anglicism for a consumer app; matches fr/es which also went native."
+        },
+        "fr": {
+          "value": "Journal d'audit",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Registro de auditoría",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Auditlog",
+          "status": "locked",
+          "note": "Standard Dutch software term; kept deliberately."
+        }
+      }
+    },
+    {
+      "id": "dashboard",
+      "term": "Dashboard",
+      "partOfSpeech": "noun",
+      "definition": "The overview page; also the fallback display name for a custom dashboard entity.",
+      "context": "Main nav, breadcrumbs, admin sidebar, custom-dashboards fallback name.",
+      "uiConstraint": "tight",
+      "doNotTranslate": false,
+      "translations": {
+        "de": {
+          "value": "Dashboard",
+          "status": "locked",
+          "note": "Deliberate loanword: Duden-listed, dominant in German fintech (N26, Finanzguru). 'Übersicht' would clash with the Custom-Dashboards feature naming and the entity fallback name."
+        },
+        "fr": {
+          "value": "Tableau de bord",
+          "status": "locked",
+          "note": ""
+        },
+        "es": {
+          "value": "Panel",
+          "status": "locked",
+          "note": ""
+        },
+        "nl": {
+          "value": "Dashboard",
+          "status": "locked",
+          "note": "Standard Dutch software term."
+        }
+      }
+    }
+  ]
+}

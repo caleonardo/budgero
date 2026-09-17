@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Card, CardContent } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
@@ -50,6 +51,8 @@ export function RecurringOccurrenceCard({
   onMarkReady,
   onSkip,
 }: RecurringOccurrenceCardProps) {
+  const { t } = useLingui();
+
   const { template } = occurrence;
   const amountDisplay = formatRecurringAmount(template, accountLocalizer);
   const budgetAmountDisplay =
@@ -69,37 +72,53 @@ export function RecurringOccurrenceCard({
           <div className="flex items-center gap-2">
             <Badge variant={template.direction === 'inflow' ? 'default' : 'secondary'}>
               {template.toAccountId != null
-                ? 'Transfer'
+                ? t`Transfer`
                 : template.direction === 'inflow'
-                  ? 'Income'
-                  : 'Bill'}
+                  ? t`Income`
+                  : t`Bill`}
             </Badge>
             <span className="text-sm text-muted-foreground">{template.name}</span>
           </div>
           <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Due:</span> {occurrence.dueDate} (
-            {dueLabel})
+            <span className="font-medium text-foreground">
+              <Trans>Due:</Trans>
+            </span>{' '}
+            {occurrence.dueDate} ({dueLabel})
           </div>
           <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Amount:</span> {amountDisplay}
+            <span className="font-medium text-foreground">
+              <Trans>Amount:</Trans>
+            </span>{' '}
+            {amountDisplay}
             {budgetAmountDisplay ? (
               <span className="ml-2 text-xs">({budgetAmountDisplay})</span>
             ) : null}
           </div>
           <div className="text-sm text-muted-foreground">
             <span className="font-medium text-foreground">
-              {template.toAccountId != null ? 'From account:' : 'Account:'}
+              <Trans>Amount:</Trans>
+            </span>{' '}
+            {amountDisplay}
+          </div>
+          <div className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {template.toAccountId != null ? t`From account:` : t`Account:`}
             </span>{' '}
             {accountName}
           </div>
           {template.toAccountId != null ? (
             <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">To account:</span>{' '}
-              {toAccountName ?? 'Unknown account'}
+              <span className="font-medium text-foreground">
+                <Trans>To account:</Trans>
+              </span>{' '}
+              {toAccountName ?? t`Unknown account`}
             </div>
           ) : (
             <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">Category:</span> {categoryName}
+              <span className="font-medium text-foreground">
+                <Trans>Category:</Trans>
+              </span>{' '}
+              {categoryName}
             </div>
           )}
         </div>
@@ -107,25 +126,35 @@ export function RecurringOccurrenceCard({
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button size="sm" disabled={isProcessing || isMarkReadyPending || isFetching}>
-                {isProcessing && isMarkReadyPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Sparkles className="mr-2 h-4 w-4" />
-                )}
-                Mark ready
+                <Trans>
+                  {isProcessing && isMarkReadyPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                  )}
+                  Mark ready
+                </Trans>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Mark “{template.name}” as ready?</AlertDialogTitle>
+                <AlertDialogTitle>
+                  <Trans>Mark “{template.name}” as ready?</Trans>
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  We will create the transaction dated {occurrence.dueDate} and run continuous rules
-                  automatically.
+                  <Trans>
+                    We will create the transaction dated {occurrence.dueDate} and run continuous
+                    rules automatically.
+                  </Trans>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onMarkReady}>Post transaction</AlertDialogAction>
+                <AlertDialogCancel>
+                  <Trans>Cancel</Trans>
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={onMarkReady}>
+                  <Trans>Post transaction</Trans>
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -136,7 +165,7 @@ export function RecurringOccurrenceCard({
             disabled={isProcessing || isSkipPending || isFetching}
             onClick={onSkip}
           >
-            Skip this time
+            <Trans>Skip this time</Trans>
           </Button>
         </div>
         {(isProcessing || isFetching) && (

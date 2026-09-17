@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import type { CustomDashboard, UnifiedReport } from '@budgero/core/browser';
 import {
@@ -45,6 +46,8 @@ export function PinChartDialog({
   description = 'Choose a report chart and target dashboard.',
   confirmLabel = 'Pin Chart',
 }: PinChartDialogProps) {
+  const { t } = useLingui();
+
   const [selectedDashboardId, setSelectedDashboardId] = useState('');
   const {
     selectableReports,
@@ -58,11 +61,11 @@ export function PinChartDialog({
     chartId: defaultChartId,
   });
   const { isRunning: isSubmitting, run: runSubmit } = useAsyncDialogAction({
-    errorMessage: 'Failed to pin chart',
+    errorMessage: t`Failed to pin chart`,
     onSuccess: () => onOpenChange(false),
   });
   const { isRunning: isCreatingDashboard, run: runCreateDashboard } = useAsyncDialogAction({
-    errorMessage: 'Failed to create dashboard',
+    errorMessage: t`Failed to create dashboard`,
   });
 
   // Pre-existing reset-on-open pattern; the setState-in-effect call is an
@@ -76,7 +79,7 @@ export function PinChartDialog({
 
   const handleSubmit = async () => {
     if (!selectedDashboardId || !selectedReportId || !selectedChartId) {
-      toast.error('Please select dashboard, report, and chart.');
+      toast.error(t`Please select dashboard, report, and chart.`);
       return;
     }
 
@@ -107,8 +110,16 @@ export function PinChartDialog({
 
         {(noDashboards || noReports) && (
           <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground space-y-2">
-            {noDashboards && <p>Create a dashboard first to pin charts.</p>}
-            {noReports && <p>No saved report with chart configuration is available yet.</p>}
+            {noDashboards && (
+              <p>
+                <Trans>Create a dashboard first to pin charts.</Trans>
+              </p>
+            )}
+            {noReports && (
+              <p>
+                <Trans>No saved report with chart configuration is available yet.</Trans>
+              </p>
+            )}
             {noDashboards && onCreateDashboard && (
               <Button
                 variant="outline"
@@ -116,7 +127,7 @@ export function PinChartDialog({
                 onClick={handleCreateDashboard}
                 disabled={isCreatingDashboard}
               >
-                {isCreatingDashboard ? 'Creating...' : 'Create "My Dashboard"'}
+                {isCreatingDashboard ? t`Creating...` : t`Create "My Dashboard"`}
               </Button>
             )}
           </div>
@@ -125,10 +136,12 @@ export function PinChartDialog({
         {!noDashboards && !noReports && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Dashboard</Label>
+              <Label>
+                <Trans>Dashboard</Trans>
+              </Label>
               <Select value={selectedDashboardId} onValueChange={setSelectedDashboardId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select dashboard" />
+                  <SelectValue placeholder={t`Select dashboard`} />
                 </SelectTrigger>
                 <SelectContent>
                   {dashboards.map((dashboard) => (
@@ -153,13 +166,13 @@ export function PinChartDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            Cancel
+            <Trans>Cancel</Trans>
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || noDashboards || noReports || isCreatingDashboard}
           >
-            {isSubmitting ? 'Saving...' : confirmLabel}
+            {isSubmitting ? t`Saving...` : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

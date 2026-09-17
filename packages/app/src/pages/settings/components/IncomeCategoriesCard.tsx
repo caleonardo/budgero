@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState, type FormEvent } from 'react';
 import { ChartNoAxesCombined, LockKeyhole, Pencil, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -24,14 +25,18 @@ export function IncomeCategoriesCard() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <ChartNoAxesCombined className="h-5 w-5" aria-hidden="true" />
-          Income categories
+          <Trans>
+            <ChartNoAxesCombined className="h-5 w-5" aria-hidden="true" />
+            Income categories
+          </Trans>
         </CardTitle>
         <CardDescription>
-          Optional: give income sources their own categories, such as Salary, Freelance, or Rental
-          income, to see them separately in analytics. All categories in the Income group count
-          toward Ready to Assign in the same way. You can keep using the default Income category for
-          everything.
+          <Trans>
+            Optional: give income sources their own categories, such as Salary, Freelance, or Rental
+            income, to see them separately in analytics. All categories in the Income group count
+            toward Ready to Assign in the same way. You can keep using the default Income category
+            for everything.
+          </Trans>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -52,6 +57,8 @@ export function IncomeCategoriesCard() {
 }
 
 function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budgetName: string }) {
+  const { t } = useLingui();
+
   const categoriesQuery = useCategories(budgetId);
   const groupsQuery = useCategoryGroups(budgetId);
   const create = useAddCategory();
@@ -74,7 +81,7 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
   );
 
   const validate = (value: string, excludeId?: number) => {
-    if (!value.trim()) return 'Enter a category name.';
+    if (!value.trim()) return t`Enter a category name.`;
     if (
       categories.some(
         (category) =>
@@ -82,7 +89,7 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
           category.Name.trim().toLowerCase() === value.trim().toLowerCase()
       )
     ) {
-      return 'An income category with this name already exists.';
+      return t`An income category with this name already exists.`;
     }
     return null;
   };
@@ -96,7 +103,7 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
     try {
       await create.mutateAsync({ budgetId, groupId: group.ID, name: name.trim(), note: '' });
       setName('');
-      toast.success('Income category added');
+      toast.success(t`Income category added`);
     } catch (error) {
       toastError('Could not add income category', error, 'Please try again.');
     }
@@ -113,7 +120,7 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
     try {
       await rename.mutateAsync({ budgetId, id: editing.id, name: editing.name.trim() });
       setEditing(null);
-      toast.success('Income category renamed');
+      toast.success(t`Income category renamed`);
     } catch (error) {
       toastError('Could not rename income category', error, 'Please try again.');
     }
@@ -122,7 +129,9 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
   if (categoriesQuery.isError || groupsQuery.isError) {
     return (
       <div role="alert" className="space-y-3 text-sm">
-        <p>Could not load income categories.</p>
+        <p>
+          <Trans>Could not load income categories.</Trans>
+        </p>
         <Button
           variant="outline"
           onClick={() => {
@@ -130,7 +139,7 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
             void groupsQuery.refetch();
           }}
         >
-          Try again
+          <Trans>Try again</Trans>
         </Button>
       </div>
     );
@@ -138,14 +147,16 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
   if (categoriesQuery.isPending || groupsQuery.isPending) {
     return (
       <p role="status" className="text-sm text-muted-foreground">
-        Loading income categories…
+        <Trans>Loading income categories…</Trans>
       </p>
     );
   }
   if (!group) {
     return (
       <p role="alert" className="text-sm text-muted-foreground">
-        This budget’s Income group is missing. Restore it before adding income categories.
+        <Trans>
+          This budget’s Income group is missing. Restore it before adding income categories.
+        </Trans>
       </p>
     );
   }
@@ -153,14 +164,18 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
   return (
     <div className="space-y-5">
       <p className="text-sm text-muted-foreground break-words">
-        Categories for <strong className="text-foreground">{budgetName}</strong>
+        <Trans>
+          Categories for <strong className="text-foreground">{budgetName}</strong>
+        </Trans>
       </p>
       <ul className="divide-y rounded-lg border">
         {categories.map((category) => (
           <li key={category.ID} className="p-3 sm:p-4">
             {editing?.id === category.ID ? (
               <form onSubmit={renameCategory} className="space-y-3">
-                <Label htmlFor="edit-income-category">Category name</Label>
+                <Label htmlFor="edit-income-category">
+                  <Trans>Category name</Trans>
+                </Label>
                 <Input
                   id="edit-income-category"
                   value={editing.name}
@@ -180,7 +195,7 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
                 )}
                 <div className="flex flex-wrap gap-2">
                   <Button type="submit" disabled={busy || !editing.name.trim()}>
-                    {rename.isPending ? 'Saving…' : 'Save name'}
+                    {rename.isPending ? t`Saving…` : t`Save name`}
                   </Button>
                   <Button
                     type="button"
@@ -188,7 +203,7 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
                     disabled={busy}
                     onClick={() => setEditing(null)}
                   >
-                    Cancel
+                    <Trans>Cancel</Trans>
                   </Button>
                 </div>
               </form>
@@ -198,8 +213,10 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
                   <p className="break-words font-medium">{category.Name}</p>
                   {category.Name === 'Income' && (
                     <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-                      <LockKeyhole className="h-3 w-3 shrink-0" aria-hidden="true" />
-                      System category · always available
+                      <Trans>
+                        <LockKeyhole className="h-3 w-3 shrink-0" aria-hidden="true" />
+                        System category · always available
+                      </Trans>
                     </p>
                   )}
                 </div>
@@ -210,7 +227,7 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
                       variant="ghost"
                       size="icon"
                       className="h-11 w-11"
-                      aria-label={`Rename ${category.Name}`}
+                      aria-label={t`Rename ${category.Name}`}
                       disabled={busy}
                       onClick={() => {
                         setEditing({ id: category.ID, name: category.Name });
@@ -238,12 +255,14 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
         ))}
       </ul>
       <form onSubmit={addCategory} className="space-y-2">
-        <Label htmlFor="new-income-category">New income category</Label>
+        <Label htmlFor="new-income-category">
+          <Trans>New income category</Trans>
+        </Label>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             id="new-income-category"
             value={name}
-            placeholder="e.g. Freelance"
+            placeholder={t`e.g. Freelance`}
             disabled={busy}
             aria-invalid={Boolean(formError)}
             aria-describedby={formError ? 'income-name-error' : undefined}
@@ -254,7 +273,7 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
           />
           <Button type="submit" className="shrink-0" disabled={busy || !name.trim()}>
             <Plus className="h-4 w-4" aria-hidden="true" />
-            {create.isPending ? 'Adding…' : 'Add category'}
+            {create.isPending ? t`Adding…` : t`Add category`}
           </Button>
         </div>
         {formError && (
@@ -278,8 +297,8 @@ function IncomeCategoryForm({ budgetId, budgetName }: { budgetId: number; budget
           onDelete={async (newCategoryId) => {
             try {
               await remove.mutateAsync({ budgetId, oldCategoryId: deleting.ID, newCategoryId });
-              toast.success('Income category deleted', {
-                description: 'Its history was moved to the selected income category.',
+              toast.success(t`Income category deleted`, {
+                description: t`Its history was moved to the selected income category.`,
               });
             } catch (error) {
               toastError('Could not delete income category', error, 'Please try again.');

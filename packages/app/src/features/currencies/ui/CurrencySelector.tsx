@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useState, useMemo } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import {
@@ -59,6 +60,8 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
   kind = 'fiat',
   'data-testid': testId,
 }) => {
+  const { t } = useLingui();
+
   const [open, setOpen] = useState(false);
   const { clerkToken, apiReachable } = useConnectivity();
 
@@ -97,8 +100,12 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     <div className="flex flex-col space-y-1">
       <div className="flex items-center gap-2">
         <Label htmlFor="currency" className="flex items-center gap-1">
-          <span>{label ?? 'Currency'}</span>
-          {!canUseCurrencyApi && <span className="text-xs text-muted-foreground">(Offline)</span>}
+          <span>{label ?? t`Currency`}</span>
+          {!canUseCurrencyApi && (
+            <span className="text-xs text-muted-foreground">
+              <Trans>(Offline)</Trans>
+            </span>
+          )}
         </Label>
         {!canUseCurrencyApi && (
           <TooltipProvider>
@@ -108,8 +115,10 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
               </TooltipTrigger>
               <TooltipContent>
                 <p className="max-w-xs">
-                  Currency conversion requires an internet connection to fetch current exchange
-                  rates. You are currently offline.
+                  <Trans>
+                    Currency conversion requires an internet connection to fetch current exchange
+                    rates. You are currently offline.
+                  </Trans>
                 </p>
               </TooltipContent>
             </Tooltip>
@@ -134,7 +143,9 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                 </span>
               </div>
             ) : (
-              <span className="text-muted-foreground">Select currency...</span>
+              <span className="text-muted-foreground">
+                <Trans>Select currency...</Trans>
+              </span>
             )}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -147,9 +158,11 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
           collisionPadding={12}
         >
           <Command className="h-full">
-            <CommandInput placeholder="Search currencies..." />
+            <CommandInput placeholder={t`Search currencies...`} />
             <CommandList className="max-h-[44dvh] overflow-y-auto overscroll-contain touch-pan-y">
-              <CommandEmpty>No currency found.</CommandEmpty>
+              <CommandEmpty>
+                <Trans>No currency found.</Trans>
+              </CommandEmpty>
               {groupedCurrencies.map(([group, groupCurrencies]) => (
                 <CommandGroup key={group} heading={group}>
                   {groupCurrencies.map((currency) => (
