@@ -1143,7 +1143,9 @@ describe('YNAB API import', () => {
         currency: 'USD',
         numberFormat: '123,456.78',
         badgeIcon: 'HelpCircle',
-        onProgress: (update) => updates.push(update),
+        onProgress: (update) => {
+          updates.push(update);
+        },
       });
 
       expect(updates).toEqual(
@@ -1278,6 +1280,38 @@ describe('YNAB API import', () => {
         },
       });
       expect(adapter.prepare('SELECT COUNT(*) AS Count FROM budgets').get()).toEqual({ Count: 1 });
+    } finally {
+      adapter.close();
+    }
+  });
+
+  it('attributes Ready to Assign discrepancies caused by transfers with accounts and descriptions', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const snapshot = snapshotFixture();
+      snapshot.plan.months[0].to_be_budgeted = 85_000;
+      const importer = new YNABImportService(adapter);
+
+      const result = await importer.importYNABFromApiSnapshotWithSummary(snapshot, {
+        spaceId: SPACE_ID,
+        budgetName: 'Transfer RTA cause test',
+        currency: 'USD',
+        numberFormat: '123,456.78',
+        badgeIcon: 'HelpCircle',
+      });
+
+      expect(result.verification?.readyToAssign.mismatches).toHaveLength(1);
+      const mismatch = result.verification!.readyToAssign.mismatches[0];
+      expect(mismatch.affectedCategories).toBeDefined();
+      const transferCause = mismatch.affectedCategories?.find((c) => c.type === 'transfer');
+      expect(transferCause).toBeDefined();
+      expect(transferCause).toMatchObject({
+        type: 'transfer',
+        reason: 'transfer',
+        sourceAccount: 'Checking',
+        destinationAccount: 'Tracking Savings',
+        transferDescription: 'Transfer from Checking to Tracking Savings',
+      });
     } finally {
       adapter.close();
     }

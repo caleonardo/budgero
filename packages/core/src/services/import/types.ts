@@ -125,6 +125,25 @@ export interface YNABImportResult {
   verification?: YNABReconciliationReport;
 }
 
+export interface YNABReadyToAssignCategoryCause {
+  type?: 'category' | 'transfer';
+  categoryGroup?: string;
+  category?: string;
+  sourceAccount?: string;
+  destinationAccount?: string;
+  transferDescription?: string;
+  transactionDate?: string;
+  transactionPayee?: string;
+  reason: 'cash_overspend' | 'assigned_diff' | 'activity_diff' | 'available_diff' | 'transfer';
+  month: string;
+  amount: number;
+  expectedAmount?: number;
+  computedAmount?: number;
+  details?: string;
+}
+
+export type YNABReadyToAssignCause = YNABReadyToAssignCategoryCause;
+
 export interface YNABReadyToAssignMismatch {
   month: string;
   expectedReadyToAssign: number;
@@ -137,7 +156,15 @@ export interface YNABReadyToAssignMismatch {
     inBudgetTransfers: number;
     revaluations: number;
     priorCashOverspend: number;
+    priorCashOverspendDetails?: {
+      categoryId: number;
+      categoryName: string;
+      categoryGroupName: string;
+      month: string;
+      amount: number;
+    }[];
   };
+  affectedCategories?: YNABReadyToAssignCategoryCause[];
 }
 
 export type YNABCategoryMonthField = 'assigned' | 'activity' | 'available';
@@ -178,6 +205,7 @@ export interface YNABReconciliationReport {
     checked: number;
     matched: number;
     mismatches: YNABCategoryMonthMismatch[];
+    allMismatches?: YNABCategoryMonthMismatch[];
     omittedMismatches: number;
   };
   readyToAssign: {
