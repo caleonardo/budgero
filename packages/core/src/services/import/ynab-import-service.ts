@@ -808,10 +808,9 @@ export class YNABImportService {
             const causesSummary =
               m.affectedCategories && m.affectedCategories.length > 0
                 ? ` | Causes: ${m.affectedCategories
-                    .map((c) =>
-                      c.type === 'transfer'
-                        ? `${c.transferDescription} (${formatAmt(c.amount)} on ${c.transactionDate || c.month})`
-                        : `${c.categoryGroup} › ${c.category} (${formatAmt(c.amount)} in ${c.month}: ${c.reason})`
+                    .map(
+                      (c) =>
+                        `${c.categoryGroup} › ${c.category} (${formatAmt(c.amount)} in ${c.month}: ${c.reason})`
                     )
                     .join(', ')}`
                 : '';
@@ -1077,9 +1076,7 @@ export class YNABImportService {
     }
 
     const months = specs.map((s) => s.month);
-    const maxMonth = months.reduce((max, m) => (m > max ? m : max), months[0]);
     const breakdownMap = this.monthlyBudgetService.getReadyToAssignBreakdownMap(budgetId, months);
-    const allTransfers = this.monthlyBudgetService.getTransfersThroughMonth(budgetId, maxMonth);
 
     let lastProgressReportTime = 0;
     for (let index = 0; index < specs.length; index++) {
@@ -1099,7 +1096,6 @@ export class YNABImportService {
             if (!causesKeySet.has(key)) {
               causesKeySet.add(key);
               affectedCategories.push({
-                type: 'category',
                 categoryGroup: o.categoryGroupName,
                 category: o.categoryName,
                 reason: 'cash_overspend',
@@ -1119,7 +1115,6 @@ export class YNABImportService {
               if (!causesKeySet.has(key)) {
                 causesKeySet.add(key);
                 affectedCategories.push({
-                  type: 'category',
                   categoryGroup: cm.categoryGroup,
                   category: cm.category,
                   reason: 'assigned_diff',
@@ -1134,52 +1129,6 @@ export class YNABImportService {
                 });
               }
             }
-          }
-        }
-
-        // 3. Transfers between accounts in or before spec.month
-        const diff = computedReadyToAssign - spec.expectedReadyToAssign;
-        const transfers = allTransfers.filter((t) => t.month <= spec.month);
-        const relevantTransfers = transfers.filter((t) => {
-          const isBoundary = t.sourceOnBudget !== t.destinationOnBudget;
-          const matchesDiff = Math.abs(t.outflowConverted - Math.abs(diff)) < 0.01;
-          const matchesDiffRounded =
-            Math.abs(Math.round(t.outflowConverted) - Math.abs(Math.round(diff))) === 0;
-          return isBoundary || matchesDiff || matchesDiffRounded;
-        });
-
-        const candidateTransfers =
-          relevantTransfers.length > 0
-            ? relevantTransfers
-            : affectedCategories.length === 0
-              ? transfers.filter((t) => t.month === spec.month)
-              : [];
-
-        for (const t of candidateTransfers) {
-          const key = `transfer:${t.transferId}:${t.sourceAccount}:${t.destinationAccount}:${t.date}`;
-          if (!causesKeySet.has(key)) {
-            causesKeySet.add(key);
-            const destination = t.destinationAccount || 'Unknown account';
-            const transferDesc = `Transfer from ${t.sourceAccount} to ${destination}`;
-            const amount =
-              t.sourceOnBudget && !t.destinationOnBudget
-                ? -t.outflowConverted
-                : t.destinationOnBudget && !t.sourceOnBudget
-                  ? t.inflowConverted
-                  : diff < 0
-                    ? -t.outflowConverted
-                    : t.outflowConverted;
-            affectedCategories.push({
-              type: 'transfer',
-              reason: 'transfer',
-              sourceAccount: t.sourceAccount,
-              destinationAccount: destination,
-              transferDescription: transferDesc,
-              transactionDate: t.date,
-              month: t.month,
-              amount,
-              details: t.memo || transferDesc,
-            });
           }
         }
 

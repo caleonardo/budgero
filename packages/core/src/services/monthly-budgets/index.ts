@@ -351,10 +351,6 @@ export class MonthlyBudgetService {
     return map;
   }
 
-  getTransfersThroughMonth(budgetId: number, throughMonth: string) {
-    return this.queries.getTransfersThroughMonth(budgetId, throughMonth);
-  }
-
   /**
    * GetAssignedLastMonthByCategoryIds - Gets total assigned for multiple categories in a month
    */
