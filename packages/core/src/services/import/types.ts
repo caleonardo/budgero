@@ -126,15 +126,9 @@ export interface YNABImportResult {
 }
 
 export interface YNABReadyToAssignCategoryCause {
-  type?: 'category' | 'transfer';
-  categoryGroup?: string;
-  category?: string;
-  sourceAccount?: string;
-  destinationAccount?: string;
-  transferDescription?: string;
-  transactionDate?: string;
-  transactionPayee?: string;
-  reason: 'cash_overspend' | 'assigned_diff' | 'activity_diff' | 'available_diff' | 'transfer';
+  categoryGroup: string;
+  category: string;
+  reason: 'cash_overspend' | 'assigned_diff';
   month: string;
   amount: number;
   expectedAmount?: number;
