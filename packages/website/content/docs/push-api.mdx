@@ -58,7 +58,7 @@ Monetary values are integer milliunits (1/1000 of a currency unit), so 42.50 is 
 
 #### Split transactions (multi-category)
 
-Add an optional `splits` array to split the transaction across several categories. Each line carries its own `inflow`/`outflow` (integer milliunits) and `categoryId` (or `transferAccountId` for a transfer line); `memo` and `payee` are optional per line. The parent's `categoryId` becomes irrelevant — omit it — and the parent's `inflow`/`outflow` **must equal the sum of the lines**, or the item is rejected on apply with "Split amounts must sum to parent total".
+Add an optional `splits` array to split the transaction across several categories. Each line carries its own `inflow`/`outflow` (integer milliunits in the account's currency) and `categoryId` (or `transferAccountId` for a transfer line); `memo` and `payee` are optional per line. The parent's `categoryId` becomes irrelevant — omit it — and the parent's `inflow`/`outflow` **must equal the sum of the lines**, or the item is rejected on apply with "Split amounts must sum to parent total".
 
 ```json
 {

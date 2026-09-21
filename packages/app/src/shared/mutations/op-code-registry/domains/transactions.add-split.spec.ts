@@ -3,6 +3,7 @@ import { executeMutationOp, getInvalidatesForOp } from '@shared/mutations/op-cod
 
 const transactionMocks = vi.hoisted(() => ({
   addTransaction: vi.fn(),
+  deleteTransaction: vi.fn(),
 }));
 const splitsMocks = vi.hoisted(() => ({
   upsertSplits: vi.fn(),
@@ -18,6 +19,7 @@ vi.mock('@shared/runtime/global', () => ({
 describe('transactions.add with optional splits (Push API v2)', () => {
   beforeEach(() => {
     transactionMocks.addTransaction.mockReset().mockResolvedValue(42);
+    transactionMocks.deleteTransaction.mockReset().mockResolvedValue(undefined);
     splitsMocks.upsertSplits.mockReset().mockResolvedValue(undefined);
   });
 
@@ -44,6 +46,7 @@ describe('transactions.add with optional splits (Push API v2)', () => {
       budgetId: 7,
       date: '2026-09-19',
       payee: 'Groceries',
+      categoryId: 999, // ignored for split parents
       splits: [
         { outflow: 7000, categoryId: 30, memo: 'food' },
         { outflow: 3000, categoryId: 31, payee: 'tax' },
@@ -52,7 +55,7 @@ describe('transactions.add with optional splits (Push API v2)', () => {
 
     const call = transactionMocks.addTransaction.mock.calls[0];
     expect(call[2]).toBe(10); // accountId
-    expect(call[3]).toBeNull(); // parent categoryId — no single category when splitting
+    expect(call[3]).toBe(0); // parent categoryId — no single category when splitting
     expect(call[4]).toBe(7); // budgetId
     expect(call[5]).toBe('2026-09-19'); // date
     expect(call[7]).toBe(''); // transferId
@@ -62,6 +65,8 @@ describe('transactions.add with optional splits (Push API v2)', () => {
       expect.objectContaining({
         CategoryID: 30,
         OutflowConverted: 7000,
+        OutflowNative: 7000,
+        InflowNative: 0,
         Memo: 'food',
         Payee: '',
         OrderIndex: 0,
@@ -69,6 +74,7 @@ describe('transactions.add with optional splits (Push API v2)', () => {
       expect.objectContaining({
         CategoryID: 31,
         OutflowConverted: 3000,
+        OutflowNative: 3000,
         Payee: 'tax',
         OrderIndex: 1,
       }),
@@ -99,8 +105,61 @@ describe('transactions.add with optional splits (Push API v2)', () => {
     ).rejects.toThrow(/must be an array/i);
   });
 
+  it.each(
+    [
+      [],
+      'nope',
+      [null],
+      [42],
+      [{ outflow: 1000 }],
+      [{ outflow: 1000, categoryId: 30, transferAccountId: 11 }],
+      [{ outflow: 1000, categoryId: '30' }],
+      [{ outflow: -1000, categoryId: 30 }],
+      [{ outflow: 1000, inflow: 1, categoryId: 30 }],
+      [{ outflow: 1000.1, categoryId: 30 }],
+      [{ outflow: 999, categoryId: 30 }],
+    ].map((splits) => [splits])
+  )('rejects invalid splits before creating the parent: %j', async (splits) => {
+    await expect(
+      executeMutationOp('transactions.add', {
+        outflow: 1000,
+        accountId: 10,
+        budgetId: 7,
+        date: '2026-09-19',
+        splits,
+      })
+    ).rejects.toThrow();
+    expect(transactionMocks.addTransaction).not.toHaveBeenCalled();
+  });
+
+  it('rejects splitting a transfer before writing either service', async () => {
+    await expect(
+      executeMutationOp('transactions.add', {
+        outflow: 1000,
+        transferId: 'pair',
+        splits: [{ outflow: 1000, categoryId: 30 }],
+      })
+    ).rejects.toThrow(/cannot be split/);
+    expect(transactionMocks.addTransaction).not.toHaveBeenCalled();
+  });
+
+  it('removes the parent if the split service rejects the lines', async () => {
+    const failure = new Error('Unknown category');
+    splitsMocks.upsertSplits.mockRejectedValueOnce(failure);
+    await expect(
+      executeMutationOp('transactions.add', {
+        outflow: 1000,
+        accountId: 10,
+        budgetId: 7,
+        date: '2026-09-19',
+        splits: [{ outflow: 1000, categoryId: 30 }],
+      })
+    ).rejects.toBe(failure);
+    expect(transactionMocks.deleteTransaction).toHaveBeenCalledExactlyOnceWith(42);
+  });
+
   it('the op invalidates split-scoped queries too', () => {
     const invalidates = getInvalidatesForOp('transactions.add');
-    expect(invalidates.some(([key]) => key === 'transactionSplits')).toBe(true);
+    expect(invalidates?.some(([key]) => key === 'transactionSplits')).toBe(true);
   });
 });
