@@ -415,7 +415,9 @@ describe('YNAB API import', () => {
     snapshot.moneyMovements![0].amount = 4_000;
 
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    normalizeYNABApiSnapshot(snapshot);
+    const normalized = normalizeYNABApiSnapshot(snapshot);
+    expect(normalized.categoryMonthSpecs[0].expectedAssigned).toBe(5_000);
+    expect(normalized.source.categoryAssignmentsVerified).toBe(0);
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringMatching(/YNAB Money Movements warning.*Money Movements disagree/i)
     );
@@ -1248,6 +1250,8 @@ describe('YNAB API import', () => {
     try {
       const snapshot = snapshotFixture();
       snapshot.plan.months[0].to_be_budgeted = 94_000;
+      // Missing movement history must not bypass post-import reconciliation.
+      snapshot.moneyMovements![0].amount = 4_000;
       const importer = new YNABImportService(adapter);
 
       const result = await importer.importYNABFromApiSnapshotWithSummary(snapshot, {
