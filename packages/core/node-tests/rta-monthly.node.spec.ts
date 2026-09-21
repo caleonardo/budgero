@@ -729,8 +729,19 @@ describe('Ready to Assign — monthly mode, credit-card behaviour', () => {
       'food'
     );
 
-    const months = ['2024-01', '2024-02', '2024-03'];
+    const months = ['2024-03', '2023-12', '2024-01', '2024-02', '2024-03'];
     const batchMap = services.monthlyBudgets.getReadyToAssignBreakdownMap(budgetId, months);
+    // Independent expectations catch regressions even if the single-month
+    // entry point delegates to the same batch implementation.
+    expect(batchMap.get('2023-12')?.readyToAssign).toBe(0);
+    expect(batchMap.get('2024-01')?.readyToAssign).toBe(1000);
+    expect(batchMap.get('2024-02')?.readyToAssign).toBe(1400);
+    expect(batchMap.get('2024-03')?.readyToAssign).toBe(1400);
+    expect(batchMap.get('2024-01')?.priorCashOverspendDetails).toEqual([]);
+    expect(batchMap.get('2024-03')?.priorCashOverspendDetails).toEqual([
+      expect.objectContaining({ categoryId: food, month: '2024-01', amount: 100 }),
+    ]);
+    expect(services.monthlyBudgets.getReadyToAssignBreakdownMap(budgetId, [])).toEqual(new Map());
 
     for (const m of months) {
       const single = services.monthlyBudgets.getReadyToAssignBreakdown(budgetId, m);

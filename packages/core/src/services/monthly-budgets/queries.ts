@@ -511,8 +511,7 @@ export class MonthlyBudgetQueries {
    * retroactively reduced by assignments made in later months; those affect
    * Ready to Assign when their own month is reached.
    * Credit-card overspending is left to the CC Payment system and never
-  /**
-   * ReadyToAssignMonthly - YNAB-style Ready to Assign for a single month.
+   * deducted here.
    */
   readyToAssignMonthly(budgetId: number, month: string): ReadyToAssignBreakdown {
     const result = this.readyToAssignMonthlyBatch(budgetId, [month]).get(month);

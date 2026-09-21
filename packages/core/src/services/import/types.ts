@@ -158,6 +158,8 @@ export interface YNABReadyToAssignMismatch {
       amount: number;
     }[];
   };
+  /** Potential contributors from Budgero's calculation, not a proven decomposition
+   * of the difference: YNAB may already include the same cash overspending. */
   affectedCategories?: YNABReadyToAssignCategoryCause[];
 }
 
