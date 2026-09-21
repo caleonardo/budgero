@@ -187,6 +187,11 @@ export const transactionOps = {
   },
   'transactions.add': {
     execute: async (args) => {
+      const identity = (args.importIdentities as ImportIdentity[] | undefined)?.[0];
+      if (identity) {
+        const existing = S().importHistory!.duplicates.findOperation(identity.operationId);
+        if (existing !== undefined) return existing;
+      }
       const splits = normalizePushSplits(args.splits);
       if (splits) {
         if (args.transferId) throw new Error('Transfer transactions cannot be split.');
@@ -436,37 +441,22 @@ export const transactionOps = {
   // service so every field keeps its existing validation and side effects.
   'transactions.updateByRef': {
     execute: async (args) => {
-      const ref = String(args.messageId ?? '');
-      if (!ref) throw new Error('"messageId" is required.');
+      const ref = args.messageId;
+      if (typeof ref !== 'string' || !ref.trim()) throw new Error('"messageId" is required.');
       const id = S().importHistory!.duplicates.findOperation(`push:${ref}`);
       if (id === undefined) {
         throw new Error(
           `No transaction found for push message_id "${ref}". Only transactions created via the Push API (with a message_id) can be updated by reference.`
         );
       }
-      const fields = (args.fields ?? {}) as Record<string, unknown>;
-      const allowed = ['inflow', 'outflow', 'date', 'memo', 'payee', 'categoryId', 'accountId'];
-      const entries = Object.entries(fields).filter(([k]) => allowed.includes(k));
-      if (entries.length === 0) {
-        throw new Error(`"fields" must set at least one of: ${allowed.join(', ')}.`);
+      if (!args.fields || typeof args.fields !== 'object' || Array.isArray(args.fields)) {
+        throw new Error('"fields" must be an object.');
       }
-      const columnFor: Record<string, string> = {
-        inflow: 'InflowConverted',
-        outflow: 'OutflowConverted',
-        date: 'Date',
-        memo: 'Memo',
-        payee: 'Payee',
-        categoryId: 'CategoryID',
-        accountId: 'AccountID',
-      };
-      for (const [key, value] of entries) {
-        await S().transactions!.updateTransactionColumn(
-          id,
-          columnFor[key],
-          value as string | number | null
-        );
-      }
-      return { transactionId: id, updated: entries.map(([k]) => k) };
+      const updated = await S().transactions!.updatePushedTransaction(
+        id,
+        args.fields as Record<string, unknown>
+      );
+      return { transactionId: id, updated };
     },
     invalidates: [...TX_WRITE_INVALIDATION_KEYS, ['payees'], ['payees', '*']],
   },
@@ -477,19 +467,12 @@ export const transactionOps = {
   // mutation history still records the operation).
   'transactions.deleteByRef': {
     execute: async (args) => {
-      const ref = String(args.messageId ?? '');
-      if (!ref) throw new Error('"messageId" is required.');
+      const ref = args.messageId;
+      if (typeof ref !== 'string' || !ref.trim()) throw new Error('"messageId" is required.');
       const id = S().importHistory!.duplicates.findOperation(`push:${ref}`);
-      if (id === undefined) {
-        throw new Error(
-          `No transaction found for push message_id "${ref}". Only transactions created via the Push API (with a message_id) can be deleted by reference.`
-        );
-      }
-      try {
-        await S().transactions!.getTransactionByID(id);
-      } catch {
-        return { transactionId: id, deleted: false }; // already gone — idempotent
-      }
+      // Provenance is cascade-deleted with the transaction. Missing references
+      // are successful no-ops so retries of a delete remain idempotent.
+      if (id === undefined) return { deleted: false };
       await S().transactions!.deleteTransaction(id);
       return { transactionId: id, deleted: true };
     },

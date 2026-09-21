@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { executeMutationOp } from '@shared/mutations/op-code-registry';
 
 const transactionMocks = vi.hoisted(() => ({
-  updateTransactionColumn: vi.fn(),
+  updatePushedTransaction: vi.fn(),
   deleteTransaction: vi.fn(),
   getTransactionByID: vi.fn(),
 }));
@@ -22,7 +22,7 @@ vi.mock('@shared/runtime/global', () => ({
 
 describe('transactions.updateByRef / deleteByRef (Push API v2)', () => {
   beforeEach(() => {
-    transactionMocks.updateTransactionColumn.mockReset().mockResolvedValue(undefined);
+    transactionMocks.updatePushedTransaction.mockReset().mockResolvedValue(['outflow', 'memo']);
     transactionMocks.deleteTransaction.mockReset().mockResolvedValue(undefined);
     transactionMocks.getTransactionByID.mockReset().mockReturnValue({ ID: 42 });
     importMocks.findOperation.mockReset();
@@ -32,12 +32,13 @@ describe('transactions.updateByRef / deleteByRef (Push API v2)', () => {
     importMocks.findOperation.mockReturnValue(42);
     const result = await executeMutationOp('transactions.updateByRef', {
       messageId: 'abc-123',
-      fields: { outflow: 9990, memo: 'fixed', ignored: 'nope' },
+      fields: { outflow: 9990, memo: 'fixed' },
     });
     expect(importMocks.findOperation).toHaveBeenCalledWith('push:abc-123');
-    expect(transactionMocks.updateTransactionColumn).toHaveBeenCalledWith(42, 'OutflowConverted', 9990);
-    expect(transactionMocks.updateTransactionColumn).toHaveBeenCalledWith(42, 'Memo', 'fixed');
-    expect(transactionMocks.updateTransactionColumn).toHaveBeenCalledTimes(2);
+    expect(transactionMocks.updatePushedTransaction).toHaveBeenCalledExactlyOnceWith(42, {
+      outflow: 9990,
+      memo: 'fixed',
+    });
     expect(result).toEqual({ transactionId: 42, updated: ['outflow', 'memo'] });
   });
 
@@ -48,11 +49,15 @@ describe('transactions.updateByRef / deleteByRef (Push API v2)', () => {
     ).rejects.toThrow(/No transaction found for push message_id "ghost"/);
   });
 
-  it('updateByRef with no allowed field fails instead of no-opping', async () => {
+  it('rejects malformed fields before invoking the service', async () => {
     importMocks.findOperation.mockReturnValue(42);
     await expect(
-      executeMutationOp('transactions.updateByRef', { messageId: 'abc', fields: { bogus: 1 } })
-    ).rejects.toThrow(/at least one of/);
+      executeMutationOp('transactions.updateByRef', {
+        messageId: 'abc',
+        fields: [],
+      })
+    ).rejects.toThrow(/must be an object/);
+    expect(transactionMocks.updatePushedTransaction).not.toHaveBeenCalled();
   });
 
   it('deleteByRef resolves the ref and truly deletes', async () => {
@@ -62,20 +67,19 @@ describe('transactions.updateByRef / deleteByRef (Push API v2)', () => {
     expect(result).toEqual({ transactionId: 42, deleted: true });
   });
 
-  it('deleteByRef is idempotent when the transaction is already gone', async () => {
-    importMocks.findOperation.mockReturnValue(42);
-    transactionMocks.getTransactionByID.mockImplementation(() => {
-      throw new Error('not found');
-    });
+  it('deleteByRef is idempotent after provenance has been cascade-deleted', async () => {
+    importMocks.findOperation.mockReturnValue(undefined);
     const result = await executeMutationOp('transactions.deleteByRef', { messageId: 'abc-123' });
     expect(transactionMocks.deleteTransaction).not.toHaveBeenCalled();
-    expect(result).toEqual({ transactionId: 42, deleted: false });
+    expect(result).toEqual({ deleted: false });
   });
 
   it('both ops require messageId', async () => {
-    await expect(executeMutationOp('transactions.updateByRef', { fields: { memo: 'x' } }))
-      .rejects.toThrow(/"messageId" is required/);
-    await expect(executeMutationOp('transactions.deleteByRef', {}))
-      .rejects.toThrow(/"messageId" is required/);
+    await expect(
+      executeMutationOp('transactions.updateByRef', { fields: { memo: 'x' } })
+    ).rejects.toThrow(/"messageId" is required/);
+    await expect(executeMutationOp('transactions.deleteByRef', {})).rejects.toThrow(
+      /"messageId" is required/
+    );
   });
 });

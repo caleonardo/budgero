@@ -447,7 +447,11 @@ class BudgeroClient:
                     f"Unknown field '{key}'. Accepted: {', '.join(key_map)}"
                 )
             wire_key, is_money = key_map[key]
+            if key == "date" and isinstance(value, date):
+                value = value.isoformat()
             wire_fields[wire_key] = to_milliunits(value) if is_money else value
+            if is_money and wire_fields[wire_key] < 0:
+                raise ValidationError(f"{key} must be non-negative")
         if not wire_fields:
             raise ValidationError("Pass at least one field to update")
 

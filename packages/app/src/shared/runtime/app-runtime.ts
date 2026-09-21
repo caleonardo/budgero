@@ -39,6 +39,7 @@ import { createRuntimeDeps } from '@shared/runtime/runtime-bridge';
 import { getInvalidatesForOp } from '@shared/mutations/op-code-registry';
 import { getErrorMessage } from '@shared/lib/errors';
 import { notifyUpdateRequired } from '@shared/lib/update-required';
+import { withPushIdentity } from './push-identity';
 
 export class AppRuntime {
   private coordinator: RuntimeCoordinator;
@@ -486,26 +487,9 @@ export class AppRuntime {
             continue;
           }
 
-          // Push provenance (updateByRef/deleteByRef): a queue add that carried
-          // a client message_id records `push:<message_id>` in import_provenance,
-          // giving external integrations a stable reference to the transaction
-          // they created — the only handle possible under E2E (they can never
-          // read server-side ids). Piggybacks the existing import-identity
-          // machinery, which also makes the add idempotent per message_id.
-          if (op === 'transactions.add' && item.message_id && args && !args.importIdentities) {
-            args.importIdentities = [
-              {
-                operationId: `push:${item.message_id}`,
-                fileRowKey: `push:${item.message_id}`,
-                sourceKey: 'push-api',
-                date: String(args.date ?? ''),
-                inflow: Number(args.inflow ?? 0),
-                outflow: Number(args.outflow ?? 0),
-                payee: String(args.payee ?? ''),
-                memo: String(args.memo ?? ''),
-                currency: '',
-              },
-            ];
+          if (op === 'transactions.add' && item.message_id && args) {
+            args = withPushIdentity(args, item.message_id);
+            parsedArgs = args;
           }
 
           const invalidates = getInvalidatesForOp(op);
@@ -831,6 +815,13 @@ export class AppRuntime {
       }
     };
 
+    if (
+      (op === 'transactions.updateByRef' || op === 'transactions.deleteByRef') &&
+      typeof payload.messageId === 'string'
+    ) {
+      const id = services.importHistory.duplicates.findOperation(`push:${payload.messageId}`);
+      return byTransactionId(id ?? null);
+    }
     if (op.startsWith('transactions.')) {
       return (
         byTransactionId(transactionId) ??
