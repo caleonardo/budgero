@@ -32,6 +32,7 @@ import {
   useTransactions,
   useUpdateTransactionColumn,
 } from '@entities/transaction/api/useTransactions';
+import { CLEARED_SHORTCUT_KEY } from '@features/transactions/api/useClearedShortcut';
 import { PayeeCombobox } from '@features/payees/ui/PayeeCombobox';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { useActiveAccounts } from '@entities/account/api/useActiveAccounts';
@@ -282,6 +283,7 @@ export function TransactionsBatchToolbar({
               size="sm"
               className="h-8 px-2"
               aria-label={t`Cleared status`}
+              title={t`Cleared status (press ${CLEARED_SHORTCUT_KEY})`}
               disabled={setClearedMutation.isPending}
             >
               <CircleCheck className="h-3 w-3" />

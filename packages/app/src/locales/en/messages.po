@@ -635,7 +635,7 @@ msgid "{0} uncategorized"
 msgstr "{0} uncategorized"
 
 #. placeholder {0}: template.name
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 msgid "{0} was added to your register."
 msgstr "{0} was added to your register."
 
@@ -698,9 +698,7 @@ msgstr "{0}Generate API Token"
 msgid "{0}Import anyway"
 msgstr "{0}Import anyway"
 
-#. placeholder {0}: busy && isMarkReadyPending ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Check className="mr-2 h-4 w-4" /> )
 #. placeholder {0}: isProcessing && isMarkReadyPending ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Sparkles className="mr-2 h-4 w-4" /> )
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "{0}Mark ready"
 msgstr "{0}Mark ready"
@@ -770,10 +768,12 @@ msgstr "{changedCount} categories adjusted"
 msgid "{count, plural, one {# transaction deleted} other {# transactions deleted}}"
 msgstr "{count, plural, one {# transaction deleted} other {# transactions deleted}}"
 
+#: src/features/transactions/api/useClearedShortcut.ts
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "{count, plural, one {# transaction marked cleared} other {# transactions marked cleared}}"
 msgstr "{count, plural, one {# transaction marked cleared} other {# transactions marked cleared}}"
 
+#: src/features/transactions/api/useClearedShortcut.ts
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "{count, plural, one {# transaction marked uncleared} other {# transactions marked uncleared}}"
 msgstr "{count, plural, one {# transaction marked uncleared} other {# transactions marked uncleared}}"
@@ -1050,13 +1050,13 @@ msgstr "+ Line"
 
 #. placeholder {0}: upcomingRecurringOccurrences.length - MAX_VISIBLE_ITEMS
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "+{0} more in the next month"
-msgstr "+{0} more in the next month"
+#~ msgid "+{0} more in the next month"
+#~ msgstr "+{0} more in the next month"
 
 #. placeholder {0}: upcomingScheduledTransactions.length - MAX_VISIBLE_ITEMS
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "+{0} more scheduled"
-msgstr "+{0} more scheduled"
+#~ msgid "+{0} more scheduled"
+#~ msgstr "+{0} more scheduled"
 
 #: src/features/transactions/ui/form/DatePickerQuick.tsx
 msgid "+1 day"
@@ -1434,8 +1434,8 @@ msgstr "<0/>Dry Run"
 
 #. placeholder {0}: occurrence.dueDate
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "<0/>Due {0}({dueLabel})"
-msgstr "<0/>Due {0}({dueLabel})"
+#~ msgid "<0/>Due {0}({dueLabel})"
+#~ msgstr "<0/>Due {0}({dueLabel})"
 
 #: src/pages/settings/components/DuplicateHintSettingsCard.tsx
 msgid "<0/>Duplicate transactions"
@@ -1831,8 +1831,8 @@ msgstr "<0/>Scan Receipt"
 
 #. placeholder {0}: format(parsedDate, 'yyyy-MM-dd')
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "<0/>Scheduled {0} ({dueLabel})"
-msgstr "<0/>Scheduled {0} ({dueLabel})"
+#~ msgid "<0/>Scheduled {0} ({dueLabel})"
+#~ msgstr "<0/>Scheduled {0} ({dueLabel})"
 
 #: src/widgets/navigation/MobileBottomNav.tsx
 msgid "<0/>Search all {totalAccountsCount} accounts"
@@ -2668,7 +2668,7 @@ msgstr "Action"
 msgid "Action completed."
 msgstr "Action completed."
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/AuditLogPage.tsx
 #: src/pages/settings/ImportsPage.tsx
 msgid "Action failed"
@@ -3054,8 +3054,8 @@ msgid "All payees"
 msgstr "All payees"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "All set - nothing scheduled for this account right now."
-msgstr "All set - nothing scheduled for this account right now."
+#~ msgid "All set - nothing scheduled for this account right now."
+#~ msgstr "All set - nothing scheduled for this account right now."
 
 #: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
 msgid "all time"
@@ -3649,8 +3649,8 @@ msgid "Automations"
 msgstr "Automations"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
-msgstr "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
+#~ msgid "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
+#~ msgstr "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
 
 #: src/features/budget-planning/ui/category-row/CategoryAmountsSection.tsx
 msgid "Avail."
@@ -4831,6 +4831,7 @@ msgstr "Clear selection"
 #: src/features/transactions/ui/ClearedToggle.tsx
 #: src/pages/accounts/AccountPage.tsx
 #: src/pages/accounts/components/AccountSummaryCards.tsx
+#: src/shared/lib/search-query-parser.ts
 msgid "Cleared"
 msgstr "Cleared"
 
@@ -4845,6 +4846,10 @@ msgstr "Cleared Balance"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Cleared status"
 msgstr "Cleared status"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Cleared status (press {CLEARED_SHORTCUT_KEY})"
+msgstr "Cleared status (press {CLEARED_SHORTCUT_KEY})"
 
 #. placeholder {0}: actionDialog.user.email
 #: src/pages/admin/admin-users/useAdminUsersState.ts
@@ -5382,6 +5387,7 @@ msgstr "Could not save the first day of the week"
 msgid "Could not save the query."
 msgstr "Could not save the query."
 
+#: src/features/transactions/api/useClearedShortcut.ts
 #: src/features/transactions/ui/ClearedToggle.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Could not update cleared status"
@@ -7824,8 +7830,8 @@ msgid "From and To currencies must be different."
 msgstr "From and To currencies must be different."
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "From automations"
-msgstr "From automations"
+#~ msgid "From automations"
+#~ msgstr "From automations"
 
 #. placeholder {0}: sections.join('\n\n---\n\n')
 #: src/features/ai/lib/tools/query-docs.ts
@@ -9556,6 +9562,10 @@ msgstr "Mark complete after the first retroactive run."
 msgid "Mark items as ready when they land to create the matching transaction automatically."
 msgstr "Mark items as ready when they land to create the matching transaction automatically."
 
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Mark ready"
+msgstr "Mark ready"
+
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Mark uncleared"
 msgstr "Mark uncleared"
@@ -11025,7 +11035,7 @@ msgstr "Number of transactions to seed"
 msgid "Obsidian"
 msgstr "Obsidian"
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Occurrence skipped"
 msgstr "Occurrence skipped"
@@ -11457,7 +11467,8 @@ msgstr "Over-assigned by {0}"
 msgid "Over-assigned by {0} — details"
 msgstr "Over-assigned by {0} — details"
 
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+#: src/features/transactions/ui/desktop-table/TransactionRow.tsx
+#: src/features/transactions/ui/mobile-transaction-card/MobileTransactionCard.tsx
 msgid "Overdue"
 msgstr "Overdue"
 
@@ -12643,6 +12654,10 @@ msgstr "Recommended Models"
 msgid "Reconcile Account"
 msgstr "Reconcile Account"
 
+#: src/shared/lib/search-query-parser.ts
+msgid "Reconciled"
+msgstr "Reconciled"
+
 #: src/features/transactions/ui/StatusIndicatorPopover.tsx
 msgid "Reconciled transaction"
 msgstr "Reconciled transaction"
@@ -12679,15 +12694,16 @@ msgid "Recurring"
 msgstr "Recurring"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgctxt "transaction-status"
-msgid "Recurring"
-msgstr "Recurring"
+#~ msgctxt "transaction-status"
+#~ msgid "Recurring"
+#~ msgstr "Recurring"
 
 #: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
 msgid "Recurring schedule"
 msgstr "Recurring schedule"
 
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/accounts/hooks/useRecurringEditorFromTransaction.ts
 msgid "Recurring transaction"
 msgstr "Recurring transaction"
@@ -13691,12 +13707,12 @@ msgid "Scenario Planner"
 msgstr "Scenario Planner"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "Scheduled"
-msgstr "Scheduled"
+#~ msgid "Scheduled"
+#~ msgstr "Scheduled"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "Scheduled entries"
-msgstr "Scheduled entries"
+#~ msgid "Scheduled entries"
+#~ msgstr "Scheduled entries"
 
 #: src/widgets/dashboard/UpcomingTransactionsCard.tsx
 msgid "Scheduled transaction"
@@ -14598,7 +14614,7 @@ msgstr "Skip for now"
 msgid "Skip this row from import"
 msgstr "Skip this row from import"
 
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Skip this time"
 msgstr "Skip this time"
@@ -14635,7 +14651,7 @@ msgstr "Something else"
 msgid "Something went wrong, please try again."
 msgstr "Something went wrong, please try again."
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/accounts/hooks/useRecurringEditorFromTransaction.ts
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Something went wrong."
@@ -16054,8 +16070,8 @@ msgstr "Transaction"
 
 #. placeholder {0}: transaction.ID
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "Transaction {0}"
-msgstr "Transaction {0}"
+#~ msgid "Transaction {0}"
+#~ msgstr "Transaction {0}"
 
 #. placeholder {0}: transaction.ID
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
@@ -16080,7 +16096,7 @@ msgstr "Transaction from {0}"
 msgid "Transaction history preserved"
 msgstr "Transaction history preserved"
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Transaction posted"
 msgstr "Transaction posted"
@@ -16425,7 +16441,6 @@ msgstr "Unarchive"
 msgid "Unarchiving..."
 msgstr "Unarchiving..."
 
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Unassigned category"
 msgstr "Unassigned category"
@@ -16465,6 +16480,7 @@ msgid "Uncategorized ({uncategorizedCount})"
 msgstr "Uncategorized ({uncategorizedCount})"
 
 #: src/features/transactions/ui/ClearedToggle.tsx
+#: src/shared/lib/search-query-parser.ts
 msgid "Uncleared"
 msgstr "Uncleared"
 
@@ -16605,7 +16621,6 @@ msgstr "Upcoming bill: {0}"
 msgid "Upcoming occurrences"
 msgstr "Upcoming occurrences"
 
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Upcoming transactions"
 msgstr "Upcoming transactions"
@@ -17112,7 +17127,7 @@ msgstr "We will follow your workspace list order."
 msgid "We will open this workspace first next time."
 msgstr "We will open this workspace first next time."
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "We will remind you again next time."
 msgstr "We will remind you again next time."

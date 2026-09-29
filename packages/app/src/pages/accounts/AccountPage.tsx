@@ -11,30 +11,25 @@ import {
   useAccountTransactionPages,
   useAccountTransactionsForSearch,
   useAccountTransactionSummary,
-  useFutureAccountTransactions,
 } from '@entities/transaction/api/queries';
 import {
-  useMarkRecurringOccurrenceReady,
   useProjectedTransactions,
   useRecurringOccurrences,
-  useSkipRecurringOccurrence,
 } from '@entities/recurring/api/useRecurringTransactions';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useUiStore } from '@shared/store/useUiStore';
 import { Badge } from '@shared/ui/badge';
-import { addDays, endOfDay, isAfter } from 'date-fns';
 import { Wallet, ArrowUpRight, ArrowDownRight, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { TooltipProvider } from '@shared/ui/tooltip';
 import { PayoffSimulator } from '@features/debt/ui/PayoffSimulator';
 import { useLoading } from '@shared/contexts/LoadingContext';
 import { RecurringTransactionEditor } from '@features/recurring/ui/RecurringTransactionEditor';
 import { getAccountTypeDefinition } from '@entities/account/model/accountTypes';
+import { addMonths } from 'date-fns';
 import { formatDateISO } from '@shared/lib/date-utils';
 import { formatSafeMilli } from '@shared/lib/currency/milli';
 import { useFormatMaskedAmount } from '@shared/lib/privacy/useMaskedLocalizer';
-import { getErrorMessage } from '@shared/lib/errors';
 import { CenteredLoader } from '@shared/ui/CenteredLoader';
-import { toast } from 'sonner';
 import { isSafeStorageAmount } from '@budgero/core/browser';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { hasUnsafeTransactionMoney } from '@entities/transaction/lib/money-integrity';
@@ -42,13 +37,12 @@ import { hasUnsafeTransactionMoney } from '@entities/transaction/lib/money-integ
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { AccountGlyph } from '@entities/account/ui/AccountGlyph';
 import { useAccountDateRange } from './hooks/useAccountDateRange';
-import { useAccountMetrics, normalizeToDate } from './hooks/useAccountMetrics';
+import { useAccountMetrics } from './hooks/useAccountMetrics';
 import { useJumpToTransaction } from './hooks/useJumpToTransaction';
 import { useRecurringEditorFromTransaction } from './hooks/useRecurringEditorFromTransaction';
 import { useTransactionStatsCallbacks } from './hooks/useTransactionStatsCallbacks';
 import { mergeProjectedTransactions } from './hooks/projected-register';
 import {
-  buildCategoriesMap,
   computeLiabilityInfo,
   convertLiabilityInfoToBudgetCurrency,
   calculateTransactionStats,
@@ -60,7 +54,6 @@ import { ValueChangeStat } from './components/ValueChangeStat';
 import { AccountSummaryCards } from './components/AccountSummaryCards';
 import { AccountDateRangeControls } from './components/AccountDateRangeControls';
 import { AccountTransactionsSection } from './components/AccountTransactionsSection';
-import { RecurringTransactionsPanel } from './components/RecurringTransactionsPanel';
 
 export default function AccountPage() {
   const { t } = useLingui();
@@ -124,8 +117,6 @@ export default function AccountPage() {
   );
   const { data: transactionSummary, isLoading: isTransactionSummaryLoading } =
     useAccountTransactionSummary(numericId, registerRange.from, registerRange.to);
-  const tomorrow = useMemo(() => formatDateISO(addDays(new Date(), 1)), []);
-  const { data: futureTransactions = [] } = useFutureAccountTransactions(numericId, tomorrow);
   const pagedTransactions = useMemo(
     () => transactionPages.data?.pages.flatMap((page) => page.rows) ?? [],
     [transactionPages.data]
@@ -164,38 +155,53 @@ export default function AccountPage() {
     isForeignCurrency ? (selectedAccount?.ID ?? 0) : 0
   );
 
-  const {
-    data: recurringOccurrences = [],
-    isLoading: recurringLoading,
-    isFetching: recurringFetching,
-  } = useRecurringOccurrences(selectedAccount?.BudgetID || selectedBudget?.ID || 0, {
-    status: ['scheduled', 'ready'],
-    accountId: numericId || undefined,
-  });
-  const markRecurringReady = useMarkRecurringOccurrenceReady();
-  const skipRecurring = useSkipRecurringOccurrence();
+  // Posted occurrences link a real transaction back to its recurring series.
+  const { data: postedOccurrences = [] } = useRecurringOccurrences(
+    selectedAccount?.BudgetID || selectedBudget?.ID || 0,
+    { status: ['ready'], accountId: numericId || undefined }
+  );
 
-  // Scheduled occurrences projected into the register as non-editable rows.
-  // The date filter mirrors the register range, so future occurrences only
-  // appear when the user extends the range past today, while overdue ones
-  // surface inside the default range.
-  const projectedOptions = useMemo(
-    () => ({
+  // Scheduled occurrences projected into the register, with inline mark
+  // ready / skip actions. They follow the register range; when the range
+  // reaches today it also looks a month ahead, so upcoming occurrences show
+  // without widening the range (overdue ones fall inside it anyway).
+  const projectedOptions = useMemo(() => {
+    const rangeTo = dateRange?.to ? formatDateISO(dateRange.to) : undefined;
+    const today = formatDateISO(new Date());
+    const monthAhead = formatDateISO(addMonths(new Date(), 1));
+    return {
       accountId: numericId || undefined,
       fromDate: dateRange?.from ? formatDateISO(dateRange.from) : undefined,
-      toDate: dateRange?.to ? formatDateISO(dateRange.to) : undefined,
-    }),
-    [numericId, dateRange]
-  );
+      toDate: rangeTo && rangeTo >= today && rangeTo < monthAhead ? monthAhead : rangeTo,
+    };
+  }, [numericId, dateRange]);
   const { data: projectedTransactions = [] } = useProjectedTransactions(
     selectedAccount?.BudgetID || selectedBudget?.ID || 0,
     projectedOptions
   );
 
-  const registerRows = useMemo(
-    () => mergeProjectedTransactions(transactionsData, allTransactionsData, projectedTransactions),
-    [transactionsData, allTransactionsData, projectedTransactions]
-  );
+  const recurringIdByTransactionId = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const occurrence of postedOccurrences) {
+      if (occurrence.transactionId != null) {
+        map.set(occurrence.transactionId, occurrence.recurringTransactionId);
+      }
+    }
+    return map;
+  }, [postedOccurrences]);
+
+  const registerRows = useMemo(() => {
+    const merged = mergeProjectedTransactions(
+      transactionsData,
+      allTransactionsData,
+      projectedTransactions
+    );
+    if (!recurringIdByTransactionId.size) return merged;
+    return merged.map((row) => {
+      const recurringId = row.IsProjected ? undefined : recurringIdByTransactionId.get(row.ID);
+      return recurringId === undefined ? row : { ...row, RecurringTransactionID: recurringId };
+    });
+  }, [transactionsData, allTransactionsData, projectedTransactions, recurringIdByTransactionId]);
   const unsafeTransactionCount = useMemo(
     () =>
       (transactionSummary?.UnsafeTransactionCount ?? 0) +
@@ -209,7 +215,6 @@ export default function AccountPage() {
     )
   );
   const hasStoredMoneyIntegrityIssue = unsafeTransactionCount > 0 || hasUnsafeAccountBalance;
-  const [processingOccurrenceId, setProcessingOccurrenceId] = useState<number | null>(null);
   const recurringEditor = useRecurringEditorFromTransaction({
     budgetId: selectedAccount?.BudgetID || selectedBudget?.ID || 0,
     accountId: numericId,
@@ -254,98 +259,6 @@ export default function AccountPage() {
     balanceConvertedToday,
     hasStoredMoneyIntegrityIssue,
   ]);
-
-  const categoriesById = useMemo(() => buildCategoriesMap(categories), [categories]);
-
-  const upcomingRecurringOccurrences = useMemo(() => {
-    const threshold = new Date();
-    threshold.setMonth(threshold.getMonth() + 1);
-    const thresholdKey = formatDateISO(threshold);
-
-    const scheduled = recurringOccurrences
-      .filter(
-        (occurrence) =>
-          occurrence.status === 'scheduled' &&
-          (occurrence.template.accountId === numericId ||
-            occurrence.template.toAccountId === numericId)
-      )
-      .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
-
-    // The next un-ready occurrence per series, so a rule whose imminent
-    // occurrences are all marked ready still surfaces its next due date even
-    // when that falls beyond the one-month reminder window.
-    const nextPerTemplate = new Map<number, number>();
-    for (const occurrence of scheduled) {
-      if (!nextPerTemplate.has(occurrence.recurringTransactionId)) {
-        nextPerTemplate.set(occurrence.recurringTransactionId, occurrence.id);
-      }
-    }
-
-    return scheduled.filter(
-      (occurrence) =>
-        occurrence.dueDate <= thresholdKey ||
-        nextPerTemplate.get(occurrence.recurringTransactionId) === occurrence.id
-    );
-  }, [recurringOccurrences, numericId]);
-
-  // Real transactions that were posted by marking a recurring occurrence ready.
-  // These are already represented by their recurring series, so they must not
-  // also appear as standalone "scheduled" entries in the upcoming panel.
-  const recurringPostedTransactionIds = useMemo(
-    () =>
-      new Set(
-        recurringOccurrences
-          .map((occurrence) => occurrence.transactionId)
-          .filter((id): id is number => id != null)
-      ),
-    [recurringOccurrences]
-  );
-
-  const upcomingScheduledTransactions = useMemo(() => {
-    const todayEnd = endOfDay(new Date());
-    return futureTransactions
-      .map((transaction) => {
-        const rawDate =
-          (transaction as { Date?: string; date?: string }).Date ??
-          (transaction as { Date?: string; date?: string }).date;
-        const parsedDate = normalizeToDate(rawDate);
-        return { transaction, parsedDate };
-      })
-      .filter(
-        ({ transaction, parsedDate }) =>
-          parsedDate &&
-          isAfter(parsedDate, todayEnd) &&
-          !recurringPostedTransactionIds.has(transaction.ID)
-      )
-      .sort((a, b) => {
-        if (!a.parsedDate || !b.parsedDate) return 0;
-        return a.parsedDate.getTime() - b.parsedDate.getTime();
-      });
-  }, [futureTransactions, recurringPostedTransactionIds]);
-
-  const handleOccurrenceAction = async (occurrenceId: number, action: 'ready' | 'skip') => {
-    try {
-      setProcessingOccurrenceId(occurrenceId);
-      if (action === 'ready') {
-        // Post dated on the due date, matching the recurring settings page.
-        const result = await markRecurringReady.mutateAsync({ occurrenceId });
-        const { template } = result.occurrence;
-        toast.success(t`Transaction posted`, {
-          description: t`${template.name} was added to your register.`,
-        });
-      } else {
-        await skipRecurring.mutateAsync({ id: occurrenceId });
-        toast.success(t`Occurrence skipped`, {
-          description: t`We will remind you again next time.`,
-        });
-      }
-    } catch (error) {
-      const message = getErrorMessage(error, t`Something went wrong.`);
-      toast.error(t`Action failed`, { description: message });
-    } finally {
-      setProcessingOccurrenceId(null);
-    }
-  };
 
   const transactionStats = useMemo(() => {
     // Search materializes the complete selected range, so its client-filtered
@@ -430,13 +343,6 @@ export default function AccountPage() {
       </div>
     );
   }
-
-  const showRecurringPanel =
-    !isTransactionsLoading &&
-    !isProcessingTransfer &&
-    (recurringLoading ||
-      upcomingRecurringOccurrences.length > 0 ||
-      upcomingScheduledTransactions.length > 0);
 
   return (
     <TooltipProvider>
@@ -651,23 +557,6 @@ export default function AccountPage() {
 
         {/* Transactions Section */}
         <div className="flex-1 sm:px-6 space-y-6">
-          {showRecurringPanel && (
-            <RecurringTransactionsPanel
-              isLoading={recurringLoading}
-              isFetching={recurringFetching}
-              accountId={numericId}
-              upcomingRecurringOccurrences={upcomingRecurringOccurrences}
-              upcomingScheduledTransactions={upcomingScheduledTransactions}
-              categoriesById={categoriesById}
-              formatter={maskedFormatter}
-              transactionCurrencyDisplay={transactionCurrencyDisplay}
-              processingOccurrenceId={processingOccurrenceId}
-              isMarkReadyPending={markRecurringReady.isPending}
-              isSkipPending={skipRecurring.isPending}
-              onOccurrenceAction={handleOccurrenceAction}
-            />
-          )}
-
           <AccountTransactionsSection
             isTransactionsLoading={isTransactionsLoading}
             isProcessingTransfer={isProcessingTransfer}

@@ -74,6 +74,10 @@ export interface GetTransactionsByAccountRow {
   Payee?: string;
   /** True for scheduled recurring occurrences shown as non-editable projected rows */
   IsProjected?: boolean;
+  /** Projected rows: the recurring occurrence to mark ready or skip */
+  OccurrenceID?: number;
+  /** Projected rows, or posted rows created from a recurring template */
+  RecurringTransactionID?: number;
   /** True when the running balance includes projected rows and is an estimate */
   RunningBalanceProjected?: boolean;
 }

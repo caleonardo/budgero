@@ -1,8 +1,12 @@
 import { Trans } from '@lingui/react/macro';
+import { getTodayISO } from '@shared/lib/date-utils';
+import {
+  RecurringIndicator,
+  RecurringOccurrenceActions,
+} from '@features/transactions/ui/RecurringOccurrenceActions';
 import React from 'react';
 import { Card, CardContent } from '@shared/ui/card';
 import { Badge } from '@shared/ui/badge';
-import { CalendarClock } from 'lucide-react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
@@ -136,25 +140,46 @@ export const MobileTransactionCard = React.memo(function MobileTransactionCard({
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0 space-y-0.5">
               <div className="flex items-center gap-1.5">
-                <CalendarClock className="h-3 w-3 text-primary shrink-0" />
+                <RecurringIndicator className="h-3 w-3" />
                 <span className="truncate text-sm font-medium">
                   {transaction.Memo || transaction.Payee}
                 </span>
-                <Badge variant="secondary" className="shrink-0 text-[9px] uppercase tracking-wide">
-                  <Trans>Projected</Trans>
-                </Badge>
+                {transaction.Date < getTodayISO() ? (
+                  <Badge
+                    variant="destructive"
+                    className="shrink-0 text-[9px] uppercase tracking-wide"
+                  >
+                    <Trans>Overdue</Trans>
+                  </Badge>
+                ) : (
+                  <Badge
+                    variant="secondary"
+                    className="shrink-0 text-[9px] uppercase tracking-wide"
+                  >
+                    <Trans>Projected</Trans>
+                  </Badge>
+                )}
               </div>
               <div className="truncate text-[11px] text-muted-foreground">
                 {transaction.Date} · {transaction.Category}
               </div>
             </div>
-            <div
-              className={`shrink-0 text-sm font-semibold tabular-nums ${
-                isOutflow ? 'text-destructive' : 'text-success'
-              }`}
-            >
-              {isOutflow ? '-' : '+'}
-              {formatMaskedMilli(currentFormatter, Math.abs(amountValue), privacyMaskNumbers)}
+            <div className="flex shrink-0 items-center gap-1">
+              <div
+                className={`text-sm font-semibold tabular-nums ${
+                  isOutflow ? 'text-destructive' : 'text-success'
+                }`}
+              >
+                {isOutflow ? '-' : '+'}
+                {formatMaskedMilli(currentFormatter, Math.abs(amountValue), privacyMaskNumbers)}
+              </div>
+              {transaction.OccurrenceID ? (
+                <RecurringOccurrenceActions
+                  occurrenceId={transaction.OccurrenceID}
+                  size="h-8 w-8"
+                  iconSize="h-4 w-4"
+                />
+              ) : null}
             </div>
           </div>
         </CardContent>

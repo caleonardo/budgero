@@ -73,3 +73,23 @@ describe('week boundaries', () => {
     }
   );
 });
+
+describe('search-query-parser cleared status', () => {
+  it.each([
+    ['uncleared coffee', 'uncleared'],
+    ['is:cleared coffee', 'cleared'],
+    ['coffee RECONCILED', 'reconciled'],
+  ] as const)('parses %s', (query, status) => {
+    const parsed = parseSearchQuery(query, [], []);
+    expect(parsed.clearedStatus).toBe(status);
+    expect(parsed.textQuery).toBe('coffee');
+    expect(parsed.matchedTokens.filter((token) => token.type === 'status')).toHaveLength(1);
+  });
+
+  it('removes the status chip from the query', () => {
+    const query = 'outflows is:uncleared coffee';
+    const parsed = parseSearchQuery(query, [], []);
+    const status = parsed.matchedTokens.find((token) => token.type === 'status')!;
+    expect(removeTokenFromQuery(query, status, parsed)).toBe('outflows coffee');
+  });
+});

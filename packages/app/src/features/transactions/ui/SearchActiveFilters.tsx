@@ -10,12 +10,14 @@ import {
   Tags,
   Search,
   Coins,
+  CircleCheck,
 } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Badge } from '@shared/ui/badge';
 import {
   getTransactionTypeLabel,
   getAmountFilterLabel,
+  getClearedStatusLabel,
   type ParsedSearchQuery,
   type MatchedToken,
 } from '@shared/lib/search-query-parser';
@@ -58,6 +60,8 @@ export const SearchActiveFilters = React.memo(function SearchActiveFilters({
         return Tags;
       case 'amount':
         return Coins;
+      case 'status':
+        return CircleCheck;
     }
   };
 
@@ -91,6 +95,8 @@ export const SearchActiveFilters = React.memo(function SearchActiveFilters({
         return token.amountFilter
           ? getAmountFilterLabel(token.amountFilter, currencyFormatter)
           : token.text;
+      case 'status':
+        return parsed.clearedStatus ? getClearedStatusLabel(parsed.clearedStatus) : token.text;
     }
   };
 
