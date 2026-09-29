@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { cn } from '@shared/lib/utils';
 import { maskFormattedIfEnabled } from '@shared/lib/privacy/mask-numbers';
 import { useUiStore } from '@shared/store/useUiStore';
+import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 
 export interface CalculatorDisplayProps {
   value: number;
@@ -27,6 +28,15 @@ export function CalculatorDisplay({
   editOnFocus,
 }: CalculatorDisplayProps) {
   const { t } = useLingui();
+  const editHint = t`Click to edit - Calculator: 100 + 50, 1000 * 0.3`;
+  const shortcutHint = () => {
+    const { mod } = getKeyboardShortcutLabels();
+    const half = mod('H');
+    const double = mod('D');
+    const zero = mod('Z');
+    const tenPercent = mod('T');
+    return t`Shortcuts: ${half} (half), ${double} (double), ${zero} (zero), ${tenPercent} (10%)`;
+  };
 
   const privacyMaskNumbers = useUiStore((state) => state.privacyMaskNumbers);
   const displayValue = displayFormatter(value);
@@ -56,7 +66,7 @@ export function CalculatorDisplay({
       }}
       tabIndex={0}
       role="button"
-      title={t`Click to edit - Calculator: 100 + 50, 1000 * 0.3${shortcuts ? ' - Shortcuts: Ctrl+H (half), Ctrl+D (double), Ctrl+Z (zero), Ctrl+T (10%)' : ''}`}
+      title={shortcuts ? `${editHint} - ${shortcutHint()}` : editHint}
     >
       {value === 0 && zeroAsEmpty ? (
         <span className="text-muted-foreground">{placeholder}</span>

@@ -20,6 +20,7 @@ import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 
 import { useUiStore } from '@shared/store/useUiStore';
 import { triggerAddTransaction, triggerCommandPalette } from './desktop-shell.utils';
+import { KeyboardShortcutsDialog } from './KeyboardShortcutsDialog';
 import type { BreadcrumbItem as BreadcrumbItemType } from './types';
 
 interface HeaderBarProps {
@@ -127,6 +128,7 @@ export const HeaderBar = React.memo(function HeaderBar({ breadcrumbs }: HeaderBa
               {shortcuts.search}
             </kbd>
           </Button>
+          <KeyboardShortcutsDialog />
           <ConnectivityStatus />
         </div>
       </div>
