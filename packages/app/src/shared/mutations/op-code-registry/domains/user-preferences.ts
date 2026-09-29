@@ -1,6 +1,18 @@
+import type { DuplicateHintSettings } from '@budgero/core/browser';
 import { S, type OpCodeEntry } from '../shared';
 
 export const userPreferenceOps = {
+  'userPreferences.setDuplicateHintSettings': {
+    execute: async (args) => {
+      const services = S() as {
+        userMeta?: { setDuplicateHintSettings(patch: Partial<DuplicateHintSettings>): void };
+      };
+      if (!services.userMeta) throw new Error('userMeta service not available');
+      services.userMeta.setDuplicateHintSettings(args.settings as Partial<DuplicateHintSettings>);
+      return { success: true };
+    },
+    invalidates: [['duplicateHintSettings'], ['userPreferences']],
+  },
   'userPreferences.setWeekStartsOn': {
     execute: async (args) => {
       const services = S() as { userMeta?: { setWeekStartsOn(value: 0 | 1): void } };

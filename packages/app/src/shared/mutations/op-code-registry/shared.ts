@@ -194,6 +194,7 @@ export const ACCOUNT_TRANSACTION_INVALIDATION_KEYS: [string, ...string[]][] = [
   ['accountTransactionPages', '*'],
   ['accountTransactionRange', '*'],
   ['accountTransactionSummary', '*'],
+  ['similarTransactions', '*'],
   ['futureAccountTransactions', '*'],
   ['accountBalanceHistory', '*'],
 ];

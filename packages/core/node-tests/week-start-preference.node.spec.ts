@@ -12,9 +12,17 @@ describe('calendar week start persistence', () => {
   it('upgrades an existing workspace without changing other preferences, and survives reopening', async () => {
     const original = await open();
     original.userMeta.setAllowOverAssignment(true);
-    // Recreate the schema before the week-start preference was introduced.
-    original.adapter.exec('ALTER TABLE user_meta DROP COLUMN WeekStartsOn');
-    original.adapter.exec('DELETE FROM schema_migrations WHERE version = 64');
+    // Recreate the schema before the week-start preference was introduced,
+    // including every later migration (the runner resumes from MAX(version)).
+    for (const column of [
+      'WeekStartsOn',
+      'DuplicateHintsEnabled',
+      'DuplicateAmountToleranceBps',
+      'DuplicateDayWindow',
+    ]) {
+      original.adapter.exec(`ALTER TABLE user_meta DROP COLUMN ${column}`);
+    }
+    original.adapter.exec('DELETE FROM schema_migrations WHERE version >= 64');
     const olderBackup = await original.adapter.backup();
     original.adapter.close();
 

@@ -16,6 +16,7 @@ import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
 import { IncomeCategoriesCard } from './components/IncomeCategoriesCard';
 import { CalendarSettingsCard } from './components/CalendarSettingsCard';
 import { GoalFundingSettingsCard } from './components/GoalFundingSettingsCard';
+import { DuplicateHintSettingsCard } from './components/DuplicateHintSettingsCard';
 
 type RtaMode = 'cumulative' | 'monthly';
 
@@ -208,6 +209,8 @@ export default function BudgetSettingsPage() {
       <GroupPercentCard />
 
       <CalendarSettingsCard />
+
+      <DuplicateHintSettingsCard />
 
       <Card>
         <CardHeader>

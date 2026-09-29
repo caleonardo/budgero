@@ -13,6 +13,7 @@ import type {
   AccountTransactionCursor,
   AccountTransactionPage,
   AccountTransactionSummary,
+  SimilarTransaction,
 } from '@budgero/core/browser';
 
 export const ACCOUNT_TRANSACTION_PAGE_SIZE = 200;
@@ -92,6 +93,31 @@ export function useAccountTransactionsForSearch(
     enabled: enabled && Boolean(accountId),
     queryFn: (services) =>
       services.transactions.getTransactionsByAccountRange(accountId as number, fromDate, toDate),
+  });
+}
+
+/**
+ * Existing transactions that may be the same payment as one being entered
+ * (same account and direction, amount and date within the configured range).
+ */
+export function useSimilarTransactions(
+  accountId: number | null,
+  date: string | null,
+  amountNative: number,
+  options: { enabled: boolean; toleranceBps: number; dayWindow: number }
+) {
+  const { enabled, toleranceBps, dayWindow } = options;
+  return useSpaceQuery<SimilarTransaction[]>({
+    key: ['similarTransactions', accountId ?? 0, date ?? '', amountNative, toleranceBps, dayWindow],
+    enabled: enabled && Boolean(accountId) && Boolean(date) && amountNative !== 0,
+    queryFn: (services) =>
+      services.transactions.findSimilarTransactions({
+        accountId: accountId as number,
+        date: date as string,
+        amountNative,
+        toleranceBps,
+        dayWindow,
+      }),
   });
 }
 

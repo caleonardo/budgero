@@ -808,6 +808,10 @@ msgstr "{cycleMonths, plural, one {jeden # Monat} other {alle # Monate}}"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# Tag} other {# Tage}}"
 
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "{days, plural, one {±# day} other {±# days}}"
+msgstr "{days, plural, one {±# Tag} other {±# Tage}}"
+
 #: src/shared/lib/search-query-parser.ts
 msgid "{days, plural, one {Last # day} other {Last # days}}"
 msgstr "{days, plural, one {Letzter # Tag} other {Letzte # Tage}}"
@@ -1422,6 +1426,10 @@ msgstr "<0/>Testlauf"
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 msgid "<0/>Due {0}({dueLabel})"
 msgstr "<0/>Fällig {0}({dueLabel})"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "<0/>Duplicate transactions"
+msgstr "<0/>Doppelte Transaktionen"
 
 #: src/features/budget-planning/ui/category-row/CategoryRowHeader.tsx
 #: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
@@ -2880,6 +2888,10 @@ msgstr "Passe den Datumsbereich oder die Filter an, um andere Ergebnisse zu erku
 msgid "Adjust the filters or date range to explore other periods."
 msgstr "Passe die Filter oder den Datumsbereich an, um andere Zeiträume zu erkunden."
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Adjust this in Settings › Budget Settings."
+msgstr "Anpassen unter Einstellungen › Budget-Einstellungen."
+
 #: src/features/transactions/ui/desktop-table/DesktopTransactionTable.tsx
 msgid "Adjust your filters or add a new transaction to get started."
 msgstr "Passe deine Filter an oder füge eine neue Transaktion hinzu, um loszulegen."
@@ -3176,6 +3188,7 @@ msgstr "Tilgungsplan"
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/pages/settings/subscription/InvoicesTable.tsx
 #: src/pages/warranties/components/WarrantyFormDialog.tsx
@@ -3766,6 +3779,14 @@ msgstr "Salden stimmen überein – beim Abgleichen werden Transaktionen als abg
 #: src/features/import/lib/import-display-text.ts
 msgid "Bank transaction ID was already imported"
 msgstr "Banktransaktions-ID wurde bereits importiert"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within {tolerance}) up to {days} days apart."
+msgstr "Banken zeigen eine vorgemerkte und die gebuchte Belastung oft mit unterschiedlichem Datum an. Markiert werden Transaktionen im selben Konto mit ähnlichem Betrag (bis {tolerance}), die höchstens {days} Tage auseinanderliegen."
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with the same amount up to {days} days apart."
+msgstr "Banken zeigen eine vorgemerkte und die gebuchte Belastung oft mit unterschiedlichem Datum an. Markiert werden Transaktionen im selben Konto mit gleichem Betrag, die höchstens {days} Tage auseinanderliegen."
 
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
@@ -5285,6 +5306,10 @@ msgstr "Beitritt zum Arbeitsbereich fehlgeschlagen. Versuche es erneut."
 msgid "Could not load calendar settings."
 msgstr "Die Kalendereinstellungen konnten nicht geladen werden."
 
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Could not load duplicate transaction settings."
+msgstr "Einstellungen für doppelte Transaktionen konnten nicht geladen werden."
+
 #: src/pages/settings/components/IncomeCategoriesCard.tsx
 msgid "Could not load income categories."
 msgstr "Die Einnahmekategorien konnten nicht geladen werden."
@@ -5312,6 +5337,10 @@ msgstr "Dieser Plan konnte nicht gelesen werden"
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 msgid "Could not read that YNAB plan."
 msgstr "Dieser YNAB-Plan konnte nicht gelesen werden."
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Could not save duplicate transaction settings"
+msgstr "Einstellungen für doppelte Transaktionen konnten nicht gespeichert werden"
 
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 msgid "Could not save the accepted import. You can cancel it safely."
@@ -5867,6 +5896,10 @@ msgstr "Datumsformat"
 #: src/pages/onboarding/steps/YnabImportStep.tsx
 msgid "DATE FORMAT"
 msgstr "DATUMSFORMAT"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Date range"
+msgstr "Zeitraum"
 
 #: src/pages/accounts/components/AccountDateRangeControls.tsx
 #: src/pages/settings/CurrencySettingsPage.tsx
@@ -6900,6 +6933,10 @@ msgstr "Jedes Jahr"
 #: src/pages/onboarding/steps/ShareStep.tsx
 msgid "Everyone you invite becomes a <0>collaborator</0> with the same view and edit rights you have. After we set up your workspace we’ll generate a private link for each person — Budgero never emails them on your behalf, you copy or send each link yourself so the secret stays off our servers."
 msgstr "Jeder, den du einlädst, wird zu einem <0>Mitwirkenden</0> mit denselben Ansichts- und Bearbeitungsrechten wie du. Nachdem wir deinen Arbeitsbereich eingerichtet haben, generieren wir einen privaten Link für jede Person — Budgero verschickt niemals E-Mails in deinem Namen. Du kopierst oder sendest jeden Link selbst, damit das Geheimnis nicht auf unseren Servern landet."
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Exact (±0.01)"
+msgstr "Exakt (±0,01)"
 
 #: src/shared/lib/search-query-parser.ts
 msgid "Exactly"
@@ -10852,6 +10889,10 @@ msgstr "Noch keine Arbeitsbereiche. Verwende die Schaltfläche oben, um deinen e
 msgid "None"
 msgstr "Keine"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Not a duplicate"
+msgstr "Kein Duplikat"
+
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Not attributed"
 msgstr "Nicht zugeordnet"
@@ -12020,6 +12061,10 @@ msgstr "Positive Zahlen erhöhen, negative verringern den Betrag."
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Possible contributors"
 msgstr "Mögliche Ursachen"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Possible duplicate"
+msgstr "Mögliches Duplikat"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Post transaction"
@@ -16926,6 +16971,14 @@ msgstr "Warmer Wüstenlehm."
 msgid "Warm southwestern desert with sand, terracotta, and sage."
 msgstr "Warme südwestliche Wüste mit Sand, Terrakotta und Salbei."
 
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Warn about possible duplicates"
+msgstr "Vor möglichen Duplikaten warnen"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Warn while adding a transaction by hand if it looks like one already in the account. Imports use their own duplicate check."
+msgstr "Warnt beim manuellen Hinzufügen, wenn eine Transaktion einer bereits im Konto vorhandenen ähnelt. Importe haben eine eigene Duplikatprüfung."
+
 #: src/pages/admin/admin-users/ActionDialog.tsx
 msgid "Warning"
 msgstr "Warnung"
@@ -17191,6 +17244,10 @@ msgstr "Whisper-Modell für On-Device-Transkription"
 msgid "Why do I need a master password?"
 msgstr "Warum brauche ich ein Master-Passwort?"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Why is this flagged?"
+msgstr "Warum wird das markiert?"
+
 #: src/pages/custom-dashboards/components/WidgetCard.tsx
 msgid "Widget"
 msgstr "Widget"
@@ -17206,6 +17263,10 @@ msgstr "Breite +"
 #: src/features/import/ui/steps/configure/FormattingTab.tsx
 msgid "With your current settings:"
 msgstr "Mit deinen aktuellen Einstellungen:"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Within {tolerance}"
+msgstr "Bis {tolerance}"
 
 #: src/pages/analytics/AnalyticsPage.tsx
 msgid "Within our means?"

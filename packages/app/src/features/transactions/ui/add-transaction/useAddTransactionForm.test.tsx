@@ -72,6 +72,7 @@ vi.mock('@entities/recurring/api/useRecurringTransactions', () => ({
 }));
 vi.mock('./TransactionFormHeader', () => ({ TransactionFormHeader: () => null }));
 vi.mock('./RecurringOptionsSection', () => ({ RecurringOptionsSection: () => null }));
+vi.mock('../form/DuplicateTransactionHint', () => ({ DuplicateTransactionHint: () => null }));
 vi.mock('./TransactionDetailsSection', () => ({
   TransactionDetailsSection: (props: React.ComponentProps<typeof TransactionDetailsSection>) => (
     <>

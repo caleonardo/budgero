@@ -808,6 +808,10 @@ msgstr "{cycleMonths, plural, one {elke # maand} other {elke # maanden}}"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# dag} other {# dagen}}"
 
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "{days, plural, one {±# day} other {±# days}}"
+msgstr "{days, plural, one {±# dag} other {±# dagen}}"
+
 #: src/shared/lib/search-query-parser.ts
 msgid "{days, plural, one {Last # day} other {Last # days}}"
 msgstr "{days, plural, one {Laatste # dag} other {Laatste # dagen}}"
@@ -1422,6 +1426,10 @@ msgstr "<0/>Testrun"
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 msgid "<0/>Due {0}({dueLabel})"
 msgstr "<0/>Vervalt {0}({dueLabel})"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "<0/>Duplicate transactions"
+msgstr "<0/>Dubbele transacties"
 
 #: src/features/budget-planning/ui/category-row/CategoryRowHeader.tsx
 #: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
@@ -2880,6 +2888,10 @@ msgstr "Pas het datumbereik of de filters aan om andere resultaten te bekijken."
 msgid "Adjust the filters or date range to explore other periods."
 msgstr "Pas de filters of het datumbereik aan om andere periodes te bekijken."
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Adjust this in Settings › Budget Settings."
+msgstr "Aan te passen via Instellingen › Budgetinstellingen."
+
 #: src/features/transactions/ui/desktop-table/DesktopTransactionTable.tsx
 msgid "Adjust your filters or add a new transaction to get started."
 msgstr "Pas je filters aan of voeg een nieuwe transactie toe om te beginnen."
@@ -3176,6 +3188,7 @@ msgstr "Aflossingsschema"
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/pages/settings/subscription/InvoicesTable.tsx
 #: src/pages/warranties/components/WarrantyFormDialog.tsx
@@ -3766,6 +3779,14 @@ msgstr "Saldo's komen overeen - afstemming markeert transacties als afgestemd"
 #: src/features/import/lib/import-display-text.ts
 msgid "Bank transaction ID was already imported"
 msgstr "Banktransactie-ID is al geïmporteerd"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within {tolerance}) up to {days} days apart."
+msgstr "Banken tonen een voorlopige en de definitieve afschrijving vaak op verschillende datums. Gemarkeerd worden transacties in dezelfde rekening met een vergelijkbaar bedrag (binnen {tolerance}) tot {days} dagen uit elkaar."
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with the same amount up to {days} days apart."
+msgstr "Banken tonen een voorlopige en de definitieve afschrijving vaak op verschillende datums. Gemarkeerd worden transacties in dezelfde rekening met hetzelfde bedrag tot {days} dagen uit elkaar."
 
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
@@ -5285,6 +5306,10 @@ msgstr "Deelnemen aan de werkruimte is mislukt. Probeer het opnieuw."
 msgid "Could not load calendar settings."
 msgstr "De kalenderinstellingen konden niet worden geladen."
 
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Could not load duplicate transaction settings."
+msgstr "Instellingen voor dubbele transacties konden niet worden geladen."
+
 #: src/pages/settings/components/IncomeCategoriesCard.tsx
 msgid "Could not load income categories."
 msgstr "De inkomstencategorieën konden niet worden geladen."
@@ -5312,6 +5337,10 @@ msgstr "Dit plan kon niet worden gelezen"
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 msgid "Could not read that YNAB plan."
 msgstr "Dit YNAB-plan kon niet worden gelezen."
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Could not save duplicate transaction settings"
+msgstr "Instellingen voor dubbele transacties konden niet worden opgeslagen"
 
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 msgid "Could not save the accepted import. You can cancel it safely."
@@ -5867,6 +5896,10 @@ msgstr "Datumnotatie"
 #: src/pages/onboarding/steps/YnabImportStep.tsx
 msgid "DATE FORMAT"
 msgstr "DATUMNOTATIE"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Date range"
+msgstr "Datumbereik"
 
 #: src/pages/accounts/components/AccountDateRangeControls.tsx
 #: src/pages/settings/CurrencySettingsPage.tsx
@@ -6900,6 +6933,10 @@ msgstr "Elk jaar"
 #: src/pages/onboarding/steps/ShareStep.tsx
 msgid "Everyone you invite becomes a <0>collaborator</0> with the same view and edit rights you have. After we set up your workspace we’ll generate a private link for each person — Budgero never emails them on your behalf, you copy or send each link yourself so the secret stays off our servers."
 msgstr "Iedereen die je uitnodigt wordt een <0>samenwerker</0> met dezelfde weergave- en bewerkingsrechten als jij. Nadat we je werkruimte hebben ingesteld, genereren we een privékoppeling voor elke persoon — Budgero stuurt nooit e-mails namens jou, je kopieert of verstuurt elke koppeling zelf zodat het geheim niet op onze servers terechtkomt."
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Exact (±0.01)"
+msgstr "Exact (±0,01)"
 
 #: src/shared/lib/search-query-parser.ts
 msgid "Exactly"
@@ -10852,6 +10889,10 @@ msgstr "Nog geen werkruimtes. Gebruik de knop hierboven om je eerste werkruimte 
 msgid "None"
 msgstr "Geen"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Not a duplicate"
+msgstr "Geen duplicaat"
+
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Not attributed"
 msgstr "Niet toegewezen"
@@ -12020,6 +12061,10 @@ msgstr "Positieve getallen verhogen het bedrag, negatieve getallen verlagen het.
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Possible contributors"
 msgstr "Mogelijke oorzaken"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Possible duplicate"
+msgstr "Mogelijk duplicaat"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Post transaction"
@@ -16926,6 +16971,14 @@ msgstr "Warme woestijnklei."
 msgid "Warm southwestern desert with sand, terracotta, and sage."
 msgstr "Warme zuidwestelijke woestijn met zand, terracotta en salie."
 
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Warn about possible duplicates"
+msgstr "Waarschuwen voor mogelijke duplicaten"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Warn while adding a transaction by hand if it looks like one already in the account. Imports use their own duplicate check."
+msgstr "Waarschuwt bij het handmatig toevoegen van een transactie als die lijkt op een die al in de rekening staat. Imports hebben hun eigen duplicaatcontrole."
+
 #: src/pages/admin/admin-users/ActionDialog.tsx
 msgid "Warning"
 msgstr "Waarschuwing"
@@ -17191,6 +17244,10 @@ msgstr "Whisper-model voor transcriptie op het apparaat"
 msgid "Why do I need a master password?"
 msgstr "Waarom heb ik een hoofdwachtwoord nodig?"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Why is this flagged?"
+msgstr "Waarom wordt dit gemarkeerd?"
+
 #: src/pages/custom-dashboards/components/WidgetCard.tsx
 msgid "Widget"
 msgstr "Widget"
@@ -17206,6 +17263,10 @@ msgstr "Breedte +"
 #: src/features/import/ui/steps/configure/FormattingTab.tsx
 msgid "With your current settings:"
 msgstr "Met je huidige instellingen:"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Within {tolerance}"
+msgstr "Binnen {tolerance}"
 
 #: src/pages/analytics/AnalyticsPage.tsx
 msgid "Within our means?"

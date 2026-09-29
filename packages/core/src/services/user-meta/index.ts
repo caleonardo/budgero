@@ -1,5 +1,6 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { UserMetaQueries, type UserMetaRow } from './queries.js';
+import type { DuplicateHintSettings } from '../transactions/types.js';
 
 export class UserMetaService {
   private queries: UserMetaQueries;
@@ -58,6 +59,14 @@ export class UserMetaService {
 
   setDialogBackgroundBlur(value: boolean): void {
     this.queries.setDialogBackgroundBlur(value);
+  }
+
+  getDuplicateHintSettings(): DuplicateHintSettings {
+    return this.queries.getDuplicateHintSettings();
+  }
+
+  setDuplicateHintSettings(patch: Partial<DuplicateHintSettings>): void {
+    this.queries.setDuplicateHintSettings(patch);
   }
 
   getWeekStartsOn(): 0 | 1 {

@@ -1,5 +1,12 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { getRow, run } from '../../database/sql.js';
+import type { DuplicateHintSettings } from '../transactions/types.js';
+
+export const DUPLICATE_HINT_DEFAULTS: DuplicateHintSettings = {
+  enabled: true,
+  toleranceBps: 100,
+  dayWindow: 7,
+};
 
 export type UserMetaRow = {
   ID: number;
@@ -135,6 +142,45 @@ export class UserMetaQueries {
     if (value !== 0 && value !== 1) throw new Error('Week start must be Sunday or Monday');
     this.ensureRow();
     run(this.db, `UPDATE user_meta SET WeekStartsOn = ? WHERE ID = 1`, value);
+  }
+
+  /** Possible-duplicate hint while adding transactions. On, 1%, ±7 days by default. */
+  getDuplicateHintSettings(): DuplicateHintSettings {
+    this.ensureRow();
+    const row = getRow<{
+      DuplicateHintsEnabled: number | null;
+      DuplicateAmountToleranceBps: number | null;
+      DuplicateDayWindow: number | null;
+    }>(
+      this.db,
+      `SELECT DuplicateHintsEnabled, DuplicateAmountToleranceBps, DuplicateDayWindow
+         FROM user_meta WHERE ID = 1`
+    );
+    return {
+      enabled: row?.DuplicateHintsEnabled == null ? true : Boolean(row.DuplicateHintsEnabled),
+      toleranceBps: row?.DuplicateAmountToleranceBps ?? DUPLICATE_HINT_DEFAULTS.toleranceBps,
+      dayWindow: row?.DuplicateDayWindow ?? DUPLICATE_HINT_DEFAULTS.dayWindow,
+    };
+  }
+
+  setDuplicateHintSettings(patch: Partial<DuplicateHintSettings>): void {
+    const next = { ...this.getDuplicateHintSettings(), ...patch };
+    if (typeof next.enabled !== 'boolean') throw new Error('Duplicate hints must be on or off');
+    if (!Number.isInteger(next.toleranceBps) || next.toleranceBps < 0 || next.toleranceBps > 1000) {
+      throw new Error('Duplicate amount tolerance must be between 0% and 10%');
+    }
+    if (!Number.isInteger(next.dayWindow) || next.dayWindow < 1 || next.dayWindow > 31) {
+      throw new Error('Duplicate date range must be between 1 and 31 days');
+    }
+    run(
+      this.db,
+      `UPDATE user_meta
+          SET DuplicateHintsEnabled = ?, DuplicateAmountToleranceBps = ?, DuplicateDayWindow = ?
+        WHERE ID = 1`,
+      next.enabled ? 1 : 0,
+      next.toleranceBps,
+      next.dayWindow
+    );
   }
 
   setLastBackup(timestamp: string): void {

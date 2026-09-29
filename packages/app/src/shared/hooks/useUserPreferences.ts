@@ -5,10 +5,18 @@ import {
   useRuntimeInitialized,
 } from '@shared/runtime/runtime-provider';
 import { executeSpaceMutation } from '@shared/runtime/mutation-router';
+import type { DuplicateHintSettings } from '@budgero/core/browser';
+
+export const DEFAULT_DUPLICATE_HINT_SETTINGS: DuplicateHintSettings = {
+  enabled: true,
+  toleranceBps: 100,
+  dayWindow: 7,
+};
 
 /** Service interface for user preferences */
 interface UserMetaService {
   getWeekStartsOn?(): Promise<0 | 1> | 0 | 1;
+  getDuplicateHintSettings?(): Promise<DuplicateHintSettings> | DuplicateHintSettings;
   getAllowOverAssignment(): Promise<boolean> | boolean;
   getSuggestCategoryFromPayee?(): Promise<boolean> | boolean;
   getShowGroupPercent?(): Promise<boolean> | boolean;
@@ -347,6 +355,43 @@ export function useWeekStartsOnPreference() {
     isLoading: !runtimeInitialized || query.isLoading,
     isError: query.isError,
     updateWeekStartsOn: mutation.mutate,
+    isUpdating: mutation.isPending,
+  };
+}
+
+/** Possible-duplicate hint while adding transactions, persisted with the active workspace. */
+export function useDuplicateHintSettingsPreference() {
+  const runtime = useRuntime();
+  const runtimeInitialized = useRuntimeInitialized();
+  const spaceId = useActiveSpaceId();
+  const query = useQuery<DuplicateHintSettings>({
+    queryKey: ['duplicateHintSettings', spaceId ?? 'global'],
+    queryFn: async () => {
+      const services = runtime.services() as ServicesWithUserMeta;
+      return (
+        (await services.userMeta?.getDuplicateHintSettings?.()) ?? DEFAULT_DUPLICATE_HINT_SETTINGS
+      );
+    },
+    enabled: runtimeInitialized,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+  const mutation = useMutation<void, Error, Partial<DuplicateHintSettings>>({
+    mutationFn: async (settings) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'userPreferences.setDuplicateHintSettings',
+        payload: { settings },
+        meta: { label: 'Update duplicate transaction hints' },
+      });
+    },
+  });
+
+  return {
+    settings: query.data ?? DEFAULT_DUPLICATE_HINT_SETTINGS,
+    isLoading: !runtimeInitialized || query.isLoading,
+    isError: query.isError,
+    updateSettings: mutation.mutate,
     isUpdating: mutation.isPending,
   };
 }

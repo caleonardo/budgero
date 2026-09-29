@@ -12,6 +12,8 @@ import {
   AccountTransactionPageOptions,
   AccountTransactionSummary,
   AccountBalanceHistoryTransaction,
+  SimilarTransaction,
+  SimilarTransactionQuery,
 } from './types.js';
 import type { Account } from '../accounts/types.js';
 import type { Budget } from '../budgets/types.js';
@@ -417,6 +419,54 @@ export class TransactionQueries {
       rows,
       nextCursor: hasMore && last ? { Date: last.Date, ID: last.ID } : null,
     };
+  }
+
+  /**
+   * Transactions in the same account that may be the same payment as a new
+   * entry: same direction, amount within the tolerance, date within the window. Banks
+   * often list a pending charge on one date and the settled one on another.
+   * Transfer legs are excluded; nearest date, then closest amount, first.
+   */
+  findSimilarTransactions({
+    accountId,
+    date,
+    amountNative,
+    dayWindow = 7,
+    toleranceBps = 100,
+    limit = 3,
+  }: SimilarTransactionQuery): SimilarTransaction[] {
+    if (!amountNative) return [];
+    // Never tighter than 0.01 (10 milliunits), so "exact" still absorbs rounding.
+    const tolerance = Math.max(10, Math.round((Math.abs(amountNative) * toleranceBps) / 10_000));
+    return allRows<SimilarTransaction>(
+      this.db,
+      `
+      SELECT ID, Date, COALESCE(Payee, '') AS Payee, COALESCE(Memo, '') AS Memo, AmountNative
+      FROM (
+        SELECT t.ID, t.Date, t.Payee, t.Memo,
+          COALESCE(t.InflowNative, t.InflowConverted, 0)
+            - COALESCE(t.OutflowNative, t.OutflowConverted, 0) AS AmountNative
+        FROM transactions t
+        WHERE t.AccountID = ?
+          AND t.Date >= date(?, ?) AND t.Date < date(?, ?)
+          AND (t.TransferID IS NULL OR t.TransferID = '')
+      )
+      WHERE ABS(AmountNative - ?) <= ? AND (AmountNative > 0) = (? > 0)
+      ORDER BY ABS(julianday(Date) - julianday(?)), ABS(AmountNative - ?), ID DESC
+      LIMIT ?
+    `,
+      accountId,
+      date,
+      `-${dayWindow} days`,
+      date,
+      `+${dayWindow + 1} days`,
+      amountNative,
+      tolerance,
+      amountNative,
+      date,
+      amountNative,
+      limit
+    );
   }
 
   /** Fetch the selected account-register date range for correctness-sensitive search. */

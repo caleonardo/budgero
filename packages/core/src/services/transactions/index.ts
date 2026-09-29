@@ -8,6 +8,8 @@ import {
   AccountTransactionPageOptions,
   AccountTransactionSummary,
   AccountBalanceHistoryTransaction,
+  SimilarTransaction,
+  SimilarTransactionQuery,
   GetTransactionsByAccountAndMonthRow,
   GetAllTransactions,
   GetTransactionsByCategoryAndMonthRow,
@@ -611,6 +613,10 @@ export class TransactionService {
     options: AccountTransactionPageOptions = {}
   ): AccountTransactionPage {
     return this.queries.getTransactionsByAccountPage(accountId, options);
+  }
+
+  findSimilarTransactions(query: SimilarTransactionQuery): SimilarTransaction[] {
+    return this.queries.findSimilarTransactions(query);
   }
 
   getTransactionsByAccountRange(
