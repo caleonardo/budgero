@@ -7,6 +7,8 @@ import type {
   ImportRunSummary,
   ImportRun,
   ImportRunUndoResult,
+  YNABImportVerificationSummary,
+  YNABReconciliationReport,
 } from './types.js';
 
 type ImportRunRow = {
@@ -35,6 +37,43 @@ function parseJsonArray(value: string | null | undefined): number[] {
   }
 }
 
+function count(value: unknown): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+/**
+ * Reduce a verification report to the counts import history shows. Accepts
+ * a full report, an already-compact summary, or a legacy row's parsed JSON.
+ */
+export function summarizeImportVerification(
+  report: YNABReconciliationReport | YNABImportVerificationSummary | Record<string, unknown>
+): YNABImportVerificationSummary {
+  type Counts = { checked?: unknown; matched?: unknown };
+  const value = report as {
+    status?: unknown;
+    accounts?: Counts;
+    categories?: Counts;
+    readyToAssign?: Counts & { mismatches?: unknown; mismatchCount?: unknown };
+  };
+  const rta = value.readyToAssign ?? {};
+  return {
+    status: value.status === 'warning' ? 'warning' : 'passed',
+    accounts: { checked: count(value.accounts?.checked), matched: count(value.accounts?.matched) },
+    categories: {
+      checked: count(value.categories?.checked),
+      matched: count(value.categories?.matched),
+    },
+    readyToAssign: {
+      checked: count(rta.checked),
+      matched: count(rta.matched),
+      mismatchCount: Array.isArray(rta.mismatches)
+        ? rta.mismatches.length
+        : count(rta.mismatchCount),
+    },
+  };
+}
+
 function parseSummary(value: string): ImportRunSummary {
   try {
     const parsed = JSON.parse(value);
@@ -47,7 +86,9 @@ function parseSummary(value: string): ImportRunSummary {
       transactionsImported: Number(parsed.transactionsImported) || 0,
       accountsCreated: Number(parsed.accountsCreated) || 0,
       categoriesCreated: Number(parsed.categoriesCreated) || 0,
-      ...(parsed.verification ? { verification: parsed.verification } : {}),
+      ...(parsed.verification
+        ? { verification: summarizeImportVerification(parsed.verification) }
+        : {}),
       ...(parsed.acceptedWithWarnings === true ? { acceptedWithWarnings: true } : {}),
     };
   } catch {
@@ -122,7 +163,9 @@ export class ImportHistoryService {
           : input.summary.transactionsImported,
         accountsCreated: input.runKey ? accountIds.length : input.summary.accountsCreated,
         categoriesCreated: input.runKey ? categoryIds.length : input.summary.categoriesCreated,
-        ...(input.summary.verification ? { verification: input.summary.verification } : {}),
+        ...(input.summary.verification
+          ? { verification: summarizeImportVerification(input.summary.verification) }
+          : {}),
         ...(input.summary.acceptedWithWarnings === true ? { acceptedWithWarnings: true } : {}),
       }),
       JSON.stringify(transactionIds),

@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { NodeSqlJsAdapter, ServiceManager, DatabaseAdapter } from '../src';
 
+const COMPACT_WARNING = {
+  status: 'warning',
+  accounts: { checked: 1, matched: 1 },
+  categories: { checked: 3, matched: 3 },
+  readyToAssign: { checked: 1, matched: 0, mismatchCount: 1 },
+};
+
 async function setup() {
   const adapter = await NodeSqlJsAdapter.create();
   const sm = new ServiceManager();
@@ -15,12 +22,12 @@ async function setup() {
   });
   const group = services.categories.addCategoryGroup('G', budgetId);
   const categoryId = services.categories.addCategory(group, budgetId, 'Cat');
-  return { services, budgetId, categoryId };
+  return { adapter, services, budgetId, categoryId };
 }
 
 describe('ImportHistoryService.undoImportRun — balance recalculation', () => {
-  it('persists an accepted YNAB reconciliation warning for later review', async () => {
-    const { services, budgetId } = await setup();
+  it('persists only verification counts for an accepted YNAB warning', async () => {
+    const { adapter, services, budgetId } = await setup();
     const verification = {
       status: 'warning' as const,
       source: { transactions: 1, subtransactions: 0, registerRows: 1 },
@@ -68,8 +75,43 @@ describe('ImportHistoryService.undoImportRun — balance recalculation', () => {
     expect(services.importHistory.listImportRuns(budgetId)[0]).toMatchObject({
       sourceType: 'ynab-api',
       status: 'completed_with_warnings',
-      summary: { acceptedWithWarnings: true, verification },
+      summary: { acceptedWithWarnings: true, verification: COMPACT_WARNING },
     });
+    // History rows ship in every synced snapshot: no per-month detail.
+    const { SummaryJSON } = adapter
+      .prepare('SELECT SummaryJSON FROM import_runs WHERE BudgetID = ?')
+      .get(budgetId) as { SummaryJSON: string };
+    expect(JSON.parse(SummaryJSON).verification).toEqual(COMPACT_WARNING);
+  });
+
+  it('compacts full verification reports saved by older builds when read', async () => {
+    const { adapter, services, budgetId } = await setup();
+    adapter
+      .prepare(
+        `INSERT INTO import_runs (BudgetID, SourceType, SourceName, SummaryJSON, TransactionIDs,
+           AccountIDs, CategoryIDs, Status, CreatedAt)
+         VALUES (?, 'ynab-api', 'Old plan', ?, '[]', '[]', '[]', 'completed_with_warnings',
+           datetime('now'))`
+      )
+      .run(
+        budgetId,
+        JSON.stringify({
+          transactionsImported: 1,
+          accountsCreated: 1,
+          categoriesCreated: 1,
+          acceptedWithWarnings: true,
+          verification: {
+            status: 'warning',
+            accounts: { checked: 1, matched: 1, debtBalanceAdjustments: [] },
+            categories: { checked: 3, matched: 3, mismatches: [], omittedMismatches: 0 },
+            readyToAssign: { checked: 1, matched: 0, mismatches: [{ month: '2026-01' }] },
+          },
+        })
+      );
+
+    expect(services.importHistory.listImportRuns(budgetId)[0].summary.verification).toEqual(
+      COMPACT_WARNING
+    );
   });
 
   it('restores the account balance after undoing an import into a pre-existing account', async () => {
