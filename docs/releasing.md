@@ -16,7 +16,7 @@ Forgejo is not part of publishing. Its private historical branches remain intact
    are excluded; contributor acknowledgements are included.
 4. Run both `pnpm run security:deps` and `pnpm run security:go` after changing release
    metadata, before committing. Resolve actionable findings. Also run relevant tests.
-5. Commit with `git commit -s`, push the branch, open a PR, and wait for required
+5. Commit, push the branch, open a PR, and wait for required
    checks. Merge the PR. Another person's approval is not required.
 6. Fetch `master` and wait for its CI to pass. Create an annotated tag at the exact
    merged release commit (not an obsolete pre-squash branch commit):

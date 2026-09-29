@@ -7,8 +7,7 @@ end-to-end encrypted through a Go backend.
 
 This is Budgero's **primary repository**. Development, reviews, and merges happen
 here, and **issues and pull requests are welcome** — see
-[CONTRIBUTING.md](CONTRIBUTING.md). All commits must be DCO-signed
-(`git commit -s`).
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Releases
 

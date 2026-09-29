@@ -37,10 +37,11 @@ CI selects checks from the files changed across the whole PR (and the full commi
 range on pushes). Website changes run website builds, type-checking, translation
 audits, and validation of the app knowledge generated from the docs. App, core,
 and runtime changes run the app checks; server changes run the Go checks. Shared
-configuration, dependency patches, lockfiles, workflow changes, and unknown paths
-run the full suite. Repository-only prose skips build steps.
+configuration, dependency patches, lockfiles, the CI workflow and its change
+selection, and unknown paths run the full suite. Repository-only prose, metadata,
+and other workflows (release, runner checks) skip build steps.
 
-The required `web`, `server`, and `dco` checks still report on every PR; a failed
+The required `web` and `server` checks still report on every PR; a failed
 change-selection job blocks merging. Fork workflow runs may need maintainer
 approval before checks appear.
 
@@ -59,27 +60,6 @@ Pre-commit hooks (husky + lint-staged) format and lint staged files automaticall
 
 Terse conventional commits, matching the existing history: `fix(import): …`,
 `feat(budget): …`, `chore: …`. No long bodies needed.
-
-## Developer Certificate of Origin
-
-Budgero uses the [DCO](https://developercertificate.org/) instead of a CLA. By signing
-off a commit you certify that you wrote the change (or otherwise have the right to
-submit it) under the project's license. You keep the copyright on your contribution.
-
-Every commit must carry a `Signed-off-by` trailer. Git adds it for you:
-
-```bash
-git commit -s
-```
-
-Forgot some? Fix up your branch and force-push:
-
-```bash
-git rebase --signoff origin/master
-git push --force-with-lease
-```
-
-CI rejects PRs containing unsigned commits.
 
 ## Licensing
 
