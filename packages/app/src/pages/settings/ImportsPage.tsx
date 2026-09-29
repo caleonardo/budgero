@@ -182,7 +182,7 @@ export default function ImportsPage() {
                         {run.summary.acceptedWithWarnings && run.summary.verification && (
                           <div className="mt-1 text-[11px] normal-case text-amber-700 dark:text-amber-400">
                             <Trans>
-                              {run.summary.verification.readyToAssign.mismatches.length} RTA ·{' '}
+                              {run.summary.verification.readyToAssign.mismatchCount} RTA ·{' '}
                               {run.summary.verification.categories.checked -
                                 run.summary.verification.categories.matched}{' '}
                               category differences
