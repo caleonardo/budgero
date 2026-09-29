@@ -423,7 +423,7 @@ export class TransactionQueries {
 
   /**
    * Transactions in the same account that may be the same payment as a new
-   * entry: same direction, amount within 1%, date within the window. Banks
+   * entry: same direction, amount within the tolerance, date within the window. Banks
    * often list a pending charge on one date and the settled one on another.
    * Transfer legs are excluded; nearest date, then closest amount, first.
    */
@@ -432,10 +432,12 @@ export class TransactionQueries {
     date,
     amountNative,
     dayWindow = 7,
+    toleranceBps = 100,
     limit = 3,
   }: SimilarTransactionQuery): SimilarTransaction[] {
     if (!amountNative) return [];
-    const tolerance = Math.max(10, Math.round(Math.abs(amountNative) / 100));
+    // Never tighter than 0.01 (10 milliunits), so "exact" still absorbs rounding.
+    const tolerance = Math.max(10, Math.round((Math.abs(amountNative) * toleranceBps) / 10_000));
     return allRows<SimilarTransaction>(
       this.db,
       `

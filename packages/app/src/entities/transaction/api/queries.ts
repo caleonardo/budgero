@@ -98,22 +98,25 @@ export function useAccountTransactionsForSearch(
 
 /**
  * Existing transactions that may be the same payment as one being entered
- * (same account, direction, amount within 1%, date within a week).
+ * (same account and direction, amount and date within the configured range).
  */
 export function useSimilarTransactions(
   accountId: number | null,
   date: string | null,
   amountNative: number,
-  enabled: boolean
+  options: { enabled: boolean; toleranceBps: number; dayWindow: number }
 ) {
+  const { enabled, toleranceBps, dayWindow } = options;
   return useSpaceQuery<SimilarTransaction[]>({
-    key: ['similarTransactions', accountId ?? 0, date ?? '', amountNative],
+    key: ['similarTransactions', accountId ?? 0, date ?? '', amountNative, toleranceBps, dayWindow],
     enabled: enabled && Boolean(accountId) && Boolean(date) && amountNative !== 0,
     queryFn: (services) =>
       services.transactions.findSimilarTransactions({
         accountId: accountId as number,
         date: date as string,
         amountNative,
+        toleranceBps,
+        dayWindow,
       }),
   });
 }

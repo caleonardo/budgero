@@ -5,6 +5,8 @@ import { AlertTriangle, Info, X } from 'lucide-react';
 import { useSimilarTransactions } from '@entities/transaction/api/queries';
 import { formatNativeAmount } from '@entities/currency/lib/currency-utils';
 import { formatDate } from '@shared/lib/date-format';
+import { useDuplicateHintSettingsPreference } from '@shared/hooks/useUserPreferences';
+import { getLocaleTag } from '@shared/i18n';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 
@@ -32,14 +34,26 @@ export function DuplicateTransactionHint({
   enabled,
 }: DuplicateTransactionHintProps) {
   const { t } = useLingui();
+  const { settings } = useDuplicateHintSettingsPreference();
+  const active = enabled && settings.enabled;
   const isoDate = date ? formatDate(date, 'yyyy-MM-dd') : null;
   const amountNative = amount ? (isInflow ? amount : -amount) : 0;
-  const { data: matches = [] } = useSimilarTransactions(accountId, isoDate, amountNative, enabled);
+  const { data: matches = [] } = useSimilarTransactions(accountId, isoDate, amountNative, {
+    enabled: active,
+    toleranceBps: settings.toleranceBps,
+    dayWindow: settings.dayWindow,
+  });
 
   const entryKey = `${accountId}:${isoDate}:${amountNative}`;
   const [dismissedKey, setDismissedKey] = React.useState<string | null>(null);
 
-  if (!enabled || matches.length === 0 || dismissedKey === entryKey) return null;
+  if (!active || matches.length === 0 || dismissedKey === entryKey) return null;
+
+  const days = settings.dayWindow;
+  const tolerance = new Intl.NumberFormat(getLocaleTag(), {
+    style: 'percent',
+    maximumFractionDigits: 1,
+  }).format(settings.toleranceBps / 10_000);
 
   return (
     <div
@@ -64,11 +78,12 @@ export function DuplicateTransactionHint({
           </PopoverTrigger>
           <PopoverContent className="w-72 text-xs">
             <p className="text-muted-foreground">
-              <Trans>
-                Banks often list a pending charge and the settled one on different dates. This flags
-                transactions in the same account with a similar amount (within 1%) up to 7 days
-                apart.
-              </Trans>
+              {settings.toleranceBps > 0
+                ? t`Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within ${tolerance}) up to ${days} days apart.`
+                : t`Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with the same amount up to ${days} days apart.`}
+            </p>
+            <p className="mt-1.5 text-muted-foreground">
+              <Trans>Adjust this in Settings › Budget Settings.</Trans>
             </p>
           </PopoverContent>
         </Popover>

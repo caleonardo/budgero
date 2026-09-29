@@ -103,6 +103,15 @@ export interface SimilarTransaction {
   AmountNative: number;
 }
 
+/** Settings for the possible-duplicate hint shown while adding transactions. */
+export interface DuplicateHintSettings {
+  enabled: boolean;
+  /** Amount tolerance in basis points (100 = 1%); never tighter than 0.01. */
+  toleranceBps: number;
+  /** Days either side of the entered date to search. */
+  dayWindow: number;
+}
+
 export interface SimilarTransactionQuery {
   accountId: number;
   /** yyyy-MM-dd */
@@ -111,6 +120,8 @@ export interface SimilarTransactionQuery {
   amountNative: number;
   /** Days either side of `date` to search. Defaults to 7. */
   dayWindow?: number;
+  /** Amount tolerance in basis points (100 = 1%). Defaults to 100. */
+  toleranceBps?: number;
   limit?: number;
 }
 

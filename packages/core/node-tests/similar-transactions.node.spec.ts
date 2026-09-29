@@ -90,4 +90,80 @@ describe('TransactionService.findSimilarTransactions', () => {
       })
     ).toEqual([]);
   });
+
+  it('uses the configured amount tolerance, never tighter than 0.01', async () => {
+    const { services, accountId, add } = await setup();
+    await add('2026-09-26', 25_010, 'Rounded');
+    await add('2026-09-26', 25_200, 'Tip added');
+
+    const payees = (toleranceBps: number) =>
+      services.transactions
+        .findSimilarTransactions({
+          accountId,
+          date: '2026-09-26',
+          amountNative: -25_000,
+          toleranceBps,
+        })
+        .map((m) => m.Payee)
+        .sort();
+
+    expect(payees(0)).toEqual(['Rounded']);
+    expect(payees(100)).toEqual(['Rounded', 'Tip added']);
+  });
+});
+
+describe('UserMetaService duplicate hint settings', () => {
+  it('defaults to on, 1%, ±7 days and saves partial updates', async () => {
+    const { services } = await setup();
+    expect(services.userMeta.getDuplicateHintSettings()).toEqual({
+      enabled: true,
+      toleranceBps: 100,
+      dayWindow: 7,
+    });
+
+    services.userMeta.setDuplicateHintSettings({ toleranceBps: 0, dayWindow: 3 });
+    services.userMeta.setDuplicateHintSettings({ enabled: false });
+    expect(services.userMeta.getDuplicateHintSettings()).toEqual({
+      enabled: false,
+      toleranceBps: 0,
+      dayWindow: 3,
+    });
+  });
+
+  it('upgrades an existing workspace to the defaults, keeping other preferences', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    const sm = new ServiceManager();
+    await sm.initialize(adapter as DatabaseAdapter);
+    sm.getServices().userMeta.setWeekStartsOn(1);
+    for (const column of [
+      'DuplicateHintsEnabled',
+      'DuplicateAmountToleranceBps',
+      'DuplicateDayWindow',
+    ]) {
+      adapter.exec(`ALTER TABLE user_meta DROP COLUMN ${column}`);
+    }
+    adapter.exec('DELETE FROM schema_migrations WHERE version >= 65');
+    const olderBackup = await adapter.backup();
+    adapter.close();
+
+    const upgraded = await NodeSqlJsAdapter.create(olderBackup);
+    const upgradedManager = new ServiceManager();
+    await upgradedManager.initialize(upgraded as DatabaseAdapter);
+    const { userMeta } = upgradedManager.getServices();
+    expect(userMeta.getDuplicateHintSettings()).toEqual({
+      enabled: true,
+      toleranceBps: 100,
+      dayWindow: 7,
+    });
+    expect(userMeta.getWeekStartsOn()).toBe(1);
+    upgraded.close();
+  });
+
+  it('rejects out-of-range values without saving', async () => {
+    const { services } = await setup();
+    expect(() => services.userMeta.setDuplicateHintSettings({ toleranceBps: 5_000 })).toThrow();
+    expect(() => services.userMeta.setDuplicateHintSettings({ dayWindow: 0 })).toThrow();
+    expect(() => services.userMeta.setDuplicateHintSettings({ toleranceBps: 1.5 })).toThrow();
+    expect(services.userMeta.getDuplicateHintSettings().toleranceBps).toBe(100);
+  });
 });

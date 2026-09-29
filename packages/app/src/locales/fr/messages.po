@@ -808,6 +808,10 @@ msgstr "{cycleMonths, plural, one {tous les # mois} other {tous les # mois}}"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# jour} other {# jours}}"
 
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "{days, plural, one {±# day} other {±# days}}"
+msgstr "{days, plural, one {±# jour} other {±# jours}}"
+
 #: src/shared/lib/search-query-parser.ts
 msgid "{days, plural, one {Last # day} other {Last # days}}"
 msgstr "{days, plural, one {# dernier jour} other {# derniers jours}}"
@@ -1422,6 +1426,10 @@ msgstr "<0/>Simulation"
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 msgid "<0/>Due {0}({dueLabel})"
 msgstr "<0/>Échéance {0}({dueLabel})"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "<0/>Duplicate transactions"
+msgstr "<0/>Transactions en double"
 
 #: src/features/budget-planning/ui/category-row/CategoryRowHeader.tsx
 #: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
@@ -2880,6 +2888,10 @@ msgstr "Ajustez la plage de dates ou les filtres pour explorer d'autres résulta
 msgid "Adjust the filters or date range to explore other periods."
 msgstr "Ajustez les filtres ou la plage de dates pour explorer d'autres périodes."
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Adjust this in Settings › Budget Settings."
+msgstr "Modifiable dans Paramètres › Paramètres du budget."
+
 #: src/features/transactions/ui/desktop-table/DesktopTransactionTable.tsx
 msgid "Adjust your filters or add a new transaction to get started."
 msgstr "Ajustez vos filtres ou ajoutez une nouvelle transaction pour commencer."
@@ -3176,6 +3188,7 @@ msgstr "Tableau d'amortissement"
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/pages/settings/subscription/InvoicesTable.tsx
 #: src/pages/warranties/components/WarrantyFormDialog.tsx
@@ -3768,8 +3781,12 @@ msgid "Bank transaction ID was already imported"
 msgstr "L’identifiant de transaction bancaire a déjà été importé"
 
 #: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
-msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within 1%) up to 7 days apart."
-msgstr "Les banques affichent souvent un débit en attente et le débit définitif à des dates différentes. Sont signalées les transactions du même compte avec un montant similaire (à 1 % près) et jusqu’à 7 jours d’écart."
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within {tolerance}) up to {days} days apart."
+msgstr "Les banques affichent souvent un débit en attente et le débit définitif à des dates différentes. Sont signalées les transactions du même compte avec un montant similaire (à {tolerance} près) et jusqu’à {days} jours d’écart."
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with the same amount up to {days} days apart."
+msgstr "Les banques affichent souvent un débit en attente et le débit définitif à des dates différentes. Sont signalées les transactions du même compte avec le même montant et jusqu’à {days} jours d’écart."
 
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
@@ -5289,6 +5306,10 @@ msgstr "Impossible de rejoindre l'espace de travail. Réessayez."
 msgid "Could not load calendar settings."
 msgstr "Impossible de charger les paramètres du calendrier."
 
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Could not load duplicate transaction settings."
+msgstr "Impossible de charger les paramètres des transactions en double."
+
 #: src/pages/settings/components/IncomeCategoriesCard.tsx
 msgid "Could not load income categories."
 msgstr "Impossible de charger les catégories de revenus."
@@ -5316,6 +5337,10 @@ msgstr "Impossible de lire ce plan"
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 msgid "Could not read that YNAB plan."
 msgstr "Impossible de lire ce plan YNAB."
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Could not save duplicate transaction settings"
+msgstr "Impossible d’enregistrer les paramètres des transactions en double"
 
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 msgid "Could not save the accepted import. You can cancel it safely."
@@ -5871,6 +5896,10 @@ msgstr "Format de date"
 #: src/pages/onboarding/steps/YnabImportStep.tsx
 msgid "DATE FORMAT"
 msgstr "FORMAT DE DATE"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Date range"
+msgstr "Plage de dates"
 
 #: src/pages/accounts/components/AccountDateRangeControls.tsx
 #: src/pages/settings/CurrencySettingsPage.tsx
@@ -6904,6 +6933,10 @@ msgstr "Tous les ans"
 #: src/pages/onboarding/steps/ShareStep.tsx
 msgid "Everyone you invite becomes a <0>collaborator</0> with the same view and edit rights you have. After we set up your workspace we’ll generate a private link for each person — Budgero never emails them on your behalf, you copy or send each link yourself so the secret stays off our servers."
 msgstr "Toute personne que vous invitez devient un <0>collaborateur</0> avec les mêmes droits de consultation et de modification que vous. Après avoir configuré votre espace de travail, nous générerons un lien privé pour chaque personne — Budgero ne leur enverra jamais d'e-mail en votre nom, vous copiez ou envoyez chaque lien vous-même afin que le secret reste hors de nos serveurs."
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Exact (±0.01)"
+msgstr "Exact (±0,01)"
 
 #: src/shared/lib/search-query-parser.ts
 msgid "Exactly"
@@ -16938,6 +16971,14 @@ msgstr "Argile désertique chaleureuse."
 msgid "Warm southwestern desert with sand, terracotta, and sage."
 msgstr "Désert chaud du Sud-Ouest avec sable, terracotta et sauge."
 
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Warn about possible duplicates"
+msgstr "Signaler les doublons possibles"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Warn while adding a transaction by hand if it looks like one already in the account. Imports use their own duplicate check."
+msgstr "Avertit lors de l’ajout manuel d’une transaction si elle ressemble à une transaction déjà présente dans le compte. Les importations ont leur propre détection des doublons."
+
 #: src/pages/admin/admin-users/ActionDialog.tsx
 msgid "Warning"
 msgstr "Avertissement"
@@ -17222,6 +17263,10 @@ msgstr "Largeur +"
 #: src/features/import/ui/steps/configure/FormattingTab.tsx
 msgid "With your current settings:"
 msgstr "Avec vos paramètres actuels :"
+
+#: src/pages/settings/components/DuplicateHintSettingsCard.tsx
+msgid "Within {tolerance}"
+msgstr "À {tolerance} près"
 
 #: src/pages/analytics/AnalyticsPage.tsx
 msgid "Within our means?"
