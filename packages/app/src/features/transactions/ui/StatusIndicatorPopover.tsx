@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { CalendarClock, Lock, type LucideIcon } from 'lucide-react';
+import { CalendarClock, Lock, RefreshCw, type LucideIcon } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
@@ -44,7 +44,7 @@ export function StatusIndicatorPopover({
       text: t`This transaction is scheduled for a future date.`,
     },
     projected: {
-      icon: CalendarClock,
+      icon: RefreshCw,
       buttonColor: 'bg-primary/10 text-primary hover:bg-primary/20',
       label: t`Projected recurring transaction`,
       srText: 'Projected recurring transaction',

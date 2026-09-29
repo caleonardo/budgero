@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addMonths, parseISO, differenceInCalendarDays } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
-import { CalendarClock, ArrowRight, AlertCircle, Repeat } from 'lucide-react';
+import { CalendarClock, ArrowRight, AlertCircle, RefreshCw } from 'lucide-react';
 
 import {
   Card,
@@ -265,7 +265,7 @@ export function UpcomingTransactionsCard({
         : null;
     const daysUntil = differenceInCalendarDays(item.date, today);
     const accentClass = item.isOutflow ? 'text-red-600 dark:text-red-300' : 'text-green-600';
-    const Icon = item.isRecurring ? Repeat : CalendarClock;
+    const Icon = item.isRecurring ? RefreshCw : CalendarClock;
 
     return (
       <li key={item.key}>

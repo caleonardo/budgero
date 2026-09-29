@@ -12,7 +12,7 @@ import {
   SlidersHorizontal,
   Coins,
   Layers,
-  Clock,
+  RefreshCw,
   Plug,
   Bot,
   Palette,
@@ -61,7 +61,7 @@ export const NAV_SETTINGS_DATA: NavRouteItem[] = [
 /** Settings → Automation & Integrations links. */
 export const NAV_SETTINGS_AUTOMATION: NavRouteItem[] = [
   { to: '/settings/rules', icon: Layers, label: msg`Rules` },
-  { to: '/settings/recurring', icon: Clock, label: msg`Recurring` },
+  { to: '/settings/recurring', icon: RefreshCw, label: msg`Recurring` },
   { to: '/settings/api', icon: Plug, label: msg`Push API` },
   { to: '/settings/ai', icon: Bot, label: msg`AI Assistant` },
 ];

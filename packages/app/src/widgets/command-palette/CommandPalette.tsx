@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { parseISO } from 'date-fns';
 import {
   Calculator,
-  Clock,
+  RefreshCw,
   CreditCard,
   Home,
   PieChart,
@@ -523,7 +523,7 @@ export function CommandPalette() {
               </span>
             </CommandItem>
             <CommandItem onSelect={() => handleNavigation('/settings/recurring')}>
-              <Clock className="mr-2 h-4 w-4" />
+              <RefreshCw className="mr-2 h-4 w-4" />
               <span>
                 <Trans>Recurring</Trans>
               </span>

@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import * as React from 'react';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, BellRing, Repeat2 } from 'lucide-react';
+import { Calendar as CalendarIcon, BellRing, RefreshCw } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Field } from '@shared/ui/field';
 import { Input } from '@shared/ui/input';
@@ -50,7 +50,7 @@ export const RecurringOptionsSection = React.memo(function RecurringOptionsSecti
       data-testid="recurring-options"
     >
       <div className="flex items-start gap-3">
-        <Repeat2 className="mt-0.5 h-4 w-4 text-primary" />
+        <RefreshCw className="mt-0.5 h-4 w-4 text-primary" />
         <div>
           <p className="text-sm font-medium">
             <Trans>Recurring schedule</Trans>

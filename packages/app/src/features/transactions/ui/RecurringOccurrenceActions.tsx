@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { Check, Loader2, Repeat, SkipForward } from 'lucide-react';
+import { Check, Loader2, RefreshCw, SkipForward } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   useMarkRecurringOccurrenceReady,
@@ -99,11 +99,11 @@ export function RecurringOccurrenceActions({
   );
 }
 
-/** Small repeat icon marking a row as projected from, or posted by, a recurring transaction. */
+/** Small recurring icon marking a row as projected from, or posted by, a recurring transaction. */
 export function RecurringIndicator({ className }: { className?: string }) {
   const { t } = useLingui();
   return (
-    <Repeat
+    <RefreshCw
       className={cn('h-3.5 w-3.5 shrink-0 text-primary', className)}
       aria-label={t`Recurring transaction`}
       role="img"
