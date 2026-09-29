@@ -109,6 +109,7 @@ export type {
   AmountConditionOperator,
   AccountConditionOperator,
   RuleConditionOperator,
+  RuleConditionJoin,
   RuleCondition,
   RuleActionType,
   RuleAction,
@@ -162,7 +163,7 @@ export type {
 } from './services/goals/calculations.js';
 
 // Rule autofill suggestions (pure computation)
-export { computeAutofillSuggestions } from './services/rules/index.js';
+export { computeAutofillSuggestions, groupRuleConditions } from './services/rules/index.js';
 
 // Chat budget-context builder (pure computation over services)
 export { buildBudgetContext, type BudgetContext } from './services/chat/context-builder.js';

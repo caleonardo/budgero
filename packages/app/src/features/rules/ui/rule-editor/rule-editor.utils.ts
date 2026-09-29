@@ -8,6 +8,7 @@ import type {
   PayeeConditionOperator,
   AmountConditionOperator,
   AccountConditionOperator,
+  RuleConditionJoin,
   Category,
   Account,
 } from '@budgero/core/browser';
@@ -39,6 +40,7 @@ export type RuleFormCondition = {
     | AccountConditionOperator;
   value: string;
   caseSensitive?: boolean;
+  join?: RuleConditionJoin;
 };
 
 export type RuleFormAction = {
@@ -47,6 +49,11 @@ export type RuleFormAction = {
 };
 
 export function normalizeCondition(condition: RuleCondition): RuleFormCondition {
+  const form = normalizeConditionFields(condition);
+  return condition.join === 'or' ? { ...form, join: 'or' } : form;
+}
+
+function normalizeConditionFields(condition: RuleCondition): RuleFormCondition {
   if (condition.field === 'amount') {
     return {
       field: 'amount',
@@ -139,7 +146,12 @@ export function getDefaultPayload(
   }
 }
 
-export function convertCondition(condition: RuleFormCondition): RuleCondition {
+export function convertCondition(condition: RuleFormCondition, index: number): RuleCondition {
+  const stored = convertConditionFields(condition);
+  return index > 0 && condition.join === 'or' ? { ...stored, join: 'or' } : stored;
+}
+
+function convertConditionFields(condition: RuleFormCondition): RuleCondition {
   if (condition.field === 'amount') {
     return {
       field: 'amount',

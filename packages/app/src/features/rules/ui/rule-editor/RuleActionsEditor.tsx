@@ -30,7 +30,7 @@ export const RuleActionsEditor = React.memo(function RuleActionsEditor({
     <RuleEditorSection
       title={t`Actions`}
       description={t`Actions run in order after all conditions pass.`}
-      addLabel="Add action"
+      addLabel={t`Add action`}
       onAdd={onAdd}
     >
       {actions.map((action, index) => (

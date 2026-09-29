@@ -3,9 +3,9 @@ import React from 'react';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
-import { Switch } from '@shared/ui/switch';
-import { MinusCircle } from 'lucide-react';
+import { CaseSensitive, X } from 'lucide-react';
 import type { RuleConditionField, RuleConditionOperator, Account } from '@budgero/core/browser';
+import { cn } from '@shared/lib/utils';
 import {
   type RuleFormCondition,
   memoOperators,
@@ -14,6 +14,7 @@ import {
   accountOperators,
   getOperatorLabel,
 } from './rule-editor.utils';
+import { RuleAccountSelect } from './RuleAccountSelect';
 
 interface RuleConditionRowProps {
   condition: RuleFormCondition;
@@ -42,108 +43,101 @@ export const RuleConditionRow = React.memo(function RuleConditionRow({
         : condition.field === 'amount'
           ? amountOperators
           : accountOperators;
+  const isText = condition.field === 'memo' || condition.field === 'payee';
+  const caseSensitive = Boolean(condition.caseSensitive);
+  const caseLabel = t`Case sensitive matching`;
 
   return (
-    <div className="rounded-lg border bg-card/40 p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        <Select
-          value={condition.field}
-          onValueChange={(value: RuleConditionField) => onUpdate(index, { field: value })}
-        >
-          <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder={t`Field`} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="memo">
-              <Trans>Memo</Trans>
+    <div className="flex flex-wrap items-center gap-2 rounded-md border bg-card/40 p-2 sm:flex-nowrap">
+      <Select
+        value={condition.field}
+        onValueChange={(value: RuleConditionField) => onUpdate(index, { field: value })}
+      >
+        <SelectTrigger size="sm" className="w-[calc(50%-0.25rem)] sm:w-28 sm:shrink-0">
+          <SelectValue placeholder={t`Field`} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="memo">
+            <Trans>Memo</Trans>
+          </SelectItem>
+          <SelectItem value="payee">
+            <Trans>Payee</Trans>
+          </SelectItem>
+          <SelectItem value="amount">
+            <Trans>Amount</Trans>
+          </SelectItem>
+          <SelectItem value="account">
+            <Trans>Account</Trans>
+          </SelectItem>
+        </SelectContent>
+      </Select>
+      <Select
+        value={condition.operator}
+        onValueChange={(value: RuleConditionOperator) => onUpdate(index, { operator: value })}
+      >
+        <SelectTrigger size="sm" className="w-[calc(50%-0.25rem)] sm:w-32 sm:shrink-0">
+          <SelectValue placeholder={t`Operator`} />
+        </SelectTrigger>
+        <SelectContent>
+          {operators.map((operator) => (
+            <SelectItem key={operator} value={operator}>
+              {getOperatorLabel(operator)}
             </SelectItem>
-            <SelectItem value="payee">
-              <Trans>Payee</Trans>
-            </SelectItem>
-            <SelectItem value="amount">
-              <Trans>Amount</Trans>
-            </SelectItem>
-            <SelectItem value="account">
-              <Trans>Account</Trans>
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          value={condition.operator}
-          onValueChange={(value: RuleConditionOperator) => onUpdate(index, { operator: value })}
-        >
-          <SelectTrigger className="w-full sm:w-36">
-            <SelectValue placeholder={t`Operator`} />
-          </SelectTrigger>
-          <SelectContent>
-            {operators.map((operator) => (
-              <SelectItem key={operator} value={operator}>
-                {getOperatorLabel(operator)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {condition.field === 'memo' || condition.field === 'payee' ? (
-          <Input
-            placeholder={condition.operator === 'regex' ? t`Regular expression` : t`Text to match`}
-            value={condition.value}
-            onChange={(event) => onUpdate(index, { value: event.target.value })}
-            className="w-full"
-          />
+          ))}
+        </SelectContent>
+      </Select>
+      <div className="flex min-w-0 flex-1 items-center gap-1">
+        {isText ? (
+          <>
+            <Input
+              className="h-8"
+              placeholder={
+                condition.operator === 'regex' ? t`Regular expression` : t`Text to match`
+              }
+              value={condition.value}
+              onChange={(event) => onUpdate(index, { value: event.target.value })}
+            />
+            <Button
+              type="button"
+              variant={caseSensitive ? 'secondary' : 'ghost'}
+              size="icon"
+              aria-pressed={caseSensitive}
+              title={caseLabel}
+              aria-label={caseLabel}
+              onClick={() => onUpdate(index, { caseSensitive: !caseSensitive })}
+              className={cn('size-8 shrink-0', !caseSensitive && 'text-muted-foreground')}
+            >
+              <CaseSensitive className="size-4" />
+            </Button>
+          </>
         ) : condition.field === 'amount' ? (
           <Input
+            className="h-8"
             placeholder={t`Amount`}
             type="number"
             value={condition.value}
             onChange={(event) => onUpdate(index, { value: event.target.value })}
-            className="w-full"
           />
         ) : (
-          <Select
+          <RuleAccountSelect
             value={(condition.value ?? '').toString()}
-            onValueChange={(value) => onUpdate(index, { value })}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={t`Select account`} />
-            </SelectTrigger>
-            <SelectContent>
-              {accounts.length === 0 ? (
-                <SelectItem value="">
-                  <Trans>No accounts available</Trans>
-                </SelectItem>
-              ) : (
-                accounts.map((account) => (
-                  <SelectItem key={account.ID} value={account.ID.toString()}>
-                    {account.Name}
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
+            accounts={accounts}
+            onChange={(value) => onUpdate(index, { value })}
+          />
         )}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          disabled={!canRemove}
-          onClick={() => onRemove(index)}
-          className="self-start"
-        >
-          <MinusCircle className="h-5 w-5 text-muted-foreground" />
-        </Button>
       </div>
-
-      {condition.field === 'memo' || condition.field === 'payee' ? (
-        <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-          <Trans>
-            <Switch
-              checked={Boolean(condition.caseSensitive)}
-              onCheckedChange={(value) => onUpdate(index, { caseSensitive: value })}
-            />
-            Case sensitive matching
-          </Trans>
-        </div>
-      ) : null}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        disabled={!canRemove}
+        onClick={() => onRemove(index)}
+        className="size-8 shrink-0 text-muted-foreground"
+        title={t`Remove condition`}
+        aria-label={t`Remove condition`}
+      >
+        <X className="size-4" />
+      </Button>
     </div>
   );
 });

@@ -661,6 +661,43 @@ describe('Rules engine (Node/sql.js)', () => {
       expect(tx(amountOnly).Payee ?? '').toBe('');
     });
 
+    it('matches when any OR-joined condition matches', async () => {
+      const tesco = await addTx({ outflow: M(5), payee: 'Tesco' });
+      const aldi = await addTx({ outflow: M(5), payee: 'Aldi' });
+      const other = await addTx({ outflow: M(5), payee: 'Lidl' });
+      const { execution } = await runRule(
+        [
+          { field: 'payee', operator: 'equals', value: 'Tesco' },
+          { field: 'payee', operator: 'equals', value: 'Aldi', join: 'or' },
+        ],
+        [{ type: 'memo.set', payload: { memo: 'MATCHED' } }],
+        [tesco, aldi, other]
+      );
+      expect(execution.matchedCount).toBe(2);
+      expect(tx(tesco).Memo).toBe('MATCHED');
+      expect(tx(aldi).Memo).toBe('MATCHED');
+      expect(tx(other).Memo ?? '').toBe('');
+    });
+
+    it('binds AND tighter than OR (a AND b OR c)', async () => {
+      const bigTarget = await addTx({ outflow: M(50), memo: 'target' });
+      const smallTarget = await addTx({ outflow: M(5), memo: 'target' });
+      const savings = await addTx({ outflow: M(5), memo: 'other', account: otherAccountId });
+      const { execution } = await runRule(
+        [
+          { field: 'memo', operator: 'contains', value: 'target' },
+          { field: 'amount', operator: '<=', value: -M(50), join: 'and' },
+          { field: 'account', operator: 'is', value: otherAccountId, join: 'or' },
+        ],
+        [{ type: 'payee.set', payload: { payee: 'MATCHED' } }],
+        [bigTarget, smallTarget, savings]
+      );
+      expect(execution.matchedCount).toBe(2);
+      expect(tx(bigTarget).Payee).toBe('MATCHED');
+      expect(tx(smallTarget).Payee ?? '').toBe('');
+      expect(tx(savings).Payee).toBe('MATCHED');
+    });
+
     it('scans every budget transaction when no transactionIds are given', async () => {
       const a = await addTx({ outflow: M(1), memo: 'target a' });
       const b = await addTx({ outflow: M(1), memo: 'target b' });

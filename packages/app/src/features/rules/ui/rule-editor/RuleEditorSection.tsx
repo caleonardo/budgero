@@ -18,18 +18,22 @@ export function RuleEditorSection({
   children,
 }: RuleEditorSectionProps) {
   return (
-    <section className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h3 className="text-base font-semibold">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
-        </div>
-        <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={onAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          {addLabel}
-        </Button>
+    <section className="space-y-2">
+      <div>
+        <h3 className="text-sm font-semibold">{title}</h3>
+        <p className="text-xs text-muted-foreground">{description}</p>
       </div>
-      <div className="space-y-3">{children}</div>
+      <div className="space-y-2">{children}</div>
+      <Button
+        type="button"
+        size="sm"
+        variant="ghost"
+        className="h-8 w-full justify-start border border-dashed text-muted-foreground hover:text-foreground"
+        onClick={onAdd}
+      >
+        <Plus className="mr-1 h-4 w-4" />
+        {addLabel}
+      </Button>
     </section>
   );
 }
