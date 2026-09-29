@@ -8,6 +8,7 @@ import CreateBudgetForm from '@features/budget-management/ui/CreateBudgetForm';
 interface BudgetWizardProps {
   onCreated?: (budgetId: number) => void;
   onModeChange?: (mode: 'manual' | 'core' | 'import') => void;
+  onWideLayoutChange?: (wide: boolean) => void;
   defaultTab?: 'manual' | 'core' | 'import';
   hideHeader?: boolean;
 }
@@ -15,12 +16,18 @@ interface BudgetWizardProps {
 const BudgetWizard: React.FC<BudgetWizardProps> = ({
   onCreated,
   onModeChange,
+  onWideLayoutChange,
   defaultTab,
   hideHeader,
 }) => {
   if (hideHeader) {
     return (
-      <CreateBudgetForm onCreated={onCreated} onModeChange={onModeChange} defaultTab={defaultTab} />
+      <CreateBudgetForm
+        onCreated={onCreated}
+        onModeChange={onModeChange}
+        onWideLayoutChange={onWideLayoutChange}
+        defaultTab={defaultTab}
+      />
     );
   }
 
@@ -29,7 +36,12 @@ const BudgetWizard: React.FC<BudgetWizardProps> = ({
       <h2 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">
         <Trans>Start a New Budget</Trans>
       </h2>
-      <CreateBudgetForm onCreated={onCreated} onModeChange={onModeChange} defaultTab={defaultTab} />
+      <CreateBudgetForm
+        onCreated={onCreated}
+        onModeChange={onModeChange}
+        onWideLayoutChange={onWideLayoutChange}
+        defaultTab={defaultTab}
+      />
     </div>
   );
 };

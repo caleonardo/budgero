@@ -577,7 +577,7 @@ msgstr "{0} Zeilen × {1} Spalten in die Zwischenablage kopiert"
 msgid "{0} rows x {columnCount} columns copied to clipboard"
 msgstr "{0} Zeilen × {columnCount} Spalten in die Zwischenablage kopiert"
 
-#. placeholder {0}: run.summary.verification.readyToAssign.mismatches.length
+#. placeholder {0}: run.summary.verification.readyToAssign.mismatchCount
 #. placeholder {1}: run.summary.verification.categories.checked - run.summary.verification.categories.matched
 #: src/pages/settings/ImportsPage.tsx
 msgid "{0} RTA · {1} category differences"
@@ -3467,6 +3467,7 @@ msgstr "Weise jeden Monat denselben Betrag zu. Ideal für Notgroschen und fortla
 msgid "Assign this to reach target"
 msgstr "Zum Erreichen des Ziels zuweisen"
 
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 #: src/pages/analytics/reports/PlanRealityReport.tsx
@@ -3506,6 +3507,11 @@ msgstr "Kategorien zugewiesen"
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Assigned:"
 msgstr "Zugewiesen:"
+
+#. placeholder {0}: cause.month
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "assignment difference in {0}"
+msgstr "Zuweisungsdifferenz in {0}"
 
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Assignment exceeds ready-to-assign amount"
@@ -4007,6 +4013,10 @@ msgstr "Budgero speichert dein Master-Passwort in der IndexedDB dieses Browsers,
 msgid "Budgero tries to detect other format settings, but exports made with the settings above are the only ones that import losslessly."
 msgstr "Budgero versucht, andere Formateinstellungen zu erkennen, aber nur Exporte mit den obigen Einstellungen lassen sich verlustfrei importieren."
 
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "Budgero value"
+msgstr "Budgero-Wert"
+
 #. placeholder {0}: formatMoney( sym, perMonth )
 #. placeholder {1}: formatDateLabel(state.goal.targetDate)
 #: src/pages/onboarding/steps/GoalStep.tsx
@@ -4033,6 +4043,10 @@ msgstr "Budgero setzt jede Transaktion, die von diesem Durchlauf betroffen war, 
 #: src/pages/onboarding/steps/StartModeStep.tsx
 msgid "Budgero works either way. Pick the path that fits."
 msgstr "Budgero funktioniert auf beide Arten. Wähle den Weg, der zu dir passt."
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "Budgero-side amounts that may explain these differences. They are hints for comparing with YNAB, not an exact breakdown."
+msgstr "Beträge auf Budgero-Seite, die diese Differenzen erklären könnten. Sie sind Hinweise für den Abgleich mit YNAB, keine exakte Aufschlüsselung."
 
 #: src/app/layout/desktop-shell/constants.ts
 #: src/app/startup/StartupStepper.tsx
@@ -4344,6 +4358,11 @@ msgstr "Bargeld"
 #: src/pages/dashboard/DashboardPage.mobile.tsx
 msgid "Cash Balance"
 msgstr "Barguthaben"
+
+#. placeholder {0}: cause.month
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "cash overspend in {0}"
+msgstr "Barüberziehung in {0}"
 
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "Cash spending:"
@@ -6175,6 +6194,7 @@ msgstr "Über die YNAB-API erkannt"
 msgid "Did the budget hold?"
 msgstr "Hält das Budget?"
 
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 msgid "Difference"
 msgstr "Differenz"
@@ -8436,6 +8456,7 @@ msgstr "Bereits gebuchte oder übersprungene Termine werden mitgezählt."
 
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/features/budget-management/model/icon-options.ts
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 #: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
 #: src/features/transactions/ui/form/TransactionTypeSelector.tsx
 #: src/pages/analytics/reports/FlowReport.tsx
@@ -8451,8 +8472,8 @@ msgstr "Einkommen"
 #. placeholder {2}: formatMilli(mismatch.breakdown.offBudgetTransfers, currency)
 #. placeholder {3}: formatMilli(mismatch.breakdown.priorCashOverspend, currency)
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
-msgid "Income {0} · Assigned {1} · Off-budget {2} · Prior cash overspend {3}"
-msgstr "Einnahmen {0} · Zugewiesen {1} · Nicht im Budget {2} · Frühere Bargeldüberziehungen {3}"
+#~ msgid "Income {0} · Assigned {1} · Off-budget {2} · Prior cash overspend {3}"
+#~ msgstr "Einnahmen {0} · Zugewiesen {1} · Nicht im Budget {2} · Frühere Bargeldüberziehungen {3}"
 
 #. placeholder {0}: savingsRate.toFixed(0)
 #: src/pages/analytics/reports/FlowReport.tsx
@@ -9739,6 +9760,7 @@ msgstr "Überwache deine private Budgero-Installation und verwalte Nutzerkonten.
 msgid "Monochrome budgeting workspace with parchment canvas and red/green utility accents."
 msgstr "Monochromer Budget-Arbeitsbereich mit Pergament-Canvas und roten/grünen Utility-Akzenten."
 
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 #: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
 msgid "Month"
@@ -10830,6 +10852,10 @@ msgstr "Noch keine Arbeitsbereiche. Verwende die Schaltfläche oben, um deinen e
 msgid "None"
 msgstr "Keine"
 
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "Not attributed"
+msgstr "Nicht zugeordnet"
+
 #: src/pages/settings/components/PrivacySettingsCard.tsx
 msgid "Not available in self-hosted builds."
 msgstr "Nicht in Self-Hosting-Builds verfügbar."
@@ -10931,6 +10957,10 @@ msgstr "Nicht im Budget"
 #: src/widgets/navigation/MobileBottomNav.tsx
 msgid "Off Budget"
 msgstr "Nicht im Budget"
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "Off-budget"
+msgstr "Außerhalb des Budgets"
 
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 msgid "Official rates restored"
@@ -11987,6 +12017,10 @@ msgstr "Poppins"
 msgid "Positive numbers increase, negatives decrease the amount."
 msgstr "Positive Zahlen erhöhen, negative verringern den Betrag."
 
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "Possible contributors"
+msgstr "Mögliche Ursachen"
+
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Post transaction"
 msgstr "Transaktion buchen"
@@ -12102,6 +12136,10 @@ msgstr "Primäres Ausgabenkonto für alltägliche Transaktionen"
 #: src/features/debt/ui/PayoffPlanSheet.tsx
 msgid "Principal"
 msgstr "Kreditbetrag"
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "Prior cash overspend"
+msgstr "Frühere Barüberziehung"
 
 #: src/pages/settings/components/GoalFundingSettingsCard.tsx
 msgid "Priority choices"
@@ -13585,6 +13623,18 @@ msgstr "Schema-Laden fehlgeschlagen"
 #: src/features/budget-management/model/icon-options.ts
 msgid "School & Learning"
 msgstr "Schule & Lernen"
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "Scroll horizontally to view all columns"
+msgstr "Horizontal scrollen, um alle Spalten zu sehen"
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "Scroll left"
+msgstr "Nach links scrollen"
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "Scroll right"
+msgstr "Nach rechts scrollen"
 
 #: src/app/layout/desktop-shell/HeaderBar.tsx
 msgid "Search"
@@ -17292,8 +17342,8 @@ msgstr "Ja, alle Daten ersetzen"
 #. placeholder {0}: formatMilli(mismatch.expectedReadyToAssign, currency)
 #. placeholder {1}: formatMilli(mismatch.computedReadyToAssign, currency)
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
-msgid "YNAB {0} · Budgero {1}"
-msgstr "YNAB {0} · Budgero {1}"
+#~ msgid "YNAB {0} · Budgero {1}"
+#~ msgstr "YNAB {0} · Budgero {1}"
 
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "YNAB applies loan interest to balances without exporting a separate transaction. Budgero added visible ledger adjustments so these balances remain exact."
@@ -17345,6 +17395,10 @@ msgstr "YNAB-Plan"
 msgid "YNAB shows the full token only once. Treat it like a password; you can revoke it later from the same screen."
 msgstr "YNAB zeigt das vollständige Token nur einmal an. Behandle es wie ein Passwort. Du kannst es später auf derselben Seite widerrufen."
 
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+msgid "YNAB value"
+msgstr "YNAB-Wert"
+
 #: src/features/budget-management/ui/create-budget-form/YnabExportGuide.tsx
 msgid "YNAB web app"
 msgstr "YNAB-Web-App"
@@ -17354,8 +17408,12 @@ msgid "YNAB-managed debt interest preserved"
 msgstr "Von YNAB verwaltete Schuldzinsen beibehalten"
 
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
-msgid "You accepted the differences below. They are saved in Import History for later review."
-msgstr "Du hast die folgenden Abweichungen akzeptiert. Sie werden zur späteren Prüfung im Importverlauf gespeichert."
+msgid "You accepted the differences below. Import History keeps a summary of them."
+msgstr "Du hast die folgenden Differenzen akzeptiert. Der Importverlauf speichert eine Zusammenfassung davon."
+
+#: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
+#~ msgid "You accepted the differences below. They are saved in Import History for later review."
+#~ msgstr "Du hast die folgenden Abweichungen akzeptiert. Sie werden zur späteren Prüfung im Importverlauf gespeichert."
 
 #. placeholder {0}: todayStr.slice(0, 7)
 #. placeholder {1}: budgetContext.summary

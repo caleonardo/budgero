@@ -1,16 +1,22 @@
+import * as React from 'react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import type {
   YNABImportProgressUpdate,
   YNABImportStage,
   YNABImportSummary,
+  YNABReadyToAssignCategoryCause,
+  YNABReadyToAssignMismatch,
   YNABReconciliationReport,
 } from '@budgero/core/browser';
 import { Alert, AlertDescription, AlertTitle } from '@shared/ui/alert';
 import { Button } from '@shared/ui/button';
 import { Progress } from '@shared/ui/progress';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import {
   AlertTriangle,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Circle,
   Loader2,
   RotateCcw,
@@ -66,6 +72,238 @@ function formatMilli(amount: number, currency: string): string {
   } catch {
     return `${(amount / 1000).toFixed(3)} ${currency}`;
   }
+}
+
+function causeKey(cause: YNABReadyToAssignCategoryCause): string {
+  return `${cause.categoryGroup}::${cause.category}::${cause.month}::${cause.reason}`;
+}
+
+function ReadyToAssignMismatchesTable({
+  mismatches,
+  currency,
+}: {
+  mismatches: YNABReadyToAssignMismatch[];
+  currency: string;
+}) {
+  const { t } = useLingui();
+  const tableContainerRef = React.useRef<HTMLDivElement>(null);
+  const [scrollState, setScrollState] = React.useState({
+    overflows: false,
+    atStart: true,
+    atEnd: true,
+  });
+
+  const updateScrollState = React.useCallback(() => {
+    const el = tableContainerRef.current;
+    if (!el) return;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    setScrollState({
+      overflows: maxScroll > 1,
+      atStart: el.scrollLeft <= 1,
+      atEnd: el.scrollLeft >= maxScroll - 1,
+    });
+  }, []);
+
+  React.useEffect(() => {
+    const el = tableContainerRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener('scroll', updateScrollState, { passive: true });
+    const observer =
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(updateScrollState);
+    observer?.observe(el);
+    return () => {
+      el.removeEventListener('scroll', updateScrollState);
+      observer?.disconnect();
+    };
+  }, [updateScrollState]);
+
+  const scrollByColumns = (direction: -1 | 1) => {
+    tableContainerRef.current?.scrollBy({ left: direction * 320, behavior: 'smooth' });
+  };
+
+  const reasonLabel = (cause: YNABReadyToAssignCategoryCause) =>
+    cause.reason === 'cash_overspend'
+      ? t`cash overspend in ${cause.month}`
+      : t`assignment difference in ${cause.month}`;
+
+  // The same origin cause is repeated on every later mismatched month.
+  const possibleCauses = new Map<string, YNABReadyToAssignCategoryCause>();
+  for (const mismatch of mismatches) {
+    for (const cause of mismatch.affectedCategories ?? []) {
+      const key = causeKey(cause);
+      if (!possibleCauses.has(key)) possibleCauses.set(key, cause);
+    }
+  }
+  const sortedCauses = [...possibleCauses.entries()].sort(
+    ([, a], [, b]) => a.month.localeCompare(b.month) || Math.abs(b.amount) - Math.abs(a.amount)
+  );
+
+  const headClass = 'h-8 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wide';
+
+  return (
+    <div className="space-y-2">
+      {sortedCauses.length > 0 && (
+        <div className="space-y-1.5 rounded-md border border-amber-500/30 bg-background/90 p-2.5 text-xs">
+          <p className="font-semibold text-foreground">
+            <Trans>Possible contributors</Trans>
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            <Trans>
+              Budgero-side amounts that may explain these differences. They are hints for comparing
+              with YNAB, not an exact breakdown.
+            </Trans>
+          </p>
+          <div className="grid grid-cols-1 gap-1.5 pt-0.5 sm:grid-cols-2">
+            {sortedCauses.map(([key, cause]) => (
+              <div
+                key={key}
+                className="flex items-center justify-between gap-2 rounded border bg-muted/30 px-2 py-1 text-[11px]"
+              >
+                <span className="min-w-0 truncate font-medium">
+                  {cause.categoryGroup} › {cause.category}
+                </span>
+                <span className="shrink-0 text-right">
+                  <span className="font-mono font-medium text-amber-700 dark:text-amber-400">
+                    {formatMilli(cause.amount, currency)}
+                  </span>{' '}
+                  <span className="text-[10px] text-muted-foreground">({reasonLabel(cause)})</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {scrollState.overflows && (
+        <div className="flex items-center justify-between gap-2 px-0.5">
+          <span className="text-[11px] font-medium text-muted-foreground">
+            <Trans>Scroll horizontally to view all columns</Trans>
+          </span>
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => scrollByColumns(-1)}
+              disabled={scrollState.atStart}
+              aria-label={t`Scroll left`}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => scrollByColumns(1)}
+              disabled={scrollState.atEnd}
+              aria-label={t`Scroll right`}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <div className="w-full overflow-hidden rounded-md border bg-background/80 shadow-2xs">
+        <Table
+          containerRef={tableContainerRef}
+          containerClassName="max-h-80 overflow-x-auto overflow-y-auto [scrollbar-width:auto] [&::-webkit-scrollbar]:h-3 [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/35 hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/55 [&::-webkit-scrollbar-track]:bg-muted/40"
+          className="min-w-[1120px] text-xs"
+        >
+          <TableHeader className="sticky top-0 z-10 bg-muted/95 backdrop-blur-xs">
+            <TableRow>
+              <TableHead className={headClass}>
+                <Trans>Month</Trans>
+              </TableHead>
+              <TableHead className={`${headClass} text-right`}>
+                <Trans>Difference</Trans>
+              </TableHead>
+              <TableHead className={headClass}>
+                <Trans>Possible contributors</Trans>
+              </TableHead>
+              <TableHead className={`${headClass} text-right`}>
+                <Trans>YNAB value</Trans>
+              </TableHead>
+              <TableHead className={`${headClass} text-right`}>
+                <Trans>Budgero value</Trans>
+              </TableHead>
+              <TableHead className={`${headClass} text-right`}>
+                <Trans>Income</Trans>
+              </TableHead>
+              <TableHead className={`${headClass} text-right`}>
+                <Trans>Assigned</Trans>
+              </TableHead>
+              <TableHead className={`${headClass} text-right`}>
+                <Trans>Off-budget</Trans>
+              </TableHead>
+              <TableHead className={`${headClass} text-right`}>
+                <Trans>Prior cash overspend</Trans>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mismatches.map((m) => (
+              <TableRow key={m.month}>
+                <TableCell className="whitespace-nowrap py-1.5 font-medium">{m.month}</TableCell>
+                <TableCell className="whitespace-nowrap py-1.5 text-right font-mono font-medium text-amber-700 dark:text-amber-400">
+                  {formatMilli(m.difference, currency)}
+                </TableCell>
+                <TableCell className="min-w-[220px] py-1.5">
+                  {m.affectedCategories && m.affectedCategories.length > 0 ? (
+                    <div className="space-y-1">
+                      {m.affectedCategories.map((cause) => (
+                        <div key={causeKey(cause)} className="text-[11px] leading-tight">
+                          <span className="font-medium">
+                            {cause.categoryGroup} › {cause.category}
+                          </span>
+                          <div className="text-[10px] text-muted-foreground">
+                            <span className="font-mono font-medium text-amber-700 dark:text-amber-400">
+                              {formatMilli(cause.amount, currency)}
+                            </span>{' '}
+                            ({reasonLabel(cause)})
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-muted-foreground" aria-hidden>
+                        —
+                      </span>
+                      <span className="sr-only">
+                        <Trans>Not attributed</Trans>
+                      </span>
+                    </>
+                  )}
+                </TableCell>
+                <TableCell className="whitespace-nowrap py-1.5 text-right font-mono">
+                  {formatMilli(m.expectedReadyToAssign, currency)}
+                </TableCell>
+                <TableCell className="whitespace-nowrap py-1.5 text-right font-mono">
+                  {formatMilli(m.computedReadyToAssign, currency)}
+                </TableCell>
+                <TableCell className="whitespace-nowrap py-1.5 text-right font-mono">
+                  {formatMilli(m.breakdown.income, currency)}
+                </TableCell>
+                <TableCell className="whitespace-nowrap py-1.5 text-right font-mono">
+                  {formatMilli(m.breakdown.assignments, currency)}
+                </TableCell>
+                <TableCell className="whitespace-nowrap py-1.5 text-right font-mono">
+                  {formatMilli(m.breakdown.offBudgetTransfers, currency)}
+                </TableCell>
+                <TableCell className="whitespace-nowrap py-1.5 text-right font-mono">
+                  {formatMilli(m.breakdown.priorCashOverspend, currency)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
 }
 
 export function YnabImportStatus({
@@ -130,7 +368,7 @@ export function YnabImportStatus({
             ? t`Source rows and account balances reconcile. Review the reporting differences before deciding whether to keep this budget.`
             : isSaved
               ? hasWarning
-                ? t`You accepted the differences below. They are saved in Import History for later review.`
+                ? t`You accepted the differences below. Import History keeps a summary of them.`
                 : t`Budgero finished the import and passed every available integrity check.`
               : error
                 ? t`Review the failed check below before trying again.`
@@ -284,32 +522,10 @@ export function YnabImportStatus({
               <Trans>Budgero did not alter the ledger to force these values to match.</Trans>
             </p>
           </div>
-          <div className="max-h-52 space-y-2 overflow-y-auto pr-1">
-            {verification.readyToAssign.mismatches.map((mismatch) => (
-              <div key={mismatch.month} className="rounded border bg-background/80 p-2 text-[11px]">
-                <div className="flex flex-wrap justify-between gap-2 font-medium">
-                  <span>{mismatch.month}</span>
-                  <span className="text-amber-700 dark:text-amber-400">
-                    Δ {formatMilli(mismatch.difference, currency)}
-                  </span>
-                </div>
-                <p className="mt-1 text-muted-foreground">
-                  <Trans>
-                    YNAB {formatMilli(mismatch.expectedReadyToAssign, currency)} · Budgero{' '}
-                    {formatMilli(mismatch.computedReadyToAssign, currency)}
-                  </Trans>
-                </p>
-                <p className="mt-1 text-muted-foreground">
-                  <Trans>
-                    Income {formatMilli(mismatch.breakdown.income, currency)} · Assigned{' '}
-                    {formatMilli(mismatch.breakdown.assignments, currency)} · Off-budget{' '}
-                    {formatMilli(mismatch.breakdown.offBudgetTransfers, currency)} · Prior cash
-                    overspend {formatMilli(mismatch.breakdown.priorCashOverspend, currency)}
-                  </Trans>
-                </p>
-              </div>
-            ))}
-          </div>
+          <ReadyToAssignMismatchesTable
+            mismatches={verification.readyToAssign.mismatches}
+            currency={currency}
+          />
         </div>
       )}
 
