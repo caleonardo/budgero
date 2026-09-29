@@ -143,6 +143,10 @@ msgstr "\"{0}\" fue eliminado y borrado de las transacciones."
 msgid "({0} original)"
 msgstr "({0} original)"
 
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "(clear)"
+msgstr "(vaciar)"
+
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 msgid "(cleared)"
 msgstr "(confirmado)"
@@ -396,8 +400,8 @@ msgstr "{0}| Elegibles {1}| Ya enviados {2}{3}"
 
 #. placeholder {0}: rule.actions.length
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "{0} action(s)"
-msgstr "{0} acción(es)"
+#~ msgid "{0} action(s)"
+#~ msgstr "{0} acción(es)"
 
 #. placeholder {0}: current.dau.toLocaleString()
 #. placeholder {1}: current.mau.toLocaleString()
@@ -440,8 +444,8 @@ msgstr "{0}gráfico{1}"
 
 #. placeholder {0}: rule.conditions.length
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "{0} condition(s)"
-msgstr "{0} condición(es)"
+#~ msgid "{0} condition(s)"
+#~ msgstr "{0} condición(es)"
 
 #. placeholder {0}: run.summary.duplicatesSkipped ?? 0
 #. placeholder {1}: run.summary.userSkipped ?? 0
@@ -698,8 +702,8 @@ msgstr "{0}Importar de todos modos"
 
 #. placeholder {0}: isProcessing && isMarkReadyPending ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Sparkles className="mr-2 h-4 w-4" /> )
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-msgid "{0}Mark ready"
-msgstr "{0}Marcar como listo"
+#~ msgid "{0}Mark ready"
+#~ msgstr "{0}Marcar como listo"
 
 #. placeholder {0}: monthsCoverage.toFixed(1)
 #: src/widgets/dashboard/AtAGlance.tsx
@@ -731,13 +735,13 @@ msgstr "{0}Actualizar"
 
 #. placeholder {0}: executeRule.isPending && executingCurrent === rule.id && executingTrigger === 'retroactive' ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Rocket className="mr-2 h-4 w-4" /> )
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "{0}Retro run"
-msgstr "{0}Ejecución retroactiva"
+#~ msgid "{0}Retro run"
+#~ msgstr "{0}Ejecución retroactiva"
 
 #. placeholder {0}: executeRule.isPending && executingCurrent === rule.id && executingTrigger === 'manual' ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Play className="mr-2 h-4 w-4" /> )
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "{0}Run now"
-msgstr "{0}Ejecutar ahora"
+#~ msgid "{0}Run now"
+#~ msgstr "{0}Ejecutar ahora"
 
 #. placeholder {0}: isSwitching ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <ArrowRightLeft className="mr-2 h-4 w-4" /> )
 #: src/app/startup/screens.tsx
@@ -761,6 +765,10 @@ msgstr "Pagos de {ccCategoryName}"
 #: src/features/budget-planning/ui/assign-dropdown/useAssignDropdownState.tsx
 msgid "{changedCount} categories adjusted"
 msgstr "{changedCount} categorías ajustadas"
+
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "{conditionCount} condition(s) · {actionCount} action(s)"
+msgstr "{conditionCount} condición(es) · {actionCount} acción(es)"
 
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "{count, plural, one {# transaction deleted} other {# transactions deleted}}"
@@ -827,6 +835,10 @@ msgstr "{days, plural, one {Último # día} other {Últimos # días}}"
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "{days} days"
 msgstr "{days} días"
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "{daysBefore, plural, one {Remind # day before} other {Remind # days before}}"
+msgstr "{daysBefore, plural, one {Recordar # día antes} other {Recordar # días antes}}"
 
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "{daysLeftInBeta} days"
@@ -987,6 +999,10 @@ msgstr "{uncategorizedCount} sin categorizar"
 #: src/pages/accounts/AccountPage.tsx
 msgid "{unsafeTransactionCount, plural, one {# transaction contains an amount outside Budgero's exact money range. Correct the exchange rate in the highlighted row; the converted amount and account balance will then be recalculated.} other {# transactions contain an amount outside Budgero's exact money range. Correct the exchange rate in the highlighted row; the converted amount and account balance will then be recalculated.}}"
 msgstr "{unsafeTransactionCount, plural, one {# transacción contiene un importe fuera del intervalo monetario exacto de Budgero. Corrige el tipo de cambio en la fila resaltada; se recalcularán el importe convertido y el saldo de la cuenta.} other {# transacciones contienen un importe fuera del intervalo monetario exacto de Budgero. Corrige el tipo de cambio en la fila resaltada; se recalcularán el importe convertido y el saldo de la cuenta.}}"
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "{upcomingCount} upcoming"
+msgstr "{upcomingCount} próximas"
 
 #. placeholder {0}: legendItems.length
 #: src/features/analytics/ui/chart-viewer/ChartLegend.tsx
@@ -1245,8 +1261,8 @@ msgid "<0/>Capture"
 msgstr "<0/>Capturar"
 
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
-msgid "<0/>Case sensitive matching"
-msgstr "<0/>Distinguir mayúsculas y minúsculas"
+#~ msgid "<0/>Case sensitive matching"
+#~ msgstr "<0/>Distinguir mayúsculas y minúsculas"
 
 #: src/widgets/dashboard/CashflowTrendCard.tsx
 msgid "<0/>Cashflow trends"
@@ -1261,8 +1277,8 @@ msgid "<0/>Category Group Percentages"
 msgstr "<0/>Porcentajes de grupos de categorías"
 
 #: src/features/rules/ui/PayeeCategoryMemoryCard.tsx
-msgid "<0/>Category memory"
-msgstr "<0/>Memoria de categorías"
+#~ msgid "<0/>Category memory"
+#~ msgstr "<0/>Memoria de categorías"
 
 #: src/pages/settings/SecurityPage.tsx
 msgid "<0/>Change Master Password"
@@ -1329,7 +1345,7 @@ msgstr "<0/>Conectado a: {0}"
 msgid "<0/>Connection Status"
 msgstr "<0/>Estado de conexión"
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "<0/>Consumed after retro run"
 msgstr "<0/>Consumido tras ejecución retroactiva"
 
@@ -1392,9 +1408,7 @@ msgstr "<0/>Inicio predeterminado"
 #: src/features/chat/ui/chat-panel/ChatConversationList.tsx
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
 #: src/pages/settings/ImportsPage.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "<0/>Delete"
 msgstr "<0/>Eliminar"
 
@@ -1442,8 +1456,6 @@ msgstr "<0/>Transacciones duplicadas"
 #: src/features/budget-planning/ui/category-row/CategoryRowHeader.tsx
 #: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
 #: src/pages/explorer-page/components/ReportsPanel.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "<0/>Edit"
 msgstr "<0/>Editar"
 
@@ -1526,8 +1538,8 @@ msgid "<0/>Hide Key"
 msgstr "<0/>Ocultar clave"
 
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "<0/>History"
-msgstr "<0/>Historial"
+#~ msgid "<0/>History"
+#~ msgstr "<0/>Historial"
 
 #: src/pages/settings/push-api/IdReferencePanel.tsx
 msgid "<0/>ID Reference"
@@ -1585,7 +1597,7 @@ msgstr "<0/>Etiqueta"
 msgid "<0/>Language"
 msgstr "<0/>Idioma"
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "<0/>Last run {lastRunLabel}"
 msgstr "<0/>Última ejecución {lastRunLabel}"
 
@@ -1598,8 +1610,8 @@ msgid "<0/>Later"
 msgstr "<0/>Más tarde"
 
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "<0/>Let Budgero handle the busywork"
-msgstr "<0/>Deja que Budgero se encargue del trabajo tedioso"
+#~ msgid "<0/>Let Budgero handle the busywork"
+#~ msgstr "<0/>Deja que Budgero se encargue del trabajo tedioso"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "<0/>Linked Accounts"
@@ -1700,8 +1712,8 @@ msgid "<0/>Pin chart"
 msgstr "<0/>Fijar gráfico"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "<0/>Plan ahead with recurring items"
-msgstr "<0/>Planifica con antelación los elementos recurrentes"
+#~ msgid "<0/>Plan ahead with recurring items"
+#~ msgstr "<0/>Planifica con antelación los elementos recurrentes"
 
 #: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
 #: src/pages/settings/AuditLogPage.tsx
@@ -1806,7 +1818,7 @@ msgid "<0/>Revoke Token"
 msgstr "<0/>Revocar token"
 
 #. placeholder {0}: rule.runOrder
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "<0/>Run order {0}"
 msgstr "<0/>Ejecutar orden {0}"
 
@@ -1870,8 +1882,8 @@ msgstr "<0/>Editor de consultas SQL"
 
 #. placeholder {0}: template.schedule.startDate
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "<0/>Started {0}"
-msgstr "<0/>Iniciado {0}"
+#~ msgid "<0/>Started {0}"
+#~ msgstr "<0/>Iniciado {0}"
 
 #: src/pages/admin/StickinessAnalyticsSection.tsx
 msgid "<0/>Stickiness & retention"
@@ -2193,8 +2205,8 @@ msgstr "<0>R</0>r/budgero"
 
 #. placeholder {0}: template.notifyDaysBefore || 0
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "<0>Remind me:</0> {0} day(s) before"
-msgstr "<0>Recuérdame:</0> {0} día(s) antes"
+#~ msgid "<0>Remind me:</0> {0} day(s) before"
+#~ msgstr "<0>Recuérdame:</0> {0} día(s) antes"
 
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "<0>Required:</0>Date column + Amount column (or Inflow/Outflow columns)<1/><2>Optional:</2>Payee, Account, Category, Memo (will use account selection below if not mapped)"
@@ -2531,6 +2543,7 @@ msgstr "Acceso hasta:"
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/shared/model/nav-registry.ts
 msgid "Account"
@@ -2619,8 +2632,6 @@ msgid "Account updated"
 msgstr "Cuenta actualizada"
 
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Account:"
 msgstr "Cuenta:"
 
@@ -2771,6 +2782,10 @@ msgstr "Añade una nota para esta transferencia..."
 msgid "Add Account"
 msgstr "Añadir cuenta"
 
+#: src/features/rules/ui/rule-editor/RuleActionsEditor.tsx
+msgid "Add action"
+msgstr "Añadir acción"
+
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 msgid "Add an account first"
 msgstr "Añade primero una cuenta"
@@ -2808,6 +2823,10 @@ msgstr "Añadir grupo de categorías"
 msgid "Add charts to visualize your query results"
 msgstr "Añade gráficos para visualizar los resultados de tu consulta"
 
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+msgid "Add condition"
+msgstr "Añadir condición"
+
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Add Exchange Rate"
 msgstr "Añadir tipo de cambio"
@@ -2833,6 +2852,7 @@ msgid "Add New Transaction"
 msgstr "Añadir una transacción"
 
 #: src/app/layout/desktop-shell/HeaderBar.tsx
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Add transaction"
 msgstr "Añadir transacción"
 
@@ -2881,10 +2901,12 @@ msgid "Adjust"
 msgstr "Ajustar"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Adjust by %"
 msgstr "Ajustar por %"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Adjust by value"
 msgstr "Ajustar por valor"
 
@@ -3020,8 +3042,8 @@ msgid "all charted"
 msgstr "todos en el gráfico"
 
 #: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
-msgid "All conditions must match for the rule to fire."
-msgstr "Todas las condiciones deben cumplirse para que se active la regla."
+#~ msgid "All conditions must match for the rule to fire."
+#~ msgstr "Todas las condiciones deben cumplirse para que se active la regla."
 
 #: src/pages/settings/SecurityPage.tsx
 msgid "All fields are required"
@@ -3195,6 +3217,7 @@ msgstr "Cuadro de amortización"
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
 #: src/pages/settings/components/DuplicateHintSettingsCard.tsx
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
@@ -3216,6 +3239,10 @@ msgstr "Importe ya reembolsado de esta deuda."
 msgid "Amount conditions require a numeric value."
 msgstr "Las condiciones de importe requieren un valor numérico."
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Amount fields"
+msgstr "Campos de importe"
+
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Amount needed available"
 msgstr "Importe necesario disponible"
@@ -3233,7 +3260,6 @@ msgid "Amount to start the month with"
 msgstr "Importe para empezar el mes"
 
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Amount:"
 msgstr "Importe:"
 
@@ -3269,6 +3295,11 @@ msgstr "Las analíticas no están disponibles en versiones autoalojadas."
 #: src/pages/explorer-page/sql-utils.ts
 msgid "Analytics view columns"
 msgstr "Columnas de la vista de analíticas"
+
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "AND"
+msgstr "Y"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "Animate amount changes on the Planning page."
@@ -3610,7 +3641,7 @@ msgid "Auto-Categorize"
 msgstr "Auto-categorizar"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Autofill"
 msgstr "Autocompletar"
 
@@ -3846,8 +3877,7 @@ msgstr "fuera del período mostrado"
 msgid "Biggest leak: {0}, {1} over its assignment."
 msgstr "Mayor fuga: {0}, {1} por encima de lo asignado."
 
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+#: src/pages/settings/recurring/components/RecurringKindBadge.tsx
 msgid "Bill"
 msgstr "Factura"
 
@@ -4057,7 +4087,7 @@ msgstr "Budgero asignará aproximadamente {0}/mes a este tarro hasta {1}."
 msgid "Budgero will create {0}."
 msgstr "Budgero creará {0}."
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Budgero will evaluate every transaction in this budget and apply any matching actions. This may take a moment for larger budgets."
 msgstr "Budgero evaluará cada transacción de este presupuesto y aplicará las acciones que coincidan. Esto puede tardar un momento en presupuestos más grandes."
 
@@ -4276,6 +4306,7 @@ msgstr "¿Puedo tener más de un espacio de trabajo?"
 msgid "Canadian Dollar"
 msgstr "Dólar canadiense"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/app/startup/screens.tsx
 #: src/features/account-management/ui/ArchiveAccountDialog.tsx
 #: src/features/account-management/ui/EditAccountDialog.tsx
@@ -4314,7 +4345,7 @@ msgstr "Dólar canadiense"
 #: src/pages/settings/components/IncomeCategoriesCard.tsx
 #: src/pages/settings/components/WorkspaceRow.tsx
 #: src/pages/settings/CurrencySettingsPage.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/pages/settings/SecurityPage.tsx
 #: src/pages/settings/subscription/PlanChangeDialog.tsx
@@ -4375,6 +4406,14 @@ msgstr "Pago con tarjeta registrado"
 #: src/pages/settings/AppearancePage.tsx
 msgid "Cards"
 msgstr "Tarjetas"
+
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+msgid "Case sensitive matching"
+msgstr "Distinguir mayúsculas y minúsculas"
+
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "case-sensitive"
+msgstr "distingue mayúsculas"
 
 #: src/entities/account/model/accountTypes.ts
 #: src/features/budget-management/model/icon-options.ts
@@ -4482,8 +4521,6 @@ msgid "Category-history differences"
 msgstr "Diferencias en el historial de categorías"
 
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Category:"
 msgstr "Categoría:"
 
@@ -4494,6 +4531,10 @@ msgstr "Categoría<0/>"
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "CC Payment Calculation"
 msgstr "Cálculo de pago de tarjeta de crédito"
+
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+msgid "Chain conditions with AND / OR. AND is checked before OR, so each OR starts a new group."
+msgstr "Encadena condiciones con Y / O. Y se evalúa antes que O, así que cada O inicia un nuevo grupo."
 
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Change account currency?"
@@ -4694,8 +4735,8 @@ msgid "Choose an account for the account action."
 msgstr "Elige una cuenta para la acción de cuenta."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "Choose an existing payee or create a new one. Leave blank to clear it."
-msgstr "Elige un beneficiario existente o crea uno nuevo. Déjalo en blanco para borrarlo."
+#~ msgid "Choose an existing payee or create a new one. Leave blank to clear it."
+#~ msgstr "Elige un beneficiario existente o crea uno nuevo. Déjalo en blanco para borrarlo."
 
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Choose another category"
@@ -4895,10 +4936,14 @@ msgstr "Haz clic en la fila que contiene las cabeceras de tu tabla. {0} Mostrand
 msgid "Click to edit"
 msgstr "Haz clic para editar"
 
+#: src/shared/ui/calculator-cell/CalculatorDisplay.tsx
+msgid "Click to edit - Calculator: 100 + 50, 1000 * 0.3"
+msgstr "Haz clic para editar - Calculadora: 100 + 50, 1000 * 0.3"
+
 #. placeholder {0}: shortcuts ? ' - Shortcuts: Ctrl+H (half), Ctrl+D (double), Ctrl+Z (zero), Ctrl+T (10%)' : ''
 #: src/shared/ui/calculator-cell/CalculatorDisplay.tsx
-msgid "Click to edit - Calculator: 100 + 50, 1000 * 0.3{0}"
-msgstr "Haz clic para editar - Calculadora: 100 + 50, 1000 * 0.3{0}"
+#~ msgid "Click to edit - Calculator: 100 + 50, 1000 * 0.3{0}"
+#~ msgstr "Haz clic para editar - Calculadora: 100 + 50, 1000 * 0.3{0}"
 
 #: src/features/chat/ui/VoiceInputButton.tsx
 msgid "Click to speak"
@@ -5106,7 +5151,7 @@ msgstr "Confirmar contraseña"
 msgid "CONFIRM PASSWORD"
 msgstr "CONFIRMAR CONTRASEÑA"
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Confirm retro run"
 msgstr "Confirmar ejecución retroactiva"
 
@@ -5214,7 +5259,7 @@ msgstr "Sigue asignando {monthlyTarget} cada mes para alcanzar tu objetivo"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Continuous"
 msgstr "Continuo"
 
@@ -5823,6 +5868,7 @@ msgstr "Cíclico"
 #: src/features/budget-planning/ui/spending-drawer-mobile/SpendingChart.tsx
 #: src/features/transactions/ui/add-transaction/recurring-form.ts
 #: src/pages/admin/StickinessAnalyticsSection.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Daily"
 msgstr "Diario"
 
@@ -6081,6 +6127,7 @@ msgstr "Supr"
 #: src/features/transactions/ui/form/SplitEditor.tsx
 #: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
 #: src/pages/explorer-page/components/ReportsPanel.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 #: src/pages/settings/CurrencySettingsPage.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/pages/warranties/WarrantiesPage.tsx
@@ -6091,7 +6138,7 @@ msgstr "Eliminar"
 
 #. placeholder {0}: rule.name
 #. placeholder {0}: template.name
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Delete “{0}”?"
 msgstr "¿Eliminar «{0}»?"
@@ -6150,7 +6197,7 @@ msgstr "¿Eliminar entrada del historial?"
 msgid "Delete payment"
 msgstr "Eliminar pago"
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Delete rule"
 msgstr "Eliminar regla"
 
@@ -6353,6 +6400,10 @@ msgstr "Dona"
 msgid "Dot (.)"
 msgstr "Punto (.)"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Double amount"
+msgstr "Duplicar importe"
+
 #: src/pages/settings/DataManagementPage.tsx
 msgid "Download CSV Files"
 msgstr "Descargar archivos CSV"
@@ -6419,8 +6470,8 @@ msgid "Due today"
 msgstr "Vence hoy"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-msgid "Due:"
-msgstr "Vencimiento:"
+#~ msgid "Due:"
+#~ msgstr "Vencimiento:"
 
 #: src/features/import/ui/csv-pdf-dialog/useImportDialogState.ts
 msgid "Duplicate check failed"
@@ -6522,6 +6573,8 @@ msgstr "Cada línea dividida necesita un importe de ingreso o de gasto."
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Edit"
 msgstr "Editar"
 
@@ -6663,6 +6716,10 @@ msgstr "Activar notificaciones"
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Enable privacy mode"
 msgstr "Activar modo privado"
+
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Enable rule"
+msgstr "Activar regla"
 
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "Enable speech-to-text for voice messages"
@@ -7684,8 +7741,12 @@ msgid "Five levels (default)"
 msgstr "Cinco niveles (predeterminado)"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "Flags<0><1><2><3/></2><4>Accepts standard JavaScript regex flags, e.g. <5>gi</5>for global, case-insensitive matches.</4></1></0>"
-msgstr "Banderas<0><1><2><3/></2><4>Acepta las banderas estándar de expresiones regulares de JavaScript, p. ej. <5>gi</5> para coincidencias globales sin distinguir mayúsculas y minúsculas.</4></1></0>"
+msgid "Flags"
+msgstr "Flags"
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#~ msgid "Flags<0><1><2><3/></2><4>Accepts standard JavaScript regex flags, e.g. <5>gi</5>for global, case-insensitive matches.</4></1></0>"
+#~ msgstr "Banderas<0><1><2><3/></2><4>Acepta las banderas estándar de expresiones regulares de JavaScript, p. ej. <5>gi</5> para coincidencias globales sin distinguir mayúsculas y minúsculas.</4></1></0>"
 
 #: src/pages/analytics/reports/ScenarioReport.tsx
 msgid "Flat average"
@@ -7820,8 +7881,8 @@ msgstr "Cuenta de origen"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "From account:"
-msgstr "Desde la cuenta:"
+#~ msgid "From account:"
+#~ msgstr "Desde la cuenta:"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "From and To currencies must be different."
@@ -7916,6 +7977,7 @@ msgstr "Jardín y exterior"
 msgid "Gas"
 msgstr "Gasolina"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/features/category-management/ui/SearchableCategorySelect.tsx
 msgid "General"
 msgstr "General"
@@ -8110,6 +8172,10 @@ msgstr "Peluquería y belleza"
 msgid "Halfway there! Save {needed} more this month"
 msgstr "¡Por la mitad! Ahorra {needed} más este mes"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Halve amount"
+msgstr "Dividir importe a la mitad"
+
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Have a specific amount available by a target date"
 msgstr "Tener una cantidad específica disponible para una fecha objetivo"
@@ -8175,6 +8241,10 @@ msgstr "Ocultar archivados"
 msgid "Hide balance column"
 msgstr "Ocultar columna de saldo"
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Hide details"
+msgstr "Ocultar detalles"
+
 #: src/features/budgeting/ui/BudgetToolbar.tsx
 msgid "Hide hidden"
 msgstr "Ocultar ocultos"
@@ -8191,11 +8261,16 @@ msgstr "Ocultar columna de etiquetas"
 msgid "Hide sidebar"
 msgstr "Ocultar barra lateral"
 
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Hide upcoming"
+msgstr "Ocultar próximas"
+
 #: src/features/ai/ui/AICategorizeDialog.tsx
 msgid "High"
 msgstr "Alto"
 
 #: src/pages/accounts/AccountsPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "History"
 msgstr "Historial"
 
@@ -8539,8 +8614,7 @@ msgstr "Incluye las operaciones ya registradas u omitidas."
 #: src/features/transactions/ui/form/TransactionTypeSelector.tsx
 #: src/pages/analytics/reports/FlowReport.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+#: src/pages/settings/recurring/components/RecurringKindBadge.tsx
 #: src/widgets/dashboard/CashflowTrendCard.tsx
 msgid "Income"
 msgstr "Ingresos"
@@ -8837,6 +8911,10 @@ msgstr "Su historial se ha movido a la categoría de ingresos seleccionada."
 msgid "Japanese Yen"
 msgstr "Yen japonés"
 
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "JavaScript regex flags, e.g. gi"
+msgstr "Flags de regex de JavaScript, p. ej. gi"
+
 #: src/pages/admin/SelfHostAdminUsers.tsx
 msgid "John Doe"
 msgstr "John Doe"
@@ -8844,6 +8922,10 @@ msgstr "John Doe"
 #: src/pages/JoinWorkspacePage.tsx
 msgid "Join a shared workspace"
 msgstr "Únete a un espacio de trabajo compartido"
+
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+msgid "Join with previous condition"
+msgstr "Unir con la condición anterior"
 
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
 #: src/pages/JoinWorkspacePage.tsx
@@ -8930,6 +9012,10 @@ msgstr "Se mantiene en memoria para esta importación y nunca se guarda en Budge
 #: src/pages/settings/push-api/EncryptionInfoPanel.tsx
 msgid "Key Source"
 msgstr "Fuente de la clave"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Keyboard shortcuts"
+msgstr "Atajos de teclado"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Know what you can spend. Keep your budget private. Create your account to start your free trial."
@@ -9544,7 +9630,7 @@ msgid "Mapping"
 msgstr "Mapeo"
 
 #. placeholder {0}: template.name
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Mark “{0}” as ready?"
 msgstr "¿Marcar “{0}” como listo?"
 
@@ -9557,10 +9643,11 @@ msgid "Mark complete after the first retroactive run."
 msgstr "Marca como completado después de la primera ejecución retroactiva."
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "Mark items as ready when they land to create the matching transaction automatically."
-msgstr "Marca los elementos como listos cuando lleguen para crear la transacción correspondiente automáticamente."
+#~ msgid "Mark items as ready when they land to create the matching transaction automatically."
+#~ msgstr "Marca los elementos como listos cuando lleguen para crear la transacción correspondiente automáticamente."
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Mark ready"
 msgstr "Marcar como listo"
 
@@ -9685,6 +9772,7 @@ msgstr "Registros de membresía"
 #: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
 #: src/features/transactions/ui/form/SplitEditor.tsx
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
@@ -9870,6 +9958,7 @@ msgstr "mensualmente"
 #: src/pages/analytics/reports/InOutReport.tsx
 #: src/pages/analytics/reports/WealthReport.tsx
 #: src/pages/settings/BudgetSettingsPage.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/pages/settings/subscription/PlanSelection.tsx
 msgid "Monthly"
 msgstr "Mensual"
@@ -10212,7 +10301,7 @@ msgstr "Evolución del patrimonio neto"
 #: src/features/goal-management/ui/GoalForm.tsx
 #: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "Never"
 msgstr "Nunca"
@@ -10328,12 +10417,12 @@ msgid "No account activity in this period."
 msgstr "Sin actividad de cuenta en este periodo."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "No accounts"
-msgstr "Sin cuentas"
+#~ msgid "No accounts"
+#~ msgstr "Sin cuentas"
 
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
-msgid "No accounts available"
-msgstr "No hay cuentas disponibles"
+#~ msgid "No accounts available"
+#~ msgstr "No hay cuentas disponibles"
 
 #: src/pages/settings/push-api/IdReferencePanel.tsx
 msgid "No accounts found"
@@ -10416,7 +10505,6 @@ msgstr "Sin presupuesto asignado"
 #: src/features/account-management/ui/DevSeedTransactionsButton.tsx
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
-#: src/pages/settings/AutomationRulesPage.tsx
 msgid "No budget selected"
 msgstr "Ningún presupuesto seleccionado"
 
@@ -10433,8 +10521,8 @@ msgid "No cached rate found. Provide a temporary rate for offline use."
 msgstr "No se ha encontrado ningún tipo de cambio en caché. Indica un tipo de cambio temporal para uso sin conexión."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "No categories"
-msgstr "Sin categorías"
+#~ msgid "No categories"
+#~ msgstr "Sin categorías"
 
 #: src/features/budget-planning/ui/assign-dropdown/useAssignDropdownState.tsx
 msgid "No categories are overfunded!"
@@ -10637,6 +10725,7 @@ msgstr "No se encontraron etiquetas."
 msgid "No labels yet."
 msgstr "Aún no hay etiquetas."
 
+#: src/features/rules/ui/rule-editor/RuleAccountSelect.tsx
 #: src/features/transactions/ui/form/AccountSelect.tsx
 msgid "No matching accounts."
 msgstr "No hay cuentas que coincidan."
@@ -10670,8 +10759,8 @@ msgid "No memo"
 msgstr "Sin nota"
 
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "No memo provided"
-msgstr "No se ha proporcionado nota"
+#~ msgid "No memo provided"
+#~ msgstr "No se ha proporcionado nota"
 
 #: src/shared/hooks/useAudioRecorder.ts
 msgid "No microphone found. Please connect a microphone."
@@ -10898,8 +10987,8 @@ msgid "No upcoming dates"
 msgstr "No hay fechas próximas"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "No upcoming occurrences"
-msgstr "No hay próximas ocurrencias"
+#~ msgid "No upcoming occurrences"
+#~ msgstr "No hay próximas ocurrencias"
 
 #: src/pages/admin/SelfHostAdminDashboard.tsx
 msgid "No users created yet."
@@ -11134,7 +11223,7 @@ msgid "One subscription, up to 5 people"
 msgstr "Una suscripción, hasta 5 personas"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "One time"
 msgstr "Una vez"
 
@@ -11326,6 +11415,11 @@ msgstr "Las notas opcionales ayudan a nuestro equipo a mejorar Budgero."
 #: src/pages/settings/components/IncomeCategoriesCard.tsx
 msgid "Optional: give income sources their own categories, such as Salary, Freelance, or Rental income, to see them separately in analytics. All categories in the Income group count toward Ready to Assign in the same way. You can keep using the default Income category for everything."
 msgstr "Opcional: asigna categorías propias a tus fuentes de ingresos, como Sueldo, Trabajo autónomo o Alquileres, para verlas por separado en los análisis. Todas las categorías del grupo Ingresos cuentan del mismo modo para Por asignar. Puedes seguir usando la categoría Ingresos predeterminada para todo."
+
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "OR"
+msgstr "O"
 
 #: src/features/ai/ui/receipt-scanner/ReceiptDropzone.tsx
 msgid "Or drag and drop an image here"
@@ -11618,7 +11712,12 @@ msgstr "Patrón"
 msgid "Pause"
 msgstr "Pausar"
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Pause rule"
+msgstr "Pausar regla"
+
 #: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Paused"
 msgstr "Pausado"
 
@@ -11629,9 +11728,14 @@ msgstr "Pagar"
 #: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
 msgid "Payee"
 msgstr "Beneficiario"
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Payee (blank clears it)"
+msgstr "Beneficiario (vacío lo borra)"
 
 #: src/pages/settings/PayeesPage.tsx
 msgid "Payee added"
@@ -12121,7 +12225,7 @@ msgstr "Posibles causas"
 msgid "Possible duplicate"
 msgstr "Posible duplicado"
 
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post transaction"
 msgstr "Registrar transacción"
 
@@ -12184,8 +12288,12 @@ msgid "Preparing your session…"
 msgstr "Preparando tu sesión…"
 
 #: src/features/transactions/ui/add-transaction/TransactionFormActions.tsx
-msgid "Press Cmd+Enter to save"
-msgstr "Pulsa Cmd+Enter para guardar"
+msgid "Press {saveShortcut} to save"
+msgstr "Pulsa {saveShortcut} para guardar"
+
+#: src/features/transactions/ui/add-transaction/TransactionFormActions.tsx
+#~ msgid "Press Cmd+Enter to save"
+#~ msgstr "Pulsa Cmd+Enter para guardar"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "Preview"
@@ -12412,6 +12520,7 @@ msgstr "trimestralmente"
 
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/features/transactions/ui/add-transaction/recurring-form.ts
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Quarterly"
 msgstr "Trimestral"
 
@@ -12788,6 +12897,7 @@ msgstr "Acción rehecha"
 msgid "Redirecting to sign in…"
 msgstr "Redirigiendo para iniciar sesión…"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/app/system/GlobalUndoHotkeys.tsx
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Redo"
@@ -12883,8 +12993,8 @@ msgid "Remaining to assign"
 msgstr "Restante por asignar"
 
 #: src/features/rules/ui/PayeeCategoryMemoryCard.tsx
-msgid "Remember how you file each payee, without writing a rule for it."
-msgstr "Recuerda cómo registras cada beneficiario, sin escribir una regla para ello."
+#~ msgid "Remember how you file each payee, without writing a rule for it."
+#~ msgstr "Recuerda cómo registras cada beneficiario, sin escribir una regla para ello."
 
 #: src/features/transactions/ui/add-transaction/TransactionFormHeader.tsx
 msgid "Remember last category, payee, account"
@@ -12893,6 +13003,10 @@ msgstr "Recordar última categoría, beneficiario, cuenta"
 #: src/pages/settings/SecurityPage.tsx
 msgid "Remember on this device (IndexedDB)"
 msgstr "Recordar en este dispositivo (IndexedDB)"
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Remind on due date"
+msgstr "Recordar el día de vencimiento"
 
 #: src/pages/settings/DataManagementPage.tsx
 msgid "Reminder frequency (days)"
@@ -12924,6 +13038,14 @@ msgstr "Eliminar"
 msgid "Remove {0} filter"
 msgstr "Quitar filtro {0}"
 
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Remove action"
+msgstr "Quitar acción"
+
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+msgid "Remove condition"
+msgstr "Quitar condición"
+
 #: src/features/chat/ui/chat-panel/ChatComposer.tsx
 msgid "Remove image"
 msgstr "Quitar imagen"
@@ -12933,6 +13055,7 @@ msgid "Remove one-off"
 msgstr "Quitar instancia única"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Remove pattern from memo"
 msgstr "Eliminar patrón de la nota"
 
@@ -13245,6 +13368,10 @@ msgstr "Jubilación"
 msgid "Retro CRT terminal with phosphor green glow and scanlines."
 msgstr "Terminal CRT retro con brillo verde fósforo y líneas de escaneo."
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Retro run"
+msgstr "Ejecución retroactiva"
+
 #: src/app/startup/screens.tsx
 #: src/pages/admin/components/RegistrationSettings.tsx
 msgid "Retry"
@@ -13459,6 +13586,10 @@ msgstr "Historial de ejecución"
 msgid "Run models locally with Ollama"
 msgstr "Ejecutar modelos localmente con Ollama"
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Run now"
+msgstr "Ejecutar ahora"
+
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 msgid "Run order"
 msgstr "Orden de ejecución"
@@ -13471,7 +13602,7 @@ msgstr "Ejecuta consultas de análisis o mantenimiento de solo lectura en la bas
 msgid "Run the report query first, then edit this chart."
 msgstr "Ejecuta primero la consulta del informe y luego edita este gráfico."
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Run this rule on past transactions?"
 msgstr "¿Aplicar esta regla a transacciones pasadas?"
 
@@ -13507,6 +13638,7 @@ msgstr "Misma moneda"
 msgid "Same date and amount in this account"
 msgstr "Misma fecha e importe en esta cuenta"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/features/budget-planning/ui/GroupNameEditPopover.tsx
 #: src/features/currencies/ui/ManualRatePrompt.tsx
 #: src/features/settings/directory-manager/DirectoryTable.tsx
@@ -13592,6 +13724,14 @@ msgstr "Guardar escenario"
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "Save Settings"
 msgstr "Guardar ajustes"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Save transaction"
+msgstr "Guardar transacción"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Save transaction from any field"
+msgstr "Guardar transacción desde cualquier campo"
 
 #: src/features/reports/ui/SaveReportDialog.tsx
 msgid "Save your SQL query as a reusable report. Optionally add chart visualizations."
@@ -13760,11 +13900,16 @@ msgid "Search accounts..."
 msgstr "Buscar cuentas..."
 
 #: src/app/layout/desktop-shell/AccountsList.tsx
+#: src/features/rules/ui/rule-editor/RuleAccountSelect.tsx
 #: src/features/transactions/ui/form/AccountSelect.tsx
 #: src/pages/accounts/AccountsPage.tsx
 #: src/pages/analytics/components/AnalyticsFilterBar.tsx
 msgid "Search accounts…"
 msgstr "Buscar cuentas…"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Search and commands"
+msgstr "Búsqueda y comandos"
 
 #: src/pages/admin/admin-users/UserSearchCard.tsx
 msgid "Search by ID, email, or name..."
@@ -13956,8 +14101,7 @@ msgstr "Selecciona una plantilla guardada"
 #: src/features/ai/ui/receipt-scanner/AIReceiptScannerDialog.tsx
 #: src/features/budget-planning/ui/category-row/CCPaymentCoverPopover.tsx
 #: src/features/import/ui/steps/ConfigureStep.tsx
-#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/rule-editor/RuleAccountSelect.tsx
 #: src/features/transactions/ui/cells/AccountSelectCell.tsx
 #: src/features/transactions/ui/form/AccountSelect.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
@@ -14266,10 +14410,12 @@ msgid "Set a new password for {0}. Share it securely with the user."
 msgstr "Establece una nueva contraseña para {0}. Compártela de forma segura con el usuario."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set account"
 msgstr "Establecer cuenta"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set amount"
 msgstr "Establecer importe"
 
@@ -14286,6 +14432,7 @@ msgid "Set aside each month"
 msgstr "Reservar cada mes"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set category"
 msgstr "Establecer categoría"
 
@@ -14294,16 +14441,22 @@ msgid "Set Master Password"
 msgstr "Establecer contraseña maestra"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set memo"
 msgstr "Establecer nota"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set payee"
 msgstr "Establecer beneficiario"
 
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Set Payee"
 msgstr "Establecer beneficiario"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Set to zero"
+msgstr "Poner a cero"
 
 #: src/features/budget-management/ui/BudgetSwitcher.tsx
 #: src/widgets/navigation/MobileTopBar.tsx
@@ -14383,6 +14536,10 @@ msgstr "Reparto dentro de una prioridad"
 msgid "Shopping"
 msgstr "Compras"
 
+#: src/shared/ui/calculator-cell/CalculatorDisplay.tsx
+msgid "Shortcuts: {half} (half), {double} (double), {zero} (zero), {tenPercent} (10%)"
+msgstr "Atajos: {half} (mitad), {double} (doble), {zero} (cero), {tenPercent} (10 %)"
+
 #: src/pages/settings/components/GoalFundingSettingsCard.tsx
 msgid "Show a small badge for categories with a priority other than 3. Funding is unaffected."
 msgstr "Mostrar una pequeña insignia en las categorías con una prioridad distinta de 3. La financiación no cambia."
@@ -14420,6 +14577,10 @@ msgstr "Mostrar vista compacta"
 msgid "Show detailed view"
 msgstr "Mostrar vista detallada"
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Show details"
+msgstr "Mostrar detalles"
+
 #: src/features/budgeting/ui/BudgetToolbar.tsx
 msgid "Show hidden"
 msgstr "Mostrar ocultos"
@@ -14455,6 +14616,10 @@ msgstr "Mostrar barra lateral"
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "Show uncategorized only"
 msgstr "Mostrar solo sin categorizar"
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Show upcoming"
+msgstr "Mostrar próximas"
 
 #: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
 msgid "Show where this credit-card debt came from"
@@ -14593,6 +14758,7 @@ msgid "Size"
 msgstr "Tamaño"
 
 #: src/features/import/ui/steps/PreviewStep.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Skip"
 msgstr "Omitir"
 
@@ -14613,7 +14779,6 @@ msgid "Skip this row from import"
 msgstr "Omitir esta fila de la importación"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Skip this time"
 msgstr "Omitir esta vez"
 
@@ -14708,6 +14873,10 @@ msgstr "Acceso especial"
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "Speech Model"
 msgstr "Modelo de voz"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Speed up budgeting without leaving the keyboard."
+msgstr "Presupuesta más rápido sin soltar el teclado."
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 #: src/pages/analytics/AnalyticsPage.tsx
@@ -14915,6 +15084,10 @@ msgstr "Iniciado —"
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 msgid "Started {0}"
 msgstr "Iniciado {0}"
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Started {startDate}"
+msgstr "Iniciada el {startDate}"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Starting"
@@ -15260,6 +15433,10 @@ msgstr "Tabla"
 msgid "Table view"
 msgstr "Vista de tabla"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Take 10%"
+msgstr "Tomar el 10 %"
+
 #: src/features/ai/ui/receipt-scanner/ReceiptDropzone.tsx
 msgid "Take Photo"
 msgstr "Hacer foto"
@@ -15442,8 +15619,8 @@ msgid "The member no longer has access to this workspace."
 msgstr "El miembro ya no tiene acceso a este espacio de trabajo."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "The memo text to set for matching transactions."
-msgstr "El texto de nota que se establecerá para las transacciones coincidentes."
+#~ msgid "The memo text to set for matching transactions."
+#~ msgstr "El texto de nota que se establecerá para las transacciones coincidentes."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "The one rule of zero-based budgeting."
@@ -15524,6 +15701,10 @@ msgstr "El espacio de trabajo fue eliminado y tu sesión se ha actualizado."
 #: src/shared/ui/theme-switch.tsx
 msgid "Theme preset"
 msgstr "Tema predefinido"
+
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "Then"
+msgstr "Entonces"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Then {monthly}/month or {yearly}/year, tax included."
@@ -15674,7 +15855,7 @@ msgstr "Esto elimina solo la entrada del historial. Tus transacciones permanecen
 msgid "This report query is not read-only and cannot run in dashboard widgets."
 msgstr "Esta consulta de informe no es de solo lectura y no se puede ejecutar en widgets del panel."
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "This rule and its history will be removed. Recent runs can still be undone from the global undo menu."
 msgstr "Esta regla y su historial se eliminarán. Las ejecuciones recientes aún se pueden deshacer desde el menú global de deshacer."
 
@@ -15853,8 +16034,8 @@ msgstr "A"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "To account:"
-msgstr "Cuenta destino:"
+#~ msgid "To account:"
+#~ msgstr "Cuenta destino:"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "To complete the goal"
@@ -15876,6 +16057,10 @@ msgstr "Para mantener el ritmo"
 msgid "Today"
 msgstr "Hoy"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Toggle cleared on selected rows"
+msgstr "Alternar liquidado en las filas seleccionadas"
+
 #: src/shared/ui/theme-switch.tsx
 msgid "Toggle color mode"
 msgstr "Cambiar modo de color"
@@ -15883,6 +16068,10 @@ msgstr "Cambiar modo de color"
 #: src/pages/warranties/components/WarrantyTable.tsx
 msgid "Toggle notes"
 msgstr "Mostrar/ocultar notas"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Toggle sidebar"
+msgstr "Mostrar/ocultar barra lateral"
 
 #: src/shared/ui/sidebar.tsx
 msgid "Toggle Sidebar"
@@ -16107,6 +16296,7 @@ msgstr "Transacción guardada correctamente."
 msgid "Transaction with splits added"
 msgstr "Transacción con divisiones añadida"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
 #: src/pages/settings/ImportsPage.tsx
 #: src/pages/warranties/components/WarrantyFormDialog.tsx
@@ -16161,8 +16351,7 @@ msgstr "Error de transcripción"
 
 #: src/features/budget-planning/ui/CCPaymentActivityDialog.tsx
 #: src/features/transactions/ui/form/TransactionTypeSelector.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+#: src/pages/settings/recurring/components/RecurringKindBadge.tsx
 msgid "Transfer"
 msgstr "Transferencia"
 
@@ -16440,8 +16629,8 @@ msgid "Unarchiving..."
 msgstr "Desarchivando..."
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "Unassigned category"
-msgstr "Categoría sin asignar"
+#~ msgid "Unassigned category"
+#~ msgstr "Categoría sin asignar"
 
 #: src/pages/admin/admin-users/user-details/BillingTab.tsx
 #: src/pages/settings/DataManagementPage.tsx
@@ -16503,6 +16692,7 @@ msgstr "Objetivos sin cubrir"
 msgid "Undid last action"
 msgstr "Se deshizo la última acción"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Undo"
 msgstr "Deshacer"
@@ -16548,11 +16738,15 @@ msgstr "Sin agrupar"
 msgid "Unknown"
 msgstr "Desconocido"
 
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
 msgid "Unknown account"
 msgstr "Cuenta desconocida"
+
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "Unknown category"
+msgstr "Categoría desconocida"
 
 #: src/features/transactions/ui/MobileTransactionList.tsx
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
@@ -16616,12 +16810,12 @@ msgid "Upcoming bill: {0}"
 msgstr "Próximo recibo: {0}"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "Upcoming occurrences"
-msgstr "Próximas ocurrencias"
+#~ msgid "Upcoming occurrences"
+#~ msgstr "Próximas ocurrencias"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "Upcoming transactions"
-msgstr "Próximas transacciones"
+#~ msgid "Upcoming transactions"
+#~ msgstr "Próximas transacciones"
 
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
@@ -17081,8 +17275,8 @@ msgid "Water"
 msgstr "Agua"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "We are loading your upcoming recurring occurrences."
-msgstr "Estamos cargando tus próximos movimientos recurrentes."
+#~ msgid "We are loading your upcoming recurring occurrences."
+#~ msgstr "Estamos cargando tus próximos movimientos recurrentes."
 
 #: src/features/rules/ui/RuleRunOverlay.tsx
 msgid "We could not apply this rule. Try again in a moment."
@@ -17113,7 +17307,7 @@ msgid "We were unable to collect your subscription payment. Update your billing 
 msgstr "No hemos podido cobrar tu pago de suscripción. Actualiza tus datos de facturación en el portal de Lemon Squeezy que aparece a continuación para recuperar el acceso."
 
 #. placeholder {0}: occurrence.dueDate
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "We will create the transaction dated {0} and run continuous rules automatically."
 msgstr "Crearemos la transacción con fecha {0} y ejecutaremos las reglas continuas automáticamente."
 
@@ -17184,6 +17378,7 @@ msgstr "WebSocket"
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/features/transactions/ui/add-transaction/recurring-form.ts
 #: src/pages/admin/StickinessAnalyticsSection.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Weekly"
 msgstr "Semanal"
 
@@ -17247,9 +17442,17 @@ msgstr "Lo que aún puedes hacer"
 msgid "What you own, what you owe, and where it's heading"
 msgstr "Lo que tienes, lo que debes y hacia dónde va"
 
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "When"
+msgstr "Cuando"
+
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "When a recurring item is almost due, it will appear here so you can mark it ready."
-msgstr "Cuando un elemento recurrente está a punto de vencer, aparecerá aquí para que puedas marcarlo como listo."
+#~ msgid "When a recurring item is almost due, it will appear here so you can mark it ready."
+#~ msgstr "Cuando un elemento recurrente está a punto de vencer, aparecerá aquí para que puedas marcarlo como listo."
+
+#: src/features/rules/ui/RuleSummary.tsx
+#~ msgid "When all match"
+#~ msgstr "Cuando todo coincida"
 
 #: src/features/category-management/ui/CategoryEditDialog.tsx
 msgid "When enabled, this category won't show budget pace lines in spending charts"
@@ -17451,6 +17654,7 @@ msgid "yearly"
 msgstr "anual"
 
 #: src/features/transactions/ui/add-transaction/recurring-form.ts
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/pages/settings/subscription/PlanSelection.tsx
 msgid "Yearly"
 msgstr "Anual"
