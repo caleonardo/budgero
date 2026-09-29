@@ -768,6 +768,14 @@ msgstr "{changedCount} categorieën aangepast"
 msgid "{count, plural, one {# transaction deleted} other {# transactions deleted}}"
 msgstr "{count, plural, one {# transactie verwijderd} other {# transacties verwijderd}}"
 
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "{count, plural, one {# transaction marked cleared} other {# transactions marked cleared}}"
+msgstr "{count, plural, one {# transactie als verwerkt gemarkeerd} other {# transacties als verwerkt gemarkeerd}}"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "{count, plural, one {# transaction marked uncleared} other {# transactions marked uncleared}}"
+msgstr "{count, plural, one {# transactie als niet verwerkt gemarkeerd} other {# transacties als niet verwerkt gemarkeerd}}"
+
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "{count, plural, one {# transaction recalculated using fallback rates.} other {# transactions recalculated using fallback rates.}}"
 msgstr "{count, plural, one {# transactie herberekend met fallback-tarieven.} other {# transacties herberekend met fallback-tarieven.}}"
@@ -4818,6 +4826,24 @@ msgstr "Begunstigde wissen"
 msgid "Clear selection"
 msgstr "Selectie wissen"
 
+#: src/features/transactions/ui/ClearedToggle.tsx
+#: src/pages/accounts/AccountPage.tsx
+#: src/pages/accounts/components/AccountSummaryCards.tsx
+msgid "Cleared"
+msgstr "Verwerkt"
+
+#: src/features/transactions/ui/ClearedToggle.tsx
+msgid "Cleared — mark as uncleared"
+msgstr "Verwerkt – markeren als niet verwerkt"
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Cleared Balance"
+msgstr "Verwerkt saldo"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Cleared status"
+msgstr "Verwerkingsstatus"
+
 #. placeholder {0}: actionDialog.user.email
 #: src/pages/admin/admin-users/useAdminUsersState.ts
 msgid "Cleared stored data for {0}"
@@ -5354,6 +5380,11 @@ msgstr "De eerste dag van de week kon niet worden opgeslagen"
 msgid "Could not save the query."
 msgstr "Kon de query niet opslaan."
 
+#: src/features/transactions/ui/ClearedToggle.tsx
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Could not update cleared status"
+msgstr "Verwerkingsstatus kon niet worden bijgewerkt"
+
 #: src/pages/settings/components/GoalFundingSettingsCard.tsx
 msgid "Could not update goal funding settings"
 msgstr "De instellingen voor doelfinanciering konden niet worden bijgewerkt"
@@ -5687,8 +5718,8 @@ msgid "Current balance"
 msgstr "Huidig saldo"
 
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
-msgid "Current Balance"
-msgstr "Huidig saldo"
+#~ msgid "Current Balance"
+#~ msgstr "Huidig saldo"
 
 #: src/pages/explorer-page/sql-utils.ts
 msgid "Current month by category group"
@@ -6803,6 +6834,10 @@ msgstr "Voer nieuw wachtwoord in (min. 8 tekens)"
 msgid "Enter report name..."
 msgstr "Voer rapportnaam in..."
 
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Enter the balance your bank shows. It is compared with your cleared balance; cleared transactions are then locked, and uncleared ones stay open."
+msgstr "Voer het saldo in dat je bank toont. Het wordt vergeleken met je verwerkte saldo; verwerkte transacties worden daarna vergrendeld, niet-verwerkte blijven open."
+
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
 msgid "Enter the invite secret first."
 msgstr "Voer eerst de uitnodigingscode in."
@@ -6820,8 +6855,8 @@ msgid "Enter the invite secret you received."
 msgstr "Voer de ontvangen uitnodigingscode in."
 
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
-msgid "Enter your actual account balance to reconcile with the current balance in the system."
-msgstr "Voer je werkelijke rekeningsaldo in om af te stemmen met het huidige saldo in het systeem."
+#~ msgid "Enter your actual account balance to reconcile with the current balance in the system."
+#~ msgstr "Voer je werkelijke rekeningsaldo in om af te stemmen met het huidige saldo in het systeem."
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 msgid "Enter your card’s minimum payment from statements."
@@ -9507,6 +9542,10 @@ msgstr "Koppeling"
 msgid "Mark “{0}” as ready?"
 msgstr "“{0}” markeren als klaar?"
 
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Mark cleared"
+msgstr "Markeren als verwerkt"
+
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 msgid "Mark complete after the first retroactive run."
 msgstr "Markeer als voltooid na de eerste retroactieve uitvoering."
@@ -9514,6 +9553,10 @@ msgstr "Markeer als voltooid na de eerste retroactieve uitvoering."
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Mark items as ready when they land to create the matching transaction automatically."
 msgstr "Markeer items als klaar zodra ze binnenkomen om automatisch de bijbehorende transactie aan te maken."
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Mark uncleared"
+msgstr "Markeren als niet verwerkt"
 
 #: src/app/startup/screens.tsx
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
@@ -12031,6 +12074,7 @@ msgstr "Probeer het over een moment opnieuw."
 #: src/features/goal-management/ui/GoalSection.tsx
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Please try again."
 msgstr "Probeer het opnieuw."
 
@@ -15633,8 +15677,12 @@ msgid "This shared workspace is locked until the owner renews their plan."
 msgstr "Deze gedeelde werkruimte is vergrendeld totdat de eigenaar zijn of haar abonnement vernieuwt."
 
 #: src/features/transactions/ui/StatusIndicatorPopover.tsx
-msgid "This transaction has been reconciled."
-msgstr "Deze transactie is afgestemd."
+msgid "This transaction has been reconciled and is locked as cleared."
+msgstr "Deze transactie is afgestemd en vergrendeld als verwerkt."
+
+#: src/features/transactions/ui/StatusIndicatorPopover.tsx
+#~ msgid "This transaction has been reconciled."
+#~ msgstr "Deze transactie is afgestemd."
 
 #: src/features/transactions/ui/StatusIndicatorPopover.tsx
 msgid "This transaction is scheduled for a future date."
@@ -16413,6 +16461,14 @@ msgstr "Niet-gecategoriseerd"
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "Uncategorized ({uncategorizedCount})"
 msgstr "Niet-gecategoriseerd ({uncategorizedCount})"
+
+#: src/features/transactions/ui/ClearedToggle.tsx
+msgid "Uncleared"
+msgstr "Niet verwerkt"
+
+#: src/features/transactions/ui/ClearedToggle.tsx
+msgid "Uncleared — mark as cleared"
+msgstr "Niet verwerkt – markeren als verwerkt"
 
 #: src/shared/lib/search-query-parser.ts
 msgid "Under"

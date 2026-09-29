@@ -45,6 +45,8 @@ export type AddTransactionInput = {
   transferId: string;
   /** Account-to-budget rate pinned on creation. */
   exchangeRateOverride?: number | null;
+  /** Already seen in the bank. Defaults to uncleared. */
+  cleared?: boolean;
 };
 
 export type AddTransferLegInput = Omit<AddTransactionInput, 'budgetId' | 'transferId'>;
@@ -87,6 +89,7 @@ export function useAddTransaction() {
           payee: input.payee,
           transferId: input.transferId,
           exchangeRateOverride: input.exchangeRateOverride ?? null,
+          ...(input.cleared ? { cleared: true } : {}),
         },
         // Plain adds refresh active views in the background so a large account
         // register does not keep the add dialog pending. Preserve the existing
@@ -258,7 +261,8 @@ export function useUpdateTransactionColumn() {
 }
 
 /**
- * Reconcile an account - marks transactions as reconciled and updates reconciled_at timestamp
+ * Reconcile an account: locks cleared transactions up to the date as
+ * reconciled (uncleared ones stay open) and stamps reconciled_at.
  */
 export type ReconcileAccountInput = {
   accountId: number;
@@ -270,7 +274,7 @@ export function useReconcileAccount() {
   return useMutation<void, Error, ReconcileAccountInput>({
     mutationFn: async (input) => {
       await executeSpaceMutation<void>(runtime, {
-        op: 'transactions.reconcile',
+        op: 'transactions.reconcileCleared',
         payload: {
           accountId: input.accountId,
           reconcileDate: input.reconcileDate,
@@ -278,6 +282,24 @@ export function useReconcileAccount() {
         meta: { label: 'useReconcileAccount' },
       });
     },
+  });
+}
+
+export type SetTransactionsClearedInput = {
+  ids: number[];
+  cleared: boolean;
+};
+
+/** Mark transactions cleared or uncleared; reconciled ones are left unchanged. */
+export function useSetTransactionsCleared() {
+  const runtime = useRuntime();
+  return useMutation<{ changed: number[] }, Error, SetTransactionsClearedInput>({
+    mutationFn: (input) =>
+      executeSpaceMutation<{ changed: number[] }>(runtime, {
+        op: 'transactions.setCleared',
+        payload: { ids: input.ids, cleared: input.cleared },
+        meta: { label: 'useSetTransactionsCleared' },
+      }),
   });
 }
 

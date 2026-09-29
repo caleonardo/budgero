@@ -19,6 +19,7 @@ import { ArrowLeftRight } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import { SecondaryAmount } from '@features/transactions/ui/SecondaryAmount';
 import { StatusIndicatorPopover } from '@features/transactions/ui/StatusIndicatorPopover';
+import { ClearedToggle } from '@features/transactions/ui/ClearedToggle';
 import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { asMilli } from '@shared/lib/currency/milli';
@@ -602,7 +603,16 @@ export const TransactionRow = React.memo(function TransactionRow({
       {/* Status */}
       <TableCell>
         <div className="flex items-center justify-center gap-2">
-          {transaction.Reconciled == true && <StatusIndicatorPopover status="reconciled" />}
+          {transaction.Reconciled == true ? (
+            <StatusIndicatorPopover status="reconciled" />
+          ) : (
+            transaction.Cleared !== undefined && (
+              <ClearedToggle
+                transactionId={transaction.ID}
+                cleared={Boolean(transaction.Cleared)}
+              />
+            )
+          )}
           {isFutureTransaction && <StatusIndicatorPopover status="future" />}
         </div>
       </TableCell>

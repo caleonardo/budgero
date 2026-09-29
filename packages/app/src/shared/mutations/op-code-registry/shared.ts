@@ -84,6 +84,8 @@ export interface TransactionSnapshot {
   transfer_id?: string;
   transferId?: string;
   ReconciledAt?: string | null;
+  Cleared?: boolean | number;
+  Reconciled?: boolean | number;
 }
 
 export type OpCall = { op: string; args: Record<string, unknown> };
@@ -145,6 +147,8 @@ export function transactionSnapshotToAddOp(snapshot: TransactionSnapshot): OpCal
       payee: snapshot.Payee ?? snapshot.payee ?? '',
       transferId: snapshot.TransferID ?? snapshot.transfer_id ?? snapshot.transferId ?? undefined,
       exchangeRateOverride: snapshot.ExchangeRateOverride ? snapshot.ExchangeRate : null,
+      // Restored rows keep their cleared status (reconciled rows were cleared).
+      cleared: Boolean(snapshot.Cleared || snapshot.Reconciled),
     },
   };
 }

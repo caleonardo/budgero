@@ -37,6 +37,7 @@ const TX_ROW_COLUMNS = `
         t.Memo,
         t.Payee,
         t.Reconciled,
+        t.Cleared,
         t.InflowConverted,
         t.OutflowConverted,
         t.InflowNative,
@@ -173,7 +174,8 @@ export class TransactionQueries {
     exchangeRate?: number | null,
     labelId?: number | null,
     exchangeRateOverride = false,
-    excludeFromReadyToAssign = false
+    excludeFromReadyToAssign = false,
+    cleared = false
   ): number {
     const result = run(
       this.db,
@@ -181,8 +183,8 @@ export class TransactionQueries {
       INSERT INTO transactions (
         InflowConverted, OutflowConverted, InflowNative, OutflowNative, CategoryID, AccountID,
         Date, Memo, Payee, BudgetID, RunningBalanceConverted, RunningBalanceNative, TransferID,
-        ExchangeRate, LabelID, ExchangeRateOverride, ExcludeFromReadyToAssign
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ExchangeRate, LabelID, ExchangeRateOverride, ExcludeFromReadyToAssign, Cleared
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       inflow,
       outflow,
@@ -200,7 +202,8 @@ export class TransactionQueries {
       exchangeRate ?? null,
       labelId ?? null,
       exchangeRateOverride ? 1 : 0,
-      excludeFromReadyToAssign ? 1 : 0
+      excludeFromReadyToAssign ? 1 : 0,
+      cleared ? 1 : 0
     );
     return Number(result.lastInsertRowid);
   }
@@ -292,6 +295,7 @@ export class TransactionQueries {
         COALESCE(s.Memo, t.Memo) as Memo,
         COALESCE(NULLIF(s.Payee, ''), t.Payee) AS Payee,
         t.Reconciled,
+        t.Cleared,
         s.InflowConverted,
         s.OutflowConverted,
         s.InflowNative,
@@ -323,6 +327,7 @@ export class TransactionQueries {
         t.Memo,
         t.Payee,
         t.Reconciled,
+        t.Cleared,
         t.InflowConverted,
         t.OutflowConverted,
         t.InflowNative,
@@ -1650,20 +1655,51 @@ export class TransactionQueries {
   }
 
   /**
-   * MarkTransactionsAsReconciled - Marks all transactions up to a date as reconciled
-   * SQL: UPDATE transactions SET Reconciled = TRUE WHERE AccountID = ? AND Date <= ?
+   * Lock transactions up to `date` as reconciled. With `clearedOnly`, only
+   * cleared rows are locked and uncleared ones stay open; without it (the
+   * legacy behaviour, kept for replaying older reconcile ops) every row is.
+   * Reconciled rows are always cleared.
    */
-  markTransactionsAsReconciled(accountId: number, date: string): void {
+  markTransactionsAsReconciled(accountId: number, date: string, clearedOnly = false): void {
     run(
       this.db,
       `
-      UPDATE transactions 
-      SET Reconciled = TRUE 
+      UPDATE transactions
+      SET Reconciled = TRUE, Cleared = TRUE
       WHERE AccountID = ? AND Date <= ? AND Reconciled = FALSE
+        ${clearedOnly ? 'AND Cleared = TRUE' : ''}
     `,
       accountId,
       date
     );
+  }
+
+  /**
+   * Mark transactions cleared or uncleared. Reconciled rows are locked and
+   * left untouched. Returns the IDs whose status actually changed.
+   */
+  setTransactionsCleared(ids: number[], cleared: boolean): number[] {
+    const changed: number[] = [];
+    for (const chunk of chunkValues(ids)) {
+      const placeholders = chunk.map(() => '?').join(', ');
+      const rows = allRows<{ ID: number }>(
+        this.db,
+        `SELECT ID FROM transactions
+          WHERE ID IN (${placeholders}) AND Reconciled = FALSE AND Cleared != ?`,
+        ...chunk,
+        cleared ? 1 : 0
+      );
+      if (!rows.length) continue;
+      const targets = rows.map((row) => row.ID);
+      run(
+        this.db,
+        `UPDATE transactions SET Cleared = ? WHERE ID IN (${targets.map(() => '?').join(', ')})`,
+        cleared ? 1 : 0,
+        ...targets
+      );
+      changed.push(...targets);
+    }
+    return changed;
   }
 
   /**

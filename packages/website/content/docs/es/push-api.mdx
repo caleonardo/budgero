@@ -54,7 +54,7 @@ Los valores monetarios son milunidades enteras (1/1000 de una unidad de moneda),
 
 ### Operación soportada actualmente
 
-- `transactions.add` — envía un ingreso o gasto. Usa `inflow` para ingresos y `outflow` para gastos (solo uno debe ser distinto de cero). Proporciona los IDs existentes de tu presupuesto, cuenta y categoría.
+- `transactions.add` — envía un ingreso o gasto. Usa `inflow` para ingresos y `outflow` para gastos (solo uno debe ser distinto de cero). Proporciona los IDs existentes de tu presupuesto, cuenta y categoría. Usa `"cleared": true` si la transacción ya se ha liquidado en el banco; si se omite, se añade como no liquidada.
 
 ## Requisitos de cifrado
 

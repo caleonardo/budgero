@@ -768,6 +768,14 @@ msgstr "{changedCount} categorías ajustadas"
 msgid "{count, plural, one {# transaction deleted} other {# transactions deleted}}"
 msgstr "{count, plural, one {# transacción eliminada} other {# transacciones eliminadas}}"
 
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "{count, plural, one {# transaction marked cleared} other {# transactions marked cleared}}"
+msgstr "{count, plural, one {# transacción marcada como liquidada} other {# transacciones marcadas como liquidadas}}"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "{count, plural, one {# transaction marked uncleared} other {# transactions marked uncleared}}"
+msgstr "{count, plural, one {# transacción marcada como no liquidada} other {# transacciones marcadas como no liquidadas}}"
+
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "{count, plural, one {# transaction recalculated using fallback rates.} other {# transactions recalculated using fallback rates.}}"
 msgstr "{count, plural, one {# transacción recalculada con tasas de respaldo.} other {# transacciones recalculadas con tasas de respaldo.}}"
@@ -4818,6 +4826,24 @@ msgstr "Borrar beneficiario"
 msgid "Clear selection"
 msgstr "Limpiar selección"
 
+#: src/features/transactions/ui/ClearedToggle.tsx
+#: src/pages/accounts/AccountPage.tsx
+#: src/pages/accounts/components/AccountSummaryCards.tsx
+msgid "Cleared"
+msgstr "Liquidado"
+
+#: src/features/transactions/ui/ClearedToggle.tsx
+msgid "Cleared — mark as uncleared"
+msgstr "Liquidada: marcar como no liquidada"
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Cleared Balance"
+msgstr "Saldo liquidado"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Cleared status"
+msgstr "Estado de liquidación"
+
 #. placeholder {0}: actionDialog.user.email
 #: src/pages/admin/admin-users/useAdminUsersState.ts
 msgid "Cleared stored data for {0}"
@@ -5354,6 +5380,11 @@ msgstr "No se ha podido guardar el primer día de la semana"
 msgid "Could not save the query."
 msgstr "No se ha podido guardar la consulta."
 
+#: src/features/transactions/ui/ClearedToggle.tsx
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Could not update cleared status"
+msgstr "No se pudo actualizar el estado de liquidación"
+
 #: src/pages/settings/components/GoalFundingSettingsCard.tsx
 msgid "Could not update goal funding settings"
 msgstr "No se han podido actualizar los ajustes de financiación de objetivos"
@@ -5687,8 +5718,8 @@ msgid "Current balance"
 msgstr "Saldo actual"
 
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
-msgid "Current Balance"
-msgstr "Saldo actual"
+#~ msgid "Current Balance"
+#~ msgstr "Saldo actual"
 
 #: src/pages/explorer-page/sql-utils.ts
 msgid "Current month by category group"
@@ -6803,6 +6834,10 @@ msgstr "Introduce la nueva contraseña (mín. 8 caracteres)"
 msgid "Enter report name..."
 msgstr "Introduce el nombre del informe..."
 
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Enter the balance your bank shows. It is compared with your cleared balance; cleared transactions are then locked, and uncleared ones stay open."
+msgstr "Introduce el saldo que muestra tu banco. Se compara con tu saldo liquidado; las transacciones liquidadas se bloquean y las no liquidadas quedan abiertas."
+
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
 msgid "Enter the invite secret first."
 msgstr "Introduce primero el secreto de invitación."
@@ -6820,8 +6855,8 @@ msgid "Enter the invite secret you received."
 msgstr "Introduce el secreto de invitación que has recibido."
 
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
-msgid "Enter your actual account balance to reconcile with the current balance in the system."
-msgstr "Introduce el saldo real de tu cuenta para conciliarlo con el saldo actual del sistema."
+#~ msgid "Enter your actual account balance to reconcile with the current balance in the system."
+#~ msgstr "Introduce el saldo real de tu cuenta para conciliarlo con el saldo actual del sistema."
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 msgid "Enter your card’s minimum payment from statements."
@@ -9507,6 +9542,10 @@ msgstr "Mapeo"
 msgid "Mark “{0}” as ready?"
 msgstr "¿Marcar “{0}” como listo?"
 
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Mark cleared"
+msgstr "Marcar como liquidada"
+
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 msgid "Mark complete after the first retroactive run."
 msgstr "Marca como completado después de la primera ejecución retroactiva."
@@ -9514,6 +9553,10 @@ msgstr "Marca como completado después de la primera ejecución retroactiva."
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Mark items as ready when they land to create the matching transaction automatically."
 msgstr "Marca los elementos como listos cuando lleguen para crear la transacción correspondiente automáticamente."
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Mark uncleared"
+msgstr "Marcar como no liquidada"
 
 #: src/app/startup/screens.tsx
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
@@ -12031,6 +12074,7 @@ msgstr "Vuelve a intentarlo dentro de un momento."
 #: src/features/goal-management/ui/GoalSection.tsx
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Please try again."
 msgstr "Inténtalo de nuevo."
 
@@ -15633,8 +15677,12 @@ msgid "This shared workspace is locked until the owner renews their plan."
 msgstr "Este espacio de trabajo compartido está bloqueado hasta que el propietario renueve su plan."
 
 #: src/features/transactions/ui/StatusIndicatorPopover.tsx
-msgid "This transaction has been reconciled."
-msgstr "Esta transacción ha sido conciliada."
+msgid "This transaction has been reconciled and is locked as cleared."
+msgstr "Esta transacción está conciliada y bloqueada como liquidada."
+
+#: src/features/transactions/ui/StatusIndicatorPopover.tsx
+#~ msgid "This transaction has been reconciled."
+#~ msgstr "Esta transacción ha sido conciliada."
 
 #: src/features/transactions/ui/StatusIndicatorPopover.tsx
 msgid "This transaction is scheduled for a future date."
@@ -16413,6 +16461,14 @@ msgstr "Sin categorizar"
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "Uncategorized ({uncategorizedCount})"
 msgstr "Sin categorizar ({uncategorizedCount})"
+
+#: src/features/transactions/ui/ClearedToggle.tsx
+msgid "Uncleared"
+msgstr "No liquidado"
+
+#: src/features/transactions/ui/ClearedToggle.tsx
+msgid "Uncleared — mark as cleared"
+msgstr "No liquidada: marcar como liquidada"
 
 #: src/shared/lib/search-query-parser.ts
 msgid "Under"

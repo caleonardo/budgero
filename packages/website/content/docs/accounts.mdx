@@ -91,12 +91,14 @@ You can also override the rate on any individual transaction — the right tool 
 
 ## Reconciliation
 
-Reconciling is the habit that keeps a manual-first budget trustworthy: comparing Budgero's balance against your bank's and confirming they agree.
+Reconciling is the habit that keeps a manual-first budget trustworthy: confirming that Budgero agrees with your bank.
 
-1. Open the account and compare its balance to your bank app or statement.
-2. If they differ, find the gap — usually a missed transaction, a duplicate, or a pending charge the bank hasn't settled.
-3. Add an adjustment transaction if a small discrepancy isn't worth archaeology.
-4. **Reconcile** the account — Budgero marks all transactions up to that date as reconciled and stamps the account with the reconciliation time.
+Every transaction has a status. New transactions you enter start **uncleared**; tap the **C** in the register once the transaction shows up in your bank, and it becomes **cleared**. Bank-file imports arrive cleared. The account header shows your **Cleared** balance next to the full balance — the cleared one is what your bank should show.
+
+1. Open the account and mark the transactions your bank has already posted as cleared.
+2. Click **Reconcile** and enter the balance your bank shows. Budgero compares it with the cleared balance.
+3. If they differ, find the gap — usually a missed transaction, a duplicate, or one not yet marked cleared. For a small discrepancy that isn't worth the archaeology, Budgero can add an adjustment transaction.
+4. Confirm — Budgero locks the cleared transactions up to today as **reconciled** and stamps the account with the reconciliation time. Uncleared transactions stay open for next time.
 
 Reconciled transactions are your verified history; the stamp tells you how fresh that verification is. Weekly reconciliation takes about two minutes per account. Monthly works too. "Never" is how manual budgets die — see [Ready to Assign](/docs/ready-to-assign) for how unreconciled drift shows up in your numbers.
 

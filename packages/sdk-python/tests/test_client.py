@@ -356,7 +356,29 @@ def test_referenced_updates_and_deletes_wire_payload(key, b64_key):
     assert deleted.message_id == captured[2]["message_id"]
 
 
-@pytest.mark.parametrize("fields", [{}, {"bogus": 1}, {"outflow": -1}])
+def test_cleared_is_opt_in_on_the_wire(key, b64_key):
+    captured = []
+
+    def handler(request):
+        captured.append(json.loads(request.content))
+        return httpx.Response(200, json={"id": "q-cleared", "message": "queued"})
+
+    with make_client(b64_key, handler) as client:
+        pending = client.add_transaction(account_id=1, category_id=5, budget_id=1,
+                                         date="2026-09-19", outflow=10)
+        client.add_transaction(account_id=1, category_id=5, budget_id=1,
+                               date="2026-09-19", outflow=10, cleared=True)
+        client.update_transaction(pending.message_id, cleared=True)
+        client.add_transfer(1, 2, 1, "2026-09-19", 5, cleared=True)
+    payloads = [decrypt_payload(item["encrypted_payload"], key) for item in captured]
+    assert "cleared" not in payloads[0]["args"]
+    assert payloads[1]["args"]["cleared"] is True
+    assert payloads[2]["args"]["fields"] == {"cleared": True}
+    assert payloads[3]["args"]["source"]["cleared"] is True
+    assert payloads[3]["args"]["destination"]["cleared"] is True
+
+
+@pytest.mark.parametrize("fields", [{}, {"bogus": 1}, {"outflow": -1}, {"cleared": "yes"}])
 def test_invalid_reference_updates_are_not_sent(b64_key, fields):
     def handler(request):
         pytest.fail("Invalid update must not be sent")

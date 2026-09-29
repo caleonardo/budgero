@@ -7,6 +7,7 @@ import { formatShortDate } from '@shared/lib/date-utils';
 import { parseISO } from 'date-fns';
 import { asMilli, formatMilli } from '@shared/lib/currency/milli';
 import { StatusIndicatorPopover } from '@features/transactions/ui/StatusIndicatorPopover';
+import { ClearedToggle } from '@features/transactions/ui/ClearedToggle';
 import { TransactionLabelBadge } from '@features/transactions/ui/TransactionLabelBadge';
 
 interface TransactionCardHeaderProps {
@@ -58,13 +59,22 @@ export const TransactionCardHeader = React.memo(function TransactionCardHeader({
           <div className="flex-1 min-w-0 max-w-[10rem] sm:max-w-[14rem] md:max-w-[18rem] min-[1900px]:max-w-[24rem] text-[11px] font-medium leading-tight text-current truncate sm:text-xs min-[1900px]:text-sm">
             {displayDate}
           </div>
-          {transaction.Reconciled == true && (
+          {transaction.Reconciled == true ? (
             <StatusIndicatorPopover
               status="reconciled"
               buttonSize="h-6 w-6"
               iconSize="h-3.5 w-3.5"
               contentWidth="w-60"
             />
+          ) : (
+            transaction.Cleared !== undefined && (
+              <ClearedToggle
+                transactionId={transaction.ID}
+                cleared={Boolean(transaction.Cleared)}
+                size="h-6 w-6"
+                iconSize="h-3.5 w-3.5"
+              />
+            )
           )}
           {isFutureTransaction && (
             <StatusIndicatorPopover

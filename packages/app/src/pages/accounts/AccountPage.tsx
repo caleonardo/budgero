@@ -141,13 +141,18 @@ export default function AccountPage() {
     await fetchNextPage();
   }, [fetchNextPage]);
 
-  const { balanceAccountToday, balanceConvertedToday, displayBalanceToday, transactionsData } =
-    useAccountMetrics({
-      selectedAccount,
-      allTransactionsData,
-      dateRange,
-      transactionCurrencyDisplay,
-    });
+  const {
+    balanceAccountToday,
+    balanceConvertedToday,
+    displayBalanceToday,
+    displayClearedBalance,
+    transactionsData,
+  } = useAccountMetrics({
+    selectedAccount,
+    allTransactionsData,
+    dateRange,
+    transactionCurrencyDisplay,
+  });
 
   // Fetch categories (needed for transaction display/editing)
   const { data: categories = [] } = useCategories(selectedBudget?.ID || 0);
@@ -499,6 +504,14 @@ export default function AccountPage() {
                 {formatMilliAmount(displayBalanceToday)}
               </p>
             </div>
+            <div>
+              <span className="text-[10px] text-muted-foreground">
+                <Trans>Cleared</Trans>
+              </span>
+              <p className="text-sm font-medium tabular-nums text-muted-foreground">
+                {formatMilliAmount(displayClearedBalance)}
+              </p>
+            </div>
             <div className="w-px h-6 bg-border" />
             <FlowStat
               icon={ArrowUpRight}
@@ -592,6 +605,7 @@ export default function AccountPage() {
           </div>
           <AccountSummaryCards
             displayBalanceToday={displayBalanceToday}
+            displayClearedBalance={displayClearedBalance}
             transactionStats={transactionStats}
             displayLiabilityInfo={displayLiabilityInfo}
             balanceAccountToday={balanceAccountToday}

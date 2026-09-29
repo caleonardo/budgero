@@ -7,6 +7,7 @@ describe('AccountSummaryCards', () => {
     render(
       <AccountSummaryCards
         displayBalanceToday={37_509_668_817_561_350_000}
+        displayClearedBalance={2_500}
         transactionStats={{ recentCount: 1, totalInflow: 1_000, totalOutflow: 0 }}
         displayLiabilityInfo={null}
         balanceAccountToday={0}
@@ -16,5 +17,6 @@ describe('AccountSummaryCards', () => {
 
     expect(screen.getByText('Invalid amount')).toBeInTheDocument();
     expect(screen.getByText('$1.00')).toBeInTheDocument();
+    expect(screen.getByText('Cleared').nextElementSibling).toHaveTextContent('$2.50');
   });
 });

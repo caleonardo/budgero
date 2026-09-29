@@ -54,7 +54,7 @@ Les valeurs monétaires sont des milliunités entières (1/1000 d'une unité mon
 
 ### Opération prise en charge à ce jour
 
-- `transactions.add` — envoyez un revenu ou une dépense. Utilisez `inflow` pour les revenus et `outflow` pour les dépenses (un seul doit être non nul). Indiquez vos identifiants de budget, de compte et de catégorie existants.
+- `transactions.add` — envoyez un revenu ou une dépense. Utilisez `inflow` pour les revenus et `outflow` pour les dépenses (un seul doit être non nul). Indiquez vos identifiants de budget, de compte et de catégorie existants. Ajoutez `"cleared": true` si la transaction est déjà passée à la banque ; sinon elle est ajoutée comme non pointée.
 
 ## Exigences de chiffrement
 

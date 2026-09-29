@@ -118,7 +118,8 @@ export class TransactionService {
     labelId?: number | null,
     exchangeRateOverride?: number | null,
     excludeFromReadyToAssign = false,
-    importIdentities: ImportIdentity[] = []
+    importIdentities: ImportIdentity[] = [],
+    cleared = false
   ): Promise<number> {
     debugLog('🔵 TransactionService.addTransaction called with:', {
       inflowOriginal,
@@ -498,7 +499,8 @@ export class TransactionService {
         resolvedExchangeRate,
         normalizedLabelId,
         usesPinnedExchangeRate,
-        excludeFromReadyToAssign
+        excludeFromReadyToAssign,
+        cleared
       );
 
       // If rate was manual/adjacent/1:1, mark pending for later recalc
@@ -807,7 +809,16 @@ export class TransactionService {
 
   /** Apply a Push API patch in account currency, committing all fields together. */
   async updatePushedTransaction(id: number, fields: Record<string, unknown>): Promise<string[]> {
-    const allowed = ['inflow', 'outflow', 'date', 'memo', 'payee', 'categoryId', 'accountId'];
+    const allowed = [
+      'inflow',
+      'outflow',
+      'date',
+      'memo',
+      'payee',
+      'categoryId',
+      'accountId',
+      'cleared',
+    ];
     const keys = Object.keys(fields);
     if (!keys.length || keys.some((key) => !allowed.includes(key))) {
       throw new ValidationError(
@@ -815,7 +826,9 @@ export class TransactionService {
       );
     }
     const previous = this.getTransactionByID(id);
-    const structural = keys.some((key) => !['memo', 'payee'].includes(key));
+    if (fields.cleared !== undefined && typeof fields.cleared !== 'boolean')
+      throw new ValidationError('cleared must be true or false.');
+    const structural = keys.some((key) => !['memo', 'payee', 'cleared'].includes(key));
     if (previous.TransferID || (structural && this.queries.getSplitsForTransaction(id).length)) {
       throw new ValidationError(
         'Transfer transactions cannot be patched; split transactions only support memo and payee.'
@@ -906,6 +919,9 @@ export class TransactionService {
       if (reprice && rate) this.queries.setExchangeRate(id, rate, Boolean(pinned));
       if (payee) this.queries.insertPayee(previous.BudgetID, payee);
       this.queries.recalculateBalancesForAccounts([...new Set([previous.AccountID, accountId])]);
+      if (typeof fields.cleared === 'boolean') {
+        this.queries.setTransactionsCleared([id], fields.cleared);
+      }
     });
     return keys;
   }
@@ -1875,20 +1891,35 @@ export class TransactionService {
   }
 
   /**
-   * ReconcileAccount - Marks all transactions up to today as reconciled and updates account reconciled_at
-   *
-   * @param accountId The account to reconcile
-   * @param reconcileDate The date to reconcile up to (defaults to today)
-   * @returns void
+   * ReconcileAccount - Locks transactions up to `reconcileDate` (default today)
+   * as reconciled and stamps the account. `clearedOnly` locks just cleared
+   * rows; without it every row is locked (legacy behaviour for older ops).
    */
-  reconcileAccount(accountId: number, reconcileDate?: string): void {
+  reconcileAccount(
+    accountId: number,
+    reconcileDate?: string,
+    options: { clearedOnly?: boolean } = {}
+  ): void {
     const date = reconcileDate || getLocalDateString();
     const timestamp = new Date().toISOString();
 
     this.db.transaction(() => {
-      this.queries.markTransactionsAsReconciled(accountId, date);
+      this.queries.markTransactionsAsReconciled(accountId, date, options.clearedOnly ?? false);
       this.queries.updateAccountReconciledAt(accountId, timestamp);
     });
+  }
+
+  /**
+   * Mark transactions cleared or uncleared; reconciled ones are left locked.
+   * Returns the IDs that changed.
+   */
+  setTransactionsCleared(ids: number[], cleared: boolean): number[] {
+    if (ids.length === 0) return [];
+    let changed: number[] = [];
+    this.db.transaction(() => {
+      changed = this.queries.setTransactionsCleared(ids, cleared);
+    });
+    return changed;
   }
 
   /**

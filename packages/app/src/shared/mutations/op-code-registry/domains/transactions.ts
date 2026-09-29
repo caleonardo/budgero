@@ -101,13 +101,13 @@ async function addTransactionFromArgs(args: Record<string, unknown>): Promise<nu
     (args.labelId as number | null | undefined) ?? null,
     typeof args.exchangeRateOverride === 'number' ? (args.exchangeRateOverride as number) : null,
   ] as const;
-  return args.importIdentities
-    ? S().transactions!.addTransaction(
-        ...parameters,
-        false,
-        args.importIdentities as ImportIdentity[]
-      )
-    : S().transactions!.addTransaction(...parameters);
+  // Omitted `cleared` means uncleared (manual entry, Push API default).
+  return S().transactions!.addTransaction(
+    ...parameters,
+    false,
+    (args.importIdentities as ImportIdentity[] | undefined) ?? [],
+    args.cleared === true
+  );
 }
 
 /**
@@ -173,7 +173,11 @@ export const transactionOps = {
       if (!identity) throw new Error('Import identity is required');
       const existing = S().importHistory!.duplicates.findOperation(identity.operationId);
       if (existing !== undefined) return { transactionId: existing, created: false };
-      return { transactionId: await addTransactionFromArgs(args), created: true };
+      // Bank-statement rows have already cleared unless the file says otherwise.
+      return {
+        transactionId: await addTransactionFromArgs({ ...args, cleared: args.cleared !== false }),
+        created: true,
+      };
     },
     invalidates: [...TRANSACTION_INVALIDATION_KEYS],
     undo: {
@@ -638,6 +642,49 @@ export const transactionOps = {
       ['labels', '*'],
       ['labelDirectory', '*'],
     ],
+  },
+  // Locks only cleared transactions; uncleared ones stay open. Kept separate
+  // from transactions.reconcile so older ops replay with their original meaning.
+  'transactions.reconcileCleared': {
+    execute: async (args) => {
+      return await S().transactions!.reconcileAccount(
+        args.accountId as number,
+        args.reconcileDate as string | undefined,
+        { clearedOnly: true }
+      );
+    },
+    invalidates: [
+      ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
+      ['accounts', '*'],
+      ['allTransactions', '*'],
+      ['allTransactionsDetailed', '*'],
+      ['allTransactionsAnalytics', '*'],
+      ['monthlyTransactions', '*'],
+    ],
+  },
+  'transactions.setCleared': {
+    execute: async (args) => {
+      const { ids } = args;
+      if (!Array.isArray(ids) || !ids.every((id) => Number.isSafeInteger(id) && id > 0)) {
+        throw new Error('ids must be a list of transaction ids.');
+      }
+      if (typeof args.cleared !== 'boolean') throw new Error('cleared must be true or false.');
+      return { changed: S().transactions!.setTransactionsCleared(ids as number[], args.cleared) };
+    },
+    invalidates: [
+      ...ACCOUNT_TRANSACTION_INVALIDATION_KEYS,
+      ['accounts', '*'],
+      ['allTransactions', '*'],
+      ['allTransactionsDetailed', '*'],
+    ],
+    undo: {
+      build: (args, result) => {
+        const changed = (result as { changed?: number[] } | undefined)?.changed ?? [];
+        return changed.length
+          ? [{ op: 'transactions.setCleared', args: { ids: changed, cleared: !args.cleared } }]
+          : [];
+      },
+    },
   },
 
   // upsert split transaction

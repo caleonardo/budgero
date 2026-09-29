@@ -18,6 +18,8 @@ export interface Transaction {
   Month: string;
   Memo: string;
   Reconciled: boolean;
+  /** Seen in the bank; always true when Reconciled. Absent when the source query omits status. */
+  Cleared?: boolean;
   InflowConverted: MilliUnits;
   OutflowConverted: MilliUnits;
   InflowNative?: MilliUnits;
@@ -31,7 +33,6 @@ export interface Transaction {
   BudgetID: number;
   // Additional fields from Wails version
   Amount?: MilliUnits;
-  Cleared?: string;
   Payee?: string;
   TransferAccountID?: string;
   Label?: string | null;
@@ -54,6 +55,8 @@ export interface GetTransactionsByAccountRow {
   LabelColor?: string | null;
   Memo: string;
   Reconciled: boolean;
+  /** Seen in the bank; always true when Reconciled. Absent when the source query omits status. */
+  Cleared?: boolean;
   InflowConverted: MilliUnits;
   OutflowConverted: MilliUnits;
   InflowNative?: MilliUnits;
@@ -153,6 +156,8 @@ export interface GetTransactionsByAccountAndMonthRow {
   LabelColor?: string | null;
   Memo: string;
   Reconciled: boolean;
+  /** Seen in the bank; always true when Reconciled. Absent when the source query omits status. */
+  Cleared?: boolean;
   InflowConverted: MilliUnits;
   OutflowConverted: MilliUnits;
   InflowNative?: MilliUnits;

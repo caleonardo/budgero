@@ -76,7 +76,17 @@ export class AccountQueries {
           SELECT SUM(t.InflowConverted - t.OutflowConverted)
           FROM transactions t
           WHERE t.AccountID = a.ID AND DATE(t.Date) > DATE('now', 'localtime')
-        ), 0) AS FutureImpactConverted
+        ), 0) AS FutureImpactConverted,
+        COALESCE((
+          SELECT SUM(COALESCE(t.InflowNative, t.InflowConverted) - COALESCE(t.OutflowNative, t.OutflowConverted))
+          FROM transactions t
+          WHERE t.AccountID = a.ID AND t.Cleared = 0
+        ), 0) AS UnclearedNative,
+        COALESCE((
+          SELECT SUM(t.InflowConverted - t.OutflowConverted)
+          FROM transactions t
+          WHERE t.AccountID = a.ID AND t.Cleared = 0
+        ), 0) AS UnclearedConverted
       FROM accounts a
       WHERE a.BudgetID = ?1
       ORDER BY a.Position ASC, a.ID ASC
