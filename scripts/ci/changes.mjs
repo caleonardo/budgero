@@ -25,9 +25,14 @@ export function planChanges(paths) {
       /^(README|CONTRIBUTING|SECURITY)\.md$/.test(path) ||
       /^docs\/.*\.md$/.test(path) ||
       path.startsWith('.github/ISSUE_TEMPLATE/') ||
-      path === '.github/PULL_REQUEST_TEMPLATE.md'
+      path === '.github/PULL_REQUEST_TEMPLATE.md' ||
+      path === '.github/FUNDING.yml' ||
+      /^LICENSE(\.md)?$/.test(path)
     ) {
-      // Repository prose and issue templates have no build consumers.
+      // Repository prose, templates, and metadata have no build consumers.
+    } else if (/^\.github\/workflows\/(?!ci\.yml$)[^/]+\.ya?ml$/.test(path)) {
+      // Other workflows (release, runner checks) are not exercised by these
+      // checks; ci.yml itself still runs everything to validate its jobs.
     } else {
       // Workflow, lockfile, tooling, shared configuration, and unknown paths
       // retain the full existing check set rather than risking a missed consumer.

@@ -37,8 +37,9 @@ CI selects checks from the files changed across the whole PR (and the full commi
 range on pushes). Website changes run website builds, type-checking, translation
 audits, and validation of the app knowledge generated from the docs. App, core,
 and runtime changes run the app checks; server changes run the Go checks. Shared
-configuration, dependency patches, lockfiles, workflow changes, and unknown paths
-run the full suite. Repository-only prose skips build steps.
+configuration, dependency patches, lockfiles, the CI workflow and its change
+selection, and unknown paths run the full suite. Repository-only prose, metadata,
+and other workflows (release, runner checks) skip build steps.
 
 The required `web` and `server` checks still report on every PR; a failed
 change-selection job blocks merging. Fork workflow runs may need maintainer
