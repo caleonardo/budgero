@@ -1,5 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
+import { cn } from '@shared/lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@shared/ui/dialog';
@@ -27,6 +28,7 @@ export function BudgetSwitcher() {
   const [selectedBudgetForEdit, setSelectedBudgetForEdit] = useState<Budget | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [isCreateDialogWide, setIsCreateDialogWide] = useState(false);
 
   useEffect(() => {
     if (!canManageBudgets) {
@@ -86,12 +88,20 @@ export function BudgetSwitcher() {
             setCreateDialogOpen(open);
           }}
         >
-          <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto p-2 sm:p-4 sm:max-w-3xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl w-[95vw]">
+          <DialogContent
+            className={cn(
+              'max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto p-2 sm:p-4',
+              isCreateDialogWide && 'w-[95vw] sm:max-w-3xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl'
+            )}
+          >
             <DialogTitle className="sr-only">Create New Budget</DialogTitle>
             <DialogDescription className="sr-only">
               <Trans>Set up a new budget to track your finances</Trans>
             </DialogDescription>
-            <BudgetWizard onCreated={handleBudgetCreated} />
+            <BudgetWizard
+              onCreated={handleBudgetCreated}
+              onWideLayoutChange={setIsCreateDialogWide}
+            />
           </DialogContent>
         </Dialog>
       )}

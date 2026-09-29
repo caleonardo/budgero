@@ -40,6 +40,8 @@ import { YnabImportStatus } from '@features/budget-management/ui/create-budget-f
 interface CreateBudgetFormProps {
   onCreated?: (budgetId: number) => void;
   onModeChange?: (mode: 'manual' | 'core' | 'import') => void;
+  /** True while the YNAB verification report (a wide table) is showing. */
+  onWideLayoutChange?: (wide: boolean) => void;
   defaultTab?: 'manual' | 'core' | 'import';
 }
 
@@ -66,6 +68,7 @@ function yieldAfterPaint(): Promise<void> {
 const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
   onCreated,
   onModeChange,
+  onWideLayoutChange,
   defaultTab,
 }) => {
   const { t } = useLingui();
@@ -368,7 +371,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         summaryParts.push(
           plural(categoryNames.length, {
             one: `Created # historical category referenced by transactions: ${categoryNames.join(', ')}.`,
-            other: `Created # historical categories referenced by transactions: ${categoryNames.join(', ')}.`
+            other: `Created # historical categories referenced by transactions: ${categoryNames.join(', ')}.`,
           })
         );
       }
@@ -376,7 +379,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         summaryParts.push(
           plural(result.summary.splitTransactionsImported, {
             one: `Imported # split transaction.`,
-            other: `Imported # split transactions.`
+            other: `Imported # split transactions.`,
           })
         );
       }
@@ -384,7 +387,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         summaryParts.push(
           plural(result.summary.accountBalancesVerified, {
             one: `Verified # account balance against YNAB.`,
-            other: `Verified # account balances against YNAB.`
+            other: `Verified # account balances against YNAB.`,
           })
         );
       } else {
@@ -394,7 +397,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         summaryParts.push(
           plural(result.summary.readyToAssignMonthsVerified, {
             one: `Matched Ready to Assign for # month.`,
-            other: `Matched Ready to Assign for # months.`
+            other: `Matched Ready to Assign for # months.`,
           })
         );
       }
@@ -402,7 +405,7 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         summaryParts.push(
           plural(result.summary.debtBalanceAdjustmentsCreated ?? 0, {
             one: `Created # visible YNAB debt interest adjustment.`,
-            other: `Created # visible YNAB debt interest adjustments.`
+            other: `Created # visible YNAB debt interest adjustments.`,
           })
         );
       }
@@ -729,6 +732,13 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
     if (!onModeChange) return;
     onModeChange(tab);
   }, [tab, onModeChange]);
+
+  const isWideLayout = tab === 'import' && ynabImportView === 'status';
+  useEffect(() => {
+    if (!onWideLayoutChange) return;
+    onWideLayoutChange(isWideLayout);
+    return () => onWideLayoutChange(false);
+  }, [isWideLayout, onWideLayoutChange]);
 
   return (
     <div className="min-w-0 space-y-3 px-1 text-sm sm:space-y-4 sm:px-0 sm:text-base">

@@ -7,10 +7,12 @@ import { StartupStepper } from './StartupStepper';
 
 interface StartupLayoutProps {
   currentStep: number;
+  /** Widen for the YNAB verification report. */
+  wide?: boolean;
   children: React.ReactNode;
 }
 
-export function StartupLayout({ currentStep, children }: StartupLayoutProps) {
+export function StartupLayout({ currentStep, wide = false, children }: StartupLayoutProps) {
   const { t } = useLingui();
 
   const logout = useLogout();
@@ -20,7 +22,7 @@ export function StartupLayout({ currentStep, children }: StartupLayoutProps) {
       <div
         className={cn(
           'flex w-full flex-col items-center gap-8 transition-[max-width]',
-          currentStep === 3 ? 'max-w-5xl lg:max-w-6xl xl:max-w-7xl' : 'max-w-xl'
+          wide ? 'max-w-5xl lg:max-w-6xl xl:max-w-7xl' : 'max-w-xl'
         )}
       >
         <div className="flex flex-col items-center gap-1">

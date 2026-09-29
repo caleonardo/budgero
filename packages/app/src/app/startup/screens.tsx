@@ -730,6 +730,7 @@ export function BudgetRequiredScreen({
   const [selectedSource, setSelectedSource] = React.useState<'manual' | 'core' | 'import' | null>(
     null
   );
+  const [isWideLayout, setIsWideLayout] = React.useState(false);
 
   const handleBudgetModeChange = React.useCallback(
     (mode: 'manual' | 'core' | 'import') => {
@@ -831,7 +832,7 @@ export function BudgetRequiredScreen({
   }
 
   return (
-    <StartupLayout currentStep={3}>
+    <StartupLayout currentStep={3} wide={isWideLayout}>
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -867,6 +868,7 @@ export function BudgetRequiredScreen({
           <BudgetWizard
             onCreated={handleBudgetCreated}
             onModeChange={handleBudgetModeChange}
+            onWideLayoutChange={setIsWideLayout}
             defaultTab={selectedSource}
             hideHeader
           />

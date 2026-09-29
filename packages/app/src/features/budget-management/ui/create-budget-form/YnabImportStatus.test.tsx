@@ -250,11 +250,11 @@ describe('YnabImportStatus', () => {
     );
 
     const headers = [
-      'YEAR-MONTH',
-      'DIFFERENCE',
-      'CATEGORY',
-      'YNAB VALUE',
-      'Budgero VALUE',
+      'Month',
+      'Difference',
+      'Possible contributors',
+      'YNAB value',
+      'Budgero value',
       'Income',
       'Assigned',
       'Off-budget',
@@ -264,6 +264,9 @@ describe('YnabImportStatus', () => {
     for (const header of headers) {
       expect(screen.getAllByRole('columnheader', { name: header })[0]).toBeInTheDocument();
     }
+    // Reports without attribution must not guess at a cause.
+    expect(screen.getByText('Not attributed')).toBeInTheDocument();
+    expect(screen.queryByText(/possible Transfer/i)).not.toBeInTheDocument();
   });
 
   it('renders affected categories and discrepancy root causes summary in Ready to Assign mismatches table', () => {
@@ -355,20 +358,19 @@ describe('YnabImportStatus', () => {
       />
     );
 
-    // Root causes summary section is rendered
-    expect(screen.getByText('Discrepancy Causes by Origin Month')).toBeInTheDocument();
-    expect(
-      screen.getByText(/Ready to Assign differences across months originate from/)
-    ).toBeInTheDocument();
+    // Summary of possible contributors, worded as hints rather than causes
+    expect(screen.getByText(/not an exact breakdown/)).toBeInTheDocument();
+    expect(screen.queryByText(/originate from/)).not.toBeInTheDocument();
 
-    // Specific category groups and names are rendered in the table and summary
-    expect(screen.getAllByText(/Bills › Electric/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/Groceries › Food/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/Immediate › Vacation/).length).toBeGreaterThanOrEqual(1);
+    // Each contributor renders once in the summary and once in the table, as plain text
+    expect(screen.getAllByText('Bills › Electric')).toHaveLength(2);
+    expect(screen.getAllByText('Groceries › Food')).toHaveLength(2);
+    expect(screen.getAllByText('Immediate › Vacation')).toHaveLength(2);
+    expect(screen.queryByText(/\$Bills|`/)).not.toBeInTheDocument();
 
     // Origin months and reasons are rendered
-    expect(screen.getAllByText(/cash overspend in 2017-07/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/cash overspend in 2018-01/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/assigned diff in 2018-01/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/cash overspend in 2017-07/)).toHaveLength(2);
+    expect(screen.getAllByText(/cash overspend in 2018-01/)).toHaveLength(2);
+    expect(screen.getAllByText(/assignment difference in 2018-01/)).toHaveLength(2);
   });
 });
