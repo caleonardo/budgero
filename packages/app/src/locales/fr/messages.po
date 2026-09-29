@@ -3767,6 +3767,10 @@ msgstr "Les soldes correspondent - le rapprochement marquera les transactions co
 msgid "Bank transaction ID was already imported"
 msgstr "L’identifiant de transaction bancaire a déjà été importé"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within 1%) up to 7 days apart."
+msgstr "Les banques affichent souvent un débit en attente et le débit définitif à des dates différentes. Sont signalées les transactions du même compte avec un montant similaire (à 1 % près) et jusqu’à 7 jours d’écart."
+
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
 #: src/shared/lib/analytics/visualization-labels.ts
@@ -10852,6 +10856,10 @@ msgstr "Aucun espace de travail pour le moment. Utilisez le bouton ci-dessus pou
 msgid "None"
 msgstr "Aucun"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Not a duplicate"
+msgstr "Pas un doublon"
+
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Not attributed"
 msgstr "Non attribué"
@@ -12020,6 +12028,10 @@ msgstr "Les nombres positifs augmentent, les nombres négatifs diminuent le mont
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Possible contributors"
 msgstr "Causes possibles"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Possible duplicate"
+msgstr "Doublon possible"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Post transaction"
@@ -17190,6 +17202,10 @@ msgstr "Modèle Whisper pour la transcription sur l'appareil"
 #: src/app/startup/screens.tsx
 msgid "Why do I need a master password?"
 msgstr "Pourquoi ai-je besoin d'un mot de passe principal ?"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Why is this flagged?"
+msgstr "Pourquoi est-ce signalé ?"
 
 #: src/pages/custom-dashboards/components/WidgetCard.tsx
 msgid "Widget"

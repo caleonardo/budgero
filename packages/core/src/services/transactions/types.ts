@@ -93,6 +93,27 @@ export interface AccountTransactionPage {
   nextCursor: AccountTransactionCursor | null;
 }
 
+/** An existing transaction that may be the same real-world payment as a new entry. */
+export interface SimilarTransaction {
+  ID: number;
+  Date: string;
+  Payee: string;
+  Memo: string;
+  /** Signed native amount (inflow - outflow), in the account currency's scale. */
+  AmountNative: number;
+}
+
+export interface SimilarTransactionQuery {
+  accountId: number;
+  /** yyyy-MM-dd */
+  date: string;
+  /** Signed native amount (inflow - outflow) of the transaction being entered. */
+  amountNative: number;
+  /** Days either side of `date` to search. Defaults to 7. */
+  dayWindow?: number;
+  limit?: number;
+}
+
 /** Aggregate values needed by the account register without materializing every row. */
 export interface AccountTransactionSummary {
   TransactionCount: number;

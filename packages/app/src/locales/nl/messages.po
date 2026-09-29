@@ -3767,6 +3767,10 @@ msgstr "Saldo's komen overeen - afstemming markeert transacties als afgestemd"
 msgid "Bank transaction ID was already imported"
 msgstr "Banktransactie-ID is al geïmporteerd"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within 1%) up to 7 days apart."
+msgstr "Banken tonen een voorlopige en de definitieve afschrijving vaak op verschillende datums. Gemarkeerd worden transacties in dezelfde rekening met een vergelijkbaar bedrag (binnen 1%) tot 7 dagen uit elkaar."
+
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
 #: src/shared/lib/analytics/visualization-labels.ts
@@ -10852,6 +10856,10 @@ msgstr "Nog geen werkruimtes. Gebruik de knop hierboven om je eerste werkruimte 
 msgid "None"
 msgstr "Geen"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Not a duplicate"
+msgstr "Geen duplicaat"
+
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Not attributed"
 msgstr "Niet toegewezen"
@@ -12020,6 +12028,10 @@ msgstr "Positieve getallen verhogen het bedrag, negatieve getallen verlagen het.
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Possible contributors"
 msgstr "Mogelijke oorzaken"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Possible duplicate"
+msgstr "Mogelijk duplicaat"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Post transaction"
@@ -17190,6 +17202,10 @@ msgstr "Whisper-model voor transcriptie op het apparaat"
 #: src/app/startup/screens.tsx
 msgid "Why do I need a master password?"
 msgstr "Waarom heb ik een hoofdwachtwoord nodig?"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Why is this flagged?"
+msgstr "Waarom wordt dit gemarkeerd?"
 
 #: src/pages/custom-dashboards/components/WidgetCard.tsx
 msgid "Widget"

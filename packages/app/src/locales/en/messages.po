@@ -3769,6 +3769,10 @@ msgstr "Balances match - reconciliation will mark transactions as reconciled"
 msgid "Bank transaction ID was already imported"
 msgstr "Bank transaction ID was already imported"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within 1%) up to 7 days apart."
+msgstr "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within 1%) up to 7 days apart."
+
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
 #: src/shared/lib/analytics/visualization-labels.ts
@@ -10854,6 +10858,10 @@ msgstr "No workspaces yet. Use the button above to create your first workspace."
 msgid "None"
 msgstr "None"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Not a duplicate"
+msgstr "Not a duplicate"
+
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Not attributed"
 msgstr "Not attributed"
@@ -12022,6 +12030,10 @@ msgstr "Positive numbers increase, negatives decrease the amount."
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Possible contributors"
 msgstr "Possible contributors"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Possible duplicate"
+msgstr "Possible duplicate"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Post transaction"
@@ -17192,6 +17204,10 @@ msgstr "Whisper model for on-device transcription"
 #: src/app/startup/screens.tsx
 msgid "Why do I need a master password?"
 msgstr "Why do I need a master password?"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Why is this flagged?"
+msgstr "Why is this flagged?"
 
 #: src/pages/custom-dashboards/components/WidgetCard.tsx
 msgid "Widget"

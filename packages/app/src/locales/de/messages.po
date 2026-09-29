@@ -3767,6 +3767,10 @@ msgstr "Salden stimmen überein – beim Abgleichen werden Transaktionen als abg
 msgid "Bank transaction ID was already imported"
 msgstr "Banktransaktions-ID wurde bereits importiert"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Banks often list a pending charge and the settled one on different dates. This flags transactions in the same account with a similar amount (within 1%) up to 7 days apart."
+msgstr "Banken zeigen eine vorgemerkte und die gebuchte Belastung oft mit unterschiedlichem Datum an. Markiert werden Transaktionen im selben Konto mit ähnlichem Betrag (bis 1 %), die höchstens 7 Tage auseinanderliegen."
+
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
 #: src/shared/lib/analytics/visualization-labels.ts
@@ -10852,6 +10856,10 @@ msgstr "Noch keine Arbeitsbereiche. Verwende die Schaltfläche oben, um deinen e
 msgid "None"
 msgstr "Keine"
 
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Not a duplicate"
+msgstr "Kein Duplikat"
+
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Not attributed"
 msgstr "Nicht zugeordnet"
@@ -12020,6 +12028,10 @@ msgstr "Positive Zahlen erhöhen, negative verringern den Betrag."
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Possible contributors"
 msgstr "Mögliche Ursachen"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Possible duplicate"
+msgstr "Mögliches Duplikat"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Post transaction"
@@ -17190,6 +17202,10 @@ msgstr "Whisper-Modell für On-Device-Transkription"
 #: src/app/startup/screens.tsx
 msgid "Why do I need a master password?"
 msgstr "Warum brauche ich ein Master-Passwort?"
+
+#: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
+msgid "Why is this flagged?"
+msgstr "Warum wird das markiert?"
 
 #: src/pages/custom-dashboards/components/WidgetCard.tsx
 msgid "Widget"

@@ -29,6 +29,7 @@ import { TransactionFormHeader } from './TransactionFormHeader';
 import { TransactionDetailsSection } from './TransactionDetailsSection';
 import { TransactionSplitSection } from './TransactionSplitSection';
 import { TransactionFormActions } from './TransactionFormActions';
+import { DuplicateTransactionHint } from '../form/DuplicateTransactionHint';
 import { RecurringOptionsSection } from './RecurringOptionsSection';
 import { useAddTransactionForm } from './useAddTransactionForm';
 import {
@@ -430,6 +431,15 @@ function BudgetTransactionForm({
         autofillAppliedFields={autofillAppliedFields}
         payeeCategoryApplied={payeeCategoryApplied}
         payeeCategorySource={payeeCategorySource}
+      />
+
+      <DuplicateTransactionHint
+        accountId={form.selectedFromAccount ? Number(form.selectedFromAccount) : null}
+        date={form.transactionDate}
+        amount={form.amount}
+        isInflow={form.isInflow}
+        currencyCode={currencyCode}
+        enabled={!recurringEnabled && !form.isTransfer}
       />
 
       {!recurringEnabled && (
