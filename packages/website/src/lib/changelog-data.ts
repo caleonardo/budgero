@@ -21,11 +21,137 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.14.0',
+    date: 'September 30, 2026',
+    summary:
+      'Adds cleared transactions and cleared-balance reconciliation, AND/OR rule conditions, duplicate hints, Push API splits, updates and transfers, and a clearer YNAB import.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Cleared transactions',
+        description:
+          'Mark transactions uncleared or cleared alongside reconciled. The account header shows your cleared balance, and reconciling compares it and locks only cleared transactions. Existing transactions start as cleared, and YNAB imports keep their cleared status.',
+      },
+      {
+        type: 'new',
+        title: 'Cleared shortcuts and search',
+        description:
+          'Press C to toggle cleared on the selected rows, and filter the register by cleared, uncleared, or reconciled.',
+      },
+      {
+        type: 'new',
+        title: 'Upcoming recurring in the register',
+        description:
+          'Scheduled recurring transactions appear inline in the register, where you can mark them ready or skip them.',
+      },
+      {
+        type: 'new',
+        title: 'Possible duplicate hints',
+        description:
+          'When you add a transaction that looks like an existing one, Budgero warns you. Switch it off or adjust how close a match has to be in Settings.',
+      },
+      {
+        type: 'new',
+        title: 'AND/OR rule conditions',
+        description:
+          'Chain rule conditions with AND or OR. AND is checked first, so each OR starts a new group.',
+      },
+      {
+        type: 'new',
+        title: 'Push API splits, updates, deletes, and transfers',
+        description:
+          'Push split transactions, update or delete pushed transactions by their message ID, and add linked transfers. The Python SDK supports all of these.',
+      },
+      {
+        type: 'new',
+        title: 'YNAB import Ready to Assign breakdown',
+        description:
+          "When the imported Ready to Assign doesn't match, the import shows which categories cause the difference.",
+      },
+      {
+        type: 'new',
+        title: 'Keyboard shortcuts dialog',
+        description: 'A header button lists every shortcut, labelled for your platform.',
+      },
+      {
+        type: 'improved',
+        title: 'Compact rules page',
+        description:
+          'Collapsible rule rows show conditions and actions. The rule form is tighter, with searchable category and account pickers.',
+      },
+      {
+        type: 'improved',
+        title: 'Compact recurring page',
+        description: 'Upcoming occurrences collapse under their schedule.',
+      },
+      {
+        type: 'improved',
+        title: 'YNAB import verification',
+        description:
+          'A clearer verification table after import, and integrity mismatches are now warnings instead of errors.',
+      },
+      {
+        type: 'improved',
+        title: 'Consistent icons',
+        description: 'One recurring icon everywhere.',
+      },
+      {
+        type: 'fixed',
+        title: 'Date range picker',
+        description: 'Its width no longer jumps.',
+      },
+      {
+        type: 'fixed',
+        title: 'Push API',
+        description:
+          'Referenced updates are applied atomically, deletes are safe to repeat, and account currencies are preserved on transfers.',
+      },
+    ],
+    acknowledgements: [
+      {
+        githubUsername: 'caleonardo',
+        pullRequest: 18,
+        contribution: 'Fixing the date picker width.',
+      },
+      {
+        githubUsername: 'caleonardo',
+        pullRequest: 22,
+        contribution: 'Turning YNAB import integrity mismatches into warnings.',
+      },
+      {
+        githubUsername: 'caleonardo',
+        pullRequest: 23,
+        contribution: 'Ready to Assign discrepancy attribution for YNAB imports.',
+      },
+      {
+        githubUsername: 'caleonardo',
+        pullRequest: 24,
+        contribution: 'The YNAB import verification table.',
+      },
+      {
+        githubUsername: 'f-liva',
+        pullRequest: 20,
+        contribution: 'Split transactions in the Push API.',
+      },
+      {
+        githubUsername: 'f-liva',
+        pullRequest: 21,
+        contribution: 'Updating and deleting pushed transactions by reference.',
+      },
+      {
+        githubUsername: 'f-liva',
+        pullRequest: 25,
+        contribution: 'Linked transfers in the Python SDK and docs.',
+      },
+    ],
+  },
+  {
     version: 'v1.13.2',
     date: 'September 17, 2026',
     summary:
       'Adds faster month and year navigation to date range filters and fixes account transaction views staying stale after changes.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'improved',
