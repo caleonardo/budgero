@@ -98,7 +98,10 @@ describe('transactions.addTransfer', () => {
       transferPayload.transferId,
       transferPayload.source.payee,
       transferPayload.source.labelId,
-      transferPayload.source.exchangeRateOverride
+      transferPayload.source.exchangeRateOverride,
+      false,
+      [],
+      false
     );
     expect(transactionMocks.addTransaction).toHaveBeenNthCalledWith(
       2,
@@ -112,7 +115,10 @@ describe('transactions.addTransfer', () => {
       transferPayload.transferId,
       transferPayload.destination.payee,
       transferPayload.destination.labelId,
-      transferPayload.destination.exchangeRateOverride
+      transferPayload.destination.exchangeRateOverride,
+      false,
+      [],
+      false
     );
 
     expect(useUndoStore.getState().past).toHaveLength(1);

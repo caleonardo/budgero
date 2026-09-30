@@ -6,6 +6,7 @@ import type {
   PayeeConditionOperator,
   AmountConditionOperator,
 } from './index.js';
+import { matchesConditionChain } from './condition-groups.js';
 
 export interface AutofillContext {
   memo: string;
@@ -32,7 +33,9 @@ export function matchesAutofillConditions(
   if (!rule.enabled || rule.mode !== 'autofill') return false;
   if (!rule.conditions || rule.conditions.length === 0) return false;
 
-  return rule.conditions.every((condition) => matchesSingleCondition(condition, context));
+  return matchesConditionChain(rule.conditions, (condition) =>
+    matchesSingleCondition(condition, context)
+  );
 }
 
 function matchesSingleCondition(condition: RuleCondition, context: AutofillContext): boolean {

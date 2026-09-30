@@ -23,6 +23,8 @@ function toRegisterRow(p: ProjectedTransactionRow): GetTransactionsByAccountRow 
     RunningBalanceNative: null,
     Account: p.Account,
     IsProjected: true,
+    OccurrenceID: p.OccurrenceID,
+    RecurringTransactionID: p.RecurringTransactionID,
   };
 }
 

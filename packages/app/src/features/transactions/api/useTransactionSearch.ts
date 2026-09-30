@@ -60,6 +60,23 @@ export function filterTransactions(
     });
   }
 
+  if (parsedQuery.clearedStatus) {
+    // Projected rows have no status yet; reconciled rows are always cleared.
+    filtered = filtered.filter((tx) => {
+      if (tx.IsProjected) return false;
+      switch (parsedQuery.clearedStatus) {
+        case 'reconciled':
+          return Boolean(tx.Reconciled);
+        case 'cleared':
+          return Boolean(tx.Cleared) || Boolean(tx.Reconciled);
+        case 'uncleared':
+          return !tx.Cleared && !tx.Reconciled;
+        default:
+          return true;
+      }
+    });
+  }
+
   if (parsedQuery.categoryMatches.length > 0) {
     const matchedCategoriesLower = parsedQuery.categoryMatches.map((c) => c.toLowerCase());
     filtered = filtered.filter((tx) => {

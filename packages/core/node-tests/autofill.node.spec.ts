@@ -56,6 +56,23 @@ describe('matchesAutofillConditions', () => {
     expect(matchesAutofillConditions(rule, context)).toBe(false);
   });
 
+  it('matches when any OR-joined condition matches', () => {
+    const rule = createBaseRule({
+      conditions: [
+        { field: 'payee', operator: 'equals', value: 'Tesco' },
+        { field: 'payee', operator: 'equals', value: 'Aldi', join: 'or' },
+      ],
+    });
+    const context = (payee: string): AutofillContext => ({
+      memo: '',
+      payee,
+      amount: null,
+      accountId: null,
+    });
+    expect(matchesAutofillConditions(rule, context('Aldi'))).toBe(true);
+    expect(matchesAutofillConditions(rule, context('Lidl'))).toBe(false);
+  });
+
   describe('memo conditions', () => {
     it('matches memo equals condition (case insensitive)', () => {
       const rule = createBaseRule({

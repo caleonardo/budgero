@@ -43,7 +43,7 @@ MAIN VIEW: transactions_analytics (one row per transaction)
 - inflow, outflow  → amounts in the budget's DISPLAY currency (budget_display_currency). Use these for totals.
 - inflow_original, outflow_original → amounts in the account's NATIVE currency (account_currency). Do NOT sum across different currencies.
 - transfer_id → identifies transfers (see below). account_on_budget (int: 1=on-budget, 0=off-budget).
-- running_balance, reconciled, has_splits, split_count, split_inflow, split_outflow
+- running_balance, cleared (seen in the bank; 1 for reconciled rows too), reconciled, has_splits, split_count, split_inflow, split_outflow
 Spending = SUM(outflow). Income = SUM(inflow). An expense row has outflow > 0; income has inflow > 0.
 
 TRANSFERS (critical — they are NOT spending or income)

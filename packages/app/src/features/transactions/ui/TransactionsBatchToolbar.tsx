@@ -7,7 +7,15 @@ import { toast } from 'sonner';
 import { applyOpInvalidations } from '@shared/lib/query-utils';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@shared/ui/select';
 import { Button } from '@shared/ui/button';
-import { Loader2, Trash2, MoveHorizontal, Tag, AlertCircle, RefreshCw } from 'lucide-react';
+import {
+  Loader2,
+  Trash2,
+  MoveHorizontal,
+  Tag,
+  AlertCircle,
+  RefreshCw,
+  CircleCheck,
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,9 +28,11 @@ import {
   useDeleteTransactions,
   useMoveTransactionToNewCategory,
   useMoveTransactionToNewAccount,
+  useSetTransactionsCleared,
   useTransactions,
   useUpdateTransactionColumn,
 } from '@entities/transaction/api/useTransactions';
+import { CLEARED_SHORTCUT_KEY } from '@features/transactions/api/useClearedShortcut';
 import { PayeeCombobox } from '@features/payees/ui/PayeeCombobox';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { useActiveAccounts } from '@entities/account/api/useActiveAccounts';
@@ -66,6 +76,7 @@ export function TransactionsBatchToolbar({
   const moveToNewCategoryMutation = useMoveTransactionToNewCategory();
   const moveToNewAccountMutation = useMoveTransactionToNewAccount();
   const updateTransactionColumnMutation = useUpdateTransactionColumn();
+  const setClearedMutation = useSetTransactionsCleared();
 
   const { data: allTransactions = [] } = useTransactions(selectedAccount?.ID || 0);
 
@@ -104,6 +115,30 @@ export function TransactionsBatchToolbar({
       toastError('Failed to delete transactions', error, 'Please try again.');
     }
   }, [selectedRowIds, deleteTransactionsMutation, clearSelection, t]);
+
+  const handleSetCleared = (cleared: boolean) => {
+    setClearedMutation.mutate(
+      { ids: selectedRowIds, cleared },
+      {
+        onSuccess: ({ changed }) => {
+          const count = changed.length;
+          toast.success(
+            cleared
+              ? plural(count, {
+                  one: '# transaction marked cleared',
+                  other: '# transactions marked cleared',
+                })
+              : plural(count, {
+                  one: '# transaction marked uncleared',
+                  other: '# transactions marked uncleared',
+                })
+          );
+        },
+        onError: (error) =>
+          toastError(t`Could not update cleared status`, error, t`Please try again.`),
+      }
+    );
+  };
 
   async function handleBatchEdits() {
     setWorking(true);
@@ -241,6 +276,28 @@ export function TransactionsBatchToolbar({
             <RefreshCw className="h-3 w-3" />
           </Button>
         )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-2"
+              aria-label={t`Cleared status`}
+              title={t`Cleared status (press ${CLEARED_SHORTCUT_KEY})`}
+              disabled={setClearedMutation.isPending}
+            >
+              <CircleCheck className="h-3 w-3" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => handleSetCleared(true)}>
+              <Trans>Mark cleared</Trans>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSetCleared(false)}>
+              <Trans>Mark uncleared</Trans>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         {/* Compact Action Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

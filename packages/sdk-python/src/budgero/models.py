@@ -176,6 +176,8 @@ class TransactionInput:
         splits: Optional list of :class:`SplitLine` to create a split
             (multi-category) transaction. When set, ``category_id`` is
             ignored and the lines must sum to ``inflow``/``outflow``.
+        cleared: Whether the transaction has already cleared the bank.
+            Defaults to False (added as uncleared).
 
     Example:
         >>> tx = TransactionInput(
@@ -198,6 +200,7 @@ class TransactionInput:
     payee: Optional[str] = None
     transfer_id: Optional[str] = None
     splits: Optional[list[SplitLine]] = None
+    cleared: bool = False
 
     def to_api_dict(self) -> dict[str, Any]:
         """
@@ -223,6 +226,8 @@ class TransactionInput:
             result["payee"] = self.payee
         if self.transfer_id is not None:
             result["transferId"] = self.transfer_id
+        if self.cleared:
+            result["cleared"] = True
         if self.splits is not None:
             if not self.splits:
                 raise ValidationError("splits must contain at least one SplitLine")

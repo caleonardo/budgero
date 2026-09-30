@@ -251,6 +251,7 @@ class BudgeroClient:
         payee: Optional[str] = None,
         transfer_id: Optional[str] = None,
         splits: Optional[list[SplitLine]] = None,
+        cleared: bool = False,
     ) -> PushResult:
         """
         Add a new transaction to your budget.
@@ -281,6 +282,8 @@ class BudgeroClient:
             splits: Optional list of SplitLine to create a split
                 (multi-category) transaction. When set, category_id is
                 ignored and the lines must sum to outflow (or inflow).
+            cleared: Whether the transaction has already cleared the bank.
+                Default is False (added as uncleared).
 
         Returns:
             PushResult with the queue ID and status.
@@ -350,6 +353,7 @@ class BudgeroClient:
             payee=payee,
             transfer_id=transfer_id,
             splits=splits,
+            cleared=cleared,
         )
 
         return self.push_transaction(tx)
@@ -424,7 +428,9 @@ class BudgeroClient:
 
         Accepted fields: ``inflow``, ``outflow`` (currency units, converted
         to milliunits), ``date`` (YYYY-MM-DD), ``memo``, ``payee``,
-        ``category_id``, ``account_id``. Only the fields you pass change.
+        ``category_id``, ``account_id``, ``cleared`` (bool; e.g. mark a
+        pending charge cleared once it settles). Only the fields you pass
+        change.
 
         Example:
             >>> result = client.add_transaction(..., outflow=50.00)
@@ -440,6 +446,7 @@ class BudgeroClient:
             "payee": ("payee", False),
             "category_id": ("categoryId", False),
             "account_id": ("accountId", False),
+            "cleared": ("cleared", False),
         }
         wire_fields: dict[str, Any] = {}
         for key, value in fields.items():
@@ -450,6 +457,8 @@ class BudgeroClient:
             wire_key, is_money = key_map[key]
             if key == "date" and isinstance(value, date):
                 value = value.isoformat()
+            if key == "cleared" and not isinstance(value, bool):
+                raise ValidationError("cleared must be True or False")
             wire_fields[wire_key] = to_milliunits(value) if is_money else value
             if is_money and wire_fields[wire_key] < 0:
                 raise ValidationError(f"{key} must be non-negative")
@@ -516,6 +525,7 @@ class BudgeroClient:
         memo: str = "",
         payee: str = "Transfer",
         transfer_id: Optional[str] = None,
+        cleared: bool = False,
     ) -> PushResult:
         """
         Move money between two of your own accounts as a true linked
@@ -526,6 +536,8 @@ class BudgeroClient:
         For accounts in different currencies, pass destination_amount in
         destination-account currency units. It defaults to amount for
         same-currency transfers. The app assigns the transfer categories.
+
+        Pass ``cleared=True`` if both legs have already cleared the bank.
 
         Store the result's ``transfer_id`` for ``delete_transfer()``.
         ``message_id`` is the distinct queue deduplication identifier.
@@ -547,7 +559,9 @@ class BudgeroClient:
             raise ValidationError("source and destination accounts must differ")
         date_str = date if isinstance(date, str) else date.isoformat()
         tid = transfer_id or str(uuid.uuid4())
-        leg = {"categoryId": 0, "date": date_str, "memo": memo, "payee": payee}
+        leg: dict[str, Any] = {"categoryId": 0, "date": date_str, "memo": memo, "payee": payee}
+        if cleared:
+            leg["cleared"] = True
         ref_id, encrypted = self._encrypt_mutation(
             "transactions.addTransfer",
             {

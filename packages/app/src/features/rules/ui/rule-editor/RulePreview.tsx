@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/react/macro';
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 export const RulePreview = React.memo(function RulePreview() {
   return (
@@ -16,7 +16,7 @@ export const RulePreview = React.memo(function RulePreview() {
 
       <div className="rounded-lg border bg-muted/30 p-4">
         <div className="flex items-start gap-3 text-sm">
-          <Sparkles className="mt-0.5 h-4 w-4 text-primary" />
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
           <span>
             <Trans>
               Budgero evaluates your rule from top to bottom. If you ever need to rerun it, open the

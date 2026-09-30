@@ -9,6 +9,8 @@ import { FlowStat } from './FlowStat';
 
 export interface AccountSummaryCardsProps {
   displayBalanceToday: number;
+  /** Balance of cleared and reconciled transactions */
+  displayClearedBalance: number;
   transactionStats: TransactionStats;
   displayLiabilityInfo: LiabilityInfo | null;
   balanceAccountToday: number;
@@ -19,6 +21,7 @@ export interface AccountSummaryCardsProps {
 
 export const AccountSummaryCards = React.memo(function AccountSummaryCards({
   displayBalanceToday,
+  displayClearedBalance,
   transactionStats,
   displayLiabilityInfo,
   balanceAccountToday,
@@ -36,6 +39,15 @@ export const AccountSummaryCards = React.memo(function AccountSummaryCards({
           </span>
           <p className="text-base font-bold tabular-nums text-foreground">
             {formatSafeMilli(formatter, displayBalanceToday)}
+          </p>
+        </div>
+
+        <div>
+          <span className="text-xs text-muted-foreground">
+            <Trans>Cleared</Trans>
+          </span>
+          <p className="text-base font-medium tabular-nums text-muted-foreground">
+            {formatSafeMilli(formatter, displayClearedBalance)}
           </p>
         </div>
 

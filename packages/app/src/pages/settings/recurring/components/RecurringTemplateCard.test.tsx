@@ -70,7 +70,7 @@ describe('RecurringTemplateCard', () => {
         accountName="Foreign account"
         accountCurrency="EUR"
         categoryName="Travel"
-        nextOccurrence={undefined}
+        occurrences={[]}
         accountLocalizer={accountLocalizer}
         budgetAmount={2_400_000}
         budgetCurrency="USD"
@@ -80,6 +80,12 @@ describe('RecurringTemplateCard', () => {
         onToggleActive={vi.fn()}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
+        processingOccurrenceId={null}
+        isMarkReadyPending={false}
+        isSkipPending={false}
+        isOccurrencesFetching={false}
+        onMarkReady={vi.fn()}
+        onSkip={vi.fn()}
       />
     );
 
@@ -94,13 +100,19 @@ describe('RecurringTemplateCard', () => {
         template={template}
         accountName="Checking"
         categoryName="Bills"
-        nextOccurrence={undefined}
+        occurrences={[]}
         accountLocalizer={{ format: (value) => String(value) }}
         isProcessing={false}
         isTogglePending={false}
         onToggleActive={vi.fn()}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
+        processingOccurrenceId={null}
+        isMarkReadyPending={false}
+        isSkipPending={false}
+        isOccurrencesFetching={false}
+        onMarkReady={vi.fn()}
+        onSkip={vi.fn()}
       />
     );
 

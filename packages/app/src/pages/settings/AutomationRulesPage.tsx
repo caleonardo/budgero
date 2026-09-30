@@ -11,12 +11,6 @@ import {
 } from '@entities/rule/api/useRules';
 import { useUiStore } from '@shared/store/useUiStore';
 import { Button } from '@shared/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
-import { Badge } from '@shared/ui/badge';
-import { Switch } from '@shared/ui/switch';
-import { ConfirmDialog } from '@shared/ui/confirm-dialog';
-import { Separator } from '@shared/ui/separator';
-import { Skeleton } from '@shared/ui/skeleton';
 import { toast } from 'sonner';
 import { RuleEditorDialog, type RuleFormValues } from '@features/rules/ui/rule-editor';
 import { RuleHistoryDrawer } from '@features/rules/ui/RuleHistoryDrawer';
@@ -28,22 +22,11 @@ import type {
   RuleExecutionResult,
   RuleRunUndoResult,
 } from '@budgero/core/browser';
-import { formatRelativeToNow as formatDistanceToNow } from '@shared/lib/date-format';
-import {
-  Bot,
-  Clock,
-  History,
-  Layers2,
-  Loader2,
-  Play,
-  Rocket,
-  ShieldOff,
-  Sparkles,
-  Trash2,
-  Pencil,
-} from 'lucide-react';
-import { cn } from '@shared/lib/utils';
+import { useAccounts } from '@entities/account/api/useAccounts';
+import { useCategories } from '@entities/category/api/useCategories';
+import { Plus } from 'lucide-react';
 import { getErrorMessage, toastError } from '@shared/lib/errors';
+import { RuleRow } from './automation-rules/RuleRow';
 
 export default function AutomationRulesPage() {
   const { t } = useLingui();
@@ -52,6 +35,8 @@ export default function AutomationRulesPage() {
   const budgetId = selectedBudget?.ID ?? 0;
 
   const { data: rules = [], isLoading } = useRules(budgetId);
+  const { data: categories = [] } = useCategories(budgetId);
+  const { data: accounts = [] } = useAccounts(budgetId);
   const createRule = useCreateRule();
   const updateRule = useUpdateRule();
   const deleteRule = useDeleteRule();
@@ -225,6 +210,15 @@ export default function AutomationRulesPage() {
     return [...rules].sort((a, b) => a.runOrder - b.runOrder || a.id - b.id);
   }, [rules]);
 
+  const categoryNames = useMemo(
+    () => new Map(categories.map((category) => [category.ID, category.Name])),
+    [categories]
+  );
+  const accountNames = useMemo(
+    () => new Map(accounts.map((account) => [account.ID, account.Name])),
+    [accounts]
+  );
+
   const closeRunOverlay = () =>
     setRunOverlay({
       open: false,
@@ -281,10 +275,10 @@ export default function AutomationRulesPage() {
   };
 
   return (
-    <div className="space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">
+    <div className="space-y-4 p-4 sm:p-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-lg font-semibold">
             <Trans>Automation rules</Trans>
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -294,215 +288,63 @@ export default function AutomationRulesPage() {
             </Trans>
           </p>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-          <Button onClick={openCreateDialog} className="w-full sm:w-auto">
-            <Trans>
-              <Sparkles className="mr-2 h-4 w-4" />
-              New rule
-            </Trans>
-          </Button>
-        </div>
+        <Button onClick={openCreateDialog} size="sm" className="w-full shrink-0 sm:w-auto">
+          <Trans>
+            <Plus className="mr-1 h-4 w-4" />
+            New rule
+          </Trans>
+        </Button>
       </div>
 
       <PayeeCategoryMemoryCard />
 
       {!budgetId ? (
-        <Card className="border-dashed">
-          <CardHeader>
-            <CardTitle>
-              <Trans>No budget selected</Trans>
-            </CardTitle>
-            <CardDescription>
-              <Trans>Select or create a budget to configure automation rules.</Trans>
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <p className="rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground">
+          <Trans>Select or create a budget to configure automation rules.</Trans>
+        </p>
       ) : isLoading ? (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="divide-y overflow-hidden rounded-lg border">
           {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton key={index} className="h-60 w-full rounded-xl" />
+            <div key={index} className="animate-pulse space-y-1.5 px-3 py-2.5">
+              <div className="h-4 w-40 rounded bg-muted" />
+              <div className="h-3 w-64 max-w-full rounded bg-muted" />
+            </div>
           ))}
         </div>
       ) : orderedRules.length === 0 ? (
-        <Card className="border-dashed">
-          <CardHeader className="space-y-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Trans>
-                <Bot className="h-5 w-5 text-muted-foreground" />
-                Let Budgero handle the busywork
-              </Trans>
-            </CardTitle>
-            <CardDescription>
-              <Trans>
-                No rules yet. Create your first automation to categorise subscriptions, split
-                income, or tidy up imported descriptions.
-              </Trans>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={openCreateDialog}>
-              <Trans>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Design a rule
-              </Trans>
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="flex flex-col gap-2 rounded-lg border border-dashed px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            <Trans>
+              No rules yet. Create your first automation to categorise subscriptions, split income,
+              or tidy up imported descriptions.
+            </Trans>
+          </p>
+          <Button onClick={openCreateDialog} variant="outline" size="sm" className="shrink-0">
+            <Trans>
+              <Plus className="mr-1 h-4 w-4" />
+              Design a rule
+            </Trans>
+          </Button>
+        </div>
       ) : (
-        <div className="grid gap-4 sm:gap-6 xl:grid-cols-2">
-          {orderedRules.map((rule) => {
-            const lastRunLabel = rule.lastRunAt
-              ? formatDistanceToNow(new Date(rule.lastRunAt), { addSuffix: true })
-              : t`Never`;
-            const isOneTimeConsumed = rule.mode === 'one_time' && rule.oneTimeConsumed;
-
-            return (
-              <Card
-                key={rule.id}
-                className={cn(
-                  'relative overflow-hidden transition-shadow hover:shadow-lg',
-                  !rule.enabled && 'opacity-80'
-                )}
-              >
-                <CardHeader className="space-y-3">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="space-y-1">
-                      <CardTitle className="flex items-center gap-2 text-xl font-semibold">
-                        {rule.name}
-                        <Badge variant={rule.mode === 'one_time' ? 'secondary' : 'outline'}>
-                          {rule.mode === 'one_time'
-                            ? t`One time`
-                            : rule.mode === 'autofill'
-                              ? t`Autofill`
-                              : t`Continuous`}
-                        </Badge>
-                      </CardTitle>
-                      {rule.description ? (
-                        <CardDescription>{rule.description}</CardDescription>
-                      ) : null}
-                    </div>
-                    <div className="flex items-center justify-end gap-3 sm:justify-start">
-                      <Switch
-                        checked={rule.enabled}
-                        onCheckedChange={(checked) => handleToggleEnabled(rule, checked)}
-                        disabled={updateRule.isPending}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Trans>
-                        <Layers2 className="h-3.5 w-3.5" />
-                        Run order {rule.runOrder}
-                      </Trans>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Trans>
-                        <Clock className="h-3.5 w-3.5" />
-                        Last run {lastRunLabel}
-                      </Trans>
-                    </span>
-                    {isOneTimeConsumed ? (
-                      <span className="flex items-center gap-1 text-destructive">
-                        <Trans>
-                          <ShieldOff className="h-3.5 w-3.5" />
-                          Consumed after retro run
-                        </Trans>
-                      </span>
-                    ) : null}
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline">
-                      <Trans>{rule.conditions.length} condition(s)</Trans>
-                    </Badge>
-                    <Badge variant="outline">
-                      <Trans>{rule.actions.length} action(s)</Trans>
-                    </Badge>
-                  </div>
-                  <Separator />
-                  <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-                    <Button
-                      size="sm"
-                      className="w-full justify-center sm:w-auto sm:justify-start"
-                      onClick={() => handleExecute(rule, 'manual')}
-                      disabled={!!executingCurrent && executingCurrent !== rule.id}
-                    >
-                      <Trans>
-                        {executeRule.isPending &&
-                        executingCurrent === rule.id &&
-                        executingTrigger === 'manual' ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Play className="mr-2 h-4 w-4" />
-                        )}
-                        Run now
-                      </Trans>
-                    </Button>
-                    <ConfirmDialog
-                      trigger={
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="w-full justify-center sm:w-auto sm:justify-start"
-                          disabled={
-                            isOneTimeConsumed ||
-                            (!!executingCurrent && executingCurrent !== rule.id)
-                          }
-                        >
-                          <Trans>
-                            {executeRule.isPending &&
-                            executingCurrent === rule.id &&
-                            executingTrigger === 'retroactive' ? (
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
-                              <Rocket className="mr-2 h-4 w-4" />
-                            )}
-                            Retro run
-                          </Trans>
-                        </Button>
-                      }
-                      title={t`Run this rule on past transactions?`}
-                      description={t`Budgero will evaluate every transaction in this budget and apply any matching actions. This may take a moment for larger budgets.`}
-                      confirmText={t`Confirm retro run`}
-                      confirmDisabled={!!executingCurrent && executingCurrent !== rule.id}
-                      onConfirm={() => {
-                        void handleExecute(rule, 'retroactive');
-                      }}
-                    />
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="w-full justify-center sm:w-auto sm:justify-start"
-                      onClick={() => openHistoryForRule(rule)}
-                    >
-                      <Trans>
-                        <History className="mr-2 h-4 w-4" />
-                        History
-                      </Trans>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="w-full justify-center sm:w-auto sm:justify-start"
-                      onClick={() => openEditDialog(rule)}
-                    >
-                      <Trans>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit
-                      </Trans>
-                    </Button>
-                    <DeleteRuleButton
-                      rule={rule}
-                      onDelete={() => handleDelete(rule)}
-                      disabled={deleteRule.isPending}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+        <div className="divide-y overflow-hidden rounded-lg border bg-card">
+          {orderedRules.map((rule) => (
+            <RuleRow
+              key={rule.id}
+              rule={rule}
+              categoryNames={categoryNames}
+              accountNames={accountNames}
+              runningTrigger={executingCurrent === rule.id ? executingTrigger : null}
+              runDisabled={!!executingCurrent && executingCurrent !== rule.id}
+              isTogglePending={updateRule.isPending}
+              isDeletePending={deleteRule.isPending}
+              onToggleEnabled={(checked) => handleToggleEnabled(rule, checked)}
+              onRun={(trigger) => handleExecute(rule, trigger)}
+              onHistory={() => openHistoryForRule(rule)}
+              onEdit={() => openEditDialog(rule)}
+              onDelete={() => handleDelete(rule)}
+            />
+          ))}
         </div>
       )}
 
@@ -535,40 +377,5 @@ export default function AutomationRulesPage() {
         onClose={closeRunOverlay}
       />
     </div>
-  );
-}
-
-function DeleteRuleButton({
-  rule,
-  onDelete,
-  disabled,
-}: {
-  rule: TransactionRule;
-  onDelete: () => void;
-  disabled: boolean;
-}) {
-  const { t } = useLingui();
-
-  return (
-    <ConfirmDialog
-      trigger={
-        <Button
-          size="sm"
-          variant="ghost"
-          className="w-full justify-center text-destructive hover:text-destructive sm:w-auto sm:justify-start"
-        >
-          <Trans>
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete
-          </Trans>
-        </Button>
-      }
-      title={<Trans>Delete “{rule.name}”?</Trans>}
-      description={t`This rule and its history will be removed. Recent runs can still be undone from the global undo menu.`}
-      confirmText={t`Delete rule`}
-      variant="destructive"
-      confirmDisabled={disabled}
-      onConfirm={onDelete}
-    />
   );
 }

@@ -2,7 +2,6 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
-import { Label } from '@shared/ui/label';
 import {
   Select,
   SelectContent,
@@ -12,11 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@shared/ui/select';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@shared/ui/tooltip';
-import { MinusCircle, Regex } from 'lucide-react';
+import { X } from 'lucide-react';
 import type { RuleActionType, Category, Account } from '@budgero/core/browser';
 import { PayeeCombobox } from '@features/payees/ui/PayeeCombobox';
+import { SearchableCategorySelect } from '@features/category-management/ui/SearchableCategorySelect';
 import type { RuleFormAction } from './rule-editor.utils';
+import { RuleAccountSelect } from './RuleAccountSelect';
 
 interface RuleActionRowProps {
   action: RuleFormAction;
@@ -46,86 +46,87 @@ export const RuleActionRow = React.memo(function RuleActionRow({
   };
 
   return (
-    <div className="rounded-lg border bg-card/40 p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        <Select
-          value={action.type}
-          onValueChange={(value: RuleActionType) => onUpdate(index, { type: value })}
-        >
-          <SelectTrigger className="w-full sm:w-56">
-            <SelectValue placeholder={t`Select action`} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>
-                <Trans>Memo</Trans>
-              </SelectLabel>
-              <SelectItem value="memo.set">
-                <Trans>Set memo</Trans>
-              </SelectItem>
-              <SelectItem value="memo.remove_regex">
-                <Trans>Remove pattern from memo</Trans>
-              </SelectItem>
-            </SelectGroup>
-            <SelectGroup>
-              <SelectLabel>
-                <Trans>Category</Trans>
-              </SelectLabel>
-              <SelectItem value="category.set">
-                <Trans>Set category</Trans>
-              </SelectItem>
-            </SelectGroup>
-            <SelectGroup>
-              <SelectLabel>
-                <Trans>Payee</Trans>
-              </SelectLabel>
-              <SelectItem value="payee.set">
-                <Trans>Set payee</Trans>
-              </SelectItem>
-            </SelectGroup>
-            <SelectGroup>
-              <SelectLabel>
-                <Trans>Amount</Trans>
-              </SelectLabel>
-              <SelectItem value="amount.set">
-                <Trans>Set amount</Trans>
-              </SelectItem>
-              <SelectItem value="amount.adjust_value">
-                <Trans>Adjust by value</Trans>
-              </SelectItem>
-              <SelectItem value="amount.adjust_percent">
-                <Trans>Adjust by %</Trans>
-              </SelectItem>
-            </SelectGroup>
-            <SelectGroup>
-              <SelectLabel>
-                <Trans>Account</Trans>
-              </SelectLabel>
-              <SelectItem value="account.set">
-                <Trans>Set account</Trans>
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          disabled={!canRemove}
-          onClick={() => onRemove(index)}
-          className="self-start"
-        >
-          <MinusCircle className="h-5 w-5 text-muted-foreground" />
-        </Button>
+    <div className="flex flex-wrap items-center gap-2 rounded-md border bg-card/40 p-2 sm:flex-nowrap">
+      <Select
+        value={action.type}
+        onValueChange={(value: RuleActionType) => onUpdate(index, { type: value })}
+      >
+        <SelectTrigger size="sm" className="w-full sm:w-52 sm:shrink-0">
+          <SelectValue placeholder={t`Select action`} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>
+              <Trans>Memo</Trans>
+            </SelectLabel>
+            <SelectItem value="memo.set">
+              <Trans>Set memo</Trans>
+            </SelectItem>
+            <SelectItem value="memo.remove_regex">
+              <Trans>Remove pattern from memo</Trans>
+            </SelectItem>
+          </SelectGroup>
+          <SelectGroup>
+            <SelectLabel>
+              <Trans>Category</Trans>
+            </SelectLabel>
+            <SelectItem value="category.set">
+              <Trans>Set category</Trans>
+            </SelectItem>
+          </SelectGroup>
+          <SelectGroup>
+            <SelectLabel>
+              <Trans>Payee</Trans>
+            </SelectLabel>
+            <SelectItem value="payee.set">
+              <Trans>Set payee</Trans>
+            </SelectItem>
+          </SelectGroup>
+          <SelectGroup>
+            <SelectLabel>
+              <Trans>Amount</Trans>
+            </SelectLabel>
+            <SelectItem value="amount.set">
+              <Trans>Set amount</Trans>
+            </SelectItem>
+            <SelectItem value="amount.adjust_value">
+              <Trans>Adjust by value</Trans>
+            </SelectItem>
+            <SelectItem value="amount.adjust_percent">
+              <Trans>Adjust by %</Trans>
+            </SelectItem>
+          </SelectGroup>
+          <SelectGroup>
+            <SelectLabel>
+              <Trans>Account</Trans>
+            </SelectLabel>
+            <SelectItem value="account.set">
+              <Trans>Set account</Trans>
+            </SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      <div className="min-w-0 flex-1">
+        <ActionPayloadEditor
+          action={action}
+          onChange={handlePayloadChange}
+          categories={categories}
+          accounts={accounts}
+          budgetId={budgetId}
+        />
       </div>
-
-      <ActionPayloadEditor
-        action={action}
-        onChange={handlePayloadChange}
-        categories={categories}
-        accounts={accounts}
-        budgetId={budgetId}
-      />
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        disabled={!canRemove}
+        onClick={() => onRemove(index)}
+        className="size-8 shrink-0 text-muted-foreground"
+        title={t`Remove action`}
+        aria-label={t`Remove action`}
+      >
+        <X className="size-4" />
+      </Button>
     </div>
   );
 });
@@ -146,197 +147,106 @@ const ActionPayloadEditor = React.memo(function ActionPayloadEditor({
   budgetId,
 }: ActionPayloadEditorProps) {
   const { t } = useLingui();
+  const inputClassName = 'h-8';
 
   switch (action.type) {
-    case 'memo.remove_regex': {
+    case 'memo.remove_regex':
       return (
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1">
-            <Label>
-              <Trans>Pattern</Trans>
-            </Label>
-            <Input
-              placeholder="e.g. (#\d{4})"
-              value={action.payload.pattern ?? ''}
-              onChange={(event) => onChange({ ...action.payload, pattern: event.target.value })}
-            />
-          </div>
-          <div className="space-y-1">
-            <Label className="flex items-center gap-1">
-              <Trans>
-                Flags
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Regex className="h-3.5 w-3.5 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-xs text-xs">
-                      <Trans>
-                        Accepts standard JavaScript regex flags, e.g. <code>gi</code>for global,
-                        case-insensitive matches.
-                      </Trans>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </Trans>
-            </Label>
-            <Input
-              placeholder="gi"
-              value={action.payload.flags ?? 'gi'}
-              onChange={(event) =>
-                onChange({ ...action.payload, flags: event.target.value || 'gi' })
-              }
-            />
-          </div>
-        </div>
-      );
-    }
-    case 'memo.set': {
-      return (
-        <div className="mt-4 space-y-1">
-          <Label>
-            <Trans>Memo</Trans>
-          </Label>
+        <div className="flex gap-2">
           <Input
-            placeholder={t`e.g. Groceries at Walmart`}
-            value={action.payload.memo ?? ''}
-            onChange={(event) => onChange({ memo: event.target.value })}
+            className={inputClassName}
+            aria-label={t`Pattern`}
+            placeholder="e.g. (#\d{4})"
+            value={action.payload.pattern ?? ''}
+            onChange={(event) => onChange({ ...action.payload, pattern: event.target.value })}
           />
-          <p className="text-xs text-muted-foreground">
-            <Trans>The memo text to set for matching transactions.</Trans>
-          </p>
-        </div>
-      );
-    }
-    case 'category.set': {
-      return (
-        <div className="mt-4 space-y-1">
-          <Label>
-            <Trans>Category</Trans>
-          </Label>
-          <Select
-            value={(action.payload.categoryId ?? '').toString()}
-            onValueChange={(value) => onChange({ categoryId: Number(value) })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={t`Select category`} />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.length === 0 ? (
-                <SelectItem value="">
-                  <Trans>No categories</Trans>
-                </SelectItem>
-              ) : (
-                categories.map((category) => (
-                  <SelectItem key={category.ID} value={category.ID.toString()}>
-                    {category.Name}
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
-        </div>
-      );
-    }
-    case 'payee.set': {
-      return (
-        <div className="mt-4 space-y-1">
-          <Label>
-            <Trans>Payee</Trans>
-          </Label>
-          <PayeeCombobox
-            budgetId={budgetId}
-            value={String(action.payload.payee ?? '')}
-            onChange={(value) => onChange({ payee: value })}
-            allowClear
-          />
-          <p className="text-xs text-muted-foreground">
-            <Trans>Choose an existing payee or create a new one. Leave blank to clear it.</Trans>
-          </p>
-        </div>
-      );
-    }
-    case 'account.set': {
-      return (
-        <div className="mt-4 space-y-1">
-          <Label>
-            <Trans>Account</Trans>
-          </Label>
-          <Select
-            value={(action.payload.accountId ?? '').toString()}
-            onValueChange={(value) => onChange({ accountId: Number(value) })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={t`Select account`} />
-            </SelectTrigger>
-            <SelectContent>
-              {accounts.length === 0 ? (
-                <SelectItem value="">
-                  <Trans>No accounts</Trans>
-                </SelectItem>
-              ) : (
-                accounts.map((account) => (
-                  <SelectItem key={account.ID} value={account.ID.toString()}>
-                    {account.Name}
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
-        </div>
-      );
-    }
-    case 'amount.set': {
-      return (
-        <div className="mt-4 space-y-1">
-          <Label>
-            <Trans>New amount</Trans>
-          </Label>
           <Input
-            type="number"
-            placeholder="0.00"
-            value={action.payload.amount ?? ''}
-            onChange={(event) => onChange({ amount: event.target.value })}
+            className={`${inputClassName} w-16 shrink-0 font-mono`}
+            aria-label={t`Flags`}
+            title={t`JavaScript regex flags, e.g. gi`}
+            placeholder="gi"
+            value={action.payload.flags ?? 'gi'}
+            onChange={(event) => onChange({ ...action.payload, flags: event.target.value || 'gi' })}
           />
         </div>
       );
-    }
-    case 'amount.adjust_value': {
+    case 'memo.set':
       return (
-        <div className="mt-4 space-y-1">
-          <Label>
-            <Trans>Difference</Trans>
-          </Label>
-          <Input
-            type="number"
-            placeholder="e.g. -12.50"
-            value={action.payload.delta ?? ''}
-            onChange={(event) => onChange({ delta: event.target.value })}
-          />
-          <p className="text-xs text-muted-foreground">
-            <Trans>Positive numbers increase, negatives decrease the amount.</Trans>
-          </p>
-        </div>
+        <Input
+          className={inputClassName}
+          aria-label={t`Memo`}
+          placeholder={t`e.g. Groceries at Walmart`}
+          value={action.payload.memo ?? ''}
+          onChange={(event) => onChange({ memo: event.target.value })}
+        />
       );
-    }
-    case 'amount.adjust_percent': {
+    case 'category.set':
       return (
-        <div className="mt-4 space-y-1">
-          <Label>
-            <Trans>Percent</Trans>
-          </Label>
-          <Input
-            type="number"
-            placeholder="e.g. -10"
-            value={action.payload.percent ?? ''}
-            onChange={(event) => onChange({ percent: event.target.value })}
-          />
-          <p className="text-xs text-muted-foreground">
-            <Trans>Use positive/negative percentages to scale the amount.</Trans>
-          </p>
-        </div>
+        <SearchableCategorySelect
+          budgetId={budgetId}
+          categories={categories}
+          selectedCategoryId={action.payload.categoryId ? Number(action.payload.categoryId) : null}
+          onCategorySelect={(categoryId) => onChange({ categoryId })}
+          placeholder={t`Select category`}
+          showAvailableForMonth={false}
+          triggerClassName="h-8 w-full"
+          popoverContentClassName="w-[320px] max-w-[90vw]"
+        />
       );
-    }
+    case 'payee.set':
+      return (
+        <PayeeCombobox
+          budgetId={budgetId}
+          value={String(action.payload.payee ?? '')}
+          onChange={(value) => onChange({ payee: value })}
+          placeholder={t`Payee (blank clears it)`}
+          triggerClassName="h-8 w-full"
+          allowClear
+        />
+      );
+    case 'account.set':
+      return (
+        <RuleAccountSelect
+          value={(action.payload.accountId ?? '').toString()}
+          accounts={accounts}
+          onChange={(accountId) => onChange({ accountId: Number(accountId) })}
+        />
+      );
+    case 'amount.set':
+      return (
+        <Input
+          className={inputClassName}
+          aria-label={t`New amount`}
+          type="number"
+          placeholder="0.00"
+          value={action.payload.amount ?? ''}
+          onChange={(event) => onChange({ amount: event.target.value })}
+        />
+      );
+    case 'amount.adjust_value':
+      return (
+        <Input
+          className={inputClassName}
+          aria-label={t`Difference`}
+          title={t`Positive numbers increase, negatives decrease the amount.`}
+          type="number"
+          placeholder="e.g. -12.50"
+          value={action.payload.delta ?? ''}
+          onChange={(event) => onChange({ delta: event.target.value })}
+        />
+      );
+    case 'amount.adjust_percent':
+      return (
+        <Input
+          className={inputClassName}
+          aria-label={t`Percent`}
+          title={t`Use positive/negative percentages to scale the amount.`}
+          type="number"
+          placeholder="e.g. -10"
+          value={action.payload.percent ?? ''}
+          onChange={(event) => onChange({ percent: event.target.value })}
+        />
+      );
     default:
       return null;
   }

@@ -421,6 +421,14 @@ async function parseYNABArchive(
   };
 }
 
+type YnabClearedStatus = 'uncleared' | 'cleared' | 'reconciled';
+
+/** YNAB exports and the API use cleared / uncleared / reconciled. */
+function ynabClearedStatus(value: string | undefined): YnabClearedStatus {
+  const normalized = (value ?? '').trim().toLowerCase();
+  return normalized === 'reconciled' || normalized === 'cleared' ? normalized : 'uncleared';
+}
+
 export class YNABImportService {
   private budgetService: BudgetService;
 
@@ -454,6 +462,18 @@ export class YNABImportService {
     this.splitService = new SplitService(db);
     this.csvParser = new CSVParser();
     this.currencyParser = new CurrencyParser();
+  }
+
+  /** Carry YNAB's cleared/reconciled status onto an imported row (new rows start uncleared). */
+  private applyYnabClearedStatus(
+    transactionId: number,
+    budgetId: number,
+    status: YnabClearedStatus
+  ): void {
+    if (status === 'uncleared') return;
+    this.db
+      .prepare('UPDATE transactions SET Cleared = 1, Reconciled = ? WHERE ID = ? AND BudgetID = ?')
+      .run(status === 'reconciled' ? 1 : 0, transactionId, budgetId);
   }
 
   static async inspectYNABZip(zipData: ArrayBuffer | Uint8Array): Promise<YNABImportPreview> {
@@ -1856,11 +1876,16 @@ export class YNABImportService {
         }))
       );
 
-      if (group.rows.every((row) => row.Cleared.trim().toLowerCase() === 'reconciled')) {
-        this.db
-          .prepare('UPDATE transactions SET Reconciled = 1 WHERE ID = ? AND BudgetID = ?')
-          .run(parentId, budgetId);
-      }
+      const statuses = group.rows.map((row) => ynabClearedStatus(row.Cleared));
+      this.applyYnabClearedStatus(
+        parentId,
+        budgetId,
+        statuses.every((status) => status === 'reconciled')
+          ? 'reconciled'
+          : statuses.every((status) => status !== 'uncleared')
+            ? 'cleared'
+            : 'uncleared'
+      );
 
       return true;
     } catch (error) {
@@ -1996,11 +2021,7 @@ export class YNABImportService {
         undefined,
         row.ExcludeFromReadyToAssign === true
       );
-      if (row.Cleared.trim().toLowerCase() === 'reconciled') {
-        this.db
-          .prepare('UPDATE transactions SET Reconciled = 1 WHERE ID = ? AND BudgetID = ?')
-          .run(transactionId, budgetId);
-      }
+      this.applyYnabClearedStatus(transactionId, budgetId, ynabClearedStatus(row.Cleared));
       return true;
     } catch (error) {
       console.error(`DEBUG: Error adding transaction ${rowIndex}:`, error);

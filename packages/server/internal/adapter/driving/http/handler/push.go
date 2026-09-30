@@ -374,6 +374,7 @@ func (h *Handlers) GetPushAPISpec(c echo.Context) error {
 					"date":       map[string]string{"type": "string", "format": "YYYY-MM-DD", "description": "Transaction date"},
 					"memo":       map[string]string{"type": "string", "description": "Transaction description/memo"},
 					"payee":      map[string]string{"type": "string", "description": "Payee name (optional)"},
+					"cleared":    map[string]string{"type": "boolean", "description": "Whether the transaction has cleared the bank (optional, default false)"},
 					"splits":     map[string]string{"type": "array", "description": "Optional split lines (multi-category): each with inflow/outflow (integer milliunits) and categoryId; lines must sum to the parent amount"},
 				},
 			},
@@ -381,7 +382,7 @@ func (h *Handlers) GetPushAPISpec(c echo.Context) error {
 				"description": "Update a transaction previously created via the Push API, referenced by the message_id of the original push",
 				"args": map[string]interface{}{
 					"messageId": map[string]string{"type": "string", "description": "The message_id sent with the original transactions.add push"},
-					"fields":    map[string]string{"type": "object", "description": "Fields to change: inflow, outflow (integer milliunits), date, memo, payee, categoryId, accountId"},
+					"fields":    map[string]string{"type": "object", "description": "Fields to change: inflow, outflow (integer milliunits), date, memo, payee, categoryId, accountId, cleared (boolean; ignored once reconciled)"},
 				},
 			},
 			"transactions.deleteByRef": map[string]interface{}{
@@ -395,8 +396,8 @@ func (h *Handlers) GetPushAPISpec(c echo.Context) error {
 				"args": map[string]interface{}{
 					"budgetId":    map[string]string{"type": "integer", "description": "Budget ID"},
 					"transferId":  map[string]string{"type": "string", "description": "Client-generated unique id linking the two legs; store it to delete the transfer later"},
-					"source":      map[string]string{"type": "object", "description": "Outflow leg: inflow=0, outflow=<source-account milliunits>, accountId, categoryId (0 = auto Transfers), date, memo, payee"},
-					"destination": map[string]string{"type": "object", "description": "Inflow leg: inflow=<destination-account milliunits>, outflow=0, accountId, categoryId (0 = auto Transfers), date, memo, payee"},
+					"source":      map[string]string{"type": "object", "description": "Outflow leg: inflow=0, outflow=<source-account milliunits>, accountId, categoryId (0 = auto Transfers), date, memo, payee, cleared (optional, default false)"},
+					"destination": map[string]string{"type": "object", "description": "Inflow leg: inflow=<destination-account milliunits>, outflow=0, accountId, categoryId (0 = auto Transfers), date, memo, payee, cleared (optional, default false)"},
 				},
 			},
 			"transactions.deleteTransfer": map[string]interface{}{

@@ -50,11 +50,10 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
 
   const incomeCategory = findCategoryByName(categories, 'Income');
 
-  // Reconcile against the realized balance as of today, NOT account.BalanceNative which
-  // also bakes in future-dated (upcoming) transactions. Subtract the future impact
-  // so the target matches the "Balance" shown in the account header.
-  // All milliunits: Account balances are stored MilliUnits values.
-  const currentBalance = asMilli(account.BalanceNative - (account.FutureImpactNative ?? 0));
+  // The bank statement only reflects cleared transactions, so reconcile against the
+  // cleared balance: the full balance minus every uncleared transaction (any date,
+  // which also drops scheduled future rows). Matches "Cleared" in the account header.
+  const currentBalance = asMilli(account.BalanceNative - (account.UnclearedNative ?? 0));
 
   // Differences under one cent (10 milliunits) are treated as matching so
   // milliunit-precision residue never creates a phantom adjustment.
@@ -104,10 +103,12 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
           memo: 'Account Reconciliation',
           payee: 'Budgero',
           transferId: '',
+          // Cleared so the reconcile below locks it with everything else.
+          cleared: true,
         });
       }
 
-      // Always mark all transactions up to today as reconciled and update the account's reconciled_at timestamp
+      // Lock cleared transactions up to today; uncleared ones stay open.
       await reconcileAccountMutation.mutateAsync({
         accountId: account.ID,
         reconcileDate: todayDate,
@@ -186,7 +187,8 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
           </DialogTitle>
           <DialogDescription className="hidden md:block">
             <Trans>
-              Enter your actual account balance to reconcile with the current balance in the system.
+              Enter the balance your bank shows. It is compared with your cleared balance; cleared
+              transactions are then locked, and uncleared ones stay open.
             </Trans>
           </DialogDescription>
         </DialogHeader>
@@ -195,7 +197,7 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
           <div className="order-1 grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
             <div>
               <Label className="text-xs md:text-sm font-medium text-muted-foreground">
-                <Trans>Current Balance</Trans>
+                <Trans>Cleared Balance</Trans>
               </Label>
               <p className="text-sm md:text-lg font-semibold break-words">
                 {formatMilli(accountLocalizer, currentBalance)}

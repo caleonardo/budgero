@@ -100,6 +100,16 @@
       "file": "src/features/transactions/ui/add-transaction/add-transaction.utils.ts",
       "text": "Transfers",
       "reason": "Stable system category name stored in transactions; only its display label may be translated."
+    },
+    {
+      "file": "src/shared/lib/keyboard-shortcuts.ts",
+      "text": "Ctrl/\u2318 {\u2026}",
+      "reason": "Keyboard key-name label (Ctrl/\u2318 + key); key names are locale-stable, not translatable copy."
+    },
+    {
+      "file": "src/shared/lib/keyboard-shortcuts.ts",
+      "text": "Ctrl+{\u2026}",
+      "reason": "Keyboard key-name label (Ctrl/\u2318 + key); key names are locale-stable, not translatable copy."
     }
   ]
 }

@@ -7,6 +7,7 @@ import { TransactionService } from '../transactions/index.js';
 import type { Transaction } from '../transactions/types.js';
 
 import { createLogger } from '../../logger.js';
+import { matchesConditionChain } from './condition-groups.js';
 
 const debugLog = createLogger('services:rules');
 
@@ -25,6 +26,8 @@ export type RuleConditionOperator =
   | AmountConditionOperator
   | AccountConditionOperator;
 
+export type RuleConditionJoin = 'and' | 'or';
+
 export interface RuleCondition {
   field: RuleConditionField;
   operator: RuleConditionOperator;
@@ -32,6 +35,8 @@ export interface RuleCondition {
   options?: {
     caseSensitive?: boolean;
   };
+  /** Link to the previous condition; defaults to AND, which binds tighter than OR. */
+  join?: RuleConditionJoin;
 }
 
 export type RuleActionType =
@@ -845,7 +850,9 @@ export class RulesService {
 
   private matchesRuleConditions(conditions: RuleCondition[], transaction: Transaction): boolean {
     if (!conditions || conditions.length === 0) return true;
-    return conditions.every((condition) => this.matchesCondition(condition, transaction));
+    return matchesConditionChain(conditions, (condition) =>
+      this.matchesCondition(condition, transaction)
+    );
   }
 
   /**
@@ -1434,3 +1441,4 @@ export class RulesService {
 }
 
 export * from './autofill.js';
+export * from './condition-groups.js';

@@ -7,6 +7,7 @@ import { TransactionsBatchToolbar } from '@features/transactions/ui/Transactions
 import { TransactionsToolbar } from '@features/transactions/ui/TransactionsToolbar';
 import type { GetTransactionsByAccountRow, Category } from '@budgero/core/browser';
 import { useTransactionTable } from '@features/transactions/api/useTransactionTable';
+import { useClearedShortcut } from '@features/transactions/api/useClearedShortcut';
 import {
   useTransactionSearch,
   filterTransactions,
@@ -404,6 +405,8 @@ export function TransactionsTable({
   const totalPages = Math.ceil(effectiveTransactionCount / pageSize) || 1;
   const hasNextPage = page < totalPages - 1;
   const hasPreviousPage = page > 0;
+
+  useClearedShortcut(selectedRowIds, rawData);
 
   const numSelected = selectedRowIds.length;
 

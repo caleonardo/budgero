@@ -1,8 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
-import { Plus, Sparkles } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { buildCurrencyLocalizer, useUiStore } from '@shared/store/useUiStore';
 import {
   useCreateRecurringTransaction,
@@ -24,7 +23,7 @@ import {
   type RecurringTransactionEditorProps,
   type RecurringTransactionEditorSubmit,
 } from '@features/recurring/ui/RecurringTransactionEditor';
-import { RecurringTemplateCard, RecurringOccurrenceCard } from './components';
+import { RecurringTemplateCard } from './components';
 
 export function RecurringTransactionsSection() {
   const { t } = useLingui();
@@ -37,11 +36,10 @@ export function RecurringTransactionsSection() {
     budgetId,
     true
   );
-  const {
-    data: occurrences = [],
-    isLoading: occurrencesLoading,
-    isFetching: occurrencesFetching,
-  } = useRecurringOccurrences(budgetId, { status: 'scheduled' });
+  const { data: occurrences = [], isFetching: occurrencesFetching } = useRecurringOccurrences(
+    budgetId,
+    { status: 'scheduled' }
+  );
 
   const { data: accounts = [] } = useAccounts(budgetId);
   const { data: categories = [] } = useCategories(budgetId);
@@ -93,12 +91,12 @@ export function RecurringTransactionsSection() {
     return map;
   }, [categories]);
 
-  const nextOccurrenceByTemplate = useMemo(() => {
-    const map = new Map<number, RecurringOccurrenceWithTemplate>();
+  const occurrencesByTemplate = useMemo(() => {
+    const map = new Map<number, RecurringOccurrenceWithTemplate[]>();
     for (const occurrence of occurrences) {
-      if (!map.has(occurrence.recurringTransactionId)) {
-        map.set(occurrence.recurringTransactionId, occurrence);
-      }
+      const list = map.get(occurrence.recurringTransactionId);
+      if (list) list.push(occurrence);
+      else map.set(occurrence.recurringTransactionId, [occurrence]);
     }
     return map;
   }, [occurrences]);
@@ -312,55 +310,30 @@ export function RecurringTransactionsSection() {
 
   const renderTemplates = () => {
     if (templatesLoading) {
-      return (
-        <div className="grid gap-4 md:grid-cols-2">
-          {Array.from({ length: 2 }).map((_, index) => (
-            <Card key={index} className="animate-pulse border-dashed">
-              <CardHeader>
-                <div className="h-6 w-32 rounded bg-muted" />
-                <div className="mt-2 h-4 w-48 rounded bg-muted" />
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="h-5 w-20 rounded bg-muted" />
-                <div className="h-4 w-full rounded bg-muted" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      );
+      return <SkeletonRows count={2} />;
     }
 
     if (!templates.length) {
       return (
-        <Card className="border-dashed">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Trans>
-                <Sparkles className="h-5 w-5 text-muted-foreground" />
-                Plan ahead with recurring items
-              </Trans>
-            </CardTitle>
-            <CardDescription>
-              <Trans>
-                Set up recurring paycheques, bills, or transfers and Budgero will remind you when
-                they are due.
-              </Trans>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={openCreateDialog} variant="outline">
-              <Trans>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Recurring Transaction
-              </Trans>
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="flex flex-col gap-2 rounded-lg border border-dashed px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            <Trans>
+              Set up recurring paycheques, bills, or transfers and Budgero will remind you when they
+              are due.
+            </Trans>
+          </p>
+          <Button onClick={openCreateDialog} variant="outline" size="sm" className="shrink-0">
+            <Trans>
+              <Plus className="mr-1 h-4 w-4" />
+              Add Recurring Transaction
+            </Trans>
+          </Button>
+        </div>
       );
     }
 
     return (
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="divide-y overflow-hidden rounded-lg border bg-card">
         {templates.map((template) => (
           <RecurringTemplateCard
             key={template.id}
@@ -375,9 +348,9 @@ export function RecurringTransactionsSection() {
             categoryName={
               template.categoryId ? categoriesById.get(template.categoryId) : 'Unassigned category'
             }
-            nextOccurrence={nextOccurrenceByTemplate.get(template.id)}
+            occurrences={occurrencesByTemplate.get(template.id) ?? EMPTY_OCCURRENCES}
             accountLocalizer={accountLocalizersById.get(template.accountId) ?? globalLocalizer}
-            budgetAmount={nextOccurrenceByTemplate.get(template.id)?.template.budgetAmount}
+            budgetAmount={occurrencesByTemplate.get(template.id)?.[0]?.template.budgetAmount}
             budgetCurrency={budgetCurrency}
             budgetLocalizer={globalLocalizer}
             isProcessing={processingTemplateId === template.id}
@@ -385,97 +358,24 @@ export function RecurringTransactionsSection() {
             onToggleActive={(nextActive) => handleToggleActive(template, nextActive)}
             onEdit={() => openEditDialog(template)}
             onDelete={() => handleDelete(template)}
+            processingOccurrenceId={processingOccurrenceId}
+            isMarkReadyPending={markReady.isPending}
+            isSkipPending={skipOccurrence.isPending}
+            isOccurrencesFetching={occurrencesFetching}
+            onMarkReady={handleMarkReady}
+            onSkip={handleSkipOccurrence}
           />
         ))}
       </div>
     );
   };
 
-  const renderOccurrences = () => {
-    if (occurrencesLoading && !occurrences.length) {
-      return (
-        <Card className="border-dashed">
-          <CardHeader>
-            <CardTitle className="text-lg">
-              <Trans>Upcoming transactions</Trans>
-            </CardTitle>
-            <CardDescription>
-              <Trans>We are loading your upcoming recurring occurrences.</Trans>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="h-14 rounded-lg border border-dashed border-primary/20 bg-muted/40 animate-pulse"
-                />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      );
-    }
-
-    if (!occurrences.length) {
-      return (
-        <Card className="border-dashed">
-          <CardHeader>
-            <CardTitle className="text-lg">
-              <Trans>No upcoming occurrences</Trans>
-            </CardTitle>
-            <CardDescription>
-              <Trans>
-                When a recurring item is almost due, it will appear here so you can mark it ready.
-              </Trans>
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      );
-    }
-
-    return (
-      <div className="space-y-3">
-        {occurrences.map((occurrence) => {
-          const { template } = occurrence;
-          const categoryName = template.categoryId
-            ? categoriesById.get(template.categoryId) || t`Unassigned category`
-            : t`Unassigned category`;
-
-          return (
-            <RecurringOccurrenceCard
-              key={occurrence.id}
-              occurrence={occurrence}
-              accountName={accountsById.get(template.accountId)?.Name ?? 'Unknown account'}
-              accountCurrency={accountsById.get(template.accountId)?.Currency}
-              toAccountName={
-                template.toAccountId != null
-                  ? accountsById.get(template.toAccountId)?.Name
-                  : undefined
-              }
-              categoryName={categoryName}
-              accountLocalizer={accountLocalizersById.get(template.accountId) ?? globalLocalizer}
-              budgetCurrency={budgetCurrency}
-              budgetLocalizer={globalLocalizer}
-              isProcessing={processingOccurrenceId === occurrence.id}
-              isMarkReadyPending={markReady.isPending}
-              isSkipPending={skipOccurrence.isPending}
-              isFetching={occurrencesFetching}
-              onMarkReady={() => handleMarkReady(occurrence)}
-              onSkip={() => handleSkipOccurrence(occurrence)}
-            />
-          );
-        })}
-      </div>
-    );
-  };
-
   return (
-    <div className="mx-4 space-y-8 sm:mx-6 lg:mx-8">
-      <section className="space-y-4">
+    <div className="mx-4 space-y-6 sm:mx-6 lg:mx-8">
+      <section className="space-y-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-base font-semibold">
               <Trans>Recurring transactions</Trans>
             </h2>
             <p className="text-sm text-muted-foreground">
@@ -485,15 +385,15 @@ export function RecurringTransactionsSection() {
               </Trans>
             </p>
           </div>
-          <Button onClick={openCreateDialog} className="w-full sm:w-auto">
+          <Button onClick={openCreateDialog} size="sm" className="w-full sm:w-auto">
             <Trans>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-1 h-4 w-4" />
               New recurring transaction
             </Trans>
           </Button>
         </div>
         {permission !== 'granted' && permission !== 'unsupported' ? (
-          <div className="flex flex-col gap-3 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 rounded-lg border border-dashed border-primary/30 bg-primary/5 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-foreground">
                 <Trans>Enable notifications</Trans>
@@ -507,6 +407,7 @@ export function RecurringTransactionsSection() {
             </div>
             <Button
               variant="secondary"
+              size="sm"
               onClick={enableNotifications}
               disabled={requestingPermission}
               className="sm:w-auto"
@@ -516,20 +417,6 @@ export function RecurringTransactionsSection() {
           </div>
         ) : null}
         {renderTemplates()}
-      </section>
-
-      <section className="space-y-4">
-        <div className="space-y-1">
-          <h2 className="text-lg font-semibold">
-            <Trans>Upcoming occurrences</Trans>
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            <Trans>
-              Mark items as ready when they land to create the matching transaction automatically.
-            </Trans>
-          </p>
-        </div>
-        {renderOccurrences()}
       </section>
 
       <div
@@ -549,6 +436,21 @@ export function RecurringTransactionsSection() {
         onSubmit={handleEditorSubmit}
         isSubmitting={createRecurring.isPending || updateRecurring.isPending}
       />
+    </div>
+  );
+}
+
+const EMPTY_OCCURRENCES: RecurringOccurrenceWithTemplate[] = [];
+
+function SkeletonRows({ count }: { count: number }) {
+  return (
+    <div className="divide-y overflow-hidden rounded-lg border">
+      {Array.from({ length: count }).map((_, index) => (
+        <div key={index} className="animate-pulse space-y-1.5 px-3 py-2.5">
+          <div className="h-4 w-40 rounded bg-muted" />
+          <div className="h-3 w-64 max-w-full rounded bg-muted" />
+        </div>
+      ))}
     </div>
   );
 }

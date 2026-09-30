@@ -66,7 +66,8 @@ export function useTransactionTable(
       const newSelection: Record<number, boolean> = replace ? {} : { ...current };
       for (const id of rowIds) {
         const parsedId = parseInt(id, 10);
-        if (!Number.isFinite(parsedId)) continue;
+        // Projected recurring rows use negative IDs and are never selectable.
+        if (!Number.isFinite(parsedId) || parsedId <= 0) continue;
         if (checked) {
           newSelection[parsedId] = true;
         } else {

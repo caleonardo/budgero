@@ -54,7 +54,7 @@ Geldwerte sind ganzzahlige Millieinheiten (1/1000 einer Währungseinheit), daher
 
 ### Derzeit unterstützte Operation
 
-- `transactions.add` — sende eine Einnahme oder Ausgabe. Verwende `inflow` für Einnahmen und `outflow` für Ausgaben (nur eines sollte ungleich null sein). Gib deine bestehenden Budget-, Konto- und Kategorie-IDs an.
+- `transactions.add` — sende eine Einnahme oder Ausgabe. Verwende `inflow` für Einnahmen und `outflow` für Ausgaben (nur eines sollte ungleich null sein). Gib deine bestehenden Budget-, Konto- und Kategorie-IDs an. Setze `"cleared": true`, wenn die Transaktion bei der Bank bereits gebucht ist; ohne Angabe wird sie als nicht gebucht hinzugefügt.
 
 ## Verschlüsselungsanforderungen
 

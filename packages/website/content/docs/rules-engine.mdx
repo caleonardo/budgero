@@ -48,7 +48,7 @@ Continuous rules fire on every entry path — CSV/PDF imports, manual entry, Pus
 
 ## Conditions: what a rule matches
 
-A rule needs at least one condition. When it has several, **all must match** (AND logic — there is no OR; if you need "this payee or that payee", make two rules).
+A rule needs at least one condition. When it has several, you chain them with **AND** or **OR** using the toggle between conditions. AND is evaluated before OR, so each OR starts a new group: `Payee is Tesco AND Amount < 50 OR Payee is Aldi` matches small Tesco purchases *or* any Aldi purchase. For "this payee or that payee", one rule with an OR is all you need.
 
 <table>
   <thead>

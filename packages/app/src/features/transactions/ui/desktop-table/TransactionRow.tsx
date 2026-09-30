@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
-import { isFutureDate } from '@shared/lib/date-utils';
+import { getTodayISO, isFutureDate } from '@shared/lib/date-utils';
 import { TableCell, TableRow } from '@shared/ui/table';
 import { TransactionSelectionCheckbox } from '@features/transactions/ui/TransactionSelectionCheckbox';
 import { Button } from '@shared/ui/button';
@@ -19,6 +19,11 @@ import { ArrowLeftRight } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
 import { SecondaryAmount } from '@features/transactions/ui/SecondaryAmount';
 import { StatusIndicatorPopover } from '@features/transactions/ui/StatusIndicatorPopover';
+import { ClearedToggle } from '@features/transactions/ui/ClearedToggle';
+import {
+  RecurringIndicator,
+  RecurringOccurrenceActions,
+} from '@features/transactions/ui/RecurringOccurrenceActions';
 import { useUiStore } from '@shared/store/useUiStore';
 import { formatMaskedMilli } from '@shared/lib/privacy/mask-numbers';
 import { asMilli } from '@shared/lib/currency/milli';
@@ -276,7 +281,15 @@ export const TransactionRow = React.memo(function TransactionRow({
           </div>
         </TableCell>
         <TableCell>
-          <span className="px-2 text-xs xl:text-sm text-muted-foreground">{transaction.Date}</span>
+          <div className="flex items-center gap-1.5 px-2">
+            <RecurringIndicator />
+            <span className="text-xs xl:text-sm text-muted-foreground">{transaction.Date}</span>
+            {transaction.Date < getTodayISO() && (
+              <Badge variant="destructive" className="px-1.5 py-0 text-[9px] uppercase">
+                <Trans>Overdue</Trans>
+              </Badge>
+            )}
+          </div>
         </TableCell>
         <TableCell className="max-w-[220px] overflow-hidden">
           <span
@@ -322,7 +335,11 @@ export const TransactionRow = React.memo(function TransactionRow({
         )}
         <TableCell>
           <div className="flex items-center justify-center gap-2">
-            <StatusIndicatorPopover status="projected" contentWidth="w-64" />
+            {transaction.OccurrenceID ? (
+              <RecurringOccurrenceActions occurrenceId={transaction.OccurrenceID} />
+            ) : (
+              <StatusIndicatorPopover status="projected" contentWidth="w-64" />
+            )}
           </div>
         </TableCell>
       </TableRow>
@@ -602,7 +619,17 @@ export const TransactionRow = React.memo(function TransactionRow({
       {/* Status */}
       <TableCell>
         <div className="flex items-center justify-center gap-2">
-          {transaction.Reconciled == true && <StatusIndicatorPopover status="reconciled" />}
+          {transaction.RecurringTransactionID !== undefined && <RecurringIndicator />}
+          {transaction.Reconciled == true ? (
+            <StatusIndicatorPopover status="reconciled" />
+          ) : (
+            transaction.Cleared !== undefined && (
+              <ClearedToggle
+                transactionId={transaction.ID}
+                cleared={Boolean(transaction.Cleared)}
+              />
+            )
+          )}
           {isFutureTransaction && <StatusIndicatorPopover status="future" />}
         </div>
       </TableCell>

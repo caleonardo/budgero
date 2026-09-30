@@ -16,7 +16,7 @@ import {
 
 export interface MatchedToken {
   text: string;
-  type: 'date' | 'transactionType' | 'category' | 'label' | 'amount';
+  type: 'date' | 'transactionType' | 'category' | 'label' | 'amount' | 'status';
   /** For amount tokens, stores the parsed filter data */
   amountFilter?: AmountFilter;
 }
@@ -34,8 +34,11 @@ export interface ParsedSearchQuery {
   categoryMatches: string[];
   labelMatches: string[];
   amountFilter: AmountFilter | null;
+  clearedStatus: ClearedStatusFilter | null;
   matchedTokens: MatchedToken[];
 }
+
+export type ClearedStatusFilter = 'cleared' | 'uncleared' | 'reconciled';
 
 const DATE_PATTERNS: {
   pattern: RegExp;
@@ -134,6 +137,19 @@ const TRANSACTION_TYPE_KEYWORDS: {
   { keywords: ['outflows', 'outflow', 'expenses', 'expense', 'spending'], type: 'outflows' },
   { keywords: ['transfers', 'transfer'], type: 'transfers' },
 ];
+
+const CLEARED_STATUS_KEYWORDS: Record<string, ClearedStatusFilter> = {
+  cleared: 'cleared',
+  'is:cleared': 'cleared',
+  uncleared: 'uncleared',
+  'is:uncleared': 'uncleared',
+  reconciled: 'reconciled',
+  'is:reconciled': 'reconciled',
+};
+
+function matchClearedStatus(token: string): ClearedStatusFilter | null {
+  return CLEARED_STATUS_KEYWORDS[token.toLowerCase()] ?? null;
+}
 
 /**
  * Tokenizes a query string, respecting quoted strings
@@ -370,6 +386,7 @@ export function parseSearchQuery(
     categoryMatches: [],
     labelMatches: [],
     amountFilter: null,
+    clearedStatus: null,
     matchedTokens: [],
   };
 
@@ -419,6 +436,15 @@ export function parseSearchQuery(
         text: token,
         type: 'transactionType',
       });
+      i++;
+      continue;
+    }
+
+    const status = matchClearedStatus(token);
+    if (status) {
+      // Use last-specified status (overwrite previous)
+      result.clearedStatus = status;
+      result.matchedTokens.push({ text: token, type: 'status' });
       i++;
       continue;
     }
@@ -513,6 +539,15 @@ export function removeTokenFromQuery(
       continue;
     }
 
+    if (
+      tokenToRemove.type === 'status' &&
+      matchClearedStatus(token) &&
+      token.toLowerCase() === tokenToRemove.text.toLowerCase()
+    ) {
+      i++;
+      continue;
+    }
+
     if (tokenToRemove.type === 'category') {
       const matchedCategory = parsed.categoryMatches.find(
         (cat) =>
@@ -543,6 +578,18 @@ export function getTransactionTypeLabel(type: 'inflows' | 'outflows' | 'transfer
       return 'Outflows';
     case 'transfers':
       return 'Transfers';
+  }
+}
+
+/** Display label for a cleared-status filter chip. */
+export function getClearedStatusLabel(status: ClearedStatusFilter): string {
+  switch (status) {
+    case 'cleared':
+      return t`Cleared`;
+    case 'uncleared':
+      return t`Uncleared`;
+    case 'reconciled':
+      return t`Reconciled`;
   }
 }
 

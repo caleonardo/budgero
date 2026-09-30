@@ -13,6 +13,7 @@ import { Loader2 } from 'lucide-react';
 
 import { DialogFooter } from '@shared/ui/dialog';
 import { Button } from '@shared/ui/button';
+import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 
 interface TransactionFormActionsProps {
   onCancel: () => void;
@@ -36,6 +37,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
   isSubmitting = false,
 }: TransactionFormActionsProps) {
   const { t } = useLingui();
+  const saveShortcut = getKeyboardShortcutLabels().mod('Enter');
 
   const submitButtonClassName = React.useMemo(() => {
     const base =
@@ -98,7 +100,7 @@ export const TransactionFormActions = React.memo(function TransactionFormActions
           <Trans>Cancel</Trans>
         </Button>
         <span className="hidden sm:inline-block text-xs text-muted-foreground">
-          <Trans>Press Cmd+Enter to save</Trans>
+          <Trans>Press {saveShortcut} to save</Trans>
         </span>
       </div>
     </DialogFooter>

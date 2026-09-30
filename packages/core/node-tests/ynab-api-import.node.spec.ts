@@ -1015,6 +1015,35 @@ describe('YNAB API import', () => {
     }
   });
 
+  it('carries YNAB cleared, uncleared, and reconciled status onto imported rows', async () => {
+    const adapter = await NodeSqlJsAdapter.create();
+    try {
+      const snapshot = snapshotFixture();
+      snapshot.plan.transactions[0].cleared = 'reconciled';
+      const result = await new YNABImportService(adapter).importYNABFromApiSnapshotWithSummary(
+        snapshot,
+        {
+          spaceId: SPACE_ID,
+          budgetName: 'Cleared status',
+          currency: 'USD',
+          numberFormat: '123,456.78',
+          badgeIcon: 'HelpCircle',
+        }
+      );
+      const status = (date: string) =>
+        adapter
+          .prepare(
+            'SELECT Cleared, Reconciled FROM transactions WHERE BudgetID = ? AND Date = ? ORDER BY ID LIMIT 1'
+          )
+          .get(result.budgetId, date);
+      expect(status('2026-09-01')).toEqual({ Cleared: 1, Reconciled: 1 });
+      expect(status('2026-09-02')).toEqual({ Cleared: 1, Reconciled: 0 });
+      expect(status('2026-09-03')).toEqual({ Cleared: 0, Reconciled: 0 });
+    } finally {
+      adapter.close();
+    }
+  });
+
   it('preserves API split parent details, transfer notes, and reconciled history', async () => {
     const adapter = await NodeSqlJsAdapter.create();
     try {

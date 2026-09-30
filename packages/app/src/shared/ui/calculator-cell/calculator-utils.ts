@@ -49,7 +49,7 @@ export function isExpression(str: string): boolean {
 
 /**
  * Apply keyboard shortcuts for common calculations.
- * Shortcuts: Ctrl+H (half), Ctrl+D (double), Ctrl+Z (zero), Ctrl+T (10%)
+ * Shortcuts (Ctrl or Cmd): H half, D double, Z zero, T 10%
  */
 export function applyShortcut(key: string, currentValue: number): string | null {
   switch (key) {

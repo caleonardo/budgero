@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { CalendarClock, CheckCircle2, type LucideIcon } from 'lucide-react';
+import { CalendarClock, Lock, RefreshCw, type LucideIcon } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
@@ -30,11 +30,11 @@ export function StatusIndicatorPopover({
     { icon: LucideIcon; buttonColor: string; label: string; srText: string; text: string }
   > = {
     reconciled: {
-      icon: CheckCircle2,
+      icon: Lock,
       buttonColor: 'text-success hover:bg-success/10',
       label: t`Reconciled transaction`,
       srText: 'Reconciled transaction details',
-      text: t`This transaction has been reconciled.`,
+      text: t`This transaction has been reconciled and is locked as cleared.`,
     },
     future: {
       icon: CalendarClock,
@@ -44,7 +44,7 @@ export function StatusIndicatorPopover({
       text: t`This transaction is scheduled for a future date.`,
     },
     projected: {
-      icon: CalendarClock,
+      icon: RefreshCw,
       buttonColor: 'bg-primary/10 text-primary hover:bg-primary/20',
       label: t`Projected recurring transaction`,
       srText: 'Projected recurring transaction',

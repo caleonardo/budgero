@@ -33,6 +33,8 @@ export interface AccountMetricsInput {
     BalanceConverted?: number | null;
     FutureImpactNative?: number | null;
     FutureImpactConverted?: number | null;
+    UnclearedNative?: number | null;
+    UnclearedConverted?: number | null;
   } | null;
   allTransactionsData: GetTransactionsByAccountRow[];
   dateRange: DateRange | undefined;
@@ -46,6 +48,10 @@ export interface AccountMetricsResult {
   balanceConvertedToday: number;
   /** Balance to display based on currency preference */
   displayBalanceToday: number;
+  /** Balance of cleared (and reconciled) transactions, in the displayed currency */
+  displayClearedBalance: number;
+  /** Cleared balance in account currency (what the bank shows) */
+  clearedBalanceAccount: number;
   /** Transactions filtered by the date range */
   transactionsData: GetTransactionsByAccountRow[];
 }
@@ -98,6 +104,16 @@ export function useAccountMetrics({
   const displayBalanceToday =
     transactionCurrencyDisplay === 'budget' ? balanceConvertedToday : balanceAccountToday;
 
+  // Cleared balance = full balance minus every uncleared transaction (any date).
+  const clearedBalanceAccount =
+    (selectedAccount?.BalanceNative ?? 0) - (selectedAccount?.UnclearedNative ?? 0);
+  const clearedBalanceConverted =
+    selectedAccount?.BalanceConverted !== undefined && selectedAccount?.BalanceConverted !== null
+      ? selectedAccount.BalanceConverted - (selectedAccount.UnclearedConverted ?? 0)
+      : clearedBalanceAccount;
+  const displayClearedBalance =
+    transactionCurrencyDisplay === 'budget' ? clearedBalanceConverted : clearedBalanceAccount;
+
   const normalizedDateRange = useMemo(() => {
     if (!dateRange?.from && !dateRange?.to) {
       return undefined;
@@ -135,6 +151,8 @@ export function useAccountMetrics({
     balanceAccountToday,
     balanceConvertedToday,
     displayBalanceToday,
+    displayClearedBalance,
+    clearedBalanceAccount,
     transactionsData,
   };
 }

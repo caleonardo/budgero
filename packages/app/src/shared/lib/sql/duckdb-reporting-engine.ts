@@ -315,6 +315,7 @@ async function registerPrebuiltAnalyticsViews(
       strftime(DATE_TRUNC('year', t.parsed_date), '%Y-%m-%d') AS year,
       t."Memo" AS memo,
       t."Reconciled" AS reconciled,
+      t."Cleared" AS cleared,
       CAST(t."InflowConverted" / 1000.0 AS DECIMAL(18, 3)) AS inflow,
       CAST(t."OutflowConverted" / 1000.0 AS DECIMAL(18, 3)) AS outflow,
       CAST(t."InflowNative" / 1000.0 AS DECIMAL(18, 3)) AS inflow_original,

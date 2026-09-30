@@ -22,6 +22,9 @@ export interface Account {
    */
   FutureImpactNative?: MilliUnits;
   FutureImpactConverted?: MilliUnits;
+  /** Sum of uncleared transactions (any date); cleared balance = balance - this. */
+  UnclearedNative?: MilliUnits;
+  UnclearedConverted?: MilliUnits;
   BudgetID: number;
   /** Sort order within the budget; rendered order in the sidebar and mobile nav */
   Position?: number;

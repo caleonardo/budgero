@@ -143,6 +143,10 @@ msgstr "\"{0}\" is verwijderd en gewist uit transacties."
 msgid "({0} original)"
 msgstr "({0} oorspronkelijk)"
 
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "(clear)"
+msgstr "(wissen)"
+
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 msgid "(cleared)"
 msgstr "(bevestigd)"
@@ -396,8 +400,8 @@ msgstr "{0}| In aanmerking {1}| Al verzonden {2}{3}"
 
 #. placeholder {0}: rule.actions.length
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "{0} action(s)"
-msgstr "{0} actie(s)"
+#~ msgid "{0} action(s)"
+#~ msgstr "{0} actie(s)"
 
 #. placeholder {0}: current.dau.toLocaleString()
 #. placeholder {1}: current.mau.toLocaleString()
@@ -440,8 +444,8 @@ msgstr "{0}diagram{1}"
 
 #. placeholder {0}: rule.conditions.length
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "{0} condition(s)"
-msgstr "{0} voorwaarde(n)"
+#~ msgid "{0} condition(s)"
+#~ msgstr "{0} voorwaarde(n)"
 
 #. placeholder {0}: run.summary.duplicatesSkipped ?? 0
 #. placeholder {1}: run.summary.userSkipped ?? 0
@@ -633,7 +637,7 @@ msgid "{0} uncategorized"
 msgstr "{0} zonder categorie"
 
 #. placeholder {0}: template.name
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 msgid "{0} was added to your register."
 msgstr "{0} is toegevoegd aan je register."
 
@@ -696,12 +700,10 @@ msgstr "{0}API-token genereren"
 msgid "{0}Import anyway"
 msgstr "{0}Toch importeren"
 
-#. placeholder {0}: busy && isMarkReadyPending ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Check className="mr-2 h-4 w-4" /> )
 #. placeholder {0}: isProcessing && isMarkReadyPending ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Sparkles className="mr-2 h-4 w-4" /> )
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-msgid "{0}Mark ready"
-msgstr "{0}Klaar markeren"
+#~ msgid "{0}Mark ready"
+#~ msgstr "{0}Klaar markeren"
 
 #. placeholder {0}: monthsCoverage.toFixed(1)
 #: src/widgets/dashboard/AtAGlance.tsx
@@ -733,13 +735,13 @@ msgstr "{0}Vernieuwen"
 
 #. placeholder {0}: executeRule.isPending && executingCurrent === rule.id && executingTrigger === 'retroactive' ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Rocket className="mr-2 h-4 w-4" /> )
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "{0}Retro run"
-msgstr "{0}Retro-uitvoering"
+#~ msgid "{0}Retro run"
+#~ msgstr "{0}Retro-uitvoering"
 
 #. placeholder {0}: executeRule.isPending && executingCurrent === rule.id && executingTrigger === 'manual' ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Play className="mr-2 h-4 w-4" /> )
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "{0}Run now"
-msgstr "{0}Nu uitvoeren"
+#~ msgid "{0}Run now"
+#~ msgstr "{0}Nu uitvoeren"
 
 #. placeholder {0}: isSwitching ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <ArrowRightLeft className="mr-2 h-4 w-4" /> )
 #: src/app/startup/screens.tsx
@@ -764,9 +766,23 @@ msgstr "{ccCategoryName} betalingen"
 msgid "{changedCount} categories adjusted"
 msgstr "{changedCount} categorieën aangepast"
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "{conditionCount} condition(s) · {actionCount} action(s)"
+msgstr "{conditionCount} voorwaarde(n) · {actionCount} actie(s)"
+
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "{count, plural, one {# transaction deleted} other {# transactions deleted}}"
 msgstr "{count, plural, one {# transactie verwijderd} other {# transacties verwijderd}}"
+
+#: src/features/transactions/api/useClearedShortcut.ts
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "{count, plural, one {# transaction marked cleared} other {# transactions marked cleared}}"
+msgstr "{count, plural, one {# transactie als verwerkt gemarkeerd} other {# transacties als verwerkt gemarkeerd}}"
+
+#: src/features/transactions/api/useClearedShortcut.ts
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "{count, plural, one {# transaction marked uncleared} other {# transactions marked uncleared}}"
+msgstr "{count, plural, one {# transactie als niet verwerkt gemarkeerd} other {# transacties als niet verwerkt gemarkeerd}}"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "{count, plural, one {# transaction recalculated using fallback rates.} other {# transactions recalculated using fallback rates.}}"
@@ -819,6 +835,10 @@ msgstr "{days, plural, one {Laatste # dag} other {Laatste # dagen}}"
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "{days} days"
 msgstr "{days} dagen"
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "{daysBefore, plural, one {Remind # day before} other {Remind # days before}}"
+msgstr "{daysBefore, plural, one {# dag van tevoren herinneren} other {# dagen van tevoren herinneren}}"
 
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "{daysLeftInBeta} days"
@@ -980,6 +1000,10 @@ msgstr "{uncategorizedCount} ongecategoriseerd"
 msgid "{unsafeTransactionCount, plural, one {# transaction contains an amount outside Budgero's exact money range. Correct the exchange rate in the highlighted row; the converted amount and account balance will then be recalculated.} other {# transactions contain an amount outside Budgero's exact money range. Correct the exchange rate in the highlighted row; the converted amount and account balance will then be recalculated.}}"
 msgstr "{unsafeTransactionCount, plural, one {# transactie bevat een bedrag buiten het exacte geldbereik van Budgero. Corrigeer de wisselkoers in de gemarkeerde rij; het omgerekende bedrag en het rekeningsaldo worden daarna opnieuw berekend.} other {# transacties bevatten een bedrag buiten het exacte geldbereik van Budgero. Corrigeer de wisselkoers in de gemarkeerde rij; het omgerekende bedrag en het rekeningsaldo worden daarna opnieuw berekend.}}"
 
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "{upcomingCount} upcoming"
+msgstr "{upcomingCount} gepland"
+
 #. placeholder {0}: legendItems.length
 #: src/features/analytics/ui/chart-viewer/ChartLegend.tsx
 msgid "{visibleCount}/{0} series visible"
@@ -1040,13 +1064,13 @@ msgstr "+ Regel"
 
 #. placeholder {0}: upcomingRecurringOccurrences.length - MAX_VISIBLE_ITEMS
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "+{0} more in the next month"
-msgstr "+{0} meer in de volgende maand"
+#~ msgid "+{0} more in the next month"
+#~ msgstr "+{0} meer in de volgende maand"
 
 #. placeholder {0}: upcomingScheduledTransactions.length - MAX_VISIBLE_ITEMS
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "+{0} more scheduled"
-msgstr "+{0} meer gepland"
+#~ msgid "+{0} more scheduled"
+#~ msgstr "+{0} meer gepland"
 
 #: src/features/transactions/ui/form/DatePickerQuick.tsx
 msgid "+1 day"
@@ -1237,8 +1261,8 @@ msgid "<0/>Capture"
 msgstr "<0/>Vastleggen"
 
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
-msgid "<0/>Case sensitive matching"
-msgstr "<0/>Hoofdlettergevoelig matchen"
+#~ msgid "<0/>Case sensitive matching"
+#~ msgstr "<0/>Hoofdlettergevoelig matchen"
 
 #: src/widgets/dashboard/CashflowTrendCard.tsx
 msgid "<0/>Cashflow trends"
@@ -1253,8 +1277,8 @@ msgid "<0/>Category Group Percentages"
 msgstr "<0/>Percentages per categoriegroep"
 
 #: src/features/rules/ui/PayeeCategoryMemoryCard.tsx
-msgid "<0/>Category memory"
-msgstr "<0/>Categoriegeheugen"
+#~ msgid "<0/>Category memory"
+#~ msgstr "<0/>Categoriegeheugen"
 
 #: src/pages/settings/SecurityPage.tsx
 msgid "<0/>Change Master Password"
@@ -1321,7 +1345,7 @@ msgstr "<0/>Verbonden met: {0}"
 msgid "<0/>Connection Status"
 msgstr "<0/>Verbindingsstatus"
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "<0/>Consumed after retro run"
 msgstr "<0/>Verbruikt na retro-uitvoering"
 
@@ -1384,9 +1408,7 @@ msgstr "<0/>Standaard startpagina"
 #: src/features/chat/ui/chat-panel/ChatConversationList.tsx
 #: src/features/goal-management/ui/GoalCard.tsx
 #: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
 #: src/pages/settings/ImportsPage.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "<0/>Delete"
 msgstr "<0/>Verwijderen"
 
@@ -1424,8 +1446,8 @@ msgstr "<0/>Testrun"
 
 #. placeholder {0}: occurrence.dueDate
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "<0/>Due {0}({dueLabel})"
-msgstr "<0/>Vervalt {0}({dueLabel})"
+#~ msgid "<0/>Due {0}({dueLabel})"
+#~ msgstr "<0/>Vervalt {0}({dueLabel})"
 
 #: src/pages/settings/components/DuplicateHintSettingsCard.tsx
 msgid "<0/>Duplicate transactions"
@@ -1434,8 +1456,6 @@ msgstr "<0/>Dubbele transacties"
 #: src/features/budget-planning/ui/category-row/CategoryRowHeader.tsx
 #: src/features/budget-planning/ui/category-row/CategoryRowTableLayout.tsx
 #: src/pages/explorer-page/components/ReportsPanel.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "<0/>Edit"
 msgstr "<0/>Bewerken"
 
@@ -1518,8 +1538,8 @@ msgid "<0/>Hide Key"
 msgstr "<0/>Sleutel verbergen"
 
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "<0/>History"
-msgstr "<0/>Geschiedenis"
+#~ msgid "<0/>History"
+#~ msgstr "<0/>Geschiedenis"
 
 #: src/pages/settings/push-api/IdReferencePanel.tsx
 msgid "<0/>ID Reference"
@@ -1577,7 +1597,7 @@ msgstr "<0/>Label"
 msgid "<0/>Language"
 msgstr "<0/>Taal"
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "<0/>Last run {lastRunLabel}"
 msgstr "<0/>Laatst uitgevoerd {lastRunLabel}"
 
@@ -1590,8 +1610,8 @@ msgid "<0/>Later"
 msgstr "<0/>Later"
 
 #: src/pages/settings/AutomationRulesPage.tsx
-msgid "<0/>Let Budgero handle the busywork"
-msgstr "<0/>Laat Budgero het saaie werk doen"
+#~ msgid "<0/>Let Budgero handle the busywork"
+#~ msgstr "<0/>Laat Budgero het saaie werk doen"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "<0/>Linked Accounts"
@@ -1692,8 +1712,8 @@ msgid "<0/>Pin chart"
 msgstr "<0/>Grafiek vastpinnen"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "<0/>Plan ahead with recurring items"
-msgstr "<0/>Plan vooruit met terugkerende items"
+#~ msgid "<0/>Plan ahead with recurring items"
+#~ msgstr "<0/>Plan vooruit met terugkerende items"
 
 #: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
 #: src/pages/settings/AuditLogPage.tsx
@@ -1798,7 +1818,7 @@ msgid "<0/>Revoke Token"
 msgstr "<0/>Token intrekken"
 
 #. placeholder {0}: rule.runOrder
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "<0/>Run order {0}"
 msgstr "<0/>Volgorde uitvoeren {0}"
 
@@ -1821,8 +1841,8 @@ msgstr "<0/>Bon scannen"
 
 #. placeholder {0}: format(parsedDate, 'yyyy-MM-dd')
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "<0/>Scheduled {0} ({dueLabel})"
-msgstr "<0/>Gepland {0} ({dueLabel})"
+#~ msgid "<0/>Scheduled {0} ({dueLabel})"
+#~ msgstr "<0/>Gepland {0} ({dueLabel})"
 
 #: src/widgets/navigation/MobileBottomNav.tsx
 msgid "<0/>Search all {totalAccountsCount} accounts"
@@ -1862,8 +1882,8 @@ msgstr "<0/>SQL-query-editor"
 
 #. placeholder {0}: template.schedule.startDate
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "<0/>Started {0}"
-msgstr "<0/>Gestart {0}"
+#~ msgid "<0/>Started {0}"
+#~ msgstr "<0/>Gestart {0}"
 
 #: src/pages/admin/StickinessAnalyticsSection.tsx
 msgid "<0/>Stickiness & retention"
@@ -2185,8 +2205,8 @@ msgstr "<0>R</0>r/budgero"
 
 #. placeholder {0}: template.notifyDaysBefore || 0
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "<0>Remind me:</0> {0} day(s) before"
-msgstr "<0>Herinner me:</0> {0} dag(en) van tevoren"
+#~ msgid "<0>Remind me:</0> {0} day(s) before"
+#~ msgstr "<0>Herinner me:</0> {0} dag(en) van tevoren"
 
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "<0>Required:</0>Date column + Amount column (or Inflow/Outflow columns)<1/><2>Optional:</2>Payee, Account, Category, Memo (will use account selection below if not mapped)"
@@ -2523,6 +2543,7 @@ msgstr "Toegang tot:"
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/shared/model/nav-registry.ts
 msgid "Account"
@@ -2611,8 +2632,6 @@ msgid "Account updated"
 msgstr "Rekening bijgewerkt"
 
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Account:"
 msgstr "Rekening:"
 
@@ -2658,7 +2677,7 @@ msgstr "Actie"
 msgid "Action completed."
 msgstr "Actie voltooid."
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/AuditLogPage.tsx
 #: src/pages/settings/ImportsPage.tsx
 msgid "Action failed"
@@ -2763,6 +2782,10 @@ msgstr "Voeg een notitie toe voor deze overboeking..."
 msgid "Add Account"
 msgstr "Rekening toevoegen"
 
+#: src/features/rules/ui/rule-editor/RuleActionsEditor.tsx
+msgid "Add action"
+msgstr "Actie toevoegen"
+
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 msgid "Add an account first"
 msgstr "Voeg eerst een rekening toe"
@@ -2800,6 +2823,10 @@ msgstr "Categoriegroep toevoegen"
 msgid "Add charts to visualize your query results"
 msgstr "Voeg grafieken toe om je queryresultaten te visualiseren"
 
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+msgid "Add condition"
+msgstr "Voorwaarde toevoegen"
+
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Add Exchange Rate"
 msgstr "Wisselkoers toevoegen"
@@ -2825,6 +2852,7 @@ msgid "Add New Transaction"
 msgstr "Nieuwe transactie toevoegen"
 
 #: src/app/layout/desktop-shell/HeaderBar.tsx
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Add transaction"
 msgstr "Transactie toevoegen"
 
@@ -2873,10 +2901,12 @@ msgid "Adjust"
 msgstr "Aanpassen"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Adjust by %"
 msgstr "Aanpassen met %"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Adjust by value"
 msgstr "Aanpassen met bedrag"
 
@@ -3012,8 +3042,8 @@ msgid "all charted"
 msgstr "alle getoond"
 
 #: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
-msgid "All conditions must match for the rule to fire."
-msgstr "Alle voorwaarden moeten overeenkomen om de regel te activeren."
+#~ msgid "All conditions must match for the rule to fire."
+#~ msgstr "Alle voorwaarden moeten overeenkomen om de regel te activeren."
 
 #: src/pages/settings/SecurityPage.tsx
 msgid "All fields are required"
@@ -3044,8 +3074,8 @@ msgid "All payees"
 msgstr "Alle begunstigden"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "All set - nothing scheduled for this account right now."
-msgstr "Alles geregeld - er staat nu niets gepland voor deze rekening."
+#~ msgid "All set - nothing scheduled for this account right now."
+#~ msgstr "Alles geregeld - er staat nu niets gepland voor deze rekening."
 
 #: src/features/budgeting/ui/ReadyToAssignHelpPopover.tsx
 msgid "all time"
@@ -3187,6 +3217,7 @@ msgstr "Aflossingsschema"
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
 #: src/pages/settings/components/DuplicateHintSettingsCard.tsx
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
@@ -3208,6 +3239,10 @@ msgstr "Bedrag dat al is afgelost op deze schuld."
 msgid "Amount conditions require a numeric value."
 msgstr "Bedragvoorwaarden vereisen een numerieke waarde."
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Amount fields"
+msgstr "Bedragvelden"
+
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Amount needed available"
 msgstr "Benodigd bedrag beschikbaar"
@@ -3225,7 +3260,6 @@ msgid "Amount to start the month with"
 msgstr "Bedrag om de maand mee te beginnen"
 
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 msgid "Amount:"
 msgstr "Bedrag:"
 
@@ -3261,6 +3295,11 @@ msgstr "Analyses zijn niet beschikbaar in zelf gehoste builds."
 #: src/pages/explorer-page/sql-utils.ts
 msgid "Analytics view columns"
 msgstr "Kolommen in analyseweergave"
+
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "AND"
+msgstr "EN"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "Animate amount changes on the Planning page."
@@ -3602,7 +3641,7 @@ msgid "Auto-Categorize"
 msgstr "Automatisch categoriseren"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Autofill"
 msgstr "Automatisch invullen"
 
@@ -3639,8 +3678,8 @@ msgid "Automations"
 msgstr "Automatiseringen"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
-msgstr "Automatiseringen en geplande boekingen die binnenkort verschijnen, worden hier weergegeven. Markeer terugkerende items als klaar wanneer je ze wilt boeken."
+#~ msgid "Automations and scheduled entries that land soon are listed here. Mark recurring items ready when you are prepared to post them."
+#~ msgstr "Automatiseringen en geplande boekingen die binnenkort verschijnen, worden hier weergegeven. Markeer terugkerende items als klaar wanneer je ze wilt boeken."
 
 #: src/features/budget-planning/ui/category-row/CategoryAmountsSection.tsx
 msgid "Avail."
@@ -3838,8 +3877,7 @@ msgstr "buiten de getoonde periode"
 msgid "Biggest leak: {0}, {1} over its assignment."
 msgstr "Grootste lek: {0}, {1} boven de toewijzing."
 
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+#: src/pages/settings/recurring/components/RecurringKindBadge.tsx
 msgid "Bill"
 msgstr "Factuur"
 
@@ -4049,7 +4087,7 @@ msgstr "Budgero wijst ongeveer {0}/maand toe aan dit potje tot {1}."
 msgid "Budgero will create {0}."
 msgstr "Budgero maakt {0} aan."
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Budgero will evaluate every transaction in this budget and apply any matching actions. This may take a moment for larger budgets."
 msgstr "Budgero beoordeelt elke transactie in dit budget en past alle bijbehorende acties toe. Dit kan even duren bij grotere budgetten."
 
@@ -4268,6 +4306,7 @@ msgstr "Kan ik meer dan één werkruimte hebben?"
 msgid "Canadian Dollar"
 msgstr "Canadese dollar"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/app/startup/screens.tsx
 #: src/features/account-management/ui/ArchiveAccountDialog.tsx
 #: src/features/account-management/ui/EditAccountDialog.tsx
@@ -4306,7 +4345,7 @@ msgstr "Canadese dollar"
 #: src/pages/settings/components/IncomeCategoriesCard.tsx
 #: src/pages/settings/components/WorkspaceRow.tsx
 #: src/pages/settings/CurrencySettingsPage.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/pages/settings/SecurityPage.tsx
 #: src/pages/settings/subscription/PlanChangeDialog.tsx
@@ -4367,6 +4406,14 @@ msgstr "Kaartbetaling geregistreerd"
 #: src/pages/settings/AppearancePage.tsx
 msgid "Cards"
 msgstr "Kaarten"
+
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+msgid "Case sensitive matching"
+msgstr "Hoofdlettergevoelig zoeken"
+
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "case-sensitive"
+msgstr "hoofdlettergevoelig"
 
 #: src/entities/account/model/accountTypes.ts
 #: src/features/budget-management/model/icon-options.ts
@@ -4474,8 +4521,6 @@ msgid "Category-history differences"
 msgstr "Verschillen in categoriegeschiedenis"
 
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Category:"
 msgstr "Categorie:"
 
@@ -4486,6 +4531,10 @@ msgstr "Categorie<0/>"
 #: src/features/budget-planning/ui/AvailableInfoPopover.tsx
 msgid "CC Payment Calculation"
 msgstr "Berekening creditcardbetaling"
+
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+msgid "Chain conditions with AND / OR. AND is checked before OR, so each OR starts a new group."
+msgstr "Koppel voorwaarden met EN / OF. EN wordt vóór OF gecontroleerd, dus elke OF start een nieuwe groep."
 
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Change account currency?"
@@ -4686,8 +4735,8 @@ msgid "Choose an account for the account action."
 msgstr "Kies een rekening voor de rekeningactie."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "Choose an existing payee or create a new one. Leave blank to clear it."
-msgstr "Kies een bestaande begunstigde of maak een nieuwe aan. Laat leeg om te wissen."
+#~ msgid "Choose an existing payee or create a new one. Leave blank to clear it."
+#~ msgstr "Kies een bestaande begunstigde of maak een nieuwe aan. Laat leeg om te wissen."
 
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Choose another category"
@@ -4818,6 +4867,29 @@ msgstr "Begunstigde wissen"
 msgid "Clear selection"
 msgstr "Selectie wissen"
 
+#: src/features/transactions/ui/ClearedToggle.tsx
+#: src/pages/accounts/AccountPage.tsx
+#: src/pages/accounts/components/AccountSummaryCards.tsx
+#: src/shared/lib/search-query-parser.ts
+msgid "Cleared"
+msgstr "Verwerkt"
+
+#: src/features/transactions/ui/ClearedToggle.tsx
+msgid "Cleared — mark as uncleared"
+msgstr "Verwerkt – markeren als niet verwerkt"
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Cleared Balance"
+msgstr "Verwerkt saldo"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Cleared status"
+msgstr "Verwerkingsstatus"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Cleared status (press {CLEARED_SHORTCUT_KEY})"
+msgstr "Verwerkingsstatus (toets {CLEARED_SHORTCUT_KEY})"
+
 #. placeholder {0}: actionDialog.user.email
 #: src/pages/admin/admin-users/useAdminUsersState.ts
 msgid "Cleared stored data for {0}"
@@ -4864,10 +4936,14 @@ msgstr "Klik op de rij die je tabelkoppen bevat. {0} {1} van {2} gedetecteerde r
 msgid "Click to edit"
 msgstr "Klik om te bewerken"
 
+#: src/shared/ui/calculator-cell/CalculatorDisplay.tsx
+msgid "Click to edit - Calculator: 100 + 50, 1000 * 0.3"
+msgstr "Klik om te bewerken - Rekenmachine: 100 + 50, 1000 * 0.3"
+
 #. placeholder {0}: shortcuts ? ' - Shortcuts: Ctrl+H (half), Ctrl+D (double), Ctrl+Z (zero), Ctrl+T (10%)' : ''
 #: src/shared/ui/calculator-cell/CalculatorDisplay.tsx
-msgid "Click to edit - Calculator: 100 + 50, 1000 * 0.3{0}"
-msgstr "Klik om te bewerken - Rekenmachine: 100 + 50, 1000 * 0.3{0}"
+#~ msgid "Click to edit - Calculator: 100 + 50, 1000 * 0.3{0}"
+#~ msgstr "Klik om te bewerken - Rekenmachine: 100 + 50, 1000 * 0.3{0}"
 
 #: src/features/chat/ui/VoiceInputButton.tsx
 msgid "Click to speak"
@@ -5075,7 +5151,7 @@ msgstr "Wachtwoord bevestigen"
 msgid "CONFIRM PASSWORD"
 msgstr "WACHTWOORD BEVESTIGEN"
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Confirm retro run"
 msgstr "Retro-run bevestigen"
 
@@ -5183,7 +5259,7 @@ msgstr "Blijf elke maand {monthlyTarget} toewijzen om je doel te bereiken"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Continuous"
 msgstr "Doorlopend"
 
@@ -5353,6 +5429,12 @@ msgstr "De eerste dag van de week kon niet worden opgeslagen"
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "Could not save the query."
 msgstr "Kon de query niet opslaan."
+
+#: src/features/transactions/api/useClearedShortcut.ts
+#: src/features/transactions/ui/ClearedToggle.tsx
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Could not update cleared status"
+msgstr "Verwerkingsstatus kon niet worden bijgewerkt"
 
 #: src/pages/settings/components/GoalFundingSettingsCard.tsx
 msgid "Could not update goal funding settings"
@@ -5687,8 +5769,8 @@ msgid "Current balance"
 msgstr "Huidig saldo"
 
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
-msgid "Current Balance"
-msgstr "Huidig saldo"
+#~ msgid "Current Balance"
+#~ msgstr "Huidig saldo"
 
 #: src/pages/explorer-page/sql-utils.ts
 msgid "Current month by category group"
@@ -5786,6 +5868,7 @@ msgstr "Cyclisch"
 #: src/features/budget-planning/ui/spending-drawer-mobile/SpendingChart.tsx
 #: src/features/transactions/ui/add-transaction/recurring-form.ts
 #: src/pages/admin/StickinessAnalyticsSection.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Daily"
 msgstr "Dagelijks"
 
@@ -6044,6 +6127,7 @@ msgstr "Del"
 #: src/features/transactions/ui/form/SplitEditor.tsx
 #: src/pages/custom-dashboards/components/DashboardSwitcher.tsx
 #: src/pages/explorer-page/components/ReportsPanel.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 #: src/pages/settings/CurrencySettingsPage.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/pages/warranties/WarrantiesPage.tsx
@@ -6054,7 +6138,7 @@ msgstr "Verwijderen"
 
 #. placeholder {0}: rule.name
 #. placeholder {0}: template.name
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Delete “{0}”?"
 msgstr "\"{0}\" verwijderen?"
@@ -6113,7 +6197,7 @@ msgstr "Geschiedenisitem verwijderen?"
 msgid "Delete payment"
 msgstr "Betaling verwijderen"
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Delete rule"
 msgstr "Regel verwijderen"
 
@@ -6316,6 +6400,10 @@ msgstr "Donut"
 msgid "Dot (.)"
 msgstr "Punt (.)"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Double amount"
+msgstr "Bedrag verdubbelen"
+
 #: src/pages/settings/DataManagementPage.tsx
 msgid "Download CSV Files"
 msgstr "CSV-bestanden downloaden"
@@ -6382,8 +6470,8 @@ msgid "Due today"
 msgstr "Vandaag verschuldigd"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-msgid "Due:"
-msgstr "Vervalt:"
+#~ msgid "Due:"
+#~ msgstr "Vervalt:"
 
 #: src/features/import/ui/csv-pdf-dialog/useImportDialogState.ts
 msgid "Duplicate check failed"
@@ -6485,6 +6573,8 @@ msgstr "Elke gesplitste regel moet een inkomsten- of uitgavenbedrag bevatten."
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Edit"
 msgstr "Bewerken"
 
@@ -6626,6 +6716,10 @@ msgstr "Meldingen inschakelen"
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Enable privacy mode"
 msgstr "Privacymodus inschakelen"
+
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Enable rule"
+msgstr "Regel inschakelen"
 
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "Enable speech-to-text for voice messages"
@@ -6803,6 +6897,10 @@ msgstr "Voer nieuw wachtwoord in (min. 8 tekens)"
 msgid "Enter report name..."
 msgstr "Voer rapportnaam in..."
 
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Enter the balance your bank shows. It is compared with your cleared balance; cleared transactions are then locked, and uncleared ones stay open."
+msgstr "Voer het saldo in dat je bank toont. Het wordt vergeleken met je verwerkte saldo; verwerkte transacties worden daarna vergrendeld, niet-verwerkte blijven open."
+
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
 msgid "Enter the invite secret first."
 msgstr "Voer eerst de uitnodigingscode in."
@@ -6820,8 +6918,8 @@ msgid "Enter the invite secret you received."
 msgstr "Voer de ontvangen uitnodigingscode in."
 
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
-msgid "Enter your actual account balance to reconcile with the current balance in the system."
-msgstr "Voer je werkelijke rekeningsaldo in om af te stemmen met het huidige saldo in het systeem."
+#~ msgid "Enter your actual account balance to reconcile with the current balance in the system."
+#~ msgstr "Voer je werkelijke rekeningsaldo in om af te stemmen met het huidige saldo in het systeem."
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 msgid "Enter your card’s minimum payment from statements."
@@ -7643,8 +7741,12 @@ msgid "Five levels (default)"
 msgstr "Vijf niveaus (standaard)"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "Flags<0><1><2><3/></2><4>Accepts standard JavaScript regex flags, e.g. <5>gi</5>for global, case-insensitive matches.</4></1></0>"
-msgstr "Flags<0><1><2><3/></2><4>Accepteert standaard JavaScript regex-flags, bijv. <5>gi</5> voor globale, hoofdletterongevoelige overeenkomsten.</4></1></0>"
+msgid "Flags"
+msgstr "Flags"
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#~ msgid "Flags<0><1><2><3/></2><4>Accepts standard JavaScript regex flags, e.g. <5>gi</5>for global, case-insensitive matches.</4></1></0>"
+#~ msgstr "Flags<0><1><2><3/></2><4>Accepteert standaard JavaScript regex-flags, bijv. <5>gi</5> voor globale, hoofdletterongevoelige overeenkomsten.</4></1></0>"
 
 #: src/pages/analytics/reports/ScenarioReport.tsx
 msgid "Flat average"
@@ -7779,16 +7881,16 @@ msgstr "Van rekening"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "From account:"
-msgstr "Van rekening:"
+#~ msgid "From account:"
+#~ msgstr "Van rekening:"
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "From and To currencies must be different."
 msgstr "De valuta 'van' en 'naar' moeten verschillend zijn."
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "From automations"
-msgstr "Van automatiseringen"
+#~ msgid "From automations"
+#~ msgstr "Van automatiseringen"
 
 #. placeholder {0}: sections.join('\n\n---\n\n')
 #: src/features/ai/lib/tools/query-docs.ts
@@ -7875,6 +7977,7 @@ msgstr "Tuin & Buiten"
 msgid "Gas"
 msgstr "Gas"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/features/category-management/ui/SearchableCategorySelect.tsx
 msgid "General"
 msgstr "Algemeen"
@@ -8069,6 +8172,10 @@ msgstr "Haar & Schoonheid"
 msgid "Halfway there! Save {needed} more this month"
 msgstr "Halverwege! Spaar deze maand nog {needed}"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Halve amount"
+msgstr "Bedrag halveren"
+
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Have a specific amount available by a target date"
 msgstr "Een specifiek bedrag beschikbaar hebben op een streefdatum"
@@ -8134,6 +8241,10 @@ msgstr "Gearchiveerde verbergen"
 msgid "Hide balance column"
 msgstr "Saldo-kolom verbergen"
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Hide details"
+msgstr "Details verbergen"
+
 #: src/features/budgeting/ui/BudgetToolbar.tsx
 msgid "Hide hidden"
 msgstr "Verborgen verbergen"
@@ -8150,11 +8261,16 @@ msgstr "Label-kolom verbergen"
 msgid "Hide sidebar"
 msgstr "Zijbalk verbergen"
 
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Hide upcoming"
+msgstr "Geplande verbergen"
+
 #: src/features/ai/ui/AICategorizeDialog.tsx
 msgid "High"
 msgstr "Hoog"
 
 #: src/pages/accounts/AccountsPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "History"
 msgstr "Geschiedenis"
 
@@ -8498,8 +8614,7 @@ msgstr "Inclusief al geboekte of overgeslagen herhalingen."
 #: src/features/transactions/ui/form/TransactionTypeSelector.tsx
 #: src/pages/analytics/reports/FlowReport.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+#: src/pages/settings/recurring/components/RecurringKindBadge.tsx
 #: src/widgets/dashboard/CashflowTrendCard.tsx
 msgid "Income"
 msgstr "Inkomen"
@@ -8796,6 +8911,10 @@ msgstr "De geschiedenis is verplaatst naar de geselecteerde inkomstencategorie."
 msgid "Japanese Yen"
 msgstr "Japanse yen"
 
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "JavaScript regex flags, e.g. gi"
+msgstr "JavaScript-regexflags, bijv. gi"
+
 #: src/pages/admin/SelfHostAdminUsers.tsx
 msgid "John Doe"
 msgstr "John Doe"
@@ -8803,6 +8922,10 @@ msgstr "John Doe"
 #: src/pages/JoinWorkspacePage.tsx
 msgid "Join a shared workspace"
 msgstr "Deelnemen aan een gedeelde werkruimte"
+
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+msgid "Join with previous condition"
+msgstr "Koppelen aan vorige voorwaarde"
 
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
 #: src/pages/JoinWorkspacePage.tsx
@@ -8889,6 +9012,10 @@ msgstr "Wordt alleen voor deze import in het geheugen bewaard en nooit opgeslage
 #: src/pages/settings/push-api/EncryptionInfoPanel.tsx
 msgid "Key Source"
 msgstr "Sleutelbron"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Keyboard shortcuts"
+msgstr "Sneltoetsen"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Know what you can spend. Keep your budget private. Create your account to start your free trial."
@@ -9503,17 +9630,30 @@ msgid "Mapping"
 msgstr "Koppeling"
 
 #. placeholder {0}: template.name
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Mark “{0}” as ready?"
 msgstr "“{0}” markeren als klaar?"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Mark cleared"
+msgstr "Markeren als verwerkt"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 msgid "Mark complete after the first retroactive run."
 msgstr "Markeer als voltooid na de eerste retroactieve uitvoering."
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "Mark items as ready when they land to create the matching transaction automatically."
-msgstr "Markeer items als klaar zodra ze binnenkomen om automatisch de bijbehorende transactie aan te maken."
+#~ msgid "Mark items as ready when they land to create the matching transaction automatically."
+#~ msgstr "Markeer items als klaar zodra ze binnenkomen om automatisch de bijbehorende transactie aan te maken."
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
+msgid "Mark ready"
+msgstr "Klaar markeren"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Mark uncleared"
+msgstr "Markeren als niet verwerkt"
 
 #: src/app/startup/screens.tsx
 #: src/features/budget-sharing/ui/RedeemInviteDialog.tsx
@@ -9632,6 +9772,7 @@ msgstr "Lidmaatschapsgegevens"
 #: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
 #: src/features/transactions/ui/form/SplitEditor.tsx
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
@@ -9817,6 +9958,7 @@ msgstr "maandelijks"
 #: src/pages/analytics/reports/InOutReport.tsx
 #: src/pages/analytics/reports/WealthReport.tsx
 #: src/pages/settings/BudgetSettingsPage.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/pages/settings/subscription/PlanSelection.tsx
 msgid "Monthly"
 msgstr "Maandelijks"
@@ -10159,7 +10301,7 @@ msgstr "Nettovermogen ontwikkeling"
 #: src/features/goal-management/ui/GoalForm.tsx
 #: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "Never"
 msgstr "Nooit"
@@ -10275,12 +10417,12 @@ msgid "No account activity in this period."
 msgstr "Geen rekeningactiviteit in deze periode."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "No accounts"
-msgstr "Geen rekeningen"
+#~ msgid "No accounts"
+#~ msgstr "Geen rekeningen"
 
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
-msgid "No accounts available"
-msgstr "Geen rekeningen beschikbaar"
+#~ msgid "No accounts available"
+#~ msgstr "Geen rekeningen beschikbaar"
 
 #: src/pages/settings/push-api/IdReferencePanel.tsx
 msgid "No accounts found"
@@ -10363,7 +10505,6 @@ msgstr "Geen budget toegewezen"
 #: src/features/account-management/ui/DevSeedTransactionsButton.tsx
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
-#: src/pages/settings/AutomationRulesPage.tsx
 msgid "No budget selected"
 msgstr "Geen budget geselecteerd"
 
@@ -10380,8 +10521,8 @@ msgid "No cached rate found. Provide a temporary rate for offline use."
 msgstr "Geen opgeslagen koers gevonden. Geef een tijdelijke koers voor offline gebruik."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "No categories"
-msgstr "Geen categorieën"
+#~ msgid "No categories"
+#~ msgstr "Geen categorieën"
 
 #: src/features/budget-planning/ui/assign-dropdown/useAssignDropdownState.tsx
 msgid "No categories are overfunded!"
@@ -10584,6 +10725,7 @@ msgstr "Geen labels gevonden."
 msgid "No labels yet."
 msgstr "Nog geen labels."
 
+#: src/features/rules/ui/rule-editor/RuleAccountSelect.tsx
 #: src/features/transactions/ui/form/AccountSelect.tsx
 msgid "No matching accounts."
 msgstr "Geen overeenkomende rekeningen."
@@ -10617,8 +10759,8 @@ msgid "No memo"
 msgstr "Geen memo"
 
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "No memo provided"
-msgstr "Geen memo opgegeven"
+#~ msgid "No memo provided"
+#~ msgstr "Geen memo opgegeven"
 
 #: src/shared/hooks/useAudioRecorder.ts
 msgid "No microphone found. Please connect a microphone."
@@ -10845,8 +10987,8 @@ msgid "No upcoming dates"
 msgstr "Geen aankomende data"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "No upcoming occurrences"
-msgstr "Geen aankomende gebeurtenissen"
+#~ msgid "No upcoming occurrences"
+#~ msgstr "Geen aankomende gebeurtenissen"
 
 #: src/pages/admin/SelfHostAdminDashboard.tsx
 msgid "No users created yet."
@@ -10980,7 +11122,7 @@ msgstr "Aantal te genereren transacties"
 msgid "Obsidian"
 msgstr "Obsidian"
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Occurrence skipped"
 msgstr "Voorkomen overgeslagen"
@@ -11081,7 +11223,7 @@ msgid "One subscription, up to 5 people"
 msgstr "Eén abonnement, tot 5 personen"
 
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "One time"
 msgstr "Eenmalig"
 
@@ -11274,6 +11416,11 @@ msgstr "Optionele notities helpen ons team Budgero te verbeteren."
 msgid "Optional: give income sources their own categories, such as Salary, Freelance, or Rental income, to see them separately in analytics. All categories in the Income group count toward Ready to Assign in the same way. You can keep using the default Income category for everything."
 msgstr "Optioneel: geef inkomstenbronnen eigen categorieën, zoals Salaris, Freelance of Huurinkomsten, om ze apart in analyses te zien. Alle categorieën in de groep Inkomsten tellen op dezelfde manier mee voor Te verdelen. Je kunt de standaardcategorie Inkomsten voor alles blijven gebruiken."
 
+#: src/features/rules/ui/rule-editor/RuleConditionsEditor.tsx
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "OR"
+msgstr "OF"
+
 #: src/features/ai/ui/receipt-scanner/ReceiptDropzone.tsx
 msgid "Or drag and drop an image here"
 msgstr "Of sleep een afbeelding hierheen"
@@ -11412,7 +11559,8 @@ msgstr "{0} te veel toegewezen"
 msgid "Over-assigned by {0} — details"
 msgstr "{0} te veel toegewezen — details"
 
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
+#: src/features/transactions/ui/desktop-table/TransactionRow.tsx
+#: src/features/transactions/ui/mobile-transaction-card/MobileTransactionCard.tsx
 msgid "Overdue"
 msgstr "Achterstallig"
 
@@ -11564,7 +11712,12 @@ msgstr "Patroon"
 msgid "Pause"
 msgstr "Pauzeren"
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Pause rule"
+msgstr "Regel pauzeren"
+
 #: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Paused"
 msgstr "Gepauzeerd"
 
@@ -11575,9 +11728,14 @@ msgstr "Betalen"
 #: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
 msgid "Payee"
 msgstr "Begunstigde"
+
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Payee (blank clears it)"
+msgstr "Begunstigde (leeg wist deze)"
 
 #: src/pages/settings/PayeesPage.tsx
 msgid "Payee added"
@@ -12031,6 +12189,7 @@ msgstr "Probeer het over een moment opnieuw."
 #: src/features/goal-management/ui/GoalSection.tsx
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Please try again."
 msgstr "Probeer het opnieuw."
 
@@ -12066,7 +12225,7 @@ msgstr "Mogelijke oorzaken"
 msgid "Possible duplicate"
 msgstr "Mogelijk duplicaat"
 
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post transaction"
 msgstr "Transactie boeken"
 
@@ -12129,8 +12288,12 @@ msgid "Preparing your session…"
 msgstr "Je sessie voorbereiden…"
 
 #: src/features/transactions/ui/add-transaction/TransactionFormActions.tsx
-msgid "Press Cmd+Enter to save"
-msgstr "Druk op Cmd+Enter om op te slaan"
+msgid "Press {saveShortcut} to save"
+msgstr "Druk op {saveShortcut} om op te slaan"
+
+#: src/features/transactions/ui/add-transaction/TransactionFormActions.tsx
+#~ msgid "Press Cmd+Enter to save"
+#~ msgstr "Druk op Cmd+Enter om op te slaan"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "Preview"
@@ -12357,6 +12520,7 @@ msgstr "elk kwartaal"
 
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/features/transactions/ui/add-transaction/recurring-form.ts
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Quarterly"
 msgstr "Kwartaal"
 
@@ -12597,6 +12761,10 @@ msgstr "Aanbevolen modellen"
 msgid "Reconcile Account"
 msgstr "Rekening afstemmen"
 
+#: src/shared/lib/search-query-parser.ts
+msgid "Reconciled"
+msgstr "Afgestemd"
+
 #: src/features/transactions/ui/StatusIndicatorPopover.tsx
 msgid "Reconciled transaction"
 msgstr "Afgestemde transactie"
@@ -12633,15 +12801,16 @@ msgid "Recurring"
 msgstr "Terugkerend"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgctxt "transaction-status"
-msgid "Recurring"
-msgstr "Terugkerend"
+#~ msgctxt "transaction-status"
+#~ msgid "Recurring"
+#~ msgstr "Terugkerend"
 
 #: src/features/transactions/ui/add-transaction/RecurringOptionsSection.tsx
 msgid "Recurring schedule"
 msgstr "Herhalingsschema"
 
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/accounts/hooks/useRecurringEditorFromTransaction.ts
 msgid "Recurring transaction"
 msgstr "Terugkerende transactie"
@@ -12728,6 +12897,7 @@ msgstr "Actie opnieuw uitgevoerd"
 msgid "Redirecting to sign in…"
 msgstr "Doorsturen naar inloggen…"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/app/system/GlobalUndoHotkeys.tsx
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Redo"
@@ -12823,8 +12993,8 @@ msgid "Remaining to assign"
 msgstr "Resterend toe te wijzen"
 
 #: src/features/rules/ui/PayeeCategoryMemoryCard.tsx
-msgid "Remember how you file each payee, without writing a rule for it."
-msgstr "Onthoud hoe je elke begunstigde indelt, zonder er een regel voor te schrijven."
+#~ msgid "Remember how you file each payee, without writing a rule for it."
+#~ msgstr "Onthoud hoe je elke begunstigde indelt, zonder er een regel voor te schrijven."
 
 #: src/features/transactions/ui/add-transaction/TransactionFormHeader.tsx
 msgid "Remember last category, payee, account"
@@ -12833,6 +13003,10 @@ msgstr "Laatste categorie, begunstigde en rekening onthouden"
 #: src/pages/settings/SecurityPage.tsx
 msgid "Remember on this device (IndexedDB)"
 msgstr "Onthouden op dit apparaat (IndexedDB)"
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Remind on due date"
+msgstr "Op de vervaldatum herinneren"
 
 #: src/pages/settings/DataManagementPage.tsx
 msgid "Reminder frequency (days)"
@@ -12864,6 +13038,14 @@ msgstr "Verwijderen"
 msgid "Remove {0} filter"
 msgstr "{0}-filter verwijderen"
 
+#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+msgid "Remove action"
+msgstr "Actie verwijderen"
+
+#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+msgid "Remove condition"
+msgstr "Voorwaarde verwijderen"
+
 #: src/features/chat/ui/chat-panel/ChatComposer.tsx
 msgid "Remove image"
 msgstr "Afbeelding verwijderen"
@@ -12873,6 +13055,7 @@ msgid "Remove one-off"
 msgstr "Eenmalige verwijderen"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Remove pattern from memo"
 msgstr "Patroon uit memo verwijderen"
 
@@ -13185,6 +13368,10 @@ msgstr "Pensioen"
 msgid "Retro CRT terminal with phosphor green glow and scanlines."
 msgstr "Retro CRT-terminal met fosforgroene gloed en scanlijnen."
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Retro run"
+msgstr "Terugwerkend uitvoeren"
+
 #: src/app/startup/screens.tsx
 #: src/pages/admin/components/RegistrationSettings.tsx
 msgid "Retry"
@@ -13399,6 +13586,10 @@ msgstr "Uitvoergeschiedenis"
 msgid "Run models locally with Ollama"
 msgstr "Modellen lokaal uitvoeren met Ollama"
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Run now"
+msgstr "Nu uitvoeren"
+
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
 msgid "Run order"
 msgstr "Uitvoervolgorde"
@@ -13411,7 +13602,7 @@ msgstr "Voer alleen-lezen analyse- of onderhoudsqueries uit op de primaire serve
 msgid "Run the report query first, then edit this chart."
 msgstr "Voer eerst de rapportquery uit en bewerk dan deze grafiek."
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "Run this rule on past transactions?"
 msgstr "Deze regel uitvoeren op eerdere transacties?"
 
@@ -13447,6 +13638,7 @@ msgstr "Dezelfde valuta"
 msgid "Same date and amount in this account"
 msgstr "Dezelfde datum en hetzelfde bedrag op deze rekening"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/features/budget-planning/ui/GroupNameEditPopover.tsx
 #: src/features/currencies/ui/ManualRatePrompt.tsx
 #: src/features/settings/directory-manager/DirectoryTable.tsx
@@ -13532,6 +13724,14 @@ msgstr "Scenario opslaan"
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "Save Settings"
 msgstr "Instellingen opslaan"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Save transaction"
+msgstr "Transactie opslaan"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Save transaction from any field"
+msgstr "Transactie opslaan vanuit elk veld"
 
 #: src/features/reports/ui/SaveReportDialog.tsx
 msgid "Save your SQL query as a reusable report. Optionally add chart visualizations."
@@ -13645,12 +13845,12 @@ msgid "Scenario Planner"
 msgstr "Scenarioplanner"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "Scheduled"
-msgstr "Gepland"
+#~ msgid "Scheduled"
+#~ msgstr "Gepland"
 
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "Scheduled entries"
-msgstr "Geplande items"
+#~ msgid "Scheduled entries"
+#~ msgstr "Geplande items"
 
 #: src/widgets/dashboard/UpcomingTransactionsCard.tsx
 msgid "Scheduled transaction"
@@ -13700,11 +13900,16 @@ msgid "Search accounts..."
 msgstr "Rekeningen zoeken..."
 
 #: src/app/layout/desktop-shell/AccountsList.tsx
+#: src/features/rules/ui/rule-editor/RuleAccountSelect.tsx
 #: src/features/transactions/ui/form/AccountSelect.tsx
 #: src/pages/accounts/AccountsPage.tsx
 #: src/pages/analytics/components/AnalyticsFilterBar.tsx
 msgid "Search accounts…"
 msgstr "Rekeningen zoeken…"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Search and commands"
+msgstr "Zoeken en opdrachten"
 
 #: src/pages/admin/admin-users/UserSearchCard.tsx
 msgid "Search by ID, email, or name..."
@@ -13896,8 +14101,7 @@ msgstr "Selecteer een opgeslagen sjabloon"
 #: src/features/ai/ui/receipt-scanner/AIReceiptScannerDialog.tsx
 #: src/features/budget-planning/ui/category-row/CCPaymentCoverPopover.tsx
 #: src/features/import/ui/steps/ConfigureStep.tsx
-#: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-#: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
+#: src/features/rules/ui/rule-editor/RuleAccountSelect.tsx
 #: src/features/transactions/ui/cells/AccountSelectCell.tsx
 #: src/features/transactions/ui/form/AccountSelect.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
@@ -14206,10 +14410,12 @@ msgid "Set a new password for {0}. Share it securely with the user."
 msgstr "Stel een nieuw wachtwoord in voor {0}. Deel het veilig met de gebruiker."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set account"
 msgstr "Rekening instellen"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set amount"
 msgstr "Bedrag instellen"
 
@@ -14226,6 +14432,7 @@ msgid "Set aside each month"
 msgstr "Elke maand opzijzetten"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set category"
 msgstr "Categorie instellen"
 
@@ -14234,16 +14441,22 @@ msgid "Set Master Password"
 msgstr "Hoofdwachtwoord instellen"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set memo"
 msgstr "Notitie instellen"
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 msgid "Set payee"
 msgstr "Begunstigde instellen"
 
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Set Payee"
 msgstr "Begunstigde instellen"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Set to zero"
+msgstr "Op nul zetten"
 
 #: src/features/budget-management/ui/BudgetSwitcher.tsx
 #: src/widgets/navigation/MobileTopBar.tsx
@@ -14323,6 +14536,10 @@ msgstr "Verdeling binnen een prioriteit"
 msgid "Shopping"
 msgstr "Winkelen"
 
+#: src/shared/ui/calculator-cell/CalculatorDisplay.tsx
+msgid "Shortcuts: {half} (half), {double} (double), {zero} (zero), {tenPercent} (10%)"
+msgstr "Sneltoetsen: {half} (halveren), {double} (verdubbelen), {zero} (nul), {tenPercent} (10%)"
+
 #: src/pages/settings/components/GoalFundingSettingsCard.tsx
 msgid "Show a small badge for categories with a priority other than 3. Funding is unaffected."
 msgstr "Een kleine badge tonen voor categorieën met een andere prioriteit dan 3. De financiering verandert niet."
@@ -14360,6 +14577,10 @@ msgstr "Compacte weergave tonen"
 msgid "Show detailed view"
 msgstr "Gedetailleerde weergave tonen"
 
+#: src/pages/settings/automation-rules/RuleRow.tsx
+msgid "Show details"
+msgstr "Details tonen"
+
 #: src/features/budgeting/ui/BudgetToolbar.tsx
 msgid "Show hidden"
 msgstr "Toon verborgen"
@@ -14395,6 +14616,10 @@ msgstr "Zijbalk tonen"
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "Show uncategorized only"
 msgstr "Alleen zonder categorie tonen"
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Show upcoming"
+msgstr "Geplande tonen"
 
 #: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
 msgid "Show where this credit-card debt came from"
@@ -14533,6 +14758,7 @@ msgid "Size"
 msgstr "Grootte"
 
 #: src/features/import/ui/steps/PreviewStep.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Skip"
 msgstr "Overslaan"
 
@@ -14552,8 +14778,7 @@ msgstr "Nu overslaan"
 msgid "Skip this row from import"
 msgstr "Deze rij overslaan bij import"
 
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 msgid "Skip this time"
 msgstr "Deze keer overslaan"
 
@@ -14589,7 +14814,7 @@ msgstr "Iets anders"
 msgid "Something went wrong, please try again."
 msgstr "Er is iets misgegaan. Probeer het opnieuw."
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/accounts/hooks/useRecurringEditorFromTransaction.ts
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Something went wrong."
@@ -14648,6 +14873,10 @@ msgstr "Speciale toegang"
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "Speech Model"
 msgstr "Spraakmodel"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Speed up budgeting without leaving the keyboard."
+msgstr "Sneller budgetteren zonder het toetsenbord los te laten."
 
 #: src/features/budgeting/ui/BudgetContextPanel.tsx
 #: src/pages/analytics/AnalyticsPage.tsx
@@ -14855,6 +15084,10 @@ msgstr "Gestart —"
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 msgid "Started {0}"
 msgstr "Gestart {0}"
+
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+msgid "Started {startDate}"
+msgstr "Gestart op {startDate}"
 
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "Starting"
@@ -15200,6 +15433,10 @@ msgstr "Tabel"
 msgid "Table view"
 msgstr "Tabelweergave"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Take 10%"
+msgstr "10% nemen"
+
 #: src/features/ai/ui/receipt-scanner/ReceiptDropzone.tsx
 msgid "Take Photo"
 msgstr "Foto maken"
@@ -15382,8 +15619,8 @@ msgid "The member no longer has access to this workspace."
 msgstr "Het lid heeft geen toegang meer tot deze werkruimte."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
-msgid "The memo text to set for matching transactions."
-msgstr "De notitietekst die moet worden ingesteld voor overeenkomende transacties."
+#~ msgid "The memo text to set for matching transactions."
+#~ msgstr "De notitietekst die moet worden ingesteld voor overeenkomende transacties."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "The one rule of zero-based budgeting."
@@ -15464,6 +15701,10 @@ msgstr "De werkruimte is verwijderd en jouw sessie is bijgewerkt."
 #: src/shared/ui/theme-switch.tsx
 msgid "Theme preset"
 msgstr "Thema-voorinstelling"
+
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "Then"
+msgstr "Dan"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Then {monthly}/month or {yearly}/year, tax included."
@@ -15614,7 +15855,7 @@ msgstr "Dit verwijdert alleen de geschiedenisvermelding. Jouw transacties blijve
 msgid "This report query is not read-only and cannot run in dashboard widgets."
 msgstr "Deze rapportquery is niet alleen-lezen en kan niet worden uitgevoerd in dashboardwidgets."
 
-#: src/pages/settings/AutomationRulesPage.tsx
+#: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "This rule and its history will be removed. Recent runs can still be undone from the global undo menu."
 msgstr "Deze regel en de geschiedenis ervan worden verwijderd. Recente uitvoeringen kunnen nog ongedaan worden gemaakt via het algemene ongedaan maken-menu."
 
@@ -15633,8 +15874,12 @@ msgid "This shared workspace is locked until the owner renews their plan."
 msgstr "Deze gedeelde werkruimte is vergrendeld totdat de eigenaar zijn of haar abonnement vernieuwt."
 
 #: src/features/transactions/ui/StatusIndicatorPopover.tsx
-msgid "This transaction has been reconciled."
-msgstr "Deze transactie is afgestemd."
+msgid "This transaction has been reconciled and is locked as cleared."
+msgstr "Deze transactie is afgestemd en vergrendeld als verwerkt."
+
+#: src/features/transactions/ui/StatusIndicatorPopover.tsx
+#~ msgid "This transaction has been reconciled."
+#~ msgstr "Deze transactie is afgestemd."
 
 #: src/features/transactions/ui/StatusIndicatorPopover.tsx
 msgid "This transaction is scheduled for a future date."
@@ -15789,8 +16034,8 @@ msgstr "Naar"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
-msgid "To account:"
-msgstr "Naar rekening:"
+#~ msgid "To account:"
+#~ msgstr "Naar rekening:"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "To complete the goal"
@@ -15812,6 +16057,10 @@ msgstr "Om op schema te blijven"
 msgid "Today"
 msgstr "Vandaag"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Toggle cleared on selected rows"
+msgstr "Verwerkt wisselen voor geselecteerde rijen"
+
 #: src/shared/ui/theme-switch.tsx
 msgid "Toggle color mode"
 msgstr "Kleurmodus wisselen"
@@ -15819,6 +16068,10 @@ msgstr "Kleurmodus wisselen"
 #: src/pages/warranties/components/WarrantyTable.tsx
 msgid "Toggle notes"
 msgstr "Notities tonen/verbergen"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Toggle sidebar"
+msgstr "Zijbalk tonen/verbergen"
 
 #: src/shared/ui/sidebar.tsx
 msgid "Toggle Sidebar"
@@ -16004,8 +16257,8 @@ msgstr "Transactie"
 
 #. placeholder {0}: transaction.ID
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
-msgid "Transaction {0}"
-msgstr "Transactie {0}"
+#~ msgid "Transaction {0}"
+#~ msgstr "Transactie {0}"
 
 #. placeholder {0}: transaction.ID
 #: src/features/transactions/ui/desktop-table/SplitDetailsDialog.tsx
@@ -16030,7 +16283,7 @@ msgstr "Transactie van {0}"
 msgid "Transaction history preserved"
 msgstr "Transactiegeschiedenis bewaard"
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "Transaction posted"
 msgstr "Transactie geboekt"
@@ -16043,6 +16296,7 @@ msgstr "Transactie succesvol opgeslagen."
 msgid "Transaction with splits added"
 msgstr "Gesplitste transactie toegevoegd"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
 #: src/pages/settings/ImportsPage.tsx
 #: src/pages/warranties/components/WarrantyFormDialog.tsx
@@ -16097,8 +16351,7 @@ msgstr "Transcriptie mislukt"
 
 #: src/features/budget-planning/ui/CCPaymentActivityDialog.tsx
 #: src/features/transactions/ui/form/TransactionTypeSelector.tsx
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
-#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
+#: src/pages/settings/recurring/components/RecurringKindBadge.tsx
 msgid "Transfer"
 msgstr "Overboeking"
 
@@ -16375,10 +16628,9 @@ msgstr "De-archiveren"
 msgid "Unarchiving..."
 msgstr "De-archiveren..."
 
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "Unassigned category"
-msgstr "Niet-toegewezen categorie"
+#~ msgid "Unassigned category"
+#~ msgstr "Niet-toegewezen categorie"
 
 #: src/pages/admin/admin-users/user-details/BillingTab.tsx
 #: src/pages/settings/DataManagementPage.tsx
@@ -16414,6 +16666,15 @@ msgstr "Niet-gecategoriseerd"
 msgid "Uncategorized ({uncategorizedCount})"
 msgstr "Niet-gecategoriseerd ({uncategorizedCount})"
 
+#: src/features/transactions/ui/ClearedToggle.tsx
+#: src/shared/lib/search-query-parser.ts
+msgid "Uncleared"
+msgstr "Niet verwerkt"
+
+#: src/features/transactions/ui/ClearedToggle.tsx
+msgid "Uncleared — mark as cleared"
+msgstr "Niet verwerkt – markeren als verwerkt"
+
 #: src/shared/lib/search-query-parser.ts
 msgid "Under"
 msgstr "Onder"
@@ -16431,6 +16692,7 @@ msgstr "Ondergefinancierde doelen"
 msgid "Undid last action"
 msgstr "Laatste actie ongedaan gemaakt"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Undo"
 msgstr "Ongedaan maken"
@@ -16476,11 +16738,15 @@ msgstr "Niet-gegroepeerd"
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/features/rules/ui/RuleSummary.tsx
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
 msgid "Unknown account"
 msgstr "Onbekende rekening"
+
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "Unknown category"
+msgstr "Onbekende categorie"
 
 #: src/features/transactions/ui/MobileTransactionList.tsx
 #: src/widgets/dashboard/UncategorizedTransactionsCard.tsx
@@ -16544,13 +16810,12 @@ msgid "Upcoming bill: {0}"
 msgstr "Aankomende rekening: {0}"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "Upcoming occurrences"
-msgstr "Aankomende gebeurtenissen"
+#~ msgid "Upcoming occurrences"
+#~ msgstr "Aankomende gebeurtenissen"
 
-#: src/pages/accounts/components/RecurringTransactionsPanel.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "Upcoming transactions"
-msgstr "Aankomende transacties"
+#~ msgid "Upcoming transactions"
+#~ msgstr "Aankomende transacties"
 
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
@@ -17010,8 +17275,8 @@ msgid "Water"
 msgstr "Water"
 
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "We are loading your upcoming recurring occurrences."
-msgstr "We zijn je aankomende terugkerende transacties aan het laden."
+#~ msgid "We are loading your upcoming recurring occurrences."
+#~ msgstr "We zijn je aankomende terugkerende transacties aan het laden."
 
 #: src/features/rules/ui/RuleRunOverlay.tsx
 msgid "We could not apply this rule. Try again in a moment."
@@ -17042,7 +17307,7 @@ msgid "We were unable to collect your subscription payment. Update your billing 
 msgstr "We konden je abonnementsbetaling niet innen. Werk je betaalgegevens bij in de Lemon Squeezy-portal hieronder om je toegang te herstellen."
 
 #. placeholder {0}: occurrence.dueDate
-#: src/pages/settings/recurring/components/RecurringOccurrenceCard.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "We will create the transaction dated {0} and run continuous rules automatically."
 msgstr "We maken de transactie aan met datum {0} en voeren doorlopende regels automatisch uit."
 
@@ -17054,7 +17319,7 @@ msgstr "We volgen de volgorde van jouw werkruimtelijst."
 msgid "We will open this workspace first next time."
 msgstr "We openen deze werkruimte de volgende keer eerst."
 
-#: src/pages/accounts/AccountPage.tsx
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
 msgid "We will remind you again next time."
 msgstr "We herinneren je er de volgende keer weer aan."
@@ -17113,6 +17378,7 @@ msgstr "WebSocket"
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/features/transactions/ui/add-transaction/recurring-form.ts
 #: src/pages/admin/StickinessAnalyticsSection.tsx
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Weekly"
 msgstr "Wekelijks"
 
@@ -17176,9 +17442,17 @@ msgstr "Wat je nog kunt doen"
 msgid "What you own, what you owe, and where it's heading"
 msgstr "Wat je hebt, wat je schuldig bent, en waar het heen gaat"
 
+#: src/features/rules/ui/RuleSummary.tsx
+msgid "When"
+msgstr "Wanneer"
+
 #: src/pages/settings/recurring/RecurringTransactionsSection.tsx
-msgid "When a recurring item is almost due, it will appear here so you can mark it ready."
-msgstr "Wanneer een terugkerend item bijna vervalt, verschijnt het hier zodat je het klaar kunt markeren."
+#~ msgid "When a recurring item is almost due, it will appear here so you can mark it ready."
+#~ msgstr "Wanneer een terugkerend item bijna vervalt, verschijnt het hier zodat je het klaar kunt markeren."
+
+#: src/features/rules/ui/RuleSummary.tsx
+#~ msgid "When all match"
+#~ msgstr "Als alles overeenkomt"
 
 #: src/features/category-management/ui/CategoryEditDialog.tsx
 msgid "When enabled, this category won't show budget pace lines in spending charts"
@@ -17380,6 +17654,7 @@ msgid "yearly"
 msgstr "jaarlijks"
 
 #: src/features/transactions/ui/add-transaction/recurring-form.ts
+#: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 #: src/pages/settings/subscription/PlanSelection.tsx
 msgid "Yearly"
 msgstr "Jaarlijks"
