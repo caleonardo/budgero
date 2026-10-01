@@ -42,10 +42,12 @@ export class CurrencyParser {
       amount = amount.slice(1);
     }
 
+    // The configured format may not match the file (e.g. a Budgero display
+    // preset chosen for a US-formatted export), so fall back to auto-detection.
     const decimalSeparator = this.decimalSeparatorForFormat(numberFormat);
-    const value = decimalSeparator
-      ? this.parseWithDecimal(amount, decimalSeparator)
-      : this.autoDetectAndParse(amount);
+    const value =
+      (decimalSeparator ? this.parseWithDecimal(amount, decimalSeparator) : undefined) ??
+      this.autoDetectAndParse(amount);
     if (value === undefined || !Number.isFinite(value)) {
       throw new Error(`Unable to parse YNAB amount: ${amountStr}`);
     }

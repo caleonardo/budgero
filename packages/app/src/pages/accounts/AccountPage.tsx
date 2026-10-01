@@ -25,7 +25,6 @@ import { PayoffSimulator } from '@features/debt/ui/PayoffSimulator';
 import { useLoading } from '@shared/contexts/LoadingContext';
 import { RecurringTransactionEditor } from '@features/recurring/ui/RecurringTransactionEditor';
 import { getAccountTypeDefinition } from '@entities/account/model/accountTypes';
-import { addMonths } from 'date-fns';
 import { formatDateISO } from '@shared/lib/date-utils';
 import { formatSafeMilli } from '@shared/lib/currency/milli';
 import { useFormatMaskedAmount } from '@shared/lib/privacy/useMaskedLocalizer';
@@ -162,19 +161,16 @@ export default function AccountPage() {
   );
 
   // Scheduled occurrences projected into the register, with inline mark
-  // ready / skip actions. They follow the register range; when the range
-  // reaches today it also looks a month ahead, so upcoming occurrences show
-  // without widening the range (overdue ones fall inside it anyway).
-  const projectedOptions = useMemo(() => {
-    const rangeTo = dateRange?.to ? formatDateISO(dateRange.to) : undefined;
-    const today = formatDateISO(new Date());
-    const monthAhead = formatDateISO(addMonths(new Date(), 1));
-    return {
+  // ready / skip actions. They strictly follow the register range, so future
+  // occurrences only show when the range extends past today.
+  const projectedOptions = useMemo(
+    () => ({
       accountId: numericId || undefined,
-      fromDate: dateRange?.from ? formatDateISO(dateRange.from) : undefined,
-      toDate: rangeTo && rangeTo >= today && rangeTo < monthAhead ? monthAhead : rangeTo,
-    };
-  }, [numericId, dateRange]);
+      fromDate: registerRange.from,
+      toDate: registerRange.to,
+    }),
+    [numericId, registerRange]
+  );
   const { data: projectedTransactions = [] } = useProjectedTransactions(
     selectedAccount?.BudgetID || selectedBudget?.ID || 0,
     projectedOptions

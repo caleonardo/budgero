@@ -499,6 +499,9 @@ const CreateBudgetForm: React.FC<CreateBudgetFormProps> = ({
         currency,
         numberFormat,
         badgeIcon: importBadgeIcon,
+        // numberFormat is the Budgero display format, not the export's;
+        // auto-detect amounts in the CSV.
+        ...(ynabSourceMode === 'zip' ? { sourceNumberFormat: '' } : {}),
         ...(ynabSourceMode === 'zip' && ynabDateOrder ? { dateOrder: ynabDateOrder } : {}),
         ...(ynabSourceMode === 'api' &&
         ynabPreview?.creditPaymentMatching &&

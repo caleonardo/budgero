@@ -61,15 +61,12 @@ describe('German bank CSV (Sparkasse-style export)', () => {
     expect(net).toBeLessThan(3000);
   });
 
-  it('rejects conflicting US formatting instead of silently changing German amounts', () => {
+  it('falls back to auto-detection when US formatting conflicts with German amounts', () => {
     const csv = loadFixture('sample-german-bank.csv');
     const { rows } = parseDelimitedText(csv, SKIP_ROWS);
     const US_FORMAT = '123,456.78';
 
-    for (const amount of [rows[0].Betrag, rows[3].Betrag]) {
-      expect(() => currencyParser.parseYNABAmountAdvanced(amount, US_FORMAT)).toThrow(
-        /Unable to parse YNAB amount/
-      );
-    }
+    expect(currencyParser.parseYNABAmountAdvanced(rows[0].Betrag, US_FORMAT)).toBe(-1250);
+    expect(currencyParser.parseYNABAmountAdvanced(rows[3].Betrag, US_FORMAT)).toBe(2847.55);
   });
 });
