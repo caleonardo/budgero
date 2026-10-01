@@ -74,6 +74,10 @@ describe('CurrencyParser', () => {
     ['R$ 1.234,56', '1.096,56 $', 1234.56],
     ['NT$1,234.56', '$1,096.56', 1234.56],
     ['S$1,234.56', '$1,096.56', 1234.56],
+    // Display preset that does not match the export falls back to auto-detection
+    ['$0.00', '1.096,56 $', 0],
+    ['$1,234.56', '1.096,56 $', 1234.56],
+    ['-$100.00', '1.096,56 $', -100],
   ])('parses the complete amount %s using display preset %s', (amount, format, expected) => {
     expect(parser.parseYNABAmountAdvanced(amount, format)).toBe(expected);
   });
