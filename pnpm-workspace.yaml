@@ -36,6 +36,7 @@ overrides:
   '@clerk/clerk-react@<5.61.6': ^5.61.7
   '@clerk/shared@<3.47.5': ^3.47.7
   '@eslint/plugin-kit@<0.3.4': ^0.3.4
+  '@grpc/grpc-js@<1.14.5': ^1.14.5
   '@protobufjs/utf8@<1.1.1': ^1.1.1
   ajv@<6.14.0: ^6.14.0
   ajv@>=7.0.0-alpha.0 <8.20.0: ^8.20.0
@@ -43,7 +44,7 @@ overrides:
   brace-expansion@^2.0.0: ^2.1.7
   brace-expansion@^5.0.0: ^5.0.12
   defu@<6.1.5: ^6.1.5
-  dompurify@<3.4.0: ^3.4.7
+  dompurify@<3.4.16: ^3.4.16
   esbuild@<0.25.0: ^0.25.0
   fast-uri@<3.1.6: ^3.1.6
   flatted@<3.4.2: ^3.4.2
