@@ -21,11 +21,32 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.14.1',
+    date: 'October 1, 2026',
+    summary:
+      'Fixes upcoming recurring transactions appearing outside the selected register range and YNAB file imports failing on amounts.',
+    isLatest: true,
+    items: [
+      {
+        type: 'fixed',
+        title: 'Upcoming recurring follows the date range',
+        description:
+          'The register only shows upcoming recurring transactions within the selected date range. Choose a range that extends past today to see them.',
+      },
+      {
+        type: 'fixed',
+        title: 'YNAB file import amounts',
+        description:
+          'YNAB file imports detect the export’s number format automatically, so amounts like $0.00 no longer stop the import when the budget uses a different number format.',
+      },
+    ],
+  },
+  {
     version: 'v1.14.0',
     date: 'September 30, 2026',
     summary:
       'Adds cleared transactions and cleared-balance reconciliation, AND/OR rule conditions, duplicate hints, Push API splits, updates and transfers, and a clearer YNAB import.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
