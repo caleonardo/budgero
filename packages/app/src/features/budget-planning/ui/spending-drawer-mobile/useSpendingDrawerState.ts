@@ -13,7 +13,6 @@ import { useCategories } from '@entities/category/api/useCategories';
 import { toast } from 'sonner';
 import { ZERO_MILLI } from '@shared/lib/currency/milli';
 import {
-  filterTransactionsByDate,
   calculateCumulativeData,
   calculateGoalStatus,
   resolveAccountIdForTx,
@@ -70,11 +69,11 @@ export function useSpendingDrawerState(
     }));
   }, [transactions, selectedCategory]);
 
-  // Filter transactions: for current month, show only up to today
-  const filteredTransactions = useMemo(() => {
-    if (deferCalculations) return [];
-    return filterTransactionsByDate(normalizedTransactions, currentMonth);
-  }, [normalizedTransactions, currentMonth, deferCalculations]);
+  // Whole month, future-dated rows included, so the total matches the category's Activity.
+  const filteredTransactions = useMemo(
+    () => (deferCalculations ? [] : normalizedTransactions),
+    [normalizedTransactions, deferCalculations]
+  );
 
   const { cumulativeData, totalSpent } = useMemo(() => {
     if (deferCalculations) {

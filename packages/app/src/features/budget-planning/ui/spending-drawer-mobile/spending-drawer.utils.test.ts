@@ -1,6 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { asMilli, fromDecimal, ZERO_MILLI } from '@shared/lib/currency/milli';
-import { getTransactionSignedAmount, mapToTransactionRow } from './spending-drawer.utils';
+import {
+  calculateCumulativeData,
+  getTransactionSignedAmount,
+  mapToTransactionRow,
+} from './spending-drawer.utils';
 import type { Transaction } from './types';
 
 describe('spending-drawer utils', () => {
@@ -63,5 +67,65 @@ describe('spending-drawer utils', () => {
     });
 
     expect(mapped.LabelID).toBeNull();
+  });
+});
+
+describe('calculateCumulativeData with future-dated rows', () => {
+  afterEach(() => vi.useRealTimers());
+
+  it('counts rows dated later this month so the total matches Activity', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 9, 10, 12));
+    const tx = (Date: string, outflow: number) =>
+      ({ Date, InflowConverted: ZERO_MILLI, OutflowConverted: asMilli(outflow) }) as Transaction;
+    const { cumulativeData, totalSpent } = calculateCumulativeData(
+      [tx('2026-10-03', 10_000), tx('2026-10-25', 5_000)],
+      '2026-10',
+      undefined,
+      false
+    );
+    expect(totalSpent).toBe(15_000);
+    expect(cumulativeData.at(-1)).toMatchObject({ date: '2026-10-25', cumulative: 15 });
+  });
+
+  it('still ends the current month at today when nothing is future-dated', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 9, 10, 12));
+    const { cumulativeData } = calculateCumulativeData(
+      [
+        {
+          Date: '2026-10-03',
+          InflowConverted: ZERO_MILLI,
+          OutflowConverted: asMilli(1_000),
+        } as Transaction,
+      ],
+      '2026-10',
+      undefined,
+      false
+    );
+    expect(cumulativeData.at(-1)?.date).toBe('2026-10-10');
+  });
+});
+
+describe('calculateCumulativeData nets refunds', () => {
+  it('subtracts inflows so the total equals the category Activity', () => {
+    const { totalSpent } = calculateCumulativeData(
+      [
+        {
+          Date: '2026-09-03',
+          InflowConverted: ZERO_MILLI,
+          OutflowConverted: asMilli(80_000),
+        } as Transaction,
+        {
+          Date: '2026-09-09',
+          InflowConverted: asMilli(30_000),
+          OutflowConverted: ZERO_MILLI,
+        } as Transaction,
+      ],
+      '2026-09',
+      undefined,
+      false
+    );
+    expect(totalSpent).toBe(50_000);
   });
 });

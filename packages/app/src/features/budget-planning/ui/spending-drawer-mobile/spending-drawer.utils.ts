@@ -3,12 +3,14 @@ import {
   differenceInDays,
   startOfMonth,
   endOfMonth,
+  endOfDay,
   endOfToday,
   isSameMonth,
+  parseISO,
 } from 'date-fns';
 import { formatDate as format } from '@shared/lib/date-format';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
-import { extractDateKey, getMonthKey, getTodayISO } from '@shared/lib/date-utils';
+import { extractDateKey, getTodayISO } from '@shared/lib/date-utils';
 import { asMilli, toDecimal, ZERO_MILLI, type MilliUnits } from '@shared/lib/currency/milli';
 import { roundMilli } from '@shared/lib/currency/round-amount';
 import type { Transaction, CumulativeDataPoint, GoalStatus } from './types';
@@ -51,27 +53,6 @@ export function getTransactionSignedAmount(
 }
 
 /**
- * Filters transactions to only include those up to today for the current month,
- * or all transactions for past months.
- */
-export function filterTransactionsByDate(
-  transactions: Transaction[],
-  currentMonth: string
-): Transaction[] {
-  if (!transactions || transactions.length === 0) return [];
-
-  // Not the current month: the query already scoped rows to the month.
-  if (currentMonth !== getMonthKey(new Date())) {
-    return transactions;
-  }
-
-  // Compare YYYY-MM-DD keys as strings — parsing tx.Date with new Date()
-  // anchors it to UTC and drops 1st-of-month transactions west of UTC.
-  const todayKey = getTodayISO();
-  return transactions.filter((tx) => extractDateKey(tx.Date) <= todayKey);
-}
-
-/**
  * Calculates cumulative spending data with budget pace.
  *
  * `monthlyGoal` and the returned `totalSpent` are milliunits; the chart data
@@ -92,8 +73,16 @@ export function calculateCumulativeData(
   const startDate = startOfMonth(new Date(Number(year), Number(month) - 1, 1));
   const monthEnd = endOfMonth(startDate);
 
-  const current = new Date();
-  const actualEndDate = isSameMonth(current, startDate) ? endOfToday() : monthEnd;
+  // Current month runs to today, or further when future-dated rows already count toward Activity.
+  const latestKey = filteredTransactions.reduce(
+    (latest, tx) => (extractDateKey(tx.Date) > latest ? extractDateKey(tx.Date) : latest),
+    ''
+  );
+  const actualEndDate = isSameMonth(new Date(), startDate)
+    ? latestKey > getTodayISO()
+      ? endOfDay(parseISO(latestKey))
+      : endOfToday()
+    : monthEnd;
 
   const shouldShowBudgetPace = monthlyGoal && !excludeFromBudgetPace;
 
@@ -107,7 +96,8 @@ export function calculateCumulativeData(
   const dailySpendMap: Record<string, number> = {};
   filteredTransactions.forEach((tx) => {
     const dayKey = extractDateKey(tx.Date);
-    dailySpendMap[dayKey] = (dailySpendMap[dayKey] || 0) + tx.OutflowConverted;
+    // Net of refunds, matching the category's Activity in the planning table.
+    dailySpendMap[dayKey] = (dailySpendMap[dayKey] || 0) + tx.OutflowConverted - tx.InflowConverted;
   });
 
   const allDates = eachDayOfInterval({
