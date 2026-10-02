@@ -21,11 +21,38 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.15.0',
+    date: 'October 2, 2026',
+    summary:
+      'Adds bank sync (beta) through your own SimpleFIN Bridge subscription, an Uncleared quick filter with keyboard shortcuts, and a spending breakdown that matches Activity.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Bank sync (beta)',
+        description:
+          'Connect your own SimpleFIN Bridge subscription (US and Canadian banks) to import transactions automatically when you open Budgero. The connection is stored encrypted in your budget and Budgero’s servers never see your bank data. Transactions that look like ones you already entered are offered as matches. This is a beta: if your bank is on SimpleFIN, we’d love your feedback on how imports and matching work for you.',
+      },
+      {
+        type: 'new',
+        title: 'Uncleared filter and shortcuts',
+        description:
+          'Account pages have an Uncleared toggle next to Uncategorized. Press ⇧C or ⇧U to switch either filter on and off.',
+      },
+      {
+        type: 'fixed',
+        title: 'Spending breakdown matches Activity',
+        description:
+          'Clicking a category’s Activity now includes transactions dated later in the month and subtracts refunds, so the breakdown total matches.',
+      },
+    ],
+  },
+  {
     version: 'v1.14.1',
     date: 'October 1, 2026',
     summary:
       'Fixes upcoming recurring transactions appearing outside the selected register range and YNAB file imports failing on amounts.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'fixed',
