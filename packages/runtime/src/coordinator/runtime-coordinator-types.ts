@@ -90,3 +90,27 @@ export interface RuntimeCoordinatorDeps {
     reloadApp?(): void;
   };
 }
+
+/** Read-only snapshot of the active space's sync position, for diagnostics UI. */
+export interface SyncDiagnostics {
+  spaceId: string;
+  /** Last mutation-log version applied to the local database. */
+  cursor: number;
+  /** Server blob version last seen by this device. */
+  blobVersion: number | undefined;
+  /** Log position of the snapshot this device last restored from. */
+  lastDownloadedMutationVersion: number | undefined;
+  connected: boolean;
+  catchUpInProgress: boolean;
+  initialCatchUpSettled: boolean;
+  /** Local mutations the server has not acknowledged yet. */
+  pendingCount: number;
+}
+
+export interface PendingMutationInfo {
+  id: string;
+  op: string;
+  timestamp: Date;
+  /** False until sent on the current connection. */
+  sent: boolean;
+}

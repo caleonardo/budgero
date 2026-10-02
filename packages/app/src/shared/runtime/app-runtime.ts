@@ -23,6 +23,8 @@ import {
   type QueryClientLike,
   type WebDatabaseInstance,
   type PayloadWithBudgetId,
+  type PendingMutationInfo,
+  type SyncDiagnostics,
 } from '@budgero/runtime';
 import {
   ServiceManager,
@@ -154,6 +156,18 @@ export class AppRuntime {
 
   isMutationApplied(mutationId: string): boolean {
     return this.coordinator.isMutationApplied(mutationId);
+  }
+
+  getSyncDiagnostics(): SyncDiagnostics | null {
+    return this.coordinator.getSyncDiagnostics();
+  }
+
+  getPendingMutations(): Promise<PendingMutationInfo[]> {
+    return this.coordinator.getPendingMutations();
+  }
+
+  redownloadFromServer(): Promise<{ restored: boolean; catchUpRequested: boolean }> {
+    return this.coordinator.redownloadFromServer();
   }
 
   getDatabase(): WebDatabaseInstance | null {

@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -288,6 +290,113 @@ func TestGetDatabaseState_IncludesMutationVersion(t *testing.T) {
 	}
 	if response["mutation_version"] != float64(2) {
 		t.Fatalf("mutation_version = %v, want 2", response["mutation_version"])
+	}
+}
+
+type mutationLogResponse struct {
+	LatestVersion int64 `json:"latest_version"`
+	Entries       []struct {
+		Version          int64  `json:"version"`
+		UserID           string `json:"user_id"`
+		EncryptedPayload string `json:"encrypted_payload"`
+	} `json:"entries"`
+}
+
+func getMutationLog(t *testing.T, h *handler.Handlers, e *echo.Echo, userID, query string) (mutationLogResponse, error) {
+	t.Helper()
+	var response mutationLogResponse
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/sync/mutations?"+query, http.NoBody)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	setUserContext(c, userID)
+	if err := h.GetMutationLog(c); err != nil {
+		return response, err
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+		t.Fatalf("Failed to parse response: %v", err)
+	}
+	return response, nil
+}
+
+func entryVersions(response mutationLogResponse) []int64 {
+	versions := []int64{}
+	for i := range response.Entries {
+		versions = append(versions, response.Entries[i].Version)
+	}
+	return versions
+}
+
+func TestGetMutationLog_PagesNewestFirstWithEncryptedPayloads(t *testing.T) {
+	h, e, tc := setupTestHandler(t)
+	userID := testkit.SeedUser(t, tc.Queries, "log@example.com")
+	spaceID := testkit.SeedSpace(t, tc.DB, tc.Queries, userID, "Log Space")
+	for v := int64(1); v <= 5; v++ {
+		testkit.SeedMutation(t, tc.Queries, spaceID, userID, v, fmt.Sprintf("cipher-%d", v))
+	}
+
+	first, err := getMutationLog(t, h, e, userID, "space_id="+spaceID+"&limit=2")
+	if err != nil {
+		t.Fatalf("GetMutationLog() error = %v", err)
+	}
+	if first.LatestVersion != 5 {
+		t.Fatalf("latest_version = %d, want 5", first.LatestVersion)
+	}
+	if got := entryVersions(first); !reflect.DeepEqual(got, []int64{5, 4}) {
+		t.Fatalf("first page versions = %v, want [5 4]", got)
+	}
+	if first.Entries[0].EncryptedPayload != "cipher-5" || first.Entries[0].UserID != userID {
+		t.Fatalf("entry = %+v, want encrypted payload and author", first.Entries[0])
+	}
+
+	next, err := getMutationLog(t, h, e, userID, "space_id="+spaceID+"&limit=2&before=4")
+	if err != nil {
+		t.Fatalf("GetMutationLog() error = %v", err)
+	}
+	if got := entryVersions(next); !reflect.DeepEqual(got, []int64{3, 2}) {
+		t.Fatalf("second page versions = %v, want [3 2]", got)
+	}
+}
+
+func TestGetMutationLog_RejectsNonMembersAndBadParams(t *testing.T) {
+	h, e, tc := setupTestHandler(t)
+	ownerID := testkit.SeedUser(t, tc.Queries, "owner-log@example.com")
+	strangerID := testkit.SeedUser(t, tc.Queries, "stranger-log@example.com")
+	spaceID := testkit.SeedSpace(t, tc.DB, tc.Queries, ownerID, "Private Log")
+	testkit.SeedMutation(t, tc.Queries, spaceID, ownerID, 1, "cipher-1")
+
+	if _, err := getMutationLog(t, h, e, strangerID, "space_id="+spaceID); err == nil {
+		t.Fatal("GetMutationLog() expected error for a non-member")
+	}
+	_, err := getMutationLog(t, h, e, ownerID, "space_id="+spaceID+"&limit=abc")
+	var httpErr *echo.HTTPError
+	if !errors.As(err, &httpErr) || httpErr.Code != http.StatusBadRequest {
+		t.Fatalf("GetMutationLog(limit=abc) error = %v, want 400", err)
+	}
+}
+
+func TestGetDatabaseState_IncludesSnapshotPosition(t *testing.T) {
+	h, e, tc := setupTestHandler(t)
+	userID := testkit.SeedUser(t, tc.Queries, "snapshot-state@example.com")
+	spaceID := testkit.SeedSpace(t, tc.DB, tc.Queries, userID, "Snapshot Space")
+	if _, err := tc.DB.ExecContext(context.Background(),
+		"UPDATE budget_space_blobs SET mutation_version = 7, size_bytes = 2048 WHERE space_id = ?", spaceID); err != nil {
+		t.Fatalf("seed blob position: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/database/state?space_id="+spaceID, http.NoBody)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	setUserContext(c, userID)
+	if err := h.GetDatabaseState(c); err != nil {
+		t.Fatalf("GetDatabaseState() error = %v", err)
+	}
+	var response map[string]any
+	if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+		t.Fatalf("Failed to parse response: %v", err)
+	}
+	if response["snapshot_mutation_version"] != float64(7) || response["snapshot_size_bytes"] != float64(2048) {
+		t.Fatalf("snapshot fields = %v / %v, want 7 / 2048",
+			response["snapshot_mutation_version"], response["snapshot_size_bytes"])
 	}
 }
 

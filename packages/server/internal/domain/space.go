@@ -34,6 +34,23 @@ type SyncState struct {
 	Version              int64  `json:"version"`
 	Hash                 string `json:"hash"`
 	EncryptionKeyVersion int64  `json:"encryption_key_version"`
+	// Snapshot* describe the stored blob; SnapshotMutationVersion 0 = unknown (legacy).
+	SnapshotMutationVersion   int64     `json:"snapshot_mutation_version"`
+	SnapshotDataFormatVersion int64     `json:"snapshot_data_format_version"`
+	SnapshotSizeBytes         int64     `json:"snapshot_size_bytes"`
+	SnapshotUpdatedAt         time.Time `json:"snapshot_updated_at"`
+}
+
+// MutationLogEntry is one stored mutation; the payload stays end-to-end encrypted.
+type MutationLogEntry struct {
+	ID               string    `json:"id"`
+	UserID           string    `json:"user_id"`
+	Version          int64     `json:"version"`
+	BaseVersion      int64     `json:"base_version"`
+	Timestamp        time.Time `json:"timestamp"`
+	EncryptedPayload string    `json:"encrypted_payload,omitempty"`
+	// Op is set only for legacy unencrypted entries.
+	Op string `json:"op,omitempty"`
 }
 
 // SpaceSummary represents a space with membership info.

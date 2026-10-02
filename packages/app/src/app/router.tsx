@@ -31,6 +31,7 @@ import PushApiPage from '@pages/settings/push-api';
 import AuditLogPage from '@pages/settings/AuditLogPage';
 import AISettingsPage from '@pages/settings/ai';
 import BankSyncPage from '@pages/settings/bank-sync';
+import SyncStatusPage from '@pages/settings/SyncStatusPage';
 import { DashboardPage } from '@pages/dashboard/DashboardPage';
 import { BudgetingPage } from '@pages/budgeting/BudgetingPage';
 import SubscriptionSuccess from '@features/subscription/ui/SubscriptionSuccess';
@@ -121,6 +122,7 @@ function AppRouter() {
             <Route path="/settings/security" element={<SecurityPage />} />
             <Route path="/settings/imports" element={<ImportsPage />} />
             <Route path="/settings/data" element={<DataManagementPage />} />
+            <Route path="/settings/sync" element={<SyncStatusPage />} />
             <Route path="/settings/budget" element={<BudgetSettingsPage />} />
             <Route path="/settings/currencies" element={<CurrencySettingsPage />} />
             <Route path="/settings/payees" element={<PayeesPage />} />

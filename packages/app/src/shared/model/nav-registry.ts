@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import type { MessageDescriptor } from '@lingui/core';
 import {
+  Activity,
   User,
   CreditCard,
   Shield,
@@ -56,6 +57,7 @@ export const NAV_SETTINGS_DATA: NavRouteItem[] = [
   { to: '/settings/labels', icon: Tag, label: msg`Labels` },
   { to: '/settings/audit-log', icon: History, label: msg`Audit Log` },
   { to: '/settings/data', icon: Database, label: msg`Data Management` },
+  { to: '/settings/sync', icon: Activity, label: msg`Sync status` },
   { to: '/settings/budget', icon: SlidersHorizontal, label: msg`Budget Settings` },
   { to: '/settings/currencies', icon: Coins, label: msg`Currencies` },
 ];

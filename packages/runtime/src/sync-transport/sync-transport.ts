@@ -168,6 +168,13 @@ export class SyncTransport {
     this.replaceLocalVersion(version);
   }
 
+  /** Pull the log from the current cursor (e.g. after a snapshot restore moved it back). */
+  requestCatchUp(): boolean {
+    if (!this.isConnected()) return false;
+    if (!this.catchUpInProgress) this.requestCatchUpIfNeeded(this.ws, this.localVersion);
+    return true;
+  }
+
   isCatchUpInProgress(): boolean {
     return this.catchUpInProgress;
   }

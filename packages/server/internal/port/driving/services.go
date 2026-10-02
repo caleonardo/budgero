@@ -223,6 +223,8 @@ type EntitlementService interface {
 type SyncService interface {
 	// GetLatestVersion returns the latest mutation version for a space.
 	GetLatestVersion(ctx context.Context, spaceID string) (int64, error)
+	// ListMutationsBefore returns a page of the encrypted mutation log, newest first.
+	ListMutationsBefore(ctx context.Context, spaceID string, before int64, limit int) ([]domain.MutationLogEntry, error)
 }
 
 // PushService defines the interface for push notification operations.

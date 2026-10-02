@@ -140,4 +140,9 @@ export { MutationExecutor } from './mutation-executor';
 export type { ExecuteResult } from './mutation-executor';
 
 export { RuntimeCoordinator } from './coordinator';
-export type { RuntimeCoordinatorDeps, StateChangeListener } from './coordinator';
+export type {
+  PendingMutationInfo,
+  RuntimeCoordinatorDeps,
+  StateChangeListener,
+  SyncDiagnostics,
+} from './coordinator';

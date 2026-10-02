@@ -403,11 +403,71 @@ func (h *Handlers) GetDatabaseState(c echo.Context) error {
 		"version":                state.Version,
 		"hash":                   state.Hash,
 		"encryption_key_version": state.EncryptionKeyVersion,
+
+		"snapshot_mutation_version":    state.SnapshotMutationVersion,
+		"snapshot_data_format_version": state.SnapshotDataFormatVersion,
+		"snapshot_size_bytes":          state.SnapshotSizeBytes,
+		"snapshot_updated_at":          state.SnapshotUpdatedAt,
 	}
 	if mutationVersion != nil {
 		response["mutation_version"] = *mutationVersion
 	}
 	return c.JSON(http.StatusOK, response)
+}
+
+// GetMutationLog returns a page of the space's mutation log, newest first.
+// Payloads stay end-to-end encrypted; clients decrypt them for display.
+func (h *Handlers) GetMutationLog(c echo.Context) error {
+	userID := middleware.GetUserIDFromContext(c)
+	if userID == "" {
+		return echo.NewHTTPError(http.StatusUnauthorized, "user not authenticated")
+	}
+	if h.services == nil || h.services.Sync == nil {
+		return echo.NewHTTPError(http.StatusServiceUnavailable, "sync unavailable")
+	}
+
+	parseInt := func(name string) (int64, error) {
+		raw := c.QueryParam(name)
+		if raw == "" {
+			return 0, nil
+		}
+		v, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil || v < 0 {
+			return 0, echo.NewHTTPError(http.StatusBadRequest, "invalid "+name)
+		}
+		return v, nil
+	}
+	before, err := parseInt("before")
+	if err != nil {
+		return err
+	}
+	limit, err := parseInt("limit")
+	if err != nil {
+		return err
+	}
+
+	ctx := c.Request().Context()
+	spaceID, err := h.services.Space.ResolveSpaceID(ctx, userID, c.QueryParam("space_id"))
+	if err != nil {
+		return mapServiceError(err)
+	}
+	latest, err := h.services.Sync.GetLatestVersion(ctx, spaceID)
+	if err != nil {
+		log.Error().Err(err).Str("space_id", spaceID).Msg("Failed to read latest mutation version")
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to read mutation log")
+	}
+	entries, err := h.services.Sync.ListMutationsBefore(ctx, spaceID, before, int(limit))
+	if err != nil {
+		log.Error().Err(err).Str("space_id", spaceID).Msg("Failed to list mutation log")
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to read mutation log")
+	}
+
+	c.Response().Header().Set("Cache-Control", "no-store")
+	return c.JSON(http.StatusOK, map[string]any{
+		"space_id":       spaceID,
+		"latest_version": latest,
+		"entries":        entries,
+	})
 }
 
 // GetDatabaseBlob returns the user's encrypted database blob (Layer 2: HTTP blob storage)

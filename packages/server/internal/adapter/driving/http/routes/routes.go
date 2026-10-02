@@ -153,6 +153,7 @@ func SetupRoutes(e *echo.Echo, h *handler.Handlers, services *application.Servic
 	// Legacy routes for backward compatibility (can be removed later)
 	protected.GET("/database/hash", h.GetDatabaseHash)
 	protected.GET("/database/state", h.GetDatabaseState)
+	protected.GET("/sync/mutations", h.GetMutationLog)
 	protected.GET("/database/download", h.DownloadDatabase)
 
 	// Offline entitlement issuing: allow any authenticated user; handler enforces eligibility

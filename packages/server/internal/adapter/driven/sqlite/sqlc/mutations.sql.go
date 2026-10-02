@@ -95,6 +95,63 @@ func (q *Queries) GetLatestMutationVersion(ctx context.Context, spaceID string) 
 	return version, err
 }
 
+const listMutationsBefore = `-- name: ListMutationsBefore :many
+SELECT id, user_id, version, op, args, encrypted_payload, timestamp, base_version
+FROM mutation_log
+WHERE space_id = ? AND version < ?
+ORDER BY version DESC
+LIMIT ?
+`
+
+type ListMutationsBeforeParams struct {
+	SpaceID string `json:"space_id"`
+	Version int64  `json:"version"`
+	Limit   int64  `json:"limit"`
+}
+
+type ListMutationsBeforeRow struct {
+	ID               string         `json:"id"`
+	UserID           string         `json:"user_id"`
+	Version          int64          `json:"version"`
+	Op               sql.NullString `json:"op"`
+	Args             sql.NullString `json:"args"`
+	EncryptedPayload sql.NullString `json:"encrypted_payload"`
+	Timestamp        time.Time      `json:"timestamp"`
+	BaseVersion      int64          `json:"base_version"`
+}
+
+func (q *Queries) ListMutationsBefore(ctx context.Context, arg ListMutationsBeforeParams) ([]ListMutationsBeforeRow, error) {
+	rows, err := q.db.QueryContext(ctx, listMutationsBefore, arg.SpaceID, arg.Version, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListMutationsBeforeRow{}
+	for rows.Next() {
+		var i ListMutationsBeforeRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Version,
+			&i.Op,
+			&i.Args,
+			&i.EncryptedPayload,
+			&i.Timestamp,
+			&i.BaseVersion,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listUserMutationDays = `-- name: ListUserMutationDays :many
 SELECT
     substr(timestamp, 1, 10) AS day,

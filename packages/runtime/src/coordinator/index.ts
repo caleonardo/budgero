@@ -1,2 +1,7 @@
 export { RuntimeCoordinator } from './runtime-coordinator';
-export type { RuntimeCoordinatorDeps, StateChangeListener } from './runtime-coordinator-types';
+export type {
+  PendingMutationInfo,
+  RuntimeCoordinatorDeps,
+  StateChangeListener,
+  SyncDiagnostics,
+} from './runtime-coordinator-types';

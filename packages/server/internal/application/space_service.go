@@ -338,6 +338,11 @@ func (s *SpaceService) GetSyncState(ctx context.Context, userID, spaceID string)
 		Version:              blob.SyncVersion,
 		Hash:                 blob.CurrentHash,
 		EncryptionKeyVersion: blob.EncryptionKeyVersion,
+
+		SnapshotMutationVersion:   blob.MutationVersion,
+		SnapshotDataFormatVersion: blob.DataFormatVersion,
+		SnapshotSizeBytes:         blob.SizeBytes,
+		SnapshotUpdatedAt:         blob.UpdatedAt,
 	}, nil
 }
 

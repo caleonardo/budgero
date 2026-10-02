@@ -349,23 +349,52 @@ export const subscriptionApi = {
     }>('/subscription/details'),
 };
 
+export interface DatabaseState {
+  version: number;
+  hash?: string;
+  space_id?: string;
+  /** Latest version in the server's mutation log. */
+  mutation_version?: number;
+  /** Log position the stored snapshot covers (0 = unknown, legacy upload). */
+  snapshot_mutation_version?: number;
+  snapshot_data_format_version?: number;
+  snapshot_size_bytes?: number;
+  snapshot_updated_at?: string;
+}
+
+export interface MutationLogEntry {
+  id: string;
+  user_id: string;
+  version: number;
+  base_version: number;
+  timestamp: string;
+  encrypted_payload?: string;
+  /** Only set on legacy unencrypted entries. */
+  op?: string;
+}
+
+export interface MutationLogPage {
+  space_id: string;
+  latest_version: number;
+  entries: MutationLogEntry[];
+}
+
+export const syncApi = {
+  getMutationLog: (spaceId: string, options: { before?: number; limit?: number } = {}) => {
+    const params = new URLSearchParams({ space_id: spaceId });
+    if (options.before) params.set('before', String(options.before));
+    if (options.limit) params.set('limit', String(options.limit));
+    return apiClient.get<MutationLogPage>(`/sync/mutations?${params.toString()}`);
+  },
+};
+
 export const blobApi = {
   // Get lightweight sync state (version/hash) for a space
-  getState: async (
-    spaceId: string
-  ): Promise<{
-    version: number;
-    hash?: string;
-    space_id?: string;
-    mutation_version?: number;
-  } | null> => {
+  getState: async (spaceId: string): Promise<DatabaseState | null> => {
     try {
-      return await apiClient.get<{
-        version: number;
-        hash?: string;
-        space_id?: string;
-        mutation_version?: number;
-      }>(`/database/state?space_id=${encodeURIComponent(spaceId)}`);
+      return await apiClient.get<DatabaseState>(
+        `/database/state?space_id=${encodeURIComponent(spaceId)}`
+      );
     } catch (error) {
       if (error instanceof ApiError && error.status === 404) {
         return null;
