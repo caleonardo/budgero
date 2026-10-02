@@ -430,6 +430,11 @@ msgstr "{0} auf null ausgeglichen und archiviert."
 msgid "{0} bank transactions may match entries you already have."
 msgstr "{0} Banktransaktionen passen eventuell zu Einträgen, die du schon hast."
 
+#. placeholder {0}: position.behind
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "{0} behind"
+msgstr "{0} zurück"
+
 #. placeholder {0}: actionDialog.user.email
 #. placeholder {0}: user.email
 #: src/pages/admin/admin-users/useAdminUsersState.ts
@@ -1085,6 +1090,11 @@ msgstr "+ PERSON EINLADEN"
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 msgid "+ Line"
 msgstr "+ Zeile"
+
+#. placeholder {0}: position.snapshotTail
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "+{0} changes after it"
+msgstr "+{0} Änderungen danach"
 
 #. placeholder {0}: upcomingRecurringOccurrences.length - MAX_VISIBLE_ITEMS
 #: src/pages/accounts/components/RecurringTransactionsPanel.tsx
@@ -2982,6 +2992,10 @@ msgstr "Aggregatfunktion"
 msgid "Ahead of pace"
 msgstr "Dem Zeitplan voraus"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Ahead of server"
+msgstr "Vor dem Server"
+
 #: src/pages/settings/ai/AISettingsPage.tsx
 #: src/shared/model/nav-registry.ts
 msgid "AI Assistant"
@@ -4503,6 +4517,10 @@ msgstr "Barüberziehung in {0}"
 msgid "Cash spending:"
 msgstr "Bargeldausgaben:"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Catch-up"
+msgstr "Nachholen"
+
 #: src/pages/analytics/reports/FlowReport.tsx
 msgid "categories"
 msgstr "Kategorien"
@@ -5268,9 +5286,9 @@ msgstr "Mit LM Studio-Server verbinden"
 #~ msgid "Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync."
 #~ msgstr "Verbinde deine Konten über SimpleFIN Bridge für automatische Transaktions-Synchronisierung."
 
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
-#~ msgid "Connected"
-#~ msgstr "Verbunden"
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Connected"
+msgstr "Verbunden"
 
 #: src/widgets/sync-status/ConnectivityStatus.tsx
 msgid "Connected - Real-time sync active"
@@ -5305,6 +5323,10 @@ msgstr "Verbindung wird hergestellt…"
 #: src/pages/onboarding/steps/YnabImportStep.tsx
 msgid "CONNECTING…"
 msgstr "VERBINDUNG WIRD HERGESTELLT…"
+
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Connection"
+msgstr "Verbindung"
 
 #: src/pages/settings/ai/useAISettingsState.ts
 msgid "Connection failed"
@@ -5403,6 +5425,10 @@ msgstr "Kopieren"
 msgid "Copy code only"
 msgstr "Nur Code kopieren"
 
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "Copy diagnostics"
+msgstr "Diagnose kopieren"
+
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 #: src/pages/explorer-page/hooks/useExplorerState.ts
 msgid "Copy Failed"
@@ -5443,6 +5469,10 @@ msgstr "Verbindung zu YNAB fehlgeschlagen"
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 msgid "Could not connect to YNAB."
 msgstr "Verbindung zu YNAB fehlgeschlagen."
+
+#: src/features/sync-diagnostics/ui/MutationLogCard.tsx
+msgid "Could not decrypt"
+msgstr "Entschlüsselung fehlgeschlagen"
 
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "Could not delete the query."
@@ -5534,6 +5564,14 @@ msgstr "Die Einstellungen zur Zielfinanzierung konnten nicht aktualisiert werden
 msgid "Couldn't connect to SimpleFIN"
 msgstr "Verbindung mit SimpleFIN fehlgeschlagen"
 
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "Couldn't copy to the clipboard"
+msgstr "Kopieren in die Zwischenablage fehlgeschlagen"
+
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "Couldn't download from the server"
+msgstr "Download vom Server fehlgeschlagen"
+
 #: src/features/bank-sync/ui/LinkAccountDialog.tsx
 msgid "Couldn't link this account"
 msgstr "Dieses Konto konnte nicht verknüpft werden"
@@ -5541,6 +5579,10 @@ msgstr "Dieses Konto konnte nicht verknüpft werden"
 #: src/features/bank-sync/ui/BankConnectionPanel.tsx
 msgid "Couldn't load accounts from SimpleFIN"
 msgstr "Konten von SimpleFIN konnten nicht geladen werden"
+
+#: src/features/sync-diagnostics/ui/MutationLogCard.tsx
+msgid "Couldn't load the mutation log"
+msgstr "Änderungsprotokoll konnte nicht geladen werden"
 
 #: src/features/bank-sync/lib/simplefin-client.ts
 msgid "Couldn't reach SimpleFIN. Check your connection and try again."
@@ -6064,6 +6106,10 @@ msgstr "Datenbankpfad"
 msgid "Database restored successfully!"
 msgstr "Datenbank erfolgreich wiederhergestellt!"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Database schema"
+msgstr "Datenbankschema"
+
 #: src/pages/admin/sql-explorer/constants.ts
 #: src/pages/settings/DataManagementPage.tsx
 msgid "Database size"
@@ -6419,6 +6465,10 @@ msgstr "In diesem Export erkannt"
 msgid "Detected through the YNAB API"
 msgstr "Über die YNAB-API erkannt"
 
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "Diagnostics copied"
+msgstr "Diagnose kopiert"
+
 #: src/pages/analytics/AnalyticsPage.tsx
 msgid "Did the budget hold?"
 msgstr "Hält das Budget?"
@@ -6501,6 +6551,7 @@ msgstr "Leben wir im Rahmen unserer Mittel?"
 
 #: src/features/ai/ui/AICategorizeDialog.tsx
 #: src/features/ai/ui/receipt-scanner/ScanProgress.tsx
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
 msgid "Done"
 msgstr "Fertig"
 
@@ -6547,6 +6598,14 @@ msgstr "Lade deine Budget-Daten herunter, bevor dein Abonnement endet. Du benöt
 #: src/pages/settings/DataManagementPage.tsx
 msgid "Download your data for backup or analysis"
 msgstr "Lade deine Daten für Backup oder Analyse herunter"
+
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "Downloaded the server copy"
+msgstr "Serverkopie heruntergeladen"
+
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "Downloaded. Newer changes will apply when you're back online."
+msgstr "Heruntergeladen. Neuere Änderungen werden übernommen, sobald du wieder online bist."
 
 #: src/pages/admin/SelfHostAdminDashboard.tsx
 msgid "Downloading…"
@@ -8482,6 +8541,10 @@ msgstr "Wie Zahlen und Dezimalstellen in der gesamten App angezeigt werden."
 msgid "How should the assistant handle actions like adding transactions?"
 msgstr "Wie soll der Assistent mit Aktionen wie dem Hinzufügen von Transaktionen umgehen?"
 
+#: src/pages/settings/SyncStatusPage.tsx
+msgid "How this device's data compares to the server, and what is still syncing."
+msgstr "Wie die Daten dieses Geräts im Vergleich zum Server stehen und was noch synchronisiert wird."
+
 #: src/features/budget-management/ui/create-budget-form/YnabPatHelpPopover.tsx
 msgid "How to create a YNAB personal access token"
 msgstr "So erstellst du einen persönlichen YNAB-Zugriffstoken"
@@ -9271,6 +9334,10 @@ msgstr "Letzter Durchlauf: gesendet {0} | fehlgeschlagen {1}"
 msgid "Last Seen"
 msgstr "Zuletzt gesehen"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Last sync error"
+msgstr "Letzter Sync-Fehler"
+
 #: src/features/bank-sync/ui/BankConnectionPanel.tsx
 msgid "Last synced {syncedAgo}. Syncs automatically when you open Budgero."
 msgstr "Zuletzt synchronisiert {syncedAgo}. Synchronisiert automatisch, wenn du Budgero öffnest."
@@ -9296,10 +9363,19 @@ msgstr "Letzte Woche"
 msgid "Last year"
 msgstr "Letztes Jahr"
 
+#: src/features/sync-diagnostics/ui/MutationLogCard.tsx
+msgid "Latest changes stored on the server, decrypted on this device. Click a change to see its details."
+msgstr "Die neuesten auf dem Server gespeicherten Änderungen, auf diesem Gerät entschlüsselt. Klicke auf eine Änderung, um Details zu sehen."
+
 #. placeholder {0}: latest.Date
 #: src/pages/accounts/components/ValueChangeStat.tsx
 msgid "Latest rate ({0})"
 msgstr "Aktueller Kurs ({0})"
+
+#. placeholder {0}: version.latest_version
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Latest release {0}"
+msgstr "Neueste Version {0}"
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Latest updates"
@@ -9483,6 +9559,10 @@ msgstr "LM Studio"
 #: src/pages/explorer-page/components/ReportsPanel.tsx
 msgid "Load"
 msgstr "Laden"
+
+#: src/features/sync-diagnostics/ui/MutationLogCard.tsx
+msgid "Load {MUTATION_LOG_PAGE_SIZE} older"
+msgstr "{MUTATION_LOG_PAGE_SIZE} ältere laden"
 
 #: src/pages/explorer-page/components/ReportsPanel.tsx
 msgid "Load a previously saved query or manage your reports."
@@ -10272,6 +10352,10 @@ msgstr "Änderung"
 msgid "Mutation KPIs"
 msgstr "Änderungs-KPIs"
 
+#: src/features/sync-diagnostics/ui/MutationLogCard.tsx
+msgid "Mutation log"
+msgstr "Änderungsprotokoll"
+
 #: src/pages/admin/admin-users/user-details/OverviewTab.tsx
 msgid "Mutation Snapshot"
 msgstr "Änderungs-Snapshot"
@@ -10754,6 +10838,10 @@ msgstr "Keine Kategorie gefunden."
 msgid "No changes needed"
 msgstr "Keine Änderungen nötig"
 
+#: src/features/sync-diagnostics/ui/MutationLogCard.tsx
+msgid "No changes on the server yet."
+msgstr "Noch keine Änderungen auf dem Server."
+
 #: src/pages/explorer-page/components/ChartsPanel.tsx
 msgid "No chart selected. Click a chart button above."
 msgstr "Kein Diagramm ausgewählt. Klicke oben auf einen Diagramm-Button."
@@ -11200,6 +11288,7 @@ msgstr "Noch keine Arbeitsbereiche. Verwende die Schaltfläche oben, um deinen e
 #: src/features/import/ui/steps/configure/FormattingTab.tsx
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 #: src/features/reports/ui/SaveReportDialog.tsx
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
 #: src/pages/warranties/components/WarrantyFormDialog.tsx
 msgid "None"
@@ -11208,6 +11297,10 @@ msgstr "Keine"
 #: src/features/transactions/ui/form/DuplicateTransactionHint.tsx
 msgid "Not a duplicate"
 msgstr "Kein Duplikat"
+
+#: src/features/sync-diagnostics/ui/MutationLogCard.tsx
+msgid "Not applied"
+msgstr "Nicht übernommen"
 
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Not attributed"
@@ -11335,6 +11428,7 @@ msgstr "Außerhalb des Budgets"
 msgid "Official rates restored"
 msgstr "Offizielle Kurse wiederhergestellt"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
 #: src/widgets/sync-status/ConnectivityStatus.tsx
 msgid "Offline"
 msgstr "Offline"
@@ -12406,6 +12500,10 @@ msgstr "Bitte warte, während wir deine Daten wiederherstellen…"
 msgid "Poppins"
 msgstr "Poppins"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Position unknown (older upload)"
+msgstr "Position unbekannt (ältere Sicherung)"
+
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 msgid "Positive numbers increase, negatives decrease the amount."
 msgstr "Positive Zahlen erhöhen, negative verringern den Betrag."
@@ -12766,6 +12864,10 @@ msgstr "Abfrage gespeichert"
 msgid "Queue Status"
 msgstr "Warteschlangenstatus"
 
+#: src/features/sync-diagnostics/ui/PendingChangesCard.tsx
+msgid "Queued"
+msgstr "Wartend"
+
 #: src/app/startup/StartupController.tsx
 msgid "Queued changes will retry automatically."
 msgstr "Ausstehende Änderungen werden automatisch erneut versucht."
@@ -12825,6 +12927,18 @@ msgstr "Kurs aktualisiert"
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "Rate: 1 {fromCurrency} = {0} {toCurrency}"
 msgstr "Kurs: 1 {fromCurrency} = {0} {toCurrency}"
+
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "Re-download"
+msgstr "Neu herunterladen"
+
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "Re-download from server"
+msgstr "Vom Server neu herunterladen"
+
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "Re-download from server?"
+msgstr "Vom Server neu herunterladen?"
 
 #: src/pages/onboarding/steps/GoalStep.tsx
 msgid "Reach a total by a date"
@@ -13121,6 +13235,7 @@ msgstr "Reduzieren…"
 msgid "Reduction failed"
 msgstr "Reduzierung fehlgeschlagen"
 
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
 #: src/pages/admin/StickinessAnalyticsSection.tsx
 msgid "Refresh"
 msgstr "Aktualisieren"
@@ -13172,6 +13287,10 @@ msgstr "Alle ablehnen"
 #: src/features/currencies/ui/CurrencyConversionOverlay.tsx
 msgid "Reload Application"
 msgstr "Anwendung neu laden"
+
+#: src/features/sync-diagnostics/ui/MutationLogCard.tsx
+msgid "Reload log"
+msgstr "Protokoll neu laden"
 
 #: src/features/debt/ui/PayoffPlanSheet.tsx
 msgid "Remaining"
@@ -13810,6 +13929,10 @@ msgstr "Diese Regel auf vergangene Transaktionen anwenden?"
 #: src/pages/settings/AutomationRulesPage.tsx
 msgid "Run undone"
 msgstr "Ausführung rückgängig gemacht"
+
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Running"
+msgstr "Läuft"
 
 #: src/features/rules/ui/RuleRunOverlay.tsx
 msgid "Running automation rule"
@@ -14537,6 +14660,10 @@ msgstr "Sende Transaktionen aus externen Diensten über die Push-API an Budgero.
 msgid "Sending..."
 msgstr "Wird gesendet..."
 
+#: src/features/sync-diagnostics/ui/PendingChangesCard.tsx
+msgid "Sent"
+msgstr "Gesendet"
+
 #. placeholder {0}: result.sent ?? 0
 #. placeholder {1}: result.eligible ?? 0
 #. placeholder {2}: result.failed ?? 0
@@ -14549,6 +14676,18 @@ msgstr "{0} von {1} gesendet, {2}{3} fehlgeschlagen."
 #: src/features/transactions/ui/transfer-rate/TransferRateDialog.tsx
 msgid "Sent from {0}"
 msgstr "Gesendet von {0}"
+
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Server"
+msgstr "Server"
+
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Server snapshot"
+msgstr "Server-Snapshot"
+
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Server unreachable"
+msgstr "Server nicht erreichbar"
 
 #: src/pages/settings/ai/ConnectionTestPanel.tsx
 msgid "Server URL"
@@ -15033,6 +15172,10 @@ msgstr "Klein"
 #: src/pages/settings/AppearancePage.tsx
 msgid "Smaller cards, Activity hidden."
 msgstr "Kleinere Karten, Aktivität ausgeblendet."
+
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Snapshot updated"
+msgstr "Snapshot aktualisiert"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "Soften the page behind dialogs. Turn this off to keep account names and other context sharp while a dialog is open."
@@ -15576,6 +15719,11 @@ msgstr "Unterstützte Formate: CSV, TSV, TXT, PDF (Tabellendaten), OFX, QFX, QIF
 msgid "Supported Operations"
 msgstr "Unterstützte Operationen"
 
+#. placeholder {0}: local.supportedSchemaVersion
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Supports up to {0}"
+msgstr "Unterstützt bis {0}"
+
 #: src/features/currencies/ui/ManualRatePrompt.tsx
 msgid "Swap"
 msgstr "Tauschen"
@@ -15626,6 +15774,10 @@ msgstr "Sync Clerk -> Budgero"
 msgid "Sync Clerk Users"
 msgstr "Clerk-Benutzer synchronisieren"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Sync data format"
+msgstr "Sync-Datenformat"
+
 #: src/features/bank-sync/model/run-bank-sync.ts
 msgid "Sync failed"
 msgstr "Synchronisierung fehlgeschlagen"
@@ -15637,6 +15789,15 @@ msgstr "Synchronisierung erfordert Aufmerksamkeit"
 #: src/features/bank-sync/ui/BankConnectionPanel.tsx
 msgid "Sync now"
 msgstr "Jetzt synchronisieren"
+
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Sync position"
+msgstr "Sync-Stand"
+
+#: src/pages/settings/SyncStatusPage.tsx
+#: src/shared/model/nav-registry.ts
+msgid "Sync status"
+msgstr "Sync-Status"
 
 #: src/pages/admin/AdminDashboard.tsx
 msgid "Sync Utilities"
@@ -15925,6 +16086,10 @@ msgstr "Die ausgewählte Umbuchung hat nicht genau ein Quell- und ein Zielkonto.
 msgid "The sent amount stays fixed. Saving recalculates the received amount and both budget valuations atomically."
 msgstr "Der gesendete Betrag bleibt unverändert. Beim Speichern werden der empfangene Betrag und beide Budgetbewertungen gemeinsam neu berechnet."
 
+#: src/features/sync-diagnostics/ui/PendingChangesCard.tsx
+msgid "The server has confirmed all changes from this device."
+msgstr "Der Server hat alle Änderungen dieses Geräts bestätigt."
+
 #: src/features/goal-management/ui/GoalForm.tsx
 msgid "The total amount to allocate across the period. Monthly target is calculated automatically."
 msgstr "Der Gesamtbetrag, der über den Zeitraum verteilt werden soll. Das monatliche Ziel wird automatisch berechnet."
@@ -15981,6 +16146,10 @@ msgstr "Dann"
 msgid "Then {monthly}/month or {yearly}/year, tax included."
 msgstr "Danach {monthly}/Monat oder {yearly}/Jahr, inklusive Steuern."
 
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "There is no server copy to download yet."
+msgstr "Es gibt noch keine Serverkopie zum Herunterladen."
+
 #: src/features/bank-sync/ui/BankReviewDialog.tsx
 msgid "These bank transactions look like ones you already entered. Match them to mark your entry as cleared, or add them as new transactions."
 msgstr "Diese Banktransaktionen sehen aus wie welche, die du schon erfasst hast. Ordne sie zu, um deinen Eintrag als gebucht zu markieren, oder füge sie als neue Transaktionen hinzu."
@@ -16030,6 +16199,10 @@ msgstr "Diese Aktion kann NICHT rückgängig gemacht werden"
 msgid "This action cannot be undone. This will permanently delete the budget \"{0}\" and all its associated data."
 msgstr "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch wird das Budget „{0}\" und alle zugehörigen Daten dauerhaft gelöscht."
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "This app"
+msgstr "Diese App"
+
 #. placeholder {0}: formatMilli(maskedLocalizer, overAmount)
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "This assignment would exceed your ready-to-assign amount by {0}."
@@ -16061,6 +16234,10 @@ msgstr "Diese Änderung führt in zukünftigen Monaten zu einem negativen Verfü
 #: src/pages/settings/PayeesPage.tsx
 msgid "This clears the selected payees from your transactions in this budget.{0} You can add them back later if needed."
 msgstr "Dies entfernt die ausgewählten Empfänger aus deinen Transaktionen in diesem Budget.{0} Du kannst sie bei Bedarf später wieder hinzufügen."
+
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "This device"
+msgstr "Dieses Gerät"
 
 #: src/features/import/lib/import-display-text.ts
 msgid "This file row was already imported"
@@ -16129,6 +16306,14 @@ msgstr "Diese Erinnerung kann nicht übersprungen werden – lade jetzt ein Back
 #: src/pages/settings/ImportsPage.tsx
 msgid "This removes the history entry only. Your transactions remain untouched."
 msgstr "Dadurch wird nur der Verlaufseintrag entfernt. Deine Transaktionen bleiben unberührt."
+
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "This replaces the data on this device with the server copy, then applies the changes made after it. {pendingCount} changes from this device haven't been confirmed yet; they are kept and applied again on top."
+msgstr "Dadurch werden die Daten auf diesem Gerät durch die Serverkopie ersetzt und anschließend die danach vorgenommenen Änderungen übernommen. {pendingCount} Änderungen dieses Geräts sind noch nicht bestätigt; sie bleiben erhalten und werden erneut darauf angewendet."
+
+#: src/features/sync-diagnostics/ui/SyncActions.tsx
+msgid "This replaces the data on this device with the server copy, then applies the changes made after it. Use it if this device shows something different from your other devices."
+msgstr "Dadurch werden die Daten auf diesem Gerät durch die Serverkopie ersetzt und anschließend die danach vorgenommenen Änderungen übernommen. Nutze das, wenn dieses Gerät etwas anderes anzeigt als deine anderen Geräte."
 
 #: src/pages/custom-dashboards/components/WidgetCard.tsx
 msgid "This report query is not read-only and cannot run in dashboard widgets."
@@ -17020,6 +17205,7 @@ msgstr "Rückgängig gemacht"
 msgid "Ungrouped"
 msgstr "Ungruppiert"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 #: src/pages/admin/SelfHostAdminDashboard.tsx
 msgid "Unknown"
@@ -17095,6 +17281,7 @@ msgid "Up to 5 seats · free"
 msgstr "Bis zu 5 Plätze · kostenlos"
 
 #: src/features/bank-sync/ui/BankSyncButton.tsx
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
 msgid "Up to date"
 msgstr "Auf dem neuesten Stand"
 
@@ -17446,6 +17633,10 @@ msgstr "Aktuelles Passwort wird überprüft..."
 msgid "Version"
 msgstr "Version"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Versions"
+msgstr "Versionen"
+
 #: src/pages/explorer-page/components/SchemaSidebar.tsx
 msgid "View"
 msgstr "Anzeigen"
@@ -17505,10 +17696,19 @@ msgstr "Spracheingabe wird in diesem Browser nicht unterstützt"
 msgid "vs {0}"
 msgstr "gegenüber {0}"
 
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Waiting"
+msgstr "Wartet"
+
 #: src/features/budget-management/ui/CreateBudgetForm.tsx
 #: src/pages/onboarding/apply-onboarding.ts
 msgid "Waiting for your review"
 msgstr "Wartet auf deine Prüfung"
+
+#: src/features/sync-diagnostics/ui/PendingChangesCard.tsx
+#: src/features/sync-diagnostics/ui/SyncOverviewCards.tsx
+msgid "Waiting to send"
+msgstr "Wartet auf Versand"
 
 #: src/features/budget-management/ui/create-budget-form/YnabImportStatus.tsx
 msgid "Waiting to start"

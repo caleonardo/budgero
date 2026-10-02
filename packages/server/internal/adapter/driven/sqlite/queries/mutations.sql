@@ -29,3 +29,10 @@ WHERE user_id = ?
   AND substr(timestamp, 1, 10) < ?
 GROUP BY substr(timestamp, 1, 10)
 ORDER BY day ASC;
+
+-- name: ListMutationsBefore :many
+SELECT id, user_id, version, op, args, encrypted_payload, timestamp, base_version
+FROM mutation_log
+WHERE space_id = ? AND version < ?
+ORDER BY version DESC
+LIMIT ?;

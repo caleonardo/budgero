@@ -26,7 +26,12 @@ import { ActiveSpaceSession } from './active-space-session';
 import { RuntimeStatePolicy, type RuntimeStateIntent } from './runtime-state-policy';
 import { RuntimeLifecycleService } from './runtime-lifecycle-service';
 import { RuntimeCoordinatorEvents } from './runtime-coordinator-events';
-import type { RuntimeCoordinatorDeps, StateChangeListener } from './runtime-coordinator-types';
+import type {
+  PendingMutationInfo,
+  RuntimeCoordinatorDeps,
+  StateChangeListener,
+  SyncDiagnostics,
+} from './runtime-coordinator-types';
 
 export class RuntimeCoordinator {
   private abortController: AbortController | null = null;
@@ -581,19 +586,62 @@ export class RuntimeCoordinator {
       }
       throw error;
     }
-    if (restored) {
-      const db = this.activeContext?.db;
-      if (db && this.activeContext) {
-        this.activeContext.dbLoader.runMigrations(db);
-        this.activeContext.dbLoader.reconcileSpaceScope(db, this.activeContext.spaceId);
-      }
-      const qc = this.getQueryClient();
-      if (qc?.invalidateQueries) {
-        await qc.invalidateQueries();
-      }
-      this.hasLocalChangesSinceLastDownload = false;
-    }
+    if (restored) await this.afterSnapshotRestore();
     this.lastSnapshotDownloadAt = Date.now();
+  }
+
+  /**
+   * User-initiated: replace the local database with the server snapshot, then
+   * replay the log tail after the snapshot's position. Unlike downloadLatest()
+   * it is not rate-limited and surfaces failures.
+   */
+  async redownloadFromServer(): Promise<{ restored: boolean; catchUpRequested: boolean }> {
+    const ctx = this.activeContext;
+    if (!ctx) throw new Error('No active budget space');
+    const restored = await ctx.dbSync.downloadAndRestore();
+    if (restored) await this.afterSnapshotRestore();
+    this.lastSnapshotDownloadAt = Date.now();
+    return { restored, catchUpRequested: ctx.sync.requestCatchUp() };
+  }
+
+  private async afterSnapshotRestore(): Promise<void> {
+    const ctx = this.activeContext;
+    if (ctx?.db) {
+      ctx.dbLoader.runMigrations(ctx.db);
+      ctx.dbLoader.reconcileSpaceScope(ctx.db, ctx.spaceId);
+    }
+    const qc = this.getQueryClient();
+    if (qc?.invalidateQueries) {
+      await qc.invalidateQueries();
+    }
+    this.hasLocalChangesSinceLastDownload = false;
+  }
+
+  getSyncDiagnostics(): SyncDiagnostics | null {
+    const ctx = this.activeContext;
+    if (!ctx) return null;
+    return {
+      spaceId: ctx.spaceId,
+      cursor: ctx.sync.getLocalVersion(),
+      blobVersion: ctx.dbSync.getBlobVersion(),
+      lastDownloadedMutationVersion: ctx.dbSync.getLastDownloadedMutationVersion(),
+      connected: ctx.sync.isConnected(),
+      catchUpInProgress: ctx.sync.isCatchUpInProgress(),
+      initialCatchUpSettled: ctx.sync.hasInitialCatchUpSettled(),
+      pendingCount: ctx.offlineQueue.peekQueueLength(),
+    };
+  }
+
+  async getPendingMutations(): Promise<PendingMutationInfo[]> {
+    const queue = this.activeContext?.offlineQueue;
+    if (!queue) return [];
+    const unsent = new Set((await queue.getUnsent()).map((m) => m.id));
+    return (await queue.getQueue()).map((m) => ({
+      id: m.id,
+      op: m.op,
+      timestamp: m.timestamp,
+      sent: !unsent.has(m.id),
+    }));
   }
 
   async requireSpaceKey(spaceId: string): Promise<Uint8Array> {

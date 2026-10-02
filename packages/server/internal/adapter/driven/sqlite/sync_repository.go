@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"budgero-server/internal/adapter/driven/sqlite/sqlc"
+	"budgero-server/internal/domain"
 	"budgero-server/internal/port/driven/repository"
 )
 
@@ -26,4 +27,30 @@ func (r *SyncRepository) GetLatestVersion(ctx context.Context, spaceID string) (
 		return 0, err
 	}
 	return ToInt64(result), nil
+}
+
+// ListMutationsBefore returns up to limit entries with version < before, newest first.
+func (r *SyncRepository) ListMutationsBefore(ctx context.Context, spaceID string, before int64, limit int) ([]domain.MutationLogEntry, error) {
+	rows, err := r.queries.ListMutationsBefore(ctx, sqlc.ListMutationsBeforeParams{
+		SpaceID: spaceID,
+		Version: before,
+		Limit:   int64(limit),
+	})
+	if err != nil {
+		return nil, err
+	}
+	entries := make([]domain.MutationLogEntry, 0, len(rows))
+	for i := range rows {
+		row := &rows[i]
+		entries = append(entries, domain.MutationLogEntry{
+			ID:               row.ID,
+			UserID:           row.UserID,
+			Version:          row.Version,
+			BaseVersion:      row.BaseVersion,
+			Timestamp:        row.Timestamp,
+			EncryptedPayload: row.EncryptedPayload.String,
+			Op:               row.Op.String,
+		})
+	}
+	return entries, nil
 }

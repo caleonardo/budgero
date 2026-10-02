@@ -949,6 +949,7 @@ func (r *CredentialRepository) MarkLogin(ctx context.Context, userID string) err
 type SyncRepository struct {
 	mu             sync.RWMutex
 	latestVersions map[string]int64 // spaceID -> latest mutation version
+	entries        map[string][]domain.MutationLogEntry
 }
 
 // NewSyncRepository creates a new fake sync repository.
@@ -970,6 +971,33 @@ func (r *SyncRepository) GetLatestVersion(ctx context.Context, spaceID string) (
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	return r.latestVersions[spaceID], nil
+}
+
+// SeedMutation appends a log entry for a space (test helper).
+func (r *SyncRepository) SeedMutation(spaceID string, entry *domain.MutationLogEntry) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if r.entries == nil {
+		r.entries = make(map[string][]domain.MutationLogEntry)
+	}
+	r.entries[spaceID] = append(r.entries[spaceID], *entry)
+	if entry.Version > r.latestVersions[spaceID] {
+		r.latestVersions[spaceID] = entry.Version
+	}
+}
+
+// ListMutationsBefore returns up to limit entries with version < before, newest first.
+func (r *SyncRepository) ListMutationsBefore(ctx context.Context, spaceID string, before int64, limit int) ([]domain.MutationLogEntry, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	result := []domain.MutationLogEntry{}
+	all := r.entries[spaceID]
+	for i := len(all) - 1; i >= 0 && len(result) < limit; i-- {
+		if all[i].Version < before {
+			result = append(result, all[i])
+		}
+	}
+	return result, nil
 }
 
 // --- PushRepository ---

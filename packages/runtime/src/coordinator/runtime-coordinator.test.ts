@@ -183,6 +183,37 @@ describe('RuntimeCoordinator', () => {
     coordinator.destroy();
   });
 
+  it('re-downloads on demand without the rate limit and reports failures', async () => {
+    vi.stubGlobal('localStorage', localStorageMock as unknown as Storage);
+    vi.stubGlobal('sessionStorage', sessionStorageMock as unknown as Storage);
+
+    const { coordinator, deps, queryClient } = createCoordinator();
+    await coordinator.init({ masterPassword: 'master', queryClient });
+
+    await expect(coordinator.redownloadFromServer()).resolves.toEqual({
+      restored: false,
+      catchUpRequested: false,
+    });
+    await coordinator.redownloadFromServer();
+    expect(deps.downloadBlob).toHaveBeenCalledTimes(2);
+
+    deps.downloadBlob.mockRejectedValueOnce(new Error('boom'));
+    await expect(coordinator.redownloadFromServer()).rejects.toThrow(
+      'Failed to restore workspace snapshot'
+    );
+
+    expect(coordinator.getSyncDiagnostics()).toMatchObject({
+      spaceId: 'local-core-space',
+      cursor: 0,
+      connected: false,
+      pendingCount: 0,
+    });
+    await expect(coordinator.getPendingMutations()).resolves.toEqual([]);
+
+    coordinator.destroy();
+    expect(coordinator.getSyncDiagnostics()).toBeNull();
+  });
+
   it('guards mutation and switching by state', async () => {
     vi.stubGlobal('localStorage', localStorageMock as unknown as Storage);
     vi.stubGlobal('sessionStorage', sessionStorageMock as unknown as Storage);
