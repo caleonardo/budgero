@@ -129,7 +129,7 @@ function AppRouter() {
             <Route path="/settings/recurring" element={<RecurringTransactionsPage />} />
             <Route path="/settings/audit-log" element={<AuditLogPage />} />
             <Route path="/settings/ai" element={<AISettingsPage />} />
-            {import.meta.env.DEV && <Route path="/settings/bank-sync" element={<BankSyncPage />} />}
+            <Route path="/settings/bank-sync" element={<BankSyncPage />} />
             <Route path="/settings/about" element={<AboutPage />} />
           </Route>
         </Route>
