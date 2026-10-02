@@ -21,11 +21,25 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.15.1',
+    date: 'October 2, 2026',
+    summary: 'Fixes the Bank sync settings page opening blank.',
+    isLatest: true,
+    items: [
+      {
+        type: 'fixed',
+        title: 'Bank sync settings page',
+        description:
+          'Settings → Bank sync opens again. In v1.15.0 it showed a blank page, so SimpleFIN could not be connected.',
+      },
+    ],
+  },
+  {
     version: 'v1.15.0',
     date: 'October 2, 2026',
     summary:
       'Adds bank sync (beta) through your own SimpleFIN Bridge subscription, an Uncleared quick filter with keyboard shortcuts, and a spending breakdown that matches Activity.',
-    isLatest: true,
+    isLatest: false,
     items: [
       {
         type: 'new',
