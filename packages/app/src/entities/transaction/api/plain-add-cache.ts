@@ -167,6 +167,8 @@ function patchTransactionSummary(
     TransactionCount: summary.TransactionCount + 1,
     TransferTransactionCount: summary.TransferTransactionCount + (inserted.TransferID ? 1 : 0),
     UncategorizedCount: summary.UncategorizedCount + (isUncategorized ? 1 : 0),
+    UnclearedCount:
+      (summary.UnclearedCount ?? 0) + (inserted.Cleared || inserted.Reconciled ? 0 : 1),
     UnsafeTransactionCount: summary.UnsafeTransactionCount + (isUnsafe ? 1 : 0),
     TotalInflowConverted: asMilli(summary.TotalInflowConverted + inserted.InflowConverted),
     TotalOutflowConverted: asMilli(summary.TotalOutflowConverted + inserted.OutflowConverted),

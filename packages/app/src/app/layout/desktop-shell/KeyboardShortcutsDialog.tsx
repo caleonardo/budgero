@@ -11,6 +11,10 @@ import {
 } from '@shared/ui/dialog';
 import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 import { CLEARED_SHORTCUT_KEY } from '@features/transactions/api/useClearedShortcut';
+import {
+  UNCATEGORIZED_FILTER_KEY,
+  UNCLEARED_FILTER_KEY,
+} from '@features/transactions/api/useQuickFilterShortcuts';
 
 interface ShortcutGroup {
   title: string;
@@ -36,6 +40,14 @@ export function KeyboardShortcutsDialog() {
       title: t`Transactions`,
       items: [
         { keys: CLEARED_SHORTCUT_KEY, label: t`Toggle cleared on selected rows` },
+        {
+          keys: shortcuts.shift(UNCLEARED_FILTER_KEY),
+          label: t`Show only uncleared (account page)`,
+        },
+        {
+          keys: shortcuts.shift(UNCATEGORIZED_FILTER_KEY),
+          label: t`Show only uncategorized (account page)`,
+        },
         { keys: 'Enter', label: t`Save transaction` },
         { keys: shortcuts.mod('Enter'), label: t`Save transaction from any field` },
       ],

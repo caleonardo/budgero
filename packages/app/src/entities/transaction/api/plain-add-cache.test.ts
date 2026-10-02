@@ -69,6 +69,7 @@ describe('patchPlainAddTransactionCaches', () => {
       TransactionCount: 2,
       TransferTransactionCount: 0,
       UncategorizedCount: 0,
+      UnclearedCount: 0,
       UnsafeTransactionCount: 0,
       TotalInflowConverted: asMilli(200),
       TotalOutflowConverted: asMilli(0),

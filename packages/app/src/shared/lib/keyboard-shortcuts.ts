@@ -9,6 +9,7 @@ export function getKeyboardShortcutLabels() {
       search: '⌘K',
       addTransaction: '⌥⌘T',
       mod: (key: string) => `⌘${key}`,
+      shift: (key: string) => `⇧${key}`,
       redo: '⇧⌘Z',
     };
   }
@@ -18,6 +19,7 @@ export function getKeyboardShortcutLabels() {
       search: 'Ctrl/⌘ K',
       addTransaction: 'Ctrl/⌘ + Alt/⌥ + T',
       mod: (key: string) => `Ctrl/⌘ ${key}`,
+      shift: (key: string) => `Shift+${key}`,
       redo: 'Ctrl/⌘ + Shift + Z',
     };
   }
@@ -26,6 +28,7 @@ export function getKeyboardShortcutLabels() {
     search: 'Ctrl+K',
     addTransaction: 'Ctrl+Alt+T',
     mod: (key: string) => `Ctrl+${key}`,
+    shift: (key: string) => `Shift+${key}`,
     redo: 'Ctrl+Y',
   };
 }

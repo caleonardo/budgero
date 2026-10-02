@@ -8,10 +8,12 @@ import { TransactionsToolbar } from '@features/transactions/ui/TransactionsToolb
 import type { GetTransactionsByAccountRow, Category } from '@budgero/core/browser';
 import { useTransactionTable } from '@features/transactions/api/useTransactionTable';
 import { useClearedShortcut } from '@features/transactions/api/useClearedShortcut';
+import { useQuickFilterShortcuts } from '@features/transactions/api/useQuickFilterShortcuts';
 import {
   useTransactionSearch,
   filterTransactions,
   isUncategorized,
+  isUncleared,
 } from '@features/transactions/api/useTransactionSearch';
 import { makeAmountAccessors } from '@features/transactions/lib/amount-accessors';
 import { MobileTransactionList } from '@features/transactions/ui/MobileTransactionList';
@@ -73,6 +75,8 @@ interface TransactionsTableProps {
   totalTransactionCount?: number;
   /** Database count used before the uncategorized filter is activated. */
   uncategorizedCountOverride?: number;
+  /** Database count used before the uncleared filter is activated. */
+  unclearedCountOverride?: number;
   /** Incremental account-register loading controls. */
   hasMoreTransactions?: boolean;
   isLoadingMoreTransactions?: boolean;
@@ -95,6 +99,7 @@ export function TransactionsTable({
   onFilterModeChange,
   totalTransactionCount,
   uncategorizedCountOverride,
+  unclearedCountOverride,
   hasMoreTransactions = false,
   isLoadingMoreTransactions = false,
   onLoadMoreTransactions,
@@ -105,6 +110,10 @@ export function TransactionsTable({
   const isMobile = useIsMobile();
   // Pagination state (search state lives in useTransactionSearch, below)
   const [showOnlyUncategorized, setShowOnlyUncategorized] = React.useState(false);
+  const [showOnlyUncleared, setShowOnlyUncleared] = React.useState(false);
+  const toggleUncleared = React.useCallback(() => setShowOnlyUncleared((v) => !v), []);
+  const toggleUncategorized = React.useCallback(() => setShowOnlyUncategorized((v) => !v), []);
+  useQuickFilterShortcuts(hideAccountColumn, toggleUncleared, toggleUncategorized);
   const [page, setPage] = React.useState(0);
 
   // Page size with localStorage persistence so the user's preference sticks
@@ -241,6 +250,11 @@ export function TransactionsTable({
     return rawData.reduce((count, tx) => count + (isUncategorized(tx) ? 1 : 0), 0);
   }, [rawData]);
 
+  const loadedUnclearedCount = React.useMemo(
+    () => rawData.reduce((count, tx) => count + (isUncleared(tx) ? 1 : 0), 0),
+    [rawData]
+  );
+
   const categoryNames = React.useMemo(() => {
     return categories.map((cat) => cat.Name);
   }, [categories]);
@@ -262,7 +276,8 @@ export function TransactionsTable({
     handleSelectCategory,
   } = useTransactionSearch(categoryNames, labelNames, onDateRangeChange);
 
-  const isFilterModeActive = searchQuery.trim().length > 0 || showOnlyUncategorized;
+  const isFilterModeActive =
+    searchQuery.trim().length > 0 || showOnlyUncategorized || showOnlyUncleared;
   React.useEffect(() => {
     onFilterModeChange?.(isFilterModeActive);
   }, [isFilterModeActive, onFilterModeChange]);
@@ -271,17 +286,28 @@ export function TransactionsTable({
     !isFilterModeActive && uncategorizedCountOverride !== undefined
       ? uncategorizedCountOverride
       : loadedUncategorizedCount;
+  const unclearedCount =
+    !isFilterModeActive && unclearedCountOverride !== undefined
+      ? unclearedCountOverride
+      : loadedUnclearedCount;
 
   const filteredData = React.useMemo(
     () =>
       filterTransactions(
         rawData,
         parsedQuery,
-        showOnlyUncategorized,
+        { uncategorized: showOnlyUncategorized, uncleared: showOnlyUncleared },
         getPrimaryInflow,
         getPrimaryOutflow
       ),
-    [rawData, parsedQuery, showOnlyUncategorized, getPrimaryInflow, getPrimaryOutflow]
+    [
+      rawData,
+      parsedQuery,
+      showOnlyUncategorized,
+      showOnlyUncleared,
+      getPrimaryInflow,
+      getPrimaryOutflow,
+    ]
   );
 
   const effectiveTransactionCount =
@@ -392,7 +418,7 @@ export function TransactionsTable({
 
   React.useEffect(() => {
     setPage(0);
-  }, [showOnlyUncategorized]);
+  }, [showOnlyUncategorized, showOnlyUncleared]);
 
   React.useEffect(() => {
     return () => {
@@ -445,6 +471,9 @@ export function TransactionsTable({
           uncategorizedCount={uncategorizedCount}
           showOnlyUncategorized={showOnlyUncategorized}
           setShowOnlyUncategorized={setShowOnlyUncategorized}
+          unclearedCount={unclearedCount}
+          showOnlyUncleared={showOnlyUncleared}
+          setShowOnlyUncleared={setShowOnlyUncleared}
         />
 
         <DialogContent onInteractOutside={(e) => e.preventDefault()}>
@@ -538,7 +567,7 @@ export function TransactionsTable({
             }
             editorDirectories={editorDirectories}
             budgetId={budgetId}
-            scrollResetKey={`${searchQuery}:${showOnlyUncategorized}`}
+            scrollResetKey={`${searchQuery}:${showOnlyUncategorized}:${showOnlyUncleared}`}
             canLoadMore={!isFilterModeActive && hasMoreTransactions}
             isLoadingMore={isLoadingMoreTransactions}
             onLoadMore={onLoadMoreTransactions}

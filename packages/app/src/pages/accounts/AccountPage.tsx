@@ -583,6 +583,7 @@ export default function AccountPage() {
               (transactionSummary?.TransactionCount ?? 0) + projectedTransactions.length
             }
             uncategorizedCount={transactionSummary?.UncategorizedCount ?? 0}
+            unclearedCount={transactionSummary?.UnclearedCount ?? 0}
             hasMoreTransactions={Boolean(transactionPages.hasNextPage)}
             isLoadingMoreTransactions={transactionPages.isFetchingNextPage}
             onLoadMoreTransactions={handleLoadMoreTransactions}

@@ -549,6 +549,7 @@ export class TransactionQueries {
             WHEN NOT EXISTS (SELECT 1 FROM transaction_splits s WHERE s.TransactionID = t.ID)
              AND (t.CategoryID IS NULL OR t.CategoryID = 0 OR c.Name IS NULL OR c.Name = '' OR c.Name = 'Uncategorized')
             THEN 1 ELSE 0 END), 0) AS UncategorizedCount,
+          COALESCE(SUM(CASE WHEN t.Cleared = 0 AND t.Reconciled = 0 THEN 1 ELSE 0 END), 0) AS UnclearedCount,
           COALESCE(SUM(CASE WHEN ${unsafeMoney} THEN 1 ELSE 0 END), 0) AS UnsafeTransactionCount,
           COALESCE(SUM(t.InflowConverted), 0) AS TotalInflowConverted,
           COALESCE(SUM(t.OutflowConverted), 0) AS TotalOutflowConverted,
@@ -563,6 +564,7 @@ export class TransactionQueries {
         TransactionCount: 0,
         TransferTransactionCount: 0,
         UncategorizedCount: 0,
+        UnclearedCount: 0,
         UnsafeTransactionCount: 0,
         TotalInflowConverted: ZERO_MILLI,
         TotalOutflowConverted: ZERO_MILLI,

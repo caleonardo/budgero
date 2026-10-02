@@ -25,6 +25,15 @@ export function isUncategorized(tx: GetTransactionsByAccountRow): boolean {
   );
 }
 
+export function isUncleared(tx: GetTransactionsByAccountRow): boolean {
+  return !tx.IsProjected && !tx.Cleared && !tx.Reconciled;
+}
+
+export interface QuickFilters {
+  uncategorized: boolean;
+  uncleared: boolean;
+}
+
 function toSearchValue(value: unknown): string {
   if (value === null || value === undefined) return '';
   if (typeof value === 'string') return value.toLowerCase();
@@ -34,12 +43,12 @@ function toSearchValue(value: unknown): string {
 /**
  * Pure filter pipeline for the transactions table: applies the semantic search
  * query's structured filters (type, category, label, amount), its free-text
- * remainder, and the "uncategorized only" toggle, in that order.
+ * remainder, and the uncategorized/uncleared toggles, in that order.
  */
 export function filterTransactions(
   data: GetTransactionsByAccountRow[],
   parsedQuery: ParsedSearchQuery,
-  showOnlyUncategorized: boolean,
+  quickFilters: QuickFilters,
   getPrimaryInflow: (transaction: GetTransactionsByAccountRow) => number,
   getPrimaryOutflow: (transaction: GetTransactionsByAccountRow) => number
 ): GetTransactionsByAccountRow[] {
@@ -138,8 +147,11 @@ export function filterTransactions(
     });
   }
 
-  if (showOnlyUncategorized) {
+  if (quickFilters.uncategorized) {
     filtered = filtered.filter(isUncategorized);
+  }
+  if (quickFilters.uncleared) {
+    filtered = filtered.filter(isUncleared);
   }
 
   return filtered;
