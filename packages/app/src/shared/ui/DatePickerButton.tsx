@@ -4,6 +4,7 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { MonthYearCalendar } from '@shared/ui/MonthYearCalendar';
+import type { Matcher } from 'react-day-picker';
 
 interface DatePickerButtonProps {
   /** ISO `yyyy-MM-dd` date string, or `''` when unset. */
@@ -11,12 +12,16 @@ interface DatePickerButtonProps {
   /** Called with an ISO `yyyy-MM-dd` string, or `''` when cleared. */
   onChange: (value: string) => void;
   placeholder?: string;
+  disabled?: Matcher | Matcher[];
+  endMonth?: Date;
 }
 
 export function DatePickerButton({
   value,
   onChange,
   placeholder = 'Pick a date',
+  disabled,
+  endMonth,
 }: DatePickerButtonProps) {
   return (
     <Popover>
@@ -34,6 +39,8 @@ export function DatePickerButton({
         <MonthYearCalendar
           selected={value ? parseISO(value) : undefined}
           onSelect={(d) => onChange(d ? format(d, 'yyyy-MM-dd') : '')}
+          disabled={disabled}
+          endMonth={endMonth}
         />
       </PopoverContent>
     </Popover>

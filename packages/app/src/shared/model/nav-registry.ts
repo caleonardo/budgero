@@ -15,6 +15,7 @@ import {
   RefreshCw,
   Plug,
   Bot,
+  Building2,
   Palette,
   Info,
   FileText,
@@ -30,6 +31,7 @@ export interface NavRouteItem {
   exact?: boolean;
   selfHostHidden?: boolean;
   devOnly?: boolean;
+  beta?: boolean;
 }
 
 /** Reports submenu links (all indented `ml-4 mr-2`). */
@@ -64,6 +66,7 @@ export const NAV_SETTINGS_AUTOMATION: NavRouteItem[] = [
   { to: '/settings/recurring', icon: RefreshCw, label: msg`Recurring` },
   { to: '/settings/api', icon: Plug, label: msg`Push API` },
   { to: '/settings/ai', icon: Bot, label: msg`AI Assistant` },
+  { to: '/settings/bank-sync', icon: Building2, label: msg`Bank sync`, beta: true },
 ];
 
 /** Settings → Preferences links. */

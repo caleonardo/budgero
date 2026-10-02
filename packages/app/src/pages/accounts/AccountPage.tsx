@@ -35,6 +35,7 @@ import { hasUnsafeTransactionMoney } from '@entities/transaction/lib/money-integ
 
 import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { AccountGlyph } from '@entities/account/ui/AccountGlyph';
+import { BankSyncButton } from '@features/bank-sync';
 import { useAccountDateRange } from './hooks/useAccountDateRange';
 import { useAccountMetrics } from './hooks/useAccountMetrics';
 import { useJumpToTransaction } from './hooks/useJumpToTransaction';
@@ -364,6 +365,13 @@ export default function AccountPage() {
                     selectedAccount={selectedAccount}
                   />
                 )}
+                {selectedAccount && (
+                  <BankSyncButton
+                    budgetId={selectedAccount.BudgetID}
+                    accountId={selectedAccount.ID}
+                    currency={selectedAccount.Currency}
+                  />
+                )}
                 <Badge variant="secondary" className="text-[10px] px-1.5 py-0 shrink-0">
                   <AccountTypeLabel type={selectedAccount?.Type} />
                 </Badge>
@@ -498,6 +506,13 @@ export default function AccountPage() {
                 variant="desktop"
               />
               {selectedAccount && (
+                <BankSyncButton
+                  budgetId={selectedAccount.BudgetID}
+                  accountId={selectedAccount.ID}
+                  currency={selectedAccount.Currency}
+                />
+              )}
+              {selectedAccount && (
                 <EditAccountDialog
                   budgetId={selectedBudget?.ID || 0}
                   selectedAccount={selectedAccount}
@@ -568,6 +583,7 @@ export default function AccountPage() {
               (transactionSummary?.TransactionCount ?? 0) + projectedTransactions.length
             }
             uncategorizedCount={transactionSummary?.UncategorizedCount ?? 0}
+            unclearedCount={transactionSummary?.UnclearedCount ?? 0}
             hasMoreTransactions={Boolean(transactionPages.hasNextPage)}
             isLoadingMoreTransactions={transactionPages.isFetchingNextPage}
             onLoadMoreTransactions={handleLoadMoreTransactions}

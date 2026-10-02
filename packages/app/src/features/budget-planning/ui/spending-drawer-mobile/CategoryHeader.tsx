@@ -27,7 +27,7 @@ export const CategoryHeader = memo(function CategoryHeader({
           <div className="mt-2 flex items-end justify-between gap-3">
             <div className="min-w-0">
               <div className="text-xl md:text-2xl font-bold truncate">
-                {formatMilli(globalLocalizer, totalSpent)}
+                {formatMilli(globalLocalizer, asMilli(Math.abs(totalSpent)))}
               </div>
               <div className="text-[11px] text-muted-foreground">
                 <Trans>Total Spent</Trans>

@@ -30,7 +30,7 @@ const ids = (query: string) =>
   filterTransactions(
     rows,
     parseSearchQuery(query, [], []),
-    false,
+    { uncategorized: false, uncleared: false },
     (tx) => tx.InflowConverted,
     (tx) => tx.OutflowConverted
   ).map((tx) => tx.ID);
@@ -40,5 +40,19 @@ describe('filterTransactions cleared status', () => {
     expect(ids('uncleared')).toEqual([1]);
     expect(ids('cleared')).toEqual([2, 3]);
     expect(ids('reconciled')).toEqual([3]);
+  });
+});
+
+describe('filterTransactions quick filters', () => {
+  it('uncleared toggle keeps only real, uncleared rows', () => {
+    expect(
+      filterTransactions(
+        rows,
+        parseSearchQuery('', [], []),
+        { uncategorized: false, uncleared: true },
+        (tx) => tx.InflowConverted,
+        (tx) => tx.OutflowConverted
+      ).map((tx) => tx.ID)
+    ).toEqual([1]);
   });
 });

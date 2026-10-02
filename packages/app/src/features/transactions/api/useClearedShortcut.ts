@@ -8,7 +8,7 @@ import { useSetTransactionsCleared } from '@entities/transaction/api/useTransact
 /** Key that toggles cleared status on the selected register rows. */
 export const CLEARED_SHORTCUT_KEY = 'C';
 
-function isTypingTarget(target: EventTarget | null): boolean {
+export function isTypingTarget(target: EventTarget | null): boolean {
   const element = target instanceof HTMLElement ? target : null;
   if (!element) return false;
   return (
@@ -32,7 +32,7 @@ export function useClearedShortcut(selectedRowIds: number[], rows: GetTransactio
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() !== 'c') return;
-      if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
+      if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || event.repeat) return;
       if (isTypingTarget(event.target)) return;
 
       const selected = new Set(selectedRowIds);

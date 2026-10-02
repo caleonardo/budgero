@@ -98,6 +98,7 @@ export type * from './services/chat/types.js';
 export type { Goal } from './services/goals/types.js';
 export type * from './services/import/types.js';
 export type * from './services/llm-settings/types.js';
+export type * from './services/bank-sync/types.js';
 export type * from './services/monthly-budgets/types.js';
 export type * from './services/mutation-history/types.js';
 export type * from './services/recurring/types.js';
@@ -225,3 +226,8 @@ export {
 } from './services/import/ynab-api-normalizer.js';
 
 export * from './services/import/duplicate-planner.js';
+export {
+  bankOperationId,
+  isPostedSimpleFINTransaction,
+  simpleFINDate,
+} from './services/bank-sync/index.js';

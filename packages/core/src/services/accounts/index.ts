@@ -55,7 +55,8 @@ export class AccountService {
     metadata?: Record<string, unknown>,
     onBudget?: boolean,
     /** Memo written on the opening transaction; app passes a localized string. */
-    initialBalanceMemo = 'Initial Balance'
+    initialBalanceMemo = 'Initial Balance',
+    initialBalanceDate?: string
   ): Promise<Account> {
     if (!name.trim()) {
       throw new Error('account name cannot be empty');
@@ -105,7 +106,7 @@ export class AccountService {
     // - Standard accounts: positive initial inflow sets opening balance
     // - Liability accounts (credit/loan/mortgage): record an initial outflow equal to total debt
     //   so the running balance starts negative and payments (inflows) reduce the debt
-    const currentDate = getLocalDateString(); // YYYY-MM-DD, user's local calendar day
+    const currentDate = initialBalanceDate ?? getLocalDateString();
 
     // Pre-fetch the rate so the initial-balance transaction can be converted immediately.
     const budget = this.queries.getBudget(budgetId);
@@ -518,12 +519,11 @@ export class AccountService {
       .find((candidate) => candidate.ID === categoryId);
     return Boolean(
       category &&
-        this.categoryService
-          .getAllCategoryGroups(budgetId)
-          .some(
-            (group) =>
-              group.ID === category.CategoryGroupID && group.Name === 'Credit Card Payments'
-          )
+      this.categoryService
+        .getAllCategoryGroups(budgetId)
+        .some(
+          (group) => group.ID === category.CategoryGroupID && group.Name === 'Credit Card Payments'
+        )
     );
   }
 

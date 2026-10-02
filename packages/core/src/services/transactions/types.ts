@@ -137,6 +137,7 @@ export interface AccountTransactionSummary {
   TransactionCount: number;
   TransferTransactionCount: number;
   UncategorizedCount: number;
+  UnclearedCount: number;
   UnsafeTransactionCount: number;
   TotalInflowConverted: MilliUnits;
   TotalOutflowConverted: MilliUnits;

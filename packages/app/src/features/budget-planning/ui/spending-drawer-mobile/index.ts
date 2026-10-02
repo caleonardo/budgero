@@ -21,7 +21,6 @@ export { TransactionDialogs } from './TransactionDialogs';
 export { useSpendingDrawerState } from './useSpendingDrawerState';
 
 export {
-  filterTransactionsByDate,
   calculateCumulativeData,
   calculateGoalStatus,
   resolveAccountIdForTx,

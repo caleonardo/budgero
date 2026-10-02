@@ -14,6 +14,7 @@ export * from './rules/index.js';
 export * from './recurring/index.js';
 export * from './mutation-history/index.js';
 export * from './llm-settings/index.js';
+export * from './bank-sync/index.js';
 export * from './chat/index.js';
 export * from './custom-dashboards/index.js';
 export * from './warranties/index.js';

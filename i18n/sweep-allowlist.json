@@ -110,6 +110,11 @@
       "file": "src/shared/lib/keyboard-shortcuts.ts",
       "text": "Ctrl+{\u2026}",
       "reason": "Keyboard key-name label (Ctrl/\u2318 + key); key names are locale-stable, not translatable copy."
+    },
+    {
+      "file": "src/shared/lib/keyboard-shortcuts.ts",
+      "text": "Shift+{\u2026}",
+      "reason": "Keyboard key-name label (Shift + key); key names are locale-stable, not translatable copy."
     }
   ]
 }

@@ -30,7 +30,7 @@ import AboutPage from '@pages/settings/AboutPage';
 import PushApiPage from '@pages/settings/push-api';
 import AuditLogPage from '@pages/settings/AuditLogPage';
 import AISettingsPage from '@pages/settings/ai';
-import SimpleFINPage from '@pages/settings/simplefin';
+import BankSyncPage from '@pages/settings/bank-sync';
 import { DashboardPage } from '@pages/dashboard/DashboardPage';
 import { BudgetingPage } from '@pages/budgeting/BudgetingPage';
 import SubscriptionSuccess from '@features/subscription/ui/SubscriptionSuccess';
@@ -129,9 +129,7 @@ function AppRouter() {
             <Route path="/settings/recurring" element={<RecurringTransactionsPage />} />
             <Route path="/settings/audit-log" element={<AuditLogPage />} />
             <Route path="/settings/ai" element={<AISettingsPage />} />
-            {import.meta.env.DEV && (
-              <Route path="/settings/simplefin" element={<SimpleFINPage />} />
-            )}
+            {import.meta.env.DEV && <Route path="/settings/bank-sync" element={<BankSyncPage />} />}
             <Route path="/settings/about" element={<AboutPage />} />
           </Route>
         </Route>

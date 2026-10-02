@@ -8,7 +8,8 @@ import { ChevronLeft, ChevronRight, ArrowUpRight, ChevronDown, ChevronUp } from 
 import { cn } from '@shared/lib/utils';
 import { SwipeRow } from '@shared/ui/SwipeRow';
 import { formatMilli, sumMilli, type MilliUnits } from '@shared/lib/currency/milli';
-import { groupTransactionsByDateKey } from '@shared/lib/date-utils';
+import { getTodayISO, groupTransactionsByDateKey } from '@shared/lib/date-utils';
+import { Badge } from '@shared/ui/badge';
 import { getTransactionSignedAmount } from './spending-drawer.utils';
 import type { TransactionListProps, Transaction } from './types';
 
@@ -134,6 +135,11 @@ const DateCard = memo(function DateCard({
             <div className="text-xs font-medium text-muted-foreground uppercase tracking whitespace-nowrap">
               {format(parseISO(dateKey), 'EEE, MMM d')}
             </div>
+            {dateKey > getTodayISO() && (
+              <Badge variant="outline" className="h-4 px-1 py-0 text-[10px] font-normal">
+                <Trans>Upcoming</Trans>
+              </Badge>
+            )}
             {isCollapsed && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground min-w-0">
                 <span className="flex-shrink-0">-</span>

@@ -152,6 +152,10 @@ export class AppRuntime {
     return result;
   }
 
+  isMutationApplied(mutationId: string): boolean {
+    return this.coordinator.isMutationApplied(mutationId);
+  }
+
   getDatabase(): WebDatabaseInstance | null {
     return this.coordinator.getDatabase() as WebDatabaseInstance | null;
   }

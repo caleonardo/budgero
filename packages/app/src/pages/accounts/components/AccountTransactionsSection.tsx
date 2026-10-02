@@ -19,6 +19,7 @@ export interface AccountTransactionsSectionProps {
   onFilterModeChange?: (active: boolean) => void;
   totalTransactionCount?: number;
   uncategorizedCount?: number;
+  unclearedCount?: number;
   hasMoreTransactions?: boolean;
   isLoadingMoreTransactions?: boolean;
   onLoadMoreTransactions?: () => Promise<unknown>;
@@ -38,6 +39,7 @@ export const AccountTransactionsSection = React.memo(function AccountTransaction
   onFilterModeChange,
   totalTransactionCount,
   uncategorizedCount,
+  unclearedCount,
   hasMoreTransactions,
   isLoadingMoreTransactions,
   onLoadMoreTransactions,
@@ -67,6 +69,7 @@ export const AccountTransactionsSection = React.memo(function AccountTransaction
       onFilterModeChange={onFilterModeChange}
       totalTransactionCount={totalTransactionCount}
       uncategorizedCountOverride={uncategorizedCount}
+      unclearedCountOverride={unclearedCount}
       hasMoreTransactions={hasMoreTransactions}
       isLoadingMoreTransactions={isLoadingMoreTransactions}
       onLoadMoreTransactions={onLoadMoreTransactions}

@@ -212,6 +212,11 @@ msgstr "{0, plural, one {{1}: # {itemLabel}} other {{2}: # {itemLabel}s}}"
 msgid "{0, plural, one {# account} other {# accounts}}"
 msgstr "{0, plural, one {# account} other {# accounts}}"
 
+#. placeholder {0}: result.reviews
+#: src/features/bank-sync/ui/BankAutoSync.tsx
+msgid "{0, plural, one {# bank transaction needs review} other {# bank transactions need review}}"
+msgstr "{0, plural, one {# bank transaction needs review} other {# bank transactions need review}}"
+
 #. placeholder {0}: overspentCategories.length
 #. placeholder {1}: formatMilli(globalLocalizer, asMilli(Math.min(totalOverspent, readyToAssign)))
 #. placeholder {2}: formatMilli(globalLocalizer, asMilli(Math.min(totalOverspent, readyToAssign)))
@@ -304,6 +309,12 @@ msgstr "{0, plural, one {Distributed across # active account.} other {Distribute
 #: src/features/budget-planning/ui/assign-dropdown/AssignQuickActions.tsx
 msgid "{0, plural, one {Free up {1} from # category} other {Free up {2} from # categories}}"
 msgstr "{0, plural, one {Free up {1} from # category} other {Free up {2} from # categories}}"
+
+#. placeholder {0}: result.imported
+#: src/features/bank-sync/ui/BankAutoSync.tsx
+#: src/features/bank-sync/ui/BankSyncButton.tsx
+msgid "{0, plural, one {Imported # bank transaction} other {Imported # bank transactions}}"
+msgstr "{0, plural, one {Imported # bank transaction} other {Imported # bank transactions}}"
 
 #. placeholder {0}: importResult.summary.splitTransactionsImported
 #. placeholder {0}: result.summary.splitTransactionsImported
@@ -415,6 +426,11 @@ msgstr "{0} active today / {1} active in last 30 days"
 #: src/features/account-management/ui/ArchiveAccountDialog.tsx
 msgid "{0} balanced to zero and archived."
 msgstr "{0} balanced to zero and archived."
+
+#. placeholder {0}: reviews.length
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "{0} bank transactions may match entries you already have."
+msgstr "{0} bank transactions may match entries you already have."
 
 #. placeholder {0}: actionDialog.user.email
 #. placeholder {0}: user.email
@@ -606,6 +622,11 @@ msgstr "{0} Summary"
 msgid "{0} tables - Click to insert"
 msgstr "{0} tables - Click to insert"
 
+#. placeholder {0}: reviews.length
+#: src/features/bank-sync/ui/BankSyncButton.tsx
+msgid "{0} to review"
+msgstr "{0} to review"
+
 #. placeholder {0}: formatTokenCount(used)
 #: src/features/chat/ui/chat-panel/ChatHeader.tsx
 msgid "{0} tokens"
@@ -642,6 +663,11 @@ msgstr "{0} uncategorized"
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 msgid "{0} was added to your register."
 msgstr "{0} was added to your register."
+
+#. placeholder {0}: link.ExternalName
+#: src/features/bank-sync/model/run-bank-sync.ts
+msgid "{0} wasn't returned by SimpleFIN."
+msgstr "{0} wasn't returned by SimpleFIN."
 
 #. placeholder {0}: budget.Name
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
@@ -689,8 +715,8 @@ msgstr "{0}Clear Queue"
 
 #. placeholder {0}: isClaiming ? ( <Loader2 className="h-4 w-4 mr-2 animate-spin" /> ) : ( <CheckCircle2 className="h-4 w-4 mr-2" /> )
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "{0}Connect"
-msgstr "{0}Connect"
+#~ msgid "{0}Connect"
+#~ msgstr "{0}Connect"
 
 #. placeholder {0}: generateTokenMutation.isPending ? ( <Loader2 className="h-4 w-4 mr-2 animate-spin" /> ) : ( <Key className="h-4 w-4 mr-2" /> )
 #: src/pages/settings/push-api/TokenStatusCard.tsx
@@ -728,9 +754,7 @@ msgstr "{0}Pull Mutations"
 msgid "{0}Redeem invite"
 msgstr "{0}Redeem invite"
 
-#. placeholder {0}: isFetching ? ( <Loader2 className="h-4 w-4 mr-2 animate-spin" /> ) : ( <RefreshCw className="h-4 w-4 mr-2" /> )
 #. placeholder {0}: isRefreshing ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <RefreshCw className="mr-2 h-4 w-4" /> )
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 msgid "{0}Refresh"
 msgstr "{0}Refresh"
@@ -1344,8 +1368,8 @@ msgid "<0/>Connected to: {0}"
 msgstr "<0/>Connected to: {0}"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "<0/>Connection Status"
-msgstr "<0/>Connection Status"
+#~ msgid "<0/>Connection Status"
+#~ msgstr "<0/>Connection Status"
 
 #: src/pages/settings/automation-rules/RuleRow.tsx
 msgid "<0/>Consumed after retro run"
@@ -1423,8 +1447,8 @@ msgid "<0/>Design a rule"
 msgstr "<0/>Design a rule"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "<0/>Disconnect"
-msgstr "<0/>Disconnect"
+#~ msgid "<0/>Disconnect"
+#~ msgstr "<0/>Disconnect"
 
 #: src/app/layout/desktop-shell/SidebarFooterContent.tsx
 msgid "<0/>Donate to Budgero<1>(opens in a new tab)</1>"
@@ -1478,8 +1502,8 @@ msgid "<0/>Expand All"
 msgstr "<0/>Expand All"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "<0/>Experimental"
-msgstr "<0/>Experimental"
+#~ msgid "<0/>Experimental"
+#~ msgstr "<0/>Experimental"
 
 #. placeholder {0}: exportType === 'sqlite' ? t`Database` : 'CSV'
 #: src/features/subscription/ui/ExportDataCard.tsx
@@ -1616,8 +1640,8 @@ msgstr "<0/>Later"
 #~ msgstr "<0/>Let Budgero handle the busywork"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "<0/>Linked Accounts"
-msgstr "<0/>Linked Accounts"
+#~ msgid "<0/>Linked Accounts"
+#~ msgstr "<0/>Linked Accounts"
 
 #: src/features/transactions/ui/MobileTransactionList.tsx
 msgid "<0/>Loading more transactions..."
@@ -2546,7 +2570,6 @@ msgstr "Access until:"
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 #: src/features/rules/ui/rule-editor/RuleConditionRow.tsx
 #: src/features/rules/ui/RuleSummary.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/shared/model/nav-registry.ts
 msgid "Account"
 msgstr "Account"
@@ -2590,8 +2613,8 @@ msgid "Account deleted"
 msgstr "Account deleted"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Account Errors"
-msgstr "Account Errors"
+#~ msgid "Account Errors"
+#~ msgstr "Account Errors"
 
 #: src/features/account-management/ui/AddAccountDialog.tsx
 #: src/features/account-management/ui/EditAccountDialog.tsx
@@ -2656,8 +2679,8 @@ msgid "Accounts"
 msgstr "Accounts"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Accounts available through your SimpleFIN connection. Click an account to view recent transactions."
-msgstr "Accounts available through your SimpleFIN connection. Click an account to view recent transactions."
+#~ msgid "Accounts available through your SimpleFIN connection. Click an account to view recent transactions."
+#~ msgstr "Accounts available through your SimpleFIN connection. Click an account to view recent transactions."
 
 #: src/pages/settings/ImportsPage.tsx
 msgid "Accounts Created"
@@ -2795,6 +2818,10 @@ msgstr "Add an account first"
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 msgid "Add an account in another currency (or crypto) first."
 msgstr "Add an account in another currency (or crypto) first."
+
+#: src/features/bank-sync/ui/BankReviewDialog.tsx
+msgid "Add as new"
+msgstr "Add as new"
 
 #: src/features/rules/ui/rule-editor/rule-editor.utils.ts
 msgid "Add at least one action for Budgero to perform."
@@ -3222,7 +3249,6 @@ msgstr "Amortization Table"
 #: src/features/rules/ui/RuleSummary.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
 #: src/pages/settings/components/DuplicateHintSettingsCard.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/pages/settings/subscription/InvoicesTable.tsx
 #: src/pages/warranties/components/WarrantyFormDialog.tsx
 #: src/pages/warranties/components/WarrantyTable.tsx
@@ -3691,7 +3717,6 @@ msgstr "Avail."
 #: src/features/budget-planning/ui/CategoryGroupRow.tsx
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetTableView.tsx
 #: src/features/budget-planning/ui/DraggableBudgetTable.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "Available"
 msgstr "Available"
 
@@ -3790,7 +3815,6 @@ msgstr "Badge Icon"
 #: src/pages/accounts/AccountPage.tsx
 #: src/pages/accounts/components/AccountSummaryCards.tsx
 #: src/pages/analytics/reports/ScenarioReport.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/widgets/dashboard/BalanceAreaChart.tsx
 msgid "Balance"
 msgstr "Balance"
@@ -3817,6 +3841,42 @@ msgstr "Balance<0/>"
 msgid "Balances match - reconciliation will mark transactions as reconciled"
 msgstr "Balances match - reconciliation will mark transactions as reconciled"
 
+#: src/features/bank-sync/ui/BankReviewDialog.tsx
+msgid "Bank"
+msgstr "Bank"
+
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Bank accounts"
+msgstr "Bank accounts"
+
+#. placeholder {0}: formatBankAmount(link.LastBalance, currency)
+#: src/features/bank-sync/ui/BankSyncButton.tsx
+msgid "Bank balance {0}"
+msgstr "Bank balance {0}"
+
+#: src/pages/settings/bank-sync/BankSyncPage.tsx
+#: src/shared/model/nav-registry.ts
+msgid "Bank sync"
+msgstr "Bank sync"
+
+#: src/features/bank-sync/model/run-bank-sync.ts
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+#: src/features/bank-sync/ui/BankSyncButton.tsx
+msgid "Bank sync failed"
+msgstr "Bank sync failed"
+
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Bank sync finished"
+msgstr "Bank sync finished"
+
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
+msgid "Bank sync uses your own SimpleFIN Bridge subscription. Budgero talks to SimpleFIN directly from this device; our servers never see your bank data."
+msgstr "Bank sync uses your own SimpleFIN Bridge subscription. Budgero talks to SimpleFIN directly from this device; our servers never see your bank data."
+
+#: src/features/bank-sync/ui/BankSyncButton.tsx
+msgid "Bank synced {syncedAgo}"
+msgstr "Bank synced {syncedAgo}"
+
 #: src/features/import/lib/import-display-text.ts
 msgid "Bank transaction ID was already imported"
 msgstr "Bank transaction ID was already imported"
@@ -3841,8 +3901,8 @@ msgstr "Base"
 
 #. placeholder {0}: btoa(`${username}:${password}`)
 #: src/features/import/lib/client.ts
-msgid "Basic {0}"
-msgstr "Basic {0}"
+#~ msgid "Basic {0}"
+#~ msgstr "Basic {0}"
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Before we build anything, here’s how Budgero thinks about money."
@@ -3858,6 +3918,7 @@ msgid "Best for documents (~6GB)"
 msgstr "Best for documents (~6GB)"
 
 #: src/app/layout/desktop-shell/SidebarNav.tsx
+#: src/pages/settings/bank-sync/BankSyncPage.tsx
 msgid "Beta"
 msgstr "Beta"
 
@@ -3971,6 +4032,7 @@ msgid "BROWSE FILES"
 msgstr "BROWSE FILES"
 
 #: src/app/layout/desktop-shell/DesktopShell.tsx
+#: src/features/bank-sync/ui/BankReviewDialog.tsx
 #: src/pages/auth/AuthPage.tsx
 msgid "Budgero"
 msgstr "Budgero"
@@ -3983,6 +4045,10 @@ msgstr "BUDGERO · ONBOARDING v1"
 #: src/features/app-update/ui/UpdateAvailableBanner.tsx
 msgid "Budgero {latest} is available — you're running {0}"
 msgstr "Budgero {latest} is available — you're running {0}"
+
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Budgero account"
+msgstr "Budgero account"
 
 #: src/features/budget-management/ui/create-budget-form/RestoreBackupTab.tsx
 msgid "Budgero Backup File (.db or .sqlite)"
@@ -4315,6 +4381,7 @@ msgstr "Canadian Dollar"
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
 #: src/features/ai/ui/AICategorizeDialog.tsx
 #: src/features/ai/ui/receipt-scanner/ScanActions.tsx
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
 #: src/features/budget-planning/ui/budget-table/BudgetModals.tsx
 #: src/features/budget-planning/ui/category-row/CCPaymentCoverPopover.tsx
 #: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
@@ -4732,6 +4799,10 @@ msgstr "Choose a valid end date or number of occurrences."
 msgid "Choose a workspace"
 msgstr "Choose a workspace"
 
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Choose an account"
+msgstr "Choose an account"
+
 #: src/features/rules/ui/rule-editor/rule-editor.utils.ts
 msgid "Choose an account for the account action."
 msgstr "Choose an account for the account action."
@@ -4879,6 +4950,11 @@ msgstr "Cleared"
 #: src/features/transactions/ui/ClearedToggle.tsx
 msgid "Cleared — mark as uncleared"
 msgstr "Cleared — mark as uncleared"
+
+#. placeholder {0}: formatBankAmount(cleared, local.Currency)
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Cleared {0}"
+msgstr "Cleared {0}"
 
 #: src/features/account-management/ui/ReconcileAccountDialog.tsx
 msgid "Cleared Balance"
@@ -5161,6 +5237,7 @@ msgstr "Confirm retro run"
 msgid "Confirm your master password"
 msgstr "Confirm your master password"
 
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
 #: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
 msgid "Connect"
 msgstr "Connect"
@@ -5168,6 +5245,10 @@ msgstr "Connect"
 #: src/pages/onboarding/steps/YnabImportStep.tsx
 msgid "CONNECT DIRECTLY"
 msgstr "CONNECT DIRECTLY"
+
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
+msgid "Connect SimpleFIN Bridge"
+msgstr "Connect SimpleFIN Bridge"
 
 #: src/pages/settings/ai/AISettingsPage.tsx
 msgid "Connect to a local LLM (Ollama, LM Studio) for maximum privacy, or point at a remote OpenAI-compatible API. Local servers keep your data on-device; remote ones do not."
@@ -5182,16 +5263,16 @@ msgid "Connect to LM Studio server"
 msgstr "Connect to LM Studio server"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Connect to SimpleFIN Bridge to sync your bank accounts."
-msgstr "Connect to SimpleFIN Bridge to sync your bank accounts."
+#~ msgid "Connect to SimpleFIN Bridge to sync your bank accounts."
+#~ msgstr "Connect to SimpleFIN Bridge to sync your bank accounts."
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync."
-msgstr "Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync."
+#~ msgid "Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync."
+#~ msgstr "Connect to your bank accounts via SimpleFIN Bridge for automatic transaction sync."
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Connected"
-msgstr "Connected"
+#~ msgid "Connected"
+#~ msgstr "Connected"
 
 #: src/widgets/sync-status/ConnectivityStatus.tsx
 msgid "Connected - Real-time sync active"
@@ -5205,10 +5286,19 @@ msgstr "Connected successfully!"
 msgid "Connected through YNAB API · "
 msgstr "Connected through YNAB API · "
 
+#. placeholder {0}: describeAccessUrl(connection.AccessURL)
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Connected to {0}"
+msgstr "Connected to {0}"
+
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
+msgid "Connected to SimpleFIN"
+msgstr "Connected to SimpleFIN"
+
 #. placeholder {0}: formatDate(new Date(credentials.createdAt))
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Connected: {0}"
-msgstr "Connected: {0}"
+#~ msgid "Connected: {0}"
+#~ msgstr "Connected: {0}"
 
 #: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
 msgid "Connecting…"
@@ -5442,6 +5532,26 @@ msgstr "Could not update cleared status"
 msgid "Could not update goal funding settings"
 msgstr "Could not update goal funding settings"
 
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
+msgid "Couldn't connect to SimpleFIN"
+msgstr "Couldn't connect to SimpleFIN"
+
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Couldn't link this account"
+msgstr "Couldn't link this account"
+
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Couldn't load accounts from SimpleFIN"
+msgstr "Couldn't load accounts from SimpleFIN"
+
+#: src/features/bank-sync/lib/simplefin-client.ts
+msgid "Couldn't reach SimpleFIN. Check your connection and try again."
+msgstr "Couldn't reach SimpleFIN. Check your connection and try again."
+
+#: src/features/bank-sync/ui/BankReviewDialog.tsx
+msgid "Couldn't resolve this match"
+msgstr "Couldn't resolve this match"
+
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/admin/admin-users/user-details/MutationsTab.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
@@ -5517,6 +5627,10 @@ msgstr "Create a dashboard first to pin charts."
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Create a goal to track your financial progress"
 msgstr "Create a goal to track your financial progress"
+
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
+msgid "Create a new app connection and copy its setup token."
+msgstr "Create a new app connection and copy its setup token."
 
 #: src/app/startup/screens.tsx
 msgid "Create a New Budget"
@@ -5969,7 +6083,6 @@ msgstr "Database statistics"
 #: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
 #: src/features/debt/ui/PayoffPlanSheet.tsx
 #: src/pages/admin/admin-users/user-details/BillingTab.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/pages/settings/subscription/InvoicesTable.tsx
 msgid "Date"
 msgstr "Date"
@@ -6259,7 +6372,6 @@ msgstr "Describe the conditions and actions you want Budgero to apply automatica
 
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/features/rules/ui/rule-editor/RuleMetadataForm.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "Description"
 msgstr "Description"
 
@@ -6344,17 +6456,21 @@ msgstr "Disabled"
 msgid "Disabled by DISABLE_REGISTRATION. Remove this environment flag and restart the server to enable sign-ups here."
 msgstr "Disabled by DISABLE_REGISTRATION. Remove this environment flag and restart the server to enable sign-ups here."
 
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
 msgid "Disconnect"
 msgstr "Disconnect"
 
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Disconnect SimpleFIN?"
-msgstr "Disconnect SimpleFIN?"
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Disconnect bank sync?"
+msgstr "Disconnect bank sync?"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Disconnected from SimpleFIN"
-msgstr "Disconnected from SimpleFIN"
+#~ msgid "Disconnect SimpleFIN?"
+#~ msgstr "Disconnect SimpleFIN?"
+
+#: src/pages/settings/simplefin/SimpleFINPage.tsx
+#~ msgid "Disconnected from SimpleFIN"
+#~ msgstr "Disconnected from SimpleFIN"
 
 #: src/pages/settings/AboutPage.tsx
 msgid "Discord Community"
@@ -7092,6 +7208,10 @@ msgstr "Execution failed"
 msgid "Existing #{0}: {1} · {2} {3}<0/>{4}<1/>{5}"
 msgstr "Existing #{0}: {1} · {2} {3}<0/>{4}<1/>{5}"
 
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Existing account"
+msgstr "Existing account"
+
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Existing amount handling"
 msgstr "Existing amount handling"
@@ -7126,8 +7246,8 @@ msgid "Expense"
 msgstr "Expense"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Experimental Feature"
-msgstr "Experimental Feature"
+#~ msgid "Experimental Feature"
+#~ msgstr "Experimental Feature"
 
 #: src/pages/warranties/components/StatusBadge.tsx
 #: src/pages/warranties/WarrantiesPage.tsx
@@ -7264,8 +7384,8 @@ msgid "Failed to clear queue: {0}"
 msgstr "Failed to clear queue: {0}"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Failed to connect"
-msgstr "Failed to connect"
+#~ msgid "Failed to connect"
+#~ msgstr "Failed to connect"
 
 #: src/features/ai/lib/client.ts
 msgid "Failed to connect. Check your API key and endpoint."
@@ -7391,8 +7511,8 @@ msgid "Failed to export encryption key"
 msgstr "Failed to export encryption key"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Failed to fetch accounts"
-msgstr "Failed to fetch accounts"
+#~ msgid "Failed to fetch accounts"
+#~ msgstr "Failed to fetch accounts"
 
 #. placeholder {0}: error.message
 #: src/pages/settings/push-api/usePushApiState.ts
@@ -8522,9 +8642,17 @@ msgstr "Import transaction"
 msgid "Import transactions and splits"
 msgstr "Import transactions and splits"
 
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Import transactions from"
+msgstr "Import transactions from"
+
 #: src/pages/settings/ImportsPage.tsx
 msgid "Import transactions from {SUPPORTED_IMPORT_FORMATS_LABEL} files and manage previous imports."
 msgstr "Import transactions from {SUPPORTED_IMPORT_FORMATS_LABEL} files and manage previous imports."
+
+#: src/pages/settings/bank-sync/BankSyncPage.tsx
+msgid "Import transactions from your banks through SimpleFIN Bridge (US and Canada)."
+msgstr "Import transactions from your banks through SimpleFIN Bridge (US and Canada)."
 
 #: src/pages/settings/ImportsPage.tsx
 msgid "Import undone"
@@ -8765,8 +8893,8 @@ msgid "Installing Budgero..."
 msgstr "Installing Budgero..."
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Institution"
-msgstr "Institution"
+#~ msgid "Institution"
+#~ msgstr "Institution"
 
 #: src/features/budget-management/model/icon-options.ts
 #: src/pages/onboarding/onboarding-data.ts
@@ -9145,9 +9273,13 @@ msgstr "Last run: sent {0} | failed {1}"
 msgid "Last Seen"
 msgstr "Last Seen"
 
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Last synced {syncedAgo}. Syncs automatically when you open Budgero."
+msgstr "Last synced {syncedAgo}. Syncs automatically when you open Budgero."
+
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Last Updated"
-msgstr "Last Updated"
+#~ msgid "Last Updated"
+#~ msgstr "Last Updated"
 
 #: src/pages/settings/push-api/TokenStatusCard.tsx
 msgid "Last Used"
@@ -9299,9 +9431,35 @@ msgstr "Line Chart"
 msgid "Linear trend (OLS)"
 msgstr "Linear trend (OLS)"
 
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Link"
+msgstr "Link"
+
+#. placeholder {0}: remote.name
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Link {0}"
+msgstr "Link {0}"
+
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Link and import"
+msgstr "Link and import"
+
 #: src/pages/warranties/components/WarrantyFormDialog.tsx
 msgid "Link to Transaction"
 msgstr "Link to Transaction"
+
+#. placeholder {0}: remote.name
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Linked {0}"
+msgstr "Linked {0}"
+
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Linking…"
+msgstr "Linking…"
+
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Links and pending reviews are removed. Imported transactions stay. To fully revoke access, also delete the app connection in SimpleFIN Bridge."
+msgstr "Links and pending reviews are removed. Imported transactions stay. To fully revoke access, also delete the app connection in SimpleFIN Bridge."
 
 #: src/pages/admin/sql-explorer/constants.ts
 #: src/pages/explorer-page/sql-utils.ts
@@ -9353,9 +9511,12 @@ msgstr "Loading account access details…"
 msgid "Loading account information..."
 msgstr "Loading account information..."
 
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Loading accounts from SimpleFIN…"
+msgstr "Loading accounts from SimpleFIN…"
+
 #: src/features/analytics/ui/IncomeExpenseByGroupChart.tsx
 #: src/features/transactions/ui/form/AccountSelect.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "Loading accounts..."
 msgstr "Loading accounts..."
 
@@ -9711,6 +9872,10 @@ msgstr "Master Password Storage"
 #: src/pages/settings/SecurityPage.tsx
 msgid "Master password will now stay in memory only."
 msgstr "Master password will now stay in memory only."
+
+#: src/features/bank-sync/ui/BankReviewDialog.tsx
+msgid "Match"
+msgstr "Match"
 
 #: src/features/import/ui/steps/PreviewStep.tsx
 msgid "Match / reason"
@@ -10143,6 +10308,7 @@ msgstr "N months…"
 msgid "name"
 msgstr "name"
 
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 #: src/pages/admin/SelfHostAdminUsers.tsx
 #: src/pages/auth/AuthPage.tsx
@@ -10318,6 +10484,10 @@ msgstr "Never share this key publicly"
 msgid "New"
 msgstr "New"
 
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "New account"
+msgstr "New account"
+
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 msgid "New amount"
 msgstr "New amount"
@@ -10436,8 +10606,8 @@ msgid "No accounts found."
 msgstr "No accounts found."
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "No accounts found. Make sure your SimpleFIN connection is properly configured."
-msgstr "No accounts found. Make sure your SimpleFIN connection is properly configured."
+#~ msgid "No accounts found. Make sure your SimpleFIN connection is properly configured."
+#~ msgstr "No accounts found. Make sure your SimpleFIN connection is properly configured."
 
 #. placeholder {0}: accountQuery.trim()
 #. placeholder {0}: query.trim()
@@ -10449,6 +10619,10 @@ msgstr "No accounts match “{0}”."
 #: src/features/account-management/ui/AccountOrderCard.tsx
 msgid "No accounts to reorder yet."
 msgstr "No accounts to reorder yet."
+
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "No accounts yet. Connect a bank in SimpleFIN Bridge, then come back."
+msgstr "No accounts yet. Connect a bank in SimpleFIN Bridge, then come back."
 
 #: src/pages/settings/AuditLogPage.tsx
 msgid "No actions recorded yet"
@@ -10931,8 +11105,8 @@ msgid "No table structure detected in PDF. The file has text but the parser coul
 msgstr "No table structure detected in PDF. The file has text but the parser couldn't find a consistent table layout. If the statement is available as CSV, that usually works better."
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "No transactions available for this account."
-msgstr "No transactions available for this account."
+#~ msgid "No transactions available for this account."
+#~ msgstr "No transactions available for this account."
 
 #: src/pages/analytics/components/CategoryTransactionCell.tsx
 msgid "No transactions for this selection."
@@ -11049,6 +11223,14 @@ msgstr "Not available in self-hosted builds."
 msgid "Not set"
 msgstr "Not set"
 
+#: src/features/bank-sync/ui/BankSyncButton.tsx
+msgid "Not synced yet"
+msgstr "Not synced yet"
+
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Not synced yet."
+msgstr "Not synced yet."
+
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 msgid "Not used yet"
 msgstr "Not used yet"
@@ -11056,6 +11238,10 @@ msgstr "Not used yet"
 #: src/pages/warranties/components/WarrantyFormDialog.tsx
 msgid "Notes"
 msgstr "Notes"
+
+#: src/features/bank-sync/ui/BankReviewDialog.tsx
+msgid "Nothing left to review."
+msgstr "Nothing left to review."
 
 #: src/features/import/ui/steps/PreviewStep.tsx
 msgid "Nothing new to import."
@@ -11162,6 +11348,10 @@ msgstr "Offline - Changes will sync when connection is restored"
 #: src/pages/onboarding/steps/PasswordStep.tsx
 msgid "OK"
 msgstr "OK"
+
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Older dates only return what your bank shares with SimpleFIN."
+msgstr "Older dates only return what your bank shares with SimpleFIN."
 
 #: src/pages/settings/CurrencySettingsPage.tsx
 msgid "Older rates are pruned and refetched on demand. Longer retention means fewer refetches for historical edits, but a larger budget file — which can slow app load and sync."
@@ -11698,13 +11888,17 @@ msgstr "Passwords match"
 msgid "paste secret here"
 msgstr "paste secret here"
 
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
+msgid "Paste the token below."
+msgstr "Paste the token below."
+
 #: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
 msgid "Paste token for this import only"
 msgstr "Paste token for this import only"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Paste your setup token here..."
-msgstr "Paste your setup token here..."
+#~ msgid "Paste your setup token here..."
+#~ msgstr "Paste your setup token here..."
 
 #: src/features/rules/ui/rule-editor/RuleActionRow.tsx
 msgid "Pattern"
@@ -11840,7 +12034,6 @@ msgid "Payoff Simulator"
 msgstr "Payoff Simulator"
 
 #: src/pages/settings/push-api/QueueStatsPanel.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "Pending"
 msgstr "Pending"
 
@@ -12068,8 +12261,8 @@ msgid "Please enter a report name"
 msgstr "Please enter a report name"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Please enter a setup token"
-msgstr "Please enter a setup token"
+#~ msgid "Please enter a setup token"
+#~ msgstr "Please enter a setup token"
 
 #: src/pages/explorer-page/hooks/useExplorerState.ts
 msgid "Please enter a SQL query"
@@ -12232,8 +12425,8 @@ msgid "Post transaction"
 msgstr "Post transaction"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Posted"
-msgstr "Posted"
+#~ msgid "Posted"
+#~ msgstr "Posted"
 
 #: src/shared/lib/analytics/klaro-config.ts
 msgid "PostHog (EU)"
@@ -12748,8 +12941,8 @@ msgid "Recent Transactions"
 msgstr "Recent Transactions"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Recent transactions from the last 30 days."
-msgstr "Recent transactions from the last 30 days."
+#~ msgid "Recent transactions from the last 30 days."
+#~ msgstr "Recent transactions from the last 30 days."
 
 #: src/pages/admin/sql-explorer/constants.ts
 msgid "Recent users"
@@ -13396,6 +13589,10 @@ msgstr "Reveal Key"
 msgid "Reverted: {0}"
 msgstr "Reverted: {0}"
 
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Review"
+msgstr "Review"
+
 #: src/pages/settings/AppearancePage.tsx
 msgid "Review account balances and transactions first."
 msgstr "Review account balances and transactions first."
@@ -13403,6 +13600,10 @@ msgstr "Review account balances and transactions first."
 #: src/features/budget-management/ui/create-budget-form/YnabImportTab.tsx
 msgid "Review account types after import"
 msgstr "Review account types after import"
+
+#: src/features/bank-sync/ui/BankReviewDialog.tsx
+msgid "Review bank transactions"
+msgstr "Review bank transactions"
 
 #: src/widgets/dashboard/OverspentCategoriesCard.tsx
 msgid "Review budget<0/>"
@@ -14358,8 +14559,8 @@ msgstr "Server URL"
 #. placeholder {0}: parsedCredentials.scheme
 #. placeholder {1}: parsedCredentials.host
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Server: {0}://{1}"
-msgstr "Server: {0}://{1}"
+#~ msgid "Server: {0}://{1}"
+#~ msgstr "Server: {0}://{1}"
 
 #: src/shared/lib/analytics/klaro-config.ts
 msgid "service"
@@ -14497,6 +14698,10 @@ msgstr "Setup failed"
 msgid "Setup failed. Try again or contact support."
 msgstr "Setup failed. Try again or contact support."
 
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
+msgid "Setup token"
+msgstr "Setup token"
+
 #: src/pages/settings/AboutPage.tsx
 msgid "Share feedback"
 msgstr "Share feedback"
@@ -14603,6 +14808,14 @@ msgstr "Show Less"
 msgid "Show only month selector and ready to assign in the budget header."
 msgstr "Show only month selector and ready to assign in the budget header."
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Show only uncategorized (account page)"
+msgstr "Show only uncategorized (account page)"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Show only uncleared (account page)"
+msgstr "Show only uncleared (account page)"
+
 #: src/pages/settings/BudgetSettingsPage.tsx
 msgid "Show percentage of assigned on group rows"
 msgstr "Show percentage of assigned on group rows"
@@ -14618,6 +14831,10 @@ msgstr "Show sidebar"
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "Show uncategorized only"
 msgstr "Show uncategorized only"
+
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "Show uncleared only"
+msgstr "Show uncleared only"
 
 #: src/pages/settings/recurring/components/RecurringTemplateCard.tsx
 msgid "Show upcoming"
@@ -14677,6 +14894,10 @@ msgstr "Showing only the most recent {MAX_PIVOT_MONTHS} months. Narrow your date
 msgid "Showing Uncategorized"
 msgstr "Showing Uncategorized"
 
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "Showing Uncleared"
+msgstr "Showing Uncleared"
+
 #: src/pages/admin/sql-explorer/useSqlExplorerState.ts
 msgid "Showing what would be affected. No changes were made."
 msgstr "Showing what would be affected. No changes were made."
@@ -14720,6 +14941,10 @@ msgstr "Sign Out"
 msgid "SIGN OUT"
 msgstr "SIGN OUT"
 
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
+msgid "Sign up at <0>SimpleFIN Bridge<1/></0> and connect your banks there."
+msgstr "Sign up at <0>SimpleFIN Bridge<1/></0> and connect your banks there."
+
 #: src/pages/auth/AuthPage.tsx
 msgid "Signing in…"
 msgstr "Signing in…"
@@ -14735,12 +14960,30 @@ msgstr "Similar row in this file; both may be real transactions"
 
 #: src/app/layout/desktop-shell/SidebarNav.tsx
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "SimpleFIN"
-msgstr "SimpleFIN"
+#~ msgid "SimpleFIN"
+#~ msgstr "SimpleFIN"
+
+#: src/features/bank-sync/lib/simplefin-client.ts
+msgid "SimpleFIN denied access. The connection may have been revoked; reconnect with a new setup token."
+msgstr "SimpleFIN denied access. The connection may have been revoked; reconnect with a new setup token."
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "SimpleFIN integration is currently in development. Features may change, break, or be removed without notice. Your credentials are stored locally in your browser. Use at your own risk."
-msgstr "SimpleFIN integration is currently in development. Features may change, break, or be removed without notice. Your credentials are stored locally in your browser. Use at your own risk."
+#~ msgid "SimpleFIN integration is currently in development. Features may change, break, or be removed without notice. Your credentials are stored locally in your browser. Use at your own risk."
+#~ msgstr "SimpleFIN integration is currently in development. Features may change, break, or be removed without notice. Your credentials are stored locally in your browser. Use at your own risk."
+
+#. placeholder {0}: response.status
+#: src/features/bank-sync/lib/simplefin-client.ts
+msgid "SimpleFIN rejected the setup token ({0})."
+msgstr "SimpleFIN rejected the setup token ({0})."
+
+#. placeholder {0}: response.status
+#: src/features/bank-sync/lib/simplefin-client.ts
+msgid "SimpleFIN request failed ({0})."
+msgstr "SimpleFIN request failed ({0})."
+
+#: src/features/bank-sync/lib/simplefin-client.ts
+msgid "SimpleFIN returned an invalid access URL."
+msgstr "SimpleFIN returned an invalid access URL."
 
 #: src/features/account-management/ui/DevSimulateRateMoveButton.tsx
 msgid "Simulate rate move"
@@ -14759,6 +15002,7 @@ msgstr "Since no account column is mapped, transactions will be imported into th
 msgid "Size"
 msgstr "Size"
 
+#: src/features/bank-sync/ui/BankReviewDialog.tsx
 #: src/features/import/ui/steps/PreviewStep.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Skip"
@@ -15111,6 +15355,10 @@ msgstr "Starting Budgero…"
 msgid "Starting funds"
 msgstr "Starting funds"
 
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "Starts the day after your latest entry so nothing is imported twice. Entries close to the bank's will be offered as matches."
+msgstr "Starts the day after your latest entry so nothing is imported twice. Entries close to the bank's will be offered as matches."
+
 #: src/features/reports/ui/SaveReportDialog.tsx
 #: src/pages/custom-dashboards/components/EditWidgetChartDialog.tsx
 msgid "Stat"
@@ -15125,7 +15373,6 @@ msgstr "Stat"
 #: src/pages/settings/AuditLogPage.tsx
 #: src/pages/settings/ImportsPage.tsx
 #: src/pages/settings/push-api/TokenStatusCard.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 #: src/pages/settings/subscription/InvoicesTable.tsx
 #: src/pages/warranties/components/WarrantyTable.tsx
 msgid "Status"
@@ -15268,8 +15515,8 @@ msgid "Successfully categorized {selectedCount} transactions."
 msgstr "Successfully categorized {selectedCount} transactions."
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Successfully connected to SimpleFIN"
-msgstr "Successfully connected to SimpleFIN"
+#~ msgid "Successfully connected to SimpleFIN"
+#~ msgstr "Successfully connected to SimpleFIN"
 
 #: src/features/ai/ui/receipt-scanner/ScanProgress.tsx
 msgid "Successfully imported {selectedCount} transactions from the receipt."
@@ -15381,13 +15628,25 @@ msgstr "Sync Clerk -> Budgero"
 msgid "Sync Clerk Users"
 msgstr "Sync Clerk Users"
 
+#: src/features/bank-sync/model/run-bank-sync.ts
+msgid "Sync failed"
+msgstr "Sync failed"
+
 #: src/shared/runtime/runtime-provider.tsx
 msgid "Sync needs attention"
 msgstr "Sync needs attention"
 
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Sync now"
+msgstr "Sync now"
+
 #: src/pages/admin/AdminDashboard.tsx
 msgid "Sync Utilities"
 msgstr "Sync Utilities"
+
+#: src/features/bank-sync/ui/BankSyncButton.tsx
+msgid "Sync with bank"
+msgstr "Sync with bank"
 
 #: src/pages/admin/admin-users/useAdminUsersState.ts
 msgid "Synced"
@@ -15540,6 +15799,14 @@ msgstr "Text Models (for categorization)"
 msgid "Text to match"
 msgstr "Text to match"
 
+#: src/features/bank-sync/lib/simplefin-client.ts
+msgid "That doesn't look like a SimpleFIN setup token."
+msgstr "That doesn't look like a SimpleFIN setup token."
+
+#: src/features/bank-sync/ui/ConnectBankCard.tsx
+msgid "The access key is stored encrypted inside this budget and syncs to your devices. Anyone you share this budget with can sync it too."
+msgstr "The access key is stored encrypted inside this budget and syncs to your devices. Anyone you share this budget with can sync it too."
+
 #: src/pages/accounts/AccountPage.tsx
 msgid "The account you're looking for doesn't exist or has been deleted."
 msgstr "The account you're looking for doesn't exist or has been deleted."
@@ -15628,6 +15895,10 @@ msgstr "The member no longer has access to this workspace."
 msgid "The one rule of zero-based budgeting."
 msgstr "The one rule of zero-based budgeting."
 
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "The opening balance is set so the account matches your bank today."
+msgstr "The opening balance is set so the account matches your bank today."
+
 #: src/pages/accounts/hooks/useRecurringEditorFromTransaction.ts
 msgid "The paired transfer transaction could not be loaded."
 msgstr "The paired transfer transaction could not be loaded."
@@ -15712,6 +15983,10 @@ msgstr "Then"
 msgid "Then {monthly}/month or {yearly}/year, tax included."
 msgstr "Then {monthly}/month or {yearly}/year, tax included."
 
+#: src/features/bank-sync/ui/BankReviewDialog.tsx
+msgid "These bank transactions look like ones you already entered. Match them to mark your entry as cleared, or add them as new transactions."
+msgstr "These bank transactions look like ones you already entered. Match them to mark your entry as cleared, or add them as new transactions."
+
 #: src/features/budget-management/ui/create-budget-form/YnabDateOrderChoice.tsx
 msgid "These dates can be read two ways. Select the date format used in YNAB."
 msgstr "These dates can be read two ways. Select the date format used in YNAB."
@@ -15743,6 +16018,10 @@ msgstr "This account will affect your budget calculations"
 #: src/features/account-management/ui/OnBudgetToggle.tsx
 msgid "This account will only be tracked for net worth"
 msgstr "This account will only be tracked for net worth"
+
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
+msgid "This account's currency isn't supported. Link it to an existing account instead."
+msgstr "This account's currency isn't supported. Link it to an existing account instead."
 
 #: src/pages/settings/DataManagementPage.tsx
 msgid "This action CANNOT be undone"
@@ -15871,6 +16150,10 @@ msgstr "This run has been undone. Transactions were restored to their prior valu
 msgid "This scenario breaks in {0}{1}"
 msgstr "This scenario breaks in {0}{1}"
 
+#: src/features/bank-sync/lib/simplefin-client.ts
+msgid "This setup token was already used or revoked. Create a new one in SimpleFIN Bridge."
+msgstr "This setup token was already used or revoked. Create a new one in SimpleFIN Bridge."
+
 #: src/pages/settings/components/WorkspaceRow.tsx
 msgid "This shared workspace is locked until the owner renews their plan."
 msgstr "This shared workspace is locked until the owner renews their plan."
@@ -15950,8 +16233,8 @@ msgid "This will remove upcoming reminders. Existing transactions are unaffected
 msgstr "This will remove upcoming reminders. Existing transactions are unaffected."
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "This will remove your SimpleFIN credentials from this browser. You can reconnect at any time with a new setup token."
-msgstr "This will remove your SimpleFIN credentials from this browser. You can reconnect at any time with a new setup token."
+#~ msgid "This will remove your SimpleFIN credentials from this browser. You can reconnect at any time with a new setup token."
+#~ msgstr "This will remove your SimpleFIN credentials from this browser. You can reconnect at any time with a new setup token."
 
 #: src/app/startup/screens.tsx
 msgid "This workspace has no budgets yet"
@@ -16044,8 +16327,8 @@ msgid "To complete the goal"
 msgstr "To complete the goal"
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "To connect, you need a SimpleFIN setup token. Get one from <0>SimpleFIN Bridge<1/></0>"
-msgstr "To connect, you need a SimpleFIN setup token. Get one from <0>SimpleFIN Bridge<1/></0>"
+#~ msgid "To connect, you need a SimpleFIN setup token. Get one from <0>SimpleFIN Bridge<1/></0>"
+#~ msgstr "To connect, you need a SimpleFIN setup token. Get one from <0>SimpleFIN Bridge<1/></0>"
 
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "To reach target available"
@@ -16307,8 +16590,8 @@ msgstr "Transactions"
 
 #. placeholder {0}: selectedAccount.name
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Transactions - {0}"
-msgstr "Transactions - {0}"
+#~ msgid "Transactions - {0}"
+#~ msgstr "Transactions - {0}"
 
 #: src/pages/explorer-page/sql-utils.ts
 msgid "Transactions analytics preview"
@@ -16494,6 +16777,7 @@ msgid "tx #{0}"
 msgstr "tx #{0}"
 
 #: src/features/ai/ui/receipt-scanner/LineItemsTable.tsx
+#: src/features/bank-sync/ui/LinkAccountDialog.tsx
 msgid "Type"
 msgstr "Type"
 
@@ -16677,6 +16961,10 @@ msgstr "Uncleared"
 msgid "Uncleared — mark as cleared"
 msgstr "Uncleared — mark as cleared"
 
+#: src/features/transactions/ui/TransactionsToolbar.tsx
+msgid "Uncleared ({unclearedCount})"
+msgstr "Uncleared ({unclearedCount})"
+
 #: src/shared/lib/search-query-parser.ts
 msgid "Under"
 msgstr "Under"
@@ -16736,7 +17024,6 @@ msgstr "Ungrouped"
 
 #: src/features/transactions/ui/mobile-transaction-card/TransactionCardDetails.tsx
 #: src/pages/admin/SelfHostAdminDashboard.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "Unknown"
 msgstr "Unknown"
 
@@ -16761,7 +17048,6 @@ msgstr "unknown error"
 
 #: src/features/account-management/ui/DevSeedTransactionsButton.tsx
 #: src/pages/settings/AuditLogPage.tsx
-#: src/pages/settings/simplefin/SimpleFINPage.tsx
 msgid "Unknown error"
 msgstr "Unknown error"
 
@@ -16776,6 +17062,10 @@ msgstr "Unknown startup error while initializing."
 #: src/pages/analytics/analytics-model.ts
 msgid "Unlabeled"
 msgstr "Unlabeled"
+
+#: src/features/bank-sync/ui/BankConnectionPanel.tsx
+msgid "Unlink"
+msgstr "Unlink"
 
 #: src/app/startup/screens.tsx
 msgid "Unlock"
@@ -16805,6 +17095,14 @@ msgstr "Unsupported file"
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Up to 5 seats · free"
 msgstr "Up to 5 seats · free"
+
+#: src/features/bank-sync/ui/BankSyncButton.tsx
+msgid "Up to date"
+msgstr "Up to date"
+
+#: src/features/budget-planning/ui/spending-drawer-mobile/TransactionList.tsx
+msgid "Upcoming"
+msgstr "Upcoming"
 
 #. placeholder {0}: template.name
 #: src/features/recurring/api/useRecurringNotifications.ts
@@ -18140,8 +18438,12 @@ msgid "Your schedule has been refreshed."
 msgstr "Your schedule has been refreshed."
 
 #: src/pages/settings/simplefin/SimpleFINPage.tsx
-msgid "Your SimpleFIN Bridge connection is active."
-msgstr "Your SimpleFIN Bridge connection is active."
+#~ msgid "Your SimpleFIN Bridge connection is active."
+#~ msgstr "Your SimpleFIN Bridge connection is active."
+
+#: src/features/bank-sync/lib/simplefin-client.ts
+msgid "Your SimpleFIN Bridge subscription needs attention."
+msgstr "Your SimpleFIN Bridge subscription needs attention."
 
 #: src/features/subscription/api/useSubscription.ts
 msgid "Your subscription has been cancelled. You will have access until the end of the billing period."

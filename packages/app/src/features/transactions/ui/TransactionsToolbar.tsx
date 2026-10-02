@@ -1,6 +1,12 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Button } from '@shared/ui/button';
+import { cn } from '@shared/lib/utils';
+import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
+import {
+  UNCATEGORIZED_FILTER_KEY,
+  UNCLEARED_FILTER_KEY,
+} from '@features/transactions/api/useQuickFilterShortcuts';
 import { DialogTrigger } from '@shared/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { Input } from '@shared/ui/input';
@@ -70,6 +76,9 @@ interface TransactionsToolbarProps {
   uncategorizedCount: number;
   showOnlyUncategorized: boolean;
   setShowOnlyUncategorized: React.Dispatch<React.SetStateAction<boolean>>;
+  unclearedCount: number;
+  showOnlyUncleared: boolean;
+  setShowOnlyUncleared: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function TransactionsToolbar({
@@ -104,8 +113,12 @@ export function TransactionsToolbar({
   uncategorizedCount,
   showOnlyUncategorized,
   setShowOnlyUncategorized,
+  unclearedCount,
+  showOnlyUncleared,
+  setShowOnlyUncleared,
 }: TransactionsToolbarProps) {
   const { t } = useLingui();
+  const { shift } = getKeyboardShortcutLabels();
 
   return (
     <div className="space-y-4 mb-4">
@@ -295,15 +308,34 @@ export function TransactionsToolbar({
           </div>
         )}
 
-        {/* Uncategorized filter toggle: only show on account page context and when any
-            uncategorized exist (or the now-empty filter is still active and needs clearing) */}
+        {/* Quick filter toggles: only on account pages, and only while there is something to
+            show (or an active, now-empty filter still needs clearing) */}
+        {hideAccountColumn && (unclearedCount > 0 || showOnlyUncleared) && (
+          <Button
+            variant={showOnlyUncleared && unclearedCount > 0 ? 'default' : 'outline'}
+            size="sm"
+            className="ml-auto flex items-center gap-1.5 text-xs"
+            onClick={() => setShowOnlyUncleared((v) => !v)}
+            title={`${showOnlyUncleared ? t`Show all transactions` : t`Show uncleared only`} (${shift(UNCLEARED_FILTER_KEY)})`}
+          >
+            <Filter className="h-4 w-4" />
+            {!showOnlyUncleared
+              ? t`Uncleared (${unclearedCount})`
+              : unclearedCount > 0
+                ? t`Showing Uncleared`
+                : t`All transactions`}
+          </Button>
+        )}
         {hideAccountColumn && (uncategorizedCount > 0 || showOnlyUncategorized) && (
           <Button
             variant={showOnlyUncategorized && uncategorizedCount > 0 ? 'default' : 'outline'}
             size="sm"
-            className="ml-auto flex items-center gap-1.5 text-xs"
+            className={cn(
+              'flex items-center gap-1.5 text-xs',
+              !(unclearedCount > 0 || showOnlyUncleared) && 'ml-auto'
+            )}
             onClick={() => setShowOnlyUncategorized((v) => !v)}
-            title={showOnlyUncategorized ? t`Show all transactions` : t`Show uncategorized only`}
+            title={`${showOnlyUncategorized ? t`Show all transactions` : t`Show uncategorized only`} (${shift(UNCATEGORIZED_FILTER_KEY)})`}
           >
             <Filter className="h-4 w-4" />
             {!showOnlyUncategorized
