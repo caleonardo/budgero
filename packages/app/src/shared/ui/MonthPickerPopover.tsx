@@ -73,7 +73,8 @@ export default function MonthPickerPopover({
   };
 
   const isFullMonthFormat = labelFormat.includes('MMMM');
-  const defaultWidthClass = isFullMonthFormat ? 'w-[140px]' : 'w-[96px]';
+  // A floor, not a fixed width: chevrons stay put across months, but wide theme fonts can grow it.
+  const defaultWidthClass = isFullMonthFormat ? 'min-w-[140px]' : 'min-w-[96px]';
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
@@ -82,7 +83,7 @@ export default function MonthPickerPopover({
           type="button"
           aria-label={t`Change month — currently ${fullLabel}`}
           className={cn(
-            'inline-flex min-w-0 items-center justify-center gap-1 rounded-md px-1.5 py-1 font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+            'inline-flex shrink-0 items-center justify-center gap-1 rounded-md px-1.5 py-1 font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             defaultWidthClass,
             triggerClassName
           )}
