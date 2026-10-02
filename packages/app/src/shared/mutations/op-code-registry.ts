@@ -1,5 +1,6 @@
 import type { OpCodeEntry, OpCodeExecutionContext } from './op-code-registry/shared';
 import { accountOps } from './op-code-registry/domains/accounts';
+import { bankSyncOps } from './op-code-registry/domains/bank-sync';
 import { budgetOps } from './op-code-registry/domains/budgets';
 import { categoryOps } from './op-code-registry/domains/categories';
 import { chatOps } from './op-code-registry/domains/chat';
@@ -39,6 +40,7 @@ const flatOpCodeRegistry = {
   ...userPreferenceOps,
   ...chatOps,
   ...llmSettingsOps,
+  ...bankSyncOps,
 } satisfies Record<string, OpCodeEntry>;
 
 /** Every known mutation op code — derived from the registry keys, so an op

@@ -184,6 +184,13 @@ export function formatOpCode(op: string): string {
     'chat.updateSettings': 'Update Chat Settings',
     'llmSettings.update': 'Update AI Settings',
     'llmSettings.delete': 'Delete AI Settings',
+    'bankSync.saveConnection': 'Connect Bank Sync',
+    'bankSync.deleteConnection': 'Disconnect Bank Sync',
+    'bankSync.saveLink': 'Link Bank Account',
+    'bankSync.deleteLink': 'Unlink Bank Account',
+    'bankSync.recordSync': 'Bank Sync',
+    'bankSync.addReviews': 'Queue Bank Matches',
+    'bankSync.setReviewStatus': 'Review Bank Match',
     'push.import': 'Push API Import',
   };
 

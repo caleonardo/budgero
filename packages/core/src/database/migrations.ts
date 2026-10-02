@@ -222,6 +222,13 @@ const ORPHAN_CLEANUP_STEPS: {
     guardTable: 'chat_settings',
   },
   {
+    table: 'bank_connections',
+    fkColumn: 'BudgetID',
+    parent: 'budgets',
+    label: 'orphaned bank connections',
+    guardTable: 'bank_connections',
+  },
+  {
     table: 'import_runs',
     fkColumn: 'BudgetID',
     parent: 'budgets',

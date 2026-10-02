@@ -15,7 +15,8 @@ export const accountOps = {
         asMilli(Number(args.balance ?? 0)),
         (args.metadata as Record<string, unknown>) || undefined,
         !!args.onBudget,
-        t`Initial Balance`
+        t`Initial Balance`,
+        (args.initialBalanceDate as string | undefined) ?? undefined
       );
     },
     invalidates: [

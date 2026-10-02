@@ -10,7 +10,6 @@ import {
   ChevronDown,
   Shield,
   ClipboardList,
-  Building2,
   List,
   ShieldCheck,
   CreditCard,
@@ -39,6 +38,13 @@ const toLinkProps = (item: NavRouteItem): SidebarNavLinkProps => ({
   icon: item.icon,
   label: item.label,
   match: item.exact === false ? 'startsWith' : 'exact',
+  badge: item.beta
+    ? {
+        label: <Trans>Beta</Trans>,
+        variant: 'outline',
+        className: 'ml-auto text-[10px] px-1 py-0 h-4 text-amber-600 border-amber-600',
+      }
+    : undefined,
 });
 
 const SETTINGS_SECTION_LABEL_CLASS =
@@ -225,18 +231,6 @@ export const SidebarNav = React.memo(function SidebarNav() {
             {NAV_SETTINGS_AUTOMATION.map((link) => (
               <SidebarNavLink key={link.to} {...toLinkProps(link)} />
             ))}
-            {import.meta.env.DEV && (
-              <SidebarNavLink
-                to="/settings/simplefin"
-                icon={Building2}
-                label={t`SimpleFIN`}
-                badge={{
-                  label: t`Beta`,
-                  variant: 'outline',
-                  className: 'ml-auto text-[10px] px-1 py-0 h-4 text-amber-600 border-amber-600',
-                }}
-              />
-            )}
 
             {/* Preferences */}
             <div className="ml-6 mr-2 mt-3 mb-1">

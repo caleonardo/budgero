@@ -8,6 +8,7 @@ import { UpdateAvailableBanner } from '@features/app-update/ui/UpdateAvailableBa
 import { cn } from '@shared/lib/utils';
 import { CommandPalette } from '@widgets/command-palette/CommandPalette';
 import OnboardingInviteShareDialog from '@features/budget-sharing/ui/OnboardingInviteShareDialog';
+import { BankAutoSync } from '@features/bank-sync';
 
 export default function DashboardLayout() {
   const isMobile = useIsMobile();
@@ -29,6 +30,7 @@ export default function DashboardLayout() {
           has actually landed on the dashboard. Reads sessionStorage and
           self-clears on close. */}
       <OnboardingInviteShareDialog />
+      <BankAutoSync />
 
       {isMobile && <MobileTopBar />}
       <main className={cn('flex-1 bg-background', isMobile && 'overflow-auto')}>

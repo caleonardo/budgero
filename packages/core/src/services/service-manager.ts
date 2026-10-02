@@ -25,6 +25,7 @@ import { RecurringTransactionService } from './recurring/index.js';
 import { ImportHistoryService } from './import/import-history-service.js';
 import { MutationHistoryService } from './mutation-history/index.js';
 import { LLMSettingsService } from './llm-settings/index.js';
+import { BankSyncService } from './bank-sync/index.js';
 import { ChatService } from './chat/index.js';
 import { UserMetaService } from './user-meta/index.js';
 import {
@@ -65,6 +66,7 @@ export interface Services {
   importHistory: ImportHistoryService;
   mutationHistory: MutationHistoryService;
   llmSettings: LLMSettingsService;
+  bankSync: BankSyncService;
   chat: ChatService;
   userMeta: UserMetaService;
   customDashboards: CustomDashboardService;
@@ -149,6 +151,7 @@ export class ServiceManager {
       importHistory: new ImportHistoryService(this.db),
       mutationHistory: new MutationHistoryService(this.db),
       llmSettings: new LLMSettingsService(this.db),
+      bankSync: new BankSyncService(this.db),
       chat: new ChatService(this.db),
       userMeta: new UserMetaService(this.db),
       customDashboards: new DatabaseCustomDashboardService(this.db),

@@ -1,0 +1,244 @@
+import { resolve } from 'node:path';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+// The integration test needs the Node database adapter; production uses the browser entry.
+// eslint-disable-next-line no-restricted-imports
+import { asMilli, NodeSqlJsAdapter, ServiceManager, type Services } from '@budgero/core';
+import type { SimpleFINAccount, SimpleFINAccountSet } from '@budgero/core/browser';
+import { executeMutationOp } from '@shared/mutations/op-code-registry';
+import type { AppRuntime } from '@shared/runtime/app-runtime';
+import { linkAccounts } from './link-accounts';
+import { isSyncDue, runBankSync, syncStart } from './run-bank-sync';
+
+const state = vi.hoisted(() => ({
+  services: undefined as Services | undefined,
+  applied: new Set<string>(),
+  remote: { errors: [], accounts: [] } as SimpleFINAccountSet,
+  fetches: 0,
+}));
+vi.mock('@shared/runtime/global', () => ({
+  getRuntime: () => ({ services: () => state.services }),
+}));
+vi.mock('@shared/runtime/mutation-router', () => ({
+  executeSpaceMutation: async (
+    _runtime: unknown,
+    spec: { op: string; payload: Record<string, unknown>; idempotencyKey?: string }
+  ) => {
+    if (spec.idempotencyKey) state.applied.add(spec.idempotencyKey);
+    return executeMutationOp(spec.op, spec.payload);
+  },
+}));
+vi.mock('../lib/simplefin-client', () => ({
+  fetchTransactions: async () => {
+    state.fetches++;
+    return structuredClone(state.remote);
+  },
+}));
+
+const runtime = {
+  services: () => state.services!,
+  isMutationApplied: (id: string) => state.applied.has(id),
+  save: async () => undefined,
+} as unknown as AppRuntime;
+
+const posted = (date: string) => {
+  const [y, m, d] = date.split('-').map(Number);
+  return Math.floor(new Date(y, m - 1, d, 12).getTime() / 1000);
+};
+const remoteAccount = (
+  transactions: SimpleFINAccount['transactions'],
+  balance = '900.00'
+): SimpleFINAccount => ({
+  org: { 'sfin-url': 'https://bridge.example', name: 'Bank' },
+  id: 'ACT-1',
+  name: 'Everyday Checking',
+  currency: 'USD',
+  balance,
+  'balance-date': posted('2026-09-10'),
+  transactions,
+});
+
+describe('bank sync engine', () => {
+  let services: Services;
+  let budgetId: number;
+
+  beforeEach(async () => {
+    const manager = new ServiceManager();
+    const cwd = vi.spyOn(process, 'cwd').mockReturnValue(resolve(process.cwd(), '../core'));
+    try {
+      await manager.initialize(await NodeSqlJsAdapter.create());
+    } finally {
+      cwd.mockRestore();
+    }
+    services = manager.getServices();
+    state.services = services;
+    state.applied.clear();
+    state.fetches = 0;
+    budgetId = await services.budgets.createBudget({
+      name: 'Bank sync',
+      display_currency: 'USD',
+      badge_icon: 'dollar',
+      number_format: '123,456.78',
+      create_default_categories: true,
+    });
+    services.bankSync.saveConnection(budgetId, 'https://u:p@bridge.example/simplefin');
+  });
+
+  const link = async (importFrom = '2026-09-01') => {
+    const account = await services.accounts.createAccount(
+      'Checking',
+      budgetId,
+      'Checking',
+      'USD',
+      asMilli(0),
+      {},
+      true
+    );
+    services.bankSync.saveLink({
+      budgetId,
+      accountId: account.ID,
+      externalAccountId: 'ACT-1',
+      externalName: 'Everyday Checking',
+      orgName: 'Bank',
+      importFrom,
+    });
+    return account.ID;
+  };
+
+  it('imports cleared rows once and never resurrects ones the user deleted', async () => {
+    const accountId = await link();
+    state.remote = {
+      errors: [],
+      accounts: [
+        remoteAccount([
+          { id: 't1', posted: posted('2026-09-02'), amount: '-25.50', description: 'Grocer' },
+          { id: 't2', posted: posted('2026-09-03'), amount: '-4.00', description: 'Coffee' },
+          { id: 't3', posted: 0, amount: '-9.00', description: 'Pending', pending: true },
+        ]),
+      ],
+    };
+    expect(await runBankSync(runtime, budgetId)).toEqual({ imported: 2, reviews: 0, errors: [] });
+    const rows = services.transactions.getTransactionsByAccount(accountId);
+    expect(rows.map((row) => [row.Date, row.OutflowNative, Boolean(row.Cleared)])).toEqual(
+      expect.arrayContaining([
+        ['2026-09-02', 25500, true],
+        ['2026-09-03', 4000, true],
+      ])
+    );
+    const [linked] = services.bankSync.listLinks(budgetId);
+    expect(linked.LastBalance).toBe(900000);
+    expect(services.bankSync.getConnection(budgetId)?.LastSyncAt).toBeTruthy();
+
+    expect((await runBankSync(runtime, budgetId)).imported).toBe(0);
+    const coffee = rows.find((row) => row.OutflowNative === 4000)!;
+    services.transactions.deleteTransaction(coffee.ID);
+    expect((await runBankSync(runtime, budgetId)).imported).toBe(0);
+  });
+
+  it('survives a bank that re-issues every transaction ID on each fetch', async () => {
+    const accountId = await link();
+    const fetchWithIds = (suffix: string) => ({
+      errors: [],
+      accounts: [
+        remoteAccount([
+          {
+            id: `g${suffix}`,
+            posted: posted('2026-09-02'),
+            amount: '-25.50',
+            description: 'Grocer',
+          },
+          {
+            id: `c${suffix}`,
+            posted: posted('2026-09-03'),
+            amount: '-4.00',
+            description: 'Coffee',
+          },
+        ]),
+      ],
+    });
+    state.remote = fetchWithIds('1');
+    expect((await runBankSync(runtime, budgetId)).imported).toBe(2);
+    state.remote = fetchWithIds('2');
+    expect((await runBankSync(runtime, budgetId)).imported).toBe(0);
+    state.remote = fetchWithIds('3');
+    expect((await runBankSync(runtime, budgetId)).imported).toBe(0);
+    state.remote = fetchWithIds('2');
+    expect((await runBankSync(runtime, budgetId)).imported).toBe(0);
+    expect(services.transactions.getTransactionsByAccount(accountId)).toHaveLength(2);
+  });
+
+  it('shares one fetch between overlapping sync triggers', async () => {
+    await link();
+    state.remote = { errors: [], accounts: [remoteAccount([])] };
+    await Promise.all([runBankSync(runtime, budgetId), runBankSync(runtime, budgetId)]);
+    expect(state.fetches).toBe(1);
+  });
+
+  it('queues a hand-entered twin for review instead of importing it', async () => {
+    const accountId = await link();
+    await services.transactions.addTransaction(
+      asMilli(0),
+      asMilli(60000),
+      accountId,
+      0,
+      budgetId,
+      '2026-09-04',
+      '',
+      '',
+      'Electric'
+    );
+    state.remote = {
+      errors: [],
+      accounts: [
+        remoteAccount([
+          { id: 'e1', posted: posted('2026-09-06'), amount: '-60.00', description: 'POWER CO' },
+        ]),
+      ],
+    };
+    expect(await runBankSync(runtime, budgetId)).toMatchObject({ imported: 0, reviews: 1 });
+    expect(services.bankSync.listPendingReviews(budgetId, accountId)[0].candidate?.payee).toBe(
+      'Electric'
+    );
+  });
+
+  it('opens a new linked account so it lands on the bank balance', async () => {
+    const remote = remoteAccount(
+      [
+        { id: 'a', posted: posted('2026-09-02'), amount: '-100.00', description: 'Rent' },
+        { id: 'b', posted: posted('2026-09-05'), amount: '2000.00', description: 'Salary' },
+      ],
+      '2500.00'
+    );
+    state.remote = { errors: [], accounts: [remote] };
+    const result = await linkAccounts(runtime, 'https://u:p@bridge.example/simplefin', budgetId, [
+      {
+        remote,
+        importFrom: '2026-09-01',
+        target: { kind: 'new', name: 'Everyday', type: 'Checking' as never },
+      },
+    ]);
+    expect(result.imported).toBe(2);
+    const [linked] = services.bankSync.listLinks(budgetId);
+    const rows = services.transactions.getTransactionsByAccount(linked.AccountID);
+    const net = rows.reduce(
+      (sum, row) => sum + (row.InflowNative ?? 0) - (row.OutflowNative ?? 0),
+      0
+    );
+    expect(net).toBe(2500000);
+    expect(rows.map((row) => row.Date).sort()[0]).toBe('2026-08-31');
+  });
+
+  it('overlaps a week behind the last sync but never before the link start', () => {
+    expect(syncStart({ ImportFrom: '2026-09-01', LastSyncAt: null })).toEqual(new Date(2026, 8, 1));
+    const last = new Date(2026, 8, 20, 10).toISOString();
+    expect(syncStart({ ImportFrom: '2026-09-01', LastSyncAt: last })).toEqual(
+      new Date(2026, 8, 13, 10)
+    );
+    expect(syncStart({ ImportFrom: '2026-09-18', LastSyncAt: last })).toEqual(
+      new Date(2026, 8, 18)
+    );
+    const now = new Date(2026, 8, 20, 15).getTime();
+    expect(isSyncDue(last, now)).toBe(false);
+    expect(isSyncDue(new Date(2026, 8, 20, 8).toISOString(), now)).toBe(true);
+    expect(isSyncDue(null, now)).toBe(true);
+  });
+});
