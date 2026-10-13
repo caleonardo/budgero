@@ -1,20 +1,25 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 import type { NextConfig } from 'next';
 
+// Where the /stats proxy forwards to. Browsers hit budgero.app/stats through
+// Cloudflare, and this proxy passes the visitor's cf-connecting-ip /
+// cf-ipcountry headers on to Umami. The upstream must NOT be behind Cloudflare
+// itself: a second Cloudflare hop rewrites those headers to this server's own
+// IP and country. In production set UMAMI_ORIGIN (a build arg — rewrites are
+// baked in at build time) to Umami's internal address, e.g. http://umami:3000.
+const UMAMI_ORIGIN = (process.env.UMAMI_ORIGIN || 'https://stats.budgero.app').replace(/\/+$/, '');
+
 const nextConfig: NextConfig = {
   output: 'standalone',
   async rewrites() {
-    // Proxy the tracker script and the collect endpoint through Cloudflare so
-    // Umami receives the real client IP + geo (cf headers); a direct hit to
-    // stats.budgero.app bypasses Cloudflare and loses both.
     return [
       {
         source: '/stats/script.js',
-        destination: 'https://stats.budgero.app/script.js',
+        destination: `${UMAMI_ORIGIN}/script.js`,
       },
       {
         source: '/stats/api/send',
-        destination: 'https://stats.budgero.app/api/send',
+        destination: `${UMAMI_ORIGIN}/api/send`,
       },
     ];
   },
