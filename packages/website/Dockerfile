@@ -17,6 +17,11 @@ ARG NEXT_PUBLIC_POSTHOG_KEY=""
 ARG NEXT_PUBLIC_POSTHOG_HOST=""
 ENV NEXT_PUBLIC_POSTHOG_KEY=$NEXT_PUBLIC_POSTHOG_KEY
 ENV NEXT_PUBLIC_POSTHOG_HOST=$NEXT_PUBLIC_POSTHOG_HOST
+# Upstream for the /stats -> Umami rewrite (baked into the routes manifest at
+# build time). Must bypass Cloudflare, e.g. --build-arg UMAMI_ORIGIN=http://umami:3000;
+# empty falls back to https://stats.budgero.app (see next.config.ts).
+ARG UMAMI_ORIGIN=""
+ENV UMAMI_ORIGIN=$UMAMI_ORIGIN
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN bun run build

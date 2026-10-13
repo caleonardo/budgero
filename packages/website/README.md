@@ -48,6 +48,14 @@ before relying on cross-domain funnel percentages. IP/browser changes and sessio
 expiry can split a journey. PostHog receives the same event names only with consent.
 Production-host checks exclude local Umami funnel events and website custom events.
 
+The `/stats` proxy forwards the visitor's Cloudflare headers (`cf-connecting-ip`,
+`cf-ipcountry`) to Umami, which uses them for the IP hash and country. Its upstream
+must therefore not be behind Cloudflare itself — a second Cloudflare hop rewrites
+those headers to the web server's own IP, and every visitor shows up in the
+server's country. Production builds set the `UMAMI_ORIGIN` build arg to Umami's
+internal address (e.g. `http://umami:3000` on the shared `dokploy-network`);
+without it the proxy falls back to `https://stats.budgero.app`.
+
 `Trial Started` retains its existing meaning: a newly created backend account
 observed during app startup within 15 minutes of account creation, deduplicated
 per device. It does not mean the user created or funded a budget. Compare equal
