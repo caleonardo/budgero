@@ -2,6 +2,22 @@ import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RecurringOccurrenceActions } from './RecurringOccurrenceActions';
 
+// Radix tooltips measure their trigger with ResizeObserver, which jsdom lacks.
+class ResizeObserverMock {
+  observe() {}
+
+  unobserve() {}
+
+  disconnect() {}
+}
+
+beforeAll(() => {
+  Object.defineProperty(globalThis, 'ResizeObserver', {
+    configurable: true,
+    value: ResizeObserverMock,
+  });
+});
+
 const markReady = vi.fn();
 const skip = vi.fn();
 vi.mock('@entities/recurring/api/useRecurringTransactions', () => ({
