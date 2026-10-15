@@ -69,6 +69,10 @@ function CellDisplayButton({ value, title, onClick, className }: CellDisplayButt
 
 interface TransactionRowProps {
   transaction: GetTransactionsByAccountRow;
+  /** Denser row (Appearance setting); drops the secondary-currency line. */
+  compact?: boolean;
+  /** Keyboard cursor is on this row. */
+  isCursor?: boolean;
   isSelected: boolean;
   isRowPending: boolean;
   budgetId: number;
@@ -107,6 +111,8 @@ interface TransactionRowProps {
 
 export const TransactionRow = React.memo(function TransactionRow({
   transaction,
+  compact = false,
+  isCursor = false,
   isSelected,
   isRowPending,
   budgetId,
@@ -257,7 +263,7 @@ export const TransactionRow = React.memo(function TransactionRow({
             className={cn('text-right font-medium font-mono', colorClass)}
           />
         )}
-        {!hideSecondaryAmounts && (
+        {!hideSecondaryAmounts && !compact && (
           <SecondaryAmount
             amount={amount}
             originalAmount={originalAmount}
@@ -278,7 +284,15 @@ export const TransactionRow = React.memo(function TransactionRow({
     const inflowValue = getPrimaryInflow(transaction) || 0;
     const outflowValue = getPrimaryOutflow(transaction) || 0;
     return (
-      <TableRow id={`transaction-${transaction.ID}`} className="h-16 bg-primary/[0.04]">
+      <TableRow
+        id={`transaction-${transaction.ID}`}
+        data-cursor={isCursor || undefined}
+        className={cn(
+          compact ? 'h-10 [&>td]:py-0.5' : 'h-16',
+          'bg-primary/[0.04]',
+          isCursor && 'outline outline-2 -outline-offset-2 outline-primary/60'
+        )}
+      >
         <TableCell className="relative px-0 text-center select-none">
           <div className="flex items-center justify-center">
             <TransactionSelectionCheckbox
@@ -362,8 +376,10 @@ export const TransactionRow = React.memo(function TransactionRow({
   return (
     <TableRow
       id={`transaction-${transaction.ID}`}
+      data-cursor={isCursor || undefined}
       className={cn(
-        'h-16',
+        compact ? 'h-10 [&>td]:py-0.5' : 'h-16',
+        isCursor && 'outline outline-2 -outline-offset-2 outline-primary/60',
         hasUnsafeMoney && 'bg-destructive/10 ring-1 ring-inset ring-destructive/30',
         isRowPending && 'opacity-70',
         isSelected && 'bg-primary/5 data-[state=selected]:bg-primary/5'

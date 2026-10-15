@@ -26,7 +26,6 @@ import {
 } from '@shared/ui/dropdown-menu';
 import { useUiStore } from '@shared/store/useUiStore';
 import {
-  useDeleteTransactions,
   useMoveTransactionToNewCategory,
   useMoveTransactionToNewAccount,
   useSetTransactionsCleared,
@@ -38,6 +37,7 @@ import {
   DUPLICATE_SHORTCUT_KEY,
   useDuplicateSelected,
 } from '@features/transactions/api/useDuplicateShortcut';
+import { useDeleteSelected } from '@features/transactions/api/useDeleteSelected';
 import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 import { PayeeCombobox } from '@features/payees/ui/PayeeCombobox';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
@@ -81,7 +81,7 @@ export function TransactionsBatchToolbar({
   const { data: accountsData } = useActiveAccounts(selectedBudget?.ID || 0);
 
   const queryClient = useQueryClient();
-  const deleteTransactionsMutation = useDeleteTransactions();
+  const { deleteRows, isDeleting } = useDeleteSelected();
   const moveToNewCategoryMutation = useMoveTransactionToNewCategory();
   const moveToNewAccountMutation = useMoveTransactionToNewAccount();
   const updateTransactionColumnMutation = useUpdateTransactionColumn();
@@ -105,27 +105,10 @@ export function TransactionsBatchToolbar({
     (t) => !t.CategoryID || t.CategoryID === 0
   ).length;
 
-  const handleDelete = React.useCallback(async () => {
-    try {
-      await deleteTransactionsMutation.mutateAsync({ transactionIds: selectedRowIds });
-
-      const count = selectedRowIds.length;
-      toast.success(
-        plural(count, {
-          one: `# transaction deleted`,
-          other: `# transactions deleted`,
-        }),
-        {
-          description: t`The selected transaction(s) have been permanently removed.`,
-        }
-      );
-
-      clearSelection();
-    } catch (error) {
-      console.error('Error deleting transactions:', error);
-      toastError('Failed to delete transactions', error, 'Please try again.');
-    }
-  }, [selectedRowIds, deleteTransactionsMutation, clearSelection, t]);
+  const handleDelete = React.useCallback(
+    () => deleteRows(selectedRowIds, clearSelection),
+    [deleteRows, selectedRowIds, clearSelection]
+  );
 
   const handleSetCleared = (cleared: boolean) => {
     setClearedMutation.mutate(
@@ -417,10 +400,10 @@ export function TransactionsBatchToolbar({
           variant="destructive"
           size="sm"
           onClick={handleDelete}
-          disabled={working || deleteTransactionsMutation.isPending}
+          disabled={working || isDeleting}
           className="h-8 px-2"
         >
-          {deleteTransactionsMutation.isPending ? (
+          {isDeleting ? (
             <Loader2 className="h-3 w-3 animate-spin" />
           ) : (
             <Trash2 className="h-3 w-3" />

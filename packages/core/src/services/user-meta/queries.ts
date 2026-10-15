@@ -1,6 +1,6 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { getRow, run } from '../../database/sql.js';
-import type { DuplicateHintSettings } from '../transactions/types.js';
+import type { DuplicateHintSettings, SameDayTransactionOrder } from '../transactions/types.js';
 
 export const DUPLICATE_HINT_DEFAULTS: DuplicateHintSettings = {
   enabled: true,
@@ -156,6 +156,36 @@ export class UserMetaQueries {
   setInlineTransactionEntry(value: boolean): void {
     this.ensureRow();
     run(this.db, `UPDATE user_meta SET InlineTransactionEntry = ? WHERE ID = 1`, value ? 1 : 0);
+  }
+
+  /** Denser register rows. Off by default. */
+  getCompactTransactionRows(): boolean {
+    this.ensureRow();
+    const row = getRow<{ CompactTransactionRows: boolean | number | null }>(
+      this.db,
+      `SELECT CompactTransactionRows FROM user_meta WHERE ID = 1`
+    );
+    return row?.CompactTransactionRows === true || row?.CompactTransactionRows === 1;
+  }
+
+  setCompactTransactionRows(value: boolean): void {
+    this.ensureRow();
+    run(this.db, `UPDATE user_meta SET CompactTransactionRows = ? WHERE ID = 1`, value ? 1 : 0);
+  }
+
+  /** Order of transactions within one day: newest entry first, or by amount. */
+  getSameDayTransactionOrder(): SameDayTransactionOrder {
+    this.ensureRow();
+    const row = getRow<{ SameDayTransactionOrder: string | null }>(
+      this.db,
+      `SELECT SameDayTransactionOrder FROM user_meta WHERE ID = 1`
+    );
+    return row?.SameDayTransactionOrder === 'amount' ? 'amount' : 'newest';
+  }
+
+  setSameDayTransactionOrder(value: SameDayTransactionOrder): void {
+    this.ensureRow();
+    run(this.db, `UPDATE user_meta SET SameDayTransactionOrder = ? WHERE ID = 1`, value);
   }
 
   /** First calendar weekday: Sunday (0) or Monday (1). */

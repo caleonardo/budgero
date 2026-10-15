@@ -1,10 +1,11 @@
 import React from 'react';
 
 export const TRANSACTION_ROW_HEIGHT = 64;
+export const COMPACT_TRANSACTION_ROW_HEIGHT = 40;
 const OVERSCAN_ROWS = 8;
 const DEFAULT_VIEWPORT_HEIGHT = 640;
 
-export function useVirtualizedTransactionRows<T>(items: T[]) {
+export function useVirtualizedTransactionRows<T>(items: T[], rowHeight = TRANSACTION_ROW_HEIGHT) {
   const viewportRef = React.useRef<HTMLDivElement>(null);
   const animationFrameRef = React.useRef<number | null>(null);
   const [scrollTop, setScrollTop] = React.useState(0);
@@ -41,16 +42,19 @@ export function useVirtualizedTransactionRows<T>(items: T[]) {
     });
   }, []);
 
-  const scrollToIndex = React.useCallback((index: number) => {
-    const nextScrollTop = Math.max(0, index * TRANSACTION_ROW_HEIGHT);
-    if (viewportRef.current) {
-      viewportRef.current.scrollTop = nextScrollTop;
-    }
-    setScrollTop(nextScrollTop);
-  }, []);
+  const scrollToIndex = React.useCallback(
+    (index: number) => {
+      const nextScrollTop = Math.max(0, index * rowHeight);
+      if (viewportRef.current) {
+        viewportRef.current.scrollTop = nextScrollTop;
+      }
+      setScrollTop(nextScrollTop);
+    },
+    [rowHeight]
+  );
 
-  const startIndex = Math.max(0, Math.floor(scrollTop / TRANSACTION_ROW_HEIGHT) - OVERSCAN_ROWS);
-  const visibleRowCount = Math.ceil(viewportHeight / TRANSACTION_ROW_HEIGHT) + OVERSCAN_ROWS * 2;
+  const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - OVERSCAN_ROWS);
+  const visibleRowCount = Math.ceil(viewportHeight / rowHeight) + OVERSCAN_ROWS * 2;
   const endIndex = Math.min(items.length, startIndex + visibleRowCount);
 
   return {
@@ -59,8 +63,8 @@ export function useVirtualizedTransactionRows<T>(items: T[]) {
     scrollToIndex,
     visibleItems: items.slice(startIndex, endIndex),
     startIndex,
-    topSpacerHeight: startIndex * TRANSACTION_ROW_HEIGHT,
-    bottomSpacerHeight: Math.max(0, (items.length - endIndex) * TRANSACTION_ROW_HEIGHT),
+    topSpacerHeight: startIndex * rowHeight,
+    bottomSpacerHeight: Math.max(0, (items.length - endIndex) * rowHeight),
     endIndex,
   };
 }

@@ -11,6 +11,7 @@ import {
 } from '@shared/ui/dialog';
 import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 import { CLEARED_SHORTCUT_KEY } from '@features/transactions/api/useClearedShortcut';
+import { ADD_TRANSACTION_SHORTCUT_KEY } from '@features/transactions/api/useRegisterActionShortcuts';
 import { DUPLICATE_SHORTCUT_KEY } from '@features/transactions/api/useDuplicateShortcut';
 import {
   UNCATEGORIZED_FILTER_KEY,
@@ -40,6 +41,16 @@ export function KeyboardShortcutsDialog() {
     {
       title: t`Transactions`,
       items: [
+        {
+          keys: shortcuts.shift(ADD_TRANSACTION_SHORTCUT_KEY),
+          label: t`Add transaction (register)`,
+        },
+        { keys: '↑ / ↓', label: t`Move between rows` },
+        { keys: 'Space', label: t`Select or deselect the current row` },
+        { keys: shortcuts.shift('↑ / ↓'), label: t`Extend the selection` },
+        { keys: shortcuts.mod('A'), label: t`Select all rows` },
+        { keys: 'Delete', label: t`Delete selected rows` },
+        { keys: 'Esc', label: t`Clear selection` },
         { keys: CLEARED_SHORTCUT_KEY, label: t`Toggle cleared on selected rows` },
         { keys: shortcuts.shift(DUPLICATE_SHORTCUT_KEY), label: t`Duplicate selected rows` },
         {

@@ -8,7 +8,11 @@ import { TransactionsToolbar } from '@features/transactions/ui/TransactionsToolb
 import type { GetTransactionsByAccountRow, Category } from '@budgero/core/browser';
 import { useTransactionTable } from '@features/transactions/api/useTransactionTable';
 import { useClearedShortcut } from '@features/transactions/api/useClearedShortcut';
+import { orderWithinDays } from '@features/transactions/lib/same-day-order';
+import { useRegisterDisplay } from '@shared/contexts/RegisterDisplayContext';
 import { useDuplicateShortcut } from '@features/transactions/api/useDuplicateShortcut';
+import { useDeleteSelected } from '@features/transactions/api/useDeleteSelected';
+import { useRegisterActionShortcuts } from '@features/transactions/api/useRegisterActionShortcuts';
 import { useQuickFilterShortcuts } from '@features/transactions/api/useQuickFilterShortcuts';
 import {
   useTransactionSearch,
@@ -294,17 +298,23 @@ export function TransactionsTable({
       ? unclearedCountOverride
       : loadedUnclearedCount;
 
+  const { sameDayOrder, compactRows } = useRegisterDisplay();
+  const orderedData = React.useMemo(
+    () => orderWithinDays(rawData, sameDayOrder),
+    [rawData, sameDayOrder]
+  );
+
   const filteredData = React.useMemo(
     () =>
       filterTransactions(
-        rawData,
+        orderedData,
         parsedQuery,
         { uncategorized: showOnlyUncategorized, uncleared: showOnlyUncleared },
         getPrimaryInflow,
         getPrimaryOutflow
       ),
     [
-      rawData,
+      orderedData,
       parsedQuery,
       showOnlyUncategorized,
       showOnlyUncleared,
@@ -436,6 +446,7 @@ export function TransactionsTable({
   const hasPreviousPage = page > 0;
 
   useClearedShortcut(selectedRowIds, rawData);
+  const { deleteRows } = useDeleteSelected();
   useDuplicateShortcut(selectedRowIds, rawData);
 
   const numSelected = selectedRowIds.length;
@@ -453,6 +464,12 @@ export function TransactionsTable({
     if (!inlineEntry) return;
     return setInlineAddTarget(openInlineAdd);
   }, [inlineEntry, openInlineAdd]);
+
+  useRegisterActionShortcuts({
+    onAdd: inlineEntry ? openInlineAdd : () => setOpenDialog(true),
+    onDeleteSelected: () => void deleteRows(selectedRowIds, () => setRowSelection({})),
+    hasSelection: selectedRowIds.length > 0,
+  });
 
   return (
     <div className="space-y-2 sm:space-y-4 px-3 sm:px-0">
@@ -595,6 +612,8 @@ export function TransactionsTable({
             canLoadMore={!isFilterModeActive && hasMoreTransactions}
             isLoadingMore={isLoadingMoreTransactions}
             onLoadMore={onLoadMoreTransactions}
+            compact={compactRows}
+            onClearSelection={() => setRowSelection({})}
           />
         )}
       </div>

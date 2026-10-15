@@ -1,6 +1,6 @@
 import { DatabaseAdapter } from '../../database/interface.js';
 import { UserMetaQueries, type UserMetaRow } from './queries.js';
-import type { DuplicateHintSettings } from '../transactions/types.js';
+import type { DuplicateHintSettings, SameDayTransactionOrder } from '../transactions/types.js';
 
 export class UserMetaService {
   private queries: UserMetaQueries;
@@ -75,6 +75,22 @@ export class UserMetaService {
 
   setInlineTransactionEntry(value: boolean): void {
     this.queries.setInlineTransactionEntry(value);
+  }
+
+  getCompactTransactionRows(): boolean {
+    return this.queries.getCompactTransactionRows();
+  }
+
+  setCompactTransactionRows(value: boolean): void {
+    this.queries.setCompactTransactionRows(value);
+  }
+
+  getSameDayTransactionOrder(): SameDayTransactionOrder {
+    return this.queries.getSameDayTransactionOrder();
+  }
+
+  setSameDayTransactionOrder(value: SameDayTransactionOrder): void {
+    this.queries.setSameDayTransactionOrder(value);
   }
 
   getDuplicateHintSettings(): DuplicateHintSettings {

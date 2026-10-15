@@ -2,6 +2,7 @@ import { Trans } from '@lingui/react/macro';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
 import { Table } from '@shared/ui/table';
+import { useRegisterKeyboard } from '@features/transactions/api/useRegisterKeyboard';
 import { TransactionTableHeader } from './TransactionTableHeader';
 import { TransactionTableBody } from './TransactionTableBody';
 import { SplitDetailsDialog } from './SplitDetailsDialog';
@@ -10,7 +11,11 @@ import type {
   TransactionEditableColumn,
   TransactionEditorDirectories,
 } from './transaction-editor-types';
-import { useVirtualizedTransactionRows } from './useVirtualizedTransactionRows';
+import {
+  COMPACT_TRANSACTION_ROW_HEIGHT,
+  TRANSACTION_ROW_HEIGHT,
+  useVirtualizedTransactionRows,
+} from './useVirtualizedTransactionRows';
 import { useTransactionViewportHeight } from './useTransactionViewportHeight';
 import { InlineTransactionRow } from './InlineTransactionRow';
 
@@ -53,6 +58,9 @@ export interface DesktopTransactionTableProps {
   canLoadMore?: boolean;
   isLoadingMore?: boolean;
   onLoadMore?: () => Promise<unknown>;
+  /** Denser rows (Appearance setting). */
+  compact?: boolean;
+  onClearSelection: () => void;
   /** Present while the inline add row is open. */
   inlineAdd?: {
     accountId?: number;
@@ -86,6 +94,8 @@ export function DesktopTransactionTable({
   canLoadMore = false,
   isLoadingMore = false,
   onLoadMore,
+  compact = false,
+  onClearSelection,
   inlineAdd,
 }: DesktopTransactionTableProps) {
   const [splitDialogState, setSplitDialogState] = useState<{
@@ -121,7 +131,10 @@ export function DesktopTransactionTable({
     topSpacerHeight,
     bottomSpacerHeight,
     endIndex,
-  } = useVirtualizedTransactionRows(transactions);
+  } = useVirtualizedTransactionRows(
+    transactions,
+    compact ? COMPACT_TRANSACTION_ROW_HEIGHT : TRANSACTION_ROW_HEIGHT
+  );
 
   useTransactionViewportHeight(viewportRef, transactions.length > 0);
 
@@ -178,6 +191,26 @@ export function DesktopTransactionTable({
     const frame = requestAnimationFrame(() => scrollToIndex(index));
     return () => cancelAnimationFrame(frame);
   }, [scrollToIndex, transactions]);
+
+  const scrollToRow = useCallback(
+    (index: number) => {
+      const row = transactions[index];
+      const element = row ? document.getElementById(`transaction-${row.ID}`) : null;
+      if (element) element.scrollIntoView({ block: 'nearest' });
+      else scrollToIndex(index);
+    },
+    [transactions, scrollToIndex]
+  );
+
+  const { cursorId } = useRegisterKeyboard({
+    enabled: !editingCell && !inlineAdd,
+    transactions,
+    rowSelection,
+    onSelectionChange,
+    onSelectAll: () => handleToggleSelectAll(true),
+    onClearSelection,
+    scrollToRow,
+  });
 
   const columnCount =
     8 +
@@ -268,6 +301,8 @@ export function DesktopTransactionTable({
               onSplitCreate={handleSplitCreate}
               onActivateCell={handleActivateCell}
               onDeactivateCell={handleDeactivateCell}
+              compact={compact}
+              cursorId={cursorId}
               leadingRows={
                 inlineAdd && (
                   <InlineTransactionRow

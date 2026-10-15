@@ -5,13 +5,18 @@ import {
   useRuntimeInitialized,
 } from '@shared/runtime/runtime-provider';
 import { executeSpaceMutation } from '@shared/runtime/mutation-router';
-import type { DuplicateHintSettings } from '@budgero/core/browser';
+import type { DuplicateHintSettings, SameDayTransactionOrder } from '@budgero/core/browser';
 
 export const DEFAULT_DUPLICATE_HINT_SETTINGS: DuplicateHintSettings = {
   enabled: true,
   toleranceBps: 100,
   dayWindow: 7,
 };
+
+// On a fresh load the runtime can report Ready a moment before its services
+// exist ("Services not initialized"). Without retries that first failed read
+// sticks, and the app runs on defaults until the preference is changed again.
+const PREFERENCE_READ_RETRIES = 3;
 
 /** Service interface for user preferences */
 interface UserMetaService {
@@ -24,6 +29,8 @@ interface UserMetaService {
   getDialogBackgroundBlur?(): Promise<boolean> | boolean;
   getHideZeroAmounts?(): Promise<boolean> | boolean;
   getInlineTransactionEntry?(): Promise<boolean> | boolean;
+  getCompactTransactionRows?(): Promise<boolean> | boolean;
+  getSameDayTransactionOrder?(): Promise<SameDayTransactionOrder> | SameDayTransactionOrder;
 }
 
 /** Runtime services with userMeta */
@@ -52,7 +59,7 @@ export function useAllowOverAssignment() {
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: PREFERENCE_READ_RETRIES,
   });
 }
 
@@ -102,7 +109,7 @@ export function useSuggestCategoryFromPayee() {
     // after every load. Callers default to true while data is undefined.
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: PREFERENCE_READ_RETRIES,
   });
 }
 
@@ -171,7 +178,7 @@ export function useShowGroupPercent() {
     },
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: PREFERENCE_READ_RETRIES,
   });
 }
 
@@ -220,7 +227,7 @@ export function usePlanningNumberAnimations() {
     },
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: PREFERENCE_READ_RETRIES,
   });
 }
 
@@ -283,7 +290,7 @@ export function useDialogBackgroundBlur() {
     enabled: runtimeInitialized,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: PREFERENCE_READ_RETRIES,
   });
 }
 
@@ -341,7 +348,7 @@ export function useHideZeroAmounts() {
     enabled: runtimeInitialized,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: PREFERENCE_READ_RETRIES,
   });
 }
 
@@ -395,7 +402,7 @@ export function useInlineTransactionEntry() {
     enabled: runtimeInitialized,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: PREFERENCE_READ_RETRIES,
   });
 }
 
@@ -434,6 +441,119 @@ export function useInlineTransactionEntryPreference() {
   };
 }
 
+/** Denser register rows. Off by default. */
+export function useCompactTransactionRows() {
+  const runtime = useRuntime();
+  const runtimeInitialized = useRuntimeInitialized();
+  const spaceId = useActiveSpaceId();
+
+  return useQuery<boolean>({
+    queryKey: ['compactTransactionRows', spaceId ?? 'global'],
+    queryFn: async () => {
+      const services = runtime.services() as ServicesWithUserMeta;
+      return (await services?.userMeta?.getCompactTransactionRows?.()) ?? false;
+    },
+    enabled: runtimeInitialized,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: PREFERENCE_READ_RETRIES,
+  });
+}
+
+/** Query + mutation pair for compact register rows. */
+export function useCompactTransactionRowsPreference() {
+  const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
+  const queryClient = useQueryClient();
+  const queryKey = ['compactTransactionRows', spaceId ?? 'global'] as const;
+  const { data: compactTransactionRows = false, ...queryRest } = useCompactTransactionRows();
+
+  const updateMutation = useMutation<void, Error, boolean, { previous: boolean | undefined }>({
+    mutationFn: async (value: boolean) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'userPreferences.setCompactTransactionRows',
+        payload: { value },
+        meta: { label: 'Update compact transaction rows setting' },
+      });
+    },
+    onMutate: async (value) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<boolean>(queryKey);
+      queryClient.setQueryData(queryKey, value);
+      return { previous };
+    },
+    onError: (_error, _value, context) => {
+      queryClient.setQueryData(queryKey, context?.previous ?? false);
+    },
+  });
+
+  return {
+    compactTransactionRows,
+    isLoading: queryRest.isLoading,
+    updateCompactTransactionRows: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+  };
+}
+
+/** How transactions sharing a date are ordered in the register. Newest first by default. */
+export function useSameDayTransactionOrder() {
+  const runtime = useRuntime();
+  const runtimeInitialized = useRuntimeInitialized();
+  const spaceId = useActiveSpaceId();
+
+  return useQuery<SameDayTransactionOrder>({
+    queryKey: ['sameDayTransactionOrder', spaceId ?? 'global'],
+    queryFn: async () => {
+      const services = runtime.services() as ServicesWithUserMeta;
+      return (await services?.userMeta?.getSameDayTransactionOrder?.()) ?? 'newest';
+    },
+    enabled: runtimeInitialized,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: PREFERENCE_READ_RETRIES,
+  });
+}
+
+/** Query + mutation pair for the same-day transaction order. */
+export function useSameDayTransactionOrderPreference() {
+  const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
+  const queryClient = useQueryClient();
+  const queryKey = ['sameDayTransactionOrder', spaceId ?? 'global'] as const;
+  const { data: sameDayTransactionOrder = 'newest', ...queryRest } = useSameDayTransactionOrder();
+
+  const updateMutation = useMutation<
+    void,
+    Error,
+    SameDayTransactionOrder,
+    { previous: SameDayTransactionOrder | undefined }
+  >({
+    mutationFn: async (value) => {
+      await executeSpaceMutation<void>(runtime, {
+        op: 'userPreferences.setSameDayTransactionOrder',
+        payload: { value },
+        meta: { label: 'Update same-day transaction order setting' },
+      });
+    },
+    onMutate: async (value) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<SameDayTransactionOrder>(queryKey);
+      queryClient.setQueryData(queryKey, value);
+      return { previous };
+    },
+    onError: (_error, _value, context) => {
+      queryClient.setQueryData(queryKey, context?.previous ?? 'newest');
+    },
+  });
+
+  return {
+    sameDayTransactionOrder,
+    isLoading: queryRest.isLoading,
+    updateSameDayTransactionOrder: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+  };
+}
+
 /** Calendar and semantic week-search preference, persisted with the active workspace. */
 export function useWeekStartsOnPreference() {
   const runtime = useRuntime();
@@ -448,7 +568,7 @@ export function useWeekStartsOnPreference() {
     enabled: runtimeInitialized,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: PREFERENCE_READ_RETRIES,
   });
   const mutation = useMutation<void, Error, 0 | 1>({
     mutationFn: async (value) => {
@@ -485,7 +605,7 @@ export function useDuplicateHintSettingsPreference() {
     enabled: runtimeInitialized,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: PREFERENCE_READ_RETRIES,
   });
   const mutation = useMutation<void, Error, Partial<DuplicateHintSettings>>({
     mutationFn: async (settings) => {

@@ -16,6 +16,8 @@ const mocks = vi.hoisted(() => ({
     getDuplicateHintSettings: vi.fn(() => ({ enabled: true, windowDays: 3 })),
     getHideZeroAmounts: vi.fn(() => false),
     getInlineTransactionEntry: vi.fn(() => false),
+    getCompactTransactionRows: vi.fn(() => false),
+    getSameDayTransactionOrder: vi.fn(() => 'newest'),
   },
 }));
 
@@ -60,6 +62,12 @@ describe('settings undo', () => {
     expect(await undoFor('userPreferences.setInlineTransactionEntry', { value: true })).toEqual([
       { op: 'userPreferences.setInlineTransactionEntry', args: { value: false } },
     ]);
+    expect(await undoFor('userPreferences.setCompactTransactionRows', { value: true })).toEqual([
+      { op: 'userPreferences.setCompactTransactionRows', args: { value: false } },
+    ]);
+    expect(
+      await undoFor('userPreferences.setSameDayTransactionOrder', { value: 'amount' })
+    ).toEqual([{ op: 'userPreferences.setSameDayTransactionOrder', args: { value: 'newest' } }]);
     expect(
       await undoFor('userPreferences.setDuplicateHintSettings', { settings: { enabled: false } })
     ).toEqual([
