@@ -1,0 +1,87 @@
+---
+title: Searching transactions
+summary: Find any transaction by typing what you mean. The register search understands dates, money in or out, cleared status, categories, labels, and amounts — and searches everything else as plain text.
+section: getting-started
+topicId: semantic-search
+takeaways:
+  - Which words the search box turns into filters, and how they combine.
+  - Finding transactions by amount with over, under, and exactly (or >, <, =).
+  - How free text, categories, and labels are matched, plus the Uncleared and Uncategorized quick filters.
+---
+
+Every account register and **All Transactions** has a search box above the table. Type what you're looking for — `groceries last month`, `outflows over 100`, `uncleared` — and Budgero turns the words it recognises into filters. Each recognised filter shows up as a chip under the box; click its **×** to drop it. Whatever is left over is searched as plain text.
+
+All filters combine: `Dining out last month over 30` shows Dining out transactions from last month above 30.
+
+The filter words are English keywords, whatever language the app is in.
+
+## Dates
+
+<table>
+  <thead>
+    <tr>
+      <th>You type</th>
+      <th>Shows</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>today</code>, <code>yesterday</code></td><td>That day</td></tr>
+    <tr><td><code>this week</code>, <code>last week</code></td><td>The week so far, or all of last week</td></tr>
+    <tr><td><code>this month</code>, <code>last month</code></td><td>The month so far, or all of last month</td></tr>
+    <tr><td><code>this year</code>, <code>last year</code></td><td>The year so far, or all of last year</td></tr>
+    <tr><td><code>last 30 days</code> (any number)</td><td>The last N days up to today</td></tr>
+  </tbody>
+</table>
+
+A date word also moves the register's date range at the top of the page, so the table loads the right period. Weeks start on the day set in **Settings → Budget Settings → First day of the week**.
+
+## Money in, money out, transfers
+
+- `inflows`, `inflow`, or `income` — money coming in (transfers excluded).
+- `outflows`, `outflow`, `expenses`, `expense`, or `spending` — money going out (transfers excluded).
+- `transfers` or `transfer` — only transfers between your accounts.
+
+## Cleared status
+
+- `cleared` — cleared transactions, including reconciled ones.
+- `uncleared` — transactions you haven't cleared yet.
+- `reconciled` — only reconciled transactions.
+
+You can also write them as `is:cleared`, `is:uncleared`, and `is:reconciled`. Scheduled recurring rows (the projected ones) never match a status.
+
+## Amounts
+
+Search by amount with a comparison word or symbol in front of the number:
+
+<table>
+  <thead>
+    <tr>
+      <th>You type</th>
+      <th>Finds amounts</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>over 50</code>, <code>above 50</code>, <code>&gt;50</code></td><td>Greater than 50</td></tr>
+    <tr><td><code>under 20</code>, <code>below 20</code>, <code>&lt;20</code></td><td>Less than 20</td></tr>
+    <tr><td><code>exactly 42.50</code>, <code>equal 42.50</code>, <code>=42.50</code></td><td>42.50 (to the cent)</td></tr>
+  </tbody>
+</table>
+
+- **Ranges:** combine both ends — `over 20 under 50`.
+- **Direction doesn't matter:** an amount filter compares the size of the transaction, whether it's money in or out. Add `outflows` or `inflows` to narrow it down.
+- **Currency:** amounts are compared in the currency the register shows (account or budget currency, from the toggle above the table). A leading `$`, `€`, or `£` is allowed: `over €100`.
+- **Number format:** use a dot for decimals and no thousands separators — `=1250.50`, not `=1.250,50` or `=1,250.50`.
+- **A number on its own is text,** not an amount: `42.50` looks for "42.50" in memos and payees. Use `=42.50` to find the amount.
+
+## Categories and labels
+
+- Type a **category name** to show only that category. Names with spaces go in quotes: `"Dining out"`. While you type, Budgero suggests matching categories; pick one to add it. Add several categories to see any of them.
+- Use `label:` for **labels**: `label:Vacation`, or `label:"Work trip"` for names with spaces.
+
+## Plain text
+
+Anything the search doesn't recognise is matched against the **memo, payee, category, label, and account** of each transaction, ignoring upper and lower case. `pharmacy` finds "City Pharmacy" as a payee or a memo.
+
+## Quick filters
+
+Next to the search, the **Uncleared** and **Uncategorized** buttons show how many such transactions there are and filter to them in one click. On an account page, <Keys>Shift+C</Keys> and <Keys>Shift+U</Keys> toggle them from the keyboard — see [Keyboard shortcuts](/docs/keyboard-shortcuts).

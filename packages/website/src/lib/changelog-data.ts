@@ -21,10 +21,107 @@ export type ChangelogEntry = {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: 'v1.18.0',
+    date: 'October 15, 2026',
+    summary:
+      'Adds keyboard navigation and batch shortcuts to the register, compact rows, your own exchange rate on foreign-currency transactions and Post now for recurring transactions, and fixes categories mixing up after switching budgets.',
+    isLatest: true,
+    items: [
+      {
+        type: 'new',
+        title: 'Keyboard navigation in the register',
+        description:
+          'Move with ↑/↓, select with Space, extend with Shift+↑/↓, select all with Ctrl/⌘+A, clear with Esc, delete with Delete (with Undo) and add with Shift+N.',
+      },
+      {
+        type: 'new',
+        title: 'Batch shortcuts',
+        description:
+          'With rows selected, G changes the category, M moves them to another account and P sets the payee.',
+      },
+      {
+        type: 'new',
+        title: 'Compact rows and order within a day',
+        description:
+          'Settings → Appearance: Row density fits more transactions on screen, and Order within a day can sort a day by amount, outflows first, which helps when clearing a busy day.',
+      },
+      {
+        type: 'new',
+        title: 'Your own exchange rate',
+        description:
+          'For a transaction in a foreign-currency account, type the amount in your budget currency (for example after swapping cash at a rounded rate) and the rate is worked out and saved.',
+      },
+      {
+        type: 'new',
+        title: 'Post now for recurring transactions',
+        description:
+          'Post a recurring transaction dated today instead of its due date, from the register or Settings → Recurring Transactions.',
+      },
+      {
+        type: 'new',
+        title: 'Sidebar totals and quick reconcile',
+        description:
+          'The On Budget and Off Budget headers show their totals, and clicking the cleared balance in the Reconcile dialog uses it as the actual balance.',
+      },
+      {
+        type: 'new',
+        title: 'Show password',
+        description: 'An eye button reveals what you typed in password and master password fields.',
+      },
+      {
+        type: 'new',
+        title: 'New guides',
+        description:
+          'Searching transactions (including finding amounts with over, under and =) and Keyboard shortcuts.',
+      },
+      {
+        type: 'improved',
+        title: 'Future and recurring transactions',
+        description:
+          'The first time you add a future-dated or recurring transaction in a budget, a short guide explains where to find it, and the recurring row actions have tooltips.',
+      },
+      {
+        type: 'improved',
+        title: 'Budget rate',
+        description:
+          'The rate editor in the register accepts calculator expressions like 9428.45 / 79.34 and no longer overflows its column.',
+      },
+      {
+        type: 'improved',
+        title: 'Forms and sidebar',
+        description:
+          'Tab moves through every field of the Add Transaction dialog, Enter on a button in the inline row presses that button, reconciled transactions show a filled lock, workspace settings sit behind a gear icon and other workspaces are collapsed.',
+      },
+      {
+        type: 'fixed',
+        title: 'Categories after switching budgets',
+        description:
+          'After opening an account and switching budgets, adding a transaction could show the previous budget’s categories and create new ones there.',
+      },
+      {
+        type: 'fixed',
+        title: 'New devices landing in onboarding',
+        description:
+          'Signing in on another device could show onboarding instead of asking for the master password when the first setup was interrupted.',
+      },
+      {
+        type: 'fixed',
+        title: 'Settings resetting after a reload',
+        description:
+          'Appearance settings such as inline entry could fall back to their defaults after reloading the app.',
+      },
+      {
+        type: 'fixed',
+        title: 'Smaller fixes',
+        description:
+          'The cleared balance no longer jumps after adding an uncleared transaction, onboarding no longer creates a duplicate goal category, and the empty-workspace screen shows which workspace you are in.',
+      },
+    ],
+  },
+  {
     version: 'v1.17.1',
     date: 'October 9, 2026',
     summary: 'Fixes untranslated labels that appeared as short codes after v1.17.0.',
-    isLatest: true,
     items: [
       {
         type: 'fixed',

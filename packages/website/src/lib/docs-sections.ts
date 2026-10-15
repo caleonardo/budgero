@@ -71,6 +71,26 @@ export const getDocsSections = (t: Translator): DocsSection[] => [
           t('top_personalizing_budgero_tk3'),
         ],
       },
+      {
+        id: 'semantic-search',
+        title: t('top_semantic_search_title'),
+        summary: t('top_semantic_search_summary'),
+        takeaways: [
+          t('top_semantic_search_tk1'),
+          t('top_semantic_search_tk2'),
+          t('top_semantic_search_tk3'),
+        ],
+      },
+      {
+        id: 'keyboard-shortcuts',
+        title: t('top_keyboard_shortcuts_title'),
+        summary: t('top_keyboard_shortcuts_summary'),
+        takeaways: [
+          t('top_keyboard_shortcuts_tk1'),
+          t('top_keyboard_shortcuts_tk2'),
+          t('top_keyboard_shortcuts_tk3'),
+        ],
+      },
     ],
   },
   {
