@@ -8807,6 +8807,11 @@ msgstr "Masquer les catégories masquées"
 msgid "Hide label column"
 msgstr "Masquer la colonne des étiquettes"
 
+#: src/pages/onboarding/steps/shared.tsx
+#: src/shared/ui/password-input.tsx
+msgid "Hide password"
+msgstr "Masquer le mot de passe"
+
 #: src/features/chat/ui/chat-panel/ChatHeader.tsx
 msgid "Hide sidebar"
 msgstr "Masquer la barre latérale"
@@ -15503,6 +15508,11 @@ msgstr "Afficher uniquement les non catégorisées (page du compte)"
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Show only uncleared (account page)"
 msgstr "Afficher uniquement les non pointées (page du compte)"
+
+#: src/pages/onboarding/steps/shared.tsx
+#: src/shared/ui/password-input.tsx
+msgid "Show password"
+msgstr "Afficher le mot de passe"
 
 #: src/pages/settings/BudgetSettingsPage.tsx
 msgid "Show percentage of assigned on group rows"

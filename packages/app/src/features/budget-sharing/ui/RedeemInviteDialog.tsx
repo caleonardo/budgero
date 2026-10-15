@@ -4,6 +4,7 @@ import { AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
+import { PasswordInput } from '@shared/ui/password-input';
 import { Label } from '@shared/ui/label';
 import {
   Dialog,
@@ -171,9 +172,8 @@ export function RedeemInviteDialog({ open, onOpenChange }: RedeemInviteDialogPro
             <Label htmlFor="master-password">
               <Trans>Master password</Trans>
             </Label>
-            <Input
+            <PasswordInput
               id="master-password"
-              type="password"
               value={masterPassword}
               onChange={(event) => setMasterPassword(event.target.value)}
               placeholder={hasCachedPassword ? t`leave blank to use cached password` : 'required'}

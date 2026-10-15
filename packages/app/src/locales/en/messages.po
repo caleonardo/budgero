@@ -8809,6 +8809,11 @@ msgstr "Hide hidden categories"
 msgid "Hide label column"
 msgstr "Hide label column"
 
+#: src/pages/onboarding/steps/shared.tsx
+#: src/shared/ui/password-input.tsx
+msgid "Hide password"
+msgstr "Hide password"
+
 #: src/features/chat/ui/chat-panel/ChatHeader.tsx
 msgid "Hide sidebar"
 msgstr "Hide sidebar"
@@ -15505,6 +15510,11 @@ msgstr "Show only uncategorized (account page)"
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Show only uncleared (account page)"
 msgstr "Show only uncleared (account page)"
+
+#: src/pages/onboarding/steps/shared.tsx
+#: src/shared/ui/password-input.tsx
+msgid "Show password"
+msgstr "Show password"
 
 #: src/pages/settings/BudgetSettingsPage.tsx
 msgid "Show percentage of assigned on group rows"
