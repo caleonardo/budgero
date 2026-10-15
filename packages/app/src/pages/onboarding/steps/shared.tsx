@@ -10,6 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 // Styling is intentionally inline (paper/editorial) — distinct from the
 // post-onboarding shadcn dashboard.
 import React from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import { parseISO } from 'date-fns';
 import { getOnboardingImage } from '../onboarding-images';
 import { CURRENCIES, type OnboardingFormState, type OnboardingStepDef } from '../onboarding-data';
@@ -140,37 +141,63 @@ export const InputRow: React.FC<{
   prefix?: string;
   big?: boolean;
   type?: string;
-}> = ({ value, onChange, placeholder, prefix, big, type }) => (
-  <div
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      border: '1px dashed rgba(57,57,57,0.55)',
-      background: PAPER,
-      padding: big ? '14px 18px' : '10px 14px',
-      fontFamily: 'IBM Plex Mono, monospace',
-    }}
-  >
-    {prefix && (
-      <span style={{ color: INK_MUTED, marginRight: 8, fontSize: big ? 20 : 14 }}>{prefix}</span>
-    )}
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      type={type}
+}> = ({ value, onChange, placeholder, prefix, big, type }) => {
+  const { t } = useLingui();
+  const [revealed, setRevealed] = React.useState(false);
+  const isPassword = type === 'password';
+  const EyeIcon = revealed ? EyeOff : Eye;
+  return (
+    <div
       style={{
-        flex: 1,
-        background: 'transparent',
-        border: 'none',
-        outline: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        border: '1px dashed rgba(57,57,57,0.55)',
+        background: PAPER,
+        padding: big ? '14px 18px' : '10px 14px',
         fontFamily: 'IBM Plex Mono, monospace',
-        fontSize: big ? 22 : 14,
-        color: INK,
       }}
-    />
-  </div>
-);
+    >
+      {prefix && (
+        <span style={{ color: INK_MUTED, marginRight: 8, fontSize: big ? 20 : 14 }}>{prefix}</span>
+      )}
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        type={isPassword && revealed ? 'text' : type}
+        style={{
+          flex: 1,
+          minWidth: 0,
+          background: 'transparent',
+          border: 'none',
+          outline: 'none',
+          fontFamily: 'IBM Plex Mono, monospace',
+          fontSize: big ? 22 : 14,
+          color: INK,
+        }}
+      />
+      {isPassword && (
+        <button
+          type="button"
+          onClick={() => setRevealed((v) => !v)}
+          aria-label={revealed ? t`Hide password` : t`Show password`}
+          aria-pressed={revealed}
+          style={{
+            marginLeft: 8,
+            padding: 0,
+            display: 'flex',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            color: INK_MUTED,
+          }}
+        >
+          <EyeIcon size={big ? 20 : 16} />
+        </button>
+      )}
+    </div>
+  );
+};
 
 // Small uppercase label above a field/section — repeated verbatim across
 // PasswordStep and GoalStep (marginBottom varies: 6 for fields, 8 for the
