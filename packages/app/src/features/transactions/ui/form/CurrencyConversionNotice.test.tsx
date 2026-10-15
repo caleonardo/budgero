@@ -32,4 +32,29 @@ describe('CurrencyConversionNotice', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Use suggested' }));
     expect(onReceivedAmountChange).toHaveBeenCalledWith(null);
   });
+
+  it('labels the amount as the budget amount for a foreign-currency transaction', () => {
+    render(
+      <CurrencyConversionNotice
+        mode="budget"
+        amount={100_000}
+        convertedAmount={150_000}
+        isLoadingRate={false}
+        fromCurrency="EUR"
+        toCurrency="USD"
+        canUseCurrencyApi
+        exchangeRate={1.5}
+        receivedAmount={150_000}
+        onReceivedAmountChange={vi.fn()}
+        onEditingChange={vi.fn()}
+        localizer={new Intl.NumberFormat('en-US')}
+      />
+    );
+
+    expect(screen.getByText('Amount in budget (USD)')).toBeInTheDocument();
+    expect(screen.getByTestId('budget-converted-amount')).toBeInTheDocument();
+    expect(
+      screen.getByText('The implied exchange rate will be saved with this transaction.')
+    ).toBeInTheDocument();
+  });
 });

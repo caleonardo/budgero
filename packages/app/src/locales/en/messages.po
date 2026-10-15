@@ -3407,6 +3407,10 @@ msgstr "Amount conditions require a numeric value."
 msgid "Amount fields"
 msgstr "Amount fields"
 
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Amount in budget ({toCurrency})"
+msgstr "Amount in budget ({toCurrency})"
+
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Amount needed available"
 msgstr "Amount needed available"
@@ -9200,6 +9204,10 @@ msgstr "In"
 msgid "In a dialog, or in an inline row at the top of the account register (desktop)."
 msgstr "In a dialog, or in an inline row at the top of the account register (desktop)."
 
+#: src/features/transactions/ui/desktop-table/InlineTransactionRow.tsx
+msgid "In budget ({conversionTargetCurrency}), edit to use your own rate"
+msgstr "In budget ({conversionTargetCurrency}), edit to use your own rate"
+
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 msgid "in progress"
 msgstr "in progress"
@@ -12225,6 +12233,10 @@ msgstr "Optional — edit this if the bank deposited a different amount."
 #: src/pages/settings/ai/ConnectionTestPanel.tsx
 msgid "Optional — required by most cloud providers"
 msgstr "Optional — required by most cloud providers"
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Optional — type what you actually got, e.g. after a rounded cash swap."
+msgstr "Optional — type what you actually got, e.g. after a rounded cash swap."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Optional but encouraged"
@@ -16788,6 +16800,10 @@ msgstr "The downward trend is statistically solid (p = {0}, R² = {1}): {2}/mont
 #: src/features/goal-management/ui/GoalSection.tsx
 msgid "The goal has been permanently removed."
 msgstr "The goal has been permanently removed."
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "The implied exchange rate will be saved with this transaction."
+msgstr "The implied exchange rate will be saved with this transaction."
 
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "The implied exchange rate will be saved with this transfer."

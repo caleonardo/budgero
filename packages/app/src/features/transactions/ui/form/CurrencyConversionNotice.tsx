@@ -2,7 +2,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 /**
  * Currency Conversion Notice Component
  *
- * Displays currency conversion information for cross-currency transfers.
+ * Displays currency conversion information for cross-currency transfers, and
+ * for transactions in a foreign-currency account (converted to the budget
+ * currency). Either way the converted amount can be typed to pin the rate.
  */
 
 import { Info, Loader2 } from 'lucide-react';
@@ -28,6 +30,8 @@ interface CurrencyConversionNoticeProps {
   onReceivedAmountChange: (amount: number | null) => void;
   onEditingChange: (editing: boolean) => void;
   localizer: Intl.NumberFormat;
+  /** 'budget': a regular transaction converted to the budget currency. */
+  mode?: 'transfer' | 'budget';
 }
 
 export function CurrencyConversionNotice({
@@ -42,7 +46,9 @@ export function CurrencyConversionNotice({
   onReceivedAmountChange,
   onEditingChange,
   localizer,
+  mode = 'transfer',
 }: CurrencyConversionNoticeProps) {
+  const isBudget = mode === 'budget';
   const { t } = useLingui();
 
   const numberFormatter = usePlainNumberFormatter(localizer);
@@ -90,7 +96,11 @@ export function CurrencyConversionNotice({
           <div className="mt-2 space-y-1.5 border-t border-sky-200 pt-2 dark:border-sky-900/60">
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-medium text-sky-900 dark:text-sky-200">
-                <Trans>Received amount ({toCurrency})</Trans>
+                {isBudget ? (
+                  <Trans>Amount in budget ({toCurrency})</Trans>
+                ) : (
+                  <Trans>Received amount ({toCurrency})</Trans>
+                )}
               </span>
               {receivedAmount !== null && (
                 <Button
@@ -117,12 +127,16 @@ export function CurrencyConversionNotice({
               inputClassName="h-8 bg-background text-right"
               displayClassName="rounded-md border border-sky-200 bg-background px-2 py-1.5 text-right dark:border-sky-900/60"
               onEditingChange={onEditingChange}
-              data-testid="transfer-received-amount"
+              data-testid={isBudget ? 'budget-converted-amount' : 'transfer-received-amount'}
             />
             <p className="text-[11px] text-sky-700 dark:text-sky-300">
-              {receivedAmount === null
-                ? t`Optional — edit this if the bank deposited a different amount.`
-                : t`The implied exchange rate will be saved with this transfer.`}
+              {isBudget
+                ? receivedAmount === null
+                  ? t`Optional — type what you actually got, e.g. after a rounded cash swap.`
+                  : t`The implied exchange rate will be saved with this transaction.`
+                : receivedAmount === null
+                  ? t`Optional — edit this if the bank deposited a different amount.`
+                  : t`The implied exchange rate will be saved with this transfer.`}
             </p>
           </div>
           {!canUseCurrencyApi && (

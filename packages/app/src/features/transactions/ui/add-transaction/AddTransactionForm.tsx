@@ -128,6 +128,8 @@ function BudgetTransactionForm({
     resolvedRate,
     receivedAmount,
     setReceivedAmount,
+    needsBudgetConversion,
+    conversionTargetCurrency,
     handleSubmit,
   } = useAddTransactionForm({
     budgetId,
@@ -407,6 +409,8 @@ function BudgetTransactionForm({
         isTransfer={form.isTransfer}
         transferInvolvesOffBudget={transferInvolvesOffBudget}
         needsCurrencyConversion={needsCurrencyConversion}
+        needsBudgetConversion={needsBudgetConversion}
+        conversionTargetCurrency={conversionTargetCurrency}
         convertedAmount={form.convertedAmount}
         isLoadingRate={form.isLoadingRate}
         selectedAccount={selectedAccount}

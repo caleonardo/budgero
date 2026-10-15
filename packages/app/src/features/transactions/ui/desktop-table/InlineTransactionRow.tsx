@@ -13,6 +13,7 @@ import { formatDate as format } from '@shared/lib/date-format';
 import { formatMilli, ZERO_MILLI } from '@shared/lib/currency/milli';
 import { buildCurrencyLocalizer } from '@shared/store/useUiStore';
 import { getExchangeRate, saveManualRate } from '@entities/currency/lib/currency-utils';
+import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { ManualRatePrompt } from '@features/currencies/ui/ManualRatePrompt';
 import { PayeeCombobox } from '@features/payees/ui/PayeeCombobox';
 import { useAddTransactionHandler } from '@features/transactions/api/useAddTransactionHandler';
@@ -86,6 +87,9 @@ export function InlineTransactionRow({
     parentSigned,
     receivedAmount,
     setReceivedAmount,
+    needsBudgetConversion,
+    conversionTargetCurrency,
+    resolvedRate,
   } = useAddTransactionForm({
     budgetId,
     selectedAccountId: accountId,
@@ -100,6 +104,7 @@ export function InlineTransactionRow({
   const [inflow, setInflow] = React.useState<number | null>(null);
   const [outflow, setOutflow] = React.useState<number | null>(null);
   // Cross-currency transfers: the other account's amount, when typed by hand.
+  // Foreign-currency transactions: the budget-currency amount, when typed.
   const [otherAmount, setOtherAmount] = React.useState<number | null>(null);
   // Rate-based estimate of what the other account sent (inflow transfers), keyed
   // by its inputs so a stale result is ignored.
@@ -166,7 +171,7 @@ export function InlineTransactionRow({
         from: rowAccount,
         to: '',
         amount: isInflow ? inflow : outflow,
-        received: null,
+        received: needsBudgetConversion ? otherAmount : null,
       };
     }
     const from = isInflow ? transferAccount : rowAccount;
@@ -231,9 +236,10 @@ export function InlineTransactionRow({
       ),
     [rowAccountRecord?.Currency, selectedBudget?.DisplayCurrency, selectedBudget?.NumberFormat]
   );
+  const otherCurrency = transferAccountRecord?.Currency ?? conversionTargetCurrency ?? 'USD';
   const otherLocalizer = React.useMemo(
-    () => localizerFor(transferAccountRecord?.Currency ?? 'USD', selectedBudget?.NumberFormat),
-    [transferAccountRecord?.Currency, selectedBudget?.NumberFormat]
+    () => localizerFor(otherCurrency, selectedBudget?.NumberFormat),
+    [otherCurrency, selectedBudget?.NumberFormat]
   );
 
   const resetRow = () => {
@@ -344,7 +350,8 @@ export function InlineTransactionRow({
     );
   };
 
-  const otherAmountValue = otherAmount ?? (isInflow ? sentAuto : form.convertedAmount);
+  const otherAmountValue =
+    otherAmount ?? (transferAccount && isInflow ? sentAuto : form.convertedAmount);
 
   // Cells before the Inflow column, and after the Outflow column, so detail rows
   // can line up with the register's columns.
@@ -398,7 +405,10 @@ export function InlineTransactionRow({
             <AccountSelectCell
               accountName={rowAccountRecord?.Name ?? ''}
               accounts={accounts}
-              onCommit={(id) => setRowAccount(String(id))}
+              onCommit={(id) => {
+                setRowAccount(String(id));
+                setOtherAmount(null);
+              }}
               triggerClassName={cellTrigger}
             />
           </TableCell>
@@ -411,8 +421,10 @@ export function InlineTransactionRow({
             payees={editorDirectories.payees}
             onChange={(payee) => {
               form.setPayee(payee);
+              // Leaving a transfer drops its other-account amount; a typed
+              // budget-currency amount on a plain transaction stays.
+              if (transferAccount) setOtherAmount(null);
               setTransferAccount('');
-              setOtherAmount(null);
             }}
             transferAccounts={isSplit ? undefined : transferTargets}
             onSelectTransfer={(id) => {
@@ -478,7 +490,18 @@ export function InlineTransactionRow({
           {renderAmountCell('outflow', outflow, setOutflow, { cellKey: 'outflow' })}
         </TableCell>
 
-        {trailingCells}
+        {showExchangeRateColumn && (
+          // Live budget rate: the estimate, or the rate implied by a typed budget amount.
+          <TableCell
+            className="text-right font-mono text-xs text-muted-foreground"
+            data-testid="inline-budget-rate"
+          >
+            {!transferAccount && needsBudgetConversion && resolvedRate
+              ? formatExchangeRate(resolvedRate)
+              : null}
+          </TableCell>
+        )}
+        {showBalanceColumn && <TableCell />}
         <TableCell />
       </TableRow>
 
@@ -506,6 +529,35 @@ export function InlineTransactionRow({
                   currency: transferAccountRecord.Currency,
                   localizer: otherLocalizer,
                 })}
+            </TableCell>
+          ))}
+          {trailingCells}
+          <TableCell />
+        </TableRow>
+      )}
+
+      {!transferAccount && needsBudgetConversion && conversionTargetCurrency && (
+        <TableRow className={rowTint} onKeyDown={handleKeyDown} data-inline-entry>
+          <TableCell
+            colSpan={leadingColumns}
+            className="py-1 text-right text-xs text-muted-foreground"
+          >
+            <Trans>In budget ({conversionTargetCurrency}), edit to use your own rate</Trans>
+          </TableCell>
+          {(['inflow', 'outflow'] as const).map((column) => (
+            <TableCell key={column} className="py-1 text-right font-mono text-xs">
+              {(column === 'inflow') === isInflow &&
+                renderAmountCell(
+                  'other',
+                  otherAmountValue,
+                  // Empty or zero means "use the estimate", never a 0 rate.
+                  (value) => setOtherAmount(value > 0 ? value : null),
+                  {
+                    cellKey: `budget-${rowAccount}`,
+                    currency: conversionTargetCurrency,
+                    localizer: otherLocalizer,
+                  }
+                )}
             </TableCell>
           ))}
           {trailingCells}
