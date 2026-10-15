@@ -276,7 +276,6 @@ msgstr "{0, plural, one {# registerrij} other {# registerrijen}}"
 msgid "{0, plural, one {# split transaction detected} other {# split transactions detected}}"
 msgstr "{0, plural, one {# gesplitste transactie gedetecteerd} other {# gesplitste transacties gedetecteerd}}"
 
-
 #. placeholder {0}: sources.length
 #: src/features/transactions/api/useDuplicateShortcut.ts
 msgid "{0, plural, one {# transaction duplicated} other {# transactions duplicated}}"
@@ -1730,9 +1729,6 @@ msgstr "<0/>Beheerder maken"
 msgid "<0/>Manage Users"
 msgstr "<0/>Gebruikers beheren"
 
-#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
-msgid "<0/>Manage workspaces"
-msgstr "<0/>Werkruimtes beheren"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "<0/>Mobile Budget View"
@@ -4821,6 +4817,18 @@ msgstr "Rekeningvaluta wijzigen?"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Change Category"
 msgstr "Categorie wijzigen"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}) or move ({MOVE_SHORTCUT_KEY})"
+msgstr "Categorie wijzigen ({CATEGORIZE_SHORTCUT_KEY}) of verplaatsen ({MOVE_SHORTCUT_KEY})"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Change category of selected rows"
+msgstr "Categorie van geselecteerde rijen wijzigen"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Change category, account or payee"
+msgstr "Categorie, rekening of begunstigde wijzigen"
 
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Change currency"
@@ -10313,6 +10321,10 @@ msgstr "Gebruikersaccounts en toegangsniveaus beheren"
 msgid "Manage Users"
 msgstr "Gebruikers beheren"
 
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+msgid "Manage workspaces"
+msgstr "Werkruimtes beheren"
+
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Manage your <0>subscription</0> and resubscribe at any time."
 msgstr "Beheer je <0>abonnement</0> en abonneer je opnieuw wanneer je maar wilt."
@@ -10797,6 +10809,10 @@ msgstr "Geld verplaatsen"
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
 msgid "Move Money"
 msgstr "Geld verplaatsen"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Move selected rows to another account"
+msgstr "Geselecteerde rijen naar een andere rekening verplaatsen"
 
 #: src/features/budget-planning/ui/category-row/MoveMoneyPopover.tsx
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx

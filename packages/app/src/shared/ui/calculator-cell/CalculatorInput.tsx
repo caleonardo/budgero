@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/react/macro';
+import { useRef } from 'react';
 import { Input } from '@shared/ui/input';
 import { cn } from '@shared/lib/utils';
 import { applyShortcut, isExpression } from './calculator-utils';
@@ -48,6 +49,11 @@ export function CalculatorInput({
   onSave,
   onCancel,
 }: CalculatorInputProps) {
+  // Tabbing out saves only after focus has landed on the next field. Saving
+  // synchronously re-renders the form mid-transition, and a Radix tab list as
+  // the next stop then drops focus (the dialog's trap sends it back to the top).
+  const tabbingOutRef = useRef(false);
+
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const raw = e.target.value;
     if (!localizer || !raw) {
@@ -165,6 +171,8 @@ export function CalculatorInput({
       e.stopPropagation();
     }
 
+    tabbingOutRef.current = e.key === 'Tab';
+
     if (e.key === 'Enter') {
       e.preventDefault();
       onSave();
@@ -191,7 +199,14 @@ export function CalculatorInput({
         ref={inputRef}
         value={inputText}
         onChange={handleChange}
-        onBlur={onSave}
+        onBlur={() => {
+          if (!tabbingOutRef.current) {
+            onSave();
+            return;
+          }
+          tabbingOutRef.current = false;
+          setTimeout(onSave, 0);
+        }}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         className={cn(

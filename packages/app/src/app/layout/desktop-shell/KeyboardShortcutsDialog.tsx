@@ -11,6 +11,10 @@ import {
 } from '@shared/ui/dialog';
 import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 import { CLEARED_SHORTCUT_KEY } from '@features/transactions/api/useClearedShortcut';
+import {
+  CATEGORIZE_SHORTCUT_KEY,
+  MOVE_SHORTCUT_KEY,
+} from '@features/transactions/api/useBatchEditShortcuts';
 import { ADD_TRANSACTION_SHORTCUT_KEY } from '@features/transactions/api/useRegisterActionShortcuts';
 import { DUPLICATE_SHORTCUT_KEY } from '@features/transactions/api/useDuplicateShortcut';
 import {
@@ -52,6 +56,8 @@ export function KeyboardShortcutsDialog() {
         { keys: 'Delete', label: t`Delete selected rows` },
         { keys: 'Esc', label: t`Clear selection` },
         { keys: CLEARED_SHORTCUT_KEY, label: t`Toggle cleared on selected rows` },
+        { keys: CATEGORIZE_SHORTCUT_KEY, label: t`Change category of selected rows` },
+        { keys: MOVE_SHORTCUT_KEY, label: t`Move selected rows to another account` },
         { keys: shortcuts.shift(DUPLICATE_SHORTCUT_KEY), label: t`Duplicate selected rows` },
         {
           keys: shortcuts.shift(UNCLEARED_FILTER_KEY),

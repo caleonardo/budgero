@@ -166,7 +166,17 @@ export function WorkspaceBudgetList({
       <section className="space-y-1">
         <div className="flex items-center gap-2 px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           <Users className="h-3.5 w-3.5" />
-          <span className="truncate">{activeSpace?.display_name ?? t`Workspace`}</span>
+          <span className="flex-1 truncate">{activeSpace?.display_name ?? t`Workspace`}</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={t`Manage workspaces`}
+            title={t`Manage workspaces`}
+            className="h-6 w-6 text-muted-foreground"
+            onClick={handleOpenWorkspaceSettings}
+          >
+            <Settings className="h-3.5 w-3.5" />
+          </Button>
         </div>
 
         {budgetsLoading ? (
@@ -367,21 +377,6 @@ export function WorkspaceBudgetList({
           </div>
         </section>
       )}
-
-      {/* Footer: Manage workspaces */}
-      <div className="border-t border-border pt-2">
-        <div
-          className={cn(rowBaseClass, rowHoverClass, 'text-muted-foreground')}
-          {...buttonizeProps(handleOpenWorkspaceSettings)}
-        >
-          <span className="flex items-center gap-2">
-            <Trans>
-              <Settings className="h-4 w-4" />
-              Manage workspaces
-            </Trans>
-          </span>
-        </div>
-      </div>
     </div>
   );
 }

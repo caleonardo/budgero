@@ -38,6 +38,11 @@ import {
   useDuplicateSelected,
 } from '@features/transactions/api/useDuplicateShortcut';
 import { useDeleteSelected } from '@features/transactions/api/useDeleteSelected';
+import {
+  CATEGORIZE_SHORTCUT_KEY,
+  MOVE_SHORTCUT_KEY,
+  useBatchEditShortcuts,
+} from '@features/transactions/api/useBatchEditShortcuts';
 import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
 import { PayeeCombobox } from '@features/payees/ui/PayeeCombobox';
 import type { GetTransactionsByAccountRow } from '@budgero/core/browser';
@@ -70,6 +75,9 @@ export function TransactionsBatchToolbar({
   const [newAccountID, setNewAccountID] = useState<string>('-1');
   const [newPayee, setNewPayee] = useState<string>('');
   const [working, setWorking] = useState<boolean>(false);
+  // Edit menu opened from the keyboard: G jumps to the category picker, M to the account picker.
+  const [editMenuOpen, setEditMenuOpen] = useState(false);
+  const [shortcutTarget, setShortcutTarget] = useState<'category' | 'account' | null>(null);
   const { overall: isFullyOnline } = useConnectivity();
   const [showRatePrompt, setShowRatePrompt] = useState(false);
   const [pendingRatePair, setPendingRatePair] = useState<{ from: string; to: string } | null>(null);
@@ -105,6 +113,13 @@ export function TransactionsBatchToolbar({
     (t) => !t.CategoryID || t.CategoryID === 0
   ).length;
 
+  useBatchEditShortcuts((target) => {
+    if (target === 'account' && accountsData.length < 2) return false;
+    setShortcutTarget(target);
+    setEditMenuOpen(true);
+    return true;
+  });
+
   const handleDelete = React.useCallback(
     () => deleteRows(selectedRowIds, clearSelection),
     [deleteRows, selectedRowIds, clearSelection]
@@ -134,17 +149,23 @@ export function TransactionsBatchToolbar({
     );
   };
 
-  async function handleBatchEdits() {
+  // Shortcut picks apply right away and pass their value in, since the state
+  // update from the same pick hasn't landed yet.
+  async function handleBatchEdits(overrides: { categoryId?: number; accountId?: string } = {}) {
+    const shortcutPick = overrides.categoryId !== undefined || overrides.accountId !== undefined;
+    const categoryId = overrides.categoryId ?? (shortcutPick ? -1 : newCategoryID);
+    const accountId = overrides.accountId ?? (shortcutPick ? '-1' : newAccountID);
+    const payee = shortcutPick ? '' : newPayee;
     setWorking(true);
 
-    if (newCategoryID === -1 && newAccountID === '-1' && !newPayee) {
+    if (categoryId === -1 && accountId === '-1' && !payee) {
       console.error('No category, account, or payee selected.');
       setWorking(false);
       return;
     }
 
     try {
-      const newAccountIdInt = parseInt(newAccountID, 10);
+      const newAccountIdInt = parseInt(accountId, 10);
 
       // If moving to new account across currencies while offline and no cached/manual rate, prompt once
       if (newAccountIdInt != -1 && selectedAccount && selectedBudget) {
@@ -171,8 +192,8 @@ export function TransactionsBatchToolbar({
       // selectedAccount is null on the All Transactions page; these mutations
       // only need the transaction id, so don't gate on it.
       const didMoveAccount = newAccountIdInt != -1;
-      const didMoveCategory = newCategoryID != -1;
-      const didUpdatePayee = !!newPayee;
+      const didMoveCategory = categoryId != -1;
+      const didUpdatePayee = !!payee;
 
       for (const id of selectedRowIds) {
         if (didMoveAccount) {
@@ -186,7 +207,7 @@ export function TransactionsBatchToolbar({
         if (didMoveCategory) {
           await moveToNewCategoryMutation.mutateAsync({
             transactionId: id,
-            newCategoryId: newCategoryID,
+            newCategoryId: categoryId,
             accountId: selectedAccount?.ID ?? 0,
             skipInvalidate: true,
           });
@@ -196,7 +217,7 @@ export function TransactionsBatchToolbar({
           await updateTransactionColumnMutation.mutateAsync({
             transactionId: id,
             column: 'Payee',
-            value: newPayee,
+            value: payee,
             accountId: selectedAccount?.ID ?? 0,
             skipInvalidate: true,
           });
@@ -304,9 +325,21 @@ export function TransactionsBatchToolbar({
           </DropdownMenuContent>
         </DropdownMenu>
         {/* Compact Action Menu */}
-        <DropdownMenu>
+        <DropdownMenu
+          open={editMenuOpen}
+          onOpenChange={(open) => {
+            setEditMenuOpen(open);
+            if (!open) setShortcutTarget(null);
+          }}
+        >
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="h-8 px-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-2"
+              aria-label={t`Change category, account or payee`}
+              title={t`Change category (${CATEGORIZE_SHORTCUT_KEY}) or move (${MOVE_SHORTCUT_KEY})`}
+            >
               <Tag className="h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
@@ -317,9 +350,17 @@ export function TransactionsBatchToolbar({
             <div className="px-2 pb-2">
               <div className="[&>div]:text-xs [&>button]:text-xs [&>div>button]:text-xs [&>button]:h-8">
                 <SearchableCategorySelect
+                  key={shortcutTarget === 'category' ? 'shortcut' : 'menu'}
+                  defaultOpen={shortcutTarget === 'category'}
                   budgetId={selectedBudget?.ID || 0}
                   selectedCategoryId={newCategoryID}
-                  onCategorySelect={setNewCategoryID}
+                  onCategorySelect={(categoryId) => {
+                    setNewCategoryID(categoryId);
+                    if (shortcutTarget !== 'category') return;
+                    setEditMenuOpen(false);
+                    setShortcutTarget(null);
+                    void handleBatchEdits({ categoryId });
+                  }}
                   triggerClassName="w-full min-w-0"
                   popoverContentClassName="w-64 max-w-[calc(100vw-2rem)]"
                 />
@@ -332,7 +373,17 @@ export function TransactionsBatchToolbar({
                   <Trans>Move to Account</Trans>
                 </div>
                 <div className="px-2 pb-2">
-                  <Select onValueChange={setNewAccountID}>
+                  <Select
+                    defaultOpen={shortcutTarget === 'account'}
+                    key={shortcutTarget === 'account' ? 'shortcut' : 'menu'}
+                    onValueChange={(accountId) => {
+                      setNewAccountID(accountId);
+                      if (shortcutTarget !== 'account') return;
+                      setEditMenuOpen(false);
+                      setShortcutTarget(null);
+                      void handleBatchEdits({ accountId });
+                    }}
+                  >
                     <SelectTrigger className="w-full text-xs h-8">
                       <SelectValue placeholder={t`Select account`} />
                     </SelectTrigger>
@@ -369,7 +420,7 @@ export function TransactionsBatchToolbar({
             )}
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={handleBatchEdits}
+              onClick={() => void handleBatchEdits()}
               disabled={
                 working ||
                 moveToNewCategoryMutation.isPending ||

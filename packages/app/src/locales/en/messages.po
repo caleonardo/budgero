@@ -278,7 +278,6 @@ msgstr "{0, plural, one {# register row} other {# register rows}}"
 msgid "{0, plural, one {# split transaction detected} other {# split transactions detected}}"
 msgstr "{0, plural, one {# split transaction detected} other {# split transactions detected}}"
 
-
 #. placeholder {0}: sources.length
 #: src/features/transactions/api/useDuplicateShortcut.ts
 msgid "{0, plural, one {# transaction duplicated} other {# transactions duplicated}}"
@@ -1732,9 +1731,6 @@ msgstr "<0/>Make Admin"
 msgid "<0/>Manage Users"
 msgstr "<0/>Manage Users"
 
-#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
-msgid "<0/>Manage workspaces"
-msgstr "<0/>Manage workspaces"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "<0/>Mobile Budget View"
@@ -4823,6 +4819,18 @@ msgstr "Change account currency?"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Change Category"
 msgstr "Change Category"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}) or move ({MOVE_SHORTCUT_KEY})"
+msgstr "Change category ({CATEGORIZE_SHORTCUT_KEY}) or move ({MOVE_SHORTCUT_KEY})"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Change category of selected rows"
+msgstr "Change category of selected rows"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Change category, account or payee"
+msgstr "Change category, account or payee"
 
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Change currency"
@@ -10315,6 +10323,10 @@ msgstr "Manage user accounts and access levels"
 msgid "Manage Users"
 msgstr "Manage Users"
 
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+msgid "Manage workspaces"
+msgstr "Manage workspaces"
+
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Manage your <0>subscription</0> and resubscribe at any time."
 msgstr "Manage your <0>subscription</0> and resubscribe at any time."
@@ -10799,6 +10811,10 @@ msgstr "Move money"
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
 msgid "Move Money"
 msgstr "Move Money"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Move selected rows to another account"
+msgstr "Move selected rows to another account"
 
 #: src/features/budget-planning/ui/category-row/MoveMoneyPopover.tsx
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
