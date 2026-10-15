@@ -14,6 +14,7 @@ import { CLEARED_SHORTCUT_KEY } from '@features/transactions/api/useClearedShort
 import {
   CATEGORIZE_SHORTCUT_KEY,
   MOVE_SHORTCUT_KEY,
+  PAYEE_SHORTCUT_KEY,
 } from '@features/transactions/api/useBatchEditShortcuts';
 import { ADD_TRANSACTION_SHORTCUT_KEY } from '@features/transactions/api/useRegisterActionShortcuts';
 import { DUPLICATE_SHORTCUT_KEY } from '@features/transactions/api/useDuplicateShortcut';
@@ -58,6 +59,7 @@ export function KeyboardShortcutsDialog() {
         { keys: CLEARED_SHORTCUT_KEY, label: t`Toggle cleared on selected rows` },
         { keys: CATEGORIZE_SHORTCUT_KEY, label: t`Change category of selected rows` },
         { keys: MOVE_SHORTCUT_KEY, label: t`Move selected rows to another account` },
+        { keys: PAYEE_SHORTCUT_KEY, label: t`Set payee of selected rows` },
         { keys: shortcuts.shift(DUPLICATE_SHORTCUT_KEY), label: t`Duplicate selected rows` },
         {
           keys: shortcuts.shift(UNCLEARED_FILTER_KEY),

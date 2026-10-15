@@ -4819,9 +4819,10 @@ msgstr "Change account currency?"
 msgid "Change Category"
 msgstr "Change Category"
 
+
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
-msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}) or move ({MOVE_SHORTCUT_KEY})"
-msgstr "Change category ({CATEGORIZE_SHORTCUT_KEY}) or move ({MOVE_SHORTCUT_KEY})"
+msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}), move ({MOVE_SHORTCUT_KEY}) or set payee ({PAYEE_SHORTCUT_KEY})"
+msgstr "Change category ({CATEGORIZE_SHORTCUT_KEY}), move ({MOVE_SHORTCUT_KEY}) or set payee ({PAYEE_SHORTCUT_KEY})"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Change category of selected rows"
@@ -12331,7 +12332,6 @@ msgstr "Other spending"
 msgid "Other spending ({0} {dimensionLabel}) — inspect"
 msgstr "Other spending ({0} {dimensionLabel}) — inspect"
 
-
 #. placeholder {0}: otherSpaces.length
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
 msgid "Other workspaces ({0})"
@@ -15469,6 +15469,10 @@ msgstr "Set payee"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Set Payee"
 msgstr "Set Payee"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Set payee of selected rows"
+msgstr "Set payee of selected rows"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Set to zero"

@@ -4817,9 +4817,10 @@ msgstr "Rekeningvaluta wijzigen?"
 msgid "Change Category"
 msgstr "Categorie wijzigen"
 
+
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
-msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}) or move ({MOVE_SHORTCUT_KEY})"
-msgstr "Categorie wijzigen ({CATEGORIZE_SHORTCUT_KEY}) of verplaatsen ({MOVE_SHORTCUT_KEY})"
+msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}), move ({MOVE_SHORTCUT_KEY}) or set payee ({PAYEE_SHORTCUT_KEY})"
+msgstr "Categorie wijzigen ({CATEGORIZE_SHORTCUT_KEY}), verplaatsen ({MOVE_SHORTCUT_KEY}) of begunstigde instellen ({PAYEE_SHORTCUT_KEY})"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Change category of selected rows"
@@ -12329,7 +12330,6 @@ msgstr "Overige uitgaven"
 msgid "Other spending ({0} {dimensionLabel}) — inspect"
 msgstr "Overige uitgaven ({0} {dimensionLabel}) — bekijken"
 
-
 #. placeholder {0}: otherSpaces.length
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
 msgid "Other workspaces ({0})"
@@ -15467,6 +15467,10 @@ msgstr "Begunstigde instellen"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Set Payee"
 msgstr "Begunstigde instellen"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Set payee of selected rows"
+msgstr "Begunstigde van geselecteerde rijen instellen"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Set to zero"

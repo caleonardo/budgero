@@ -4817,9 +4817,10 @@ msgstr "Kontowährung ändern?"
 msgid "Change Category"
 msgstr "Kategorie ändern"
 
+
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
-msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}) or move ({MOVE_SHORTCUT_KEY})"
-msgstr "Kategorie ändern ({CATEGORIZE_SHORTCUT_KEY}) oder verschieben ({MOVE_SHORTCUT_KEY})"
+msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}), move ({MOVE_SHORTCUT_KEY}) or set payee ({PAYEE_SHORTCUT_KEY})"
+msgstr "Kategorie ändern ({CATEGORIZE_SHORTCUT_KEY}), verschieben ({MOVE_SHORTCUT_KEY}) oder Empfänger festlegen ({PAYEE_SHORTCUT_KEY})"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Change category of selected rows"
@@ -12329,7 +12330,6 @@ msgstr "Sonstige Ausgaben"
 msgid "Other spending ({0} {dimensionLabel}) — inspect"
 msgstr "Sonstige Ausgaben ({0} {dimensionLabel}) — Details"
 
-
 #. placeholder {0}: otherSpaces.length
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
 msgid "Other workspaces ({0})"
@@ -15467,6 +15467,10 @@ msgstr "Empfänger festlegen"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Set Payee"
 msgstr "Empfänger festlegen"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Set payee of selected rows"
+msgstr "Empfänger der ausgewählten Zeilen festlegen"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Set to zero"

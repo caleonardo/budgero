@@ -41,6 +41,7 @@ import { useDeleteSelected } from '@features/transactions/api/useDeleteSelected'
 import {
   CATEGORIZE_SHORTCUT_KEY,
   MOVE_SHORTCUT_KEY,
+  PAYEE_SHORTCUT_KEY,
   useBatchEditShortcuts,
 } from '@features/transactions/api/useBatchEditShortcuts';
 import { getKeyboardShortcutLabels } from '@shared/lib/keyboard-shortcuts';
@@ -77,7 +78,9 @@ export function TransactionsBatchToolbar({
   const [working, setWorking] = useState<boolean>(false);
   // Edit menu opened from the keyboard: G jumps to the category picker, M to the account picker.
   const [editMenuOpen, setEditMenuOpen] = useState(false);
-  const [shortcutTarget, setShortcutTarget] = useState<'category' | 'account' | null>(null);
+  const [shortcutTarget, setShortcutTarget] = useState<'category' | 'account' | 'payee' | null>(
+    null
+  );
   const { overall: isFullyOnline } = useConnectivity();
   const [showRatePrompt, setShowRatePrompt] = useState(false);
   const [pendingRatePair, setPendingRatePair] = useState<{ from: string; to: string } | null>(null);
@@ -122,6 +125,7 @@ export function TransactionsBatchToolbar({
 
   useBatchEditShortcuts((target) => {
     if (target === 'account' && accountsData.length < 2) return false;
+    if (target === 'payee' && !selectedBudget) return false;
     setShortcutTarget(target);
     setEditMenuOpen(true);
     return true;
@@ -158,11 +162,16 @@ export function TransactionsBatchToolbar({
 
   // Shortcut picks apply right away and pass their value in, since the state
   // update from the same pick hasn't landed yet.
-  async function handleBatchEdits(overrides: { categoryId?: number; accountId?: string } = {}) {
-    const shortcutPick = overrides.categoryId !== undefined || overrides.accountId !== undefined;
+  async function handleBatchEdits(
+    overrides: { categoryId?: number; accountId?: string; payee?: string } = {}
+  ) {
+    const shortcutPick =
+      overrides.categoryId !== undefined ||
+      overrides.accountId !== undefined ||
+      overrides.payee !== undefined;
     const categoryId = overrides.categoryId ?? (shortcutPick ? -1 : newCategoryID);
     const accountId = overrides.accountId ?? (shortcutPick ? '-1' : newAccountID);
-    const payee = shortcutPick ? '' : newPayee;
+    const payee = overrides.payee ?? (shortcutPick ? '' : newPayee);
     setWorking(true);
 
     if (categoryId === -1 && accountId === '-1' && !payee) {
@@ -345,7 +354,7 @@ export function TransactionsBatchToolbar({
               size="sm"
               className="h-8 px-2"
               aria-label={t`Change category, account or payee`}
-              title={t`Change category (${CATEGORIZE_SHORTCUT_KEY}) or move (${MOVE_SHORTCUT_KEY})`}
+              title={t`Change category (${CATEGORIZE_SHORTCUT_KEY}), move (${MOVE_SHORTCUT_KEY}) or set payee (${PAYEE_SHORTCUT_KEY})`}
             >
               <Tag className="h-3 w-3" />
             </Button>
@@ -419,9 +428,19 @@ export function TransactionsBatchToolbar({
                 </div>
                 <div className="px-2 pb-2">
                   <PayeeCombobox
+                    key={shortcutTarget === 'payee' ? 'shortcut' : 'menu'}
+                    defaultOpen={shortcutTarget === 'payee'}
+                    onOpenChange={(open) => {
+                      if (!open && shortcutTarget === 'payee') closeShortcutMenu();
+                    }}
                     budgetId={selectedBudget.ID}
                     value={newPayee}
-                    onChange={setNewPayee}
+                    onChange={(payee) => {
+                      setNewPayee(payee);
+                      if (shortcutTarget !== 'payee' || !payee) return;
+                      closeShortcutMenu();
+                      void handleBatchEdits({ payee });
+                    }}
                     triggerClassName="w-full text-xs h-8"
                     popoverContentClassName="w-64 max-w-[calc(100vw-2rem)]"
                     placeholder={t`Select payee`}

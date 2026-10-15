@@ -4817,9 +4817,10 @@ msgstr "Changer la devise du compte ?"
 msgid "Change Category"
 msgstr "Changer de catégorie"
 
+
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
-msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}) or move ({MOVE_SHORTCUT_KEY})"
-msgstr "Changer de catégorie ({CATEGORIZE_SHORTCUT_KEY}) ou déplacer ({MOVE_SHORTCUT_KEY})"
+msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}), move ({MOVE_SHORTCUT_KEY}) or set payee ({PAYEE_SHORTCUT_KEY})"
+msgstr "Changer de catégorie ({CATEGORIZE_SHORTCUT_KEY}), déplacer ({MOVE_SHORTCUT_KEY}) ou définir le bénéficiaire ({PAYEE_SHORTCUT_KEY})"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Change category of selected rows"
@@ -12329,7 +12330,6 @@ msgstr "Autres dépenses"
 msgid "Other spending ({0} {dimensionLabel}) — inspect"
 msgstr "Autres dépenses ({0} {dimensionLabel}) — détails"
 
-
 #. placeholder {0}: otherSpaces.length
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
 msgid "Other workspaces ({0})"
@@ -15467,6 +15467,10 @@ msgstr "Définir le bénéficiaire"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Set Payee"
 msgstr "Définir le bénéficiaire"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Set payee of selected rows"
+msgstr "Définir le bénéficiaire des lignes sélectionnées"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Set to zero"

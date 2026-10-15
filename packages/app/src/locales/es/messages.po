@@ -4817,9 +4817,10 @@ msgstr "¿Cambiar la moneda de la cuenta?"
 msgid "Change Category"
 msgstr "Cambiar categoría"
 
+
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
-msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}) or move ({MOVE_SHORTCUT_KEY})"
-msgstr "Cambiar categoría ({CATEGORIZE_SHORTCUT_KEY}) o mover ({MOVE_SHORTCUT_KEY})"
+msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}), move ({MOVE_SHORTCUT_KEY}) or set payee ({PAYEE_SHORTCUT_KEY})"
+msgstr "Cambiar categoría ({CATEGORIZE_SHORTCUT_KEY}), mover ({MOVE_SHORTCUT_KEY}) o asignar beneficiario ({PAYEE_SHORTCUT_KEY})"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Change category of selected rows"
@@ -12329,7 +12330,6 @@ msgstr "Otros gastos"
 msgid "Other spending ({0} {dimensionLabel}) — inspect"
 msgstr "Otros gastos ({0} {dimensionLabel}) — detalles"
 
-
 #. placeholder {0}: otherSpaces.length
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
 msgid "Other workspaces ({0})"
@@ -15467,6 +15467,10 @@ msgstr "Establecer beneficiario"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Set Payee"
 msgstr "Establecer beneficiario"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Set payee of selected rows"
+msgstr "Asignar beneficiario a las filas seleccionadas"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Set to zero"
