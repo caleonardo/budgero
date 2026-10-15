@@ -691,12 +691,25 @@ export function WorkspaceRequiredScreen({
   );
 }
 
+function CurrentWorkspaceLabel({ name }: { name: string | null }) {
+  if (!name) return null;
+  return (
+    <p className="text-xs text-muted-foreground">
+      <Trans>
+        Workspace: <span className="font-medium text-foreground">{name}</span>
+      </Trans>
+    </p>
+  );
+}
+
 export function BudgetRequiredScreen({
   alternativeWorkspaces,
+  workspaceName,
   switchingWorkspaceId,
   onSwitchWorkspace,
 }: {
   alternativeWorkspaces: BudgetSpaceSummary[];
+  workspaceName: string | null;
   switchingWorkspaceId: string | null;
   onSwitchWorkspace: (spaceId: string) => void;
 }) {
@@ -758,6 +771,7 @@ export function BudgetRequiredScreen({
       <StartupLayout currentStep={3}>
         <Card>
           <CardHeader>
+            <CurrentWorkspaceLabel name={workspaceName} />
             <CardTitle>
               <Trans>Create Your First Budget</Trans>
             </CardTitle>
@@ -837,6 +851,7 @@ export function BudgetRequiredScreen({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
+              <CurrentWorkspaceLabel name={workspaceName} />
               <CardTitle>
                 {selectedSource === 'manual' && t`Create a New Budget`}
                 {selectedSource === 'import' && t`Import from YNAB`}
@@ -888,10 +903,12 @@ export function BudgetRequiredScreen({
 
 export function BudgetBlockedScreen({
   alternativeWorkspaces,
+  workspaceName,
   switchingWorkspaceId,
   onSwitchWorkspace,
 }: {
   alternativeWorkspaces: BudgetSpaceSummary[];
+  workspaceName: string | null;
   switchingWorkspaceId: string | null;
   onSwitchWorkspace: (spaceId: string) => void;
 }) {
@@ -903,6 +920,7 @@ export function BudgetBlockedScreen({
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-xl">
         <CardHeader>
+          <CurrentWorkspaceLabel name={workspaceName} />
           <CardTitle>
             <Trans>This workspace has no budgets yet</Trans>
           </CardTitle>

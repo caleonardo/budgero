@@ -429,6 +429,7 @@ export default function StartupController() {
         content = (
           <BudgetRequiredScreen
             alternativeWorkspaces={budget.alternativeWorkspaces}
+            workspaceName={budget.workspaceName}
             switchingWorkspaceId={switchingWorkspaceId}
             onSwitchWorkspace={(spaceId) => {
               void handleSwitchWorkspace(spaceId);
@@ -440,6 +441,7 @@ export default function StartupController() {
         content = (
           <BudgetBlockedScreen
             alternativeWorkspaces={budget.alternativeWorkspaces}
+            workspaceName={budget.workspaceName}
             switchingWorkspaceId={switchingWorkspaceId}
             onSwitchWorkspace={(spaceId) => {
               void handleSwitchWorkspace(spaceId);
