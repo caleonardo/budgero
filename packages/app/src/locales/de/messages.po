@@ -10412,6 +10412,10 @@ msgstr "Ordne vor dem Import jede Kreditkarte ihrer Zahlungskategorie zu."
 msgid "match payment categories below"
 msgstr "Zahlungskategorien unten zuordnen"
 
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Matches your bank? Click to use it"
+msgstr "Stimmt mit der Bank überein? Zum Übernehmen klicken"
+
 #. placeholder {0}: formatAmount(maxCover)
 #: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
 msgid "Max {0} — covering never puts the source in the red"
@@ -18215,6 +18219,10 @@ msgstr "Verwende positive/negative Prozentwerte, um den Betrag zu skalieren."
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "Use suggested"
 msgstr "Vorschlag verwenden"
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Use the cleared balance as the actual balance"
+msgstr "Gebuchten Saldo als tatsächlichen Saldo verwenden"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Use your phone, tablet, or computer"

@@ -10412,6 +10412,10 @@ msgstr "Vincula cada tarjeta de crédito a su categoría de pago antes de import
 msgid "match payment categories below"
 msgstr "vincula las categorías de pago debajo"
 
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Matches your bank? Click to use it"
+msgstr "¿Coincide con tu banco? Haz clic para usarlo"
+
 #. placeholder {0}: formatAmount(maxCover)
 #: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
 msgid "Max {0} — covering never puts the source in the red"
@@ -18215,6 +18219,10 @@ msgstr "Usa porcentajes positivos/negativos para escalar el importe."
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "Use suggested"
 msgstr "Usar sugerido"
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Use the cleared balance as the actual balance"
+msgstr "Usar el saldo confirmado como saldo real"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Use your phone, tablet, or computer"

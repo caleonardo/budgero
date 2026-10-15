@@ -191,9 +191,23 @@ export function ReconcileAccountDialog({ account, budgetId }: ReconcileAccountDi
               <Label className="text-xs md:text-sm font-medium text-muted-foreground">
                 <Trans>Cleared Balance</Trans>
               </Label>
-              <p className="text-sm md:text-lg font-semibold break-words">
-                {formatMilli(accountLocalizer, currentBalance)}
-              </p>
+              {/* Most reconciles match: one click copies it into Actual Balance. */}
+              <button
+                type="button"
+                onClick={() => {
+                  setActualBalance(currentBalance);
+                  setLiveBalance(currentBalance);
+                }}
+                className="group block text-left"
+                aria-label={t`Use the cleared balance as the actual balance`}
+              >
+                <span className="block text-sm md:text-lg font-semibold break-words underline decoration-dotted decoration-muted-foreground/50 underline-offset-4 group-hover:decoration-foreground">
+                  {formatMilli(accountLocalizer, currentBalance)}
+                </span>
+                <span className="mt-0.5 block text-[11px] leading-tight text-muted-foreground group-hover:text-foreground">
+                  <Trans>Matches your bank? Click to use it</Trans>
+                </span>
+              </button>
             </div>
             <div>
               <Label className="text-xs md:text-sm font-medium text-muted-foreground">

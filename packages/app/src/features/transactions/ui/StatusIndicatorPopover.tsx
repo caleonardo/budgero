@@ -31,7 +31,9 @@ export function StatusIndicatorPopover({
   > = {
     reconciled: {
       icon: Lock,
-      buttonColor: 'text-success hover:bg-success/10',
+      // Filled, unlike the outlined cleared check, so the two read apart at a glance.
+      buttonColor:
+        'bg-success text-success-foreground hover:bg-success/85 hover:text-success-foreground',
       label: t`Reconciled transaction`,
       srText: 'Reconciled transaction details',
       text: t`This transaction has been reconciled and is locked as cleared.`,

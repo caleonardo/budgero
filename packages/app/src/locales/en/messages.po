@@ -10414,6 +10414,10 @@ msgstr "Match each credit card to its payment category before importing."
 msgid "match payment categories below"
 msgstr "match payment categories below"
 
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Matches your bank? Click to use it"
+msgstr "Matches your bank? Click to use it"
+
 #. placeholder {0}: formatAmount(maxCover)
 #: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
 msgid "Max {0} — covering never puts the source in the red"
@@ -18217,6 +18221,10 @@ msgstr "Use positive/negative percentages to scale the amount."
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "Use suggested"
 msgstr "Use suggested"
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Use the cleared balance as the actual balance"
+msgstr "Use the cleared balance as the actual balance"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Use your phone, tablet, or computer"
