@@ -213,7 +213,7 @@ export function TransactionsTable({
   } = useTransactionTable(initialData, transactionCurrencyDisplay);
 
   const selectedAccountIdForForm = preselectedAccountId ?? selectedAccount?.ID;
-  const budgetId = selectedAccount?.BudgetID || selectedBudget?.ID || 0;
+  const budgetId = selectedBudget?.ID || selectedAccount?.BudgetID || 0;
   const { labels = [] } = useLabels(budgetId);
   const { data: accounts = [] } = useAccounts(budgetId);
   const { data: categoryGroups = [] } = useCategoryGroups(budgetId);
