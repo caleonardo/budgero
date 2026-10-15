@@ -237,6 +237,7 @@ export function patchPlainAddTransactionCaches(
   const convertedDelta = row.InflowConverted - row.OutflowConverted;
   const nativeDelta =
     (row.InflowNative ?? row.InflowConverted) - (row.OutflowNative ?? row.OutflowConverted);
+  const isUncleared = !row.Cleared && !row.Reconciled;
   queryClient.setQueriesData<Account[]>(
     {
       predicate: (query) =>
@@ -261,6 +262,12 @@ export function patchPlainAddTransactionCaches(
                 row.Date > today
                   ? asMilli((account.FutureImpactConverted ?? 0) + convertedDelta)
                   : account.FutureImpactConverted,
+              UnclearedNative: isUncleared
+                ? asMilli((account.UnclearedNative ?? 0) + nativeDelta)
+                : account.UnclearedNative,
+              UnclearedConverted: isUncleared
+                ? asMilli((account.UnclearedConverted ?? 0) + convertedDelta)
+                : account.UnclearedConverted,
             }
           : account
       )

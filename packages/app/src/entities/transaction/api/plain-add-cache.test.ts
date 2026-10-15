@@ -101,6 +101,44 @@ describe('patchPlainAddTransactionCaches', () => {
     ).toBe(3);
   });
 
+  it('keeps the cleared balance unchanged when the added row is uncleared', () => {
+    const queryClient = new QueryClient();
+    const accountKey = ['accounts', 'space-1', 3];
+    const account: Account = {
+      ID: 7,
+      Name: 'Checking',
+      Currency: 'USD',
+      Type: 'Checking',
+      BalanceNative: asMilli(1000),
+      BalanceConverted: asMilli(1000),
+      UnclearedNative: asMilli(1000),
+      UnclearedConverted: asMilli(1000),
+      BudgetID: 3,
+      OnBudget: true,
+    };
+    queryClient.setQueryData(accountKey, [account]);
+
+    patchPlainAddTransactionCaches(
+      queryClient,
+      'space-1',
+      3,
+      { ...row(2, '2025-01-20', 958, -42), Cleared: false },
+      '2025-01-10'
+    );
+    patchPlainAddTransactionCaches(
+      queryClient,
+      'space-1',
+      3,
+      { ...row(3, '2025-01-05', 1058, 100), Cleared: true },
+      '2025-01-10'
+    );
+
+    const patched = queryClient.getQueryData<Account[]>(accountKey)?.[0];
+    expect(patched?.BalanceNative).toBe(1058);
+    expect((patched?.BalanceNative ?? 0) - (patched?.UnclearedNative ?? 0)).toBe(100);
+    expect((patched?.BalanceConverted ?? 0) - (patched?.UnclearedConverted ?? 0)).toBe(100);
+  });
+
   it('updates visible running balances when a backdated row falls before the cached range', () => {
     const queryClient = new QueryClient();
     const rangeKey = ['accountTransactionRange', 'space-1', 7, '2025-01-01', '2025-01-31'];
