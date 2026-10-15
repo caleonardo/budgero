@@ -13007,13 +13007,25 @@ msgid "Post “{0}” now?"
 msgstr "Valider « {0} » maintenant ?"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated {dueLabel}, its due date"
+msgstr "La valider datée du {dueLabel}, sa date d’échéance"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated today instead of its due date"
+msgstr "La valider datée d’aujourd’hui au lieu de sa date d’échéance"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it on its due date"
+msgstr "La valider à sa date d’échéance"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post now"
 msgstr "Valider maintenant"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
-msgid "Post now, dated today"
-msgstr "Valider maintenant, daté d’aujourd’hui"
+#~ msgid "Post now, dated today"
+#~ msgstr "Valider maintenant, daté d’aujourd’hui"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post transaction"
@@ -15741,6 +15753,10 @@ msgstr "Ignorer les N premières lignes"
 #: src/pages/onboarding/OnboardingFlow.tsx
 msgid "Skip for now"
 msgstr "Ignorer pour le moment"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Skip this occurrence; the schedule continues"
+msgstr "Ignorer cette occurrence ; la fréquence continue"
 
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "Skip this row from import"

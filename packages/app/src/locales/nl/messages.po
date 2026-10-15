@@ -13007,13 +13007,25 @@ msgid "Post “{0}” now?"
 msgstr "„{0}” nu boeken?"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated {dueLabel}, its due date"
+msgstr "Boeken op {dueLabel}, de vervaldatum"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated today instead of its due date"
+msgstr "Boeken met de datum van vandaag in plaats van de vervaldatum"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it on its due date"
+msgstr "Boeken op de vervaldatum"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post now"
 msgstr "Nu boeken"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
-msgid "Post now, dated today"
-msgstr "Nu boeken, met de datum van vandaag"
+#~ msgid "Post now, dated today"
+#~ msgstr "Nu boeken, met de datum van vandaag"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post transaction"
@@ -15741,6 +15753,10 @@ msgstr "Eerste N rijen overslaan"
 #: src/pages/onboarding/OnboardingFlow.tsx
 msgid "Skip for now"
 msgstr "Nu overslaan"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Skip this occurrence; the schedule continues"
+msgstr "Dit voorkomen overslaan; de planning gaat door"
 
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "Skip this row from import"

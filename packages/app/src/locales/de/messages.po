@@ -13007,13 +13007,25 @@ msgid "Post “{0}” now?"
 msgstr "„{0}“ jetzt buchen?"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated {dueLabel}, its due date"
+msgstr "Mit Datum {dueLabel} buchen, dem Fälligkeitsdatum"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated today instead of its due date"
+msgstr "Mit heutigem Datum statt dem Fälligkeitsdatum buchen"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it on its due date"
+msgstr "Zum Fälligkeitsdatum buchen"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post now"
 msgstr "Jetzt buchen"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
-msgid "Post now, dated today"
-msgstr "Jetzt buchen, mit heutigem Datum"
+#~ msgid "Post now, dated today"
+#~ msgstr "Jetzt buchen, mit heutigem Datum"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post transaction"
@@ -15741,6 +15753,10 @@ msgstr "Erste N Zeilen überspringen"
 #: src/pages/onboarding/OnboardingFlow.tsx
 msgid "Skip for now"
 msgstr "Vorerst überspringen"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Skip this occurrence; the schedule continues"
+msgstr "Diesen Termin überspringen; der Zeitplan läuft weiter"
 
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "Skip this row from import"

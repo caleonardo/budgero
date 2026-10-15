@@ -13009,13 +13009,25 @@ msgid "Post “{0}” now?"
 msgstr "Post “{0}” now?"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated {dueLabel}, its due date"
+msgstr "Post it dated {dueLabel}, its due date"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated today instead of its due date"
+msgstr "Post it dated today instead of its due date"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it on its due date"
+msgstr "Post it on its due date"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post now"
 msgstr "Post now"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
-msgid "Post now, dated today"
-msgstr "Post now, dated today"
+#~ msgid "Post now, dated today"
+#~ msgstr "Post now, dated today"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post transaction"
@@ -15743,6 +15755,10 @@ msgstr "Skip first N rows"
 #: src/pages/onboarding/OnboardingFlow.tsx
 msgid "Skip for now"
 msgstr "Skip for now"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Skip this occurrence; the schedule continues"
+msgstr "Skip this occurrence; the schedule continues"
 
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "Skip this row from import"

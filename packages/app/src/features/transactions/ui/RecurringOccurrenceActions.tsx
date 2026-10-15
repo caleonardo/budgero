@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { CalendarCheck, Check, Loader2, RefreshCw, SkipForward } from 'lucide-react';
+import type React from 'react';
 import { toast } from 'sonner';
 import {
   useMarkRecurringOccurrenceReady,
@@ -9,6 +10,7 @@ import { getTodayISO } from '@shared/lib/date-utils';
 import { getErrorMessage } from '@shared/lib/errors';
 import { cn } from '@shared/lib/utils';
 import { Button } from '@shared/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui/tooltip';
 
 interface RecurringOccurrenceActionsProps {
   occurrenceId: number;
@@ -55,58 +57,44 @@ export function RecurringOccurrenceActions({
       }
     );
 
+  const dueLabel = dueDate?.slice(0, 10);
+
   return (
     <div className="flex items-center gap-0.5">
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className={cn(size, 'rounded-full text-success hover:bg-success/10 hover:text-success')}
+      <ActionButton
+        label={t`Mark ready`}
+        hint={dueLabel ? t`Post it dated ${dueLabel}, its due date` : t`Post it on its due date`}
+        className={cn(size, 'text-success hover:bg-success/10 hover:text-success')}
         disabled={busy}
-        aria-label={t`Mark ready`}
-        title={t`Mark ready`}
-        onClick={(event) => {
-          event.stopPropagation();
-          post();
-        }}
+        onClick={() => post()}
       >
         {markReady.isPending && markReady.variables?.transactionDate == null ? (
           <Loader2 className={cn(iconSize, 'animate-spin')} />
         ) : (
           <Check className={iconSize} />
         )}
-      </Button>
+      </ActionButton>
       {canPostNow && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={cn(size, 'rounded-full text-primary hover:bg-primary/10 hover:text-primary')}
+        <ActionButton
+          label={t`Post now`}
+          hint={t`Post it dated today instead of its due date`}
+          className={cn(size, 'text-primary hover:bg-primary/10 hover:text-primary')}
           disabled={busy}
-          aria-label={t`Post now`}
-          title={t`Post now, dated today`}
-          onClick={(event) => {
-            event.stopPropagation();
-            post(today);
-          }}
+          onClick={() => post(today)}
         >
           {markReady.isPending && markReady.variables?.transactionDate != null ? (
             <Loader2 className={cn(iconSize, 'animate-spin')} />
           ) : (
             <CalendarCheck className={iconSize} />
           )}
-        </Button>
+        </ActionButton>
       )}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className={cn(size, 'rounded-full text-muted-foreground hover:text-foreground')}
+      <ActionButton
+        label={t`Skip this time`}
+        hint={t`Skip this occurrence; the schedule continues`}
+        className={cn(size, 'text-muted-foreground hover:text-foreground')}
         disabled={busy}
-        aria-label={t`Skip this time`}
-        title={t`Skip this time`}
-        onClick={(event) => {
-          event.stopPropagation();
+        onClick={() =>
           skip.mutate(
             { id: occurrenceId },
             {
@@ -116,16 +104,57 @@ export function RecurringOccurrenceActions({
                 }),
               onError,
             }
-          );
-        }}
+          )
+        }
       >
         {skip.isPending ? (
           <Loader2 className={cn(iconSize, 'animate-spin')} />
         ) : (
           <SkipForward className={iconSize} />
         )}
-      </Button>
+      </ActionButton>
     </div>
+  );
+}
+
+function ActionButton({
+  label,
+  hint,
+  className,
+  disabled,
+  onClick,
+  children,
+}: {
+  label: string;
+  hint: string;
+  className: string;
+  disabled: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={cn('rounded-full', className)}
+          disabled={disabled}
+          aria-label={label}
+          onClick={(event) => {
+            event.stopPropagation();
+            onClick();
+          }}
+        >
+          {children}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="font-medium">{label}</p>
+        <p className="text-xs opacity-80">{hint}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

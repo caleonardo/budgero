@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/react/macro';
+import { useEffect, useState } from 'react';
 import { CalendarClock, RefreshCw } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSchedulingGuideStore } from '@shared/store/useSchedulingGuideStore';
@@ -18,14 +19,35 @@ import {
  */
 export function SchedulingGuideDialog() {
   const pending = useSchedulingGuideStore((state) => state.pending);
-  const dismiss = useSchedulingGuideStore((state) => state.dismiss);
+  const dismissGuide = useSchedulingGuideStore((state) => state.dismiss);
   const requestShowUpcoming = useSchedulingGuideStore((state) => state.requestShowUpcoming);
   const location = useLocation();
   const navigate = useNavigate();
 
   const accountId = useSchedulingGuideStore((state) => state.accountId);
 
+  // The trigger usually fires while the dialog that created the transaction is
+  // still open (or stays open, e.g. Quick Add). Stacking a second modal on a
+  // closing one locks the page, so wait until no other dialog is open.
+  const [readyFor, setReadyFor] = useState<typeof pending>(null);
+  useEffect(() => {
+    if (!pending) return;
+    const timer = window.setInterval(() => {
+      if (!document.querySelector('[role="dialog"][data-state="open"]')) {
+        window.clearInterval(timer);
+        setReadyFor(pending);
+      }
+    }, 200);
+    return () => window.clearInterval(timer);
+  }, [pending]);
+
+  const dismiss = () => {
+    setReadyFor(null);
+    dismissGuide();
+  };
+
   const showUpcoming = () => {
+    setReadyFor(null);
     requestShowUpcoming();
     // Projected recurring rows only render on account registers.
     const target = accountId ? `/accounts/${accountId}` : '/accounts/all';
@@ -33,7 +55,10 @@ export function SchedulingGuideDialog() {
   };
 
   return (
-    <Dialog open={pending !== null} onOpenChange={(open) => !open && dismiss()}>
+    <Dialog
+      open={pending !== null && readyFor === pending}
+      onOpenChange={(open) => !open && dismiss()}
+    >
       <DialogContent className="sm:max-w-md">
         {pending === 'recurring' ? (
           <DialogHeader>

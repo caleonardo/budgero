@@ -13007,13 +13007,25 @@ msgid "Post “{0}” now?"
 msgstr "¿Registrar «{0}» ahora?"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated {dueLabel}, its due date"
+msgstr "Registrarla con fecha {dueLabel}, su vencimiento"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated today instead of its due date"
+msgstr "Registrarla con fecha de hoy en lugar de su vencimiento"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it on its due date"
+msgstr "Registrarla en su fecha de vencimiento"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post now"
 msgstr "Registrar ahora"
 
 #: src/features/transactions/ui/RecurringOccurrenceActions.tsx
-msgid "Post now, dated today"
-msgstr "Registrar ahora, con fecha de hoy"
+#~ msgid "Post now, dated today"
+#~ msgstr "Registrar ahora, con fecha de hoy"
 
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post transaction"
@@ -15741,6 +15753,10 @@ msgstr "Omitir las primeras N filas"
 #: src/pages/onboarding/OnboardingFlow.tsx
 msgid "Skip for now"
 msgstr "Omitir por ahora"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Skip this occurrence; the schedule continues"
+msgstr "Omitir esta ocurrencia; la periodicidad continúa"
 
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "Skip this row from import"
