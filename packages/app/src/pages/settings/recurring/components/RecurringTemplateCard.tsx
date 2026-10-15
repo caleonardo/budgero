@@ -94,7 +94,7 @@ interface RecurringTemplateCardProps {
   isMarkReadyPending: boolean;
   isSkipPending: boolean;
   isOccurrencesFetching: boolean;
-  onMarkReady: (occurrence: RecurringOccurrenceWithTemplate) => void;
+  onMarkReady: (occurrence: RecurringOccurrenceWithTemplate, transactionDate?: string) => void;
   onSkip: (occurrence: RecurringOccurrenceWithTemplate) => void;
 }
 
@@ -291,6 +291,7 @@ export function RecurringTemplateCard({
               isSkipPending={isSkipPending}
               isFetching={isOccurrencesFetching}
               onMarkReady={() => onMarkReady(occurrence)}
+              onPostNow={(today) => onMarkReady(occurrence, today)}
               onSkip={() => onSkip(occurrence)}
             />
           ))}

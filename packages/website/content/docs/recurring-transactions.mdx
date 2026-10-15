@@ -27,9 +27,10 @@ Each template defines:
 - **Ends** — never, on a date, or after a set number of occurrences (counted from the first one, including any you posted or skipped). Handy for loans, instalment plans, and fixed-term subscriptions.
 - **Reminder** — how many days before the due date you want a notification.
 
-From the schedule, Budgero generates **occurrences** — the individual upcoming due dates — about six months into the future. The settings page lists what's coming up next, and for each occurrence you have two choices:
+From the schedule, Budgero generates **occurrences** — the individual upcoming due dates — about six months into the future. The settings page lists what's coming up next, and for each occurrence you have three choices:
 
-- **Mark ready** creates the real transaction and runs your [continuous rules](/docs/rules-engine) on it automatically — so the payee, category, and memo cleanup you've automated applies to recurring entries too. The transaction is always dated on the occurrence's due date, even if you confirm it a few days early.
+- **Mark ready** creates the real transaction and runs your [continuous rules](/docs/rules-engine) on it automatically — so the payee, category, and memo cleanup you've automated applies to recurring entries too. The transaction is dated on the occurrence's due date, even if you confirm it a few days early.
+- **Post now** does the same, but dates the transaction today instead of on the due date — handy when a bill is paid early or late.
 - **Skip this time** drops a single occurrence without touching the schedule. The series continues with the next date.
 
 Nothing is ever posted automatically. A recurring transaction is a reminder with a one-click "make it real" button, not a standing order — you stay the final checkpoint between the plan and the ledger.

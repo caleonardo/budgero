@@ -8448,6 +8448,10 @@ msgstr "From Budgero's official docs/policy:\n"
 msgid "From savings"
 msgstr "From savings"
 
+#: src/features/transactions/ui/SchedulingGuideDialog.tsx
+msgid "From the register you can <0>Mark ready</0> (posts on the due date), <1>Post now</1> (posts today) or <2>Skip</2>. The dashboard’s Upcoming transactions card and Settings → Recurring Transactions list them too."
+msgstr "From the register you can <0>Mark ready</0> (posts on the due date), <1>Post now</1> (posts today) or <2>Skip</2>. The dashboard’s Upcoming transactions card and Settings → Recurring Transactions list them too."
+
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 msgid "From your last transaction for \"{name}\""
 msgstr "From your last transaction for \"{name}\""
@@ -8644,6 +8648,10 @@ msgstr "Good general vision"
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Good progress - aim for more consistency"
 msgstr "Good progress - aim for more consistency"
+
+#: src/features/transactions/ui/SchedulingGuideDialog.tsx
+msgid "Got it"
+msgstr "Got it"
 
 #: src/pages/admin/SelfHostAdminUsers.tsx
 msgid "Grant admin privileges"
@@ -11799,6 +11807,10 @@ msgstr "Note"
 msgid "Notes"
 msgstr "Notes"
 
+#: src/features/transactions/ui/SchedulingGuideDialog.tsx
+msgid "Nothing is posted automatically. Each upcoming occurrence appears in the account register once the date range at the top reaches its due date. Pick <0>Next 30 days</0> or <1>Next 3 months</1> there to see them."
+msgstr "Nothing is posted automatically. Each upcoming occurrence appears in the account register once the date range at the top reaches its due date. Pick <0>Next 30 days</0> or <1>Next 3 months</1> there to see them."
+
 #: src/features/bank-sync/ui/BankReviewDialog.tsx
 msgid "Nothing left to review."
 msgstr "Nothing left to review."
@@ -12996,6 +13008,32 @@ msgstr "Possible contributors"
 msgid "Possible duplicate"
 msgstr "Possible duplicate"
 
+#. placeholder {0}: template.name
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
+msgid "Post “{0}” now?"
+msgstr "Post “{0}” now?"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated {dueLabel}, its due date"
+msgstr "Post it dated {dueLabel}, its due date"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it dated today instead of its due date"
+msgstr "Post it dated today instead of its due date"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Post it on its due date"
+msgstr "Post it on its due date"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
+msgid "Post now"
+msgstr "Post now"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+#~ msgid "Post now, dated today"
+#~ msgstr "Post now, dated today"
+
 #: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
 msgid "Post transaction"
 msgstr "Post transaction"
@@ -13779,6 +13817,10 @@ msgstr "Regex match"
 #: src/features/bank-sync/ui/EnableBankingSetupCard.tsx
 msgid "Register a new application (Production for your real banks, Sandbox to try a mock bank). Use this redirect URL and choose to generate the private key in the browser:"
 msgstr "Register a new application (Production for your real banks, Sandbox to try a mock bank). Use this redirect URL and choose to generate the private key in the browser:"
+
+#: src/features/transactions/ui/SchedulingGuideDialog.tsx
+msgid "Registers show the date range at the top of the page, and the usual presets end today, so future transactions are out of view. Pick <0>Next 30 days</0> or <1>Next 3 months</1> in the date range to see them."
+msgstr "Registers show the date range at the top of the page, and the usual presets end today, so future transactions are out of view. Pick <0>Next 30 days</0> or <1>Next 3 months</1> in the date range to see them."
 
 #: src/pages/admin/components/RegistrationSettings.tsx
 msgid "Registration"
@@ -15528,6 +15570,10 @@ msgstr "Show priority badges"
 msgid "Show sidebar"
 msgstr "Show sidebar"
 
+#: src/features/transactions/ui/SchedulingGuideDialog.tsx
+msgid "Show the next 30 days"
+msgstr "Show the next 30 days"
+
 #: src/features/transactions/ui/TransactionsToolbar.tsx
 msgid "Show uncategorized only"
 msgstr "Show uncategorized only"
@@ -15719,6 +15765,10 @@ msgstr "Skip first N rows"
 #: src/pages/onboarding/OnboardingFlow.tsx
 msgid "Skip for now"
 msgstr "Skip for now"
+
+#: src/features/transactions/ui/RecurringOccurrenceActions.tsx
+msgid "Skip this occurrence; the schedule continues"
+msgstr "Skip this occurrence; the schedule continues"
 
 #: src/features/import/ui/steps/configure/MappingTab.tsx
 msgid "Skip this row from import"
@@ -16787,6 +16837,10 @@ msgstr "These dates can be read two ways. Select the date format used in YNAB."
 #: src/features/bank-sync/ui/BankFeedSettingsDialog.tsx
 msgid "They arrive uncleared and are updated once your bank books them. Pending transactions your bank drops, like a released card hold, are removed."
 msgstr "They arrive uncleared and are updated once your bank books them. Pending transactions your bank drops, like a released card hold, are removed."
+
+#: src/features/transactions/ui/SchedulingGuideDialog.tsx
+msgid "They don’t count toward today’s balance until their date, and the dashboard’s Upcoming transactions card lists them as Scheduled."
+msgstr "They don’t count toward today’s balance until their date, and the dashboard’s Upcoming transactions card lists them as Scheduled."
 
 #: src/pages/settings/PayeesPage.tsx
 msgid "They have been cleared from existing transactions."
@@ -18487,6 +18541,11 @@ msgstr "We were unable to collect your subscription payment. Update your billing
 msgid "We will create the transaction dated {0} and run continuous rules automatically."
 msgstr "We will create the transaction dated {0} and run continuous rules automatically."
 
+#. placeholder {0}: occurrence.dueDate
+#: src/pages/settings/recurring/components/RecurringOccurrenceRow.tsx
+msgid "We will create the transaction dated today ({today}) instead of {0} and run continuous rules automatically."
+msgstr "We will create the transaction dated today ({today}) instead of {0} and run continuous rules automatically."
+
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 msgid "We will follow your workspace list order."
 msgstr "We will follow your workspace list order."
@@ -18677,6 +18736,10 @@ msgstr "Where the plan leaks"
 #: src/features/budget-planning/ui/category-row/CCUnderfundedBadge.tsx
 msgid "Where this debt came from"
 msgstr "Where this debt came from"
+
+#: src/features/transactions/ui/SchedulingGuideDialog.tsx
+msgid "Where your recurring transactions show up"
+msgstr "Where your recurring transactions show up"
 
 #: src/shared/lib/analytics/klaro-config.ts
 msgid "Which features get used. No personal or financial data."
@@ -19352,6 +19415,10 @@ msgstr "Your subscription is now active. You have full access to all features of
 #: src/features/subscription/api/useSubscription.ts
 msgid "Your subscription plan has been updated successfully."
 msgstr "Your subscription plan has been updated successfully."
+
+#: src/features/transactions/ui/SchedulingGuideDialog.tsx
+msgid "Your transaction is dated in the future"
+msgstr "Your transaction is dated in the future"
 
 #: src/pages/settings/subscription/SubscriptionStatusCard.tsx
 msgid "your trial end date"

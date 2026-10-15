@@ -27,9 +27,10 @@ Cada plantilla define:
 - **Finaliza**: nunca, en una fecha o tras un número de repeticiones (desde la primera, incluidas las registradas u omitidas). Útil para préstamos, pagos a plazos y suscripciones de duración limitada.
 - **Recordatorio** — cuántos días antes de la fecha de vencimiento quieres recibir una notificación.
 
-A partir de la periodicidad, Budgero genera **ocurrencias** — las próximas fechas de vencimiento individuales — aproximadamente seis meses hacia adelante. La página de ajustes muestra lo que viene a continuación, y para cada ocurrencia tienes dos opciones:
+A partir de la periodicidad, Budgero genera **ocurrencias** — las próximas fechas de vencimiento individuales — aproximadamente seis meses hacia adelante. La página de ajustes muestra lo que viene a continuación, y para cada ocurrencia tienes tres opciones:
 
-- **Marcar como lista** crea la transacción real y ejecuta tus [reglas continuas](/docs/rules-engine) sobre ella automáticamente — de modo que la limpieza de beneficiario, categoría y nota que has automatizado también se aplica a las entradas recurrentes. La transacción siempre lleva la fecha de vencimiento de la ocurrencia, aunque la confirmes unos días antes.
+- **Marcar como lista** crea la transacción real y ejecuta tus [reglas continuas](/docs/rules-engine) sobre ella automáticamente — de modo que la limpieza de beneficiario, categoría y nota que has automatizado también se aplica a las entradas recurrentes. La transacción lleva la fecha de vencimiento de la ocurrencia, aunque la confirmes unos días antes.
+- **Registrar ahora** hace lo mismo, pero fecha la transacción hoy en lugar de en la fecha de vencimiento — útil cuando una factura se paga antes o después.
 - **Saltar esta vez** elimina una sola ocurrencia sin tocar la periodicidad. La serie continúa con la siguiente fecha.
 
 Nada se registra nunca de forma automática. Una transacción recurrente es un recordatorio con un botón de "hacerla real" con un clic, no una orden permanente — tú sigues siendo el último control entre el plan y el registro.

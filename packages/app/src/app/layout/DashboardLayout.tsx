@@ -9,6 +9,7 @@ import { cn } from '@shared/lib/utils';
 import { CommandPalette } from '@widgets/command-palette/CommandPalette';
 import OnboardingInviteShareDialog from '@features/budget-sharing/ui/OnboardingInviteShareDialog';
 import { BankAutoSync } from '@features/bank-sync';
+import { SchedulingGuideDialog } from '@features/transactions/ui/SchedulingGuideDialog';
 
 export default function DashboardLayout() {
   const isMobile = useIsMobile();
@@ -31,6 +32,7 @@ export default function DashboardLayout() {
           self-clears on close. */}
       <OnboardingInviteShareDialog />
       <BankAutoSync />
+      <SchedulingGuideDialog />
 
       {isMobile && <MobileTopBar />}
       <main className={cn('flex-1 bg-background', isMobile && 'overflow-auto')}>

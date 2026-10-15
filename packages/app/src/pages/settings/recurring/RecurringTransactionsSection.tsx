@@ -254,10 +254,16 @@ export function RecurringTransactionsSection() {
     }
   };
 
-  const handleMarkReady = async (occurrence: RecurringOccurrenceWithTemplate) => {
+  const handleMarkReady = async (
+    occurrence: RecurringOccurrenceWithTemplate,
+    transactionDate?: string
+  ) => {
     try {
       setProcessingOccurrenceId(occurrence.id);
-      const result = await markReady.mutateAsync({ occurrenceId: occurrence.id });
+      const result = await markReady.mutateAsync({
+        occurrenceId: occurrence.id,
+        transactionDate,
+      });
       const accountName = accountsById.get(result.occurrence.template.accountId)?.Name;
       toast.success(t`Transaction posted`, {
         description: accountName
