@@ -7,6 +7,7 @@ import { useMDXComponent } from 'next-contentlayer2/hooks';
 import { cn } from '@/lib/utils';
 import { Callout } from '@/components/callout';
 import { CodeBlock } from '@/components/mdx/code-block';
+import { Keys } from '@/components/mdx/keys';
 import { TrialCta } from '@/components/mdx/trial-cta';
 import { TrackedLink } from '@/components/TrackedLink';
 import { pricing } from '@/lib/pricing';
@@ -83,6 +84,7 @@ const components = {
   Callout,
   TrialCta,
   TrackedLink,
+  Keys,
   MonthlyPrice,
   YearlyPrice,
   pre: (props: React.HTMLAttributes<HTMLPreElement>) => <CodeBlock {...props} />,

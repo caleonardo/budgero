@@ -212,6 +212,11 @@
     @apply rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em];
   }
 
+  /* Keyboard keys */
+  kbd {
+    @apply rounded border border-b-2 border-border bg-muted px-1.5 py-0.5 font-mono text-[0.85em] whitespace-nowrap;
+  }
+
   /* Subtle dotted grid background that adapts to theme */
   .bg-grid {
     background-image: radial-gradient(rgba(17, 24, 39, 0.06) 1px, transparent 1px);

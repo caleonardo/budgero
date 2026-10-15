@@ -1,0 +1,118 @@
+---
+title: Keyboard shortcuts
+summary: Budget without reaching for the mouse. Move through the register, select rows, recategorize, move, clear, duplicate, and delete transactions, and do quick maths in amount fields — all from the keyboard.
+section: getting-started
+topicId: keyboard-shortcuts
+takeaways:
+  - The global shortcuts for search, adding a transaction, the sidebar, and undo.
+  - Moving through the register and acting on selected rows with single keys.
+  - Saving from the transaction form and the calculator shortcuts in amount fields.
+---
+
+Budgero is built to be used from the keyboard. The full list is always one click away: the **keyboard** button in the header opens **Keyboard shortcuts** inside the app.
+
+Keys are shown for your computer: <kbd>⌘</kbd> <kbd>⌥</kbd> <kbd>⇧</kbd> on a Mac, <kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>Shift</kbd> elsewhere. Shortcuts are ignored while you're typing in a field, so they never get in the way of your text.
+
+## Everywhere
+
+<table>
+  <thead>
+    <tr>
+      <th>Keys</th>
+      <th>Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><Keys>Ctrl+K</Keys></td><td>Search and commands</td></tr>
+    <tr><td><Keys>Ctrl+Alt+T</Keys></td><td>Add a transaction</td></tr>
+    <tr><td><Keys>Ctrl+B</Keys></td><td>Show or hide the sidebar</td></tr>
+    <tr><td><Keys>Ctrl+Z</Keys></td><td>Undo</td></tr>
+    <tr><td><Keys>Ctrl+Y</Keys> or <Keys>Ctrl+Shift+Z</Keys></td><td>Redo</td></tr>
+  </tbody>
+</table>
+
+## In the register
+
+On an account page or **All Transactions** (desktop):
+
+<table>
+  <thead>
+    <tr>
+      <th>Keys</th>
+      <th>Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><Keys>Shift+N</Keys></td><td>Add a transaction (in the dialog or the inline row, whichever you use)</td></tr>
+    <tr><td><Keys>↑</Keys> / <Keys>↓</Keys></td><td>Move the highlighted row</td></tr>
+    <tr><td><Keys>Space</Keys></td><td>Select or deselect the highlighted row</td></tr>
+    <tr><td><Keys>Shift+↑</Keys> / <Keys>↓</Keys></td><td>Extend the selection</td></tr>
+    <tr><td><Keys>Ctrl+A</Keys></td><td>Select every row</td></tr>
+    <tr><td><Keys>Esc</Keys></td><td>Clear the selection</td></tr>
+    <tr><td><Keys>Shift+C</Keys></td><td>Show only uncleared transactions (account page)</td></tr>
+    <tr><td><Keys>Shift+U</Keys></td><td>Show only uncategorized transactions (account page)</td></tr>
+  </tbody>
+</table>
+
+## With rows selected
+
+<table>
+  <thead>
+    <tr>
+      <th>Keys</th>
+      <th>Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><Keys>G</Keys></td><td>Change the category</td></tr>
+    <tr><td><Keys>M</Keys></td><td>Move to another account</td></tr>
+    <tr><td><Keys>P</Keys></td><td>Set the payee</td></tr>
+    <tr><td><Keys>C</Keys></td><td>Mark cleared, or uncleared if they all already are</td></tr>
+    <tr><td><Keys>Shift+D</Keys></td><td>Duplicate</td></tr>
+    <tr><td><Keys>Delete</Keys></td><td>Delete — the confirmation has an Undo button</td></tr>
+  </tbody>
+</table>
+
+<Keys>G</Keys>, <Keys>M</Keys>, and <Keys>P</Keys> open a picker with the search already focused: type a few letters, press <Keys>Enter</Keys>, and the change applies to every selected row. <Keys>Esc</Keys> closes the picker without changing anything. Reconciled rows are skipped by <Keys>C</Keys>.
+
+## Adding a transaction
+
+<table>
+  <thead>
+    <tr>
+      <th>Keys</th>
+      <th>Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><Keys>Tab</Keys> / <Keys>Shift+Tab</Keys></td><td>Move between fields</td></tr>
+    <tr><td><Keys>Enter</Keys></td><td>Save (from a text field)</td></tr>
+    <tr><td><Keys>Ctrl+Enter</Keys></td><td>Save from any field</td></tr>
+    <tr><td><Keys>Esc</Keys></td><td>Close without saving (inline row)</td></tr>
+  </tbody>
+</table>
+
+In the inline row, <Keys>Enter</Keys> on a button presses that button — Split, Cancel, or a picker — instead of saving.
+
+## Amount fields
+
+Amount fields are calculators: type `120 + 35` or `300 / 3` and the result is saved. These work while editing an amount:
+
+<table>
+  <thead>
+    <tr>
+      <th>Keys</th>
+      <th>Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><Keys>Ctrl+H</Keys></td><td>Halve the amount</td></tr>
+    <tr><td><Keys>Ctrl+D</Keys></td><td>Double the amount</td></tr>
+    <tr><td><Keys>Ctrl+T</Keys></td><td>Take 10%</td></tr>
+    <tr><td><Keys>Ctrl+Z</Keys></td><td>Set to zero</td></tr>
+    <tr><td><Keys>Enter</Keys></td><td>Save the amount</td></tr>
+    <tr><td><Keys>Esc</Keys></td><td>Cancel the edit</td></tr>
+  </tbody>
+</table>
+
+To find transactions rather than move between them, see [Searching transactions](/docs/semantic-search).

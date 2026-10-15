@@ -1,0 +1,87 @@
+---
+title: "Transaktionen durchsuchen"
+summary: "Finde jede Transaktion, indem du einfach eintippst, was du meinst. Die Suche im Register versteht Datumsangaben, Einnahmen und Ausgaben, den Buchungsstatus, Kategorien, Labels und Beträge – und durchsucht alles andere als Freitext."
+section: getting-started
+topicId: semantic-search
+takeaways:
+  - "Welche Wörter das Suchfeld in Filter umwandelt und wie sie sich kombinieren."
+  - "Transaktionen nach Betrag finden mit over, under und exactly (oder >, <, =)."
+  - "Wie Freitext, Kategorien und Labels abgeglichen werden, plus die Schnellfilter Nicht gebucht und Ohne Kategorie."
+---
+
+Jedes Kontoregister und **Alle Transaktionen** haben über der Tabelle ein Suchfeld. Tippe ein, wonach du suchst – `groceries last month`, `outflows over 100`, `uncleared` – und Budgero wandelt die Wörter, die es erkennt, in Filter um. Jeder erkannte Filter erscheint als Chip unter dem Feld; klicke auf sein **×**, um ihn zu entfernen. Alles, was übrig bleibt, wird als Freitext gesucht.
+
+Alle Filter lassen sich kombinieren: `Dining out last month over 30` zeigt Transaktionen der Kategorie Dining out aus dem letzten Monat, die über 30 liegen.
+
+Die Filterwörter sind englische Schlüsselwörter – ganz gleich, in welcher Sprache die App eingestellt ist.
+
+## Datumsangaben
+
+<table>
+  <thead>
+    <tr>
+      <th>Eingabe</th>
+      <th>Zeigt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>today</code>, <code>yesterday</code></td><td>Den jeweiligen Tag</td></tr>
+    <tr><td><code>this week</code>, <code>last week</code></td><td>Die bisherige Woche oder die gesamte letzte Woche</td></tr>
+    <tr><td><code>this month</code>, <code>last month</code></td><td>Den bisherigen Monat oder den gesamten letzten Monat</td></tr>
+    <tr><td><code>this year</code>, <code>last year</code></td><td>Das bisherige Jahr oder das gesamte letzte Jahr</td></tr>
+    <tr><td><code>last 30 days</code> (beliebige Zahl)</td><td>Die letzten N Tage bis heute</td></tr>
+  </tbody>
+</table>
+
+Ein Datumswort verschiebt außerdem den Datumsbereich des Registers oben auf der Seite, damit die Tabelle den richtigen Zeitraum lädt. Wochen beginnen an dem Tag, der unter **Einstellungen → Budget-Einstellungen → Erster Wochentag** festgelegt ist.
+
+## Einnahmen, Ausgaben und Umbuchungen
+
+- `inflows`, `inflow` oder `income` – eingehendes Geld (ohne Umbuchungen).
+- `outflows`, `outflow`, `expenses`, `expense` oder `spending` – ausgehendes Geld (ohne Umbuchungen).
+- `transfers` oder `transfer` – nur Umbuchungen zwischen deinen Konten.
+
+## Buchungsstatus
+
+- `cleared` – gebuchte Transaktionen, einschließlich abgeglichener.
+- `uncleared` – Transaktionen, die du noch nicht gebucht hast.
+- `reconciled` – nur abgeglichene Transaktionen.
+
+Du kannst sie auch als `is:cleared`, `is:uncleared` und `is:reconciled` schreiben. Geplante wiederkehrende Zeilen (die projizierten) werden von keinem Status erfasst.
+
+## Beträge
+
+Suche nach einem Betrag, indem du ein Vergleichswort oder -symbol vor die Zahl setzt:
+
+<table>
+  <thead>
+    <tr>
+      <th>Eingabe</th>
+      <th>Findet Beträge</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>over 50</code>, <code>above 50</code>, <code>&gt;50</code></td><td>Größer als 50</td></tr>
+    <tr><td><code>under 20</code>, <code>below 20</code>, <code>&lt;20</code></td><td>Kleiner als 20</td></tr>
+    <tr><td><code>exactly 42.50</code>, <code>equal 42.50</code>, <code>=42.50</code></td><td>42.50 (auf den Cent genau)</td></tr>
+  </tbody>
+</table>
+
+- **Bereiche:** Kombiniere beide Grenzen – `over 20 under 50`.
+- **Die Richtung spielt keine Rolle:** Ein Betragsfilter vergleicht die Höhe der Transaktion, egal ob Geld eingeht oder ausgeht. Füge `outflows` oder `inflows` hinzu, um die Auswahl einzugrenzen.
+- **Währung:** Beträge werden in der Währung verglichen, die das Register anzeigt (Kontowährung oder Budget-Währung, über den Umschalter oberhalb der Tabelle). Ein vorangestelltes `$`, `€` oder `£` ist erlaubt: `over €100`.
+- **Zahlenformat:** Verwende einen Punkt als Dezimaltrennzeichen und keine Tausendertrennzeichen – `=1250.50`, nicht `=1.250,50` oder `=1,250.50`.
+- **Eine Zahl allein ist Text,** kein Betrag: `42.50` sucht nach „42.50“ in Memos und Empfängern. Verwende `=42.50`, um den Betrag zu finden.
+
+## Kategorien und Labels
+
+- Tippe einen **Kategorienamen** ein, um nur diese Kategorie anzuzeigen. Namen mit Leerzeichen gehören in Anführungszeichen: `"Dining out"`. Während du tippst, schlägt Budgero passende Kategorien vor; wähle eine aus, um sie hinzuzufügen. Füge mehrere Kategorien hinzu, um Transaktionen aus jeder davon zu sehen.
+- Verwende `label:` für **Labels**: `label:Vacation` oder `label:"Work trip"` für Namen mit Leerzeichen.
+
+## Freitext
+
+Alles, was die Suche nicht erkennt, wird mit **Memo, Empfänger, Kategorie, Label und Konto** jeder Transaktion abgeglichen, wobei Groß- und Kleinschreibung keine Rolle spielt. `pharmacy` findet „City Pharmacy“ als Empfänger oder im Memo.
+
+## Schnellfilter
+
+Neben der Suche zeigen die Schaltflächen **Nicht gebucht** und **Ohne Kategorie**, wie viele solcher Transaktionen es gibt, und filtern mit einem Klick danach. Auf einer Kontoseite schaltest du sie mit <Keys>Shift+C</Keys> und <Keys>Shift+U</Keys> per Tastatur ein und aus – siehe [Tastenkürzel](/docs/keyboard-shortcuts).

@@ -1,0 +1,87 @@
+---
+title: "Transacties zoeken"
+summary: "Vind elke transactie door te typen wat je bedoelt. De zoekfunctie in het register begrijpt datums, geld dat binnenkomt of uitgaat, bevestigingsstatus, categorieën, labels en bedragen — en doorzoekt al het andere als gewone tekst."
+section: getting-started
+topicId: semantic-search
+takeaways:
+  - "Welke woorden het zoekvak omzet in filters, en hoe ze worden gecombineerd."
+  - "Transacties op bedrag vinden met over, under en exactly (of >, <, =)."
+  - "Hoe vrije tekst, categorieën en labels worden gematcht, plus de snelfilters Niet bevestigd en Niet-gecategoriseerd."
+---
+
+Elk rekeningregister en **Alle transacties** heeft een zoekvak boven de tabel. Typ wat je zoekt — `groceries last month`, `outflows over 100`, `uncleared` — en Budgero zet de woorden die het herkent om in filters. Elk herkend filter verschijnt als chip onder het vak; klik op de **×** om het te verwijderen. Wat overblijft, wordt doorzocht als gewone tekst.
+
+Alle filters worden gecombineerd: `Dining out last month over 30` toont transacties in Dining out van vorige maand boven de 30.
+
+De filterwoorden zijn Engelse trefwoorden, in welke taal de app ook staat.
+
+## Datums
+
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Toont</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>today</code>, <code>yesterday</code></td><td>Die dag</td></tr>
+    <tr><td><code>this week</code>, <code>last week</code></td><td>De week tot nu toe, of de hele vorige week</td></tr>
+    <tr><td><code>this month</code>, <code>last month</code></td><td>De maand tot nu toe, of de hele vorige maand</td></tr>
+    <tr><td><code>this year</code>, <code>last year</code></td><td>Het jaar tot nu toe, of het hele vorige jaar</td></tr>
+    <tr><td><code>last 30 days</code> (elk getal)</td><td>De laatste N dagen tot en met vandaag</td></tr>
+  </tbody>
+</table>
+
+Een datumwoord verschuift ook het datumbereik van het register bovenaan de pagina, zodat de tabel de juiste periode laadt. Weken beginnen op de dag die is ingesteld bij **Instellingen → Budgetinstellingen → Eerste dag van de week**.
+
+## Geld in, geld uit, overboekingen
+
+- `inflows`, `inflow` of `income` — geld dat binnenkomt (zonder overboekingen).
+- `outflows`, `outflow`, `expenses`, `expense` of `spending` — geld dat uitgaat (zonder overboekingen).
+- `transfers` of `transfer` — alleen overboekingen tussen je eigen rekeningen.
+
+## Bevestigingsstatus
+
+- `cleared` — bevestigde transacties, inclusief afgestemde.
+- `uncleared` — transacties die je nog niet hebt bevestigd.
+- `reconciled` — alleen afgestemde transacties.
+
+Je kunt ze ook schrijven als `is:cleared`, `is:uncleared` en `is:reconciled`. Geplande terugkerende rijen (de geprojecteerde) komen nooit overeen met een status.
+
+## Bedragen
+
+Zoek op bedrag met een vergelijkingswoord of -symbool voor het getal:
+
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Vindt bedragen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>over 50</code>, <code>above 50</code>, <code>&gt;50</code></td><td>Groter dan 50</td></tr>
+    <tr><td><code>under 20</code>, <code>below 20</code>, <code>&lt;20</code></td><td>Kleiner dan 20</td></tr>
+    <tr><td><code>exactly 42.50</code>, <code>equal 42.50</code>, <code>=42.50</code></td><td>42.50 (tot op de cent)</td></tr>
+  </tbody>
+</table>
+
+- **Bereiken:** combineer beide grenzen — `over 20 under 50`.
+- **Richting maakt niet uit:** een bedragfilter vergelijkt de grootte van de transactie, of het nu om geld gaat dat binnenkomt of uitgaat. Voeg `outflows` of `inflows` toe om verder te verfijnen.
+- **Valuta:** bedragen worden vergeleken in de valuta die het register toont (rekeningvaluta of budgetvaluta, via de schakelaar boven de tabel). Een `$`, `€` of `£` vooraan is toegestaan: `over €100`.
+- **Getalnotatie:** gebruik een punt voor decimalen en geen scheidingstekens voor duizendtallen — `=1250.50`, niet `=1.250,50` of `=1,250.50`.
+- **Een los getal is tekst,** geen bedrag: `42.50` zoekt naar "42.50" in memo's en begunstigden. Gebruik `=42.50` om het bedrag te vinden.
+
+## Categorieën en labels
+
+- Typ een **categorienaam** om alleen die categorie te tonen. Namen met spaties zet je tussen aanhalingstekens: `"Dining out"`. Terwijl je typt, stelt Budgero overeenkomende categorieën voor; kies er een om hem toe te voegen. Voeg meerdere categorieën toe om transacties uit elk daarvan te zien.
+- Gebruik `label:` voor **labels**: `label:Vacation`, of `label:"Work trip"` voor namen met spaties.
+
+## Gewone tekst
+
+Alles wat de zoekfunctie niet herkent, wordt vergeleken met de **memo, begunstigde, categorie, label en rekening** van elke transactie, zonder onderscheid tussen hoofdletters en kleine letters. `pharmacy` vindt "City Pharmacy" als begunstigde of in een memo.
+
+## Snelfilters
+
+Naast het zoekvak tonen de knoppen **Niet bevestigd** en **Niet-gecategoriseerd** hoeveel van zulke transacties er zijn, en filteren ze er met één klik op. Op een rekeningpagina schakel je ze met <Keys>Shift+C</Keys> en <Keys>Shift+U</Keys> aan en uit vanaf het toetsenbord — zie [Sneltoetsen](/docs/keyboard-shortcuts).

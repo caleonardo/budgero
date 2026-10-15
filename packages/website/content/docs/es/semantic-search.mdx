@@ -1,0 +1,87 @@
+---
+title: "Buscar transacciones"
+summary: "Encuentra cualquier transacción escribiendo lo que buscas. La búsqueda del registro entiende fechas, entradas y salidas de dinero, el estado de confirmación, categorías, etiquetas e importes — y busca todo lo demás como texto normal."
+section: getting-started
+topicId: semantic-search
+takeaways:
+  - "Qué palabras convierte el cuadro de búsqueda en filtros y cómo se combinan."
+  - "Encontrar transacciones por importe con over, under y exactly (o >, <, =)."
+  - "Cómo se buscan el texto libre, las categorías y las etiquetas, además de los filtros rápidos Sin confirmar y Sin categorizar."
+---
+
+Cada registro de cuenta y **Todas las transacciones** tienen un cuadro de búsqueda encima de la tabla. Escribe lo que buscas — `groceries last month`, `outflows over 100`, `uncleared` — y Budgero convierte las palabras que reconoce en filtros. Cada filtro reconocido aparece como una ficha bajo el cuadro; haz clic en su **×** para quitarlo. Todo lo que sobra se busca como texto normal.
+
+Todos los filtros se combinan: `Dining out last month over 30` muestra las transacciones de la categoría Dining out del mes pasado por encima de 30.
+
+Las palabras de filtro son palabras clave en inglés, sea cual sea el idioma de la aplicación.
+
+## Fechas
+
+<table>
+  <thead>
+    <tr>
+      <th>Escribe</th>
+      <th>Muestra</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>today</code>, <code>yesterday</code></td><td>Ese día</td></tr>
+    <tr><td><code>this week</code>, <code>last week</code></td><td>La semana en curso hasta hoy, o toda la semana pasada</td></tr>
+    <tr><td><code>this month</code>, <code>last month</code></td><td>El mes en curso hasta hoy, o todo el mes pasado</td></tr>
+    <tr><td><code>this year</code>, <code>last year</code></td><td>El año en curso hasta hoy, o todo el año pasado</td></tr>
+    <tr><td><code>last 30 days</code> (cualquier número)</td><td>Los últimos N días hasta hoy</td></tr>
+  </tbody>
+</table>
+
+Una palabra de fecha también ajusta el rango de fechas del registro en la parte superior de la página, para que la tabla cargue el periodo correcto. Las semanas empiezan el día fijado en **Ajustes → Ajustes del presupuesto → Primer día de la semana**.
+
+## Entradas, salidas y transferencias
+
+- `inflows`, `inflow` o `income` — dinero que entra (sin incluir transferencias).
+- `outflows`, `outflow`, `expenses`, `expense` o `spending` — dinero que sale (sin incluir transferencias).
+- `transfers` o `transfer` — solo las transferencias entre tus cuentas.
+
+## Estado de confirmación
+
+- `cleared` — transacciones confirmadas, incluidas las conciliadas.
+- `uncleared` — transacciones que aún no has confirmado.
+- `reconciled` — solo transacciones conciliadas.
+
+También puedes escribirlas como `is:cleared`, `is:uncleared` e `is:reconciled`. Las filas recurrentes programadas (las proyectadas) nunca coinciden con ningún estado.
+
+## Importes
+
+Busca por importe con una palabra o un símbolo de comparación delante del número:
+
+<table>
+  <thead>
+    <tr>
+      <th>Escribe</th>
+      <th>Encuentra importes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>over 50</code>, <code>above 50</code>, <code>&gt;50</code></td><td>Mayores que 50</td></tr>
+    <tr><td><code>under 20</code>, <code>below 20</code>, <code>&lt;20</code></td><td>Menores que 20</td></tr>
+    <tr><td><code>exactly 42.50</code>, <code>equal 42.50</code>, <code>=42.50</code></td><td>42.50 (al céntimo)</td></tr>
+  </tbody>
+</table>
+
+- **Rangos:** combina los dos extremos — `over 20 under 50`.
+- **La dirección no importa:** un filtro de importe compara el tamaño de la transacción, tanto si es dinero que entra como si sale. Añade `outflows` o `inflows` para acotarlo.
+- **Moneda:** los importes se comparan en la moneda que muestra el registro (Moneda de la cuenta o Moneda del presupuesto, según el selector encima de la tabla). Se admite un `$`, `€` o `£` delante: `over €100`.
+- **Formato de número:** usa un punto para los decimales y no uses separadores de miles — `=1250.50`, no `=1.250,50` ni `=1,250.50`.
+- **Un número solo es texto,** no un importe: `42.50` busca "42.50" en notas y beneficiarios. Usa `=42.50` para encontrar el importe.
+
+## Categorías y etiquetas
+
+- Escribe el **nombre de una categoría** para ver solo esa categoría. Los nombres con espacios van entre comillas: `"Dining out"`. Mientras escribes, Budgero sugiere categorías que coinciden; elige una para añadirla. Añade varias categorías para ver cualquiera de ellas.
+- Usa `label:` para las **etiquetas**: `label:Vacation`, o `label:"Work trip"` para nombres con espacios.
+
+## Texto normal
+
+Todo lo que la búsqueda no reconoce se compara con la **nota, el beneficiario, la categoría, la etiqueta y la cuenta** de cada transacción, sin distinguir mayúsculas de minúsculas. `pharmacy` encuentra "City Pharmacy" como beneficiario o en una nota.
+
+## Filtros rápidos
+
+Junto a la búsqueda, los botones **Sin confirmar** y **Sin categorizar** muestran cuántas transacciones de ese tipo hay y las filtran con un clic. En la página de una cuenta, <Keys>Shift+C</Keys> y <Keys>Shift+U</Keys> los activan y desactivan desde el teclado — consulta [Atajos de teclado](/docs/keyboard-shortcuts).
