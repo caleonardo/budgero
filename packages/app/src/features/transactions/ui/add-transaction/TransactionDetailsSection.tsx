@@ -81,6 +81,10 @@ interface TransactionDetailsSectionProps {
 
   // Currency conversion
   needsCurrencyConversion: boolean;
+  /** Regular transaction in an account whose currency differs from the budget's. */
+  needsBudgetConversion?: boolean;
+  /** Currency the converted amount is shown in (destination account or budget). */
+  conversionTargetCurrency?: string | null;
   convertedAmount: number | null;
   isLoadingRate: boolean;
   selectedAccount: Account | undefined;
@@ -147,6 +151,8 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
   isTransfer,
   transferInvolvesOffBudget,
   needsCurrencyConversion,
+  needsBudgetConversion = false,
+  conversionTargetCurrency = null,
   convertedAmount,
   isLoadingRate,
   selectedAccount,
@@ -243,21 +249,23 @@ export const TransactionDetailsSection = React.memo(function TransactionDetailsS
         />
       )}
 
-      {showCurrencyConversion && needsCurrencyConversion && isTransfer && (
-        <CurrencyConversionNotice
-          amount={amount ?? 0}
-          convertedAmount={convertedAmount}
-          isLoadingRate={isLoadingRate}
-          fromCurrency={selectedAccount?.Currency || ''}
-          toCurrency={toAccount?.Currency || ''}
-          canUseCurrencyApi={canUseCurrencyApi}
-          exchangeRate={exchangeRate}
-          receivedAmount={receivedAmount}
-          onReceivedAmountChange={onReceivedAmountChange}
-          onEditingChange={onAmountEditingChange}
-          localizer={globalLocalizer}
-        />
-      )}
+      {showCurrencyConversion &&
+        ((needsCurrencyConversion && isTransfer) || (needsBudgetConversion && !isTransfer)) && (
+          <CurrencyConversionNotice
+            mode={isTransfer ? 'transfer' : 'budget'}
+            amount={amount ?? 0}
+            convertedAmount={convertedAmount}
+            isLoadingRate={isLoadingRate}
+            fromCurrency={selectedAccount?.Currency || ''}
+            toCurrency={(isTransfer ? toAccount?.Currency : conversionTargetCurrency) || ''}
+            canUseCurrencyApi={canUseCurrencyApi}
+            exchangeRate={exchangeRate}
+            receivedAmount={receivedAmount}
+            onReceivedAmountChange={onReceivedAmountChange}
+            onEditingChange={onAmountEditingChange}
+            localizer={globalLocalizer}
+          />
+        )}
 
       {/* Internal transfers do not have a payee; an off-budget account is external to the budget. */}
       {shouldShowPayeeField(isTransfer, transferInvolvesOffBudget) && (

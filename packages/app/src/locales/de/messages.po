@@ -3405,6 +3405,10 @@ msgstr "Betragsbedingungen erfordern einen numerischen Wert."
 msgid "Amount fields"
 msgstr "Betragsfelder"
 
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Amount in budget ({toCurrency})"
+msgstr "Betrag im Budget ({toCurrency})"
+
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Amount needed available"
 msgstr "Benötigter Betrag verfügbar"
@@ -9198,6 +9202,10 @@ msgstr "Eingang"
 msgid "In a dialog, or in an inline row at the top of the account register (desktop)."
 msgstr "In einem Dialog oder in einer Inline-Zeile oben im Kontoregister (Desktop)."
 
+#: src/features/transactions/ui/desktop-table/InlineTransactionRow.tsx
+msgid "In budget ({conversionTargetCurrency}), edit to use your own rate"
+msgstr "Im Budget ({conversionTargetCurrency}), ändern für eigenen Kurs"
+
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 msgid "in progress"
 msgstr "in Bearbeitung"
@@ -12223,6 +12231,10 @@ msgstr "Optional — ändere dies, wenn die Bank einen anderen Betrag gutgeschri
 #: src/pages/settings/ai/ConnectionTestPanel.tsx
 msgid "Optional — required by most cloud providers"
 msgstr "Optional — von den meisten Cloud-Anbietern erforderlich"
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Optional — type what you actually got, e.g. after a rounded cash swap."
+msgstr "Optional — gib ein, was du tatsächlich bekommen hast, z. B. nach einem gerundeten Bargeldtausch."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Optional but encouraged"
@@ -16786,6 +16798,10 @@ msgstr "Der Abwärtstrend ist statistisch belastbar (p = {0}, R² = {1}): {2}/Mo
 #: src/features/goal-management/ui/GoalSection.tsx
 msgid "The goal has been permanently removed."
 msgstr "Das Ziel wurde dauerhaft entfernt."
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "The implied exchange rate will be saved with this transaction."
+msgstr "Der sich daraus ergebende Wechselkurs wird mit dieser Transaktion gespeichert."
 
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "The implied exchange rate will be saved with this transfer."

@@ -3405,6 +3405,10 @@ msgstr "Bedragvoorwaarden vereisen een numerieke waarde."
 msgid "Amount fields"
 msgstr "Bedragvelden"
 
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Amount in budget ({toCurrency})"
+msgstr "Bedrag in budget ({toCurrency})"
+
 #: src/features/goal-management/lib/core-goal-text.ts
 msgid "Amount needed available"
 msgstr "Benodigd bedrag beschikbaar"
@@ -9198,6 +9202,10 @@ msgstr "In"
 msgid "In a dialog, or in an inline row at the top of the account register (desktop)."
 msgstr "In een dialoogvenster of in een inline rij bovenaan het rekeningregister (desktop)."
 
+#: src/features/transactions/ui/desktop-table/InlineTransactionRow.tsx
+msgid "In budget ({conversionTargetCurrency}), edit to use your own rate"
+msgstr "In budget ({conversionTargetCurrency}), wijzig voor je eigen koers"
+
 #: src/features/rules/ui/RuleHistoryDrawer.tsx
 msgid "in progress"
 msgstr "bezig"
@@ -12223,6 +12231,10 @@ msgstr "Optioneel — pas dit aan als de bank een ander bedrag heeft bijgeschrev
 #: src/pages/settings/ai/ConnectionTestPanel.tsx
 msgid "Optional — required by most cloud providers"
 msgstr "Optioneel — vereist door de meeste cloudproviders"
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "Optional — type what you actually got, e.g. after a rounded cash swap."
+msgstr "Optioneel — vul in wat je echt kreeg, bv. na een afgerond contant wisselbedrag."
 
 #: src/pages/onboarding/onboarding-data.ts
 msgid "Optional but encouraged"
@@ -16786,6 +16798,10 @@ msgstr "De dalende trend is statistisch betrouwbaar (p = {0}, R² = {1}): {2}/ma
 #: src/features/goal-management/ui/GoalSection.tsx
 msgid "The goal has been permanently removed."
 msgstr "Het doel is permanent verwijderd."
+
+#: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
+msgid "The implied exchange rate will be saved with this transaction."
+msgstr "De afgeleide wisselkoers wordt bij deze transactie opgeslagen."
 
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "The implied exchange rate will be saved with this transfer."

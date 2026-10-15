@@ -157,6 +157,27 @@ export function useAddTransactionForm({
     return selectedAccount.Currency !== toAccount.Currency;
   }, [disableCurrencyConversion, form.isTransfer, selectedAccount, toAccount]);
 
+  // A non-transfer in a foreign-currency account is booked in the budget
+  // currency too; the user may type that amount to pin the rate (e.g. cash
+  // swapped at a rounded rate). It reuses the transfer's received-amount state.
+  const needsBudgetConversion = React.useMemo(() => {
+    if (disableCurrencyConversion || form.isTransfer) return false;
+    const budgetCurrency = selectedBudget?.DisplayCurrency;
+    return Boolean(
+      selectedAccount && budgetCurrency && selectedAccount.Currency !== budgetCurrency
+    );
+  }, [
+    disableCurrencyConversion,
+    form.isTransfer,
+    selectedAccount,
+    selectedBudget?.DisplayCurrency,
+  ]);
+  const conversionTargetCurrency = form.isTransfer
+    ? (toAccount?.Currency ?? null)
+    : needsBudgetConversion
+      ? (selectedBudget?.DisplayCurrency ?? null)
+      : null;
+
   React.useEffect(() => {
     setReceivedAmount(null);
   }, [form.transactionType, form.selectedFromAccount, form.selectedToAccount]);
@@ -295,11 +316,12 @@ export function useAddTransactionForm({
 
   React.useEffect(() => {
     async function calculatePreview() {
+      const targetCurrency = conversionTargetCurrency;
       if (
-        !needsCurrencyConversion ||
+        !(needsCurrencyConversion || needsBudgetConversion) ||
         !form.amount ||
         !selectedAccount ||
-        !toAccount ||
+        !targetCurrency ||
         !selectedBudget
       ) {
         setConvertedAmount(null);
@@ -314,7 +336,7 @@ export function useAddTransactionForm({
             sourceAmount: form.amount,
             receivedAmount,
             sourceCurrency: selectedAccount.Currency,
-            destinationCurrency: toAccount.Currency,
+            destinationCurrency: targetCurrency,
           })
         );
         setLoadingRate(false);
@@ -329,13 +351,17 @@ export function useAddTransactionForm({
         const date = getCurrentDate(form.transactionDate);
         const localOrManual = await getLocalOrManualRate(
           selectedAccount.Currency,
-          toAccount.Currency,
+          targetCurrency,
           date,
           selectedBudget.ID
         );
         if (!localOrManual) {
-          setPendingRatePair({ from: selectedAccount.Currency, to: toAccount.Currency });
-          setShowRatePrompt(true);
+          // Transfers need the rate up front; plain transactions ask on save.
+          if (form.isTransfer) {
+            setPendingRatePair({ from: selectedAccount.Currency, to: targetCurrency });
+            setShowRatePrompt(true);
+          }
+          setConvertedAmount(null);
           setLoadingRate(false);
           return;
         }
@@ -346,16 +372,14 @@ export function useAddTransactionForm({
       try {
         const rate = await getExchangeRate(
           selectedAccount.Currency,
-          toAccount.Currency,
+          targetCurrency,
           currentDate,
           selectedBudget.ID
         );
         // money × rate crosses storage scales (crypto is sat-scale); convertScaled rounds back
         setConvertedAmount(
           rate
-            ? asMilli(
-                convertScaled(form.amount, rate, selectedAccount.Currency, toAccount.Currency)
-              )
+            ? asMilli(convertScaled(form.amount, rate, selectedAccount.Currency, targetCurrency))
             : null
         );
         setResolvedRate(rate);
@@ -367,18 +391,20 @@ export function useAddTransactionForm({
       }
     }
 
-    if (needsCurrencyConversion) {
+    if (needsCurrencyConversion || needsBudgetConversion) {
       void calculatePreview();
     }
   }, [
     form.amount,
     needsCurrencyConversion,
+    needsBudgetConversion,
+    conversionTargetCurrency,
     selectedAccount,
-    toAccount,
     form.transactionDate,
     selectedBudget,
     canUseCurrencyApi,
     receivedAmount,
+    form.isTransfer,
     setConvertedAmount,
     setLoadingRate,
     setPendingRatePair,
@@ -567,7 +593,26 @@ export function useAddTransactionForm({
 
       // Non-transfer transactions
       if (!isSplit) {
-        if (!canUseCurrencyApi && selectedAccount && selectedBudget) {
+        // A typed budget-currency amount pins the account-to-budget rate.
+        const budgetRateOverride =
+          needsBudgetConversion &&
+          receivedAmount &&
+          receivedAmount > 0 &&
+          selectedAccount &&
+          form.amount
+            ? calculateImpliedTransferRate({
+                sourceAmount: form.amount,
+                receivedAmount,
+                sourceCurrency: selectedAccount.Currency,
+                destinationCurrency: selectedBudget?.DisplayCurrency ?? selectedAccount.Currency,
+              })
+            : null;
+        if (
+          budgetRateOverride === null &&
+          !canUseCurrencyApi &&
+          selectedAccount &&
+          selectedBudget
+        ) {
           const budgetCurrency = selectedBudget.DisplayCurrency;
           if (budgetCurrency && selectedAccount.Currency !== budgetCurrency) {
             const d = getCurrentDate(form.transactionDate);
@@ -606,7 +651,8 @@ export function useAddTransactionForm({
           parseInt(form.selectedFromAccount),
           labelId,
           null,
-          addAnother
+          addAnother,
+          budgetRateOverride
         );
 
         logAutofillApplications(transactionId, autofillAppliedSuggestions);
@@ -730,6 +776,7 @@ export function useAddTransactionForm({
       t,
       form,
       isSplit,
+      needsBudgetConversion,
       splitLines,
       accounts,
       categories,
@@ -792,6 +839,8 @@ export function useAddTransactionForm({
     resolvedRate,
     receivedAmount,
     setReceivedAmount,
+    needsBudgetConversion,
+    conversionTargetCurrency,
 
     // Autofill
     autofillAppliedFields,

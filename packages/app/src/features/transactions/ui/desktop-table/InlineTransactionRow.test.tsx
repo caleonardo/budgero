@@ -55,6 +55,8 @@ vi.mock('@features/transactions/ui/add-transaction/useAddTransactionForm', () =>
       parentSigned: 0,
       receivedAmount: form.state.receivedAmount ?? null,
       setReceivedAmount: setter('receivedAmount'),
+      needsBudgetConversion: !!form.state.needsBudgetConversion,
+      conversionTargetCurrency: form.state.conversionTargetCurrency ?? null,
     }),
   };
 });
@@ -257,5 +259,22 @@ describe('InlineTransactionRow', () => {
     expect(form.handleSubmit).not.toHaveBeenCalled();
     fireEvent.keyDown(screen.getByLabelText('Memo'), { key: 'Enter' });
     await vi.waitFor(() => expect(form.handleSubmit).toHaveBeenCalledTimes(1));
+  });
+
+  it('lets a foreign-currency transaction type its budget-currency amount', () => {
+    form.state.needsBudgetConversion = true;
+    form.state.conversionTargetCurrency = 'HUF';
+    const row = renderRow({ accountId: 3 });
+    fireEvent.change(screen.getByLabelText('outflow'), { target: { value: '5000' } });
+    expect(screen.getByText(/In budget \(HUF\)/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('other'), { target: { value: '2000000' } });
+    row.rerender();
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+    expect(form.state).toMatchObject({
+      transactionType: 'outflow',
+      selectedFromAccount: '3',
+      amount: 5000,
+      receivedAmount: 2000000,
+    });
   });
 });
