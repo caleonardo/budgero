@@ -2,7 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Card } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
-import { Input } from '@shared/ui/input';
+import { PasswordInput } from '@shared/ui/password-input';
 import { Label } from '@shared/ui/label';
 import {
   Dialog,
@@ -292,9 +292,8 @@ export default function ExportDataCard({ spaceId, embedded = false }: ExportData
               <Label htmlFor="export-master-password">
                 <Trans>Master Password</Trans>
               </Label>
-              <Input
+              <PasswordInput
                 id="export-master-password"
-                type="password"
                 value={masterPassword}
                 onChange={(e) => setMasterPassword(e.target.value)}
                 placeholder={t`Enter your master password`}

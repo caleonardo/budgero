@@ -14,6 +14,7 @@ import {
 } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
+import { PasswordInput } from '@shared/ui/password-input';
 import { Label } from '@shared/ui/label';
 import { Alert, AlertDescription } from '@shared/ui/alert';
 import {
@@ -132,9 +133,8 @@ function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnaps
         <Label htmlFor="startup-master-password">
           <Trans>Master Password</Trans>
         </Label>
-        <Input
+        <PasswordInput
           id="startup-master-password"
-          type="password"
           value={snapshot.inputPassword}
           onChange={(event) => snapshot.setInputPassword(event.target.value)}
           placeholder={t`Enter your master password`}
@@ -152,9 +152,8 @@ function MasterPasswordForm({ snapshot }: { snapshot: MasterPasswordStartupSnaps
             <Label htmlFor="startup-master-password-confirm">
               <Trans>Confirm Master Password</Trans>
             </Label>
-            <Input
+            <PasswordInput
               id="startup-master-password-confirm"
-              type="password"
               value={snapshot.confirmPassword}
               onChange={(event) => snapshot.setConfirmPassword(event.target.value)}
               placeholder={t`Confirm your master password`}
@@ -546,9 +545,8 @@ export function WorkspaceRequiredScreen({
                     <Label htmlFor="workspace-invite-master">
                       <Trans>Master password</Trans>
                     </Label>
-                    <Input
+                    <PasswordInput
                       id="workspace-invite-master"
-                      type="password"
                       value={masterPassword}
                       onChange={(event) => setMasterPassword(event.target.value)}
                       placeholder={t`Your Budgero master password`}
