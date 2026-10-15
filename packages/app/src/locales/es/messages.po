@@ -18788,6 +18788,10 @@ msgstr "Espacio de trabajo cambiado"
 msgid "Workspace to export"
 msgstr "Espacio de trabajo a exportar"
 
+#: src/app/startup/screens.tsx
+msgid "Workspace: <0>{name}</0>"
+msgstr "Espacio de trabajo: <0>{name}</0>"
+
 #: src/pages/admin/admin-users/UserDetailsDialog.tsx
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 #: src/shared/model/nav-registry.ts

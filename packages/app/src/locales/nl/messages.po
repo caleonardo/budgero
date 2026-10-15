@@ -18788,6 +18788,10 @@ msgstr "Werkruimte gewisseld"
 msgid "Workspace to export"
 msgstr "Werkruimte om te exporteren"
 
+#: src/app/startup/screens.tsx
+msgid "Workspace: <0>{name}</0>"
+msgstr "Werkruimte: <0>{name}</0>"
+
 #: src/pages/admin/admin-users/UserDetailsDialog.tsx
 #: src/pages/settings/WorkspaceSettingsPage.tsx
 #: src/shared/model/nav-registry.ts

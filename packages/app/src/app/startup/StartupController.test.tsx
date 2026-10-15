@@ -208,6 +208,7 @@ function createBudgetSnapshot(
     status: 'ready',
     canManageBudgets: true,
     alternativeWorkspaces: [],
+    workspaceName: null,
     ...overrides,
   };
 }

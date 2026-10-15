@@ -43,7 +43,7 @@ export function useAddTransactionHandler({ onDialogClose }: UseAddTransactionHan
   const selectedBudget = useUiStore((state) => state.selectedBudget);
 
   const { data: categories = [] } = useCategories(
-    selectedAccount?.BudgetID || selectedBudget?.ID || 0
+    selectedBudget?.ID || selectedAccount?.BudgetID || 0
   );
 
   const addTransactionMutation = useAddTransaction();
@@ -81,7 +81,7 @@ export function useAddTransactionHandler({ onDialogClose }: UseAddTransactionHan
         accountId,
         categoryId,
         labelId,
-        budgetId: selectedAccount?.BudgetID || selectedBudget?.ID || 0,
+        budgetId: selectedBudget?.ID || selectedAccount?.BudgetID || 0,
         date: transactionDate,
         memo,
         payee,
@@ -107,7 +107,7 @@ export function useAddTransactionHandler({ onDialogClose }: UseAddTransactionHan
       const transactionDate = request.date
         ? request.date.toLocaleDateString('en-CA')
         : new Date().toLocaleDateString('en-CA');
-      const budgetId = selectedAccount?.BudgetID || selectedBudget?.ID || 0;
+      const budgetId = selectedBudget?.ID || selectedAccount?.BudgetID || 0;
 
       const result = await addTransferMutation.mutateAsync({
         budgetId,

@@ -255,3 +255,57 @@ it.each(['', '1.234,567'])(
     );
   }
 );
+
+it('reuses the selected envelope for the default goal instead of creating a duplicate', async () => {
+  vi.clearAllMocks();
+  mocks.createSpace.mockResolvedValue({ space_id: 'space-1' });
+  let nextId = 1;
+  type Call = { op: string; payload: { name?: string } };
+  const execute = vi.fn(async (_call: Call) => ({ result: nextId++ }));
+  const runtime = {
+    isInitialized: () => true,
+    refreshSpaces: vi.fn().mockResolvedValue(undefined),
+    switchSpace: vi.fn().mockResolvedValue(undefined),
+    getDatabase: () => ({}),
+    finalizeOutOfBandMutation: vi.fn().mockResolvedValue(undefined),
+    mutationsRouter: () => ({ execute }),
+    services: () => ({}),
+  } as unknown as AppRuntime;
+
+  await runOnboardingApply(
+    {
+      ...INITIAL_STATE,
+      startMode: 'fresh',
+      budgetName: 'Home',
+      password: 'pw',
+      passwordConfirm: 'pw',
+    },
+    {
+      activePath: 'fresh',
+      runtime,
+      queryClient: {
+        invalidateQueries: vi.fn().mockResolvedValue(undefined),
+        setQueryData: vi.fn(),
+      } as unknown as QueryClient,
+      navigate: vi.fn() as unknown as NavigateFunction,
+      profileId: 'profile-1',
+      setThemeId: vi.fn(),
+      updateOnboardingAsync: vi.fn().mockResolvedValue(undefined),
+      onComplete: vi.fn(),
+      setApplyStatus: vi.fn(),
+      setApplyError: vi.fn(),
+      onYnabProgress: vi.fn(),
+      onYnabResult: vi.fn(),
+      reviewYnabImport: vi.fn(),
+      onYnabImportCancelled: vi.fn(),
+      waitForYnabContinue: async () => true,
+    }
+  );
+
+  const calls = execute.mock.calls.map(([call]) => call);
+  const emergency = calls.filter(
+    (c) => c.op === 'categories.create' && c.payload.name === 'Emergency fund'
+  );
+  expect(emergency).toHaveLength(1);
+  expect(calls.some((c) => c.op === 'goals.create')).toBe(true);
+});
