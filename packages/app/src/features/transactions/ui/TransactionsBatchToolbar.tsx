@@ -113,6 +113,13 @@ export function TransactionsBatchToolbar({
     (t) => !t.CategoryID || t.CategoryID === 0
   ).length;
 
+  // A G/M picker is the whole interaction: closing it (pick or Escape) closes
+  // the edit menu too, so focus returns to the register and G/M work again.
+  const closeShortcutMenu = () => {
+    setEditMenuOpen(false);
+    setShortcutTarget(null);
+  };
+
   useBatchEditShortcuts((target) => {
     if (target === 'account' && accountsData.length < 2) return false;
     setShortcutTarget(target);
@@ -352,13 +359,15 @@ export function TransactionsBatchToolbar({
                 <SearchableCategorySelect
                   key={shortcutTarget === 'category' ? 'shortcut' : 'menu'}
                   defaultOpen={shortcutTarget === 'category'}
+                  onOpenChange={(open) => {
+                    if (!open && shortcutTarget === 'category') closeShortcutMenu();
+                  }}
                   budgetId={selectedBudget?.ID || 0}
                   selectedCategoryId={newCategoryID}
                   onCategorySelect={(categoryId) => {
                     setNewCategoryID(categoryId);
                     if (shortcutTarget !== 'category') return;
-                    setEditMenuOpen(false);
-                    setShortcutTarget(null);
+                    closeShortcutMenu();
                     void handleBatchEdits({ categoryId });
                   }}
                   triggerClassName="w-full min-w-0"
@@ -376,11 +385,13 @@ export function TransactionsBatchToolbar({
                   <Select
                     defaultOpen={shortcutTarget === 'account'}
                     key={shortcutTarget === 'account' ? 'shortcut' : 'menu'}
+                    onOpenChange={(open) => {
+                      if (!open && shortcutTarget === 'account') closeShortcutMenu();
+                    }}
                     onValueChange={(accountId) => {
                       setNewAccountID(accountId);
                       if (shortcutTarget !== 'account') return;
-                      setEditMenuOpen(false);
-                      setShortcutTarget(null);
+                      closeShortcutMenu();
                       void handleBatchEdits({ accountId });
                     }}
                   >
