@@ -368,6 +368,11 @@ export const useUiStore = create<UiState>((set) => ({
 
   selectedBudget: null,
   setSelectedBudget: (budget) => {
+    // Account and category selections belong to the previous budget; keeping
+    // them made entry forms load that budget's accounts and categories.
+    if (useUiStore.getState().selectedBudget?.ID !== budget?.ID) {
+      set({ selectedAccount: null, selectedCategories: [], lastSelectedCategoryId: null });
+    }
     set({ selectedBudget: budget });
 
     // Update localizers when the budget changes. NumberFormat is a budget-level
