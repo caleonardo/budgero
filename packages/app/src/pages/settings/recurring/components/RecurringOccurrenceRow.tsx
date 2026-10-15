@@ -12,7 +12,7 @@ import {
   AlertDialogTrigger,
 } from '@shared/ui/alert-dialog';
 import type { RecurringOccurrenceWithTemplate } from '@budgero/core/browser';
-import { formatDueLabel } from '@shared/lib/date-utils';
+import { formatDueLabel, getTodayISO } from '@shared/lib/date-utils';
 
 interface RecurringOccurrenceRowProps {
   occurrence: RecurringOccurrenceWithTemplate;
@@ -21,6 +21,8 @@ interface RecurringOccurrenceRowProps {
   isSkipPending: boolean;
   isFetching: boolean;
   onMarkReady: () => void;
+  /** Posts the occurrence dated today instead of on its due date. */
+  onPostNow: (today: string) => void;
   onSkip: () => void;
 }
 
@@ -31,10 +33,12 @@ export function RecurringOccurrenceRow({
   isSkipPending,
   isFetching,
   onMarkReady,
+  onPostNow,
   onSkip,
 }: RecurringOccurrenceRowProps) {
   const { template } = occurrence;
   const busy = isProcessing || isFetching;
+  const today = getTodayISO();
 
   return (
     <li className="flex items-center justify-between gap-3 py-1.5 pl-10 pr-3">
@@ -79,6 +83,41 @@ export function RecurringOccurrenceRow({
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        {occurrence.dueDate !== today && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 px-2.5 text-xs"
+                disabled={busy || isMarkReadyPending}
+              >
+                <Trans>Post now</Trans>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  <Trans>Post “{template.name}” now?</Trans>
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  <Trans>
+                    We will create the transaction dated today ({today}) instead of{' '}
+                    {occurrence.dueDate} and run continuous rules automatically.
+                  </Trans>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>
+                  <Trans>Cancel</Trans>
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={() => onPostNow(today)}>
+                  <Trans>Post now</Trans>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
         <Button
           size="sm"
           variant="ghost"

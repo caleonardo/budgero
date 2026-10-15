@@ -6,6 +6,7 @@ import { applyOpInvalidations, resolveSpaceKey } from '@shared/lib/query-utils';
 import { getTodayISO } from '@shared/lib/date-utils';
 import type { MilliUnits } from '@shared/lib/currency/milli';
 import { ACCOUNT_TRANSACTION_INVALIDATION_KEYS } from '@shared/mutations/op-code-registry/shared';
+import { requestSchedulingGuide } from '@shared/store/useSchedulingGuideStore';
 import { patchPlainAddTransactionCaches } from './plain-add-cache';
 
 // Query invalidation for these mutations is driven centrally by the
@@ -121,6 +122,9 @@ export function useAddTransaction() {
       return transactionId;
     },
     onSuccess: (_newId, vars) => {
+      if (vars.date.slice(0, 10) > getTodayISO()) {
+        requestSchedulingGuide('future', resolveSpaceKey(spaceId), vars.budgetId, vars.accountId);
+      }
       if (!vars.transferId) {
         applyOpInvalidations(queryClient, 'transactions.add', {
           excludeRoots: [
@@ -145,6 +149,7 @@ export function useAddTransaction() {
  */
 export function useAddTransfer() {
   const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
   const queryClient = useQueryClient();
 
   return useMutation<AddTransferResult, Error, AddTransferInput>({
@@ -162,7 +167,17 @@ export function useAddTransfer() {
         meta: { label: 'useAddTransfer', skipInvalidate: true },
       });
     },
-    onSuccess: () => applyOpInvalidations(queryClient, 'transactions.addTransfer'),
+    onSuccess: (_result, vars) => {
+      if (vars.source.date.slice(0, 10) > getTodayISO()) {
+        requestSchedulingGuide(
+          'future',
+          resolveSpaceKey(spaceId),
+          vars.budgetId,
+          vars.source.accountId
+        );
+      }
+      applyOpInvalidations(queryClient, 'transactions.addTransfer');
+    },
     onError: (error) => {
       console.error('Transfer failed:', error);
     },

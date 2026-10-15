@@ -27,4 +27,18 @@ describe('RecurringOccurrenceActions', () => {
     await user.click(screen.getByRole('button', { name: 'Skip this time' }));
     expect(skip).toHaveBeenCalledWith({ id: 12 }, expect.any(Object));
   });
+
+  it('posts dated today with Post now, offered only when the due date is not today', async () => {
+    const user = userEvent.setup();
+    const today = new Date().toLocaleDateString('en-CA');
+    const { rerender } = render(<RecurringOccurrenceActions occurrenceId={12} dueDate={today} />);
+    expect(screen.queryByRole('button', { name: 'Post now' })).not.toBeInTheDocument();
+
+    rerender(<RecurringOccurrenceActions occurrenceId={12} dueDate="2999-01-01" />);
+    await user.click(screen.getByRole('button', { name: 'Post now' }));
+    expect(markReady).toHaveBeenCalledWith(
+      { occurrenceId: 12, transactionDate: today },
+      expect.any(Object)
+    );
+  });
 });

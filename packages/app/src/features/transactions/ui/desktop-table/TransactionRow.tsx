@@ -346,7 +346,10 @@ export const TransactionRow = React.memo(function TransactionRow({
         <TableCell>
           <div className="flex items-center justify-center gap-2">
             {transaction.OccurrenceID ? (
-              <RecurringOccurrenceActions occurrenceId={transaction.OccurrenceID} />
+              <RecurringOccurrenceActions
+                occurrenceId={transaction.OccurrenceID}
+                dueDate={transaction.Date}
+              />
             ) : (
               <StatusIndicatorPopover status="projected" contentWidth="w-64" />
             )}

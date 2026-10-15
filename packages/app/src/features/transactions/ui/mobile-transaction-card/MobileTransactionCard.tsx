@@ -176,6 +176,7 @@ export const MobileTransactionCard = React.memo(function MobileTransactionCard({
               {transaction.OccurrenceID ? (
                 <RecurringOccurrenceActions
                   occurrenceId={transaction.OccurrenceID}
+                  dueDate={transaction.Date}
                   size="h-8 w-8"
                   iconSize="h-4 w-4"
                 />

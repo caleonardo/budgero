@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import { useRuntime } from '@shared/runtime/runtime-provider';
+import { useActiveSpaceId, useRuntime } from '@shared/runtime/runtime-provider';
+import { resolveSpaceKey } from '@shared/lib/query-utils';
+import { requestSchedulingGuide } from '@shared/store/useSchedulingGuideStore';
 import { executeSpaceMutation } from '@shared/runtime/mutation-router';
 import { useSpaceQuery } from '@shared/api/useSpaceQuery';
 import type {
@@ -59,6 +61,7 @@ export function useProjectedTransactions(
 
 export function useCreateRecurringTransaction() {
   const runtime = useRuntime();
+  const spaceId = useActiveSpaceId();
   return useMutation<RecurringTransaction, Error, CreateRecurringTransactionInput>({
     mutationFn: async (input) => {
       return executeSpaceMutation<RecurringTransaction>(runtime, {
@@ -67,6 +70,13 @@ export function useCreateRecurringTransaction() {
         meta: { label: 'useCreateRecurringTransaction' },
       });
     },
+    onSuccess: (_template, input) =>
+      requestSchedulingGuide(
+        'recurring',
+        resolveSpaceKey(spaceId),
+        input.budgetId,
+        input.accountId
+      ),
   });
 }
 

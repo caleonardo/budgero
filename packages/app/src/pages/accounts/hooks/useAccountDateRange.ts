@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
-import { subDays, startOfDay, endOfDay } from 'date-fns';
+import { addDays, subDays, startOfDay, endOfDay } from 'date-fns';
+import { useSchedulingGuideStore } from '@shared/store/useSchedulingGuideStore';
 import { formatPeriodLabel } from '../account-page.utils';
 
 /**
@@ -13,8 +14,23 @@ export function useAccountDateRange() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
     const today = endOfDay(new Date());
     const start = startOfDay(subDays(today, 180));
-    return { from: start, to: today };
+    const showUpcoming = useSchedulingGuideStore.getState().showUpcomingRequested;
+    return { from: start, to: showUpcoming ? endOfDay(addDays(today, 30)) : today };
   });
+  // "Show the next 30 days" from the scheduling guide keeps the start and
+  // extends the end; a request made before this register mounted applies above.
+  useEffect(() => {
+    const guide = useSchedulingGuideStore.getState();
+    if (guide.showUpcomingRequested) guide.consumeShowUpcoming();
+    return useSchedulingGuideStore.subscribe((state) => {
+      if (!state.showUpcomingRequested) return;
+      state.consumeShowUpcoming();
+      setDateRange((prev) => ({
+        from: prev?.from ?? startOfDay(new Date()),
+        to: endOfDay(addDays(new Date(), 30)),
+      }));
+    });
+  }, []);
   const [isMobileDatePickerOpen, setIsMobileDatePickerOpen] = useState(false);
   const [isDesktopDatePickerOpen, setIsDesktopDatePickerOpen] = useState(false);
 

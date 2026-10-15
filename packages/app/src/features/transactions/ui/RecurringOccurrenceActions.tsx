@@ -1,27 +1,31 @@
 import { useLingui } from '@lingui/react/macro';
-import { Check, Loader2, RefreshCw, SkipForward } from 'lucide-react';
+import { CalendarCheck, Check, Loader2, RefreshCw, SkipForward } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   useMarkRecurringOccurrenceReady,
   useSkipRecurringOccurrence,
 } from '@entities/recurring/api/useRecurringTransactions';
+import { getTodayISO } from '@shared/lib/date-utils';
 import { getErrorMessage } from '@shared/lib/errors';
 import { cn } from '@shared/lib/utils';
 import { Button } from '@shared/ui/button';
 
 interface RecurringOccurrenceActionsProps {
   occurrenceId: number;
+  /** YYYY-MM-DD due date; "Post now" is offered when it isn't today. */
+  dueDate?: string;
   /** Button size, e.g. 'h-7 w-7' (desktop table) or 'h-6 w-6' (mobile card). */
   size?: string;
   iconSize?: string;
 }
 
 /**
- * Inline "Mark ready" / "Skip this time" actions for a projected recurring
- * occurrence in the register (replaces the separate upcoming panel).
+ * Inline "Mark ready" / "Post now" / "Skip this time" actions for a projected
+ * recurring occurrence in the register (replaces the separate upcoming panel).
  */
 export function RecurringOccurrenceActions({
   occurrenceId,
+  dueDate,
   size = 'h-7 w-7',
   iconSize = 'h-4 w-4',
 }: RecurringOccurrenceActionsProps) {
@@ -29,11 +33,27 @@ export function RecurringOccurrenceActions({
   const markReady = useMarkRecurringOccurrenceReady();
   const skip = useSkipRecurringOccurrence();
   const busy = markReady.isPending || skip.isPending;
+  const today = getTodayISO();
+  const canPostNow = dueDate != null && dueDate.slice(0, 10) !== today;
 
   const onError = (error: unknown) =>
     toast.error(t`Action failed`, {
       description: getErrorMessage(error, t`Something went wrong.`),
     });
+
+  const post = (transactionDate?: string) =>
+    markReady.mutate(
+      { occurrenceId, transactionDate },
+      {
+        onSuccess: (result) => {
+          const { template } = result.occurrence;
+          toast.success(t`Transaction posted`, {
+            description: t`${template.name} was added to your register.`,
+          });
+        },
+        onError,
+      }
+    );
 
   return (
     <div className="flex items-center gap-0.5">
@@ -47,26 +67,36 @@ export function RecurringOccurrenceActions({
         title={t`Mark ready`}
         onClick={(event) => {
           event.stopPropagation();
-          markReady.mutate(
-            { occurrenceId },
-            {
-              onSuccess: (result) => {
-                const { template } = result.occurrence;
-                toast.success(t`Transaction posted`, {
-                  description: t`${template.name} was added to your register.`,
-                });
-              },
-              onError,
-            }
-          );
+          post();
         }}
       >
-        {markReady.isPending ? (
+        {markReady.isPending && markReady.variables?.transactionDate == null ? (
           <Loader2 className={cn(iconSize, 'animate-spin')} />
         ) : (
           <Check className={iconSize} />
         )}
       </Button>
+      {canPostNow && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={cn(size, 'rounded-full text-primary hover:bg-primary/10 hover:text-primary')}
+          disabled={busy}
+          aria-label={t`Post now`}
+          title={t`Post now, dated today`}
+          onClick={(event) => {
+            event.stopPropagation();
+            post(today);
+          }}
+        >
+          {markReady.isPending && markReady.variables?.transactionDate != null ? (
+            <Loader2 className={cn(iconSize, 'animate-spin')} />
+          ) : (
+            <CalendarCheck className={iconSize} />
+          )}
+        </Button>
+      )}
       <Button
         type="button"
         variant="ghost"

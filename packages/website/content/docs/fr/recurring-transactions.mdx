@@ -27,9 +27,10 @@ Chaque modèle définit :
 - **Fin** — jamais, à une date ou après un nombre défini d’occurrences (depuis la première, y compris celles enregistrées ou ignorées). Utile pour les prêts, paiements échelonnés et abonnements à durée limitée.
 - **Rappel** — combien de jours avant la date d'échéance vous souhaitez recevoir une notification.
 
-À partir de la fréquence, Budgero génère des **occurrences** — les dates d'échéance à venir individuelles — sur environ six mois dans le futur. La page des paramètres liste ce qui arrive ensuite, et pour chaque occurrence vous avez deux choix :
+À partir de la fréquence, Budgero génère des **occurrences** — les dates d'échéance à venir individuelles — sur environ six mois dans le futur. La page des paramètres liste ce qui arrive ensuite, et pour chaque occurrence vous avez trois choix :
 
-- **Marquer comme prête** crée la transaction réelle et y applique automatiquement vos [règles continues](/docs/rules-engine) — ainsi, le nettoyage du bénéficiaire, de la catégorie et du mémo que vous avez automatisé s'applique également aux saisies récurrentes. La transaction est toujours datée à la date d'échéance de l'occurrence, même si vous la confirmez quelques jours en avance.
+- **Marquer comme prête** crée la transaction réelle et y applique automatiquement vos [règles continues](/docs/rules-engine) — ainsi, le nettoyage du bénéficiaire, de la catégorie et du mémo que vous avez automatisé s'applique également aux saisies récurrentes. La transaction est datée à la date d'échéance de l'occurrence, même si vous la confirmez quelques jours en avance.
+- **Valider maintenant** fait la même chose, mais date la transaction d'aujourd'hui au lieu de la date d'échéance — pratique quand une facture est payée en avance ou en retard.
 - **Passer cette fois** supprime une seule occurrence sans toucher à la fréquence. La série continue avec la prochaine date.
 
 Rien n'est jamais enregistré automatiquement. Une transaction récurrente est un rappel avec un bouton « concrétiser en un clic », et non un ordre permanent — vous restez le point de contrôle final entre le plan et le registre.
