@@ -4819,7 +4819,6 @@ msgstr "Change account currency?"
 msgid "Change Category"
 msgstr "Change Category"
 
-
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}), move ({MOVE_SHORTCUT_KEY}) or set payee ({PAYEE_SHORTCUT_KEY})"
 msgstr "Change category ({CATEGORIZE_SHORTCUT_KEY}), move ({MOVE_SHORTCUT_KEY}) or set payee ({PAYEE_SHORTCUT_KEY})"
