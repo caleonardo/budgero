@@ -465,6 +465,13 @@ export async function runOnboardingApply(
         }
       }
 
+      // An untouched template leaves state.goal.label empty, so resolve the
+      // label the goal envelope will get before matching selected envelopes.
+      const goalLabel =
+        state.goal.label.trim() ||
+        i18n._(
+          GOAL_TEMPLATES.find((g) => g.id === state.goal.id)?.label ?? GOAL_TEMPLATES[0].label
+        );
       // Category groups + categories. Track group ids by label so the goal
       // step below can drop a goal envelope into SAVINGS without creating
       // a duplicate group.
@@ -488,10 +495,11 @@ export async function runOnboardingApply(
           const parentId = groupRes.result;
           groupIdByLabel.set(groupLabel, parentId);
           for (const cat of cats) {
+            const name = CATEGORY_ITEM_LABELS[cat] ? i18n._(CATEGORY_ITEM_LABELS[cat]) : cat;
             const catRes = await runtime.mutationsRouter().execute<number>({
               op: 'categories.create',
               payload: {
-                name: CATEGORY_ITEM_LABELS[cat] ? i18n._(CATEGORY_ITEM_LABELS[cat]) : cat,
+                name,
                 parentId,
                 budgetId,
                 note: '',
@@ -499,7 +507,7 @@ export async function runOnboardingApply(
               spaceId,
               meta: { label: 'onboarding.createCategory' },
             });
-            if (goalCategoryId == null && cat.toLowerCase() === state.goal.label.toLowerCase()) {
+            if (goalCategoryId == null && name.toLowerCase() === goalLabel.toLowerCase()) {
               goalCategoryId = catRes.result;
             }
           }
@@ -513,11 +521,6 @@ export async function runOnboardingApply(
       // name. Every goal template the user can pick is savings-oriented, so
       // SAVINGS is always the right home. Skip the placeholder "Something
       // else" label — that means the user picked Custom but didn't rename.
-      const goalLabel =
-        state.goal.label.trim() ||
-        i18n._(
-          GOAL_TEMPLATES.find((g) => g.id === state.goal.id)?.label ?? GOAL_TEMPLATES[0].label
-        );
       const goalIsUsable = goalLabel.length > 0 && goalLabel.toLowerCase() !== 'something else';
       if (state.goal.target > 0 && goalIsUsable && goalCategoryId == null) {
         const savingsLabel = i18n._(CATEGORY_PRESETS.savings.label);
