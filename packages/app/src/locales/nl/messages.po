@@ -8807,6 +8807,11 @@ msgstr "Verborgen categorieën verbergen"
 msgid "Hide label column"
 msgstr "Label-kolom verbergen"
 
+#: src/pages/onboarding/steps/shared.tsx
+#: src/shared/ui/password-input.tsx
+msgid "Hide password"
+msgstr "Wachtwoord verbergen"
+
 #: src/features/chat/ui/chat-panel/ChatHeader.tsx
 msgid "Hide sidebar"
 msgstr "Zijbalk verbergen"
@@ -15503,6 +15508,11 @@ msgstr "Alleen niet gecategoriseerde tonen (rekeningpagina)"
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Show only uncleared (account page)"
 msgstr "Alleen niet bevestigde tonen (rekeningpagina)"
+
+#: src/pages/onboarding/steps/shared.tsx
+#: src/shared/ui/password-input.tsx
+msgid "Show password"
+msgstr "Wachtwoord tonen"
 
 #: src/pages/settings/BudgetSettingsPage.tsx
 msgid "Show percentage of assigned on group rows"

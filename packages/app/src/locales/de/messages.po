@@ -8807,6 +8807,11 @@ msgstr "Versteckte Kategorien ausblenden"
 msgid "Hide label column"
 msgstr "Label-Spalte ausblenden"
 
+#: src/pages/onboarding/steps/shared.tsx
+#: src/shared/ui/password-input.tsx
+msgid "Hide password"
+msgstr "Passwort verbergen"
+
 #: src/features/chat/ui/chat-panel/ChatHeader.tsx
 msgid "Hide sidebar"
 msgstr "Seitenleiste ausblenden"
@@ -15503,6 +15508,11 @@ msgstr "Nur nicht kategorisierte anzeigen (Kontoseite)"
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Show only uncleared (account page)"
 msgstr "Nur nicht gebuchte anzeigen (Kontoseite)"
+
+#: src/pages/onboarding/steps/shared.tsx
+#: src/shared/ui/password-input.tsx
+msgid "Show password"
+msgstr "Passwort anzeigen"
 
 #: src/pages/settings/BudgetSettingsPage.tsx
 msgid "Show percentage of assigned on group rows"

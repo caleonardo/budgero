@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Button } from '@shared/ui/button';
 import { Alert, AlertDescription } from '@shared/ui/alert';
-import { Input } from '@shared/ui/input';
+import { PasswordInput } from '@shared/ui/password-input';
 import { Loader2 } from 'lucide-react';
 import { MasterPasswordManager } from '@shared/lib/crypto';
 import { useOptionalClerkAuth, useProfile } from '@entities/user/api/useAuth';
@@ -239,8 +239,7 @@ export default function JoinWorkspacePage() {
               <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 <Trans>Master password</Trans>
               </div>
-              <Input
-                type="password"
+              <PasswordInput
                 value={masterPasswordInput}
                 onChange={(event) => setMasterPasswordInput(event.target.value)}
                 placeholder={t`Your Budgero master password`}
