@@ -51,6 +51,9 @@ interface TransactionTableBodyProps {
   onDeactivateCell: () => void;
   /** Rendered above the transactions, e.g. the inline add row. */
   leadingRows?: React.ReactNode;
+  compact?: boolean;
+  /** ID of the row under the keyboard cursor. */
+  cursorId?: number | null;
 }
 
 export const TransactionTableBody = React.memo(function TransactionTableBody({
@@ -86,6 +89,8 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
   onActivateCell,
   onDeactivateCell,
   leadingRows,
+  compact = false,
+  cursorId = null,
 }: TransactionTableBodyProps) {
   const lastSelectedIndexRef = useRef<number | null>(null);
   const shiftPressedRef = useRef(false);
@@ -149,6 +154,8 @@ export const TransactionTableBody = React.memo(function TransactionTableBody({
           <TransactionRow
             key={transaction.ID}
             transaction={transaction}
+            compact={compact}
+            isCursor={cursorId === transaction.ID}
             isSelected={isSelected}
             isRowPending={isRowPending}
             budgetId={budgetId}

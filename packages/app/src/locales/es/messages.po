@@ -839,7 +839,7 @@ msgstr "{changedCount} categorías ajustadas"
 msgid "{conditionCount} condition(s) · {actionCount} action(s)"
 msgstr "{conditionCount} condición(es) · {actionCount} acción(es)"
 
-#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+#: src/features/transactions/api/useDeleteSelected.ts
 msgid "{count, plural, one {# transaction deleted} other {# transactions deleted}}"
 msgstr "{count, plural, one {# transacción eliminada} other {# transacciones eliminadas}}"
 
@@ -1728,10 +1728,6 @@ msgstr "<0/>Hacer administrador"
 #: src/pages/admin/AdminDashboard.tsx
 msgid "<0/>Manage Users"
 msgstr "<0/>Gestionar usuarios"
-
-#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
-msgid "<0/>Manage workspaces"
-msgstr "<0/>Gestionar espacios de trabajo"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "<0/>Mobile Budget View"
@@ -3008,6 +3004,10 @@ msgstr "Añadir transacción"
 #: src/app/layout/desktop-shell/HeaderBar.tsx
 msgid "Add transaction ({0})"
 msgstr "Añadir transacción ({0})"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Add transaction (register)"
+msgstr "Añadir transacción (registro)"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "Add transactions"
@@ -4537,6 +4537,10 @@ msgstr "Autobús y transporte"
 msgid "Business"
 msgstr "Negocios"
 
+#: src/pages/settings/AppearancePage.tsx
+msgid "By amount"
+msgstr "Por importe"
+
 #: src/pages/analytics/reports/WealthReport.tsx
 msgid "By Type"
 msgstr "Por tipo"
@@ -4812,6 +4816,18 @@ msgstr "¿Cambiar la moneda de la cuenta?"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Change Category"
 msgstr "Cambiar categoría"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Change category ({CATEGORIZE_SHORTCUT_KEY}), move ({MOVE_SHORTCUT_KEY}) or set payee ({PAYEE_SHORTCUT_KEY})"
+msgstr "Cambiar categoría ({CATEGORIZE_SHORTCUT_KEY}), mover ({MOVE_SHORTCUT_KEY}) o asignar beneficiario ({PAYEE_SHORTCUT_KEY})"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Change category of selected rows"
+msgstr "Cambiar la categoría de las filas seleccionadas"
+
+#: src/features/transactions/ui/TransactionsBatchToolbar.tsx
+msgid "Change category, account or payee"
+msgstr "Cambiar categoría, cuenta o beneficiario"
 
 #: src/features/account-management/ui/AccountCurrencyChangeDialog.tsx
 msgid "Change currency"
@@ -5156,6 +5172,7 @@ msgstr "Borrar etiqueta"
 msgid "Clear payee"
 msgstr "Borrar beneficiario"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 #: src/features/settings/directory-manager/DirectoryTable.tsx
 msgid "Clear selection"
 msgstr "Limpiar selección"
@@ -5393,6 +5410,10 @@ msgstr "Asignación de columnas"
 msgid "Columns"
 msgstr "Columnas"
 
+#: src/pages/settings/AppearancePage.tsx
+msgid "Comfortable"
+msgstr "Cómoda"
+
 #: src/features/import/ui/steps/configure/FormattingTab.tsx
 msgid "Comma (,)"
 msgstr "Coma (,)"
@@ -5402,12 +5423,20 @@ msgid "Common administrative tasks"
 msgstr "Tareas administrativas comunes"
 
 #: src/pages/settings/AppearancePage.tsx
+msgid "Compact"
+msgstr "Compacta"
+
+#: src/pages/settings/AppearancePage.tsx
 msgid "Compact cards"
 msgstr "Tarjetas compactas"
 
 #: src/pages/settings/AppearancePage.tsx
 msgid "Compact header"
 msgstr "Cabecera compacta"
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Compact rows fit more transactions on screen (desktop register)."
+msgstr "Las filas compactas muestran más transacciones en pantalla (registro de escritorio)."
 
 #. placeholder {0}: row.duplicate.sameFileIndex + 1
 #: src/features/import/ui/steps/PreviewStep.tsx
@@ -6654,6 +6683,10 @@ msgstr "Eliminar regla"
 msgid "Delete scenario {0}"
 msgstr "Eliminar escenario {0}"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Delete selected rows"
+msgstr "Eliminar las filas seleccionadas"
+
 #: src/features/transactions/ui/DeleteTransactionDialog.tsx
 msgid "Delete this transaction?"
 msgstr "¿Eliminar esta transacción?"
@@ -7729,6 +7762,10 @@ msgstr "Exportando..."
 msgid "Exports cover only the currently active workspace{0}. Switch workspaces and export again to back up the others."
 msgstr "Las exportaciones solo cubren el espacio de trabajo activo actualmente{0}. Cambia de espacio de trabajo y exporta de nuevo para hacer una copia de seguridad de los demás."
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Extend the selection"
+msgstr "Ampliar la selección"
+
 #: src/features/debt/ui/PayoffPlanSheet.tsx
 msgid "Extra monthly"
 msgstr "Extra mensual"
@@ -7883,6 +7920,10 @@ msgstr "No se ha podido eliminar el panel"
 #: src/features/goal-management/ui/GoalSection.tsx
 msgid "Failed to delete goal"
 msgstr "Error al eliminar el objetivo"
+
+#: src/features/transactions/api/useDeleteSelected.ts
+msgid "Failed to delete transactions"
+msgstr "No se pudieron eliminar las transacciones"
 
 #: src/pages/warranties/WarrantiesPage.tsx
 msgid "Failed to delete warranty"
@@ -10279,6 +10320,10 @@ msgstr "Gestiona cuentas de usuario y niveles de acceso"
 msgid "Manage Users"
 msgstr "Gestionar usuarios"
 
+#: src/features/budget-management/ui/WorkspaceBudgetList.tsx
+msgid "Manage workspaces"
+msgstr "Gestionar espacios de trabajo"
+
 #: src/features/subscription/ui/SharedWorkspaceAccessRequired.tsx
 msgid "Manage your <0>subscription</0> and resubscribe at any time."
 msgstr "Gestiona tu <0>suscripción</0> y vuelve a suscribirte en cualquier momento."
@@ -10747,6 +10792,10 @@ msgstr "Mover {0} abajo"
 msgid "Move {0} up"
 msgstr "Mover {0} arriba"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Move between rows"
+msgstr "Moverse entre filas"
+
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 msgid "Move failed"
 msgstr "Movimiento fallido"
@@ -10759,6 +10808,10 @@ msgstr "Mover dinero"
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
 msgid "Move Money"
 msgstr "Mover dinero"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Move selected rows to another account"
+msgstr "Mover las filas seleccionadas a otra cuenta"
 
 #: src/features/budget-planning/ui/category-row/MoveMoneyPopover.tsx
 #: src/features/budget-planning/ui/desktop-table/DesktopBudgetCategoryRow.tsx
@@ -11069,6 +11122,14 @@ msgstr "Las nuevas contraseñas no coinciden"
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 msgid "New Recurring Transaction"
 msgstr "Nueva transacción recurrente"
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Newest entry first, or by amount: outflows first, then inflows, largest first. Handy when clearing a busy day."
+msgstr "La más reciente primero, o por importe: primero salidas, luego entradas, de mayor a menor. Útil al conciliar un día con muchos movimientos."
+
+#: src/pages/settings/AppearancePage.tsx
+msgid "Newest first"
+msgstr "Más reciente primero"
 
 #: src/features/import/ui/steps/PreviewStep.tsx
 msgid "Next"
@@ -12204,6 +12265,10 @@ msgstr "O abre uno de tus otros espacios de trabajo:"
 msgid "OR PICK ONE:"
 msgstr "O ELIGE UNO:"
 
+#: src/pages/settings/AppearancePage.tsx
+msgid "Order within a day"
+msgstr "Orden dentro de un día"
+
 #: src/pages/settings/AuditLogPage.tsx
 msgid "Origin"
 msgstr "Origen"
@@ -12264,9 +12329,10 @@ msgstr "Otros gastos"
 msgid "Other spending ({0} {dimensionLabel}) — inspect"
 msgstr "Otros gastos ({0} {dimensionLabel}) — detalles"
 
+#. placeholder {0}: otherSpaces.length
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
-msgid "Other workspaces"
-msgstr "Otros espacios de trabajo"
+msgid "Other workspaces ({0})"
+msgstr "Otros espacios de trabajo ({0})"
 
 #: src/pages/analytics/reports/ScenarioReport.tsx
 msgid "Out"
@@ -12964,6 +13030,7 @@ msgstr "Vuelve a intentarlo dentro de un momento."
 
 #: src/features/budget-planning/ui/budget-table/useCategoryOperations.ts
 #: src/features/goal-management/ui/GoalSection.tsx
+#: src/features/transactions/api/useDeleteSelected.ts
 #: src/features/transactions/ui/add-transaction/AddTransactionForm.tsx
 #: src/features/transactions/ui/add-transaction/useAddTransactionForm.ts
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
@@ -14396,6 +14463,10 @@ msgstr "Fila {0}: {1}"
 msgid "Row / account"
 msgstr "Fila / cuenta"
 
+#: src/pages/settings/AppearancePage.tsx
+msgid "Row density"
+msgstr "Densidad de filas"
+
 #. placeholder {0}: widget.desktopLayout.rowSpan
 #: src/pages/custom-dashboards/components/WidgetCard.tsx
 msgid "Rows {0}"
@@ -15033,6 +15104,10 @@ msgstr "Seleccionar todo"
 msgid "Select all deletable users"
 msgstr "Seleccionar todos los usuarios que se pueden eliminar"
 
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Select all rows"
+msgstr "Seleccionar todas las filas"
+
 #: src/features/transactions/ui/desktop-table/TransactionTableHeader.tsx
 msgid "Select all transactions on this page"
 msgstr "Seleccionar todas las transacciones de esta página"
@@ -15145,6 +15220,10 @@ msgstr "Selecciona o crea un espacio de trabajo para gestionar las opciones de c
 #: src/features/payees/ui/PayeeCombobox.tsx
 msgid "Select or create payee"
 msgstr "Selecciona o crea un beneficiario"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Select or deselect the current row"
+msgstr "Seleccionar o deseleccionar la fila actual"
 
 #: src/features/transactions/ui/add-transaction/TransactionDetailsSection.tsx
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
@@ -15387,6 +15466,10 @@ msgstr "Establecer beneficiario"
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
 msgid "Set Payee"
 msgstr "Establecer beneficiario"
+
+#: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+msgid "Set payee of selected rows"
+msgstr "Asignar beneficiario a las filas seleccionadas"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
 msgid "Set to zero"
@@ -16749,8 +16832,8 @@ msgid "The selected date column has no year (e.g. \"Oct 25\"). All transactions 
 msgstr "La columna de fecha seleccionada no tiene año (p. ej. \"25 oct\"). Todas las transacciones se importarán usando este año. Cámbialo si el extracto corresponde a un año diferente."
 
 #: src/features/transactions/ui/TransactionsBatchToolbar.tsx
-msgid "The selected transaction(s) have been permanently removed."
-msgstr "Las transacciones seleccionadas se han eliminado permanentemente."
+#~ msgid "The selected transaction(s) have been permanently removed."
+#~ msgstr "Las transacciones seleccionadas se han eliminado permanentemente."
 
 #: src/pages/accounts/hooks/useRecurringEditorFromTransaction.ts
 msgid "The selected transfer does not have one source and one destination. Recurring split transfers are not supported yet."
@@ -17875,6 +17958,7 @@ msgid "Undid last action"
 msgstr "Se deshizo la última acción"
 
 #: src/app/layout/desktop-shell/KeyboardShortcutsDialog.tsx
+#: src/features/transactions/api/useDeleteSelected.ts
 #: src/widgets/navigation/MobileTopBar.tsx
 msgid "Undo"
 msgstr "Deshacer"

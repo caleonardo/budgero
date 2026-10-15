@@ -11,7 +11,14 @@ export function TransactionSelectionCheckbox({
   fillCell?: boolean;
 }) {
   return (
-    <div className="flex size-11 shrink-0 select-none items-center justify-center">
+    // With fillCell the whole cell is the target, so the wrapper needn't be 44px
+    // tall (that would stop compact register rows from shrinking).
+    <div
+      className={cn(
+        'flex shrink-0 select-none items-center justify-center',
+        fillCell ? 'size-8' : 'size-11'
+      )}
+    >
       <Checkbox
         {...props}
         className={cn(

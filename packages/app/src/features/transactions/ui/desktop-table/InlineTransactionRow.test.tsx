@@ -248,4 +248,14 @@ describe('InlineTransactionRow', () => {
     fireEvent.keyDown(screen.getByLabelText('Memo'), { key: 'Escape' });
     expect(row.onClose).toHaveBeenCalled();
   });
+
+  it('Enter on a button presses the button instead of saving the row', async () => {
+    const row = renderRow();
+    fireEvent.change(screen.getByLabelText('outflow'), { target: { value: '25000' } });
+    row.rerender();
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Cancel' }), { key: 'Enter' });
+    expect(form.handleSubmit).not.toHaveBeenCalled();
+    fireEvent.keyDown(screen.getByLabelText('Memo'), { key: 'Enter' });
+    await vi.waitFor(() => expect(form.handleSubmit).toHaveBeenCalledTimes(1));
+  });
 });

@@ -262,3 +262,6 @@ export interface LabelListItem {
   Color: string;
   UsageCount: number;
 }
+
+/** How transactions that share a date are ordered in the register. */
+export type SameDayTransactionOrder = 'newest' | 'amount';

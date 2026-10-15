@@ -1,4 +1,4 @@
-import type { DuplicateHintSettings } from '@budgero/core/browser';
+import type { DuplicateHintSettings, SameDayTransactionOrder } from '@budgero/core/browser';
 import { S, safeCapture, type OpCodeEntry } from '../shared';
 
 type UserMetaGetter =
@@ -9,7 +9,9 @@ type UserMetaGetter =
   | 'getPlanningNumberAnimations'
   | 'getDialogBackgroundBlur'
   | 'getHideZeroAmounts'
-  | 'getInlineTransactionEntry';
+  | 'getInlineTransactionEntry'
+  | 'getCompactTransactionRows'
+  | 'getSameDayTransactionOrder';
 
 /** Undo for single-value preference setters: re-issue the op with the old value. */
 function preferenceUndo(op: string, getter: UserMetaGetter): NonNullable<OpCodeEntry['undo']> {
@@ -151,5 +153,36 @@ export const userPreferenceOps = {
     },
     invalidates: [['inlineTransactionEntry'], ['userPreferences']],
     undo: preferenceUndo('userPreferences.setInlineTransactionEntry', 'getInlineTransactionEntry'),
+  },
+  'userPreferences.setCompactTransactionRows': {
+    execute: async (args) => {
+      const services = S() as {
+        userMeta?: { setCompactTransactionRows(value: boolean): void };
+      };
+      if (!services.userMeta) {
+        throw new Error('userMeta service not available');
+      }
+      services.userMeta.setCompactTransactionRows(args.value as boolean);
+      return { success: true };
+    },
+    invalidates: [['compactTransactionRows'], ['userPreferences']],
+    undo: preferenceUndo('userPreferences.setCompactTransactionRows', 'getCompactTransactionRows'),
+  },
+  'userPreferences.setSameDayTransactionOrder': {
+    execute: async (args) => {
+      const services = S() as {
+        userMeta?: { setSameDayTransactionOrder(value: SameDayTransactionOrder): void };
+      };
+      if (!services.userMeta) {
+        throw new Error('userMeta service not available');
+      }
+      services.userMeta.setSameDayTransactionOrder(args.value as SameDayTransactionOrder);
+      return { success: true };
+    },
+    invalidates: [['sameDayTransactionOrder'], ['userPreferences']],
+    undo: preferenceUndo(
+      'userPreferences.setSameDayTransactionOrder',
+      'getSameDayTransactionOrder'
+    ),
   },
 } satisfies Record<string, OpCodeEntry>;

@@ -276,7 +276,14 @@ export function InlineTransactionRow({
       e.preventDefault();
       onClose();
     } else if (e.key === 'Enter' && !e.shiftKey && !e.altKey) {
-      if (target.getAttribute?.('role') === 'combobox') return;
+      // Enter on a button (Split, Cancel, pickers, toggles) presses that button;
+      // it saves only from a text field. Ctrl/⌘+Enter saves from anywhere.
+      const onControl =
+        target.tagName === 'BUTTON' ||
+        ['button', 'combobox', 'switch', 'checkbox', 'tab'].includes(
+          target.getAttribute?.('role') ?? ''
+        );
+      if (onControl && !e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
       void save(false);
     }

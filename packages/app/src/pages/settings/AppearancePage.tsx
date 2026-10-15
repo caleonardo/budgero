@@ -24,8 +24,10 @@ import { SettingsPageHeader } from '@pages/settings/SettingsPageHeader';
 import {
   useDialogBackgroundBlurPreference,
   useHideZeroAmountsPreference,
+  useCompactTransactionRowsPreference,
   useInlineTransactionEntryPreference,
   usePlanningNumberAnimationsPreference,
+  useSameDayTransactionOrderPreference,
 } from '@shared/hooks/useUserPreferences';
 
 export default function AppearancePage() {
@@ -63,6 +65,16 @@ export default function AppearancePage() {
     updateInlineTransactionEntry,
     isUpdating: isUpdatingInlineTransactionEntry,
   } = useInlineTransactionEntryPreference();
+  const {
+    compactTransactionRows,
+    updateCompactTransactionRows,
+    isUpdating: isUpdatingCompactTransactionRows,
+  } = useCompactTransactionRowsPreference();
+  const {
+    sameDayTransactionOrder,
+    updateSameDayTransactionOrder,
+    isUpdating: isUpdatingSameDayTransactionOrder,
+  } = useSameDayTransactionOrderPreference();
 
   const handleHomePageChange = (value: string) => {
     const page = value as HomePageOption;
@@ -329,6 +341,67 @@ export default function AppearancePage() {
                 </SelectItem>
                 <SelectItem value="inline">
                   <Trans>Inline row</Trans>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="compact-transaction-rows">
+                <Trans>Row density</Trans>
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                <Trans>Compact rows fit more transactions on screen (desktop register).</Trans>
+              </p>
+            </div>
+            <Select
+              value={compactTransactionRows ? 'compact' : 'comfortable'}
+              onValueChange={(value) => updateCompactTransactionRows(value === 'compact')}
+              disabled={isUpdatingCompactTransactionRows}
+            >
+              <SelectTrigger id="compact-transaction-rows" className="w-36 shrink-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="comfortable">
+                  <Trans>Comfortable</Trans>
+                </SelectItem>
+                <SelectItem value="compact">
+                  <Trans>Compact</Trans>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="same-day-transaction-order">
+                <Trans>Order within a day</Trans>
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                <Trans>
+                  Newest entry first, or by amount: outflows first, then inflows, largest first.
+                  Handy when clearing a busy day.
+                </Trans>
+              </p>
+            </div>
+            <Select
+              value={sameDayTransactionOrder}
+              onValueChange={(value) =>
+                updateSameDayTransactionOrder(value === 'amount' ? 'amount' : 'newest')
+              }
+              disabled={isUpdatingSameDayTransactionOrder}
+            >
+              <SelectTrigger id="same-day-transaction-order" className="w-36 shrink-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">
+                  <Trans>Newest first</Trans>
+                </SelectItem>
+                <SelectItem value="amount">
+                  <Trans>By amount</Trans>
                 </SelectItem>
               </SelectContent>
             </Select>
