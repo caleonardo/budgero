@@ -57,6 +57,7 @@ vi.mock('@features/transactions/ui/add-transaction/useAddTransactionForm', () =>
       setReceivedAmount: setter('receivedAmount'),
       needsBudgetConversion: !!form.state.needsBudgetConversion,
       conversionTargetCurrency: form.state.conversionTargetCurrency ?? null,
+      resolvedRate: form.state.resolvedRate ?? null,
     }),
   };
 });
@@ -264,7 +265,9 @@ describe('InlineTransactionRow', () => {
   it('lets a foreign-currency transaction type its budget-currency amount', () => {
     form.state.needsBudgetConversion = true;
     form.state.conversionTargetCurrency = 'HUF';
-    const row = renderRow({ accountId: 3 });
+    form.state.resolvedRate = 400;
+    const row = renderRow({ accountId: 3, showExchangeRateColumn: true });
+    expect(screen.getByTestId('inline-budget-rate')).toHaveTextContent('400');
     fireEvent.change(screen.getByLabelText('outflow'), { target: { value: '5000' } });
     expect(screen.getByText(/In budget \(HUF\)/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('other'), { target: { value: '2000000' } });

@@ -13,6 +13,7 @@ import { formatDate as format } from '@shared/lib/date-format';
 import { formatMilli, ZERO_MILLI } from '@shared/lib/currency/milli';
 import { buildCurrencyLocalizer } from '@shared/store/useUiStore';
 import { getExchangeRate, saveManualRate } from '@entities/currency/lib/currency-utils';
+import { formatExchangeRate } from '@entities/currency/lib/exchange-rate-format';
 import { ManualRatePrompt } from '@features/currencies/ui/ManualRatePrompt';
 import { PayeeCombobox } from '@features/payees/ui/PayeeCombobox';
 import { useAddTransactionHandler } from '@features/transactions/api/useAddTransactionHandler';
@@ -88,6 +89,7 @@ export function InlineTransactionRow({
     setReceivedAmount,
     needsBudgetConversion,
     conversionTargetCurrency,
+    resolvedRate,
   } = useAddTransactionForm({
     budgetId,
     selectedAccountId: accountId,
@@ -488,7 +490,18 @@ export function InlineTransactionRow({
           {renderAmountCell('outflow', outflow, setOutflow, { cellKey: 'outflow' })}
         </TableCell>
 
-        {trailingCells}
+        {showExchangeRateColumn && (
+          // Live budget rate: the estimate, or the rate implied by a typed budget amount.
+          <TableCell
+            className="text-right font-mono text-xs text-muted-foreground"
+            data-testid="inline-budget-rate"
+          >
+            {!transferAccount && needsBudgetConversion && resolvedRate
+              ? formatExchangeRate(resolvedRate)
+              : null}
+          </TableCell>
+        )}
+        {showBalanceColumn && <TableCell />}
         <TableCell />
       </TableRow>
 
