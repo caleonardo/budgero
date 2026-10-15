@@ -1729,7 +1729,6 @@ msgstr "<0/>Hacer administrador"
 msgid "<0/>Manage Users"
 msgstr "<0/>Gestionar usuarios"
 
-
 #: src/pages/settings/AppearancePage.tsx
 msgid "<0/>Mobile Budget View"
 msgstr "<0/>Vista de presupuesto móvil"
@@ -12330,9 +12329,11 @@ msgstr "Otros gastos"
 msgid "Other spending ({0} {dimensionLabel}) — inspect"
 msgstr "Otros gastos ({0} {dimensionLabel}) — detalles"
 
+
+#. placeholder {0}: otherSpaces.length
 #: src/features/budget-management/ui/WorkspaceBudgetList.tsx
-msgid "Other workspaces"
-msgstr "Otros espacios de trabajo"
+msgid "Other workspaces ({0})"
+msgstr "Otros espacios de trabajo ({0})"
 
 #: src/pages/analytics/reports/ScenarioReport.tsx
 msgid "Out"

@@ -272,39 +272,52 @@ export function WorkspaceBudgetList({
         )}
       </section>
 
-      {/* Other accessible workspaces */}
+      {/* Other accessible workspaces: collapsed so the active budgets stay in focus */}
       {otherSpaces.length > 0 && (
         <section className="space-y-1 border-t border-border pt-3">
-          <div className="px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            <Trans>Other workspaces</Trans>
-          </div>
-          <div className="space-y-0.5">
-            {otherSpaces.map((space) => {
-              const isSwitching = switchingSpaceId === space.space_id;
-              return (
-                <div
-                  key={space.space_id}
-                  className={cn(rowBaseClass, rowHoverClass, isSwitching && 'opacity-70')}
-                  {...buttonizeProps(() => {
-                    void handleSwitchSpace(space);
-                  })}
-                  aria-disabled={isSwitching}
-                >
-                  <div className="flex min-w-0 items-center gap-2">
-                    <Users className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    <span className="truncate">{space.display_name}</span>
+          <Collapsible defaultOpen={false}>
+            <CollapsibleTrigger asChild>
+              <div
+                className={cn(
+                  rowBaseClass,
+                  rowHoverClass,
+                  'text-xs font-medium uppercase tracking-wide text-muted-foreground'
+                )}
+              >
+                <span>
+                  <Trans>Other workspaces ({otherSpaces.length})</Trans>
+                </span>
+                <ChevronDown className="h-3.5 w-3.5 transition-transform [[data-state=open]_&]:rotate-180" />
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-0.5 space-y-0.5">
+              {otherSpaces.map((space) => {
+                const isSwitching = switchingSpaceId === space.space_id;
+                return (
+                  <div
+                    key={space.space_id}
+                    className={cn(rowBaseClass, rowHoverClass, isSwitching && 'opacity-70')}
+                    {...buttonizeProps(() => {
+                      void handleSwitchSpace(space);
+                    })}
+                    aria-disabled={isSwitching}
+                  >
+                    <div className="flex min-w-0 items-center gap-2">
+                      <Users className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      <span className="truncate">{space.display_name}</span>
+                    </div>
+                    {isSwitching ? (
+                      <Spinner className="h-3.5 w-3.5 text-muted-foreground" />
+                    ) : (
+                      <span className="text-xs text-muted-foreground">
+                        <Trans>Switch</Trans>
+                      </span>
+                    )}
                   </div>
-                  {isSwitching ? (
-                    <Spinner className="h-3.5 w-3.5 text-muted-foreground" />
-                  ) : (
-                    <span className="text-xs text-muted-foreground">
-                      <Trans>Switch</Trans>
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </CollapsibleContent>
+          </Collapsible>
         </section>
       )}
 
