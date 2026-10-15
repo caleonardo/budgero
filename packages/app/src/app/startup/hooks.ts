@@ -116,6 +116,7 @@ export interface BudgetStartupSnapshot {
   status: 'loading' | 'required' | 'blocked' | 'ready';
   canManageBudgets: boolean;
   alternativeWorkspaces: BudgetSpaceSummary[];
+  workspaceName: string | null;
 }
 
 export function useAuthStartupSnapshot(): AuthStartupSnapshot {
@@ -952,6 +953,7 @@ export function useBudgetStartupSnapshot(
       status: 'ready',
       canManageBudgets: false,
       alternativeWorkspaces: [],
+      workspaceName: null,
     };
   }
 
@@ -959,5 +961,6 @@ export function useBudgetStartupSnapshot(
     status: resolution.status,
     canManageBudgets: Boolean(canManageBudgets),
     alternativeWorkspaces: resolution.alternativeWorkspaces,
+    workspaceName: activeSpace?.display_name || null,
   };
 }
