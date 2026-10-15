@@ -68,4 +68,17 @@ describe('ExchangeRateCell', () => {
     await user.click(screen.getByRole('button', { name: 'Use anyway' }));
     expect(onCommit).toHaveBeenCalledWith(1000);
   });
+
+  it('accepts a calculator expression', async () => {
+    const onCommit = vi.fn();
+    const user = userEvent.setup();
+
+    render(<ExchangeRateCell value={117} onCommit={onCommit} />);
+    await user.click(screen.getByRole('button', { name: '117.00' }));
+    const input = screen.getByRole('textbox');
+    await user.clear(input);
+    await user.type(input, '9428,45 / 79,34{Enter}');
+
+    expect(onCommit).toHaveBeenCalledWith(9428.45 / 79.34);
+  });
 });

@@ -1,7 +1,9 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import React from 'react';
 import { Input } from '@shared/ui/input';
+import { Popover, PopoverAnchor, PopoverContent } from '@shared/ui/popover';
 import { cn } from '@shared/lib/utils';
+import { evaluateExpression } from '@shared/ui/calculator-cell/calculator-utils';
 import {
   formatExchangeRate,
   isUnusualExchangeRateChange,
@@ -20,11 +22,19 @@ interface ExchangeRateCellProps {
   validateRate?: (rate: number) => string | null;
 }
 
+function parseRate(text: string): number {
+  const normalized = text.trim().replace(/,/g, '.');
+  const plain = Number(normalized);
+  if (normalized && Number.isFinite(plain)) return plain;
+  return evaluateExpression(normalized) ?? NaN;
+}
+
 /**
  * Inline editor for a transaction's exchange rate. Rates are dimensionless
  * decimals, so they must NOT go through CalculatorCell's integer-milliunit
- * contract. Plain text input with either a dot or comma decimal separator is
- * accepted, and parsed precision is preserved instead of rounded on commit.
+ * contract. Plain numbers or calculator expressions (e.g. `9428.45 / 79.34`) with
+ * either a dot or comma decimal separator are accepted, and parsed precision is
+ * preserved instead of rounded on commit.
  */
 export function ExchangeRateCell({
   value,
@@ -64,7 +74,7 @@ export function ExchangeRateCell({
   };
 
   const commit = (confirmUnusual = false) => {
-    const parsed = Number(text.replace(',', '.'));
+    const parsed = parseRate(text);
     if (!Number.isFinite(parsed) || parsed <= 0) {
       setError(t`Enter an exchange rate greater than zero.`);
       setPendingUnusualRate(null);
@@ -97,33 +107,44 @@ export function ExchangeRateCell({
 
   if (isEditing) {
     return (
-      <div className="min-w-44">
-        <Input
-          autoFocus
-          type="text"
-          inputMode="decimal"
-          value={text}
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? errorId : undefined}
-          onChange={(e) => {
-            setText(e.target.value);
-            setError(null);
-            setPendingUnusualRate(null);
-          }}
-          onBlur={() => commit(false)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              commit(pendingUnusualRate !== null);
-            } else if (e.key === 'Escape') {
-              cancel();
-            }
-          }}
-          placeholder={placeholder}
-          className={cn('font-mono', inputClassName)}
-        />
+      // The error renders in a portal so a narrow table column can't clip it.
+      <Popover open={Boolean(error)}>
+        <PopoverAnchor asChild>
+          <div className="w-full min-w-0">
+            <Input
+              autoFocus
+              type="text"
+              inputMode="decimal"
+              value={text}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? errorId : undefined}
+              onChange={(e) => {
+                setText(e.target.value);
+                setError(null);
+                setPendingUnusualRate(null);
+              }}
+              onBlur={() => commit(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  commit(pendingUnusualRate !== null);
+                } else if (e.key === 'Escape') {
+                  cancel();
+                }
+              }}
+              placeholder={placeholder}
+              className={cn('font-mono', inputClassName)}
+            />
+          </div>
+        </PopoverAnchor>
         {error && (
-          <div id={errorId} className="mt-1 text-left text-[11px] leading-tight text-destructive">
+          <PopoverContent
+            id={errorId}
+            side="bottom"
+            align="end"
+            onOpenAutoFocus={(event) => event.preventDefault()}
+            className="w-56 p-2 text-left text-[11px] leading-tight text-destructive"
+          >
             <p>{error}</p>
             {pendingUnusualRate !== null && (
               <div className="mt-1 flex gap-2">
@@ -145,9 +166,9 @@ export function ExchangeRateCell({
                 </button>
               </div>
             )}
-          </div>
+          </PopoverContent>
         )}
-      </div>
+      </Popover>
     );
   }
 
