@@ -259,6 +259,12 @@ export async function switchWorkspaceAndSyncBudgetState({
   forceSnapshotDownload?: boolean;
 }): Promise<BudgetSelectionResolution> {
   await runtime.switchSpace(spaceId, { forceSnapshotDownload });
+  // Budget IDs repeat across workspaces, so an ID change can't be relied on here.
+  useUiStore.setState({
+    selectedAccount: null,
+    selectedCategories: [],
+    lastSelectedCategoryId: null,
+  });
   return syncBudgetStateFromRuntime({
     runtime,
     queryClient,
