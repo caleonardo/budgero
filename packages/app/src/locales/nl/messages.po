@@ -10457,6 +10457,10 @@ msgstr "Koppel elke creditcard aan de bijbehorende betalingscategorie voordat je
 msgid "match payment categories below"
 msgstr "koppel hieronder de betalingscategorieën"
 
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Matches your bank? Click to use it"
+msgstr "Klopt met je bank? Klik om het te gebruiken"
+
 #. placeholder {0}: formatAmount(maxCover)
 #: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
 msgid "Max {0} — covering never puts the source in the red"
@@ -18299,6 +18303,10 @@ msgstr "Gebruik positieve/negatieve percentages om het bedrag te schalen."
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "Use suggested"
 msgstr "Voorgestelde gebruiken"
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Use the cleared balance as the actual balance"
+msgstr "Het bevestigde saldo als werkelijk saldo gebruiken"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Use your phone, tablet, or computer"

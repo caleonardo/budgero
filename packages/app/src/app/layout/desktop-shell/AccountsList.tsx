@@ -48,6 +48,10 @@ function realizedBalance(account: Account): number {
     : (account.BalanceNative ?? 0) - (account.FutureImpactNative ?? 0);
 }
 
+function sumRealized(accounts: Account[]): number {
+  return accounts.reduce((sum, account) => sum + realizedBalance(account), 0);
+}
+
 const AccountItem = React.memo(function AccountItem({
   account,
   uncategorizedCount,
@@ -108,12 +112,17 @@ const AccountItem = React.memo(function AccountItem({
 const AccountSection = React.memo(function AccountSection({
   title,
   accounts,
+  total,
+  spaced = false,
   uncategorizedData,
   globalLocalizer,
   pathname,
 }: {
   title: string;
   accounts: Account[];
+  /** Sum of every account in the section, including ones hidden by "Show All". */
+  total: number;
+  spaced?: boolean;
   uncategorizedData: UncategorizedData | undefined;
   globalLocalizer: { format: (value: number) => string };
   pathname: string;
@@ -124,9 +133,17 @@ const AccountSection = React.memo(function AccountSection({
 
   return (
     <>
-      <div className={cn('px-3 py-0.5', title === 'Off Budget' && 'mt-1')}>
-        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+      <div className={cn('mx-2 flex items-baseline gap-2 px-3 py-0.5', spaced && 'mt-1')}>
+        <div className="flex-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           {title}
+        </div>
+        <div
+          className={cn(
+            'text-[11px] font-mono font-semibold tabular-nums',
+            total < 0 ? 'text-destructive' : 'text-muted-foreground'
+          )}
+        >
+          {formatMaskedMilli(globalLocalizer, total, privacyMaskNumbers)}
         </div>
       </div>
       {accounts.map((account) => {
@@ -229,6 +246,7 @@ export const AccountsList = React.memo(function AccountsList({
       <AccountSection
         title={t`On Budget`}
         accounts={displayOnBudget}
+        total={sumRealized(onBudgetAccounts)}
         uncategorizedData={uncategorizedData}
         globalLocalizer={globalLocalizer}
         pathname={location.pathname}
@@ -236,6 +254,8 @@ export const AccountsList = React.memo(function AccountsList({
       <AccountSection
         title={t`Off Budget`}
         accounts={displayOffBudget}
+        total={sumRealized(offBudgetAccounts)}
+        spaced
         uncategorizedData={uncategorizedData}
         globalLocalizer={globalLocalizer}
         pathname={location.pathname}

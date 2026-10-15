@@ -10457,6 +10457,10 @@ msgstr "Associez chaque carte de crédit à sa catégorie de paiement avant l'im
 msgid "match payment categories below"
 msgstr "associez les catégories de paiement ci-dessous"
 
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Matches your bank? Click to use it"
+msgstr "Correspond à votre banque ? Cliquez pour l’utiliser"
+
 #. placeholder {0}: formatAmount(maxCover)
 #: src/features/budget-planning/ui/category-row/CoverOverspendingPopover.tsx
 msgid "Max {0} — covering never puts the source in the red"
@@ -18299,6 +18303,10 @@ msgstr "Utilisez des pourcentages positifs/négatifs pour ajuster le montant."
 #: src/features/transactions/ui/form/CurrencyConversionNotice.tsx
 msgid "Use suggested"
 msgstr "Utiliser la suggestion"
+
+#: src/features/account-management/ui/ReconcileAccountDialog.tsx
+msgid "Use the cleared balance as the actual balance"
+msgstr "Utiliser le solde pointé comme solde réel"
 
 #: src/pages/auth/AuthPage.tsx
 msgid "Use your phone, tablet, or computer"
